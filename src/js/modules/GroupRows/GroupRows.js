@@ -120,6 +120,8 @@ class GroupRows extends Module{
 			this.subscribe("rows-added", this.rowsUpdated.bind(this));
 			this.subscribe("row-moving", this.rowMoving.bind(this));
 
+			this.registerDisplayHandler(this.getRows.bind(this), 20);
+
 			this.initialized = true;
 		}
 	}
@@ -171,6 +173,7 @@ class GroupRows extends Module{
 
 	//return appropriate rows with group headers
 	getRows(rows){
+		console.log("rows", rows)
 		if(this.groupIDLookups.length){
 
 			this.dispatchExternal("dataGrouping");
@@ -353,7 +356,7 @@ class GroupRows extends Module{
 			if(!samePath) {
 				oldRowGroup.removeRow(row);
 				this.assignRowToGroup(row, this.groups);
-				this.table.rowManager.refreshActiveData("group", false, true);
+				this.refreshData(false, true);
 			}
 		}
 	}
@@ -384,7 +387,7 @@ class GroupRows extends Module{
 				this.setDisplayIndex(displayIndex);
 			}
 
-			this.table.rowManager.refreshActiveData("group", true, true);
+			this.refreshData(false, true);
 		}
 
 		return output;

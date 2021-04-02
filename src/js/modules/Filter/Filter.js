@@ -21,6 +21,8 @@ class Filter extends Module{
 		this.subscribe("column-init", this.initializeColumnHeaderFilter.bind(this));
 		this.subscribe("column-width-fit-before", this.hideHeaderFilterElements.bind(this));
 		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
+
+		this.registerDataHandler(this.filter.bind(this), 10);
 	}
 
 	initializeColumnHeaderFilter(column){

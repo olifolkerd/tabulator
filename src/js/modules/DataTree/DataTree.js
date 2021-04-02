@@ -100,6 +100,8 @@ class DataTree extends Module{
 			this.subscribe("row-deleted", this.rowDelete.bind(this),0);
 			this.subscribe("row-data-changed", this.rowDataChanged.bind(this), 10);
 			this.subscribe("column-moving-rows", this.columnMoving.bind(this));
+
+			this.registerDisplayHandler(this.getRows.bind(this), 30);
 		}
 	}
 
@@ -119,7 +121,7 @@ class DataTree extends Module{
 
 			if(visible){
 				this.layoutRow(row);
-				this.table.rowManager.refreshActiveData("tree", false, true);
+				this.refreshData(false, true);
 			}
 		}
 	}
@@ -337,7 +339,7 @@ class DataTree extends Module{
 
 			row.reinitialize();
 
-			this.table.rowManager.refreshActiveData("tree", false, true);
+			this.refreshData(false, true);
 
 			this.dispatchExternal("dataTreeRowExpanded", row.getComponent(), row.modules.dataTree.index);
 		}
@@ -351,7 +353,7 @@ class DataTree extends Module{
 
 			row.reinitialize();
 
-			this.table.rowManager.refreshActiveData("tree", false, true);
+			this.refreshData(false, true);
 
 			this.dispatchExternal("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
 		}
@@ -418,7 +420,7 @@ class DataTree extends Module{
 			this.layoutRow(parent);
 		}
 
-		this.table.rowManager.refreshActiveData("tree", false, true);
+		this.refreshData(false, true);
 	}
 
 	addTreeChildRow(row, data, top, index){
@@ -453,7 +455,7 @@ class DataTree extends Module{
 		this.initializeRow(row);
 		this.layoutRow(row);
 
-		this.table.rowManager.refreshActiveData("tree", false, true);
+		this.refreshData(false, true);
 	}
 
 	findChildIndex(subject, parent){

@@ -31,14 +31,30 @@ class Page extends Module{
 	}
 
 	initialize(){
+		console.log("page init", this.table.options.pagination)
 		if(this.table.options.pagination){
 			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
+
+			this.registerDisplayHandler(this.restOnRenderBefore.bind(this), 40);
+			this.registerDisplayHandler(this.getRows.bind(this), 50);
+
+			this.initializePaginator();
 		}
 	}
 
+	restOnRenderBefore(rows, renderInPosition){
+		if(!renderInPosition){
+			if(this.mode === "local"){
+				this.reset();
+			}
+		}
+
+		return rows;
+	}
+
 	rowsUpdated(){
-		this.table.rowManager.refreshActiveData(false, false, true);
+		this.refreshData(false, true, "all");
 	}
 
 	createElements(){
@@ -126,7 +142,7 @@ class Page extends Module{
 	}
 
 	//setup pageination
-	initialize(hidden){
+	initializePaginator(hidden){
 		if(this.table.options.pagination || hidden){
 			var pageSelectLabel, testElRow, testElCell;
 
@@ -257,7 +273,7 @@ class Page extends Module{
 	}
 
 	initializeProgressive(mode){
-		this.initialize(true);
+		this.initializePaginator(true);
 		this.mode = "progressive_" + mode;
 		this.progressiveLoad = true;
 	}
@@ -565,7 +581,7 @@ class Page extends Module{
 				case "local":
 				left = this.table.rowManager.scrollLeft;
 
-				this.table.rowManager.refreshActiveData("page");
+				this.refreshData();
 				this.table.rowManager.scrollHorizontal(left);
 
 				this.dispatchExternal("pageLoaded", this.getPage());

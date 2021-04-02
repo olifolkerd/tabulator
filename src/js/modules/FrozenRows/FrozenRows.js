@@ -7,7 +7,6 @@ class FrozenRows extends Module{
 
 		this.topElement = document.createElement("div");
 		this.rows = [];
-		this.displayIndex = 0; //index in display pipeline
 	}
 
 	initialize(){
@@ -19,14 +18,8 @@ class FrozenRows extends Module{
 		this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
 
 		this.subscribe("row-deleting", this.detachRow.bind(this));
-	}
 
-	setDisplayIndex(index){
-		this.displayIndex = index;
-	}
-
-	getDisplayIndex(){
-		return this.displayIndex;
+		this.registerDisplayHandler(this.getRows.bind(this), 10);
 	}
 
 	isFrozen(){

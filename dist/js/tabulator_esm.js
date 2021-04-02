@@ -51,13 +51,33 @@ class Module extends CoreFeature{
 
 	constructor(table, name){
 		super(table);
+
+		this._handler = null;
 	}
 
 	initialize(){
 		// setup module when table is initialized, to be overriden in module
 	}
 
+	registerDataHandler(handler, priority){
+		this.table.rowManager.registerDataPipelineHandler(handler, priority);
+		this._handler = handler;
+	}
 
+	registerDisplayHandler(handler, priority){
+		this.table.rowManager.registerDisplayPipelineHandler(handler, priority);
+		this._handler = handler;
+	}
+
+	refreshData(skipStage, renderInPosition, handler){
+		if(!handler){
+			handler = this._handler;
+		}
+
+		if(handler){
+			this.table.rowManager.refreshActiveData(handler, skipStage, renderInPosition);
+		}
+	}
 }
 
 class Helpers{
@@ -4627,6 +4647,8 @@ class DataTree extends Module{
 			this.subscribe("row-deleted", this.rowDelete.bind(this),0);
 			this.subscribe("row-data-changed", this.rowDataChanged.bind(this), 10);
 			this.subscribe("column-moving-rows", this.columnMoving.bind(this));
+
+			this.registerDisplayHandler(this.getRows.bind(this), 30);
 		}
 	}
 
@@ -4646,7 +4668,7 @@ class DataTree extends Module{
 
 			if(visible){
 				this.layoutRow(row);
-				this.table.rowManager.refreshActiveData("tree", false, true);
+				this.refreshData(false, true);
 			}
 		}
 	}
@@ -4864,7 +4886,7 @@ class DataTree extends Module{
 
 			row.reinitialize();
 
-			this.table.rowManager.refreshActiveData("tree", false, true);
+			this.refreshData(false, true);
 
 			this.dispatchExternal("dataTreeRowExpanded", row.getComponent(), row.modules.dataTree.index);
 		}
@@ -4878,7 +4900,7 @@ class DataTree extends Module{
 
 			row.reinitialize();
 
-			this.table.rowManager.refreshActiveData("tree", false, true);
+			this.refreshData(false, true);
 
 			this.dispatchExternal("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
 		}
@@ -4945,7 +4967,7 @@ class DataTree extends Module{
 			this.layoutRow(parent);
 		}
 
-		this.table.rowManager.refreshActiveData("tree", false, true);
+		this.refreshData(false, true);
 	}
 
 	addTreeChildRow(row, data, top, index){
@@ -4980,7 +5002,7 @@ class DataTree extends Module{
 		this.initializeRow(row);
 		this.layoutRow(row);
 
-		this.table.rowManager.refreshActiveData("tree", false, true);
+		this.refreshData(false, true);
 	}
 
 	findChildIndex(subject, parent){
@@ -8509,6 +8531,8 @@ class Filter extends Module{
 		this.subscribe("column-init", this.initializeColumnHeaderFilter.bind(this));
 		this.subscribe("column-width-fit-before", this.hideHeaderFilterElements.bind(this));
 		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
+
+		this.registerDataHandler(this.filter.bind(this), 10);
 	}
 
 	initializeColumnHeaderFilter(column){
@@ -10259,7 +10283,6 @@ class FrozenRows extends Module{
 
 		this.topElement = document.createElement("div");
 		this.rows = [];
-		this.displayIndex = 0; //index in display pipeline
 	}
 
 	initialize(){
@@ -10271,14 +10294,8 @@ class FrozenRows extends Module{
 		this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
 
 		this.subscribe("row-deleting", this.detachRow.bind(this));
-	}
 
-	setDisplayIndex(index){
-		this.displayIndex = index;
-	}
-
-	getDisplayIndex(){
-		return this.displayIndex;
+		this.registerDisplayHandler(this.getRows.bind(this), 10);
 	}
 
 	isFrozen(){
@@ -11199,6 +11216,8 @@ class GroupRows extends Module{
 			this.subscribe("rows-added", this.rowsUpdated.bind(this));
 			this.subscribe("row-moving", this.rowMoving.bind(this));
 
+			this.registerDisplayHandler(this.getRows.bind(this), 20);
+
 			this.initialized = true;
 		}
 	}
@@ -11250,6 +11269,7 @@ class GroupRows extends Module{
 
 	//return appropriate rows with group headers
 	getRows(rows){
+		console.log("rows", rows);
 		if(this.groupIDLookups.length){
 
 			this.dispatchExternal("dataGrouping");
@@ -11432,7 +11452,7 @@ class GroupRows extends Module{
 			if(!samePath) {
 				oldRowGroup.removeRow(row);
 				this.assignRowToGroup(row, this.groups);
-				this.table.rowManager.refreshActiveData("group", false, true);
+				this.refreshData(false, true);
 			}
 		}
 	}
@@ -11462,7 +11482,7 @@ class GroupRows extends Module{
 				this.setDisplayIndex(displayIndex);
 			}
 
-			this.table.rowManager.refreshActiveData("group", true, true);
+			this.refreshData(false, true);
 		}
 
 		return output;
@@ -13668,14 +13688,30 @@ class Page extends Module{
 	}
 
 	initialize(){
+		console.log("page init", this.table.options.pagination);
 		if(this.table.options.pagination){
 			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
+
+			this.registerDisplayHandler(this.restOnRenderBefore.bind(this), 40);
+			this.registerDisplayHandler(this.getRows.bind(this), 50);
+
+			this.initializePaginator();
 		}
 	}
 
+	restOnRenderBefore(rows, renderInPosition){
+		if(!renderInPosition){
+			if(this.mode === "local"){
+				this.reset();
+			}
+		}
+
+		return rows;
+	}
+
 	rowsUpdated(){
-		this.table.rowManager.refreshActiveData(false, false, true);
+		this.refreshData(false, true, "all");
 	}
 
 	createElements(){
@@ -13763,7 +13799,7 @@ class Page extends Module{
 	}
 
 	//setup pageination
-	initialize(hidden){
+	initializePaginator(hidden){
 		if(this.table.options.pagination || hidden){
 			var pageSelectLabel, testElRow, testElCell;
 
@@ -13894,7 +13930,7 @@ class Page extends Module{
 	}
 
 	initializeProgressive(mode){
-		this.initialize(true);
+		this.initializePaginator(true);
 		this.mode = "progressive_" + mode;
 		this.progressiveLoad = true;
 	}
@@ -14198,7 +14234,7 @@ class Page extends Module{
 				case "local":
 				left = this.table.rowManager.scrollLeft;
 
-				this.table.rowManager.refreshActiveData("page");
+				this.refreshData();
 				this.table.rowManager.scrollHorizontal(left);
 
 				this.dispatchExternal("pageLoaded", this.getPage());
@@ -16643,6 +16679,7 @@ class Sort extends Module{
 
 	initialize(){
 		this.subscribe("column-layout", this.initializeColumn.bind(this));
+		this.registerDataHandler(this.sort.bind(this), 20);
 	}
 
 	//initialize column header for sorting
@@ -19099,6 +19136,7 @@ class RowManager extends CoreFeature{
 		this.fixedHeight = false; //current rendering mode
 
 		this.rows = []; //hold row data objects
+		this.activeRowsPipeline = []; //hold caluclation of active rows
 		this.activeRows = []; //rows currently available to on display in the table
 		this.activeRowsCount = 0; //count of active rows
 
@@ -19114,9 +19152,13 @@ class RowManager extends CoreFeature{
 		this.redrawBlockRestoreConfig = false; //store latest redraw function calls for when redraw is needed
 		this.redrawBlockRederInPosition = false; //store latest redraw function calls for when redraw is needed
 
-		this._bindEvents();
+		this.dataPipeline = []; //hold data pipeline tasks
+		this.displayPipeline = []; //hold data display pipeline tasks
 
+		this._bindEvents();
 	}
+
+
 
 	//////////////// Setup Functions /////////////////
 
@@ -19311,6 +19353,7 @@ class RowManager extends CoreFeature{
 
 		this.rows = [];
 		this.activeRows = [];
+		this.activeRowsPipeline = [];
 		this.activeRowsCount = 0;
 		this.displayRows = [];
 		this.displayRowsCount = 0;
@@ -19763,162 +19806,132 @@ class RowManager extends CoreFeature{
 		this.dispatch("scroll-horizontal", left);
 	}
 
+	registerDataPipelineHandler(handler, priority){
+		if(typeof priority !== "undefined"){
+			this.dataPipeline.push({handler, priority});
+			this.dataPipeline.sort((a, b) => {
+				return a.priority - b.priority;
+			});
+		}else {
+			console.error("Data pipeline handlers must have a priority in order to be registered");
+		}
+	}
+
+	registerDisplayPipelineHandler(handler, priority){
+		if(typeof priority !== "undefined"){
+			this.displayPipeline.push({handler, priority});
+			this.displayPipeline.sort((a, b) => {
+				return a.priority - b.priority;
+			});
+		}else {
+			console.error("Display pipeline handlers must have a priority in order to be registered");
+		}
+	}
+
 	//set active data set
-	refreshActiveData(stage, skipStage, renderInPosition){
+	refreshActiveData(handler, skipStage, renderInPosition){
 		var table = this.table,
-		cascadeOrder = ["all", "filter", "sort", "display", "freeze", "group", "tree", "page"],
-		displayIndex;
+		stage = "",
+		index = 0,
+		cascadeOrder = ["all", "dataPipeline", "display", "displayPipeline", "end"];
+
+
+		if(typeof handler === "function"){
+			index = this.dataPipeline.findIndex((item) => {
+				return item.handler === handler;
+			});
+
+			if(index > -1){
+				stage = "dataPipeline";
+
+				if(skipStage){
+					if(index == this.dataPipeline.length - 1){
+						stage = "display";
+					}else {
+						index++;
+					}
+				}
+			}else {
+				index = this.displayPipeline.findIndex((item) => {
+					return item.handler === handler;
+				});
+
+				if(index > -1){
+					stage = "displayPipeline";
+
+					if(skipStage){
+						if(index == this.displayPipeline.length - 1){
+							stage = "end";
+						}else {
+							index++;
+						}
+					}
+				}else {
+					console.error("Unable to refresh data, invalid handler provided", handler);
+					return;
+				}
+			}
+		}else {
+			stage = handler || "all";
+			index = 0;
+		}
 
 		if(this.redrawBlock){
-
-			if(!this.redrawBlockRestoreConfig || (cascadeOrder.indexOf(stage) < cascadeOrder.indexOf(this.redrawBlockRestoreConfig.stage))){
+			if(!this.redrawBlockRestoreConfig || (this.redrawBlockRestoreConfig && ((this.redrawBlockRestoreConfig.stage === stage && index < this.redrawBlockRestoreConfig.index) || (cascadeOrder.indexOf(stage) < cascadeOrder.indexOf(this.redrawBlockRestoreConfig.stage))))){
 				this.redrawBlockRestoreConfig = {
-					stage: stage,
+					handler: handler,
 					skipStage: skipStage,
 					renderInPosition: renderInPosition,
+					stage:stage,
+					index:index,
 				};
 			}
 
 			return;
 		}else {
-
 			this.dispatch("data-refesh");
 
-			if(!stage){
-				stage = "all";
+			if(!handler){
+				this.activeRowsPipeline[0] = this.rows.slice(0);
 			}
 
 			//cascade through data refresh stages
 			switch(stage){
 				case "all":
+				//handle case where alldata needs refreshing
 
-				case "filter":
-				if(!skipStage){
-					if(table.modExists("filter")){
-						this.setActiveRows(table.modules.filter.filter(this.rows));
-					}else {
-						this.setActiveRows(this.rows.slice(0));
-					}
-				}else {
-					skipStage = false;
+				case "dataPipeline":
+
+				for(let i = index; i < this.dataPipeline.length; i++){
+					let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i]);
+
+					this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
 				}
 
-				case "sort":
-				if(!skipStage){
-					if(table.modExists("sort")){
-						table.modules.sort.sort(this.activeRows);
-					}
-				}else {
-					skipStage = false;
-				}
+				this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
 
-				//regenerate row numbers for row number formatter if in use
 				this.regenerateRowNumbers();
 
-				//generic stage to allow for pipeline trigger after the data manipulation stage
 				case "display":
+				index = 0;
 				this.resetDisplayRows();
 
-				case "freeze":
-				if(!skipStage){
-					if(this.table.modExists("frozenRows")){
-						if(table.modules.frozenRows.isFrozen()){
-							if(!table.modules.frozenRows.getDisplayIndex()){
-								table.modules.frozenRows.setDisplayIndex(this.getNextDisplayIndex());
-							}
+				case "displayPipeline":
+				for(let i = index; i < this.displayPipeline.length; i++){
+					console.log("display", this.displayPipeline[i]);
+					var result = this.displayPipeline[i].handler(i ? this.getDisplayRows(i - 1) : this.activeRows, renderInPosition);
 
-							displayIndex = table.modules.frozenRows.getDisplayIndex();
-
-							displayIndex = this.setDisplayRows(table.modules.frozenRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
-
-							if(displayIndex !== true){
-								table.modules.frozenRows.setDisplayIndex(displayIndex);
-							}
-						}
-					}
-				}else {
-					skipStage = false;
+					this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
 				}
-
-				case "group":
-				if(!skipStage){
-					if(table.options.groupBy && table.modExists("groupRows")){
-
-						if(!table.modules.groupRows.getDisplayIndex()){
-							table.modules.groupRows.setDisplayIndex(this.getNextDisplayIndex());
-						}
-
-						displayIndex = table.modules.groupRows.getDisplayIndex();
-
-						displayIndex = this.setDisplayRows(table.modules.groupRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
-
-						if(displayIndex !== true){
-							table.modules.groupRows.setDisplayIndex(displayIndex);
-						}
-					}
-				}else {
-					skipStage = false;
-				}
-
-				case "tree":
-
-				if(!skipStage){
-					if(table.options.dataTree && table.modExists("dataTree")){
-						if(!table.modules.dataTree.getDisplayIndex()){
-							table.modules.dataTree.setDisplayIndex(this.getNextDisplayIndex());
-						}
-
-						displayIndex = table.modules.dataTree.getDisplayIndex();
-
-						displayIndex = this.setDisplayRows(table.modules.dataTree.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
-
-						if(displayIndex !== true){
-							table.modules.dataTree.setDisplayIndex(displayIndex);
-						}
-					}
-				}else {
-					skipStage = false;
-				}
-
-				if(table.options.pagination && table.modExists("page") && !renderInPosition){
-					if(table.modules.page.getMode() == "local"){
-						table.modules.page.reset();
-					}
-				}
-
-				case "page":
-				if(!skipStage){
-					if(table.options.pagination && table.modExists("page")){
-
-						if(!table.modules.page.getDisplayIndex()){
-							table.modules.page.setDisplayIndex(this.getNextDisplayIndex());
-						}
-
-						displayIndex = table.modules.page.getDisplayIndex();
-
-						if(table.modules.page.getMode() == "local"){
-							table.modules.page.setMaxRows(this.getDisplayRows(displayIndex - 1).length);
-						}
-
-
-						displayIndex = this.setDisplayRows(table.modules.page.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
-
-						if(displayIndex !== true){
-							table.modules.page.setDisplayIndex(displayIndex);
-						}
-					}
-				}else {
-					skipStage = false;
-				}
+				//case to handle scenario when trying to skip past end stage
 			}
-
 
 			if(Helpers.elVisible(this.element)){
 				if(renderInPosition){
 					this.reRenderInPosition();
 				}else {
 
-					if(stage === "all" && this.table.options.virtualDomHoz){
+					if(!handler && this.table.options.virtualDomHoz){
 						this.table.vdomHoz.dataChange();
 					}
 
@@ -19962,17 +19975,17 @@ class RowManager extends CoreFeature{
 
 		this.displayRowsCount = this.displayRows[0].length;
 
-		if(this.table.modExists("frozenRows")){
-			this.table.modules.frozenRows.setDisplayIndex(0);
-		}
+		// if(this.table.modExists("frozenRows")){
+		// 	this.table.modules.frozenRows.setDisplayIndex(0);
+		// }
 
-		if(this.table.options.groupBy && this.table.modExists("groupRows")){
-			this.table.modules.groupRows.setDisplayIndex(0);
-		}
+		// if(this.table.options.groupBy && this.table.modExists("groupRows")){
+		// 	this.table.modules.groupRows.setDisplayIndex(0);
+		// }
 
-		if(this.table.options.pagination && this.table.modExists("page")){
-			this.table.modules.page.setDisplayIndex(0);
-		}
+		// if(this.table.options.pagination && this.table.modExists("page")){
+		// 	this.table.modules.page.setDisplayIndex(0);
+		// }
 	}
 
 	getNextDisplayIndex(){
@@ -20005,7 +20018,6 @@ class RowManager extends CoreFeature{
 		}else {
 			return this.displayRows[index] || [];
 		}
-
 	}
 
 	getVisibleRows(viewable){
@@ -20213,7 +20225,7 @@ class RowManager extends CoreFeature{
 		this.redrawBlock = false;
 
 		if(this.redrawBlockRestoreConfig){
-			this.refreshActiveData(this.redrawBlockRestoreConfig.stage, this.redrawBlockRestoreConfig.skipStage, this.redrawBlockRestoreConfig.renderInPosition);
+			this.refreshActiveData(this.redrawBlockRestoreConfig.handler, this.redrawBlockRestoreConfig.skipStage, this.redrawBlockRestoreConfig.renderInPosition);
 
 			this.redrawBlockRestoreConfig = false;
 		}else {

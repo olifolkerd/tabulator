@@ -13,6 +13,7 @@ class Sort extends Module{
 
 	initialize(){
 		this.subscribe("column-layout", this.initializeColumn.bind(this));
+		this.registerDataHandler(this.sort.bind(this), 20);
 	}
 
 	//initialize column header for sorting

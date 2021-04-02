@@ -21,6 +21,7 @@ export default class RowManager extends CoreFeature{
 		this.fixedHeight = false; //current rendering mode
 
 		this.rows = []; //hold row data objects
+		this.activeRowsPipeline = []; //hold caluclation of active rows
 		this.activeRows = []; //rows currently available to on display in the table
 		this.activeRowsCount = 0; //count of active rows
 
@@ -36,9 +37,13 @@ export default class RowManager extends CoreFeature{
 		this.redrawBlockRestoreConfig = false; //store latest redraw function calls for when redraw is needed
 		this.redrawBlockRederInPosition = false; //store latest redraw function calls for when redraw is needed
 
-		this._bindEvents();
+		this.dataPipeline = []; //hold data pipeline tasks
+		this.displayPipeline = []; //hold data display pipeline tasks
 
+		this._bindEvents();
 	}
+
+
 
 	//////////////// Setup Functions /////////////////
 
@@ -233,6 +238,7 @@ export default class RowManager extends CoreFeature{
 
 		this.rows = [];
 		this.activeRows = [];
+		this.activeRowsPipeline = [];
 		this.activeRowsCount = 0;
 		this.displayRows = [];
 		this.displayRowsCount = 0;
@@ -686,162 +692,135 @@ export default class RowManager extends CoreFeature{
 		this.dispatch("scroll-horizontal", left);
 	}
 
+	registerDataPipelineHandler(handler, priority){
+		if(typeof priority !== "undefined"){
+			this.dataPipeline.push({handler, priority})
+			this.dataPipeline.sort((a, b) => {
+				return a.priority - b.priority;
+			});
+		}else{
+			console.error("Data pipeline handlers must have a priority in order to be registered")
+		}
+	}
+
+	registerDisplayPipelineHandler(handler, priority){
+		if(typeof priority !== "undefined"){
+			this.displayPipeline.push({handler, priority})
+			this.displayPipeline.sort((a, b) => {
+				return a.priority - b.priority;
+			});
+		}else{
+			console.error("Display pipeline handlers must have a priority in order to be registered")
+		}
+	}
+
 	//set active data set
-	refreshActiveData(stage, skipStage, renderInPosition){
+	refreshActiveData(handler, skipStage, renderInPosition){
 		var table = this.table,
-		cascadeOrder = ["all", "filter", "sort", "display", "freeze", "group", "tree", "page"],
+		stage = "",
+		index = 0,
+		cascadeOrder = ["all", "dataPipeline", "display", "displayPipeline", "end"],
 		displayIndex;
 
-		if(this.redrawBlock){
 
-			if(!this.redrawBlockRestoreConfig || (cascadeOrder.indexOf(stage) < cascadeOrder.indexOf(this.redrawBlockRestoreConfig.stage))){
+		if(typeof handler === "function"){
+			index = this.dataPipeline.findIndex((item) => {
+				return item.handler === handler;
+			});
+
+			if(index > -1){
+				stage = "dataPipeline";
+
+				if(skipStage){
+					if(index == this.dataPipeline.length - 1){
+						stage = "display";
+					}else{
+						index++;
+					}
+				}
+			}else{
+				index = this.displayPipeline.findIndex((item) => {
+					return item.handler === handler;
+				});
+
+				if(index > -1){
+					stage = "displayPipeline";
+
+					if(skipStage){
+						if(index == this.displayPipeline.length - 1){
+							stage = "end";
+						}else{
+							index++;
+						}
+					}
+				}else{
+					console.error("Unable to refresh data, invalid handler provided", handler)
+					return;
+				}
+			}
+		}else{
+			stage = handler || "all";
+			index = 0;
+		}
+
+		if(this.redrawBlock){
+			if(!this.redrawBlockRestoreConfig || (this.redrawBlockRestoreConfig && ((this.redrawBlockRestoreConfig.stage === stage && index < this.redrawBlockRestoreConfig.index) || (cascadeOrder.indexOf(stage) < cascadeOrder.indexOf(this.redrawBlockRestoreConfig.stage))))){
 				this.redrawBlockRestoreConfig = {
-					stage: stage,
+					handler: handler,
 					skipStage: skipStage,
 					renderInPosition: renderInPosition,
+					stage:stage,
+					index:index,
 				};
 			}
 
 			return;
 		}else{
-
 			this.dispatch("data-refesh");
 
-			if(!stage){
-				stage = "all";
+			if(!handler){
+				this.activeRowsPipeline[0] = this.rows.slice(0);
 			}
 
 			//cascade through data refresh stages
 			switch(stage){
 				case "all":
+				//handle case where alldata needs refreshing
 
-				case "filter":
-				if(!skipStage){
-					if(table.modExists("filter")){
-						this.setActiveRows(table.modules.filter.filter(this.rows));
-					}else{
-						this.setActiveRows(this.rows.slice(0));
-					}
-				}else{
-					skipStage = false;
+				case "dataPipeline":
+
+				for(let i = index; i < this.dataPipeline.length; i++){
+					let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i]);
+
+					this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
 				}
 
-				case "sort":
-				if(!skipStage){
-					if(table.modExists("sort")){
-						table.modules.sort.sort(this.activeRows);
-					}
-				}else{
-					skipStage = false;
-				}
+				this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
 
-				//regenerate row numbers for row number formatter if in use
 				this.regenerateRowNumbers();
 
-				//generic stage to allow for pipeline trigger after the data manipulation stage
 				case "display":
+				index = 0;
 				this.resetDisplayRows();
 
-				case "freeze":
-				if(!skipStage){
-					if(this.table.modExists("frozenRows")){
-						if(table.modules.frozenRows.isFrozen()){
-							if(!table.modules.frozenRows.getDisplayIndex()){
-								table.modules.frozenRows.setDisplayIndex(this.getNextDisplayIndex());
-							}
+				case "displayPipeline":
+				for(let i = index; i < this.displayPipeline.length; i++){
+					console.log("display", this.displayPipeline[i])
+					var result = this.displayPipeline[i].handler(i ? this.getDisplayRows(i - 1) : this.activeRows, renderInPosition);
 
-							displayIndex = table.modules.frozenRows.getDisplayIndex();
-
-							displayIndex = this.setDisplayRows(table.modules.frozenRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
-
-							if(displayIndex !== true){
-								table.modules.frozenRows.setDisplayIndex(displayIndex);
-							}
-						}
-					}
-				}else{
-					skipStage = false;
+					this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
 				}
 
-				case "group":
-				if(!skipStage){
-					if(table.options.groupBy && table.modExists("groupRows")){
-
-						if(!table.modules.groupRows.getDisplayIndex()){
-							table.modules.groupRows.setDisplayIndex(this.getNextDisplayIndex());
-						}
-
-						displayIndex = table.modules.groupRows.getDisplayIndex();
-
-						displayIndex = this.setDisplayRows(table.modules.groupRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
-
-						if(displayIndex !== true){
-							table.modules.groupRows.setDisplayIndex(displayIndex);
-						}
-					}
-				}else{
-					skipStage = false;
-				}
-
-				case "tree":
-
-				if(!skipStage){
-					if(table.options.dataTree && table.modExists("dataTree")){
-						if(!table.modules.dataTree.getDisplayIndex()){
-							table.modules.dataTree.setDisplayIndex(this.getNextDisplayIndex());
-						}
-
-						displayIndex = table.modules.dataTree.getDisplayIndex();
-
-						displayIndex = this.setDisplayRows(table.modules.dataTree.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
-
-						if(displayIndex !== true){
-							table.modules.dataTree.setDisplayIndex(displayIndex);
-						}
-					}
-				}else{
-					skipStage = false;
-				}
-
-				if(table.options.pagination && table.modExists("page") && !renderInPosition){
-					if(table.modules.page.getMode() == "local"){
-						table.modules.page.reset();
-					}
-				}
-
-				case "page":
-				if(!skipStage){
-					if(table.options.pagination && table.modExists("page")){
-
-						if(!table.modules.page.getDisplayIndex()){
-							table.modules.page.setDisplayIndex(this.getNextDisplayIndex());
-						}
-
-						displayIndex = table.modules.page.getDisplayIndex();
-
-						if(table.modules.page.getMode() == "local"){
-							table.modules.page.setMaxRows(this.getDisplayRows(displayIndex - 1).length);
-						}
-
-
-						displayIndex = this.setDisplayRows(table.modules.page.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
-
-						if(displayIndex !== true){
-							table.modules.page.setDisplayIndex(displayIndex);
-						}
-					}
-				}else{
-					skipStage = false;
-				}
+				case "end":
+				//case to handle scenario when trying to skip past end stage
 			}
-
 
 			if(Helpers.elVisible(this.element)){
 				if(renderInPosition){
 					this.reRenderInPosition();
 				}else{
 
-					if(stage === "all" && this.table.options.virtualDomHoz){
+					if(!handler && this.table.options.virtualDomHoz){
 						this.table.vdomHoz.dataChange();
 					}
 
@@ -885,17 +864,17 @@ export default class RowManager extends CoreFeature{
 
 		this.displayRowsCount = this.displayRows[0].length;
 
-		if(this.table.modExists("frozenRows")){
-			this.table.modules.frozenRows.setDisplayIndex(0);
-		}
+		// if(this.table.modExists("frozenRows")){
+		// 	this.table.modules.frozenRows.setDisplayIndex(0);
+		// }
 
-		if(this.table.options.groupBy && this.table.modExists("groupRows")){
-			this.table.modules.groupRows.setDisplayIndex(0);
-		}
+		// if(this.table.options.groupBy && this.table.modExists("groupRows")){
+		// 	this.table.modules.groupRows.setDisplayIndex(0);
+		// }
 
-		if(this.table.options.pagination && this.table.modExists("page")){
-			this.table.modules.page.setDisplayIndex(0);
-		}
+		// if(this.table.options.pagination && this.table.modExists("page")){
+		// 	this.table.modules.page.setDisplayIndex(0);
+		// }
 	}
 
 	getNextDisplayIndex(){
@@ -928,7 +907,6 @@ export default class RowManager extends CoreFeature{
 		}else{
 			return this.displayRows[index] || [];
 		}
-
 	}
 
 	getVisibleRows(viewable){
@@ -1137,7 +1115,7 @@ export default class RowManager extends CoreFeature{
 		this.redrawBlock = false;
 
 		if(this.redrawBlockRestoreConfig){
-			this.refreshActiveData(this.redrawBlockRestoreConfig.stage, this.redrawBlockRestoreConfig.skipStage, this.redrawBlockRestoreConfig.renderInPosition)
+			this.refreshActiveData(this.redrawBlockRestoreConfig.handler, this.redrawBlockRestoreConfig.skipStage, this.redrawBlockRestoreConfig.renderInPosition)
 
 			this.redrawBlockRestoreConfig = false;
 		}else{
