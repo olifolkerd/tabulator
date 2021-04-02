@@ -16,6 +16,10 @@ export default class Renderer extends CoreFeature{
 	/////// Internal Bindings /////////
 	///////////////////////////////////
 
+	initialize(){
+		//initialize core functionality
+	}
+
 	clearRows(){
 		//clear down existing rows layout
 	}

@@ -989,7 +989,11 @@ export default class RowManager extends CoreFeature{
 	setRenderMode(){
 		if(this.table.options.virtualDom){
 			this.renderMode = "virtual";
-			this.renderer = new RendererVirtualDomVertical(this.table, this.element, this.tableElement)
+
+			if(!this.renderer || !(this.renderer instanceof RendererVirtualDomVertical)){
+				this.renderer = new RendererVirtualDomVertical(this.table, this.element, this.tableElement)
+				this.renderer.initialize();
+			}
 
 			if((this.table.element.clientHeight || this.table.options.height)){
 				this.fixedHeight = true;
@@ -998,7 +1002,11 @@ export default class RowManager extends CoreFeature{
 			}
 		}else{
 			this.renderMode = "classic";
-			this.renderer = new RendererClassic(this.table, this.element, this.tableElement)
+
+			if(!this.renderer || !(this.renderer instanceof RendererClassic)){
+				this.renderer = new RendererClassic(this.table, this.element, this.tableElement)
+				this.renderer.initialize();
+			}
 		}
 	}
 

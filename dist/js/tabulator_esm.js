@@ -18344,6 +18344,10 @@ class Renderer extends CoreFeature{
 	/////// Internal Bindings /////////
 	///////////////////////////////////
 
+	initialize(){
+		//initialize core functionality
+	}
+
 	clearRows(){
 		//clear down existing rows layout
 	}
@@ -20057,7 +20061,11 @@ class RowManager extends CoreFeature{
 	setRenderMode(){
 		if(this.table.options.virtualDom){
 			this.renderMode = "virtual";
-			this.renderer = new VirtualDomVertical(this.table, this.element, this.tableElement);
+
+			if(!this.renderer || !(this.renderer instanceof VirtualDomVertical)){
+				this.renderer = new VirtualDomVertical(this.table, this.element, this.tableElement);
+				this.renderer.initialize();
+			}
 
 			if((this.table.element.clientHeight || this.table.options.height)){
 				this.fixedHeight = true;
@@ -20066,7 +20074,11 @@ class RowManager extends CoreFeature{
 			}
 		}else {
 			this.renderMode = "classic";
-			this.renderer = new Classic(this.table, this.element, this.tableElement);
+
+			if(!this.renderer || !(this.renderer instanceof Classic)){
+				this.renderer = new Classic(this.table, this.element, this.tableElement);
+				this.renderer.initialize();
+			}
 		}
 	}
 
