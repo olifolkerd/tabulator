@@ -1033,124 +1033,6 @@ class Tabulator {
 			console.warn("setHeight function is not available in classic render mode");
 		}
 	}
-	///////////////// Grouping Functions ///////////////
-	setGroupBy(groups){
-		if(this.modExists("groupRows", true)){
-			this.options.groupBy = groups;
-			this.modules.groupRows.initialize();
-			this.rowManager.refreshActiveData("display");
-
-			if(this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group){
-				this.modules.persistence.save("group");
-			}
-		}else{
-			return false;
-		}
-	}
-
-	setGroupValues(groupValues){
-		if(this.modExists("groupRows", true)){
-			this.options.groupValues = groupValues;
-			this.modules.groupRows.initialize();
-			this.rowManager.refreshActiveData("display");
-
-			if(this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group){
-				this.modules.persistence.save("group");
-			}
-		}else{
-			return false;
-		}
-	}
-
-	setGroupStartOpen(values){
-		if(this.modExists("groupRows", true)){
-			this.options.groupStartOpen = values;
-			this.modules.groupRows.initialize();
-			if(this.options.groupBy){
-				this.rowManager.refreshActiveData("group");
-
-				if(this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group){
-					this.modules.persistence.save("group");
-				}
-			}else{
-				console.warn("Grouping Update - cant refresh view, no groups have been set");
-			}
-		}else{
-			return false;
-		}
-	}
-
-	setGroupHeader(values){
-		if(this.modExists("groupRows", true)){
-			this.options.groupHeader = values;
-			this.modules.groupRows.initialize();
-			if(this.options.groupBy){
-				this.rowManager.refreshActiveData("group");
-
-				if(this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group){
-					this.modules.persistence.save("group");
-				}
-			}else{
-				console.warn("Grouping Update - cant refresh view, no groups have been set");
-			}
-		}else{
-			return false;
-		}
-	}
-
-	getGroups(values){
-		if(this.modExists("groupRows", true)){
-			return this.modules.groupRows.getGroups(true);
-		}else{
-			return false;
-		}
-	}
-
-	// get grouped table data in the same format as getData()
-	getGroupedData(){
-		if (this.modExists("groupRows", true)){
-			return this.options.groupBy ?
-			this.modules.groupRows.getGroupedData() : this.getData()
-		}
-	}
-
-	getEditedCells(){
-		if(this.modExists("edit", true)){
-			return this.modules.edit.getEditedCells();
-		}
-	}
-
-	clearCellEdited(cells){
-		if(this.modExists("edit", true)){
-
-			if(!cells){
-				cells = this.modules.edit.getEditedCells();
-			}
-
-			if(!Array.isArray(cells)){
-				cells = [cells];
-			}
-
-			cells.forEach((cell) => {
-				this.modules.edit.clearEdited(cell._getSelf());
-			});
-		}
-	}
-
-	///////////////// Column Calculation Functions ///////////////
-	getCalcResults(){
-		if(this.modExists("columnCalcs", true)){
-			return this.modules.columnCalcs.getResults();
-		}else{
-			return false;
-		}
-	}
-
-	recalc(){
-		if(this.modExists("columnCalcs", true)){
-			this.modules.columnCalcs.recalcAll(this.rowManager.activeRows);
-		}
-	}
 
 	/////////////// Navigation Management //////////////
 	navigatePrev(){
@@ -1241,60 +1123,6 @@ class Tabulator {
 		return false;
 	}
 
-	/////////////// History Management //////////////
-	undo(){
-		if(this.options.history && this.modExists("history", true)){
-			return this.modules.history.undo();
-		}else{
-			return false;
-		}
-	}
-
-	redo(){
-		if(this.options.history && this.modExists("history", true)){
-			return this.modules.history.redo();
-		}else{
-			return false;
-		}
-	}
-
-	getHistoryUndoSize(){
-		if(this.options.history && this.modExists("history", true)){
-			return this.modules.history.getHistoryUndoSize();
-		}else{
-			return false;
-		}
-	}
-
-	getHistoryRedoSize(){
-		if(this.options.history && this.modExists("history", true)){
-			return this.modules.history.getHistoryRedoSize();
-		}else{
-			return false;
-		}
-	}
-
-	clearHistory(){
-		if(this.options.history && this.modExists("history", true)){
-			return this.modules.history.clear();
-		}else{
-			return false;
-		}
-	}
-
-	/////////////// Download Management //////////////
-	download(type, filename, options, active){
-		if(this.modExists("download", true)){
-			this.modules.download.download(type, filename, options, active);
-		}
-	}
-
-	downloadToTab(type, filename, options, active){
-		if(this.modExists("download", true)){
-			this.modules.download.download(type, filename, options, active, true);
-		}
-	}
-
 	//////////////////// Event Bus ///////////////////
 
 	on(key, callback){
@@ -1310,11 +1138,6 @@ class Tabulator {
 		key = args.shift();
 
 		this.externalEvents.dispatch(...arguments)
-	}
-
-	/////////// Inter Table Communications ///////////
-	tableComms(table, module, action, data){
-		this.modules.comms.receive(table, module, action, data);
 	}
 
 	////////////// Extension Management //////////////

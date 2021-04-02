@@ -21,6 +21,12 @@ class History extends Module{
 			this.subscribe("row-added", this.clear.bind(this));
 			this.subscribe("row-move", this.rowMoved.bind(this));
 		}
+
+		this.registerTableFunction("undo", this.undo.bind(this));
+		this.registerTableFunction("redo", this.redo.bind(this));
+		this.registerTableFunction("getHistoryUndoSize", this.getHistoryUndoSize.bind(this));
+		this.registerTableFunction("getHistoryRedoSize", this.getHistoryRedoSize.bind(this));
+		this.registerTableFunction("clearHistory", this.clear.bind(this));
 	}
 
 	rowMoved(from, to, after){

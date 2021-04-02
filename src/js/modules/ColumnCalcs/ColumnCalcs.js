@@ -22,8 +22,6 @@ class ColumnCalcs extends Module{
 		this.botRow = false;
 		this.topInitialized = false;
 		this.botInitialized = false;
-
-		this.initialize();
 	}
 
 	createElement (){
@@ -42,7 +40,21 @@ class ColumnCalcs extends Module{
 		this.subscribe("row-added", this.rowsUpdated.bind(this));
 		this.subscribe("column-moved", this.recalcActiveRows.bind(this));
 		this.subscribe("column-add", this.recalcActiveRows.bind(this));
+
+		this.registerTableFunction("getCalcResults", this.getResults.bind(this));
+		this.registerTableFunction("recalc", this.userRecalc.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+	userRecalc(){
+		this.recalcAll(this.table.rowManager.activeRows);
+	}
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	rowsUpdated(row){
 		if(this.table.options.groupBy){

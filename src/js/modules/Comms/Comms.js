@@ -3,6 +3,14 @@ import TableRegistry from '../../core/TableRegistry.js';
 
 class Comms extends Module{
 
+	constructor(table){
+		super(table);
+	}
+
+	initialize(){
+		this.registerTableFunction("tableComms", this.receive.bind(this));
+	}
+
 	getConnections(selectors){
 		var connections = [],
 		connection;

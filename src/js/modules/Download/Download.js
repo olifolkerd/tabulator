@@ -8,6 +8,24 @@ class Download extends Module{
 		super(table);
 	}
 
+	initialize(){
+		this.registerTableFunction("download", this.download.bind(this));
+		this.registerTableFunction("downloadToTab", this.downloadToTab.bind(this));
+	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	downloadToTab(type, filename, options, active){
+		this.download(type, filename, options, active, true);
+	}
+
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
+
 	//trigger file download
 	download(type, filename, options, range, interceptCallback){
 		var downloadFunc = false;

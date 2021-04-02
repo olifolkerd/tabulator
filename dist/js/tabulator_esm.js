@@ -4130,8 +4130,6 @@ class ColumnCalcs extends Module{
 		this.botRow = false;
 		this.topInitialized = false;
 		this.botInitialized = false;
-
-		this.initialize();
 	}
 
 	createElement (){
@@ -4150,7 +4148,21 @@ class ColumnCalcs extends Module{
 		this.subscribe("row-added", this.rowsUpdated.bind(this));
 		this.subscribe("column-moved", this.recalcActiveRows.bind(this));
 		this.subscribe("column-add", this.recalcActiveRows.bind(this));
+
+		this.registerTableFunction("getCalcResults", this.getResults.bind(this));
+		this.registerTableFunction("recalc", this.userRecalc.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+	userRecalc(){
+		this.recalcAll(this.table.rowManager.activeRows);
+	}
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	rowsUpdated(row){
 		if(this.table.options.groupBy){
@@ -5442,6 +5454,24 @@ class Download extends Module{
 	constructor(table){
 		super(table);
 	}
+
+	initialize(){
+		this.registerTableFunction("download", this.download.bind(this));
+		this.registerTableFunction("downloadToTab", this.downloadToTab.bind(this));
+	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	downloadToTab(type, filename, options, active){
+		this.download(type, filename, options, active, true);
+	}
+
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	//trigger file download
 	download(type, filename, options, range, interceptCallback){
@@ -7347,7 +7377,31 @@ class Edit extends Module{
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 		this.subscribe("data-refesh", this.cancelEdit.bind(this));
+
+		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
+		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+	clearCellEdited(cells){
+		if(!cells){
+			cells = this.modules.edit.getEditedCells();
+		}
+
+		if(!Array.isArray(cells)){
+			cells = [cells];
+		}
+
+		cells.forEach((cell) => {
+			this.modules.edit.clearEdited(cell._getSelf());
+		});
+	}
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	initializeColumnCheck(column){
 		if(typeof column.definition.editor !== "undefined"){
@@ -11355,7 +11409,82 @@ class GroupRows extends Module{
 
 			this.initialized = true;
 		}
+
+		this.registerTableFunction("setGroupBy", this.setGroupBy.bind(this));
+		this.registerTableFunction("setGroupValues", this.setGroupValues.bind(this));
+		this.registerTableFunction("setGroupStartOpen", this.setGroupStartOpen.bind(this));
+		this.registerTableFunction("setGroupHeader", this.setGroupHeader.bind(this));
+		this.registerTableFunction("getGroups", this.userGetGroups.bind(this));
+		this.registerTableFunction("getGroupedData", this.userGetGroupedData.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	setGroupBy(groups){
+		this.table.options.groupBy = groups;
+		this.initialize();
+		this.refreshData(false, false, "display");
+
+		if(this.table.options.persistence && this.table.modules.persistence.config.group){
+			this.table.modules.persistence.save("group");
+		}
+	}
+
+	setGroupValues(groupValues){
+		this.table.options.groupValues = groupValues;
+		this.initialize();
+		this.refreshData(false, false, "display");
+
+		if(this.table.options.persistence && this.table.modules.persistence.config.group){
+			this.table.modules.persistence.save("group");
+		}
+	}
+
+	setGroupStartOpen(values){
+		this.table.options.groupStartOpen = values;
+		this.initialize();
+
+		if(this.table.options.groupBy){
+			this.refreshData();
+
+			if(this.table.options.persistence && this.table.modules.persistence.config.group){
+				this.table.modules.persistence.save("group");
+			}
+		}else {
+			console.warn("Grouping Update - cant refresh view, no groups have been set");
+		}
+	}
+
+	setGroupHeader(values){
+		this.table.options.groupHeader = values;
+		this.initialize();
+
+		if(this.table.options.groupBy){
+			this.refreshData();
+
+			if(this.table.options.persistence && this.table.modules.persistence.config.group){
+				this.table.modules.persistence.save("group");
+			}
+		}else {
+			console.warn("Grouping Update - cant refresh view, no groups have been set");
+		}
+	}
+
+	userGetGroups(values){
+		return this.getGroups(true);
+	}
+
+	// get grouped table data in the same format as getData()
+	userGetGroupedData(){
+		return this.table.options.groupBy ?
+			this.getGroupedData() : this.getData()
+	}
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	rowMoving(from, to, after){
 		if(!after && to instanceof Group){
@@ -11422,11 +11551,11 @@ class GroupRows extends Module{
 		}
 	}
 
-	getGroups(compoment){
+	getGroups(component){
 		var groupComponents = [];
 
 		this.groupList.forEach(function(group){
-			groupComponents.push(compoment ? group.getComponent() : group);
+			groupComponents.push(component ? group.getComponent() : group);
 		});
 
 		return groupComponents;
@@ -11721,6 +11850,12 @@ class History extends Module{
 			this.subscribe("row-added", this.clear.bind(this));
 			this.subscribe("row-move", this.rowMoved.bind(this));
 		}
+
+		this.registerTableFunction("undo", this.undo.bind(this));
+		this.registerTableFunction("redo", this.redo.bind(this));
+		this.registerTableFunction("getHistoryUndoSize", this.getHistoryUndoSize.bind(this));
+		this.registerTableFunction("getHistoryRedoSize", this.getHistoryRedoSize.bind(this));
+		this.registerTableFunction("clearHistory", this.clear.bind(this));
 	}
 
 	rowMoved(from, to, after){
@@ -21376,6 +21511,14 @@ Localize.langs = defaultLangs;
 
 class Comms extends Module{
 
+	constructor(table){
+		super(table);
+	}
+
+	initialize(){
+		this.registerTableFunction("tableComms", this.receive.bind(this));
+	}
+
 	getConnections(selectors){
 		var connections = [],
 		connection;
@@ -22979,124 +23122,6 @@ class Tabulator$1 {
 			console.warn("setHeight function is not available in classic render mode");
 		}
 	}
-	///////////////// Grouping Functions ///////////////
-	setGroupBy(groups){
-		if(this.modExists("groupRows", true)){
-			this.options.groupBy = groups;
-			this.modules.groupRows.initialize();
-			this.rowManager.refreshActiveData("display");
-
-			if(this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group){
-				this.modules.persistence.save("group");
-			}
-		}else {
-			return false;
-		}
-	}
-
-	setGroupValues(groupValues){
-		if(this.modExists("groupRows", true)){
-			this.options.groupValues = groupValues;
-			this.modules.groupRows.initialize();
-			this.rowManager.refreshActiveData("display");
-
-			if(this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group){
-				this.modules.persistence.save("group");
-			}
-		}else {
-			return false;
-		}
-	}
-
-	setGroupStartOpen(values){
-		if(this.modExists("groupRows", true)){
-			this.options.groupStartOpen = values;
-			this.modules.groupRows.initialize();
-			if(this.options.groupBy){
-				this.rowManager.refreshActiveData("group");
-
-				if(this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group){
-					this.modules.persistence.save("group");
-				}
-			}else {
-				console.warn("Grouping Update - cant refresh view, no groups have been set");
-			}
-		}else {
-			return false;
-		}
-	}
-
-	setGroupHeader(values){
-		if(this.modExists("groupRows", true)){
-			this.options.groupHeader = values;
-			this.modules.groupRows.initialize();
-			if(this.options.groupBy){
-				this.rowManager.refreshActiveData("group");
-
-				if(this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group){
-					this.modules.persistence.save("group");
-				}
-			}else {
-				console.warn("Grouping Update - cant refresh view, no groups have been set");
-			}
-		}else {
-			return false;
-		}
-	}
-
-	getGroups(values){
-		if(this.modExists("groupRows", true)){
-			return this.modules.groupRows.getGroups(true);
-		}else {
-			return false;
-		}
-	}
-
-	// get grouped table data in the same format as getData()
-	getGroupedData(){
-		if (this.modExists("groupRows", true)){
-			return this.options.groupBy ?
-			this.modules.groupRows.getGroupedData() : this.getData()
-		}
-	}
-
-	getEditedCells(){
-		if(this.modExists("edit", true)){
-			return this.modules.edit.getEditedCells();
-		}
-	}
-
-	clearCellEdited(cells){
-		if(this.modExists("edit", true)){
-
-			if(!cells){
-				cells = this.modules.edit.getEditedCells();
-			}
-
-			if(!Array.isArray(cells)){
-				cells = [cells];
-			}
-
-			cells.forEach((cell) => {
-				this.modules.edit.clearEdited(cell._getSelf());
-			});
-		}
-	}
-
-	///////////////// Column Calculation Functions ///////////////
-	getCalcResults(){
-		if(this.modExists("columnCalcs", true)){
-			return this.modules.columnCalcs.getResults();
-		}else {
-			return false;
-		}
-	}
-
-	recalc(){
-		if(this.modExists("columnCalcs", true)){
-			this.modules.columnCalcs.recalcAll(this.rowManager.activeRows);
-		}
-	}
 
 	/////////////// Navigation Management //////////////
 	navigatePrev(){
@@ -23187,60 +23212,6 @@ class Tabulator$1 {
 		return false;
 	}
 
-	/////////////// History Management //////////////
-	undo(){
-		if(this.options.history && this.modExists("history", true)){
-			return this.modules.history.undo();
-		}else {
-			return false;
-		}
-	}
-
-	redo(){
-		if(this.options.history && this.modExists("history", true)){
-			return this.modules.history.redo();
-		}else {
-			return false;
-		}
-	}
-
-	getHistoryUndoSize(){
-		if(this.options.history && this.modExists("history", true)){
-			return this.modules.history.getHistoryUndoSize();
-		}else {
-			return false;
-		}
-	}
-
-	getHistoryRedoSize(){
-		if(this.options.history && this.modExists("history", true)){
-			return this.modules.history.getHistoryRedoSize();
-		}else {
-			return false;
-		}
-	}
-
-	clearHistory(){
-		if(this.options.history && this.modExists("history", true)){
-			return this.modules.history.clear();
-		}else {
-			return false;
-		}
-	}
-
-	/////////////// Download Management //////////////
-	download(type, filename, options, active){
-		if(this.modExists("download", true)){
-			this.modules.download.download(type, filename, options, active);
-		}
-	}
-
-	downloadToTab(type, filename, options, active){
-		if(this.modExists("download", true)){
-			this.modules.download.download(type, filename, options, active, true);
-		}
-	}
-
 	//////////////////// Event Bus ///////////////////
 
 	on(key, callback){
@@ -23256,11 +23227,6 @@ class Tabulator$1 {
 		key = args.shift();
 
 		this.externalEvents.dispatch(...arguments);
-	}
-
-	/////////// Inter Table Communications ///////////
-	tableComms(table, module, action, data){
-		this.modules.comms.receive(table, module, action, data);
 	}
 
 	////////////// Extension Management //////////////

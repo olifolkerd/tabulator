@@ -23,7 +23,31 @@ class Edit extends Module{
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 		this.subscribe("data-refesh", this.cancelEdit.bind(this));
+
+		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
+		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+	clearCellEdited(cells){
+		if(!cells){
+			cells = this.modules.edit.getEditedCells();
+		}
+
+		if(!Array.isArray(cells)){
+			cells = [cells];
+		}
+
+		cells.forEach((cell) => {
+			this.modules.edit.clearEdited(cell._getSelf());
+		});
+	}
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	initializeColumnCheck(column){
 		if(typeof column.definition.editor !== "undefined"){

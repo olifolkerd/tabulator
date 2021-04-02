@@ -124,7 +124,82 @@ class GroupRows extends Module{
 
 			this.initialized = true;
 		}
+
+		this.registerTableFunction("setGroupBy", this.setGroupBy.bind(this));
+		this.registerTableFunction("setGroupValues", this.setGroupValues.bind(this));
+		this.registerTableFunction("setGroupStartOpen", this.setGroupStartOpen.bind(this));
+		this.registerTableFunction("setGroupHeader", this.setGroupHeader.bind(this));
+		this.registerTableFunction("getGroups", this.userGetGroups.bind(this));
+		this.registerTableFunction("getGroupedData", this.userGetGroupedData.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	setGroupBy(groups){
+		this.table.options.groupBy = groups;
+		this.initialize();
+		this.refreshData(false, false, "display");
+
+		if(this.table.options.persistence && this.table.modules.persistence.config.group){
+			this.table.modules.persistence.save("group");
+		}
+	}
+
+	setGroupValues(groupValues){
+		this.table.options.groupValues = groupValues;
+		this.initialize();
+		this.refreshData(false, false, "display");
+
+		if(this.table.options.persistence && this.table.modules.persistence.config.group){
+			this.table.modules.persistence.save("group");
+		}
+	}
+
+	setGroupStartOpen(values){
+		this.table.options.groupStartOpen = values;
+		this.initialize();
+
+		if(this.table.options.groupBy){
+			this.refreshData();
+
+			if(this.table.options.persistence && this.table.modules.persistence.config.group){
+				this.table.modules.persistence.save("group");
+			}
+		}else{
+			console.warn("Grouping Update - cant refresh view, no groups have been set");
+		}
+	}
+
+	setGroupHeader(values){
+		this.table.options.groupHeader = values;
+		this.initialize();
+
+		if(this.table.options.groupBy){
+			this.refreshData();
+
+			if(this.table.options.persistence && this.table.modules.persistence.config.group){
+				this.table.modules.persistence.save("group");
+			}
+		}else{
+			console.warn("Grouping Update - cant refresh view, no groups have been set");
+		}
+	}
+
+	userGetGroups(values){
+		return this.getGroups(true);
+	}
+
+	// get grouped table data in the same format as getData()
+	userGetGroupedData(){
+		return this.table.options.groupBy ?
+			this.getGroupedData() : this.getData()
+	}
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	rowMoving(from, to, after){
 		if(!after && to instanceof Group){
@@ -191,11 +266,11 @@ class GroupRows extends Module{
 		}
 	}
 
-	getGroups(compoment){
+	getGroups(component){
 		var groupComponents = [];
 
 		this.groupList.forEach(function(group){
-			groupComponents.push(compoment ? group.getComponent() : group);
+			groupComponents.push(component ? group.getComponent() : group);
 		});
 
 		return groupComponents;
