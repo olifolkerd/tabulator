@@ -12,10 +12,9 @@ export default class Classic extends Renderer{
 
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
-
 	}
 
-	clear(){
+	clearRows(){
 		var element = this.tableElement;
 
 		// element.children.detach();
@@ -30,7 +29,7 @@ export default class Classic extends Renderer{
 		element.style.visibility = "";
 	}
 
-	render(){
+	renderRows(){
 		var element = this.tableElement,
 		onlyGroupHeaders = true;
 
@@ -52,7 +51,7 @@ export default class Classic extends Renderer{
 	}
 
 
-	rerender(callback){
+	rerenderRows(callback){
 		this.render();
 
 		if(callback){

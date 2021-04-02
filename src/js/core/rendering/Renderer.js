@@ -16,27 +16,41 @@ export default class Renderer extends CoreFeature{
 	/////// Internal Bindings /////////
 	///////////////////////////////////
 
-
-	clear(){
-		//clear down existing layout
+	clearRows(){
+		//clear down existing rows layout
 	}
 
-	render(){
-		//render from a clean slate
+	clearColumns(){
+		//clear down existing columns layout
 	}
 
-	rerender(callback){
-		// rerender and keep position
+	renderRows(){
+		//render rows from a clean slate
+	}
+
+	renderColumns(){
+		//render columns from a clean slate
+	}
+
+	rerenderRows(){
+		// rerender rows and keep position
 		if(callback){
 			callback();
 		}
 	}
 
-	scrollHorizontal(left, dir){
+	rerenderColumns(){
+		// rerender columns and keep position
+		if(callback){
+			callback();
+		}
+	}
+
+	scrollColumns(left, dir){
 		//handle horizontal scrolling
 	}
 
-	scrollVertical(top, dir){
+	scrollRows(top, dir){
 		//handle vertical scolling
 	}
 
@@ -81,6 +95,24 @@ export default class Renderer extends CoreFeature{
 	/////// External Triggers /////////
 	/////// (DO NOT OVERRIDE) /////////
 	///////////////////////////////////
+
+	clear(){
+		//clear down existing layout
+		this.clearRows();
+		this.clearColumns();
+	}
+
+	render(){
+		//render from a clean slate
+		this.renderRows();
+		this.renderColumns();
+	}
+
+	rerender(callback){
+		// rerender and keep position
+		this.rerenderRows();
+		this.rerenderColumns();
+	}
 
 	scrollToRowPosition(row, position, ifVisible){
 		var rowIndex = this.rows().indexOf(row),

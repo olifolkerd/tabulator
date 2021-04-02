@@ -36,8 +36,7 @@ export default class VirtualDomVertical extends Renderer{
 	///////// Public Functions ///////////
 	//////////////////////////////////////
 
-	clear(){
-
+	clearRows(){
 		var element = this.tableElement;
 
 		// element.children.detach();
@@ -64,11 +63,11 @@ export default class VirtualDomVertical extends Renderer{
 		this.vDomScrollPosBottom = 0;
 	}
 
-	render(){
+	renderRows(){
 		this._virtualRenderFill();
 	}
 
-	rerender(callback){
+	rerenderRows(callback){
 		var scrollTop = this.elementVertical.scrollTop;
 		var topRow = false;
 		var topOffset = false;
@@ -100,7 +99,7 @@ export default class VirtualDomVertical extends Renderer{
 		this.scrollHorizontal(left);
 	}
 
-	scrollVertical(top, dir){
+	scrollRows(top, dir){
 		var topDiff = top - this.vDomScrollPosTop;
 		var bottomDiff = top - this.vDomScrollPosBottom;
 		var margin = this.vDomWindowBuffer * 2;

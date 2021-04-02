@@ -18344,27 +18344,41 @@ class Renderer extends CoreFeature{
 	/////// Internal Bindings /////////
 	///////////////////////////////////
 
-
-	clear(){
-		//clear down existing layout
+	clearRows(){
+		//clear down existing rows layout
 	}
 
-	render(){
-		//render from a clean slate
+	clearColumns(){
+		//clear down existing columns layout
 	}
 
-	rerender(callback){
-		// rerender and keep position
+	renderRows(){
+		//render rows from a clean slate
+	}
+
+	renderColumns(){
+		//render columns from a clean slate
+	}
+
+	rerenderRows(){
+		// rerender rows and keep position
 		if(callback){
 			callback();
 		}
 	}
 
-	scrollHorizontal(left, dir){
+	rerenderColumns(){
+		// rerender columns and keep position
+		if(callback){
+			callback();
+		}
+	}
+
+	scrollColumns(left, dir){
 		//handle horizontal scrolling
 	}
 
-	scrollVertical(top, dir){
+	scrollRows(top, dir){
 		//handle vertical scolling
 	}
 
@@ -18409,6 +18423,24 @@ class Renderer extends CoreFeature{
 	/////// External Triggers /////////
 	/////// (DO NOT OVERRIDE) /////////
 	///////////////////////////////////
+
+	clear(){
+		//clear down existing layout
+		this.clearRows();
+		this.clearColumns();
+	}
+
+	render(){
+		//render from a clean slate
+		this.renderRows();
+		this.renderColumns();
+	}
+
+	rerender(callback){
+		// rerender and keep position
+		this.rerenderRows();
+		this.rerenderColumns();
+	}
 
 	scrollToRowPosition(row, position, ifVisible){
 		var rowIndex = this.rows().indexOf(row),
@@ -18491,10 +18523,9 @@ class Classic extends Renderer{
 
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
-
 	}
 
-	clear(){
+	clearRows(){
 		var element = this.tableElement;
 
 		// element.children.detach();
@@ -18509,7 +18540,7 @@ class Classic extends Renderer{
 		element.style.visibility = "";
 	}
 
-	render(){
+	renderRows(){
 		var element = this.tableElement,
 		onlyGroupHeaders = true;
 
@@ -18531,7 +18562,7 @@ class Classic extends Renderer{
 	}
 
 
-	rerender(callback){
+	rerenderRows(callback){
 		this.render();
 
 		if(callback){
@@ -18592,8 +18623,7 @@ class VirtualDomVertical extends Renderer{
 	///////// Public Functions ///////////
 	//////////////////////////////////////
 
-	clear(){
-
+	clearRows(){
 		var element = this.tableElement;
 
 		// element.children.detach();
@@ -18620,11 +18650,11 @@ class VirtualDomVertical extends Renderer{
 		this.vDomScrollPosBottom = 0;
 	}
 
-	render(){
+	renderRows(){
 		this._virtualRenderFill();
 	}
 
-	rerender(callback){
+	rerenderRows(callback){
 		var scrollTop = this.elementVertical.scrollTop;
 		var topRow = false;
 		var topOffset = false;
@@ -18656,7 +18686,7 @@ class VirtualDomVertical extends Renderer{
 		this.scrollHorizontal(left);
 	}
 
-	scrollVertical(top, dir){
+	scrollRows(top, dir){
 		var topDiff = top - this.vDomScrollPosTop;
 		var bottomDiff = top - this.vDomScrollPosBottom;
 		var margin = this.vDomWindowBuffer * 2;
@@ -19153,7 +19183,7 @@ class RowManager extends CoreFeature{
 			if(this.scrollTop != top){
 				this.scrollTop = top;
 
-				this.renderer.scrollVertical(top, topDir);
+				this.renderer.scrollRows(top, topDir);
 
 				this.dispatch("scroll-vertical", top, topDir);
 				this.dispatchExternal("scrollVertical", top, topDir);
@@ -20020,7 +20050,7 @@ class RowManager extends CoreFeature{
 				this.redrawBlockRederInPosition = true;
 			}
 		}else {
-			this.renderer.rerender(callback);
+			this.renderer.rerenderRows(callback);
 		}
 	}
 
@@ -20052,7 +20082,7 @@ class RowManager extends CoreFeature{
 
 		if(this.displayRowsCount){
 			this._clearTable();
-			this.renderer.render();
+			this.renderer.renderRows();
 
 			if(this.firstRender){
 				this.firstRender = false;
@@ -20102,7 +20132,7 @@ class RowManager extends CoreFeature{
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
 
-		this.renderer.clear();
+		this.renderer.clearRows();
 	}
 
 	styleRow(row, index){

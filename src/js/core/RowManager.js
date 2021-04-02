@@ -114,7 +114,7 @@ export default class RowManager extends CoreFeature{
 			if(this.scrollTop != top){
 				this.scrollTop = top;
 
-				this.renderer.scrollVertical(top, topDir);
+				this.renderer.scrollRows(top, topDir);
 
 				this.dispatch("scroll-vertical", top, topDir);
 				this.dispatchExternal("scrollVertical", top, topDir);
@@ -982,7 +982,7 @@ export default class RowManager extends CoreFeature{
 				this.redrawBlockRederInPosition = true;
 			}
 		}else{
-			this.renderer.rerender(callback);
+			this.renderer.rerenderRows(callback);
 		}
 	}
 
@@ -1014,7 +1014,7 @@ export default class RowManager extends CoreFeature{
 
 		if(this.displayRowsCount){
 			this._clearTable();
-			this.renderer.render();
+			this.renderer.renderRows();
 
 			if(this.firstRender){
 				this.firstRender = false;
@@ -1064,7 +1064,7 @@ export default class RowManager extends CoreFeature{
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
 
-		this.renderer.clear();
+		this.renderer.clearRows();
 	}
 
 	styleRow(row, index){
