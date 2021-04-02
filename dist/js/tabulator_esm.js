@@ -7304,6 +7304,7 @@ class Edit extends Module{
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
+		this.subscribe("data-refesh", this.cancelEdit.bind(this));
 	}
 
 	initializeColumnCheck(column){
@@ -15983,6 +15984,10 @@ class SelectRow extends Module{
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
 			this.subscribe("rows-wipe", this.clearSelectionData.bind(this));
 			this.subscribe("rows-retrieve", this.clearSelectionData.bind(this));
+
+			if(this.table.options.selectable && this.table.options.selectablePersistence){
+				this.subscribe("data-refesh", this.deselectRows.bind(this));
+			}
 		}
 	}
 
@@ -19777,16 +19782,10 @@ class RowManager extends CoreFeature{
 			return;
 		}else {
 
-			if(this.table.modExists("edit")){
-				this.table.modules.edit.cancelEdit();
-			}
+			this.dispatch("data-refesh");
 
 			if(!stage){
 				stage = "all";
-			}
-
-			if(table.options.selectable && !table.options.selectablePersistence && table.modExists("selectRow")){
-				table.modules.selectRow.deselectRows();
 			}
 
 			//cascade through data refresh stages

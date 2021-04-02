@@ -705,16 +705,10 @@ export default class RowManager extends CoreFeature{
 			return;
 		}else{
 
-			if(this.table.modExists("edit")){
-				this.table.modules.edit.cancelEdit();
-			}
+			this.dispatch("data-refesh");
 
 			if(!stage){
 				stage = "all";
-			}
-
-			if(table.options.selectable && !table.options.selectablePersistence && table.modExists("selectRow")){
-				table.modules.selectRow.deselectRows();
 			}
 
 			//cascade through data refresh stages
