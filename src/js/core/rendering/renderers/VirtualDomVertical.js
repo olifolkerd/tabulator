@@ -5,6 +5,8 @@ export default class VirtualDomVertical extends Renderer{
 	constructor(table){
 		super(table);
 
+		this.verticalFillMode = "fill";
+
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
 
@@ -29,6 +31,10 @@ export default class VirtualDomVertical extends Renderer{
 		this.vDomTopNewRows = []; //rows to normalize after appending to optimize render speed
 		this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
 	}
+
+	//////////////////////////////////////
+	///////// Public Functions ///////////
+	//////////////////////////////////////
 
 	clear(){
 
@@ -93,6 +99,61 @@ export default class VirtualDomVertical extends Renderer{
 
 		this.scrollHorizontal(left);
 	}
+
+	scrollVertical(top, dir){
+		var topDiff = top - this.vDomScrollPosTop;
+		var bottomDiff = top - this.vDomScrollPosBottom;
+		var margin = this.vDomWindowBuffer * 2;
+		var rows = this.rows();
+
+		this.scrollTop = top;
+
+		if(-topDiff > margin || bottomDiff > margin){
+			//if big scroll redraw table;
+			var left = this.scrollLeft;
+			this._virtualRenderFill(Math.floor((this.element.scrollTop / this.element.scrollHeight) * rows.length));
+			this.scrollHorizontal(left);
+		}else{
+			if(dir){
+				//scrolling up
+				if(topDiff < 0){
+					this._addTopRow(rows, -topDiff);
+				}
+
+				if(bottomDiff < 0){
+					//hide bottom row if needed
+					if(this.vDomScrollHeight - this.scrollTop > this.vDomWindowBuffer){
+						this._removeBottomRow(rows, -bottomDiff);
+					}else{
+						this.vDomScrollPosBottom = this.scrollTop;
+					}
+				}
+			}else{
+				//scrolling down
+				if(topDiff >= 0){
+					//hide top row if needed
+					if(this.scrollTop > this.vDomWindowBuffer){
+
+						this._removeTopRow(rows, topDiff);
+					}else{
+						this.vDomScrollPosTop = this.scrollTop;
+					}
+				}
+
+				if(bottomDiff >= 0){
+					this._addBottomRow(rows, bottomDiff);
+				}
+			}
+		}
+	}
+
+	resize(){
+		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.element.clientHeight;
+	}
+
+	//////////////////////////////////////
+	//////// Internal Rendering //////////
+	//////////////////////////////////////
 
 	//full virtual render
 	_virtualRenderFill(position, forceMove, offset){
@@ -190,7 +251,7 @@ export default class VirtualDomVertical extends Renderer{
 				this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.element.scrollWidth > this.element.clientWidth ? this.element.offsetHeight - this.element.clientHeight : 0);
 			}
 
-			this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.table.rowManager.height);
+			this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.element.clientHeight);
 
 			//adjust for horizontal scrollbar if present (and not at top of table)
 			if(this.element.scrollWidth > this.element.offsetWidth && forceMove){
@@ -212,52 +273,6 @@ export default class VirtualDomVertical extends Renderer{
 		}
 	}
 
-	scrollVertical(top, dir){
-		var topDiff = top - this.vDomScrollPosTop;
-		var bottomDiff = top - this.vDomScrollPosBottom;
-		var margin = this.vDomWindowBuffer * 2;
-		var rows = this.rows();
-
-		this.scrollTop = top;
-
-		if(-topDiff > margin || bottomDiff > margin){
-			//if big scroll redraw table;
-			var left = this.scrollLeft;
-			this._virtualRenderFill(Math.floor((this.element.scrollTop / this.element.scrollHeight) * rows.length));
-			this.scrollHorizontal(left);
-		}else{
-			if(dir){
-				//scrolling up
-				if(topDiff < 0){
-					this._addTopRow(rows, -topDiff);
-				}
-
-				if(bottomDiff < 0){
-					//hide bottom row if needed
-					if(this.vDomScrollHeight - this.scrollTop > this.vDomWindowBuffer){
-						this._removeBottomRow(rows, -bottomDiff);
-					}else{
-						this.vDomScrollPosBottom = this.scrollTop;
-					}
-				}
-			}else{
-				//scrolling down
-				if(topDiff >= 0){
-					//hide top row if needed
-					if(this.scrollTop > this.vDomWindowBuffer){
-
-						this._removeTopRow(rows, topDiff);
-					}else{
-						this.vDomScrollPosTop = this.scrollTop;
-					}
-				}
-
-				if(bottomDiff >= 0){
-					this._addBottomRow(rows, bottomDiff);
-				}
-			}
-		}
-	}
 
 	_addTopRow(rows, topDiff, i=0){
 		var table = this.tableElement;

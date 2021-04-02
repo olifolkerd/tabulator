@@ -14,7 +14,6 @@ export default class RowManager extends CoreFeature{
 		this.tableElement = this.createTableElement(); //table element
 		this.heightFixer = this.createTableElement(); //table element
 		this.columnManager = null; //hold column manager object
-		this.height = 0; //hold height of table element
 
 		this.firstRender = false; //handle first render
 		this.renderMode = "virtual"; //current rendering mode
@@ -32,8 +31,6 @@ export default class RowManager extends CoreFeature{
 
 		// this.vDomTop = 0; //hold position for first rendered row in the virtual DOM
 		// this.vDomBottom = 0; //hold possition for last rendered row in the virtual DOM
-
-		// this.vDomWindowBuffer = 0; //window row buffer before removing elements, to smooth scrolling
 
 		this.rowNumColumn = false; //hold column component for row number column
 
@@ -1214,7 +1211,7 @@ export default class RowManager extends CoreFeature{
 		var initialHeight = this.element.clientHeight,
 		modExists;
 
-		if(this.renderMode === "virtual"){
+		if(this.renderer.verticalFillMode === "fill"){
 			let otherHeight =  Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
 
 			if(this.fixedHeight){
@@ -1227,8 +1224,7 @@ export default class RowManager extends CoreFeature{
 				this.element.scrollTop = this.scrollTop;
 			}
 
-			this.height = this.element.clientHeight;
-			this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
+			this.renderer.resize();
 
 			//check if the table has changed size when dealing with variable height tables
 			if(!this.fixedHeight && initialHeight != this.element.clientHeight){

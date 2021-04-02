@@ -4,6 +4,8 @@ export default class Classic extends Renderer{
 	constructor(table){
 		super(table);
 
+		this.verticalFillMode = "fill";
+
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
 

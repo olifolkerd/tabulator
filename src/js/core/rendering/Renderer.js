@@ -6,6 +6,8 @@ export default class Renderer extends CoreFeature{
 
 		this.element = table.rowManager.element;
 		this.tableElement =  table.rowManager.tableElement;
+
+		this.verticalFillMode = "fit"; // used by row manager to determin how to size the render area ("fit" - fits container to the contents, "fill" - fills the contianer without resizing it)
 	}
 
 	///////////////////////////////////
@@ -43,6 +45,10 @@ export default class Renderer extends CoreFeature{
 
 	scrollToRow(row){
 		//scroll to specific row
+	}
+
+	resize(){
+		//container has rezied, carry out any needed recalculations (DO NOT RERENDER IN THIS FUNCTION)
 	}
 
 	///////////////////////////////////

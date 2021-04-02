@@ -11911,7 +11911,7 @@ var defaultActions = {
 	},
 	scrollPageUp:function(e){
 		var rowManager = this.table.rowManager,
-		newPos = rowManager.scrollTop - rowManager.height,
+		newPos = rowManager.scrollTop - rowManager.element.clientHeight,
 		scrollMax = rowManager.element.scrollHeight;
 
 		e.preventDefault();
@@ -11928,7 +11928,7 @@ var defaultActions = {
 	},
 	scrollPageDown:function(e){
 		var rowManager = this.table.rowManager,
-		newPos = rowManager.scrollTop + rowManager.height,
+		newPos = rowManager.scrollTop + rowManager.element.clientHeight,
 		scrollMax = rowManager.element.scrollHeight;
 
 		e.preventDefault();
@@ -18335,6 +18335,8 @@ class Renderer extends CoreFeature{
 
 		this.element = table.rowManager.element;
 		this.tableElement =  table.rowManager.tableElement;
+
+		this.verticalFillMode = "fit"; // used by row manager to determin how to size the render area ("fit" - fits container to the contents, "fill" - fills the contianer without resizing it)
 	}
 
 	///////////////////////////////////
@@ -18374,6 +18376,10 @@ class Renderer extends CoreFeature{
 		//scroll to specific row
 	}
 
+	resize(){
+		//container has rezied, carry out any needed recalculations (DO NOT RERENDER IN THIS FUNCTION)
+	}
+
 	///////////////////////////////////
 	//////// Helper Functions /////////
 	///////////////////////////////////
@@ -18398,6 +18404,8 @@ class Renderer extends CoreFeature{
 class Classic extends Renderer{
 	constructor(table){
 		super(table);
+
+		this.verticalFillMode = "fill";
 
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
@@ -18462,6 +18470,8 @@ class VirtualDomVertical extends Renderer{
 	constructor(table){
 		super(table);
 
+		this.verticalFillMode = "fill";
+
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
 
@@ -18486,6 +18496,10 @@ class VirtualDomVertical extends Renderer{
 		this.vDomTopNewRows = []; //rows to normalize after appending to optimize render speed
 		this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
 	}
+
+	//////////////////////////////////////
+	///////// Public Functions ///////////
+	//////////////////////////////////////
 
 	clear(){
 
@@ -18550,6 +18564,61 @@ class VirtualDomVertical extends Renderer{
 
 		this.scrollHorizontal(left);
 	}
+
+	scrollVertical(top, dir){
+		var topDiff = top - this.vDomScrollPosTop;
+		var bottomDiff = top - this.vDomScrollPosBottom;
+		var margin = this.vDomWindowBuffer * 2;
+		var rows = this.rows();
+
+		this.scrollTop = top;
+
+		if(-topDiff > margin || bottomDiff > margin){
+			//if big scroll redraw table;
+			var left = this.scrollLeft;
+			this._virtualRenderFill(Math.floor((this.element.scrollTop / this.element.scrollHeight) * rows.length));
+			this.scrollHorizontal(left);
+		}else {
+			if(dir){
+				//scrolling up
+				if(topDiff < 0){
+					this._addTopRow(rows, -topDiff);
+				}
+
+				if(bottomDiff < 0){
+					//hide bottom row if needed
+					if(this.vDomScrollHeight - this.scrollTop > this.vDomWindowBuffer){
+						this._removeBottomRow(rows, -bottomDiff);
+					}else {
+						this.vDomScrollPosBottom = this.scrollTop;
+					}
+				}
+			}else {
+				//scrolling down
+				if(topDiff >= 0){
+					//hide top row if needed
+					if(this.scrollTop > this.vDomWindowBuffer){
+
+						this._removeTopRow(rows, topDiff);
+					}else {
+						this.vDomScrollPosTop = this.scrollTop;
+					}
+				}
+
+				if(bottomDiff >= 0){
+					this._addBottomRow(rows, bottomDiff);
+				}
+			}
+		}
+	}
+
+	resize(){
+		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.element.clientHeight;
+	}
+
+	//////////////////////////////////////
+	//////// Internal Rendering //////////
+	//////////////////////////////////////
 
 	//full virtual render
 	_virtualRenderFill(position, forceMove, offset){
@@ -18647,7 +18716,7 @@ class VirtualDomVertical extends Renderer{
 				this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.element.scrollWidth > this.element.clientWidth ? this.element.offsetHeight - this.element.clientHeight : 0);
 			}
 
-			this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.table.rowManager.height);
+			this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.element.clientHeight);
 
 			//adjust for horizontal scrollbar if present (and not at top of table)
 			if(this.element.scrollWidth > this.element.offsetWidth && forceMove){
@@ -18669,52 +18738,6 @@ class VirtualDomVertical extends Renderer{
 		}
 	}
 
-	scrollVertical(top, dir){
-		var topDiff = top - this.vDomScrollPosTop;
-		var bottomDiff = top - this.vDomScrollPosBottom;
-		var margin = this.vDomWindowBuffer * 2;
-		var rows = this.rows();
-
-		this.scrollTop = top;
-
-		if(-topDiff > margin || bottomDiff > margin){
-			//if big scroll redraw table;
-			var left = this.scrollLeft;
-			this._virtualRenderFill(Math.floor((this.element.scrollTop / this.element.scrollHeight) * rows.length));
-			this.scrollHorizontal(left);
-		}else {
-			if(dir){
-				//scrolling up
-				if(topDiff < 0){
-					this._addTopRow(rows, -topDiff);
-				}
-
-				if(bottomDiff < 0){
-					//hide bottom row if needed
-					if(this.vDomScrollHeight - this.scrollTop > this.vDomWindowBuffer){
-						this._removeBottomRow(rows, -bottomDiff);
-					}else {
-						this.vDomScrollPosBottom = this.scrollTop;
-					}
-				}
-			}else {
-				//scrolling down
-				if(topDiff >= 0){
-					//hide top row if needed
-					if(this.scrollTop > this.vDomWindowBuffer){
-
-						this._removeTopRow(rows, topDiff);
-					}else {
-						this.vDomScrollPosTop = this.scrollTop;
-					}
-				}
-
-				if(bottomDiff >= 0){
-					this._addBottomRow(rows, bottomDiff);
-				}
-			}
-		}
-	}
 
 	_addTopRow(rows, topDiff, i=0){
 		var table = this.tableElement;
@@ -18887,7 +18910,6 @@ class RowManager extends CoreFeature{
 		this.tableElement = this.createTableElement(); //table element
 		this.heightFixer = this.createTableElement(); //table element
 		this.columnManager = null; //hold column manager object
-		this.height = 0; //hold height of table element
 
 		this.firstRender = false; //handle first render
 		this.renderMode = "virtual"; //current rendering mode
@@ -18905,8 +18927,6 @@ class RowManager extends CoreFeature{
 
 		// this.vDomTop = 0; //hold position for first rendered row in the virtual DOM
 		// this.vDomBottom = 0; //hold possition for last rendered row in the virtual DOM
-
-		// this.vDomWindowBuffer = 0; //window row buffer before removing elements, to smooth scrolling
 
 		this.rowNumColumn = false; //hold column component for row number column
 
@@ -20085,7 +20105,7 @@ class RowManager extends CoreFeature{
 	adjustTableSize(){
 		var initialHeight = this.element.clientHeight;
 
-		if(this.renderMode === "virtual"){
+		if(this.renderer.verticalFillMode === "fill"){
 			let otherHeight =  Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
 
 			if(this.fixedHeight){
@@ -20098,8 +20118,7 @@ class RowManager extends CoreFeature{
 				this.element.scrollTop = this.scrollTop;
 			}
 
-			this.height = this.element.clientHeight;
-			this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
+			this.renderer.resize();
 
 			//check if the table has changed size when dealing with variable height tables
 			if(!this.fixedHeight && initialHeight != this.element.clientHeight){
