@@ -52,6 +52,11 @@ export default class Renderer extends CoreFeature{
 		//determin weather the row is nearest the top or bottom of the table, retur true for top or false for bottom
 	}
 
+	visibleRows(includingBuffer){
+		//return the visible rows
+		return [];
+	}
+
 	///////////////////////////////////
 	//////// Helper Functions /////////
 	///////////////////////////////////

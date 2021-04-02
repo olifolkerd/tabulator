@@ -30,9 +30,6 @@ export default class RowManager extends CoreFeature{
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
 
-		// this.vDomTop = 0; //hold position for first rendered row in the virtual DOM
-		// this.vDomBottom = 0; //hold possition for last rendered row in the virtual DOM
-
 		this.rowNumColumn = false; //hold column component for row number column
 
 		this.redrawBlock = false; //prevent redraws to allow multiple data manipulations becore continuing
@@ -941,45 +938,7 @@ export default class RowManager extends CoreFeature{
 	}
 
 	getVisibleRows(viewable){
-		var topEdge = this.element.scrollTop,
-		bottomEdge = this.element.clientHeight + topEdge,
-		topFound = false,
-		topRow = 0,
-		bottomRow = 0,
-		rows = this.getDisplayRows();
-
-		if(viewable){
-
-			this.getDisplayRows();
-			for(var i = this.vDomTop; i <= this.vDomBottom; i++){
-				if(rows[i]){
-					if(!topFound){
-						if((topEdge - rows[i].getElement().offsetTop) >= 0){
-							topRow = i;
-						}else{
-							topFound = true;
-
-							if(bottomEdge - rows[i].getElement().offsetTop >= 0){
-								bottomRow = i;
-							}else{
-								break;
-							}
-						}
-					}else{
-						if(bottomEdge - rows[i].getElement().offsetTop >= 0){
-							bottomRow = i;
-						}else{
-							break;
-						}
-					}
-				}
-			}
-		}else{
-			topRow = this.vDomTop;
-			bottomRow = this.vDomBottom;
-		}
-
-		return rows.slice(topRow, bottomRow + 1);
+		return this.renderer.visibleRows(!viewable);
 	}
 
 	//repeat action accross display rows

@@ -72,4 +72,8 @@ export default class Classic extends Renderer{
 		this.elementVertical.scrollTop = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.elementVertical).top + this.elementVertical.scrollTop;
 	}
 
+	visibleRows(includingBuffer){
+		return this.rows();
+	}
+
 }

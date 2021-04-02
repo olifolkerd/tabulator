@@ -18380,6 +18380,11 @@ class Renderer extends CoreFeature{
 		//determin weather the row is nearest the top or bottom of the table, retur true for top or false for bottom
 	}
 
+	visibleRows(includingBuffer){
+		//return the visible rows
+		return [];
+	}
+
 	///////////////////////////////////
 	//////// Helper Functions /////////
 	///////////////////////////////////
@@ -18544,6 +18549,10 @@ class Classic extends Renderer{
 		var rowEl = row.getElement();
 
 		this.elementVertical.scrollTop = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.elementVertical).top + this.elementVertical.scrollTop;
+	}
+
+	visibleRows(includingBuffer){
+		return this.rows();
 	}
 
 }
@@ -18712,6 +18721,46 @@ class VirtualDomVertical extends Renderer{
 		}
 	}
 
+	visibleRows(includingBuffer){
+		var topEdge = elementVertical.scrollTop,
+		bottomEdge = elementVertical.clientHeight + topEdge,
+		topFound = false,
+		topRow = 0,
+		bottomRow = 0,
+		rows = this.rows();
+
+		if(includingBuffer){
+			topRow = this.vDomTop;
+			bottomRow = this.vDomBottom;
+		}else {
+			for(var i = this.vDomTop; i <= this.vDomBottom; i++){
+				if(rows[i]){
+					if(!topFound){
+						if((topEdge - rows[i].getElement().offsetTop) >= 0){
+							topRow = i;
+						}else {
+							topFound = true;
+
+							if(bottomEdge - rows[i].getElement().offsetTop >= 0){
+								bottomRow = i;
+							}else {
+								break;
+							}
+						}
+					}else {
+						if(bottomEdge - rows[i].getElement().offsetTop >= 0){
+							bottomRow = i;
+						}else {
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		return rows.slice(topRow, bottomRow + 1);
+	}
+
 	//////////////////////////////////////
 	//////// Internal Rendering //////////
 	//////////////////////////////////////
@@ -18833,7 +18882,6 @@ class VirtualDomVertical extends Renderer{
 			}
 		}
 	}
-
 
 	_addTopRow(rows, topDiff, i=0){
 		var table = this.tableElement;
@@ -19020,9 +19068,6 @@ class RowManager extends CoreFeature{
 
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
-
-		// this.vDomTop = 0; //hold position for first rendered row in the virtual DOM
-		// this.vDomBottom = 0; //hold possition for last rendered row in the virtual DOM
 
 		this.rowNumColumn = false; //hold column component for row number column
 
@@ -19931,45 +19976,7 @@ class RowManager extends CoreFeature{
 	}
 
 	getVisibleRows(viewable){
-		var topEdge = this.element.scrollTop,
-		bottomEdge = this.element.clientHeight + topEdge,
-		topFound = false,
-		topRow = 0,
-		bottomRow = 0,
-		rows = this.getDisplayRows();
-
-		if(viewable){
-
-			this.getDisplayRows();
-			for(var i = this.vDomTop; i <= this.vDomBottom; i++){
-				if(rows[i]){
-					if(!topFound){
-						if((topEdge - rows[i].getElement().offsetTop) >= 0){
-							topRow = i;
-						}else {
-							topFound = true;
-
-							if(bottomEdge - rows[i].getElement().offsetTop >= 0){
-								bottomRow = i;
-							}else {
-								break;
-							}
-						}
-					}else {
-						if(bottomEdge - rows[i].getElement().offsetTop >= 0){
-							bottomRow = i;
-						}else {
-							break;
-						}
-					}
-				}
-			}
-		}else {
-			topRow = this.vDomTop;
-			bottomRow = this.vDomBottom;
-		}
-
-		return rows.slice(topRow, bottomRow + 1);
+		return this.renderer.visibleRows(!viewable);
 	}
 
 	//repeat action accross display rows

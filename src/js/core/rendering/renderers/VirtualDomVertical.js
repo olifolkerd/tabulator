@@ -165,6 +165,46 @@ export default class VirtualDomVertical extends Renderer{
 		}
 	}
 
+	visibleRows(includingBuffer){
+		var topEdge = elementVertical.scrollTop,
+		bottomEdge = elementVertical.clientHeight + topEdge,
+		topFound = false,
+		topRow = 0,
+		bottomRow = 0,
+		rows = this.rows();
+
+		if(includingBuffer){
+			topRow = this.vDomTop;
+			bottomRow = this.vDomBottom;
+		}else{
+			for(var i = this.vDomTop; i <= this.vDomBottom; i++){
+				if(rows[i]){
+					if(!topFound){
+						if((topEdge - rows[i].getElement().offsetTop) >= 0){
+							topRow = i;
+						}else{
+							topFound = true;
+
+							if(bottomEdge - rows[i].getElement().offsetTop >= 0){
+								bottomRow = i;
+							}else{
+								break;
+							}
+						}
+					}else{
+						if(bottomEdge - rows[i].getElement().offsetTop >= 0){
+							bottomRow = i;
+						}else{
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		return rows.slice(topRow, bottomRow + 1);
+	}
+
 	//////////////////////////////////////
 	//////// Internal Rendering //////////
 	//////////////////////////////////////
@@ -286,7 +326,6 @@ export default class VirtualDomVertical extends Renderer{
 			}
 		}
 	}
-
 
 	_addTopRow(rows, topDiff, i=0){
 		var table = this.tableElement;
