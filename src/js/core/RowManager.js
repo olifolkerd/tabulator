@@ -1157,21 +1157,14 @@ export default class RowManager extends CoreFeature{
 		this.table.tableWidth = this.table.element.clientWidth;
 
 		if(!force){
-			if(this.renderMode == "classic"){
+			// if(this.renderMode == "classic"){
+			// 	if(this.table.options.groupBy){
+			// 		this.refreshActiveData("group", false, false);
+			// 	}
+			// }
 
-				if(this.table.options.groupBy){
-					this.refreshActiveData("group", false, false);
-				}else{
-					// this._simpleRender();
-
-					//TODO - Refactor this whole function to move responsibiity for rerendering choices into renderer
-					this.renderer.rerender();
-				}
-
-			}else{
-				this.reRenderInPosition();
-				this.scrollHorizontal(left);
-			}
+			this.reRenderInPosition();
+			this.scrollHorizontal(left);
 
 			if(!this.displayRowsCount){
 				if(this.table.options.placeholder){
