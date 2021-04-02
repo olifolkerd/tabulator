@@ -12,6 +12,22 @@ class Module extends CoreFeature{
 		// setup module when table is initialized, to be overriden in module
 	}
 
+	///////////////////////////////////
+	/// Public Function Registation ///
+	///////////////////////////////////
+
+	registerTableFunction(name, fun){
+		if(typeof this.table[name] === "undefined"){
+			this.table[name] = func;
+		}else{
+			console.warn("Unable to bind table function, name already in use", name)
+		}
+	}
+
+	///////////////////////////////////
+	////////// Data Pipeline //////////
+	///////////////////////////////////
+
 	registerDataHandler(handler, priority){
 		this.table.rowManager.registerDataPipelineHandler(handler, priority)
 		this._handler = handler;
