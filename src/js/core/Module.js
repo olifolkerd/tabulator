@@ -16,7 +16,7 @@ class Module extends CoreFeature{
 	/// Public Function Registation ///
 	///////////////////////////////////
 
-	registerTableFunction(name, fun){
+	registerTableFunction(name, func){
 		if(typeof this.table[name] === "undefined"){
 			this.table[name] = func;
 		}else{

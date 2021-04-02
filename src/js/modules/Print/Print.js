@@ -14,7 +14,17 @@ class Print extends Module{
 			window.addEventListener("beforeprint", this.replaceTable.bind(this));
 			window.addEventListener("afterprint", this.cleanup.bind(this));
 		}
+
+		this.registerTableFunction("print", this.printFullscreen.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	replaceTable(){
 		if(!this.manualBlock){

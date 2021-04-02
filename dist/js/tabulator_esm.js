@@ -63,7 +63,7 @@ class Module extends CoreFeature{
 	/// Public Function Registation ///
 	///////////////////////////////////
 
-	registerTableFunction(name, fun){
+	registerTableFunction(name, func){
 		if(typeof this.table[name] === "undefined"){
 			this.table[name] = func;
 		}else {
@@ -440,6 +440,8 @@ class Ajax extends Module{
 			}
 
 		}
+
+		this.registerTableFunction("getAjaxUrl", this.getUrl.bind(this));
 	}
 
 	scrollVertical(top, dir){
@@ -863,6 +865,8 @@ class Clipboard extends Module{
 
 		this.setPasteParser(this.table.options.clipboardPasteParser);
 		this.setPasteAction(this.table.options.clipboardPasteAction);
+
+		this.registerTableFunction("copyToClipboard", this.copy.bind(this));
 	}
 
 	reset(){
@@ -7843,6 +7847,19 @@ class Export extends Module{
 		this.colVisProp = "";
 	}
 
+	initialize(){
+		this.registerTableFunction("getHtml", this.getHtml.bind(this));
+	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
+
 	generateExportList(config, style, range, colVisProp){
 		this.cloneTableStyle = style;
 		this.config = config || {};
@@ -8549,7 +8566,109 @@ class Filter extends Module{
 		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
 
 		this.registerDataHandler(this.filter.bind(this), 10);
+
+		this.registerTableFunction("searchRows", this.searchRows.bind(this));
+		this.registerTableFunction("searchData", this.searchData.bind(this));
+
+		this.registerTableFunction("setFilter", this.userSetFilter.bind(this));
+		this.registerTableFunction("refreshFilter", this.userRefreshFilter.bind(this));
+		this.registerTableFunction("addFilter", this.userAddFilter.bind(this));
+		this.registerTableFunction("getFilters", this.getFilters.bind(this));
+		this.registerTableFunction("setHeaderFilterFocus", this.userSetHeaderFilterFocus.bind(this));
+		this.registerTableFunction("getHeaderFilterValue", this.userGetHeaderFilterValue.bind(this));
+		this.registerTableFunction("setHeaderFilterValue", this.userSetHeaderFilterValue.bind(this));
+		this.registerTableFunction("getHeaderFilters", this.getHeaderFilters.bind(this));
+		this.registerTableFunction("removeFilter", this.userRemoveFilter.bind(this));
+		this.registerTableFunction("clearFilter", this.userClearFilter.bind(this));
+		this.registerTableFunction("clearHeaderFilter", this.userClearHeaderFilter.bind(this));
 	}
+
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	//set standard filters
+	userSetFilter(field, type, value, params){
+		this.setFilter(field, type, value, params);
+		this.table.rowManager.filterRefresh();
+	}
+
+	//set standard filters
+	userRefreshFilter(){
+		this.table.rowManager.filterRefresh();
+	}
+
+	//add filter to array
+	userAddFilter(field, type, value, params){
+		this.addFilter(field, type, value, params);
+		this.table.rowManager.filterRefresh();
+	}
+
+	userSetHeaderFilterFocus(field){
+		var column = this.table.columnManager.findColumn(field);
+
+		if(column){
+			this.setHeaderFilterFocus(column);
+		}else {
+			console.warn("Column Filter Focus Error - No matching column found:", field);
+			return false;
+		}
+	}
+
+	userGetHeaderFilterValue(field) {
+		var column = this.table.columnManager.findColumn(field);
+
+		if(column){
+			return this.getHeaderFilterValue(column);
+		}else {
+			console.warn("Column Filter Error - No matching column found:", field);
+		}
+	}
+
+	userSetHeaderFilterValue(field, value){
+		var column = this.table.columnManager.findColumn(field);
+
+		if(column){
+			this.setHeaderFilterValue(column, value);
+		}else {
+			console.warn("Column Filter Error - No matching column found:", field);
+			return false;
+		}
+	}
+
+	//remove filter from array
+	userRemoveFilter(field, type, value){
+		this.removeFilter(field, type, value);
+		this.table.rowManager.filterRefresh();
+	}
+
+	//clear filters
+	userClearFilter(all){
+		this.clearFilter(all);
+		this.table.rowManager.filterRefresh();
+	}
+
+	//clear header filters
+	userClearHeaderFilter(){
+		this.clearHeaderFilter();
+		this.table.rowManager.filterRefresh();
+	}
+
+
+	//search for specific row components
+	searchRows(field, type, value){
+		return this.search("rows", field, type, value);
+	}
+
+	//search for specific data
+	searchData(field, type, value){
+		return this.search("data", field, type, value);
+	}
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	initializeColumnHeaderFilter(column){
 		var def = column.definition;
@@ -13704,7 +13823,6 @@ class Page extends Module{
 	}
 
 	initialize(){
-		console.log("page init", this.table.options.pagination);
 		if(this.table.options.pagination){
 			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
@@ -13714,7 +13832,45 @@ class Page extends Module{
 
 			this.initializePaginator();
 		}
+
+		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
+		this.registerTableFunction("setPage", this.setPage.bind(this));
+		this.registerTableFunction("setPageToRow", this.userSetPageToRow.bind(this));
+		this.registerTableFunction("setPageSize", this.userSetPageSize.bind(this));
+		this.registerTableFunction("getPageSize", this.getPageSize.bind(this));
+		this.registerTableFunction("previousPage", this.previousPage.bind(this));
+		this.registerTableFunction("nextPage", this.nextPage.bind(this));
+		this.registerTableFunction("getPage", this.getPage.bind(this));
+		this.registerTableFunction("getPageMax", this.getPageMax.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	userSetPageToRow(row){
+		if(this.table.options.pagination){
+			row = this.rowManager.findRow(row);
+
+			if(row){
+				return this.setPageToRow(row)
+			}
+		}
+
+		return Promise.reject();
+	}
+
+	userSetPageSize(size){
+		if(this.table.options.pagination){
+			this.setPageSize(size);
+			return this.setPage(1);
+		}else {
+			return false;
+		}
+	}
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	restOnRenderBefore(rows, renderInPosition){
 		if(!renderInPosition){
@@ -14577,7 +14733,28 @@ class Persistence extends Module{
 				this.subscribe("column-moved", this.save.bind(this, "columns"));
 			}
 		}
+
+		this.registerTableFunction("getColumnLayout", this.getColumnLayout.bind(this));
+		this.registerTableFunction("setColumnLayout", this.setColumnLayout.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	getColumnLayout(){
+		return this.parseColumns(this.table.columnManager.getColumns());
+	}
+
+	setColumnLayout(layout){
+		this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout));
+		return true;
+	}
+
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	initializeColumn(column){
 		var def, keys;
@@ -14846,7 +15023,17 @@ class Print extends Module{
 			window.addEventListener("beforeprint", this.replaceTable.bind(this));
 			window.addEventListener("afterprint", this.cleanup.bind(this));
 		}
+
+		this.registerTableFunction("print", this.printFullscreen.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	replaceTable(){
 		if(!this.manualBlock){
@@ -16041,6 +16228,12 @@ class SelectRow extends Module{
 				this.subscribe("data-refesh", this.deselectRows.bind(this));
 			}
 		}
+
+		this.registerTableFunction("selectRow", this.selectRows.bind(this));
+		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
+		this.registerTableFunction("toggleSelectRow", this.toggleRow.bind(this));
+		this.registerTableFunction("getSelectedRows", this.getSelectedRows.bind(this));
+		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
 	}
 
 	rowRetrieve(type, prevValue){
@@ -16687,16 +16880,40 @@ var defaultSorters = {
 class Sort extends Module{
 
 	constructor(table){
-	 	super(table);
+		super(table);
 
 	 	this.sortList = []; //holder current sort
 	 	this.changed = false; //has the sort changed since last render
+	 }
+
+	 initialize(){
+	 	this.subscribe("column-layout", this.initializeColumn.bind(this));
+	 	this.registerDataHandler(this.sort.bind(this), 20);
+
+	 	this.registerTableFunction("setSort", this.userSetSort.bind(this));
+	 	this.registerTableFunction("getSorters", this.getSort.bind(this));
+	 	this.registerTableFunction("clearSort", this.clearSort.bind(this));
+	 }
+
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	userSetSort(sortList, dir){
+		this.setSort(sortList, dir);
+		this.table.rowManager.sorterRefresh();
 	}
 
-	initialize(){
-		this.subscribe("column-layout", this.initializeColumn.bind(this));
-		this.registerDataHandler(this.sort.bind(this), 20);
+	clearSort(){
+		this.clear();
+		this.table.rowManager.sorterRefresh();
 	}
+
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	//initialize column header for sorting
 	initializeColumn(column){
@@ -17180,7 +17397,49 @@ class Validate extends Module{
 	initialize(){
 		this.subscribe("cell-delete", this.clearValidation.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
+
+		this.registerTableFunction("getInvalidCells", this.getInvalidCells.bind(this));
+		this.registerTableFunction("clearCellValidation", this.userClearCellValidation.bind(this));
+		this.registerTableFunction("validate", this.userValidate.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+
+	userClearCellValidation(cells){
+		if(!cells){
+			cells = this.getInvalidCells();
+		}
+
+		if(!Array.isArray(cells)){
+			cells = [cells];
+		}
+
+		cells.forEach((cell) => {
+			this.clearValidation(cell._getSelf());
+		});
+	}
+
+	userValidate(cells){
+		var output = [];
+
+		//clear row data
+		this.table.rowManager.rows.forEach(function(row){
+			var valid = row.validate();
+
+			if(valid !== true){
+				output = output.concat(valid);
+			}
+		});
+
+		return output.length ? output : true;
+	}
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	initializeColumnCheck(column){
 		if(typeof column.definition.validator !== "undefined"){
@@ -20953,6 +21212,10 @@ class Localize extends Module{
 		}
 
 		this.setLocale(this.table.options.locale);
+
+		this.registerTableFunction("setLocale", this.setLocale.bind(this));
+		this.registerTableFunction("getLocale", this.getLocale.bind(this));
+		this.registerTableFunction("getLang", this.getLang.bind(this));
 	}
 
 	//set header placehoder
@@ -22101,7 +22364,6 @@ class Tabulator$1 {
 
 	//local data from local file
 	setDataFromLocalFile(extensions){
-
 		return new Promise((resolve, reject) => {
 			var input = document.createElement("input");
 			input.type = "file";
@@ -22217,41 +22479,6 @@ class Tabulator$1 {
 	//get table data array count
 	getDataCount(active){
 		return this.rowManager.getDataCount(active);
-	}
-
-	//search for specific row components
-	searchRows(field, type, value){
-		if(this.modExists("filter", true)){
-			return this.modules.filter.search("rows", field, type, value);
-		}
-	}
-
-	//search for specific data
-	searchData(field, type, value){
-		if(this.modExists("filter", true)){
-			return this.modules.filter.search("data", field, type, value);
-		}
-	}
-
-	//get table html
-	getHtml(visible, style, config){
-		if(this.modExists("export", true)){
-			return this.modules.export.getHtml(visible, style, config);
-		}
-	}
-
-	//get print html
-	print(visible, style, config){
-		if(this.modExists("print", true)){
-			return this.modules.print.printFullscreen(visible, style, config);
-		}
-	}
-
-	//retrieve Ajax URL
-	getAjaxUrl(){
-		if(this.modExists("ajax", true)){
-			return this.modules.ajax.getUrl();
-		}
 	}
 
 	//replace data, keeping table in position with same sort
@@ -22582,13 +22809,6 @@ class Tabulator$1 {
 		}
 	}
 
-	//copy table data to clipboard
-	copyToClipboard(selector){
-		if(this.modExists("clipboard", true)){
-			this.modules.clipboard.copy(selector);
-		}
-	}
-
 	/////////////// Column Functions  ///////////////
 	setColumns(definition){
 		this.columnManager.setColumns(definition);
@@ -22611,20 +22831,6 @@ class Tabulator$1 {
 
 	getColumnDefinitions(){
 		return this.columnManager.getDefinitionTree();
-	}
-
-	getColumnLayout(){
-		if(this.modExists("persistence", true)){
-			return this.modules.persistence.parseColumns(this.columnManager.getColumns());
-		}
-	}
-
-	setColumnLayout(layout){
-		if(this.modExists("persistence", true)){
-			this.columnManager.setColumns(this.modules.persistence.mergeDefinition(this.options.columns, layout));
-			return true;
-		}
-		return false;
 	}
 
 	showColumn(field){
@@ -22756,19 +22962,6 @@ class Tabulator$1 {
 		});
 	}
 
-	//////////// Localization Functions  ////////////
-	setLocale(locale){
-		this.modules.localize.setLocale(locale);
-	}
-
-	getLocale(){
-		return this.modules.localize.getLocale();
-	}
-
-	getLang(locale){
-		return this.modules.localize.getLang(locale);
-	}
-
 	//////////// General Public Functions ////////////
 	//redraw list without updating data
 	redraw(force){
@@ -22777,7 +22970,6 @@ class Tabulator$1 {
 	}
 
 	setHeight(height){
-
 		if(this.rowManager.renderMode !== "classic"){
 			this.options.height = isNaN(height) ? height : height + "px";
 			this.element.style.height = this.options.height;
@@ -22787,287 +22979,6 @@ class Tabulator$1 {
 			console.warn("setHeight function is not available in classic render mode");
 		}
 	}
-
-	///////////////////// Sorting ////////////////////
-	setSort(sortList, dir){
-		if(this.modExists("sort", true)){
-			this.modules.sort.setSort(sortList, dir);
-			this.rowManager.sorterRefresh();
-		}
-	}
-
-	getSorters(){
-		if(this.modExists("sort", true)){
-			return this.modules.sort.getSort();
-		}
-	}
-
-	clearSort(){
-		if(this.modExists("sort", true)){
-			this.modules.sort.clear();
-			this.rowManager.sorterRefresh();
-		}
-	}
-
-
-	///////////////////// Filtering ////////////////////
-
-	//set standard filters
-	setFilter(field, type, value, params){
-		if(this.modExists("filter", true)){
-			this.modules.filter.setFilter(field, type, value, params);
-			this.rowManager.filterRefresh();
-		}
-	}
-
-	//set standard filters
-	refreshFilter(){
-		if(this.modExists("filter", true)){
-			this.rowManager.filterRefresh();
-		}
-	}
-
-	//add filter to array
-	addFilter(field, type, value, params){
-		if(this.modExists("filter", true)){
-			this.modules.filter.addFilter(field, type, value, params);
-			this.rowManager.filterRefresh();
-		}
-	}
-
-	//get all filters
-	getFilters(all){
-		if(this.modExists("filter", true)){
-			return this.modules.filter.getFilters(all);
-		}
-	}
-
-	setHeaderFilterFocus(field){
-		if(this.modExists("filter", true)){
-			var column = this.columnManager.findColumn(field);
-
-			if(column){
-				this.modules.filter.setHeaderFilterFocus(column);
-			}else {
-				console.warn("Column Filter Focus Error - No matching column found:", field);
-				return false;
-			}
-		}
-	}
-
-	getHeaderFilterValue(field) {
-		if(this.modExists("filter", true)){
-			var column = this.columnManager.findColumn(field);
-
-			if(column){
-				return this.modules.filter.getHeaderFilterValue(column);
-			}else {
-				console.warn("Column Filter Error - No matching column found:", field);
-			}
-		}
-	}
-
-	setHeaderFilterValue(field, value){
-		if(this.modExists("filter", true)){
-			var column = this.columnManager.findColumn(field);
-
-			if(column){
-				this.modules.filter.setHeaderFilterValue(column, value);
-			}else {
-				console.warn("Column Filter Error - No matching column found:", field);
-				return false;
-			}
-		}
-	}
-
-	getHeaderFilters(){
-		if(this.modExists("filter", true)){
-			return this.modules.filter.getHeaderFilters();
-		}
-	}
-
-
-	//remove filter from array
-	removeFilter(field, type, value){
-		if(this.modExists("filter", true)){
-			this.modules.filter.removeFilter(field, type, value);
-			this.rowManager.filterRefresh();
-		}
-	}
-
-	//clear filters
-	clearFilter(all){
-		if(this.modExists("filter", true)){
-			this.modules.filter.clearFilter(all);
-			this.rowManager.filterRefresh();
-		}
-	}
-
-	//clear header filters
-	clearHeaderFilter(){
-		if(this.modExists("filter", true)){
-			this.modules.filter.clearHeaderFilter();
-			this.rowManager.filterRefresh();
-		}
-	}
-
-	///////////////////// select ////////////////////
-	selectRow(rows){
-		if(this.modExists("selectRow", true)){
-			this.modules.selectRow.selectRows(rows);
-		}
-	}
-
-	deselectRow(rows){
-		if(this.modExists("selectRow", true)){
-			this.modules.selectRow.deselectRows(rows);
-		}
-	}
-
-	toggleSelectRow(row){
-		if(this.modExists("selectRow", true)){
-			this.modules.selectRow.toggleRow(row);
-		}
-	}
-
-	getSelectedRows(){
-		if(this.modExists("selectRow", true)){
-			return this.modules.selectRow.getSelectedRows();
-		}
-	}
-
-	getSelectedData(){
-		if(this.modExists("selectRow", true)){
-			return this.modules.selectRow.getSelectedData();
-		}
-	}
-
-	///////////////////// validation  ////////////////////
-	getInvalidCells(){
-		if(this.modExists("validate", true)){
-			return this.modules.validate.getInvalidCells();
-		}
-	}
-
-	clearCellValidation(cells){
-
-		if(this.modExists("validate", true)){
-
-			if(!cells){
-				cells = this.modules.validate.getInvalidCells();
-			}
-
-			if(!Array.isArray(cells)){
-				cells = [cells];
-			}
-
-			cells.forEach((cell) => {
-				this.modules.validate.clearValidation(cell._getSelf());
-			});
-		}
-	}
-
-	validate(cells){
-		var output = [];
-
-		//clear row data
-		this.rowManager.rows.forEach(function(row){
-			var valid = row.validate();
-
-			if(valid !== true){
-				output = output.concat(valid);
-			}
-		});
-
-		return output.length ? output : true;
-	}
-
-	//////////// Pagination Functions  ////////////
-	setMaxPage(max){
-		if(this.options.pagination && this.modExists("page")){
-			this.modules.page.setMaxPage(max);
-		}else {
-			return false;
-		}
-	}
-
-	setPage(page){
-		if(this.options.pagination && this.modExists("page")){
-			return this.modules.page.setPage(page);
-		}else {
-			return new Promise((resolve, reject) => { reject(); });
-		}
-	}
-
-	setPageToRow(row){
-		return new Promise((resolve, reject) => {
-			if(this.options.pagination && this.modExists("page")){
-				row = this.rowManager.findRow(row);
-
-				if(row){
-					this.modules.page.setPageToRow(row)
-					.then(()=>{
-						resolve();
-					})
-					.catch(()=>{
-						reject();
-					});
-				}else {
-					reject();
-				}
-			}else {
-				reject();
-			}
-		});
-	}
-
-	setPageSize(size){
-		if(this.options.pagination && this.modExists("page")){
-			this.modules.page.setPageSize(size);
-			this.modules.page.setPage(1).then(()=>{}).catch(()=>{});
-		}else {
-			return false;
-		}
-	}
-
-	getPageSize(){
-		if(this.options.pagination && this.modExists("page", true)){
-			return this.modules.page.getPageSize();
-		}
-	}
-
-	previousPage(){
-		if(this.options.pagination && this.modExists("page")){
-			this.modules.page.previousPage();
-		}else {
-			return false;
-		}
-	}
-
-	nextPage(){
-		if(this.options.pagination && this.modExists("page")){
-			this.modules.page.nextPage();
-		}else {
-			return false;
-		}
-	}
-
-	getPage(){
-		if(this.options.pagination && this.modExists("page")){
-			return this.modules.page.getPage();
-		}else {
-			return false;
-		}
-	}
-
-	getPageMax(){
-		if(this.options.pagination && this.modExists("page")){
-			return this.modules.page.getPageMax();
-		}else {
-			return false;
-		}
-	}
-
 	///////////////// Grouping Functions ///////////////
 	setGroupBy(groups){
 		if(this.modExists("groupRows", true)){

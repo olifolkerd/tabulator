@@ -14,7 +14,49 @@ class Validate extends Module{
 	initialize(){
 		this.subscribe("cell-delete", this.clearValidation.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
+
+		this.registerTableFunction("getInvalidCells", this.getInvalidCells.bind(this));
+		this.registerTableFunction("clearCellValidation", this.userClearCellValidation.bind(this));
+		this.registerTableFunction("validate", this.userValidate.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+
+	userClearCellValidation(cells){
+		if(!cells){
+			cells = this.getInvalidCells();
+		}
+
+		if(!Array.isArray(cells)){
+			cells = [cells];
+		}
+
+		cells.forEach((cell) => {
+			this.clearValidation(cell._getSelf());
+		});
+	}
+
+	userValidate(cells){
+		var output = [];
+
+		//clear row data
+		this.table.rowManager.rows.forEach(function(row){
+			var valid = row.validate();
+
+			if(valid !== true){
+				output = output.concat(valid);
+			}
+		});
+
+		return output.length ? output : true;
+	}
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	initializeColumnCheck(column){
 		if(typeof column.definition.validator !== "undefined"){

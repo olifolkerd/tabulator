@@ -23,6 +23,12 @@ class SelectRow extends Module{
 				this.subscribe("data-refesh", this.deselectRows.bind(this));
 			}
 		}
+
+		this.registerTableFunction("selectRow", this.selectRows.bind(this));
+		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
+		this.registerTableFunction("toggleSelectRow", this.toggleRow.bind(this));
+		this.registerTableFunction("getSelectedRows", this.getSelectedRows.bind(this));
+		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
 	}
 
 	rowRetrieve(type, prevValue){

@@ -13,6 +13,19 @@ class Export extends Module{
 		this.colVisProp = "";
 	}
 
+	initialize(){
+		this.registerTableFunction("getHtml", this.getHtml.bind(this));
+	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
+
 	generateExportList(config, style, range, colVisProp){
 		this.cloneTableStyle = style;
 		this.config = config || {};

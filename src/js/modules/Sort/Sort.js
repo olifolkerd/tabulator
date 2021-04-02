@@ -5,16 +5,40 @@ import defaultSorters from './defaults/sorters.js';
 class Sort extends Module{
 
 	constructor(table){
-	 	super(table);
+		super(table);
 
 	 	this.sortList = []; //holder current sort
 	 	this.changed = false; //has the sort changed since last render
+	 }
+
+	 initialize(){
+	 	this.subscribe("column-layout", this.initializeColumn.bind(this));
+	 	this.registerDataHandler(this.sort.bind(this), 20);
+
+	 	this.registerTableFunction("setSort", this.userSetSort.bind(this));
+	 	this.registerTableFunction("getSorters", this.getSort.bind(this));
+	 	this.registerTableFunction("clearSort", this.clearSort.bind(this));
+	 }
+
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	userSetSort(sortList, dir){
+		this.setSort(sortList, dir);
+		this.table.rowManager.sorterRefresh();
 	}
 
-	initialize(){
-		this.subscribe("column-layout", this.initializeColumn.bind(this));
-		this.registerDataHandler(this.sort.bind(this), 20);
+	clearSort(){
+		this.clear();
+		this.table.rowManager.sorterRefresh();
 	}
+
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	//initialize column header for sorting
 	initializeColumn(column){

@@ -23,7 +23,109 @@ class Filter extends Module{
 		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
 
 		this.registerDataHandler(this.filter.bind(this), 10);
+
+		this.registerTableFunction("searchRows", this.searchRows.bind(this));
+		this.registerTableFunction("searchData", this.searchData.bind(this));
+
+		this.registerTableFunction("setFilter", this.userSetFilter.bind(this));
+		this.registerTableFunction("refreshFilter", this.userRefreshFilter.bind(this));
+		this.registerTableFunction("addFilter", this.userAddFilter.bind(this));
+		this.registerTableFunction("getFilters", this.getFilters.bind(this));
+		this.registerTableFunction("setHeaderFilterFocus", this.userSetHeaderFilterFocus.bind(this));
+		this.registerTableFunction("getHeaderFilterValue", this.userGetHeaderFilterValue.bind(this));
+		this.registerTableFunction("setHeaderFilterValue", this.userSetHeaderFilterValue.bind(this));
+		this.registerTableFunction("getHeaderFilters", this.getHeaderFilters.bind(this));
+		this.registerTableFunction("removeFilter", this.userRemoveFilter.bind(this));
+		this.registerTableFunction("clearFilter", this.userClearFilter.bind(this));
+		this.registerTableFunction("clearHeaderFilter", this.userClearHeaderFilter.bind(this));
 	}
+
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	//set standard filters
+	userSetFilter(field, type, value, params){
+		this.setFilter(field, type, value, params);
+		this.table.rowManager.filterRefresh();
+	}
+
+	//set standard filters
+	userRefreshFilter(){
+		this.table.rowManager.filterRefresh();
+	}
+
+	//add filter to array
+	userAddFilter(field, type, value, params){
+		this.addFilter(field, type, value, params);
+		this.table.rowManager.filterRefresh();
+	}
+
+	userSetHeaderFilterFocus(field){
+		var column = this.table.columnManager.findColumn(field);
+
+		if(column){
+			this.setHeaderFilterFocus(column);
+		}else{
+			console.warn("Column Filter Focus Error - No matching column found:", field);
+			return false;
+		}
+	}
+
+	userGetHeaderFilterValue(field) {
+		var column = this.table.columnManager.findColumn(field);
+
+		if(column){
+			return this.getHeaderFilterValue(column);
+		}else{
+			console.warn("Column Filter Error - No matching column found:", field);
+		}
+	}
+
+	userSetHeaderFilterValue(field, value){
+		var column = this.table.columnManager.findColumn(field);
+
+		if(column){
+			this.setHeaderFilterValue(column, value);
+		}else{
+			console.warn("Column Filter Error - No matching column found:", field);
+			return false;
+		}
+	}
+
+	//remove filter from array
+	userRemoveFilter(field, type, value){
+		this.removeFilter(field, type, value);
+		this.table.rowManager.filterRefresh();
+	}
+
+	//clear filters
+	userClearFilter(all){
+		this.clearFilter(all);
+		this.table.rowManager.filterRefresh();
+	}
+
+	//clear header filters
+	userClearHeaderFilter(){
+		this.clearHeaderFilter();
+		this.table.rowManager.filterRefresh();
+	}
+
+
+	//search for specific row components
+	searchRows(field, type, value){
+		return this.search("rows", field, type, value);
+	}
+
+	//search for specific data
+	searchData(field, type, value){
+		return this.search("data", field, type, value);
+	}
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	initializeColumnHeaderFilter(column){
 		var def = column.definition;

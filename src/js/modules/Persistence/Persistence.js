@@ -127,7 +127,28 @@ class Persistence extends Module{
 				this.subscribe("column-moved", this.save.bind(this, "columns"));
 			}
 		}
+
+		this.registerTableFunction("getColumnLayout", this.getColumnLayout.bind(this));
+		this.registerTableFunction("setColumnLayout", this.setColumnLayout.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	getColumnLayout(){
+		return this.parseColumns(this.table.columnManager.getColumns());
+	}
+
+	setColumnLayout(layout){
+		this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout))
+		return true;
+	}
+
+
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	initializeColumn(column){
 		var def, keys;

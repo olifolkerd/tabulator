@@ -418,7 +418,6 @@ class Tabulator {
 
 	//local data from local file
 	setDataFromLocalFile(extensions){
-
 		return new Promise((resolve, reject) => {
 			var input = document.createElement("input");
 			input.type = "file";
@@ -534,41 +533,6 @@ class Tabulator {
 	//get table data array count
 	getDataCount(active){
 		return this.rowManager.getDataCount(active);
-	}
-
-	//search for specific row components
-	searchRows(field, type, value){
-		if(this.modExists("filter", true)){
-			return this.modules.filter.search("rows", field, type, value);
-		}
-	}
-
-	//search for specific data
-	searchData(field, type, value){
-		if(this.modExists("filter", true)){
-			return this.modules.filter.search("data", field, type, value);
-		}
-	}
-
-	//get table html
-	getHtml(visible, style, config){
-		if(this.modExists("export", true)){
-			return this.modules.export.getHtml(visible, style, config);
-		}
-	}
-
-	//get print html
-	print(visible, style, config){
-		if(this.modExists("print", true)){
-			return this.modules.print.printFullscreen(visible, style, config);
-		}
-	}
-
-	//retrieve Ajax URL
-	getAjaxUrl(){
-		if(this.modExists("ajax", true)){
-			return this.modules.ajax.getUrl();
-		}
 	}
 
 	//replace data, keeping table in position with same sort
@@ -899,13 +863,6 @@ class Tabulator {
 		}
 	}
 
-	//copy table data to clipboard
-	copyToClipboard(selector){
-		if(this.modExists("clipboard", true)){
-			this.modules.clipboard.copy(selector);
-		}
-	}
-
 	/////////////// Column Functions  ///////////////
 	setColumns(definition){
 		this.columnManager.setColumns(definition);
@@ -928,20 +885,6 @@ class Tabulator {
 
 	getColumnDefinitions(){
 		return this.columnManager.getDefinitionTree();
-	}
-
-	getColumnLayout(){
-		if(this.modExists("persistence", true)){
-			return this.modules.persistence.parseColumns(this.columnManager.getColumns());
-		}
-	}
-
-	setColumnLayout(layout){
-		if(this.modExists("persistence", true)){
-			this.columnManager.setColumns(this.modules.persistence.mergeDefinition(this.options.columns, layout))
-			return true;
-		}
-		return false;
 	}
 
 	showColumn(field){
@@ -1073,19 +1016,6 @@ class Tabulator {
 		});
 	}
 
-	//////////// Localization Functions  ////////////
-	setLocale(locale){
-		this.modules.localize.setLocale(locale);
-	}
-
-	getLocale(){
-		return this.modules.localize.getLocale();
-	}
-
-	getLang(locale){
-		return this.modules.localize.getLang(locale);
-	}
-
 	//////////// General Public Functions ////////////
 	//redraw list without updating data
 	redraw(force){
@@ -1094,7 +1024,6 @@ class Tabulator {
 	}
 
 	setHeight(height){
-
 		if(this.rowManager.renderMode !== "classic"){
 			this.options.height = isNaN(height) ? height : height + "px";
 			this.element.style.height = this.options.height;
@@ -1104,287 +1033,6 @@ class Tabulator {
 			console.warn("setHeight function is not available in classic render mode");
 		}
 	}
-
-	///////////////////// Sorting ////////////////////
-	setSort(sortList, dir){
-		if(this.modExists("sort", true)){
-			this.modules.sort.setSort(sortList, dir);
-			this.rowManager.sorterRefresh();
-		}
-	}
-
-	getSorters(){
-		if(this.modExists("sort", true)){
-			return this.modules.sort.getSort();
-		}
-	}
-
-	clearSort(){
-		if(this.modExists("sort", true)){
-			this.modules.sort.clear();
-			this.rowManager.sorterRefresh();
-		}
-	}
-
-
-	///////////////////// Filtering ////////////////////
-
-	//set standard filters
-	setFilter(field, type, value, params){
-		if(this.modExists("filter", true)){
-			this.modules.filter.setFilter(field, type, value, params);
-			this.rowManager.filterRefresh();
-		}
-	}
-
-	//set standard filters
-	refreshFilter(){
-		if(this.modExists("filter", true)){
-			this.rowManager.filterRefresh();
-		}
-	}
-
-	//add filter to array
-	addFilter(field, type, value, params){
-		if(this.modExists("filter", true)){
-			this.modules.filter.addFilter(field, type, value, params);
-			this.rowManager.filterRefresh();
-		}
-	}
-
-	//get all filters
-	getFilters(all){
-		if(this.modExists("filter", true)){
-			return this.modules.filter.getFilters(all);
-		}
-	}
-
-	setHeaderFilterFocus(field){
-		if(this.modExists("filter", true)){
-			var column = this.columnManager.findColumn(field);
-
-			if(column){
-				this.modules.filter.setHeaderFilterFocus(column);
-			}else{
-				console.warn("Column Filter Focus Error - No matching column found:", field);
-				return false;
-			}
-		}
-	}
-
-	getHeaderFilterValue(field) {
-		if(this.modExists("filter", true)){
-			var column = this.columnManager.findColumn(field);
-
-			if(column){
-				return this.modules.filter.getHeaderFilterValue(column);
-			}else{
-				console.warn("Column Filter Error - No matching column found:", field);
-			}
-		}
-	}
-
-	setHeaderFilterValue(field, value){
-		if(this.modExists("filter", true)){
-			var column = this.columnManager.findColumn(field);
-
-			if(column){
-				this.modules.filter.setHeaderFilterValue(column, value);
-			}else{
-				console.warn("Column Filter Error - No matching column found:", field);
-				return false;
-			}
-		}
-	}
-
-	getHeaderFilters(){
-		if(this.modExists("filter", true)){
-			return this.modules.filter.getHeaderFilters();
-		}
-	}
-
-
-	//remove filter from array
-	removeFilter(field, type, value){
-		if(this.modExists("filter", true)){
-			this.modules.filter.removeFilter(field, type, value);
-			this.rowManager.filterRefresh();
-		}
-	}
-
-	//clear filters
-	clearFilter(all){
-		if(this.modExists("filter", true)){
-			this.modules.filter.clearFilter(all);
-			this.rowManager.filterRefresh();
-		}
-	}
-
-	//clear header filters
-	clearHeaderFilter(){
-		if(this.modExists("filter", true)){
-			this.modules.filter.clearHeaderFilter();
-			this.rowManager.filterRefresh();
-		}
-	}
-
-	///////////////////// select ////////////////////
-	selectRow(rows){
-		if(this.modExists("selectRow", true)){
-			this.modules.selectRow.selectRows(rows);
-		}
-	}
-
-	deselectRow(rows){
-		if(this.modExists("selectRow", true)){
-			this.modules.selectRow.deselectRows(rows);
-		}
-	}
-
-	toggleSelectRow(row){
-		if(this.modExists("selectRow", true)){
-			this.modules.selectRow.toggleRow(row);
-		}
-	}
-
-	getSelectedRows(){
-		if(this.modExists("selectRow", true)){
-			return this.modules.selectRow.getSelectedRows();
-		}
-	}
-
-	getSelectedData(){
-		if(this.modExists("selectRow", true)){
-			return this.modules.selectRow.getSelectedData();
-		}
-	}
-
-	///////////////////// validation  ////////////////////
-	getInvalidCells(){
-		if(this.modExists("validate", true)){
-			return this.modules.validate.getInvalidCells();
-		}
-	}
-
-	clearCellValidation(cells){
-
-		if(this.modExists("validate", true)){
-
-			if(!cells){
-				cells = this.modules.validate.getInvalidCells();
-			}
-
-			if(!Array.isArray(cells)){
-				cells = [cells];
-			}
-
-			cells.forEach((cell) => {
-				this.modules.validate.clearValidation(cell._getSelf());
-			});
-		}
-	}
-
-	validate(cells){
-		var output = [];
-
-		//clear row data
-		this.rowManager.rows.forEach(function(row){
-			var valid = row.validate();
-
-			if(valid !== true){
-				output = output.concat(valid);
-			}
-		});
-
-		return output.length ? output : true;
-	}
-
-	//////////// Pagination Functions  ////////////
-	setMaxPage(max){
-		if(this.options.pagination && this.modExists("page")){
-			this.modules.page.setMaxPage(max);
-		}else{
-			return false;
-		}
-	}
-
-	setPage(page){
-		if(this.options.pagination && this.modExists("page")){
-			return this.modules.page.setPage(page);
-		}else{
-			return new Promise((resolve, reject) => { reject() });
-		}
-	}
-
-	setPageToRow(row){
-		return new Promise((resolve, reject) => {
-			if(this.options.pagination && this.modExists("page")){
-				row = this.rowManager.findRow(row);
-
-				if(row){
-					this.modules.page.setPageToRow(row)
-					.then(()=>{
-						resolve();
-					})
-					.catch(()=>{
-						reject();
-					});
-				}else{
-					reject();
-				}
-			}else{
-				reject();
-			}
-		});
-	}
-
-	setPageSize(size){
-		if(this.options.pagination && this.modExists("page")){
-			this.modules.page.setPageSize(size);
-			this.modules.page.setPage(1).then(()=>{}).catch(()=>{});
-		}else{
-			return false;
-		}
-	}
-
-	getPageSize(){
-		if(this.options.pagination && this.modExists("page", true)){
-			return this.modules.page.getPageSize();
-		}
-	}
-
-	previousPage(){
-		if(this.options.pagination && this.modExists("page")){
-			this.modules.page.previousPage();
-		}else{
-			return false;
-		}
-	}
-
-	nextPage(){
-		if(this.options.pagination && this.modExists("page")){
-			this.modules.page.nextPage();
-		}else{
-			return false;
-		}
-	}
-
-	getPage(){
-		if(this.options.pagination && this.modExists("page")){
-			return this.modules.page.getPage();
-		}else{
-			return false;
-		}
-	}
-
-	getPageMax(){
-		if(this.options.pagination && this.modExists("page")){
-			return this.modules.page.getPageMax();
-		}else{
-			return false;
-		}
-	}
-
 	///////////////// Grouping Functions ///////////////
 	setGroupBy(groups){
 		if(this.modExists("groupRows", true)){

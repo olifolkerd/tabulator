@@ -76,6 +76,8 @@ class Clipboard extends Module{
 
 		this.setPasteParser(this.table.options.clipboardPasteParser);
 		this.setPasteAction(this.table.options.clipboardPasteAction);
+
+		this.registerTableFunction("copyToClipboard", this.copy.bind(this));
 	}
 
 	reset(){

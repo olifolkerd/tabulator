@@ -27,6 +27,10 @@ class Localize extends Module{
 		}
 
 		this.setLocale(this.table.options.locale);
+
+		this.registerTableFunction("setLocale", this.setLocale.bind(this));
+		this.registerTableFunction("getLocale", this.getLocale.bind(this));
+		this.registerTableFunction("getLang", this.getLang.bind(this));
 	}
 
 	//set header placehoder

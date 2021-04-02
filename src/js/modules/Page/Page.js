@@ -31,7 +31,6 @@ class Page extends Module{
 	}
 
 	initialize(){
-		console.log("page init", this.table.options.pagination)
 		if(this.table.options.pagination){
 			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
@@ -41,7 +40,45 @@ class Page extends Module{
 
 			this.initializePaginator();
 		}
+
+		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
+		this.registerTableFunction("setPage", this.setPage.bind(this));
+		this.registerTableFunction("setPageToRow", this.userSetPageToRow.bind(this));
+		this.registerTableFunction("setPageSize", this.userSetPageSize.bind(this));
+		this.registerTableFunction("getPageSize", this.getPageSize.bind(this));
+		this.registerTableFunction("previousPage", this.previousPage.bind(this));
+		this.registerTableFunction("nextPage", this.nextPage.bind(this));
+		this.registerTableFunction("getPage", this.getPage.bind(this));
+		this.registerTableFunction("getPageMax", this.getPageMax.bind(this));
 	}
+
+	///////////////////////////////////
+	///////// Table Functions /////////
+	///////////////////////////////////
+
+	userSetPageToRow(row){
+		if(this.table.options.pagination){
+			row = this.rowManager.findRow(row);
+
+			if(row){
+				return this.setPageToRow(row)
+			}
+		}
+
+		return Promise.reject();
+	}
+
+	userSetPageSize(size){
+		if(this.table.options.pagination){
+			this.setPageSize(size);
+			return this.setPage(1);
+		}else{
+			return false;
+		}
+	}
+	///////////////////////////////////
+	///////// Internal Logic //////////
+	///////////////////////////////////
 
 	restOnRenderBefore(rows, renderInPosition){
 		if(!renderInPosition){

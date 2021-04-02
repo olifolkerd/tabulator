@@ -87,6 +87,8 @@ class Ajax extends Module{
 			}
 
 		}
+
+		this.registerTableFunction("getAjaxUrl", this.getUrl.bind(this));
 	}
 
 	scrollVertical(top, dir){
