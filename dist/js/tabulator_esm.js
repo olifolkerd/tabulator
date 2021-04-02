@@ -18333,16 +18333,12 @@ class Renderer extends CoreFeature{
 	constructor(table){
 		super(table);
 
-		this.element = table.rowManager.element;
+		this.elementVertical = table.rowManager.element;
 		this.tableElement =  table.rowManager.tableElement;
 
 		this.verticalFillMode = "fit"; // used by row manager to determin how to size the render area ("fit" - fits container to the contents, "fill" - fills the contianer without resizing it)
 	}
 
-	///////////////////////////////////
-	/////// External Triggers /////////
-	//////// DO NOT OVERRIDE //////////
-	///////////////////////////////////
 
 	///////////////////////////////////
 	/////// Internal Bindings /////////
@@ -18372,12 +18368,16 @@ class Renderer extends CoreFeature{
 		//handle vertical scolling
 	}
 
-	scrollToRow(row){
-		//scroll to specific row
-	}
-
 	resize(){
 		//container has rezied, carry out any needed recalculations (DO NOT RERENDER IN THIS FUNCTION)
+	}
+
+	scrollToRow(row){
+		//scroll to a specific row
+	}
+
+	scrollToRowNearestTop(row){
+		//determin weather the row is nearest the top or bottom of the table, retur true for top or false for bottom
 	}
 
 	///////////////////////////////////
@@ -18398,6 +18398,80 @@ class Renderer extends CoreFeature{
 			rowEl.classList.add("tabulator-row-odd");
 			rowEl.classList.remove("tabulator-row-even");
 		}
+	}
+
+	///////////////////////////////////
+	/////// External Triggers /////////
+	/////// (DO NOT OVERRIDE) /////////
+	///////////////////////////////////
+
+	scrollToRowPosition(row, position, ifVisible){
+		var rowIndex = this.rows().indexOf(row),
+		rowEl = row.getElement(),
+		offset = 0;
+
+		return new Promise((resolve, reject) => {
+			if(rowIndex > -1){
+
+				if(typeof ifVisible === "undefined"){
+					ifVisible = this.table.options.scrollToRowIfVisible;
+				}
+
+				console.log("if vis", ifVisible);
+
+				//check row visibility
+				if(!ifVisible){
+					if(Helpers.elVisible(rowEl)){
+						offset = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.elementVertical).top;
+
+						if(offset > 0 && offset < this.elementVertical.clientHeight - rowEl.offsetHeight){
+							return false;
+						}
+					}
+				}
+
+				if(typeof position === "undefined"){
+					position = this.table.options.scrollToRowPosition;
+				}
+
+				if(position === "nearest"){
+					position = this.scrollToRowNearestTop(row) ? "top" : "bottom";
+				}
+
+				//scroll to row
+				this.scrollToRow(row);
+
+				//align to correct position
+				switch(position){
+					case "middle":
+					case "center":
+
+					if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
+						this.elementVertical.scrollTop = this.elementVertical.scrollTop + (rowEl.offsetTop - this.elementVertical.scrollTop) - ((this.elementVertical.scrollHeight - rowEl.offsetTop) / 2);
+					}else {
+						this.elementVertical.scrollTop = this.elementVertical.scrollTop - (this.elementVertical.clientHeight / 2);
+					}
+
+					break;
+
+					case "bottom":
+
+					if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
+						this.elementVertical.scrollTop = this.elementVertical.scrollTop - (this.elementVertical.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
+					}else {
+						this.elementVertical.scrollTop = this.elementVertical.scrollTop - this.elementVertical.clientHeight + rowEl.offsetHeight;
+					}
+
+					break;
+				}
+
+				resolve();
+
+			}else {
+				console.warn("Scroll Error - Row not visible");
+				reject("Scroll Error - Row not visible");
+			}
+		});
 	}
 }
 
@@ -18460,8 +18534,16 @@ class Classic extends Renderer{
 		}
 	}
 
-	scrollToRow(row){
+	scrollToRowNearestTop(row){
+		var rowTop = Helpers.elOffset(row.getElement()).top;
 
+		return !(Math.abs(this.elementVertical.scrollTop - rowTop) > Math.abs(this.elementVertical.scrollTop + this.elementVertical.clientHeight - rowTop));
+	}
+
+	scrollToRow(row){
+		var rowEl = row.getElement();
+
+		this.elementVertical.scrollTop = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.elementVertical).top + this.elementVertical.scrollTop;
 	}
 
 }
@@ -18515,8 +18597,8 @@ class VirtualDomVertical extends Renderer{
 		element.style.display = "";
 		element.style.visibility = "";
 
-		this.element.scrollTop = 0;
-		this.element.scrollLeft = 0;
+		this.elementVertical.scrollTop = 0;
+		this.elementVertical.scrollLeft = 0;
 
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
@@ -18534,7 +18616,7 @@ class VirtualDomVertical extends Renderer{
 	}
 
 	rerender(callback){
-		var scrollTop = this.element.scrollTop;
+		var scrollTop = this.elementVertical.scrollTop;
 		var topRow = false;
 		var topOffset = false;
 
@@ -18576,7 +18658,7 @@ class VirtualDomVertical extends Renderer{
 		if(-topDiff > margin || bottomDiff > margin){
 			//if big scroll redraw table;
 			var left = this.scrollLeft;
-			this._virtualRenderFill(Math.floor((this.element.scrollTop / this.element.scrollHeight) * rows.length));
+			this._virtualRenderFill(Math.floor((this.elementVertical.scrollTop / this.elementVertical.scrollHeight) * rows.length));
 			this.scrollHorizontal(left);
 		}else {
 			if(dir){
@@ -18613,7 +18695,21 @@ class VirtualDomVertical extends Renderer{
 	}
 
 	resize(){
-		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.element.clientHeight;
+		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.elementVertical.clientHeight;
+	}
+
+	scrollToRowNearestTop(row){
+		var rowIndex = this.rows().indexOf(row);
+
+		return !(Math.abs(this.vDomTop - rowIndex) > Math.abs(this.vDomBottom - rowIndex));
+	}
+
+	scrollToRow(row){
+		var index = this.rows().indexOf(row);
+
+		if(index > -1){
+			this._virtualRenderFill(index, true);
+		}
 	}
 
 	//////////////////////////////////////
@@ -18623,7 +18719,7 @@ class VirtualDomVertical extends Renderer{
 	//full virtual render
 	_virtualRenderFill(position, forceMove, offset){
 		var	element = this.tableElement,
-		holder = this.element,
+		holder = this.elementVertical,
 		topPad = 0,
 		rowsHeight = 0,
 		topPadHeight = 0,
@@ -18657,7 +18753,7 @@ class VirtualDomVertical extends Renderer{
 			position -= topPad;
 		}
 
-		if(rowsCount && Helpers.elVisible(this.element)){
+		if(rowsCount && Helpers.elVisible(this.elementVertical)){
 			this.vDomTop = position;
 
 			this.vDomBottom = position -1;
@@ -18713,14 +18809,14 @@ class VirtualDomVertical extends Renderer{
 			element.style.paddingBottom = this.vDomBottomPad + "px";
 
 			if(forceMove){
-				this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.element.scrollWidth > this.element.clientWidth ? this.element.offsetHeight - this.element.clientHeight : 0);
+				this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.elementVertical.scrollWidth > this.elementVertical.clientWidth ? this.elementVertical.offsetHeight - this.elementVertical.clientHeight : 0);
 			}
 
-			this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.element.clientHeight);
+			this.scrollTop = Math.min(this.scrollTop, this.elementVertical.scrollHeight - this.elementVertical.clientHeight);
 
 			//adjust for horizontal scrollbar if present (and not at top of table)
-			if(this.element.scrollWidth > this.element.offsetWidth && forceMove){
-				this.scrollTop += this.element.offsetHeight - this.element.clientHeight;
+			if(this.elementVertical.scrollWidth > this.elementVertical.offsetWidth && forceMove){
+				this.scrollTop += this.elementVertical.offsetHeight - this.elementVertical.clientHeight;
 			}
 
 			this.vDomScrollPosTop = this.scrollTop;
@@ -19026,7 +19122,7 @@ class RowManager extends CoreFeature{
 			if(subject instanceof Row$1){
 				//subject is row element
 				return subject;
-			}else if(subject instanceof RowComponent){
+			}else if(subject instanceof RowComponent$1){
 				//subject is public row component
 				return subject._getSelf() || false;
 			}else if(typeof HTMLElement !== "undefined" && subject instanceof HTMLElement){
@@ -19069,87 +19165,7 @@ class RowManager extends CoreFeature{
 	}
 
 	scrollToRow(row, position, ifVisible){
-		var rowIndex = this.getDisplayRows().indexOf(row),
-		rowEl = row.getElement(),
-		rowTop,
-		offset = 0;
-
-		return new Promise((resolve, reject) => {
-			if(rowIndex > -1){
-
-				if(typeof position === "undefined"){
-					position = this.table.options.scrollToRowPosition;
-				}
-
-				if(typeof ifVisible === "undefined"){
-					ifVisible = this.table.options.scrollToRowIfVisible;
-				}
-
-
-				if(position === "nearest"){
-					switch(this.renderMode){
-						case"classic":
-						rowTop = Helpers.elOffset(rowEl).top;
-						position = Math.abs(this.element.scrollTop - rowTop) > Math.abs(this.element.scrollTop + this.element.clientHeight - rowTop) ? "bottom" : "top";
-						break;
-						case"virtual":
-						position = Math.abs(this.vDomTop - rowIndex) > Math.abs(this.vDomBottom - rowIndex) ? "bottom" : "top";
-						break;
-					}
-				}
-
-				//check row visibility
-				if(!ifVisible){
-					if(Helpers.elVisible(rowEl)){
-						offset = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.element).top;
-
-						if(offset > 0 && offset < this.element.clientHeight - rowEl.offsetHeight){
-							return false;
-						}
-					}
-				}
-
-				//scroll to row
-				switch(this.renderMode){
-					case"classic":
-					this.element.scrollTop = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.element).top + this.element.scrollTop;
-					break;
-					case"virtual":
-					this._virtualRenderFill(rowIndex, true);
-					break;
-				}
-
-				//align to correct position
-				switch(position){
-					case "middle":
-					case "center":
-
-					if(this.element.scrollHeight - this.element.scrollTop == this.element.clientHeight){
-						this.element.scrollTop = this.element.scrollTop + (rowEl.offsetTop - this.element.scrollTop) - ((this.element.scrollHeight - rowEl.offsetTop) / 2);
-					}else {
-						this.element.scrollTop = this.element.scrollTop - (this.element.clientHeight / 2);
-					}
-
-					break;
-
-					case "bottom":
-
-					if(this.element.scrollHeight - this.element.scrollTop == this.element.clientHeight){
-						this.element.scrollTop = this.element.scrollTop - (this.element.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
-					}else {
-						this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + rowEl.offsetHeight;
-					}
-
-					break;
-				}
-
-				resolve();
-
-			}else {
-				console.warn("Scroll Error - Row not visible");
-				reject("Scroll Error - Row not visible");
-			}
-		});
+		return this.renderer.scrollToRowPosition(row, position, ifVisible);
 	}
 
 	////////////////// Data Handling //////////////////

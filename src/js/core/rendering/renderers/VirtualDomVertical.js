@@ -50,8 +50,8 @@ export default class VirtualDomVertical extends Renderer{
 		element.style.display = "";
 		element.style.visibility = "";
 
-		this.element.scrollTop = 0;
-		this.element.scrollLeft = 0;
+		this.elementVertical.scrollTop = 0;
+		this.elementVertical.scrollLeft = 0;
 
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
@@ -69,7 +69,7 @@ export default class VirtualDomVertical extends Renderer{
 	}
 
 	rerender(callback){
-		var scrollTop = this.element.scrollTop;
+		var scrollTop = this.elementVertical.scrollTop;
 		var topRow = false;
 		var topOffset = false;
 
@@ -111,7 +111,7 @@ export default class VirtualDomVertical extends Renderer{
 		if(-topDiff > margin || bottomDiff > margin){
 			//if big scroll redraw table;
 			var left = this.scrollLeft;
-			this._virtualRenderFill(Math.floor((this.element.scrollTop / this.element.scrollHeight) * rows.length));
+			this._virtualRenderFill(Math.floor((this.elementVertical.scrollTop / this.elementVertical.scrollHeight) * rows.length));
 			this.scrollHorizontal(left);
 		}else{
 			if(dir){
@@ -148,7 +148,21 @@ export default class VirtualDomVertical extends Renderer{
 	}
 
 	resize(){
-		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.element.clientHeight;
+		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.elementVertical.clientHeight;
+	}
+
+	scrollToRowNearestTop(row){
+		var rowIndex = this.rows().indexOf(row);
+
+		return !(Math.abs(this.vDomTop - rowIndex) > Math.abs(this.vDomBottom - rowIndex));
+	}
+
+	scrollToRow(row){
+		var index = this.rows().indexOf(row);
+
+		if(index > -1){
+			this._virtualRenderFill(index, true);
+		}
 	}
 
 	//////////////////////////////////////
@@ -158,7 +172,7 @@ export default class VirtualDomVertical extends Renderer{
 	//full virtual render
 	_virtualRenderFill(position, forceMove, offset){
 		var	element = this.tableElement,
-		holder = this.element,
+		holder = this.elementVertical,
 		topPad = 0,
 		rowsHeight = 0,
 		topPadHeight = 0,
@@ -192,7 +206,7 @@ export default class VirtualDomVertical extends Renderer{
 			position -= topPad;
 		}
 
-		if(rowsCount && Helpers.elVisible(this.element)){
+		if(rowsCount && Helpers.elVisible(this.elementVertical)){
 			this.vDomTop = position;
 
 			this.vDomBottom = position -1;
@@ -248,14 +262,14 @@ export default class VirtualDomVertical extends Renderer{
 			element.style.paddingBottom = this.vDomBottomPad + "px";
 
 			if(forceMove){
-				this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.element.scrollWidth > this.element.clientWidth ? this.element.offsetHeight - this.element.clientHeight : 0);
+				this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.elementVertical.scrollWidth > this.elementVertical.clientWidth ? this.elementVertical.offsetHeight - this.elementVertical.clientHeight : 0);
 			}
 
-			this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.element.clientHeight);
+			this.scrollTop = Math.min(this.scrollTop, this.elementVertical.scrollHeight - this.elementVertical.clientHeight);
 
 			//adjust for horizontal scrollbar if present (and not at top of table)
-			if(this.element.scrollWidth > this.element.offsetWidth && forceMove){
-				this.scrollTop += this.element.offsetHeight - this.element.clientHeight;
+			if(this.elementVertical.scrollWidth > this.elementVertical.offsetWidth && forceMove){
+				this.scrollTop += this.elementVertical.offsetHeight - this.elementVertical.clientHeight;
 			}
 
 			this.vDomScrollPosTop = this.scrollTop;

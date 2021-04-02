@@ -1,4 +1,5 @@
 import Renderer from '../Renderer.js';
+import Helpers from '../../Helpers.js';
 
 export default class Classic extends Renderer{
 	constructor(table){
@@ -59,8 +60,16 @@ export default class Classic extends Renderer{
 		}
 	}
 
-	scrollToRow(row){
+	scrollToRowNearestTop(row){
+		var rowTop = Helpers.elOffset(row.getElement()).top;
 
+		return !(Math.abs(this.elementVertical.scrollTop - rowTop) > Math.abs(this.elementVertical.scrollTop + this.elementVertical.clientHeight - rowTop));
+	}
+
+	scrollToRow(row){
+		var rowEl = row.getElement();
+
+		this.elementVertical.scrollTop = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.elementVertical).top + this.elementVertical.scrollTop;
 	}
 
 }

@@ -1,5 +1,6 @@
 import CoreFeature from './CoreFeature.js';
 import Row from './row/Row.js';
+import RowComponent from './row/RowComponent.js';
 import Helpers from './Helpers.js';
 
 import RendererClassic from './rendering/renderers/Classic.js';
@@ -173,87 +174,7 @@ export default class RowManager extends CoreFeature{
 	}
 
 	scrollToRow(row, position, ifVisible){
-		var rowIndex = this.getDisplayRows().indexOf(row),
-		rowEl = row.getElement(),
-		rowTop,
-		offset = 0;
-
-		return new Promise((resolve, reject) => {
-			if(rowIndex > -1){
-
-				if(typeof position === "undefined"){
-					position = this.table.options.scrollToRowPosition;
-				}
-
-				if(typeof ifVisible === "undefined"){
-					ifVisible = this.table.options.scrollToRowIfVisible;
-				}
-
-
-				if(position === "nearest"){
-					switch(this.renderMode){
-						case"classic":
-						rowTop = Helpers.elOffset(rowEl).top;
-						position = Math.abs(this.element.scrollTop - rowTop) > Math.abs(this.element.scrollTop + this.element.clientHeight - rowTop) ? "bottom" : "top";
-						break;
-						case"virtual":
-						position = Math.abs(this.vDomTop - rowIndex) > Math.abs(this.vDomBottom - rowIndex) ? "bottom" : "top";
-						break;
-					}
-				}
-
-				//check row visibility
-				if(!ifVisible){
-					if(Helpers.elVisible(rowEl)){
-						offset = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.element).top;
-
-						if(offset > 0 && offset < this.element.clientHeight - rowEl.offsetHeight){
-							return false;
-						}
-					}
-				}
-
-				//scroll to row
-				switch(this.renderMode){
-					case"classic":
-					this.element.scrollTop = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.element).top + this.element.scrollTop;
-					break;
-					case"virtual":
-					this._virtualRenderFill(rowIndex, true);
-					break;
-				}
-
-				//align to correct position
-				switch(position){
-					case "middle":
-					case "center":
-
-					if(this.element.scrollHeight - this.element.scrollTop == this.element.clientHeight){
-						this.element.scrollTop = this.element.scrollTop + (rowEl.offsetTop - this.element.scrollTop) - ((this.element.scrollHeight - rowEl.offsetTop) / 2);
-					}else{
-						this.element.scrollTop = this.element.scrollTop - (this.element.clientHeight / 2);
-					}
-
-					break;
-
-					case "bottom":
-
-					if(this.element.scrollHeight - this.element.scrollTop == this.element.clientHeight){
-						this.element.scrollTop = this.element.scrollTop - (this.element.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
-					}else{
-						this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + rowEl.offsetHeight;
-					}
-
-					break;
-				}
-
-				resolve();
-
-			}else{
-				console.warn("Scroll Error - Row not visible");
-				reject("Scroll Error - Row not visible");
-			}
-		});
+		return this.renderer.scrollToRowPosition(row, position, ifVisible);
 	}
 
 	////////////////// Data Handling //////////////////
