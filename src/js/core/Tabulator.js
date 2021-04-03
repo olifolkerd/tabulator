@@ -6,6 +6,8 @@ import ColumnManager from './ColumnManager.js';
 import RowManager from './RowManager.js';
 import FooterManager from './FooterManager.js';
 
+import InteractionMonitor from './InteractionMonitor.js';
+
 import ExternalEventBus from './ExternalEventBus.js';
 import InternalEventBus from './InternalEventBus.js';
 
@@ -26,6 +28,7 @@ class Tabulator {
 		this.vdomHoz  = null; //holder horizontal virtual dom
 		this.externalEvents = null; //handle external event messaging
 		this.eventBus = null; //handle internal event messaging
+		this.interactionMonitor = false; //track user interaction
 		this.browser = ""; //hold current browser type
 		this.browserSlow = false; //handle reduced functionality for slower browsers
 		this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
@@ -141,6 +144,9 @@ class Tabulator {
 
 	//concreate table
 	_create(){
+
+		this.InteractionMonitor = new InteractionMonitor(this);
+
 		this._clearObjectPointers();
 
 		this._mapDepricatedFunctionality();
