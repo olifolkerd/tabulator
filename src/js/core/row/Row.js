@@ -60,56 +60,6 @@ export default class Row extends CoreFeature{
 
 		this.dispatch("row-init", this);
 
-		//handle row click events
-		if (this.table.options.rowClick){
-			this.element.addEventListener("click", (e) => {
-				this.table.options.rowClick(e, this.getComponent());
-			});
-		}
-
-		if (this.table.options.rowDblClick){
-			this.element.addEventListener("dblclick", (e) => {
-				this.table.options.rowDblClick(e, this.getComponent());
-			});
-		}
-
-		if (this.table.options.rowContext){
-			this.element.addEventListener("contextmenu", (e) => {
-				this.table.options.rowContext(e, this.getComponent());
-			});
-		}
-
-		//handle mouse events
-		if (this.table.options.rowMouseEnter){
-			this.element.addEventListener("mouseenter", (e) => {
-				this.table.options.rowMouseEnter(e, this.getComponent());
-			});
-		}
-
-		if (this.table.options.rowMouseLeave){
-			this.element.addEventListener("mouseleave", (e) => {
-				this.table.options.rowMouseLeave(e, this.getComponent());
-			});
-		}
-
-		if (this.table.options.rowMouseOver){
-			this.element.addEventListener("mouseover", (e) => {
-				this.table.options.rowMouseOver(e, this.getComponent());
-			});
-		}
-
-		if (this.table.options.rowMouseOut){
-			this.element.addEventListener("mouseout", (e) => {
-				this.table.options.rowMouseOut(e, this.getComponent());
-			});
-		}
-
-		if (this.table.options.rowMouseMove){
-			this.element.addEventListener("mousemove", (e) => {
-				this.table.options.rowMouseMove(e, this.getComponent());
-			});
-		}
-
 		if (this.table.options.rowTap){
 
 			tap = false;

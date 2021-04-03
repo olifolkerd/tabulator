@@ -102,7 +102,6 @@ export default class InteractionManager extends CoreFeature {
 	triggerEvents(type, e, targets){
 		for(let key in targets){
 			this.dispatch(key + "-" + type, e, targets[key])
-			console.log("dispatch", key + "-" + type, e, targets[key])
 		}
 	}
 }

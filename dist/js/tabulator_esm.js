@@ -3499,56 +3499,6 @@ class Row$1 extends CoreFeature{
 
 		this.dispatch("row-init", this);
 
-		//handle row click events
-		if (this.table.options.rowClick){
-			this.element.addEventListener("click", (e) => {
-				this.table.options.rowClick(e, this.getComponent());
-			});
-		}
-
-		if (this.table.options.rowDblClick){
-			this.element.addEventListener("dblclick", (e) => {
-				this.table.options.rowDblClick(e, this.getComponent());
-			});
-		}
-
-		if (this.table.options.rowContext){
-			this.element.addEventListener("contextmenu", (e) => {
-				this.table.options.rowContext(e, this.getComponent());
-			});
-		}
-
-		//handle mouse events
-		if (this.table.options.rowMouseEnter){
-			this.element.addEventListener("mouseenter", (e) => {
-				this.table.options.rowMouseEnter(e, this.getComponent());
-			});
-		}
-
-		if (this.table.options.rowMouseLeave){
-			this.element.addEventListener("mouseleave", (e) => {
-				this.table.options.rowMouseLeave(e, this.getComponent());
-			});
-		}
-
-		if (this.table.options.rowMouseOver){
-			this.element.addEventListener("mouseover", (e) => {
-				this.table.options.rowMouseOver(e, this.getComponent());
-			});
-		}
-
-		if (this.table.options.rowMouseOut){
-			this.element.addEventListener("mouseout", (e) => {
-				this.table.options.rowMouseOut(e, this.getComponent());
-			});
-		}
-
-		if (this.table.options.rowMouseMove){
-			this.element.addEventListener("mousemove", (e) => {
-				this.table.options.rowMouseMove(e, this.getComponent());
-			});
-		}
-
 		if (this.table.options.rowTap){
 
 			tap = false;
@@ -17741,9 +17691,58 @@ class Interaction extends Module{
 	}
 
 	initialize(){
+		this.initializeRows();
+
+		this.subscribe("column-init", this.initializeColumn.bind(this));
+	}
+
+	initializeRows(){
+		//handle row click events
+		if (this.table.options.rowClick){
+			this.subscribe("row-click", this.handle.bind(this, "rowClick"));
+		}
+
+		if (this.table.options.rowDblClick){
+			this.subscribe("row-dblclick", this.handle.bind(this, "rowDblClick"));
+		}
+
+		if (this.table.options.rowContext){
+			this.subscribe("row-contextmenu", this.handle.bind(this, "rowContext"));
+		}
+
+		if (this.table.options.rowMouseEnter){
+			this.subscribe("row-mouseenter", this.handle.bind(this, "rowMouseEnter"));
+		}
+
+		if (this.table.options.rowMouseLeave){
+			this.subscribe("row-mouseleave", this.handle.bind(this, "rowMouseLeave"));
+		}
+
+		if (this.table.options.rowMouseOver){
+			this.subscribe("row-mouseover", this.handle.bind(this, "rowMouseOver"));
+		}
+
+		if (this.table.options.rowMouseOut){
+			this.subscribe("row-mouseout", this.handle.bind(this, "rowMouseOut"));
+		}
+
+		if (this.table.options.rowMouseMove){
+			this.subscribe("row-mousemove", this.handle.bind(this, "rowMouseMove"));
+		}
+	}
+
+	initializeColumn(column){
+		console.log("inter column", column);
+		this.initializeCells(column);
+	}
+
+	initializeCells(column){
 
 	}
 
+	handle(action, e, component){
+		this.table.options[action](e, component.getComponent());
+	}
 }
 
 Interaction.moduleName = "interaction";
@@ -20907,7 +20906,6 @@ class InteractionManager extends CoreFeature {
 	triggerEvents(type, e, targets){
 		for(let key in targets){
 			this.dispatch(key + "-" + type, e, targets[key]);
-			console.log("dispatch", key + "-" + type, e, targets[key]);
 		}
 	}
 }
