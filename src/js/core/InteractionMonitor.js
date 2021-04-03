@@ -23,7 +23,7 @@ export default class InteractionManager extends CoreFeature {
 	track(type, e){
 		var targets = this.findTargets(e.path);
 		targets = this.bindComponents(targets);
-		console.log("interactions", targets)
+		this.triggerEvents(type, e, targets);
 	}
 
 	findTargets(path){
@@ -82,5 +82,11 @@ export default class InteractionManager extends CoreFeature {
 		}
 
 		return targets;
+	}
+
+	triggerEvents(type, e, targets){
+		for(let key in targets){
+			this.dispatch(key + "-" + type, e, targets[key])
+		}
 	}
 }
