@@ -61,6 +61,18 @@ class Interaction extends Module{
 	handle(action, e, component){
 		this.table.options[action](e, component.getComponent());
 	}
+
+	handleColumn(action, e, component){
+		if(typeof component.definition[action] === "function"){
+			component.definition[action](e, component.getComponent());
+		}
+	}
+
+	handleCell(action, e, component){
+		if(typeof component.column.definition[action] === "function"){
+			component.column.definition[action](e, component.getComponent());
+		}
+	}
 }
 
 Interaction.moduleName = "interaction";
