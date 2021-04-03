@@ -165,8 +165,8 @@ export default class VirtualDomVertical extends Renderer{
 	}
 
 	visibleRows(includingBuffer){
-		var topEdge = elementVertical.scrollTop,
-		bottomEdge = elementVertical.clientHeight + topEdge,
+		var topEdge = this.elementVertical.scrollTop,
+		bottomEdge = this.elementVertical.clientHeight + topEdge,
 		topFound = false,
 		topRow = 0,
 		bottomRow = 0,
