@@ -17733,6 +17733,21 @@ Validate.moduleName = "validate";
 //load defaults
 Validate.validators = defaultValidators;
 
+class Interaction extends Module{
+
+	constructor(table){
+		super(table);
+
+	}
+
+	initialize(){
+
+	}
+
+}
+
+Interaction.moduleName = "interaction";
+
 var modules = /*#__PURE__*/Object.freeze({
 	__proto__: null,
 	AccessorModule: Accessor,
@@ -17765,7 +17780,8 @@ var modules = /*#__PURE__*/Object.freeze({
 	ResponsiveLayoutModule: ResponsiveLayout,
 	SelectRowModule: SelectRow,
 	SortModule: Sort,
-	ValidateModule: Validate
+	ValidateModule: Validate,
+	InteractionModule: Interaction
 });
 
 var defaultOptions$1 = {
@@ -20813,11 +20829,11 @@ class InteractionManager extends CoreFeature {
 		this.el.addEventListener("click", this.track.bind(this, "click"));
 		this.el.addEventListener("dblclick", this.track.bind(this, "dblclick"));
 		this.el.addEventListener("contextmenu", this.track.bind(this, "contextmenu"));
-		this.el.addEventListener("mouseenter", this.track.bind(this, "mouseenter"));
-		this.el.addEventListener("mouseleave", this.track.bind(this, "mouseleave"));
-		this.el.addEventListener("mouseover", this.track.bind(this, "mouseover"));
-		this.el.addEventListener("mouseout", this.track.bind(this, "mouseout"));
-		this.el.addEventListener("mousemove", this.track.bind(this, "mousemove"));
+		// this.el.addEventListener("mouseenter", this.track.bind(this, "mouseenter"))
+		// this.el.addEventListener("mouseleave", this.track.bind(this, "mouseleave"))
+		// this.el.addEventListener("mouseover", this.track.bind(this, "mouseover"))
+		// this.el.addEventListener("mouseout", this.track.bind(this, "mouseout"))
+		// this.el.addEventListener("mousemove", this.track.bind(this, "mousemove"))
 		// this.el.addEventListener("touchstart", this.track.bind(this, "touchstart"))
 		// this.el.addEventListener("touchend", this.track.bind(this, "touchend"))
 
