@@ -17,7 +17,22 @@ export default class InteractionManager extends CoreFeature {
 			// "tabulator":false,
 		};
 
+		this.bindListeners();
+	}
+
+	bindListeners(){
 		this.el.addEventListener("click", this.track.bind(this, "click"))
+		this.el.addEventListener("dblclick", this.track.bind(this, "dblclick"))
+		this.el.addEventListener("contextmenu", this.track.bind(this, "contextmenu"))
+		this.el.addEventListener("mouseenter", this.track.bind(this, "mouseenter"))
+		this.el.addEventListener("mouseleave", this.track.bind(this, "mouseleave"))
+		this.el.addEventListener("mouseover", this.track.bind(this, "mouseover"))
+		this.el.addEventListener("mouseout", this.track.bind(this, "mouseout"))
+		this.el.addEventListener("mousemove", this.track.bind(this, "mousemove"))
+		// this.el.addEventListener("touchstart", this.track.bind(this, "touchstart"))
+		// this.el.addEventListener("touchend", this.track.bind(this, "touchend"))
+
+		//TODO - add composite events for tab, double tap and taphold
 	}
 
 	track(type, e){
@@ -87,6 +102,7 @@ export default class InteractionManager extends CoreFeature {
 	triggerEvents(type, e, targets){
 		for(let key in targets){
 			this.dispatch(key + "-" + type, e, targets[key])
+			console.log("dispatch", key + "-" + type, e, targets[key])
 		}
 	}
 }

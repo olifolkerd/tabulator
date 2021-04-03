@@ -1877,7 +1877,7 @@ class Cell$1 extends CoreFeature{
 }
 
 //public column object
-class ColumnComponent$1 {
+class ColumnComponent {
 	constructor (column){
 		this._column = column;
 		this.type = "ColumnComponent";
@@ -3258,7 +3258,7 @@ class Column$1 extends CoreFeature{
 	//////////////// Object Generation /////////////////
 	getComponent(){
 		if(!this.component){
-			this.component = new ColumnComponent$1(this);
+			this.component = new ColumnComponent(this);
 		}
 
 		return this.component;
@@ -20806,7 +20806,22 @@ class InteractionManager extends CoreFeature {
 			// "tabulator":false,
 		};
 
+		this.bindListeners();
+	}
+
+	bindListeners(){
 		this.el.addEventListener("click", this.track.bind(this, "click"));
+		this.el.addEventListener("dblclick", this.track.bind(this, "dblclick"));
+		this.el.addEventListener("contextmenu", this.track.bind(this, "contextmenu"));
+		this.el.addEventListener("mouseenter", this.track.bind(this, "mouseenter"));
+		this.el.addEventListener("mouseleave", this.track.bind(this, "mouseleave"));
+		this.el.addEventListener("mouseover", this.track.bind(this, "mouseover"));
+		this.el.addEventListener("mouseout", this.track.bind(this, "mouseout"));
+		this.el.addEventListener("mousemove", this.track.bind(this, "mousemove"));
+		// this.el.addEventListener("touchstart", this.track.bind(this, "touchstart"))
+		// this.el.addEventListener("touchend", this.track.bind(this, "touchend"))
+
+		//TODO - add composite events for tab, double tap and taphold
 	}
 
 	track(type, e){
@@ -20876,6 +20891,7 @@ class InteractionManager extends CoreFeature {
 	triggerEvents(type, e, targets){
 		for(let key in targets){
 			this.dispatch(key + "-" + type, e, targets[key]);
+			console.log("dispatch", key + "-" + type, e, targets[key]);
 		}
 	}
 }
