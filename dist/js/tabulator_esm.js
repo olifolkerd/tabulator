@@ -3874,6 +3874,12 @@ class Row$1 extends CoreFeature{
 		});
 	}
 
+	findCell(subject){
+		return this.cells.find((cell) => {
+			return cell.element === subject;
+		});
+	}
+
 	findNextEditableCell(index){
 		var nextCell = false;
 
@@ -19208,8 +19214,8 @@ class VirtualDomVertical extends Renderer{
 	}
 
 	visibleRows(includingBuffer){
-		var topEdge = elementVertical.scrollTop,
-		bottomEdge = elementVertical.clientHeight + topEdge,
+		var topEdge = this.elementVertical.scrollTop,
+		bottomEdge = this.elementVertical.clientHeight + topEdge,
 		topFound = false,
 		topRow = 0,
 		bottomRow = 0,
@@ -20805,6 +20811,7 @@ class InteractionManager extends CoreFeature {
 
 	track(type, e){
 		var targets = this.findTargets(e.path);
+		targets = this.bindComponents(targets);
 		console.log("interactions", targets);
 	}
 
@@ -20830,6 +20837,36 @@ class InteractionManager extends CoreFeature {
 
 			for (let target of elTargets) {
 				targets[this.trackClases[target]] = el;
+			}
+		}
+
+		return targets;
+	}
+
+	bindComponents(targets){
+		//ensure row component is looked up before cell
+		var keys = Object.keys(targets).reverse();
+
+		for(let key of keys){
+			let component;
+			let target = targets[key];
+
+			switch(key){
+				case "row":
+					component = this.table.rowManager.findRow(target);
+				break;
+
+				case "column":
+					component = this.table.columnManager.findColumn(target);
+				break
+
+				case "cell":
+					component = targets["row"].findCell(target);
+				break;
+			}
+
+			if(component){
+				targets[key] = component;
 			}
 		}
 
