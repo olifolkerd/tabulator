@@ -435,6 +435,12 @@ export default class Row extends CoreFeature{
 		});
 	}
 
+	findCell(subject){
+		return this.cells.find((cell) => {
+			return cell.element === subject;
+		});
+	}
+
 	findNextEditableCell(index){
 		var nextCell = false;
 
