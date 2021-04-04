@@ -103,7 +103,7 @@ export default class InteractionManager extends CoreFeature {
 
 	track(type, e){
 		var targets = this.findTargets(e.path);
-		targets = this.bindComponents(targets);
+		targets = this.bindComponents(type, targets);
 		this.triggerEvents(type, e, targets);
 	}
 
@@ -135,9 +135,10 @@ export default class InteractionManager extends CoreFeature {
 		return targets;
 	}
 
-	bindComponents(targets){
+	bindComponents(type, targets){
 		//ensure row component is looked up before cell
-		var keys = Object.keys(targets).reverse();
+		var keys = Object.keys(targets).reverse(),
+		listener = this.listeners[type];
 
 		for(let key of keys){
 			let component;
@@ -145,15 +146,21 @@ export default class InteractionManager extends CoreFeature {
 
 			switch(key){
 				case "row":
-				component = this.table.rowManager.findRow(target);
+				if(listener.components.includes("row") || listener.components.includes("row")){
+					component = this.table.rowManager.findRow(target);
+				}
 				break;
 
 				case "column":
-				component = this.table.columnManager.findColumn(target);
+				if(listener.components.includes("column")){
+					component = this.table.columnManager.findColumn(target);
+				}
 				break
 
 				case "cell":
-				component = targets["row"].findCell(target);
+				if(listener.components.includes("cell")){
+					component = targets["row"].findCell(target);
+				}
 				break;
 			}
 
@@ -166,8 +173,12 @@ export default class InteractionManager extends CoreFeature {
 	}
 
 	triggerEvents(type, e, targets){
+		var listener = this.listeners[type];
+
 		for(let key in targets){
-			this.dispatch(key + "-" + type, e, targets[key])
+			if(targets[key] && listener.components.includes(key)){
+				this.dispatch(key + "-" + type, e, targets[key]);
+			}
 		}
 	}
 }
