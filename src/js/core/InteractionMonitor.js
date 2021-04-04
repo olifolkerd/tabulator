@@ -147,7 +147,11 @@ export default class InteractionManager extends CoreFeature {
 			switch(key){
 				case "row":
 				if(listener.components.includes("row") || listener.components.includes("row")){
-					component = this.table.rowManager.findRow(target);
+					let rows = this.table.rowManager.getVisibleRows();
+
+					component = rows.find((row) => {
+						return row.getElement() === target;
+					});
 				}
 				break;
 
