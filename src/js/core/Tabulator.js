@@ -44,7 +44,10 @@ class Tabulator {
 			this.externalEvents = new ExternalEventBus(this.options, this.options.debugEvents);
 			this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
 
-			this._create();
+			//delay table creation to allow event bindings immediatly after the constructor
+			setTimeout(() => {
+				this._create();
+			})
 		}
 
 		TableRegistry.register(this); //register table for inderdevice communication
