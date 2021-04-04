@@ -21012,8 +21012,17 @@ class ExternalEventBus {
 	constructor(optionsList, debug){
 		this.events = {};
 		this.optionsList = optionsList || {};
+		this.subscriptionNotifiers = {};
 
 		this.dispatch = debug ? this._debugDispatch.bind(this) : this._dispatch.bind(this);
+	}
+
+	subscriptionChange(key, callback){
+		if(!this.subscriptionNotifiers[key]){
+			this.subscriptionNotifiers[key] = [];
+		}
+
+		this.subscriptionNotifiers[key].push(callback);
 	}
 
 	subscribe(key, callback){
@@ -21022,6 +21031,8 @@ class ExternalEventBus {
 		}
 
 		this.events[key].push(callback);
+
+		this._notifiySubscriptionChange(key, true);
 	}
 
 	unsubscribe(key, callback){
@@ -21035,17 +21046,31 @@ class ExternalEventBus {
 					this.events[key].splice(index, 1);
 				}else {
 					console.warn("Cannot remove event, no matching event found:", key, callback);
+					return;
 				}
 			}else {
 				delete this.events[key];
 			}
 		}else {
 			console.warn("Cannot remove event, no events set on:", key);
+			return;
 		}
+
+		this._notifiySubscriptionChange(key, false);
 	}
 
 	subscribed(key){
 		return this.optionsList[key] || (this.events[key] && this.events[key].length);
+	}
+
+	_notifiySubscriptionChange(key, subscribed){
+		var notifiers = this.subscriptionNotifiers[key];
+
+		if(notifiers){
+			notifiers.forEach((callback)=>{
+				callback(subscribed);
+			});
+		}
 	}
 
 	_dispatch(){
