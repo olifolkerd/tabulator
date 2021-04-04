@@ -6,7 +6,7 @@ class Interaction extends Module{
 	constructor(table){
 		super(table);
 
-		this.rowEventsMap = {
+		this.eventMap = {
 			rowClick:"row-click",
 			rowDblClick:"row-dblclick",
 			rowContext:"row-contextmenu",
@@ -17,24 +17,44 @@ class Interaction extends Module{
 			rowMouseMove:"row-mousemove",
 		}
 
+		this.subscribers = {};
+
 	}
 
 	initialize(){
-		this.initializeRows();
+		this.initializeExternalEvents();
 
 		this.subscribe("column-init", this.initializeColumn.bind(this))
 	}
 
-	initializeRows(){
-		for(let key in this.rowEventsMap){
+	initializeExternalEvents(){
+		for(let key in this.eventMap){
 			if(this.table.options[key]){
-				this.subscribe(this.rowEventsMap[key], this.handle.bind(this, key))
+				this.subscriptionChanged(key, true);
+			}
+			this.subscriptionChangeExternal(key, this.subscriptionChanged.bind(this, key))
+		}
+	}
+
+	subscriptionChanged(key, added){
+		var index;
+
+		if(added){
+			if(!this.subscribers[key]){
+				this.subscribers[key] = this.handle.bind(this, key);
+				this.subscribe(this.eventMap[key], this.subscribers[key]);
+			}
+		}else{
+			if(this.subscribers[key] && !this.table.options[key]  && !this.subscribedExternal(key)){
+				this.unsubscribe(this.eventMap[key], this.subscribers[key]);
+				delete this.subscribers[key];
 			}
 		}
 	}
 
+
+
 	initializeColumn(column){
-		console.log("inter column", column)
 		this.initializeCells(column);
 	}
 
@@ -43,7 +63,13 @@ class Interaction extends Module{
 	}
 
 	handle(action, e, component){
-		this.table.options[action](e, component.getComponent());
+		component = component.getComponent();
+
+		if(this.table.options[action]){
+			this.table.options[action](e, component);
+		}
+
+		this.dispatchExternal(action, e, component)
 	}
 
 	handleColumn(action, e, component){

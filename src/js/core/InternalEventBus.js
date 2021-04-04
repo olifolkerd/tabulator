@@ -34,7 +34,9 @@ export default class InternalEventBus {
 
 		if(this.events[key]){
 			if(callback){
-				index = this.events[key].indexOf(callback);
+				index = this.events[key].findIndex((item) => {
+					return item.callback === callback;
+				});
 
 				if(index > -1){
 					this.events[key].splice(index, 1);
@@ -59,8 +61,6 @@ export default class InternalEventBus {
 
 	chain(key, args, fallback){
 		var value;
-
-		// console.log("InternalEvent:" + key, args);
 
 		if(!Array.isArray(args)){
 			args = [args];

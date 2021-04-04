@@ -40,6 +40,10 @@ export default class CoreFeature{
 		this.table.externalEvents.subscribed(key);
 	}
 
+	subscriptionChangeExternal(){
+		this.table.externalEvents.subscriptionChange(...arguments);
+	}
+
 
 	//////////////////////////////////////////
 	//////////////// Modules /////////////////

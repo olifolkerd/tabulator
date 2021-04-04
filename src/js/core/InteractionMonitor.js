@@ -74,7 +74,7 @@ export default class InteractionManager extends CoreFeature {
 		}else{
 			if(!this.subscribed(component + "-" + key)){
 				if(index > -1){
-					this.listener.splice(index, 1);
+					listener.splice(index, 1);
 					changed = true;
 				}
 			}
