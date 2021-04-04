@@ -17692,6 +17692,17 @@ class Interaction extends Module{
 	constructor(table){
 		super(table);
 
+		this.rowEventsMap = {
+			rowClick:"row-click",
+			rowDblClick:"row-dblclick",
+			rowContext:"row-contextmenu",
+			rowMouseEnter:"row-mouseenter",
+			rowMouseLeave:"row-mouseleave",
+			rowMouseOver:"row-mouseover",
+			rowMouseOut:"row-mouseout",
+			rowMouseMove:"row-mousemove",
+		};
+
 	}
 
 	initialize(){
@@ -17701,37 +17712,10 @@ class Interaction extends Module{
 	}
 
 	initializeRows(){
-		//handle row click events
-		if (this.table.options.rowClick){
-			this.subscribe("row-click", this.handle.bind(this, "rowClick"));
-		}
-
-		if (this.table.options.rowDblClick){
-			this.subscribe("row-dblclick", this.handle.bind(this, "rowDblClick"));
-		}
-
-		if (this.table.options.rowContext){
-			this.subscribe("row-contextmenu", this.handle.bind(this, "rowContext"));
-		}
-
-		if (this.table.options.rowMouseEnter){
-			this.subscribe("row-mouseenter", this.handle.bind(this, "rowMouseEnter"));
-		}
-
-		if (this.table.options.rowMouseLeave){
-			this.subscribe("row-mouseleave", this.handle.bind(this, "rowMouseLeave"));
-		}
-
-		if (this.table.options.rowMouseOver){
-			this.subscribe("row-mouseover", this.handle.bind(this, "rowMouseOver"));
-		}
-
-		if (this.table.options.rowMouseOut){
-			this.subscribe("row-mouseout", this.handle.bind(this, "rowMouseOut"));
-		}
-
-		if (this.table.options.rowMouseMove){
-			this.subscribe("row-mousemove", this.handle.bind(this, "rowMouseMove"));
+		for(let key in this.rowEventsMap){
+			if(this.table.options[key]){
+				this.subscribe(this.rowEventsMap[key], this.handle.bind(this, key));
+			}
 		}
 	}
 
@@ -21121,8 +21105,6 @@ class InternalEventBus {
 
 		this.subscriptionNotifiers[key].push(callback);
 	}
-
-
 
 	subscribe(key, callback, priority = 10000){
 		if(!this.events[key]){

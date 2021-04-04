@@ -15,8 +15,6 @@ export default class InternalEventBus {
 		this.subscriptionNotifiers[key].push(callback);
 	}
 
-
-
 	subscribe(key, callback, priority = 10000){
 		if(!this.events[key]){
 			this.events[key] = [];
