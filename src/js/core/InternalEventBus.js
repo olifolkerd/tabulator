@@ -13,6 +13,10 @@ export default class InternalEventBus {
 		}
 
 		this.subscriptionNotifiers[key].push(callback);
+
+		if(this.subscribed(key)){
+			this._notifiySubscriptionChange(key, true);
+		}
 	}
 
 	subscribe(key, callback, priority = 10000){

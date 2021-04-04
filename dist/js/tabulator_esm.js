@@ -21050,6 +21050,10 @@ class ExternalEventBus {
 		}
 
 		this.subscriptionNotifiers[key].push(callback);
+
+		if(this.subscribed(key)){
+			this._notifiySubscriptionChange(key, true);
+		}
 	}
 
 	subscribe(key, callback){
@@ -21105,7 +21109,7 @@ class ExternalEventBus {
 	_dispatch(){
 		var args = Array.from(arguments),
 		key = args.shift(),
-		result;
+	result;
 
 		if(this.events[key]){
 			this.events[key].forEach((callback, i) => {
@@ -21149,6 +21153,10 @@ class InternalEventBus {
 		}
 
 		this.subscriptionNotifiers[key].push(callback);
+
+		if(this.subscribed(key)){
+			this._notifiySubscriptionChange(key, true);
+		}
 	}
 
 	subscribe(key, callback, priority = 10000){
