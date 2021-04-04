@@ -8,7 +8,9 @@ export default class InteractionManager extends CoreFeature {
 
 		this.el = this.table.element;
 
-		this.abortClasses = ["tabulator-headers", "tabulator-table"]
+		this.abortClasses = ["tabulator-headers", "tabulator-table"];
+
+		this.previousTargets = {};
 
 		this.listeners = [
 		"click",
@@ -138,40 +140,52 @@ export default class InteractionManager extends CoreFeature {
 	bindComponents(type, targets){
 		//ensure row component is looked up before cell
 		var keys = Object.keys(targets).reverse(),
-		listener = this.listeners[type];
+		listener = this.listeners[type],
+		targetMatches = {};
 
 		for(let key of keys){
 			let component;
 			let target = targets[key];
+			let previousTarget = this.previousTargets[key];
 
-			switch(key){
-				case "row":
-				if(listener.components.includes("row") || listener.components.includes("row")){
-					let rows = this.table.rowManager.getVisibleRows();
+			if(previousTarget && previousTarget.target === target){
+				component = previousTarget.component;
+			}else{
+				switch(key){
+					case "row":
+					if(listener.components.includes("row") || listener.components.includes("row")){
+						let rows = this.table.rowManager.getVisibleRows();
 
-					component = rows.find((row) => {
-						return row.getElement() === target;
-					});
+						component = rows.find((row) => {
+							return row.getElement() === target;
+						});
+					}
+					break;
+
+					case "column":
+					if(listener.components.includes("column")){
+						component = this.table.columnManager.findColumn(target);
+					}
+					break
+
+					case "cell":
+					if(listener.components.includes("cell")){
+						component = targets["row"].findCell(target);
+					}
+					break;
 				}
-				break;
-
-				case "column":
-				if(listener.components.includes("column")){
-					component = this.table.columnManager.findColumn(target);
-				}
-				break
-
-				case "cell":
-				if(listener.components.includes("cell")){
-					component = targets["row"].findCell(target);
-				}
-				break;
 			}
 
 			if(component){
 				targets[key] = component;
+				targetMatches[key] = {
+					target:target,
+					component:component,
+				}
 			}
 		}
+
+		this.previousTargets = targetMatches;
 
 		return targets;
 	}
