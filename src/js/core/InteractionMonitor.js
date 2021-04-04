@@ -10,29 +10,93 @@ export default class InteractionManager extends CoreFeature {
 
 		this.abortClasses = ["tabulator-headers", "tabulator-table"]
 
-		this.trackClases = {
+		this.listeners = [
+			"click",
+			"dblclick",
+			"contextmenu",
+			"mouseenter",
+			"mouseleave",
+			"mouseover",
+			"mouseout",
+			"mousemove",
+			"touchstart",
+			"touchend",
+		];
+
+		this.componentMap = {
 			"tabulator-cell":"cell",
 			"tabulator-row":"row",
 			"tabulator-col":"column",
-			// "tabulator":false,
 		};
 
-		this.bindListeners();
+		this.buildListenerMap();
+		this.bindSubscriptionWatchers();
 	}
 
-	bindListeners(){
-		this.el.addEventListener("click", this.track.bind(this, "click"))
-		this.el.addEventListener("dblclick", this.track.bind(this, "dblclick"))
-		this.el.addEventListener("contextmenu", this.track.bind(this, "contextmenu"))
-		// this.el.addEventListener("mouseenter", this.track.bind(this, "mouseenter"))
-		// this.el.addEventListener("mouseleave", this.track.bind(this, "mouseleave"))
-		// this.el.addEventListener("mouseover", this.track.bind(this, "mouseover"))
-		// this.el.addEventListener("mouseout", this.track.bind(this, "mouseout"))
-		// this.el.addEventListener("mousemove", this.track.bind(this, "mousemove"))
-		// this.el.addEventListener("touchstart", this.track.bind(this, "touchstart"))
-		// this.el.addEventListener("touchend", this.track.bind(this, "touchend"))
+	buildListenerMap(){
+		var listenerMap = {};
 
-		//TODO - add composite events for tab, double tap and taphold
+		this.listeners.forEach((listener) => {
+			listenerMap[listener] = {
+				handler:null,
+				components:[],
+			}
+		})
+
+		this.listeners = listenerMap;
+	}
+
+	bindSubscriptionWatchers(){
+		var listeners = Object.keys(this.listeners),
+		components = Object.values(this.componentMap);
+
+		for(let comp of components){
+			for(let listener of listeners){
+				let key = comp + "-" + listener;
+
+				this.subscriptionChange(key, this.subscriptionChanged.bind(this, comp, listener));
+			}
+		}
+	}
+
+	subscriptionChanged(component, key, added){
+		var listener = this.listeners[key].components,
+		index = listener.indexOf(component),
+		changed = false;
+
+		if(added){
+			if(index === -1){
+				listener.push(component);
+				changed = true;
+			}
+		}else{
+			if(index > -1){
+				this.listener.splice(index, 1);
+				changed = true;
+			}
+		}
+
+		if(changed){
+			this.updateEventListeners();
+		}
+	}
+
+	updateEventListeners(){
+		for(let key in this.listeners){
+			let listener = this.listeners[key];
+
+			if(listener.components.length){
+				if(!listener.handler){
+					listener.handler = this.track.bind(this, key);
+					this.el.addEventListener(key, listener.handler)
+				}
+			}else{
+				if(listener.handler){
+					this.el.removeEventListener(key, listener.handler)
+					listener.handler = null;
+				}
+			}
+		}
 	}
 
 	track(type, e){
@@ -44,7 +108,7 @@ export default class InteractionManager extends CoreFeature {
 	findTargets(path){
 		var targets = {};
 
-		let trackClasses = Object.keys(this.trackClases);
+		let componentMap = Object.keys(this.componentMap);
 
 		for (let el of path) {
 			let classList = el.classList ? [...el.classList] : [];
@@ -58,11 +122,11 @@ export default class InteractionManager extends CoreFeature {
 			}
 
 			let elTargets = classList.filter((item) => {
-				return trackClasses.includes(item);
+				return componentMap.includes(item);
 			})
 
 			for (let target of elTargets) {
-				targets[this.trackClases[target]] = el;
+				targets[this.componentMap[target]] = el;
 			}
 		}
 
@@ -79,15 +143,15 @@ export default class InteractionManager extends CoreFeature {
 
 			switch(key){
 				case "row":
-					component = this.table.rowManager.findRow(target);
+				component = this.table.rowManager.findRow(target);
 				break;
 
 				case "column":
-					component = this.table.columnManager.findColumn(target);
+				component = this.table.columnManager.findColumn(target);
 				break
 
 				case "cell":
-					component = targets["row"].findCell(target);
+				component = targets["row"].findCell(target);
 				break;
 			}
 
