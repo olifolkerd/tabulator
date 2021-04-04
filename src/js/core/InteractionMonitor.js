@@ -11,16 +11,16 @@ export default class InteractionManager extends CoreFeature {
 		this.abortClasses = ["tabulator-headers", "tabulator-table"]
 
 		this.listeners = [
-			"click",
-			"dblclick",
-			"contextmenu",
-			"mouseenter",
-			"mouseleave",
-			"mouseover",
-			"mouseout",
-			"mousemove",
-			"touchstart",
-			"touchend",
+		"click",
+		"dblclick",
+		"contextmenu",
+		"mouseenter",
+		"mouseleave",
+		"mouseover",
+		"mouseout",
+		"mousemove",
+		"touchstart",
+		"touchend",
 		];
 
 		this.componentMap = {
@@ -70,9 +70,11 @@ export default class InteractionManager extends CoreFeature {
 				changed = true;
 			}
 		}else{
-			if(index > -1){
-				this.listener.splice(index, 1);
-				changed = true;
+			if(!this.subscribed(component + "-" + key)){
+				if(index > -1){
+					this.listener.splice(index, 1);
+					changed = true;
+				}
 			}
 		}
 
