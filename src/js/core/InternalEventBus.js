@@ -2,9 +2,20 @@ export default class InternalEventBus {
 
 	constructor(debug){
 		this.events = {};
+		this.subscriptionNotifiers = {};
 
 		this.dispatch = debug ? this._debugDispatch.bind(this) : this._dispatch.bind(this);
 	}
+
+	subscriptionChange(key, callback){
+		if(!this.subscriptionNotifiers[key]){
+			this.subscriptionNotifiers[key] = [];
+		}
+
+		this.subscriptionNotifiers[key].push(callback);
+	}
+
+
 
 	subscribe(key, callback, priority = 10000){
 		if(!this.events[key]){
@@ -16,6 +27,8 @@ export default class InternalEventBus {
 		this.events[key].sort((a, b) => {
 			return a.priority - b.priority;
 		});
+
+		this._notifiySubscriptionChange(key, true);
 	}
 
 	unsubscribe(key, callback){
@@ -29,13 +42,17 @@ export default class InternalEventBus {
 					this.events[key].splice(index, 1);
 				}else{
 					console.warn("Cannot remove event, no matching event found:", key, callback);
+					return;
 				}
 			}else{
 				delete this.events[key];
 			}
 		}else{
 			console.warn("Cannot remove event, no events set on:", key);
+			return;
 		}
+
+		this._notifiySubscriptionChange(key, false);
 	}
 
 	subscribed(key){
@@ -59,6 +76,16 @@ export default class InternalEventBus {
 			return value;
 		}else{
 			return typeof fallback === "function" ? fallback() : fallback;
+		}
+	}
+
+	_notifiySubscriptionChange(key, subscribed){
+		var notifiers = this.subscriptionNotifiers[key];
+
+		if(notifiers){
+			notifiers.forEach((callback)=>{
+				callback(subscribed);
+			});
 		}
 	}
 

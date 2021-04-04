@@ -20,6 +20,10 @@ export default class CoreFeature{
 		this.table.eventBus.subscribed(key);
 	}
 
+	subscriptionChange(){
+		this.table.eventBus.subscriptionChange(...arguments);
+	}
+
 	dispatch(){
 		this.table.eventBus.dispatch(...arguments);
 	}
