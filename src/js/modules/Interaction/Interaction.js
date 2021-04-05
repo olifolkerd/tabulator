@@ -7,6 +7,7 @@ class Interaction extends Module{
 		super(table);
 
 		this.eventMap = {
+			//row events
 			rowClick:"row-click",
 			rowDblClick:"row-dblclick",
 			rowContext:"row-contextmenu",
@@ -19,6 +20,7 @@ class Interaction extends Module{
 			rowDblTap:"row",
 			rowTapHold:"row",
 
+			//cellEvents
 			cellClick:"cell-click",
 			cellDblClick:"cell-dblclick",
 			cellContext:"cell-contextmenu",
@@ -30,6 +32,19 @@ class Interaction extends Module{
 			cellTap:"cell",
 			cellDblTap:"cell",
 			cellTapHold:"cell",
+
+			//cellEvents
+			headerClick:"column-click",
+			headerDblClick:"column-dblclick",
+			headerContext:"column-contextmenu",
+			headerMouseEnter:"column-mouseenter",
+			headerMouseLeave:"column-mouseleave",
+			headerMouseOver:"column-mouseover",
+			headerMouseOut:"column-mouseout",
+			headerMouseMove:"column-mousemove",
+			headerTap:"column",
+			headerDblTap:"column",
+			headerTapHold:"column",
 		}
 
 		this.subscribers = {};
@@ -43,6 +58,11 @@ class Interaction extends Module{
 				tapHold:null,
 			},
 			cell:{
+				tap:null,
+				tapDbl:null,
+				tapHold:null,
+			},
+			column:{
 				tap:null,
 				tapDbl:null,
 				tapHold:null,
@@ -146,6 +166,10 @@ class Interaction extends Module{
 
 	handleTouch(type, action, e, component){
 		var watchers = this.touchWatchers[type];
+
+		if(type === "column"){
+			type = "header";
+		}
 
 		switch(action){
 			case "start":

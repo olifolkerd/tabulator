@@ -47,8 +47,7 @@ export default class Cell extends CoreFeature{
 	}
 
 	_configureCell(){
-		var cellEvents = this.column.cellEvents,
-		element = this.element,
+		var element = this.element,
 		field = this.column.getField(),
 		vertAligns = {
 			top:"flex-start",
@@ -93,11 +92,11 @@ export default class Cell extends CoreFeature{
 			});
 		}
 
-		this._bindClickEvents(cellEvents);
+		// this._bindClickEvents(cellEvents);
 
-		this._bindTouchEvents(cellEvents);
+		// this._bindTouchEvents(cellEvents);
 
-		this._bindMouseEvents(cellEvents);
+		// this._bindMouseEvents(cellEvents);
 
 		this.dispatch("cell-init", this);
 

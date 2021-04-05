@@ -1250,8 +1250,7 @@ class Cell$1 extends CoreFeature{
 	}
 
 	_configureCell(){
-		var cellEvents = this.column.cellEvents,
-		element = this.element,
+		var element = this.element,
 		field = this.column.getField(),
 		vertAligns = {
 			top:"flex-start",
@@ -1296,11 +1295,11 @@ class Cell$1 extends CoreFeature{
 			});
 		}
 
-		this._bindClickEvents(cellEvents);
+		// this._bindClickEvents(cellEvents);
 
-		this._bindTouchEvents(cellEvents);
+		// this._bindTouchEvents(cellEvents);
 
-		this._bindMouseEvents(cellEvents);
+		// this._bindMouseEvents(cellEvents);
 
 		this.dispatch("cell-init", this);
 
@@ -2203,20 +2202,6 @@ class Column$1 extends CoreFeature{
 
 		this.modules = {}; //hold module variables;
 
-		this.cellEvents = {
-			cellClick:false,
-			cellDblClick:false,
-			cellContext:false,
-			cellTap:false,
-			cellDblTap:false,
-			cellTapHold:false,
-			cellMouseEnter:false,
-			cellMouseLeave:false,
-			cellMouseOver:false,
-			cellMouseOut:false,
-			cellMouseMove:false,
-		};
-
 		this.width = null; //column width
 		this.widthStyled = ""; //column width prestyled to improve render efficiency
 		this.maxWidth = null; //column maximum width
@@ -2464,66 +2449,6 @@ class Column$1 extends CoreFeature{
 				clearTimeout(tapHold);
 				tapHold = null;
 			});
-		}
-
-		//store column cell click event bindings
-		if(typeof(def.cellClick) == "function"){
-			this.cellEvents.cellClick = def.cellClick;
-		}
-
-		if(typeof(def.cellDblClick) == "function"){
-			this.cellEvents.cellDblClick = def.cellDblClick;
-		}
-
-		if(typeof(def.cellContext) == "function"){
-			this.cellEvents.cellContext = def.cellContext;
-		}
-
-		//store column mouse event bindings
-		if(typeof(def.cellMouseEnter) == "function"){
-			this.cellEvents.cellMouseEnter = def.cellMouseEnter;
-		}
-
-		if(typeof(def.cellMouseLeave) == "function"){
-			this.cellEvents.cellMouseLeave = def.cellMouseLeave;
-		}
-
-		if(typeof(def.cellMouseOver) == "function"){
-			this.cellEvents.cellMouseOver = def.cellMouseOver;
-		}
-
-		if(typeof(def.cellMouseOut) == "function"){
-			this.cellEvents.cellMouseOut = def.cellMouseOut;
-		}
-
-		if(typeof(def.cellMouseMove) == "function"){
-			this.cellEvents.cellMouseMove = def.cellMouseMove;
-		}
-
-		//setup column cell tap event bindings
-		if(typeof(def.cellTap) == "function"){
-			this.cellEvents.cellTap = def.cellTap;
-		}
-
-		if(typeof(def.cellDblTap) == "function"){
-			this.cellEvents.cellDblTap = def.cellDblTap;
-		}
-
-		if(typeof(def.cellTapHold) == "function"){
-			this.cellEvents.cellTapHold = def.cellTapHold;
-		}
-
-		//setup column cell edit callbacks
-		if(typeof(def.cellEdited) == "function"){
-			this.cellEvents.cellEdited = def.cellEdited;
-		}
-
-		if(typeof(def.cellEditing) == "function"){
-			this.cellEvents.cellEditing = def.cellEditing;
-		}
-
-		if(typeof(def.cellEditCancelled) == "function"){
-			this.cellEvents.cellEditCancelled = def.cellEditCancelled;
 		}
 	}
 
@@ -17635,6 +17560,7 @@ class Interaction extends Module{
 		super(table);
 
 		this.eventMap = {
+			//row events
 			rowClick:"row-click",
 			rowDblClick:"row-dblclick",
 			rowContext:"row-contextmenu",
@@ -17647,6 +17573,7 @@ class Interaction extends Module{
 			rowDblTap:"row",
 			rowTapHold:"row",
 
+			//cellEvents
 			cellClick:"cell-click",
 			cellDblClick:"cell-dblclick",
 			cellContext:"cell-contextmenu",
@@ -17658,6 +17585,19 @@ class Interaction extends Module{
 			cellTap:"cell",
 			cellDblTap:"cell",
 			cellTapHold:"cell",
+
+			//cellEvents
+			headerClick:"column-click",
+			headerDblClick:"column-dblclick",
+			headerContext:"column-contextmenu",
+			headerMouseEnter:"column-mouseenter",
+			headerMouseLeave:"column-mouseleave",
+			headerMouseOver:"column-mouseover",
+			headerMouseOut:"column-mouseout",
+			headerMouseMove:"column-mousemove",
+			headerTap:"column",
+			headerDblTap:"column",
+			headerTapHold:"column",
 		};
 
 		this.subscribers = {};
@@ -17671,6 +17611,11 @@ class Interaction extends Module{
 				tapHold:null,
 			},
 			cell:{
+				tap:null,
+				tapDbl:null,
+				tapHold:null,
+			},
+			column:{
 				tap:null,
 				tapDbl:null,
 				tapHold:null,
@@ -17773,6 +17718,10 @@ class Interaction extends Module{
 
 	handleTouch(type, action, e, component){
 		var watchers = this.touchWatchers[type];
+
+		if(type === "column"){
+			type = "header";
+		}
 
 		switch(action){
 			case "start":
@@ -18206,6 +18155,19 @@ var defaultOptions$1 = {
 	cellMouseOver:false,
 	cellMouseOut:false,
 	cellMouseMove:false,
+
+	//column header callbacks
+	headerClick:false,
+	headerDblClick:false,
+	headerContext:false,
+	headerTap:false,
+	headerDblTap:false,
+	headerTapHold:false,
+	headerMouseEnter:false,
+	headerMouseLeave:false,
+	headerMouseOver:false,
+	headerMouseOut:false,
+	headerMouseMove:false,
 };
 
 class ColumnManager extends CoreFeature {

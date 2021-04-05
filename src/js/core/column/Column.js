@@ -42,20 +42,6 @@ class Column extends CoreFeature{
 
 		this.modules = {}; //hold module variables;
 
-		this.cellEvents = {
-			cellClick:false,
-			cellDblClick:false,
-			cellContext:false,
-			cellTap:false,
-			cellDblTap:false,
-			cellTapHold:false,
-			cellMouseEnter:false,
-			cellMouseLeave:false,
-			cellMouseOver:false,
-			cellMouseOut:false,
-			cellMouseMove:false,
-		};
-
 		this.width = null; //column width
 		this.widthStyled = ""; //column width prestyled to improve render efficiency
 		this.maxWidth = null; //column maximum width
@@ -303,66 +289,6 @@ class Column extends CoreFeature{
 				clearTimeout(tapHold);
 				tapHold = null;
 			});
-		}
-
-		//store column cell click event bindings
-		if(typeof(def.cellClick) == "function"){
-			this.cellEvents.cellClick = def.cellClick;
-		}
-
-		if(typeof(def.cellDblClick) == "function"){
-			this.cellEvents.cellDblClick = def.cellDblClick;
-		}
-
-		if(typeof(def.cellContext) == "function"){
-			this.cellEvents.cellContext = def.cellContext;
-		}
-
-		//store column mouse event bindings
-		if(typeof(def.cellMouseEnter) == "function"){
-			this.cellEvents.cellMouseEnter = def.cellMouseEnter;
-		}
-
-		if(typeof(def.cellMouseLeave) == "function"){
-			this.cellEvents.cellMouseLeave = def.cellMouseLeave;
-		}
-
-		if(typeof(def.cellMouseOver) == "function"){
-			this.cellEvents.cellMouseOver = def.cellMouseOver;
-		}
-
-		if(typeof(def.cellMouseOut) == "function"){
-			this.cellEvents.cellMouseOut = def.cellMouseOut;
-		}
-
-		if(typeof(def.cellMouseMove) == "function"){
-			this.cellEvents.cellMouseMove = def.cellMouseMove;
-		}
-
-		//setup column cell tap event bindings
-		if(typeof(def.cellTap) == "function"){
-			this.cellEvents.cellTap = def.cellTap;
-		}
-
-		if(typeof(def.cellDblTap) == "function"){
-			this.cellEvents.cellDblTap = def.cellDblTap;
-		}
-
-		if(typeof(def.cellTapHold) == "function"){
-			this.cellEvents.cellTapHold = def.cellTapHold;
-		}
-
-		//setup column cell edit callbacks
-		if(typeof(def.cellEdited) == "function"){
-			this.cellEvents.cellEdited = def.cellEdited;
-		}
-
-		if(typeof(def.cellEditing) == "function"){
-			this.cellEvents.cellEditing = def.cellEditing;
-		}
-
-		if(typeof(def.cellEditCancelled) == "function"){
-			this.cellEvents.cellEditCancelled = def.cellEditCancelled;
 		}
 	}
 

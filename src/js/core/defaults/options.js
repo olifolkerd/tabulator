@@ -335,4 +335,17 @@ export default {
 	cellMouseOver:false,
 	cellMouseOut:false,
 	cellMouseMove:false,
-};
+
+	//column header callbacks
+	headerClick:false,
+	headerDblClick:false,
+	headerContext:false,
+	headerTap:false,
+	headerDblTap:false,
+	headerTapHold:false,
+	headerMouseEnter:false,
+	headerMouseLeave:false,
+	headerMouseOver:false,
+	headerMouseOut:false,
+	headerMouseMove:false,
+}
