@@ -10301,25 +10301,6 @@ class Group{
 	addBindings(){
 		var dblTap,	tapHold, tap, toggleElement;
 
-		//handle group click events
-		if (this.groupManager.table.options.groupClick){
-			this.element.addEventListener("click", (e) => {
-				this.groupManager.table.options.groupClick.call(this.groupManager.table, e, this.getComponent());
-			});
-		}
-
-		if (this.groupManager.table.options.groupDblClick){
-			this.element.addEventListener("dblclick", (e) => {
-				this.groupManager.table.options.groupDblClick.call(this.groupManager.table, e, this.getComponent());
-			});
-		}
-
-		if (this.groupManager.table.options.groupContext){
-			this.element.addEventListener("contextmenu", (e) => {
-				this.groupManager.table.options.groupContext.call(this.groupManager.table, e, this.getComponent());
-			});
-		}
-
 		if ((this.groupManager.table.options.groupContextMenu || this.groupManager.table.options.groupClickMenu) && this.groupManager.table.modExists("menu")){
 			this.groupManager.table.modules.menu.initializeGroup.call(this.groupManager.table.modules.menu, this);
 		}
@@ -17344,7 +17325,7 @@ class Interaction extends Module{
 			rowDblTap:"row",
 			rowTapHold:"row",
 
-			//cellEvents
+			//cell events
 			cellClick:"cell-click",
 			cellDblClick:"cell-dblclick",
 			cellContext:"cell-contextmenu",
@@ -17357,7 +17338,7 @@ class Interaction extends Module{
 			cellDblTap:"cell",
 			cellTapHold:"cell",
 
-			//cellEvents
+			//column header events
 			headerClick:"column-click",
 			headerDblClick:"column-dblclick",
 			headerContext:"column-contextmenu",
@@ -17369,6 +17350,19 @@ class Interaction extends Module{
 			headerTap:"column",
 			headerDblTap:"column",
 			headerTapHold:"column",
+
+			//group header
+			groupClick:"group-click",
+			groupDblClick:"group-dblclick",
+			groupContext:"group-contextmenu",
+			groupMouseEnter:"group-mouseenter",
+			groupMouseLeave:"group-mouseleave",
+			groupMouseOver:"group-mouseover",
+			groupMouseOut:"group-mouseout",
+			groupMouseMove:"group-mousemove",
+			groupTap:"group",
+			groupDblTap:"group",
+			groupTapHold:"group",
 		};
 
 		this.subscribers = {};
@@ -17649,7 +17643,7 @@ var defaultOptions$1 = {
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
 
 	resizableColumns:true, //resizable columns
-	resizableRows:false, //resizable rows
+	resizablegroups:false, //resizable rows
 	autoResize:true, //auto resize table
 
 	columns:[],//store for colum header info
@@ -17832,9 +17826,6 @@ var defaultOptions$1 = {
 	//grouping callbacks
 	groupToggleElement:"arrow",
 	groupClosedShowCalcs:false,
-	groupClick:false,
-	groupDblClick:false,
-	groupContext:false,
 	groupContextMenu:false,
 	groupClickMenu:false,
 	groupTap:false,
@@ -17982,6 +17973,19 @@ var defaultOptions$1 = {
 	headerMouseOver:false,
 	headerMouseOut:false,
 	headerMouseMove:false,
+
+	//group header callbacks
+	groupClick:false,
+	groupDblClick:false,
+	groupContext:false,
+	groupTap:false,
+	groupDblTap:false,
+	groupTapHold:false,
+	groupMouseEnter:false,
+	groupMouseLeave:false,
+	groupMouseOver:false,
+	groupMouseOut:false,
+	groupMouseMove:false,
 };
 
 class ColumnManager extends CoreFeature {
@@ -20693,6 +20697,7 @@ class InteractionManager extends CoreFeature {
 		this.componentMap = {
 			"tabulator-cell":"cell",
 			"tabulator-row":"row",
+			"tabulator-group":"group",
 			"tabulator-col":"column",
 		};
 
@@ -20800,6 +20805,10 @@ class InteractionManager extends CoreFeature {
 			}
 		}
 
+		if(targets.group && targets.group === targets.row){
+			delete targets.row;
+		}
+
 		return targets;
 	}
 
@@ -20819,6 +20828,7 @@ class InteractionManager extends CoreFeature {
 			}else {
 				switch(key){
 					case "row":
+					case "group":
 					if(listener.components.includes("row") || listener.components.includes("cell")){
 						let rows = this.table.rowManager.getVisibleRows();
 

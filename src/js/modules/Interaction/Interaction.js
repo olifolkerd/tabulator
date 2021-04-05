@@ -23,7 +23,7 @@ class Interaction extends Module{
 			rowDblTap:"row",
 			rowTapHold:"row",
 
-			//cellEvents
+			//cell events
 			cellClick:"cell-click",
 			cellDblClick:"cell-dblclick",
 			cellContext:"cell-contextmenu",
@@ -36,7 +36,7 @@ class Interaction extends Module{
 			cellDblTap:"cell",
 			cellTapHold:"cell",
 
-			//cellEvents
+			//column header events
 			headerClick:"column-click",
 			headerDblClick:"column-dblclick",
 			headerContext:"column-contextmenu",
@@ -48,6 +48,19 @@ class Interaction extends Module{
 			headerTap:"column",
 			headerDblTap:"column",
 			headerTapHold:"column",
+
+			//group header
+			groupClick:"group-click",
+			groupDblClick:"group-dblclick",
+			groupContext:"group-contextmenu",
+			groupMouseEnter:"group-mouseenter",
+			groupMouseLeave:"group-mouseleave",
+			groupMouseOver:"group-mouseover",
+			groupMouseOut:"group-mouseout",
+			groupMouseMove:"group-mousemove",
+			groupTap:"group",
+			groupDblTap:"group",
+			groupTapHold:"group",
 		}
 
 		this.subscribers = {};

@@ -15,7 +15,7 @@ export default {
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
 
 	resizableColumns:true, //resizable columns
-	resizableRows:false, //resizable rows
+	resizablegroups:false, //resizable rows
 	autoResize:true, //auto resize table
 
 	columns:[],//store for colum header info
@@ -198,9 +198,6 @@ export default {
 	//grouping callbacks
 	groupToggleElement:"arrow",
 	groupClosedShowCalcs:false,
-	groupClick:false,
-	groupDblClick:false,
-	groupContext:false,
 	groupContextMenu:false,
 	groupClickMenu:false,
 	groupTap:false,
@@ -348,4 +345,17 @@ export default {
 	headerMouseOver:false,
 	headerMouseOut:false,
 	headerMouseMove:false,
+
+	//group header callbacks
+	groupClick:false,
+	groupDblClick:false,
+	groupContext:false,
+	groupTap:false,
+	groupDblTap:false,
+	groupTapHold:false,
+	groupMouseEnter:false,
+	groupMouseLeave:false,
+	groupMouseOver:false,
+	groupMouseOut:false,
+	groupMouseMove:false,
 }

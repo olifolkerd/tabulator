@@ -81,25 +81,6 @@ class Group{
 	addBindings(){
 		var dblTap,	tapHold, tap, toggleElement;
 
-		//handle group click events
-		if (this.groupManager.table.options.groupClick){
-			this.element.addEventListener("click", (e) => {
-				this.groupManager.table.options.groupClick.call(this.groupManager.table, e, this.getComponent());
-			});
-		}
-
-		if (this.groupManager.table.options.groupDblClick){
-			this.element.addEventListener("dblclick", (e) => {
-				this.groupManager.table.options.groupDblClick.call(this.groupManager.table, e, this.getComponent());
-			});
-		}
-
-		if (this.groupManager.table.options.groupContext){
-			this.element.addEventListener("contextmenu", (e) => {
-				this.groupManager.table.options.groupContext.call(this.groupManager.table, e, this.getComponent());
-			});
-		}
-
 		if ((this.groupManager.table.options.groupContextMenu || this.groupManager.table.options.groupClickMenu) && this.groupManager.table.modExists("menu")){
 			this.groupManager.table.modules.menu.initializeGroup.call(this.groupManager.table.modules.menu, this);
 		}

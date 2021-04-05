@@ -28,6 +28,7 @@ export default class InteractionManager extends CoreFeature {
 		this.componentMap = {
 			"tabulator-cell":"cell",
 			"tabulator-row":"row",
+			"tabulator-group":"group",
 			"tabulator-col":"column",
 		};
 
@@ -135,6 +136,10 @@ export default class InteractionManager extends CoreFeature {
 			}
 		}
 
+		if(targets.group && targets.group === targets.row){
+			delete targets.row;
+		}
+
 		return targets;
 	}
 
@@ -154,6 +159,7 @@ export default class InteractionManager extends CoreFeature {
 			}else{
 				switch(key){
 					case "row":
+					case "group":
 					if(listener.components.includes("row") || listener.components.includes("cell")){
 						let rows = this.table.rowManager.getVisibleRows();
 
