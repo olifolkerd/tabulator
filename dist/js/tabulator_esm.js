@@ -1295,246 +1295,11 @@ class Cell$1 extends CoreFeature{
 			});
 		}
 
-		// this._bindClickEvents(cellEvents);
-
-		// this._bindTouchEvents(cellEvents);
-
-		// this._bindMouseEvents(cellEvents);
-
 		this.dispatch("cell-init", this);
 
 		//hide cell if not visible
 		if(!this.column.visible){
 			this.hide();
-		}
-	}
-
-	_bindClickEvents(cellEvents){
-		var element = this.element;
-
-		//set event bindings
-		if (cellEvents.cellClick || this.table.options.cellClick){
-			element.addEventListener("click", (e) => {
-				var component = this.getComponent();
-
-				if(cellEvents.cellClick){
-					cellEvents.cellClick.call(this.table, e, component);
-				}
-
-				if(this.table.options.cellClick){
-					this.table.options.cellClick.call(this.table, e, component);
-				}
-			});
-		}
-
-		if (cellEvents.cellDblClick || this.table.options.cellDblClick){
-			element.addEventListener("dblclick", (e) => {
-				var component = this.getComponent();
-
-				if(cellEvents.cellDblClick){
-					cellEvents.cellDblClick.call(this.table, e, component);
-				}
-
-				if(this.table.options.cellDblClick){
-					this.table.options.cellDblClick.call(this.table, e, component);
-				}
-			});
-		}else {
-			element.addEventListener("dblclick", (e) => {
-				if(this.table.modExists("edit")){
-					if (this.table.modules.edit.currentCell === this){
-						return; //prevent instant selection of editor content
-					}
-				}
-
-				e.preventDefault();
-
-				try{
-					if (document.selection) { // IE
-						var range = document.body.createTextRange();
-						range.moveToElementText(this.element);
-						range.select();
-					} else if (window.getSelection) {
-						var range = document.createRange();
-						range.selectNode(this.element);
-						window.getSelection().removeAllRanges();
-						window.getSelection().addRange(range);
-					}
-				}catch(e){}
-			});
-		}
-
-		if (cellEvents.cellContext || this.table.options.cellContext){
-			element.addEventListener("contextmenu", (e) => {
-				var component = this.getComponent();
-
-				if(cellEvents.cellContext){
-					cellEvents.cellContext.call(this.table, e, component);
-				}
-
-				if(this.table.options.cellContext){
-					this.table.options.cellContext.call(this.table, e, component);
-				}
-			});
-		}
-	}
-
-	_bindMouseEvents(cellEvents){
-		var element = this.element;
-
-		if (cellEvents.cellMouseEnter || this.table.options.cellMouseEnter){
-			element.addEventListener("mouseenter", (e) => {
-				var component = this.getComponent();
-
-				if(cellEvents.cellMouseEnter){
-					cellEvents.cellMouseEnter.call(this.table, e, component);
-				}
-
-				if(this.table.options.cellMouseEnter){
-					this.table.options.cellMouseEnter.call(this.table, e, component);
-				}
-			});
-		}
-
-		if (cellEvents.cellMouseLeave || this.table.options.cellMouseLeave){
-			element.addEventListener("mouseleave", (e) => {
-				var component = this.getComponent();
-
-				if(cellEvents.cellMouseLeave){
-					cellEvents.cellMouseLeave.call(this.table, e, component);
-				}
-
-				if(this.table.options.cellMouseLeave){
-					this.table.options.cellMouseLeave.call(this.table, e, component);
-				}
-			});
-		}
-
-		if (cellEvents.cellMouseOver || this.table.options.cellMouseOver){
-			element.addEventListener("mouseover", (e) => {
-				var component = this.getComponent();
-
-				if(cellEvents.cellMouseOver){
-					cellEvents.cellMouseOver.call(this.table, e, component);
-				}
-
-				if(this.table.options.cellMouseOver){
-					this.table.options.cellMouseOver.call(this.table, e, component);
-				}
-			});
-		}
-
-		if (cellEvents.cellMouseOut || this.table.options.cellMouseOut){
-			element.addEventListener("mouseout", (e) => {
-				var component = this.getComponent();
-
-				if(cellEvents.cellMouseOut){
-					cellEvents.cellMouseOut.call(this.table, e, component);
-				}
-
-				if(this.table.options.cellMouseOut){
-					this.table.options.cellMouseOut.call(this.table, e, component);
-				}
-			});
-		}
-
-		if (cellEvents.cellMouseMove || this.table.options.cellMouseMove){
-			element.addEventListener("mousemove", (e) => {
-				var component = this.getComponent();
-
-				if(cellEvents.cellMouseMove){
-					cellEvents.cellMouseMove.call(this.table, e, component);
-				}
-
-				if(this.table.options.cellMouseMove){
-					this.table.options.cellMouseMove.call(this.table, e, component);
-				}
-			});
-		}
-	}
-
-	_bindTouchEvents(cellEvents){
-		var element = this.element,
-		dblTap,	tapHold, tap;
-
-		if (cellEvents.cellTap || this.table.options.cellTap){
-			tap = false;
-
-			element.addEventListener("touchstart", (e) => {
-				tap = true;
-			}, {passive: true});
-
-			element.addEventListener("touchend", (e) => {
-				if(tap){
-					var component = this.getComponent();
-
-					if(cellEvents.cellTap){
-						cellEvents.cellTap.call(this.table, e, component);
-					}
-
-					if(this.table.options.cellTap){
-						this.table.options.cellTap.call(this.table, e, component);
-					}
-				}
-
-				tap = false;
-			});
-		}
-
-		if (cellEvents.cellDblTap || this.table.options.cellDblTap){
-			dblTap = null;
-
-			element.addEventListener("touchend", (e) => {
-				if(dblTap){
-					clearTimeout(dblTap);
-					dblTap = null;
-
-					var component = this.getComponent();
-
-					if(cellEvents.cellDblTap){
-						cellEvents.cellDblTap.call(this.table, e, component);
-					}
-
-					if(this.table.options.cellDblTap){
-						this.table.options.cellDblTap.call(this.table, e, component);
-					}
-				}else {
-
-					dblTap = setTimeout(() => {
-						clearTimeout(dblTap);
-						dblTap = null;
-					}, 300);
-				}
-			});
-		}
-
-		if (cellEvents.cellTapHold || this.table.options.cellTapHold){
-			tapHold = null;
-
-			element.addEventListener("touchstart", (e) => {
-				clearTimeout(tapHold);
-
-				tapHold = setTimeout(() => {
-					clearTimeout(tapHold);
-					tapHold = null;
-					tap = false;
-					var component = this.getComponent();
-
-					if(cellEvents.cellTapHold){
-						cellEvents.cellTapHold.call(this.table, e, component);
-					}
-
-					if(this.table.options.cellTapHold){
-						this.table.options.cellTapHold.call(this.table, e, component);
-					}
-				}, 1000);
-
-			}, {passive: true});
-
-			element.addEventListener("touchend", (e) => {
-				clearTimeout(tapHold);
-				tapHold = null;
-			});
 		}
 	}
 
@@ -7338,8 +7103,8 @@ class Edit extends Module{
 				cell.row.normalizeHeight(true);
 			}
 
-			if(cell.column.cellEvents.cellEditCancelled){
-				cell.column.cellEvents.cellEditCancelled.call(this.table, component);
+			if(cell.column.definition.cellEditCancelled){
+				cell.column.definition.cellEditCancelled.call(this.table, component);
 			}
 
 			this.dispatchExternal("cellEditCancelled", component);
@@ -7537,13 +7302,13 @@ class Edit extends Module{
 				if(this.mouseClick){
 					this.mouseClick = false;
 
-					if(cell.column.cellEvents.cellClick){
-						cell.column.cellEvents.cellClick.call(this.table, e, component);
+					if(cell.column.definition.cellClick){
+						cell.column.definition.cellClick.call(this.table, e, component);
 					}
 				}
 
-				if(cell.column.cellEvents.cellEditing){
-					cell.column.cellEvents.cellEditing.call(this.table, component);
+				if(cell.column.definition.cellEditing){
+					cell.column.definition.cellEditing.call(this.table, component);
 				}
 
 				this.dispatchExternal("cellEditing", component);
@@ -17636,6 +17401,30 @@ class Interaction extends Module{
 		this.initializeExternalEvents();
 
 		this.subscribe("column-init", this.initializeColumn.bind(this));
+		this.subscribe("cell-dblclick", this.cellContentsSelectionFixer.bind(this));
+	}
+
+	cellContentsSelectionFixer(e, cell){
+		if(this.table.modExists("edit")){
+			if (this.table.modules.edit.currentCell === this){
+				return; //prevent instant selection of editor content
+			}
+		}
+
+		e.preventDefault();
+
+		try{
+			if (document.selection) { // IE
+				var range = document.body.createTextRange();
+				range.moveToElementText(this.element);
+				range.select();
+			} else if (window.getSelection) {
+				var range = document.createRange();
+				range.selectNode(this.element);
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(range);
+			}
+		}catch(e){}
 	}
 
 	initializeExternalEvents(){
@@ -20968,7 +20757,8 @@ class InteractionManager extends CoreFeature {
 			if(listener.components.length){
 				if(!listener.handler){
 					listener.handler = this.track.bind(this, key);
-					this.el.addEventListener(key, listener.handler, {passive: true});
+					this.el.addEventListener(key, listener.handler);
+					// this.el.addEventListener(key, listener.handler, {passive: true})
 				}
 			}else {
 				if(listener.handler){

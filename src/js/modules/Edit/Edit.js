@@ -152,8 +152,8 @@ class Edit extends Module{
 				cell.row.normalizeHeight(true);
 			}
 
-			if(cell.column.cellEvents.cellEditCancelled){
-				cell.column.cellEvents.cellEditCancelled.call(this.table, component);
+			if(cell.column.definition.cellEditCancelled){
+				cell.column.definition.cellEditCancelled.call(this.table, component);
 			}
 
 			this.dispatchExternal("cellEditCancelled", component);
@@ -355,13 +355,13 @@ class Edit extends Module{
 				if(this.mouseClick){
 					this.mouseClick = false;
 
-					if(cell.column.cellEvents.cellClick){
-						cell.column.cellEvents.cellClick.call(this.table, e, component);
+					if(cell.column.definition.cellClick){
+						cell.column.definition.cellClick.call(this.table, e, component);
 					}
 				}
 
-				if(cell.column.cellEvents.cellEditing){
-					cell.column.cellEvents.cellEditing.call(this.table, component);
+				if(cell.column.definition.cellEditing){
+					cell.column.definition.cellEditing.call(this.table, component);
 				}
 
 				this.dispatchExternal("cellEditing", component);

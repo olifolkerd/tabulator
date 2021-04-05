@@ -80,6 +80,30 @@ class Interaction extends Module{
 		this.initializeExternalEvents();
 
 		this.subscribe("column-init", this.initializeColumn.bind(this))
+		this.subscribe("cell-dblclick", this.cellContentsSelectionFixer.bind(this))
+	}
+
+	cellContentsSelectionFixer(e, cell){
+		if(this.table.modExists("edit")){
+			if (this.table.modules.edit.currentCell === this){
+				return; //prevent instant selection of editor content
+			}
+		}
+
+		e.preventDefault();
+
+		try{
+			if (document.selection) { // IE
+				var range = document.body.createTextRange();
+				range.moveToElementText(this.element);
+				range.select();
+			} else if (window.getSelection) {
+				var range = document.createRange();
+				range.selectNode(this.element);
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(range);
+			}
+		}catch(e){}
 	}
 
 	initializeExternalEvents(){
