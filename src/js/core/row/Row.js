@@ -59,65 +59,6 @@ export default class Row extends CoreFeature{
 		this.createElement();
 
 		this.dispatch("row-init", this);
-
-		if (this.table.options.rowTap){
-
-			tap = false;
-
-			this.element.addEventListener("touchstart", (e) => {
-				tap = true;
-			}, {passive: true});
-
-			this.element.addEventListener("touchend", (e) => {
-				if(tap){
-					this.table.options.rowTap(e, this.getComponent());
-				}
-
-				tap = false;
-			});
-		}
-
-		if (this.table.options.rowDblTap){
-
-			dblTap = null;
-
-			this.element.addEventListener("touchend", (e) => {
-				if(dblTap){
-					clearTimeout(dblTap);
-					dblTap = null;
-
-					this.table.options.rowDblTap(e, this.getComponent());
-				}else{
-
-					dblTap = setTimeout(() => {
-						clearTimeout(dblTap);
-						dblTap = null;
-					}, 300);
-				}
-			});
-		}
-
-		if (this.table.options.rowTapHold){
-
-			tapHold = null;
-
-			this.element.addEventListener("touchstart", (e) => {
-				clearTimeout(tapHold);
-
-				tapHold = setTimeout(() => {
-					clearTimeout(tapHold);
-					tapHold = null;
-					tap = false;
-					this.table.options.rowTapHold(e, this.getComponent());
-				}, 1000);
-
-			}, {passive: true});
-
-			this.element.addEventListener("touchend", (e) => {
-				clearTimeout(tapHold);
-				tapHold = null;
-			});
-		}
 	}
 
 	generateCells(){

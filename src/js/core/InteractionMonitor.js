@@ -92,7 +92,7 @@ export default class InteractionManager extends CoreFeature {
 			if(listener.components.length){
 				if(!listener.handler){
 					listener.handler = this.track.bind(this, key);
-					this.el.addEventListener(key, listener.handler)
+					this.el.addEventListener(key, listener.handler, {passive: true})
 				}
 			}else{
 				if(listener.handler){
