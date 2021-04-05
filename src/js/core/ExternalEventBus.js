@@ -73,7 +73,11 @@ export default class ExternalEventBus {
 	_dispatch(){
 		var args = Array.from(arguments),
 		key = args.shift(),
-	result;
+		result;
+
+		if(typeof this.optionsList[key] === "function"){
+			result = this.optionsList[key].apply(this, args);
+		}
 
 		if(this.events[key]){
 			this.events[key].forEach((callback, i) => {
@@ -83,10 +87,6 @@ export default class ExternalEventBus {
 					result = callResult;
 				}
 			});
-		}
-
-		if(typeof this.optionsList[key] === "function"){
-			result = this.optionsList[key].apply(this, args);
 		}
 
 		return result;
