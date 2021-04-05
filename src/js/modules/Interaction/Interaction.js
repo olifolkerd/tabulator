@@ -18,6 +18,18 @@ class Interaction extends Module{
 			rowTap:"row",
 			rowDblTap:"row",
 			rowTapHold:"row",
+
+			cellClick:"cell-click",
+			cellDblClick:"cell-dblclick",
+			cellContext:"cell-contextmenu",
+			cellMouseEnter:"cell-mouseenter",
+			cellMouseLeave:"cell-mouseleave",
+			cellMouseOver:"cell-mouseover",
+			cellMouseOut:"cell-mouseout",
+			cellMouseMove:"cell-mousemove",
+			cellTap:"cell",
+			cellDblTap:"cell",
+			cellTapHold:"cell",
 		}
 
 		this.subscribers = {};
@@ -129,13 +141,7 @@ class Interaction extends Module{
 	}
 
 	handle(action, e, component){
-		component = component.getComponent();
-
-		if(this.table.options[action]){
-			this.table.options[action](e, component);
-		}
-
-		this.dispatchExternal(action, e, component)
+		this.dispatchExternal(action, e, component.getComponent());
 	}
 
 	handleTouch(type, action, e, component){

@@ -17646,6 +17646,18 @@ class Interaction extends Module{
 			rowTap:"row",
 			rowDblTap:"row",
 			rowTapHold:"row",
+
+			cellClick:"cell-click",
+			cellDblClick:"cell-dblclick",
+			cellContext:"cell-contextmenu",
+			cellMouseEnter:"cell-mouseenter",
+			cellMouseLeave:"cell-mouseleave",
+			cellMouseOver:"cell-mouseover",
+			cellMouseOut:"cell-mouseout",
+			cellMouseMove:"cell-mousemove",
+			cellTap:"cell",
+			cellDblTap:"cell",
+			cellTapHold:"cell",
 		};
 
 		this.subscribers = {};
@@ -17756,13 +17768,7 @@ class Interaction extends Module{
 	}
 
 	handle(action, e, component){
-		component = component.getComponent();
-
-		if(this.table.options[action]){
-			this.table.options[action](e, component);
-		}
-
-		this.dispatchExternal(action, e, component);
+		this.dispatchExternal(action, e, component.getComponent());
 	}
 
 	handleTouch(type, action, e, component){
@@ -18053,33 +18059,8 @@ var defaultOptions$1 = {
 
 	placeholder:false,
 
-	//row callbacks
-	rowClick:false,
-	rowDblClick:false,
-	rowContext:false,
-	rowTap:false,
-	rowDblTap:false,
-	rowTapHold:false,
-	rowMouseEnter:false,
-	rowMouseLeave:false,
-	rowMouseOver:false,
-	rowMouseOut:false,
-	rowMouseMove:false,
 	rowContextMenu:false,
 	rowClickMenu:false,
-
-	//cell callbacks
-	cellClick:false,
-	cellDblClick:false,
-	cellContext:false,
-	cellTap:false,
-	cellDblTap:false,
-	cellTapHold:false,
-	cellMouseEnter:false,
-	cellMouseLeave:false,
-	cellMouseOver:false,
-	cellMouseOut:false,
-	cellMouseMove:false,
 
 	//ajax callbacks
 	ajaxRequesting:function(){},
@@ -18200,7 +18181,31 @@ var defaultOptions$1 = {
 	historyUndo:null,
 	historyRedo:null,
 
+	//row callbacks
+	rowClick:false,
+	rowDblClick:false,
+	rowContext:false,
+	rowTap:false,
+	rowDblTap:false,
+	rowTapHold:false,
+	rowMouseEnter:false,
+	rowMouseLeave:false,
+	rowMouseOver:false,
+	rowMouseOut:false,
+	rowMouseMove:false,
 
+	//cell callbacks
+	cellClick:false,
+	cellDblClick:false,
+	cellContext:false,
+	cellTap:false,
+	cellDblTap:false,
+	cellTapHold:false,
+	cellMouseEnter:false,
+	cellMouseLeave:false,
+	cellMouseOver:false,
+	cellMouseOut:false,
+	cellMouseMove:false,
 };
 
 class ColumnManager extends CoreFeature {
@@ -21037,7 +21042,7 @@ class InteractionManager extends CoreFeature {
 			}else {
 				switch(key){
 					case "row":
-					if(listener.components.includes("row") || listener.components.includes("row")){
+					if(listener.components.includes("row") || listener.components.includes("cell")){
 						let rows = this.table.rowManager.getVisibleRows();
 
 						component = rows.find((row) => {

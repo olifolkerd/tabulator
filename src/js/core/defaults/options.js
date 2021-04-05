@@ -188,33 +188,8 @@ export default {
 
 	placeholder:false,
 
-	//row callbacks
-	rowClick:false,
-	rowDblClick:false,
-	rowContext:false,
-	rowTap:false,
-	rowDblTap:false,
-	rowTapHold:false,
-	rowMouseEnter:false,
-	rowMouseLeave:false,
-	rowMouseOver:false,
-	rowMouseOut:false,
-	rowMouseMove:false,
 	rowContextMenu:false,
 	rowClickMenu:false,
-
-	//cell callbacks
-	cellClick:false,
-	cellDblClick:false,
-	cellContext:false,
-	cellTap:false,
-	cellDblTap:false,
-	cellTapHold:false,
-	cellMouseEnter:false,
-	cellMouseLeave:false,
-	cellMouseOver:false,
-	cellMouseOut:false,
-	cellMouseMove:false,
 
 	//ajax callbacks
 	ajaxRequesting:function(){},
@@ -335,5 +310,29 @@ export default {
 	historyUndo:null,
 	historyRedo:null,
 
+	//row callbacks
+	rowClick:false,
+	rowDblClick:false,
+	rowContext:false,
+	rowTap:false,
+	rowDblTap:false,
+	rowTapHold:false,
+	rowMouseEnter:false,
+	rowMouseLeave:false,
+	rowMouseOver:false,
+	rowMouseOut:false,
+	rowMouseMove:false,
 
+	//cell callbacks
+	cellClick:false,
+	cellDblClick:false,
+	cellContext:false,
+	cellTap:false,
+	cellDblTap:false,
+	cellTapHold:false,
+	cellMouseEnter:false,
+	cellMouseLeave:false,
+	cellMouseOver:false,
+	cellMouseOut:false,
+	cellMouseMove:false,
 };
