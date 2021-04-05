@@ -54,10 +54,7 @@ export default class Row extends CoreFeature{
 	}
 
 	generateElement(){
-		var dblTap,	tapHold, tap;
-
 		this.createElement();
-
 		this.dispatch("row-init", this);
 	}
 

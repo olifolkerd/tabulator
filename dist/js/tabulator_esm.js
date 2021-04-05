@@ -3501,9 +3501,7 @@ class Row$1 extends CoreFeature{
 	}
 
 	generateElement(){
-
 		this.createElement();
-
 		this.dispatch("row-init", this);
 	}
 
