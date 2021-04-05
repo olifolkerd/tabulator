@@ -147,7 +147,6 @@ class Tabulator {
 
 	//concreate table
 	_create(){
-
 		this.InteractionMonitor = new InteractionMonitor(this);
 
 		this._clearObjectPointers();
