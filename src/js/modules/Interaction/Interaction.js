@@ -1,6 +1,9 @@
 import Module from '../../core/Module.js';
 import Helpers from '../../core/Helpers.js';
 
+import Cell from '../../core/cell/Cell';
+import Column from '../../core/column/Column';
+
 class Interaction extends Module{
 
 	constructor(table){
@@ -50,6 +53,8 @@ class Interaction extends Module{
 		this.subscribers = {};
 
 		this.touchSubscribers = {};
+
+		this.columnSubscribers = {};
 
 		this.touchWatchers = {
 			row:{
@@ -101,7 +106,7 @@ class Interaction extends Module{
 			}
 		}else{
 			if(this.eventMap[key].includes("-")){
-				if(this.subscribers[key] && !this.table.options[key]  && !this.subscribedExternal(key)){
+				if(this.subscribers[key] && !this.table.options[key] && !this.columnSubscribers[key]  && !this.subscribedExternal(key)){
 					this.unsubscribe(this.eventMap[key], this.subscribers[key]);
 					delete this.subscribers[key];
 				}
@@ -153,15 +158,25 @@ class Interaction extends Module{
 	}
 
 	initializeColumn(column){
-		this.initializeCells(column);
-	}
+		var def = column.definition;
 
-	initializeCells(column){
+		for(let key in this.eventMap){
+			if(def[key]){
+				this.subscriptionChanged(key, true);
 
+				if(!this.columnSubscribers[key]){
+					this.columnSubscribers[key] = [];
+				}
+
+				this.columnSubscribers[key].push(column);
+
+				console.log("col sub", this.columnSubscribers)
+			}
+		}
 	}
 
 	handle(action, e, component){
-		this.dispatchExternal(action, e, component.getComponent());
+		this.dispatchEvent(action, e, component);
 	}
 
 	handleTouch(type, action, e, component){
@@ -185,7 +200,7 @@ class Interaction extends Module{
 				clearTimeout(watchers.tapDbl);
 				watchers.tapDbl = null;
 
-				this.dispatchExternal(type + "TapHold", e,  component.getComponent());
+				this.dispatchEvent(type + "TapHold", e,  component);
 			}, 1000);
 			break;
 
@@ -193,14 +208,14 @@ class Interaction extends Module{
 			if(watchers.tap){
 
 				watchers.tap = null;
-				this.dispatchExternal(type + "Tap", e,  component.getComponent());
+				this.dispatchEvent(type + "Tap", e,  component);
 			}
 
 			if(watchers.tapDbl){
 				clearTimeout(watchers.tapDbl);
 				watchers.tapDbl = null;
 
-				this.dispatchExternal(type + "DblTap", e,  component.getComponent());
+				this.dispatchEvent(type + "DblTap", e,  component);
 			}else{
 				watchers.tapDbl = setTimeout(() => {
 					clearTimeout(watchers.tapDbl);
@@ -214,17 +229,24 @@ class Interaction extends Module{
 		}
 	}
 
+	dispatchEvent(action, e, component){
+		var componentObj = component.getComponent(),
+		callback;
 
-	handleColumn(action, e, component){
-		if(typeof component.definition[action] === "function"){
-			component.definition[action](e, component.getComponent());
-		}
-	}
+		if(this.columnSubscribers[action]){
 
-	handleCell(action, e, component){
-		if(typeof component.column.definition[action] === "function"){
-			component.column.definition[action](e, component.getComponent());
+			if(component instanceof Cell){
+				callback = component.column.definition[action];
+			}else if(component instanceof Column){
+				callback = component.definition[action];
+			}
+
+			if(callback){
+				callback(e, componentObj);
+			}
 		}
+
+		this.dispatchExternal(action, e, componentObj);
 	}
 }
 
