@@ -1661,9 +1661,7 @@ class Cell$1 extends CoreFeature{
 	//////////////// Object Generation /////////////////
 	getComponent(){
 		if(!this.component){
-			var start = performance.now();
 			this.component = new CellComponent(this);
-			console.log("p", performance.now() - start);
 		}
 
 		return this.component;
