@@ -3,6 +3,16 @@ export default class CellComponent {
 
 	constructor (cell){
 		this._cell = cell;
+
+		return new Proxy(this, {
+			get: function(target, name, receiver) {
+				if (typeof target[name] !== "undefined") {
+					return target[name];
+				}else{
+					return target._cell.table.componentFunctionMap("cell", target._cell, name)
+				}
+			}
+		})
 	}
 
 	getValue(){

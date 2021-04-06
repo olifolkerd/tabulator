@@ -1,6 +1,16 @@
 class CalcComponent{
 	constructor (row){
 		this._row = row;
+
+		return new Proxy(this, {
+			get: function(target, name, receiver) {
+				if (typeof target[name] !== "undefined") {
+					return target[name];
+				}else{
+					return target._row.table.componentFunctionMap("row", target._row, name)
+				}
+			}
+		})
 	}
 
 	getData(transform){

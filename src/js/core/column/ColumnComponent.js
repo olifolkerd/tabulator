@@ -3,6 +3,16 @@ export default class ColumnComponent {
 	constructor (column){
 		this._column = column;
 		this.type = "ColumnComponent";
+
+		return new Proxy(this, {
+			get: function(target, name, receiver) {
+				if (typeof target[name] !== "undefined") {
+					return target[name];
+				}else{
+					return target._column.table.componentFunctionMap("row", target._column, name)
+				}
+			}
+		})
 	}
 
 	getElement(){

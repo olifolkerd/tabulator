@@ -1066,6 +1066,16 @@ Clipboard.pasteParsers = defaultPasteParsers;
 class CalcComponent{
 	constructor (row){
 		this._row = row;
+
+		return new Proxy(this, {
+			get: function(target, name, receiver) {
+				if (typeof target[name] !== "undefined") {
+					return target[name];
+				}else {
+					return target._row.table.componentFunctionMap("row", target._row, name)
+				}
+			}
+		})
 	}
 
 	getData(transform){
@@ -1105,6 +1115,16 @@ class CellComponent {
 
 	constructor (cell){
 		this._cell = cell;
+
+		return new Proxy(this, {
+			get: function(target, name, receiver) {
+				if (typeof target[name] !== "undefined") {
+					return target[name];
+				}else {
+					return target._cell.table.componentFunctionMap("cell", target._cell, name)
+				}
+			}
+		})
 	}
 
 	getValue(){
@@ -1641,7 +1661,9 @@ class Cell$1 extends CoreFeature{
 	//////////////// Object Generation /////////////////
 	getComponent(){
 		if(!this.component){
+			var start = performance.now();
 			this.component = new CellComponent(this);
+			console.log("p", performance.now() - start);
 		}
 
 		return this.component;
@@ -1653,6 +1675,16 @@ class ColumnComponent {
 	constructor (column){
 		this._column = column;
 		this.type = "ColumnComponent";
+
+		return new Proxy(this, {
+			get: function(target, name, receiver) {
+				if (typeof target[name] !== "undefined") {
+					return target[name];
+				}else {
+					return target._column.table.componentFunctionMap("row", target._column, name)
+				}
+			}
+		})
 	}
 
 	getElement(){
@@ -2976,6 +3008,16 @@ class RowComponent$1 {
 
 	constructor (row){
 		this._row = row;
+
+		return new Proxy(this, {
+			get: function(target, name, receiver) {
+				if (typeof target[name] !== "undefined") {
+					return target[name];
+				}else {
+					return target._row.table.componentFunctionMap("row", target._row, name)
+				}
+			}
+		})
 	}
 
 	getData(transform){
@@ -10170,6 +10212,16 @@ class GroupComponent {
 	constructor (group){
 		this._group = group;
 		this.type = "GroupComponent";
+
+		return new Proxy(this, {
+			get: function(target, name, receiver) {
+				if (typeof target[name] !== "undefined") {
+					return target[name];
+				}else {
+					return target._group.table.componentFunctionMap("row", target._group, name)
+				}
+			}
+		})
 	}
 
 	getKey(){
@@ -23369,6 +23421,14 @@ class Tabulator$1 {
 		}
 
 		return false;
+	}
+
+	//////////// Component Function Map //////////////
+
+	componentFunctionMap(type, component, name){
+		return function(){
+			console.log("demo", type, component, name);
+		}
 	}
 
 	//////////////////// Event Bus ///////////////////

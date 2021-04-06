@@ -1131,6 +1131,14 @@ class Tabulator {
 		return false;
 	}
 
+	//////////// Component Function Map //////////////
+
+	componentFunctionMap(type, component, name){
+		return function(){
+			console.log("demo", type, component, name);
+		}
+	}
+
 	//////////////////// Event Bus ///////////////////
 
 	on(key, callback){
