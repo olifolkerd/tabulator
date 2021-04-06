@@ -17,6 +17,14 @@ class DataTree extends Module{
 		this.startOpen = function(){};
 
 		this.displayIndex = 0;
+
+		//register component functions
+		this.registerComponentFunction("row", "treeCollapse", this.collapseRow.bind(this));
+		this.registerComponentFunction("row", "treeExpand", this.expandRow.bind(this));
+		this.registerComponentFunction("row", "treeToggle", this.toggleRow.bind(this));
+		this.registerComponentFunction("row", "getTreeParent", this.getTreeParent.bind(this));
+		this.registerComponentFunction("row", "getTreeChildren", this.getRowChildren.bind(this));
+		this.registerComponentFunction("row", "addTreeChild", this.addTreeChildRow.bind(this));
 	}
 
 	initialize(){
@@ -103,6 +111,10 @@ class DataTree extends Module{
 
 			this.registerDisplayHandler(this.getRows.bind(this), 30);
 		}
+	}
+
+	getRowChildren(row){
+		return this.getTreeChildren(row, true);
 	}
 
 	columnMoving(){

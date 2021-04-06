@@ -15,14 +15,7 @@ class Filter extends Module{
 		this.prevHeaderFilterChangeCheck = "{}";
 
 		this.changed = false; //has filtering changed since last render
-	}
 
-	initialize(){
-		this.subscribe("column-init", this.initializeColumnHeaderFilter.bind(this));
-		this.subscribe("column-width-fit-before", this.hideHeaderFilterElements.bind(this));
-		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
-
-		this.registerDataHandler(this.filter.bind(this), 10);
 
 		this.registerTableFunction("searchRows", this.searchRows.bind(this));
 		this.registerTableFunction("searchData", this.searchData.bind(this));
@@ -38,6 +31,19 @@ class Filter extends Module{
 		this.registerTableFunction("removeFilter", this.userRemoveFilter.bind(this));
 		this.registerTableFunction("clearFilter", this.userClearFilter.bind(this));
 		this.registerTableFunction("clearHeaderFilter", this.userClearHeaderFilter.bind(this));
+
+		this.registerComponentFunction("column", "headerFilterFocus", this.setHeaderFilterFocus.bind(this));
+		this.registerComponentFunction("column", "reloadHeaderFilter", this.reloadHeaderFilter.bind(this));
+		this.registerComponentFunction("column", "getHeaderFilterValue", this.getHeaderFilterValue.bind(this));
+		this.registerComponentFunction("column", "setHeaderFilterValue", this.setHeaderFilterValue.bind(this));
+	}
+
+	initialize(){
+		this.subscribe("column-init", this.initializeColumnHeaderFilter.bind(this));
+		this.subscribe("column-width-fit-before", this.hideHeaderFilterElements.bind(this));
+		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
+
+		this.registerDataHandler(this.filter.bind(this), 10);
 	}
 
 

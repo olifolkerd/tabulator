@@ -1187,28 +1187,8 @@ class CellComponent {
 		this._cell.cancelEdit();
 	}
 
-	isEdited(){
-		return !! this._cell.modules.edit && this._cell.modules.edit.edited;
-	}
-
-	clearEdited(){
-		if(this._cell.table.modExists("edit", true)){
-			this._cell.table.modules.edit.clearEdited(this._cell);
-		}
-	}
-
-	isValid(){
-		return this._cell.modules.validate ? !this._cell.modules.validate.invalid : true;
-	}
-
 	validate(){
 		return this._cell.validate();
-	}
-
-	clearValidation(){
-		if(this._cell.table.modExists("validate", true)){
-			this._cell.table.modules.validate.clearValidation(this._cell);
-		}
 	}
 
 	nav(){
@@ -1773,30 +1753,6 @@ class ColumnComponent {
 
 	getTable(){
 		return this._column.table;
-	}
-
-	headerFilterFocus(){
-		if(this._column.table.modExists("filter", true)){
-			this._column.table.modules.filter.setHeaderFilterFocus(this._column);
-		}
-	}
-
-	reloadHeaderFilter(){
-		if(this._column.table.modExists("filter", true)){
-			this._column.table.modules.filter.reloadHeaderFilter(this._column);
-		}
-	}
-
-	getHeaderFilterValue(){
-		if(this._column.table.modExists("filter", true)){
-			return this._column.table.modules.filter.getHeaderFilterValue(this._column);
-		}
-	}
-
-	setHeaderFilterValue(value){
-		if(this._column.table.modExists("filter", true)){
-			this._column.table.modules.filter.setHeaderFilterValue(this._column, value);
-		}
 	}
 
 	move(to, after){
@@ -3061,12 +3017,6 @@ class RowComponent$1 {
 		return this._row.table.rowManager.scrollToRow(this._row);
 	}
 
-	pageTo(){
-		if(this._row.table.modExists("page", true)){
-			return this._row.table.modules.page.setPageToRow(this._row);
-		}
-	}
-
 	move(to, after){
 		this._row.moveToRow(to, after);
 	}
@@ -3079,91 +3029,12 @@ class RowComponent$1 {
 		this._row.normalizeHeight(true);
 	}
 
-	select(){
-		this._row.table.modules.selectRow.selectRows(this._row);
-	}
-
-	deselect(){
-		this._row.table.modules.selectRow.deselectRows(this._row);
-	}
-
-	toggleSelect(){
-		this._row.table.modules.selectRow.toggleRow(this._row);
-	}
-
-	isSelected(){
-		return this._row.table.modules.selectRow.isRowSelected(this._row);
-	}
-
 	_getSelf(){
 		return this._row;
 	}
 
 	validate(){
 		return this._row.validate();
-	}
-
-	freeze(){
-		if(this._row.table.modExists("frozenRows", true)){
-			this._row.table.modules.frozenRows.freezeRow(this._row);
-		}
-	}
-
-	unfreeze(){
-		if(this._row.table.modExists("frozenRows", true)){
-			this._row.table.modules.frozenRows.unfreezeRow(this._row);
-		}
-	}
-
-	isFrozen(){
-		if(this._row.table.modExists("frozenRows", true)){
-			var index = this._row.table.modules.frozenRows.rows.indexOf(this._row);
-			return index > -1;
-		}
-
-		return false;
-	}
-
-	treeCollapse(){
-		if(this._row.table.modExists("dataTree", true)){
-			this._row.table.modules.dataTree.collapseRow(this._row);
-		}
-	}
-
-	treeExpand(){
-		if(this._row.table.modExists("dataTree", true)){
-			this._row.table.modules.dataTree.expandRow(this._row);
-		}
-	}
-
-	treeToggle(){
-		if(this._row.table.modExists("dataTree", true)){
-			this._row.table.modules.dataTree.toggleRow(this._row);
-		}
-	}
-
-	getTreeParent(){
-		if(this._row.table.modExists("dataTree", true)){
-			return this._row.table.modules.dataTree.getTreeParent(this._row);
-		}
-
-		return false;
-	}
-
-	getTreeChildren(){
-		if(this._row.table.modExists("dataTree", true)){
-			return this._row.table.modules.dataTree.getTreeChildren(this._row, true);
-		}
-
-		return false;
-	}
-
-	addTreeChild(data, pos, index){
-		if(this._row.table.modExists("dataTree", true)){
-			return this._row.table.modules.dataTree.addTreeChildRow(this._row, data, pos, index);
-		}
-
-		return false;
 	}
 
 	reformat(){
@@ -4238,6 +4109,14 @@ class DataTree extends Module{
 		this.startOpen = function(){};
 
 		this.displayIndex = 0;
+
+		//register component functions
+		this.registerComponentFunction("row", "treeCollapse", this.collapseRow.bind(this));
+		this.registerComponentFunction("row", "treeExpand", this.expandRow.bind(this));
+		this.registerComponentFunction("row", "treeToggle", this.toggleRow.bind(this));
+		this.registerComponentFunction("row", "getTreeParent", this.getTreeParent.bind(this));
+		this.registerComponentFunction("row", "getTreeChildren", this.getRowChildren.bind(this));
+		this.registerComponentFunction("row", "addTreeChild", this.addTreeChildRow.bind(this));
 	}
 
 	initialize(){
@@ -4324,6 +4203,10 @@ class DataTree extends Module{
 
 			this.registerDisplayHandler(this.getRows.bind(this), 30);
 		}
+	}
+
+	getRowChildren(row){
+		return this.getTreeChildren(row, true);
 	}
 
 	columnMoving(){
@@ -7010,6 +6893,12 @@ class Edit extends Module{
 		this.editedCells = [];
 
 		this.editors = Edit.editors;
+
+		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
+		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
+
+		this.registerComponentFunction("cell", "isEdited", this.cellisEdited.bind(this));
+		this.registerComponentFunction("cell", "clearEdited", this.clearEdited.bind(this));
 	}
 
 	initialize(){
@@ -7019,9 +6908,14 @@ class Edit extends Module{
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 		this.subscribe("data-refesh", this.cancelEdit.bind(this));
+	}
 
-		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
-		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
+	///////////////////////////////////
+	///////// Cell Functions /////////
+	///////////////////////////////////
+
+	cellisEdited(cell){
+		return !! cell.modules.edit && cell.modules.edit.edited;
 	}
 
 	///////////////////////////////////
@@ -8254,14 +8148,7 @@ class Filter extends Module{
 		this.prevHeaderFilterChangeCheck = "{}";
 
 		this.changed = false; //has filtering changed since last render
-	}
 
-	initialize(){
-		this.subscribe("column-init", this.initializeColumnHeaderFilter.bind(this));
-		this.subscribe("column-width-fit-before", this.hideHeaderFilterElements.bind(this));
-		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
-
-		this.registerDataHandler(this.filter.bind(this), 10);
 
 		this.registerTableFunction("searchRows", this.searchRows.bind(this));
 		this.registerTableFunction("searchData", this.searchData.bind(this));
@@ -8277,6 +8164,19 @@ class Filter extends Module{
 		this.registerTableFunction("removeFilter", this.userRemoveFilter.bind(this));
 		this.registerTableFunction("clearFilter", this.userClearFilter.bind(this));
 		this.registerTableFunction("clearHeaderFilter", this.userClearHeaderFilter.bind(this));
+
+		this.registerComponentFunction("column", "headerFilterFocus", this.setHeaderFilterFocus.bind(this));
+		this.registerComponentFunction("column", "reloadHeaderFilter", this.reloadHeaderFilter.bind(this));
+		this.registerComponentFunction("column", "getHeaderFilterValue", this.getHeaderFilterValue.bind(this));
+		this.registerComponentFunction("column", "setHeaderFilterValue", this.setHeaderFilterValue.bind(this));
+	}
+
+	initialize(){
+		this.subscribe("column-init", this.initializeColumnHeaderFilter.bind(this));
+		this.subscribe("column-width-fit-before", this.hideHeaderFilterElements.bind(this));
+		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
+
+		this.registerDataHandler(this.filter.bind(this), 10);
 	}
 
 
@@ -10114,6 +10014,11 @@ class FrozenRows extends Module{
 
 		this.topElement = document.createElement("div");
 		this.rows = [];
+
+		//register component functions
+		this.registerComponentFunction("row", "freeze", this.freezeRow.bind(this));
+		this.registerComponentFunction("row", "unfreeze", this.unfreezeRow.bind(this));
+		this.registerComponentFunction("row", "isFrozen", this.isRowFrozen.bind(this));
 	}
 
 	initialize(){
@@ -10127,6 +10032,11 @@ class FrozenRows extends Module{
 		this.subscribe("row-deleting", this.detachRow.bind(this));
 
 		this.registerDisplayHandler(this.getRows.bind(this), 10);
+	}
+
+	isRowFrozen(row){
+		var index = this.rows.indexOf(row);
+		return index > -1;
 	}
 
 	isFrozen(){
@@ -13587,7 +13497,18 @@ class Page extends Module{
 		this.dataReceivedNames = {};
 		this.dataSentNames = {};
 
-		this.createElements();
+		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
+		this.registerTableFunction("setPage", this.setPage.bind(this));
+		this.registerTableFunction("setPageToRow", this.userSetPageToRow.bind(this));
+		this.registerTableFunction("setPageSize", this.userSetPageSize.bind(this));
+		this.registerTableFunction("getPageSize", this.getPageSize.bind(this));
+		this.registerTableFunction("previousPage", this.previousPage.bind(this));
+		this.registerTableFunction("nextPage", this.nextPage.bind(this));
+		this.registerTableFunction("getPage", this.getPage.bind(this));
+		this.registerTableFunction("getPageMax", this.getPageMax.bind(this));
+
+		//register component functions
+		this.registerComponentFunction("row", "pageTo", this.setPageToRow.bind(this));
 	}
 
 	initialize(){
@@ -13598,18 +13519,9 @@ class Page extends Module{
 			this.registerDisplayHandler(this.restOnRenderBefore.bind(this), 40);
 			this.registerDisplayHandler(this.getRows.bind(this), 50);
 
+			this.createElements();
 			this.initializePaginator();
 		}
-
-		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
-		this.registerTableFunction("setPage", this.setPage.bind(this));
-		this.registerTableFunction("setPageToRow", this.userSetPageToRow.bind(this));
-		this.registerTableFunction("setPageSize", this.userSetPageSize.bind(this));
-		this.registerTableFunction("getPageSize", this.getPageSize.bind(this));
-		this.registerTableFunction("previousPage", this.previousPage.bind(this));
-		this.registerTableFunction("nextPage", this.nextPage.bind(this));
-		this.registerTableFunction("getPage", this.getPage.bind(this));
-		this.registerTableFunction("getPageMax", this.getPageMax.bind(this));
 	}
 
 	///////////////////////////////////
@@ -15983,6 +15895,18 @@ class SelectRow extends Module{
 		this.selectPrev = []; //hold previously selected element for drag drop selection
 		this.selectedRows = []; //hold selected rows
 		this.headerCheckboxElement = null; // hold header select element
+
+		this.registerTableFunction("selectRow", this.selectRows.bind(this));
+		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
+		this.registerTableFunction("toggleSelectRow", this.toggleRow.bind(this));
+		this.registerTableFunction("getSelectedRows", this.getSelectedRows.bind(this));
+		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
+
+		//register component functions
+		this.registerComponentFunction("row", "select", this.selectRows.bind(this));
+		this.registerComponentFunction("row", "deselect", this.deselectRows.bind(this));
+		this.registerComponentFunction("row", "toggleSelect", this.toggleRow.bind(this));
+		this.registerComponentFunction("row", "isSelected", this.isRowSelected.bind(this));
 	}
 
 	initialize(){
@@ -15996,12 +15920,6 @@ class SelectRow extends Module{
 				this.subscribe("data-refesh", this.deselectRows.bind(this));
 			}
 		}
-
-		this.registerTableFunction("selectRow", this.selectRows.bind(this));
-		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
-		this.registerTableFunction("toggleSelectRow", this.toggleRow.bind(this));
-		this.registerTableFunction("getSelectedRows", this.getSelectedRows.bind(this));
-		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
 	}
 
 	rowRetrieve(type, prevValue){
@@ -17159,16 +17077,27 @@ class Validate extends Module{
 		super(table);
 
 		this.invalidCells = [];
+
+		this.registerTableFunction("getInvalidCells", this.getInvalidCells.bind(this));
+		this.registerTableFunction("clearCellValidation", this.userClearCellValidation.bind(this));
+		this.registerTableFunction("validate", this.userValidate.bind(this));
+
+		this.registerComponentFunction("cell", "isValid", this.cellIsValid.bind(this));
+		this.registerComponentFunction("cell", "clearValidation", this.clearValidation.bind(this));
 	}
 
 
 	initialize(){
 		this.subscribe("cell-delete", this.clearValidation.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
+	}
 
-		this.registerTableFunction("getInvalidCells", this.getInvalidCells.bind(this));
-		this.registerTableFunction("clearCellValidation", this.userClearCellValidation.bind(this));
-		this.registerTableFunction("validate", this.userValidate.bind(this));
+	///////////////////////////////////
+	////////// Cell Functions /////////
+	///////////////////////////////////
+
+	cellIsValid(cell){
+		return cell.modules.validate ? !cell.modules.validate.invalid : true;
 	}
 
 	///////////////////////////////////

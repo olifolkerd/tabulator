@@ -7,6 +7,11 @@ class FrozenRows extends Module{
 
 		this.topElement = document.createElement("div");
 		this.rows = [];
+
+		//register component functions
+		this.registerComponentFunction("row", "freeze", this.freezeRow.bind(this));
+		this.registerComponentFunction("row", "unfreeze", this.unfreezeRow.bind(this));
+		this.registerComponentFunction("row", "isFrozen", this.isRowFrozen.bind(this));
 	}
 
 	initialize(){
@@ -20,6 +25,11 @@ class FrozenRows extends Module{
 		this.subscribe("row-deleting", this.detachRow.bind(this));
 
 		this.registerDisplayHandler(this.getRows.bind(this), 10);
+	}
+
+	isRowFrozen(row){
+		var index = this.rows.indexOf(row);
+		return index > -1;
 	}
 
 	isFrozen(){

@@ -27,7 +27,18 @@ class Page extends Module{
 		this.dataReceivedNames = {};
 		this.dataSentNames = {};
 
-		this.createElements();
+		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
+		this.registerTableFunction("setPage", this.setPage.bind(this));
+		this.registerTableFunction("setPageToRow", this.userSetPageToRow.bind(this));
+		this.registerTableFunction("setPageSize", this.userSetPageSize.bind(this));
+		this.registerTableFunction("getPageSize", this.getPageSize.bind(this));
+		this.registerTableFunction("previousPage", this.previousPage.bind(this));
+		this.registerTableFunction("nextPage", this.nextPage.bind(this));
+		this.registerTableFunction("getPage", this.getPage.bind(this));
+		this.registerTableFunction("getPageMax", this.getPageMax.bind(this));
+
+		//register component functions
+		this.registerComponentFunction("row", "pageTo", this.setPageToRow.bind(this));
 	}
 
 	initialize(){
@@ -38,18 +49,9 @@ class Page extends Module{
 			this.registerDisplayHandler(this.restOnRenderBefore.bind(this), 40);
 			this.registerDisplayHandler(this.getRows.bind(this), 50);
 
+			this.createElements();
 			this.initializePaginator();
 		}
-
-		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
-		this.registerTableFunction("setPage", this.setPage.bind(this));
-		this.registerTableFunction("setPageToRow", this.userSetPageToRow.bind(this));
-		this.registerTableFunction("setPageSize", this.userSetPageSize.bind(this));
-		this.registerTableFunction("getPageSize", this.getPageSize.bind(this));
-		this.registerTableFunction("previousPage", this.previousPage.bind(this));
-		this.registerTableFunction("nextPage", this.nextPage.bind(this));
-		this.registerTableFunction("getPage", this.getPage.bind(this));
-		this.registerTableFunction("getPageMax", this.getPageMax.bind(this));
 	}
 
 	///////////////////////////////////

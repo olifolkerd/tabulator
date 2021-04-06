@@ -8,16 +8,27 @@ class Validate extends Module{
 		super(table);
 
 		this.invalidCells = [];
+
+		this.registerTableFunction("getInvalidCells", this.getInvalidCells.bind(this));
+		this.registerTableFunction("clearCellValidation", this.userClearCellValidation.bind(this));
+		this.registerTableFunction("validate", this.userValidate.bind(this));
+
+		this.registerComponentFunction("cell", "isValid", this.cellIsValid.bind(this));
+		this.registerComponentFunction("cell", "clearValidation", this.clearValidation.bind(this));
 	}
 
 
 	initialize(){
 		this.subscribe("cell-delete", this.clearValidation.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
+	}
 
-		this.registerTableFunction("getInvalidCells", this.getInvalidCells.bind(this));
-		this.registerTableFunction("clearCellValidation", this.userClearCellValidation.bind(this));
-		this.registerTableFunction("validate", this.userValidate.bind(this));
+	///////////////////////////////////
+	////////// Cell Functions /////////
+	///////////////////////////////////
+
+	cellIsValid(cell){
+		return cell.modules.validate ? !cell.modules.validate.invalid : true;
 	}
 
 	///////////////////////////////////

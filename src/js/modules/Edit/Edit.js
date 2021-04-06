@@ -14,6 +14,12 @@ class Edit extends Module{
 		this.editedCells = [];
 
 		this.editors = Edit.editors;
+
+		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
+		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
+
+		this.registerComponentFunction("cell", "isEdited", this.cellisEdited.bind(this));
+		this.registerComponentFunction("cell", "clearEdited", this.clearEdited.bind(this));
 	}
 
 	initialize(){
@@ -23,9 +29,14 @@ class Edit extends Module{
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 		this.subscribe("data-refesh", this.cancelEdit.bind(this));
+	}
 
-		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
-		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
+	///////////////////////////////////
+	///////// Cell Functions /////////
+	///////////////////////////////////
+
+	cellisEdited(cell){
+		return !! cell.modules.edit && cell.modules.edit.edited;
 	}
 
 	///////////////////////////////////

@@ -71,28 +71,8 @@ export default class CellComponent {
 		this._cell.cancelEdit();
 	}
 
-	isEdited(){
-		return !! this._cell.modules.edit && this._cell.modules.edit.edited;
-	}
-
-	clearEdited(){
-		if(this._cell.table.modExists("edit", true)){
-			this._cell.table.modules.edit.clearEdited(this._cell);
-		}
-	}
-
-	isValid(){
-		return this._cell.modules.validate ? !this._cell.modules.validate.invalid : true;
-	}
-
 	validate(){
 		return this._cell.validate();
-	}
-
-	clearValidation(){
-		if(this._cell.table.modExists("validate", true)){
-			this._cell.table.modules.validate.clearValidation(this._cell);
-		}
 	}
 
 	nav(){

@@ -10,6 +10,18 @@ class SelectRow extends Module{
 		this.selectPrev = []; //hold previously selected element for drag drop selection
 		this.selectedRows = []; //hold selected rows
 		this.headerCheckboxElement = null; // hold header select element
+
+		this.registerTableFunction("selectRow", this.selectRows.bind(this));
+		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
+		this.registerTableFunction("toggleSelectRow", this.toggleRow.bind(this));
+		this.registerTableFunction("getSelectedRows", this.getSelectedRows.bind(this));
+		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
+
+		//register component functions
+		this.registerComponentFunction("row", "select", this.selectRows.bind(this));
+		this.registerComponentFunction("row", "deselect", this.deselectRows.bind(this));
+		this.registerComponentFunction("row", "toggleSelect", this.toggleRow.bind(this));
+		this.registerComponentFunction("row", "isSelected", this.isRowSelected.bind(this));
 	}
 
 	initialize(){
@@ -23,12 +35,6 @@ class SelectRow extends Module{
 				this.subscribe("data-refesh", this.deselectRows.bind(this));
 			}
 		}
-
-		this.registerTableFunction("selectRow", this.selectRows.bind(this));
-		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
-		this.registerTableFunction("toggleSelectRow", this.toggleRow.bind(this));
-		this.registerTableFunction("getSelectedRows", this.getSelectedRows.bind(this));
-		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
 	}
 
 	rowRetrieve(type, prevValue){

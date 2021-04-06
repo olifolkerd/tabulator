@@ -101,30 +101,6 @@ export default class ColumnComponent {
 		return this._column.table;
 	}
 
-	headerFilterFocus(){
-		if(this._column.table.modExists("filter", true)){
-			this._column.table.modules.filter.setHeaderFilterFocus(this._column);
-		}
-	}
-
-	reloadHeaderFilter(){
-		if(this._column.table.modExists("filter", true)){
-			this._column.table.modules.filter.reloadHeaderFilter(this._column);
-		}
-	}
-
-	getHeaderFilterValue(){
-		if(this._column.table.modExists("filter", true)){
-			return this._column.table.modules.filter.getHeaderFilterValue(this._column);
-		}
-	}
-
-	setHeaderFilterValue(value){
-		if(this._column.table.modExists("filter", true)){
-			this._column.table.modules.filter.setHeaderFilterValue(this._column, value);
-		}
-	}
-
 	move(to, after){
 		var toColumn = this._column.table.columnManager.findColumn(to);
 
