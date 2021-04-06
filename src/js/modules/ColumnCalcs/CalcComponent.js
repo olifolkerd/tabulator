@@ -7,7 +7,7 @@ class CalcComponent{
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else{
-					return target._row.table.componentFunctionMap("row", target._row, name)
+					return target._row.table.componentFunctionBinder.handle("row", target._row, name)
 				}
 			}
 		})

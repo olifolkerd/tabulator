@@ -24,6 +24,10 @@ class Module extends CoreFeature{
 		}
 	}
 
+	registerComponentFunction(component, func, handler){
+		return this.table.componentFunctionBinder.bind(component, func, handler);
+	}
+
 	///////////////////////////////////
 	////////// Data Pipeline //////////
 	///////////////////////////////////

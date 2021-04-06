@@ -7,6 +7,7 @@ import RowManager from './RowManager.js';
 import FooterManager from './FooterManager.js';
 
 import InteractionMonitor from './InteractionMonitor.js';
+import ComponentFuctionBinder from './ComponentFuctionBinder.js';
 
 import ExternalEventBus from './ExternalEventBus.js';
 import InternalEventBus from './InternalEventBus.js';
@@ -33,6 +34,8 @@ class Tabulator {
 		this.browserSlow = false; //handle reduced functionality for slower browsers
 		this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
 		this.rtl = false; //check if the table is in RTL mode
+
+		this.componentFunctionBinder = new ComponentFuctionBinder(this); //bind component functions
 
 		this.modules = {}; //hold all modules bound to this table
 		this.modulesCore = {}; //hold core modules bound to this table (for initialization purposes)
@@ -1129,14 +1132,6 @@ class Tabulator {
 		}
 
 		return false;
-	}
-
-	//////////// Component Function Map //////////////
-
-	componentFunctionMap(type, component, name){
-		return function(){
-			console.log("demo", type, component, name);
-		}
 	}
 
 	//////////////////// Event Bus ///////////////////

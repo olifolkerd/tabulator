@@ -9,7 +9,7 @@ class GroupComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else{
-					return target._group.table.componentFunctionMap("row", target._group, name)
+					return target._group.table.componentFunctionBinder.handle("row", target._group, name)
 				}
 			}
 		})

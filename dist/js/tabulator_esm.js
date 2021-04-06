@@ -79,6 +79,10 @@ class Module extends CoreFeature{
 		}
 	}
 
+	registerComponentFunction(component, func, handler){
+		return this.table.componentFunctionBinder.bind(component, func, handler);
+	}
+
 	///////////////////////////////////
 	////////// Data Pipeline //////////
 	///////////////////////////////////
@@ -1072,7 +1076,7 @@ class CalcComponent{
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._row.table.componentFunctionMap("row", target._row, name)
+					return target._row.table.componentFunctionBinder.handle("row", target._row, name)
 				}
 			}
 		})
@@ -1121,7 +1125,7 @@ class CellComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._cell.table.componentFunctionMap("cell", target._cell, name)
+					return target._cell.table.componentFunctionBinder.handle("cell", target._cell, name)
 				}
 			}
 		})
@@ -1679,7 +1683,7 @@ class ColumnComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._column.table.componentFunctionMap("row", target._column, name)
+					return target._column.table.componentFunctionBinder.handle("row", target._column, name)
 				}
 			}
 		})
@@ -3012,7 +3016,7 @@ class RowComponent$1 {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._row.table.componentFunctionMap("row", target._row, name)
+					return target._row.table.componentFunctionBinder.handle("row", target._row, name)
 				}
 			}
 		})
@@ -10216,7 +10220,7 @@ class GroupComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._group.table.componentFunctionMap("row", target._group, name)
+					return target._group.table.componentFunctionBinder.handle("row", target._group, name)
 				}
 			}
 		})
@@ -20927,6 +20931,36 @@ class InteractionManager extends CoreFeature {
 	}
 }
 
+class ComponentFuctionBinder{
+
+	constructor(table){
+		this.table = table;
+
+		this.bindings = {};
+	}
+
+	bind(type, funcName, handler){
+		if(!this.bindings[type]){
+			this.bindings[type] = {};
+		}
+
+		if(this.bindings[type][funcName]){
+			console.log("Unable to bind component handler, a matching function name is already bound", type, funcName, hanlder);
+		}else {
+			this.bindings[type][funcName] = handler;
+		}
+	}
+
+	handle(type, component, name){
+		if(this.bindings[type] && this.bindings[type][name]){
+			return this.bindings[type][name].bind(null, component);
+		}else {
+			console.error("The " + type + " component does not have a " + name + " function, have you checked that you have the correct Tabulator module installed?");
+		}
+	}
+
+}
+
 class ExternalEventBus {
 
 	constructor(optionsList, debug){
@@ -22325,6 +22359,8 @@ class Tabulator$1 {
 		this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
 		this.rtl = false; //check if the table is in RTL mode
 
+		this.componentFunctionBinder = new ComponentFuctionBinder(this); //bind component functions
+
 		this.modules = {}; //hold all modules bound to this table
 		this.modulesCore = {}; //hold core modules bound to this table (for initialization purposes)
 		this.modulesRegular = {}; //hold regular modules bound to this table (for initialization purposes)
@@ -23419,14 +23455,6 @@ class Tabulator$1 {
 		}
 
 		return false;
-	}
-
-	//////////// Component Function Map //////////////
-
-	componentFunctionMap(type, component, name){
-		return function(){
-			console.log("demo", type, component, name);
-		}
 	}
 
 	//////////////////// Event Bus ///////////////////
