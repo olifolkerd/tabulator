@@ -2071,7 +2071,7 @@ class Column$1 extends CoreFeature{
 		var def = this.definition;
 
 		//set header tooltips
-		var tooltip = def.headerTooltip || def.tooltip === false  ? def.headerTooltip : this.table.options.tooltipsHeader;
+		var tooltip = typeof def.headerTooltip === "undefined" ? def.tooltip : def.headerTooltip;
 
 		if(tooltip){
 			if(tooltip === true){
@@ -2242,24 +2242,22 @@ class Column$1 extends CoreFeature{
 		}
 
 		//set min width if present
-		this.setMinWidth(typeof def.minWidth == "undefined" ? this.table.options.columnMinWidth : parseInt(def.minWidth));
+		this.setMinWidth(typeof def.minWidth == "undefined" ? 40 : parseInt(def.minWidth));
 
-		if(def.maxWidth || this.table.options.columnMaxWidth){
-			if(def.maxWidth !== false){
-				this.setMaxWidth(typeof def.maxWidth == "undefined" ? this.table.options.columnMaxWidth : parseInt(def.maxWidth));
-			}
+		if(def.maxWidth){
+			this.setMaxWidth(parseInt(def.maxWidth));
 		}
 
 		this.reinitializeWidth();
 
 		//set tooltip if present
-		this.tooltip = this.definition.tooltip || this.definition.tooltip === false ? this.definition.tooltip : this.table.options.tooltips;
+		this.tooltip = this.definition.tooltip;
 
 		//set orizontal text alignment
-		this.hozAlign = typeof(this.definition.hozAlign) == "undefined" ? this.table.options.cellHozAlign : this.definition.hozAlign;
-		this.vertAlign = typeof(this.definition.vertAlign) == "undefined" ? this.table.options.cellVertAlign : this.definition.vertAlign;
+		this.hozAlign = this.definition.hozAlign;
+		this.vertAlign = this.definition.vertAlign;
 
-		this.titleElement.style.textAlign = this.definition.headerHozAlign || this.table.options.headerHozAlign;
+		this.titleElement.style.textAlign = this.definition.headerHozAlign;
 	}
 
 	_buildColumnHeaderContent(){
@@ -2363,7 +2361,7 @@ class Column$1 extends CoreFeature{
 			});
 		}
 
-		this.titleElement.style.textAlign = this.definition.headerHozAlign || this.table.options.headerHozAlign;
+		this.titleElement.style.textAlign = this.definition.headerHozAlign;
 
 		this.element.appendChild(this.groupElement);
 	}
@@ -8490,7 +8488,7 @@ class Filter extends Module{
 					});
 				}else {
 					self.table.modules.localize.bind("headerFilters|default", function(value){
-						editorElement.setAttribute("placeholder", typeof self.column.definition.headerFilterPlaceholder !== "undefined" && self.column.definition.headerFilterPlaceholder ? self.column.definition.headerFilterPlaceholder : value);
+						editorElement.setAttribute("placeholder", value);
 					});
 				}
 
@@ -15151,10 +15149,10 @@ class ResizeColumns extends Module{
 	}
 
 	initialize(){
-		if(this.table.options.resizableColumns){
+		// if(this.table.options.resizableColumns){
 			this.subscribe("cell-layout", this.layoutCellHandles.bind(this));
 			this.subscribe("column-init", this.layoutColumnHeader.bind(this));
-		}
+		// }
 	}
 
 	layoutCellHandles(cell){
@@ -15170,7 +15168,7 @@ class ResizeColumns extends Module{
 	initializeColumn(type, column, element){
 		var self = this,
 		variableHeight = false,
-		mode = this.table.options.resizableColumns;
+		mode = column.definition.resizable;
 
 		//set column resize mode
 		if(type === "header"){
@@ -15260,7 +15258,7 @@ class ResizeColumns extends Module{
 	}
 
 	_checkResizability(column){
-		return typeof column.definition.resizable != "undefined" ? column.definition.resizable : this.table.options.resizableColumns;
+		return column.definition.resizable;
 	}
 
 	_mouseDown(e, column, handle){
@@ -16626,10 +16624,10 @@ class Sort extends Module{
 			sorter:sorter, dir:"none",
 			params:column.definition.sorterParams || {},
 			startingDir:column.definition.headerSortStartingDir || "asc",
-			tristate: typeof column.definition.headerSortTristate !== "undefined" ? column.definition.headerSortTristate : this.table.options.headerSortTristate,
+			tristate: column.definition.headerSortTristate,
 		};
 
-		if(typeof column.definition.headerSort === "undefined" ? (this.table.options.headerSort !== false) : column.definition.headerSort !== false){
+		if(column.definition.headerSort !== false){
 
 			colEl = column.getElement();
 
@@ -17621,20 +17619,14 @@ var defaultOptions$1 = {
 	layout:"fitData", ///layout type "fitColumns" | "fitData"
 	layoutColumnsOnNewData:false, //update column widths on setData
 
-	columnMinWidth:40, //minimum global width for a column
 	columnMaxWidth:false, //minimum global width for a column
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
 
-	resizableColumns:true, //resizable columns
 	resizablegroups:false, //resizable rows
 	autoResize:true, //auto resize table
 
 	columns:[],//store for colum header info
-	columnDefaults:false, //store column default props
-
-	cellHozAlign:"", //horizontal align columns
-	cellVertAlign:"", //vertical align columns
-	headerHozAlign:"", //horizontal header alignment
+	columnDefaults:{}, //store column default props
 
 	data:[], //default starting data
 
@@ -17645,8 +17637,6 @@ var defaultOptions$1 = {
 
 	nestedFieldSeparator:".", //seperatpr for nested data
 
-	tooltips: false, //Tool tip value
-	tooltipsHeader: false, //Tool tip for headers
 	tooltipGenerationMode:"load", //when to generate tooltips
 
 	initialSort:false, //initial sorting criteria
@@ -17715,7 +17705,6 @@ var defaultOptions$1 = {
 	selectableCheck:function(data, row){return true;}, //check wheather row is selectable
 
 	headerFilterLiveFilterDelay: 300, //delay before updating column after user types in header filter
-	headerFilterPlaceholder: false, //placeholder text to display in header filters
 
 	headerVisible:true, //hide header
 
@@ -18530,7 +18519,7 @@ class ColumnManager extends CoreFeature {
 
 				width = column.definition.width || 0;
 
-				minWidth = typeof column.minWidth == "undefined" ? this.table.options.columnMinWidth : parseInt(column.minWidth);
+				minWidth = typeof column.minWidth == "undefined" ? 40 : parseInt(column.minWidth);
 
 				if(typeof(width) == "string"){
 					if(width.indexOf("%") > -1){
@@ -21504,8 +21493,8 @@ class Localize extends Module{
 	initialize(){
 		this.langList = Helpers.deepClone(Localize.langs);
 
-		if(this.table.options.headerFilterPlaceholder !== false){
-			this.setHeaderFilterPlaceholder(this.table.options.headerFilterPlaceholder);
+		if(this.table.options.columnDefaults.headerFilterPlaceholder !== false){
+			this.setHeaderFilterPlaceholder(this.table.options.columnDefaults.headerFilterPlaceholder);
 		}
 
 		for(let locale in this.table.options.langs){

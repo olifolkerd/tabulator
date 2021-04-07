@@ -18,8 +18,8 @@ class Localize extends Module{
 	initialize(){
 		this.langList = Helpers.deepClone(Localize.langs);
 
-		if(this.table.options.headerFilterPlaceholder !== false){
-			this.setHeaderFilterPlaceholder(this.table.options.headerFilterPlaceholder);
+		if(this.table.options.columnDefaults.headerFilterPlaceholder !== false){
+			this.setHeaderFilterPlaceholder(this.table.options.columnDefaults.headerFilterPlaceholder);
 		}
 
 		for(let locale in this.table.options.langs){

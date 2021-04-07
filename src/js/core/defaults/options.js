@@ -10,20 +10,14 @@ export default {
 	layout:"fitData", ///layout type "fitColumns" | "fitData"
 	layoutColumnsOnNewData:false, //update column widths on setData
 
-	columnMinWidth:40, //minimum global width for a column
 	columnMaxWidth:false, //minimum global width for a column
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
 
-	resizableColumns:true, //resizable columns
 	resizablegroups:false, //resizable rows
 	autoResize:true, //auto resize table
 
 	columns:[],//store for colum header info
-	columnDefaults:false, //store column default props
-
-	cellHozAlign:"", //horizontal align columns
-	cellVertAlign:"", //vertical align columns
-	headerHozAlign:"", //horizontal header alignment
+	columnDefaults:{}, //store column default props
 
 	data:[], //default starting data
 
@@ -34,8 +28,6 @@ export default {
 
 	nestedFieldSeparator:".", //seperatpr for nested data
 
-	tooltips: false, //Tool tip value
-	tooltipsHeader: false, //Tool tip for headers
 	tooltipGenerationMode:"load", //when to generate tooltips
 
 	initialSort:false, //initial sorting criteria
@@ -104,7 +96,6 @@ export default {
 	selectableCheck:function(data, row){return true;}, //check wheather row is selectable
 
 	headerFilterLiveFilterDelay: 300, //delay before updating column after user types in header filter
-	headerFilterPlaceholder: false, //placeholder text to display in header filters
 
 	headerVisible:true, //hide header
 

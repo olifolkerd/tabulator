@@ -358,7 +358,7 @@ class Filter extends Module{
 					});
 				}else{
 					self.table.modules.localize.bind("headerFilters|default", function(value){
-						editorElement.setAttribute("placeholder", typeof self.column.definition.headerFilterPlaceholder !== "undefined" && self.column.definition.headerFilterPlaceholder ? self.column.definition.headerFilterPlaceholder : value);
+						editorElement.setAttribute("placeholder", value);
 					});
 				}
 

@@ -65,10 +65,10 @@ class Sort extends Module{
 			sorter:sorter, dir:"none",
 			params:column.definition.sorterParams || {},
 			startingDir:column.definition.headerSortStartingDir || "asc",
-			tristate: typeof column.definition.headerSortTristate !== "undefined" ? column.definition.headerSortTristate : this.table.options.headerSortTristate,
+			tristate: column.definition.headerSortTristate,
 		};
 
-		if(typeof column.definition.headerSort === "undefined" ? (this.table.options.headerSort !== false) : column.definition.headerSort !== false){
+		if(column.definition.headerSort !== false){
 
 			colEl = column.getElement();
 

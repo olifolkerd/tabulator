@@ -150,7 +150,7 @@ class Column extends CoreFeature{
 		var def = this.definition;
 
 		//set header tooltips
-		var tooltip = def.headerTooltip || def.tooltip === false  ? def.headerTooltip : this.table.options.tooltipsHeader;
+		var tooltip = typeof def.headerTooltip === "undefined" ? def.tooltip : def.headerTooltip;
 
 		if(tooltip){
 			if(tooltip === true){
@@ -321,24 +321,22 @@ class Column extends CoreFeature{
 		}
 
 		//set min width if present
-		this.setMinWidth(typeof def.minWidth == "undefined" ? this.table.options.columnMinWidth : parseInt(def.minWidth));
+		this.setMinWidth(typeof def.minWidth == "undefined" ? 40 : parseInt(def.minWidth));
 
-		if(def.maxWidth || this.table.options.columnMaxWidth){
-			if(def.maxWidth !== false){
-				this.setMaxWidth(typeof def.maxWidth == "undefined" ? this.table.options.columnMaxWidth : parseInt(def.maxWidth));
-			}
+		if(def.maxWidth){
+			this.setMaxWidth(parseInt(def.maxWidth));
 		}
 
 		this.reinitializeWidth();
 
 		//set tooltip if present
-		this.tooltip = this.definition.tooltip || this.definition.tooltip === false ? this.definition.tooltip : this.table.options.tooltips;
+		this.tooltip = this.definition.tooltip;
 
 		//set orizontal text alignment
-		this.hozAlign = typeof(this.definition.hozAlign) == "undefined" ? this.table.options.cellHozAlign : this.definition.hozAlign;
-		this.vertAlign = typeof(this.definition.vertAlign) == "undefined" ? this.table.options.cellVertAlign : this.definition.vertAlign;
+		this.hozAlign = this.definition.hozAlign;
+		this.vertAlign = this.definition.vertAlign;
 
-		this.titleElement.style.textAlign = this.definition.headerHozAlign || this.table.options.headerHozAlign;
+		this.titleElement.style.textAlign = this.definition.headerHozAlign;
 	}
 
 	_buildColumnHeaderContent(){
@@ -443,7 +441,7 @@ class Column extends CoreFeature{
 			});
 		}
 
-		this.titleElement.style.textAlign = this.definition.headerHozAlign || this.table.options.headerHozAlign;
+		this.titleElement.style.textAlign = this.definition.headerHozAlign;
 
 		this.element.appendChild(this.groupElement);
 	}

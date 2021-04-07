@@ -13,10 +13,10 @@ class ResizeColumns extends Module{
 	}
 
 	initialize(){
-		if(this.table.options.resizableColumns){
+		// if(this.table.options.resizableColumns){
 			this.subscribe("cell-layout", this.layoutCellHandles.bind(this));
 			this.subscribe("column-init", this.layoutColumnHeader.bind(this));
-		}
+		// }
 	}
 
 	layoutCellHandles(cell){
@@ -32,7 +32,7 @@ class ResizeColumns extends Module{
 	initializeColumn(type, column, element){
 		var self = this,
 		variableHeight = false,
-		mode = this.table.options.resizableColumns;
+		mode = column.definition.resizable;
 
 		//set column resize mode
 		if(type === "header"){
@@ -122,7 +122,7 @@ class ResizeColumns extends Module{
 	}
 
 	_checkResizability(column){
-		return typeof column.definition.resizable != "undefined" ? column.definition.resizable : this.table.options.resizableColumns;
+		return column.definition.resizable;
 	}
 
 	_mouseDown(e, column, handle){
