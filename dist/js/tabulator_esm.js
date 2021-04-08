@@ -21810,11 +21810,9 @@ class OptionsList {
 	}
 
 	generate(defaultOptions, userOptions = {}){
-		var output = Object.assign({}, defaultOptions);
+		var output = Object.assign({}, this.registeredDefaults);
 
-		console.log("gen", this.registeredDefaults);
-
-		Object.assign(output, this.registeredDefaults);
+		Object.assign(output, defaultOptions);
 
 		if(userOptions.invalidOptionWarnings !== false || this.table.options.invalidOptionWarnings){
 			for (var key in userOptions){
