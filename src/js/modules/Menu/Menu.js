@@ -11,6 +11,11 @@ class Menu extends Module{
 		this.escEvent = this.escMenu.bind(this);
 		this.nestedMenuBlock = false;
 		this.positionReversedX = false;
+
+		this.registerTableOption("rowContextMenu", false);
+		this.registerTableOption("rowClickMenu", false);
+		this.registerTableOption("groupContextMenu", false);
+		this.registerTableOption("groupClickMenu", false);
 	}
 
 	initialize(){

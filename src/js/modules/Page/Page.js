@@ -27,6 +27,16 @@ class Page extends Module{
 		this.dataReceivedNames = {};
 		this.dataSentNames = {};
 
+		this.registerTableOption("pagination", false); //set pagination type
+		this.registerTableOption("paginationSize", false); //set number of rows to a page
+		this.registerTableOption("paginationInitialPage", 5); //initail page to show on load
+		this.registerTableOption("paginationButtonCount", 5);  // set count of page button
+		this.registerTableOption("paginationSizeSelector", false); //add pagination size selector element
+		this.registerTableOption("paginationElement", false); //element to hold pagination numbers
+		this.registerTableOption("paginationDataSent", {}); //pagination data sent to the server
+		this.registerTableOption("paginationDataReceived", {}); //pagination data received from the server
+		this.registerTableOption("paginationAddRow", "page"); //add rows on table or page
+
 		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
 		this.registerTableFunction("setPage", this.setPage.bind(this));
 		this.registerTableFunction("setPageToRow", this.userSetPageToRow.bind(this));

@@ -399,6 +399,24 @@ class Ajax extends Module{
 		this.loading = false;
 
 		this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
+
+		this.registerTableOption("ajaxURL", false); //url for ajax loading
+		this.registerTableOption("ajaxURLGenerator", false);
+		this.registerTableOption("ajaxParams", {});  //params for ajax loading
+		this.registerTableOption("ajaxConfig", "get"); //ajax request type
+		this.registerTableOption("ajaxContentType", "form"); //ajax request type
+		this.registerTableOption("ajaxRequestFunc", false); //promise function
+		this.registerTableOption("ajaxLoader", true); //show loader
+		this.registerTableOption("ajaxLoaderLoading", false); //loader element
+		this.registerTableOption("ajaxLoaderError", false); //loader element
+		this.registerTableOption("ajaxFiltering", false);
+		this.registerTableOption("ajaxSorting", false);
+		this.registerTableOption("ajaxProgressiveLoad", false); //progressive loading
+		this.registerTableOption("ajaxProgressiveLoadDelay", 0); //delay between requests
+		this.registerTableOption("ajaxProgressiveLoadScrollMargin", 0); //margin before scroll begins
+		this.registerTableOption("ajaxRequesting", function(){});
+		this.registerTableOption("ajaxResponse", false);
+
 	}
 
 	//initialize setup options
@@ -3658,6 +3676,8 @@ class ColumnCalcs extends Module{
 		this.botRow = false;
 		this.topInitialized = false;
 		this.botInitialized = false;
+
+		this.registerTableOption("columnCalcs", true);
 	}
 
 	createElement (){
@@ -7467,6 +7487,8 @@ class Export extends Module{
 		this.config = {};
 		this.cloneTableStyle = true;
 		this.colVisProp = "";
+
+		this.registerTableOption("htmlOutputConfig", false); //html outypu config
 	}
 
 	initialize(){
@@ -10879,6 +10901,18 @@ class GroupRows extends Module{
 		this.allowedValues = false;
 		this.groups = {}; //hold row groups
 		this.displayIndex = 0; //index in display pipeline
+
+		this.registerTableOption("groupBy", false); //enable table grouping and set field to group by
+		this.registerTableOption("groupStartOpen", true); //starting state of group
+		this.registerTableOption("groupValues", false);
+		this.registerTableOption("groupUpdateOnCellEdit", false);
+		this.registerTableOption("groupHeader", false); //header generation function
+		this.registerTableOption("groupHeaderPrint", null);
+		this.registerTableOption("groupHeaderClipboard", null);
+		this.registerTableOption("groupHeaderHtmlOutput", null);
+		this.registerTableOption("groupHeaderDownload", null);
+		this.registerTableOption("groupToggleElement", "arrow");
+		this.registerTableOption("groupClosedShowCalcs", false);
 	}
 
 	//initialize group configuration
@@ -12156,6 +12190,11 @@ class Menu extends Module{
 		this.escEvent = this.escMenu.bind(this);
 		this.nestedMenuBlock = false;
 		this.positionReversedX = false;
+
+		this.registerTableOption("rowContextMenu", false);
+		this.registerTableOption("rowClickMenu", false);
+		this.registerTableOption("groupContextMenu", false);
+		this.registerTableOption("groupClickMenu", false);
 	}
 
 	initialize(){
@@ -12488,6 +12527,8 @@ class MoveColumns extends Module{
 
 		this.moveHover = this.moveHover.bind(this);
 		this.endMove = this.endMove.bind(this);
+
+		this.registerTableOption("movableColumns", false); //enable movable columns
 	}
 
 	createPlaceholderElement(){
@@ -12782,6 +12823,12 @@ class MoveRows extends Module{
 
 		this.connectedTable = false;
 		this.connectedRow = false;
+
+		this.registerTableOption("movableRows", false); //enable movable rows
+		this.registerTableOption("movableRowsConnectedTables", false); //tables for movable rows to be connected to
+		this.registerTableOption("movableRowsConnectedElements", false); //other elements for movable rows to be connected to
+		this.registerTableOption("movableRowsSender", false);
+		this.registerTableOption("movableRowsReceiver", "insert");
 	}
 
 	createPlaceholderElement(){
@@ -13536,6 +13583,16 @@ class Page extends Module{
 
 		this.dataReceivedNames = {};
 		this.dataSentNames = {};
+
+		this.registerTableOption("pagination", false); //set pagination type
+		this.registerTableOption("paginationSize", false); //set number of rows to a page
+		this.registerTableOption("paginationInitialPage", 5); //initail page to show on load
+		this.registerTableOption("paginationButtonCount", 5);  // set count of page button
+		this.registerTableOption("paginationSizeSelector", false); //add pagination size selector element
+		this.registerTableOption("paginationElement", false); //element to hold pagination numbers
+		this.registerTableOption("paginationDataSent", {}); //pagination data sent to the server
+		this.registerTableOption("paginationDataReceived", {}); //pagination data received from the server
+		this.registerTableOption("paginationAddRow", "page"); //add rows on table or page
 
 		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
 		this.registerTableFunction("setPage", this.setPage.bind(this));
@@ -14341,6 +14398,12 @@ class Persistence extends Module{
 		this.config = {};
 		this.readFunc = false;
 		this.writeFunc = false;
+
+		this.registerTableOption("persistence", false);
+		this.registerTableOption("persistenceID", ""); //key for persistent storage
+		this.registerTableOption("persistenceMode", true); //mode for storing persistence information
+		this.registerTableOption("persistenceReaderFunc", false); //function for handling persistence data reading
+		this.registerTableOption("persistenceWriterFunc", false); //function for handling persistence data writing
 	}
 
 	// Test for whether localStorage is available for use.
@@ -15632,6 +15695,11 @@ class ResponsiveLayout extends Module{
 		this.collapseFormatter = [];
 		this.collapseStartOpen = true;
 		this.collapseHandleColumn = false;
+
+		this.registerTableOption("responsiveLayout", false); //responsive layout flags
+		this.registerTableOption("responsiveLayoutCollapseStartOpen", true); //start showing collapsed data
+		this.registerTableOption("responsiveLayoutCollapseUseFormatters", true); //responsive layout collapse formatter
+		this.registerTableOption("responsiveLayoutCollapseFormatter", false); //responsive layout collapse formatter
 	}
 
 	//generate resposive columns list
@@ -17143,6 +17211,8 @@ class Validate extends Module{
 
 		this.invalidCells = [];
 
+		this.registerTableOption("validationMode", "blocking");
+
 		this.registerTableFunction("getInvalidCells", this.getInvalidCells.bind(this));
 		this.registerTableFunction("clearCellValidation", this.userClearCellValidation.bind(this));
 		this.registerTableFunction("validate", this.userValidate.bind(this));
@@ -17713,63 +17783,6 @@ var defaultOptions$1 = {
     virtualDomBuffer:0, // set virtual DOM buffer size
 	virtualDomHoz:false, //enable horizontal DOM virtualization
 
-	persistence:false,
-	persistenceID:"", //key for persistent storage
-	persistenceMode:true, //mode for storing persistence information
-	persistenceReaderFunc:false, //function for handling persistence data reading
-	persistenceWriterFunc:false, //function for handling persistence data writing
-
-	responsiveLayout:false, //responsive layout flags
-	responsiveLayoutCollapseStartOpen:true, //start showing collapsed data
-	responsiveLayoutCollapseUseFormatters:true, //responsive layout collapse formatter
-	responsiveLayoutCollapseFormatter:false, //responsive layout collapse formatter
-
-	pagination:false, //set pagination type
-	paginationSize:false, //set number of rows to a page
-	paginationInitialPage:1, //initail page to show on load
-	paginationButtonCount: 5, // set count of page button
-	paginationSizeSelector:false, //add pagination size selector element
-	paginationElement:false, //element to hold pagination numbers
-	paginationDataSent:{}, //pagination data sent to the server
-	paginationDataReceived:{}, //pagination data received from the server
-	paginationAddRow: "page", //add rows on table or page
-
-	ajaxURL:false, //url for ajax loading
-	ajaxURLGenerator:false,
-	ajaxParams:{}, //params for ajax loading
-	ajaxConfig:"get", //ajax request type
-	ajaxContentType:"form", //ajax request type
-	ajaxRequestFunc:false, //promise function
-	ajaxLoader:true, //show loader
-	ajaxLoaderLoading:false, //loader element
-	ajaxLoaderError:false, //loader element
-	ajaxFiltering:false,
-	ajaxSorting:false,
-	ajaxProgressiveLoad:false, //progressive loading
-	ajaxProgressiveLoadDelay:0, //delay between requests
-	ajaxProgressiveLoadScrollMargin:0, //margin before scroll begins
-
-	groupBy:false, //enable table grouping and set field to group by
-	groupStartOpen:true, //starting state of group
-	groupValues:false,
-	groupUpdateOnCellEdit:false,
-
-	groupHeader:false, //header generation function
-	groupHeaderPrint:null,
-	groupHeaderClipboard:null,
-	groupHeaderHtmlOutput:null,
-	groupHeaderDownload:null,
-
-	htmlOutputConfig:false, //html outypu config
-
-	movableColumns:false, //enable movable columns
-
-	movableRows:false, //enable movable rows
-	movableRowsConnectedTables:false, //tables for movable rows to be connected to
-	movableRowsConnectedElements:false, //other elements for movable rows to be connected to
-	movableRowsSender:false,
-	movableRowsReceiver:"insert",
-
 	scrollToRowPosition:"top",
 	scrollToRowIfVisible:true,
 
@@ -17782,27 +17795,6 @@ var defaultOptions$1 = {
 	rowFormatterHtmlOutput:null,
 
 	placeholder:false,
-
-	rowContextMenu:false,
-	rowClickMenu:false,
-
-	//ajax callbacks
-	ajaxRequesting:function(){},
-	ajaxResponse:false,
-
-	//grouping callbacks
-	groupToggleElement:"arrow",
-	groupClosedShowCalcs:false,
-	groupContextMenu:false,
-	groupClickMenu:false,
-	groupTap:false,
-	groupDblTap:false,
-	groupTapHold:false,
-
-	columnCalcs:true,
-
-	//validation callbacks
-	validationMode:"blocking",
 
 	//////////////////////////////////////
 	////////////// Events ////////////////
@@ -17953,6 +17945,7 @@ var defaultOptions$1 = {
 	groupMouseOver:false,
 	groupMouseOut:false,
 	groupMouseMove:false,
+
 };
 
 class ColumnManager extends CoreFeature {

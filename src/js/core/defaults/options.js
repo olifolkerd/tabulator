@@ -37,63 +37,6 @@ export default {
     virtualDomBuffer:0, // set virtual DOM buffer size
 	virtualDomHoz:false, //enable horizontal DOM virtualization
 
-	persistence:false,
-	persistenceID:"", //key for persistent storage
-	persistenceMode:true, //mode for storing persistence information
-	persistenceReaderFunc:false, //function for handling persistence data reading
-	persistenceWriterFunc:false, //function for handling persistence data writing
-
-	responsiveLayout:false, //responsive layout flags
-	responsiveLayoutCollapseStartOpen:true, //start showing collapsed data
-	responsiveLayoutCollapseUseFormatters:true, //responsive layout collapse formatter
-	responsiveLayoutCollapseFormatter:false, //responsive layout collapse formatter
-
-	pagination:false, //set pagination type
-	paginationSize:false, //set number of rows to a page
-	paginationInitialPage:1, //initail page to show on load
-	paginationButtonCount: 5, // set count of page button
-	paginationSizeSelector:false, //add pagination size selector element
-	paginationElement:false, //element to hold pagination numbers
-	paginationDataSent:{}, //pagination data sent to the server
-	paginationDataReceived:{}, //pagination data received from the server
-	paginationAddRow: "page", //add rows on table or page
-
-	ajaxURL:false, //url for ajax loading
-	ajaxURLGenerator:false,
-	ajaxParams:{}, //params for ajax loading
-	ajaxConfig:"get", //ajax request type
-	ajaxContentType:"form", //ajax request type
-	ajaxRequestFunc:false, //promise function
-	ajaxLoader:true, //show loader
-	ajaxLoaderLoading:false, //loader element
-	ajaxLoaderError:false, //loader element
-	ajaxFiltering:false,
-	ajaxSorting:false,
-	ajaxProgressiveLoad:false, //progressive loading
-	ajaxProgressiveLoadDelay:0, //delay between requests
-	ajaxProgressiveLoadScrollMargin:0, //margin before scroll begins
-
-	groupBy:false, //enable table grouping and set field to group by
-	groupStartOpen:true, //starting state of group
-	groupValues:false,
-	groupUpdateOnCellEdit:false,
-
-	groupHeader:false, //header generation function
-	groupHeaderPrint:null,
-	groupHeaderClipboard:null,
-	groupHeaderHtmlOutput:null,
-	groupHeaderDownload:null,
-
-	htmlOutputConfig:false, //html outypu config
-
-	movableColumns:false, //enable movable columns
-
-	movableRows:false, //enable movable rows
-	movableRowsConnectedTables:false, //tables for movable rows to be connected to
-	movableRowsConnectedElements:false, //other elements for movable rows to be connected to
-	movableRowsSender:false,
-	movableRowsReceiver:"insert",
-
 	scrollToRowPosition:"top",
 	scrollToRowIfVisible:true,
 
@@ -106,27 +49,6 @@ export default {
 	rowFormatterHtmlOutput:null,
 
 	placeholder:false,
-
-	rowContextMenu:false,
-	rowClickMenu:false,
-
-	//ajax callbacks
-	ajaxRequesting:function(){},
-	ajaxResponse:false,
-
-	//grouping callbacks
-	groupToggleElement:"arrow",
-	groupClosedShowCalcs:false,
-	groupContextMenu:false,
-	groupClickMenu:false,
-	groupTap:false,
-	groupDblTap:false,
-	groupTapHold:false,
-
-	columnCalcs:true,
-
-	//validation callbacks
-	validationMode:"blocking",
 
 	//////////////////////////////////////
 	////////////// Events ////////////////
@@ -277,4 +199,5 @@ export default {
 	groupMouseOver:false,
 	groupMouseOut:false,
 	groupMouseMove:false,
+
 }

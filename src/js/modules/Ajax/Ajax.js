@@ -25,6 +25,24 @@ class Ajax extends Module{
 		this.loading = false;
 
 		this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
+
+		this.registerTableOption("ajaxURL", false); //url for ajax loading
+		this.registerTableOption("ajaxURLGenerator", false);
+		this.registerTableOption("ajaxParams", {});  //params for ajax loading
+		this.registerTableOption("ajaxConfig", "get"); //ajax request type
+		this.registerTableOption("ajaxContentType", "form"); //ajax request type
+		this.registerTableOption("ajaxRequestFunc", false); //promise function
+		this.registerTableOption("ajaxLoader", true); //show loader
+		this.registerTableOption("ajaxLoaderLoading", false); //loader element
+		this.registerTableOption("ajaxLoaderError", false); //loader element
+		this.registerTableOption("ajaxFiltering", false);
+		this.registerTableOption("ajaxSorting", false);
+		this.registerTableOption("ajaxProgressiveLoad", false); //progressive loading
+		this.registerTableOption("ajaxProgressiveLoadDelay", 0); //delay between requests
+		this.registerTableOption("ajaxProgressiveLoadScrollMargin", 0); //margin before scroll begins
+		this.registerTableOption("ajaxRequesting", function(){});
+		this.registerTableOption("ajaxResponse", false);
+
 	}
 
 	//initialize setup options

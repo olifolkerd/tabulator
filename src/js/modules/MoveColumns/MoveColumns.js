@@ -21,6 +21,8 @@ class MoveColumns extends Module{
 
 		this.moveHover = this.moveHover.bind(this);
 		this.endMove = this.endMove.bind(this);
+
+		this.registerTableOption("movableColumns", false); //enable movable columns
 	}
 
 	createPlaceholderElement(){

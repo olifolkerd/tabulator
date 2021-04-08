@@ -15,6 +15,18 @@ class GroupRows extends Module{
 		this.allowedValues = false;
 		this.groups = {}; //hold row groups
 		this.displayIndex = 0; //index in display pipeline
+
+		this.registerTableOption("groupBy", false); //enable table grouping and set field to group by
+		this.registerTableOption("groupStartOpen", true); //starting state of group
+		this.registerTableOption("groupValues", false);
+		this.registerTableOption("groupUpdateOnCellEdit", false);
+		this.registerTableOption("groupHeader", false); //header generation function
+		this.registerTableOption("groupHeaderPrint", null);
+		this.registerTableOption("groupHeaderClipboard", null);
+		this.registerTableOption("groupHeaderHtmlOutput", null);
+		this.registerTableOption("groupHeaderDownload", null);
+		this.registerTableOption("groupToggleElement", "arrow");
+		this.registerTableOption("groupClosedShowCalcs", false);
 	}
 
 	//initialize group configuration

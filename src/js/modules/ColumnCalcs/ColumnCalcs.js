@@ -22,6 +22,8 @@ class ColumnCalcs extends Module{
 		this.botRow = false;
 		this.topInitialized = false;
 		this.botInitialized = false;
+
+		this.registerTableOption("columnCalcs", true);
 	}
 
 	createElement (){

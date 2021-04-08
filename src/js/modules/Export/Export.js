@@ -11,6 +11,8 @@ class Export extends Module{
 		this.config = {};
 		this.cloneTableStyle = true;
 		this.colVisProp = "";
+
+		this.registerTableOption("htmlOutputConfig", false); //html outypu config
 	}
 
 	initialize(){

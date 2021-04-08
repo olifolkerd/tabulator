@@ -9,6 +9,8 @@ class Validate extends Module{
 
 		this.invalidCells = [];
 
+		this.registerTableOption("validationMode", "blocking");
+
 		this.registerTableFunction("getInvalidCells", this.getInvalidCells.bind(this));
 		this.registerTableFunction("clearCellValidation", this.userClearCellValidation.bind(this));
 		this.registerTableFunction("validate", this.userValidate.bind(this));

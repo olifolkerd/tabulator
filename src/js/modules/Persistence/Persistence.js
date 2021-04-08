@@ -15,6 +15,12 @@ class Persistence extends Module{
 		this.config = {};
 		this.readFunc = false;
 		this.writeFunc = false;
+
+		this.registerTableOption("persistence", false);
+		this.registerTableOption("persistenceID", ""); //key for persistent storage
+		this.registerTableOption("persistenceMode", true); //mode for storing persistence information
+		this.registerTableOption("persistenceReaderFunc", false); //function for handling persistence data reading
+		this.registerTableOption("persistenceWriterFunc", false); //function for handling persistence data writing
 	}
 
 	// Test for whether localStorage is available for use.
