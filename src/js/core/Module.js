@@ -12,6 +12,15 @@ class Module extends CoreFeature{
 		// setup module when table is initialized, to be overriden in module
 	}
 
+
+	///////////////////////////////////
+	////// Options Registration ///////
+	///////////////////////////////////
+
+	registerTableOption(key, value){
+		this.table.optionsList.register(key, value);
+	}
+
 	///////////////////////////////////
 	/// Public Function Registation ///
 	///////////////////////////////////

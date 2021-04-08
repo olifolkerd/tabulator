@@ -67,6 +67,15 @@ class Module extends CoreFeature{
 		// setup module when table is initialized, to be overriden in module
 	}
 
+
+	///////////////////////////////////
+	////// Options Registration ///////
+	///////////////////////////////////
+
+	registerTableOption(key, value){
+		this.table.optionsList.register(key, value);
+	}
+
 	///////////////////////////////////
 	/// Public Function Registation ///
 	///////////////////////////////////
@@ -17616,9 +17625,6 @@ var defaultOptions$1 = {
 	minHeight:false, //minimum height of tabulator
 	maxHeight:false, //maximum height of tabulator
 
-	layout:"fitData", ///layout type "fitColumns" | "fitData"
-	layoutColumnsOnNewData:false, //update column widths on setData
-
 	columnMaxWidth:false, //minimum global width for a column
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
 
@@ -21410,6 +21416,9 @@ class Layout extends Module{
 		super(table, "layout");
 
 		this.mode = null;
+
+		this.registerTableOption("layout", "fitData");
+		this.registerTableOption("layoutColumnsOnNewData", false);
 	}
 
 	//initialize layout system
@@ -21798,6 +21807,50 @@ class ModuleBinder {
 		}
 
 		tabulator.registerModule(mods);
+	}
+}
+
+class OptionsList {
+	constructor(table, msgType){
+		this.table = table;
+		this.msgType = msgType;
+		this.registeredDefaults = {};
+	}
+
+	register(option, value){
+		this.registeredDefaults[option] = value;
+	}
+
+	generate(defaultOptions, userOptions = {}){
+		var output = Object.assign({}, defaultOptions);
+
+		console.log("gen", this.registeredDefaults);
+
+		Object.assign(output, this.registeredDefaults);
+
+		if(userOptions.invalidOptionWarnings || this.table.options.invalidOptionWarnings){
+			for (var key in userOptions){
+				if(!output.hasOwnProperty(key)){
+					console.warn("Invalid " + msgType + " option:", key);
+				}
+			}
+		}
+
+		for (var key in output){
+			if(key in userOptions){
+				output[key] = userOptions[key];
+			}else {
+				if(Array.isArray(output[key])){
+					output[key] = Object.assign([], output[key]);
+				}else if(typeof output[key] === "object" && output[key] !== null){
+					output[key] = Object.assign({}, output[key]);
+				}else {
+					output[key] = output[key];
+				}
+			}
+		}
+
+		return output;
 	}
 }
 
@@ -22281,11 +22334,11 @@ class Tabulator$1 {
 		this.modulesCore = {}; //hold core modules bound to this table (for initialization purposes)
 		this.modulesRegular = {}; //hold regular modules bound to this table (for initialization purposes)
 
-		if(this.initializeElement(element)){
-			this.initializeOptions(options || {});
+		this.optionsList = new OptionsList(this, "table constructor");
 
-			this.externalEvents = new ExternalEventBus(this.options, this.options.debugEvents);
-			this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
+		if(this.initializeElement(element)){
+
+			this.initialzeCoreSystems(options);
 
 			//delay table creation to allow event bindings immediatly after the constructor
 			setTimeout(() => {
@@ -22294,35 +22347,6 @@ class Tabulator$1 {
 		}
 
 		TableRegistry.register(this); //register table for inderdevice communication
-	}
-
-	initializeOptions(options){
-
-		var defaults = Tabulator$1.defaultOptions;
-
-		//warn user if option is not available
-		if(options.invalidOptionWarnings !== false){
-			for (var key in options){
-				if(typeof defaults[key] === "undefined"){
-					console.warn("Invalid table constructor option:", key);
-				}
-			}
-		}
-
-		//assign options to table
-		for (var key in defaults){
-			if(key in options){
-				this.options[key] = options[key];
-			}else {
-				if(Array.isArray(defaults[key])){
-					this.options[key] = Object.assign([], defaults[key]);
-				}else if(typeof defaults[key] === "object" && defaults[key] !== null){
-					this.options[key] = Object.assign({}, defaults[key]);
-				}else {
-					this.options[key] = defaults[key];
-				}
-			}
-		}
 	}
 
 	initializeElement(element){
@@ -22342,6 +22366,19 @@ class Tabulator$1 {
 			console.error("Tabulator Creation Error - Invalid element provided:", element);
 			return false;
 		}
+	}
+
+	initialzeCoreSystems(options){
+		this.bindModules();
+
+		this.options = this.optionsList.generate(Tabulator$1.defaultOptions, options);
+
+		this._clearObjectPointers();
+
+		this._mapDepricatedFunctionality();
+
+		this.externalEvents = new ExternalEventBus(this.options, this.options.debugEvents);
+		this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
 	}
 
 	rtlCheck(){
@@ -22390,12 +22427,6 @@ class Tabulator$1 {
 	//concreate table
 	_create(){
 		this.InteractionMonitor = new InteractionManager(this);
-
-		this._clearObjectPointers();
-
-		this._mapDepricatedFunctionality();
-
-		this.bindModules();
 
 		this.rtlCheck();
 

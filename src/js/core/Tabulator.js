@@ -15,6 +15,8 @@ import InternalEventBus from './tools/InternalEventBus.js';
 import TableRegistry from './tools/TableRegistry.js';
 import ModuleBinder from './tools/ModuleBinder.js';
 
+import OptionsList from './tools/OptionsList.js';
+
 import VirtualDomHorizontal from './rendering/renderers/VirtualDomHorizontal.js';
 
 class Tabulator {
@@ -41,11 +43,11 @@ class Tabulator {
 		this.modulesCore = {}; //hold core modules bound to this table (for initialization purposes)
 		this.modulesRegular = {}; //hold regular modules bound to this table (for initialization purposes)
 
-		if(this.initializeElement(element)){
-			this.initializeOptions(options || {});
+		this.optionsList = new OptionsList(this, "table constructor");
 
-			this.externalEvents = new ExternalEventBus(this.options, this.options.debugEvents);
-			this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
+		if(this.initializeElement(element)){
+
+			this.initialzeCoreSystems(options);
 
 			//delay table creation to allow event bindings immediatly after the constructor
 			setTimeout(() => {
@@ -54,35 +56,6 @@ class Tabulator {
 		}
 
 		TableRegistry.register(this); //register table for inderdevice communication
-	}
-
-	initializeOptions(options){
-
-		var defaults = Tabulator.defaultOptions;
-
-		//warn user if option is not available
-		if(options.invalidOptionWarnings !== false){
-			for (var key in options){
-				if(typeof defaults[key] === "undefined"){
-					console.warn("Invalid table constructor option:", key)
-				}
-			}
-		}
-
-		//assign options to table
-		for (var key in defaults){
-			if(key in options){
-				this.options[key] = options[key];
-			}else{
-				if(Array.isArray(defaults[key])){
-					this.options[key] = Object.assign([], defaults[key]);
-				}else if(typeof defaults[key] === "object" && defaults[key] !== null){
-					this.options[key] = Object.assign({}, defaults[key]);
-				}else{
-					this.options[key] = defaults[key];
-				}
-			}
-		}
 	}
 
 	initializeElement(element){
@@ -102,6 +75,19 @@ class Tabulator {
 			console.error("Tabulator Creation Error - Invalid element provided:", element);
 			return false;
 		}
+	}
+
+	initialzeCoreSystems(options){
+		this.bindModules();
+
+		this.options = this.optionsList.generate(Tabulator.defaultOptions, options)
+
+		this._clearObjectPointers();
+
+		this._mapDepricatedFunctionality();
+
+		this.externalEvents = new ExternalEventBus(this.options, this.options.debugEvents);
+		this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
 	}
 
 	rtlCheck(){
@@ -151,12 +137,6 @@ class Tabulator {
 	//concreate table
 	_create(){
 		this.InteractionMonitor = new InteractionMonitor(this);
-
-		this._clearObjectPointers();
-
-		this._mapDepricatedFunctionality();
-
-		this.bindModules();
 
 		this.rtlCheck();
 
