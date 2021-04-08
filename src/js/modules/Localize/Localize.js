@@ -13,6 +13,9 @@ class Localize extends Module{
 		this.lang = false; //current language
 		this.bindings = {}; //update events to call when locale is changed
 		this.langList = {};
+
+		this.registerTableOption("locale", false); //current system language
+		this.registerTableOption("langs", {});
 	}
 
 	initialize(){

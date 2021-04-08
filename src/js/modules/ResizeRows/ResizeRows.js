@@ -11,7 +11,7 @@ class ResizeRows extends Module{
 		this.handle = null;
 		this.prevHandle = null;
 
-		this.registerTableOption("resizableRows", false);
+		this.registerTableOption("resizableRows", false); //resizable rows
 	}
 
 	initialize(){

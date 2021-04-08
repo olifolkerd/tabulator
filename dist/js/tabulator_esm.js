@@ -15392,7 +15392,7 @@ class ResizeRows extends Module{
 		this.handle = null;
 		this.prevHandle = null;
 
-		this.registerTableOption("resizableRows", false);
+		this.registerTableOption("resizableRows", false); //resizable rows
 	}
 
 	initialize(){
@@ -16632,6 +16632,9 @@ class Sort extends Module{
 	 	this.changed = false; //has the sort changed since last render
 
 	 	this.registerTableOption("initialSort", false); //initial sorting criteria
+	 	this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
+	 	this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
+	 	this.registerTableOption("headerSortElement", "<div class='tabulator-arrow'></div>"); //header sort element
 	 }
 
 	 initialize(){
@@ -21483,6 +21486,9 @@ class Localize extends Module{
 		this.lang = false; //current language
 		this.bindings = {}; //update events to call when locale is changed
 		this.langList = {};
+
+		this.registerTableOption("locale", false); //current system language
+		this.registerTableOption("langs", {});
 	}
 
 	initialize(){

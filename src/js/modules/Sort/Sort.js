@@ -11,6 +11,9 @@ class Sort extends Module{
 	 	this.changed = false; //has the sort changed since last render
 
 	 	this.registerTableOption("initialSort", false); //initial sorting criteria
+	 	this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
+	 	this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
+	 	this.registerTableOption("headerSortElement", "<div class='tabulator-arrow'></div>"); //header sort element
 	 }
 
 	 initialize(){
