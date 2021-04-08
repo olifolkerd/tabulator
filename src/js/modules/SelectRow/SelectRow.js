@@ -11,6 +11,12 @@ class SelectRow extends Module{
 		this.selectedRows = []; //hold selected rows
 		this.headerCheckboxElement = null; // hold header select element
 
+		this.registerTableOption("selectable", "highlight"); //highlight rows on hover
+		this.registerTableOption("selectableRangeMode", "drag");  //highlight rows on hover
+		this.registerTableOption("selectableRollingSelection", true); //roll selection once maximum number of selectable rows is reached
+		this.registerTableOption("selectablePersistence", true); // maintain selection when table view is updated
+		this.registerTableOption("selectableCheck", function(data, row){return true;}); //check wheather row is selectable
+
 		this.registerTableFunction("selectRow", this.selectRows.bind(this));
 		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
 		this.registerTableFunction("toggleSelectRow", this.toggleRow.bind(this));

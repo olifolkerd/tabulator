@@ -8,6 +8,9 @@ class Layout extends Module{
 		super(table, "layout");
 
 		this.mode = null;
+
+		this.registerTableOption("layout", "fitData"); //layout type
+		this.registerTableOption("layoutColumnsOnNewData", false); //update column widths on setData
 	}
 
 	//initialize layout system

@@ -6,6 +6,10 @@ class Download extends Module{
 
 	constructor(table){
 		super(table);
+
+		this.registerTableOption("downloadReady", function(data, blob){return blob;}); //function to manipulate download data
+		this.registerTableOption("downloadConfig", {}); //download config
+		this.registerTableOption("downloadRowRange", "active"); //restrict download to active rows only
 	}
 
 	initialize(){

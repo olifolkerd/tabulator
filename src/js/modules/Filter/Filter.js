@@ -16,6 +16,9 @@ class Filter extends Module{
 
 		this.changed = false; //has filtering changed since last render
 
+		this.registerTableOption("initialFilter", false); //initial filtering criteria
+		this.registerTableOption("initialHeaderFilter", false); //initial header filtering criteria
+		this.registerTableOption("headerFilterLiveFilterDelay", 300); //delay before updating column after user types in header filter
 
 		this.registerTableFunction("searchRows", this.searchRows.bind(this));
 		this.registerTableFunction("searchData", this.searchData.bind(this));

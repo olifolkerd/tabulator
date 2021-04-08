@@ -2,19 +2,14 @@ export default {
 
 	debugEvents:false, //flag to console log events
 	debugEventsInternal:false, //flag to console log events
+	invalidOptionWarnings:true, //allow toggling of invalid option warnings
 
 	height:false, //height of tabulator
 	minHeight:false, //minimum height of tabulator
 	maxHeight:false, //maximum height of tabulator
 
-	layout:"fitData", ///layout type "fitColumns" | "fitData"
-	layoutColumnsOnNewData:false, //update column widths on setData
-
 	columnMaxWidth:false, //minimum global width for a column
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
-
-	resizablegroups:false, //resizable rows
-	autoResize:true, //auto resize table
 
 	columns:[],//store for colum header info
 	columnDefaults:{}, //store column default props
@@ -24,21 +19,9 @@ export default {
 	autoColumns:false, //build columns from data row structure
 	autoColumnsDefinitions:false,
 
-	reactiveData:false, //enable data reactivity
-
 	nestedFieldSeparator:".", //seperatpr for nested data
 
 	tooltipGenerationMode:"load", //when to generate tooltips
-
-	initialSort:false, //initial sorting criteria
-	initialFilter:false, //initial filtering criteria
-	initialHeaderFilter:false, //initial header filtering criteria
-
-	columnHeaderSortMulti: true, //multiple or single column sorting
-
-	sortOrderReverse:false, //reverse internal sort ordering
-
-	headerSortElement:"<div class='tabulator-arrow'></div>", //header sort element
 
 	footerElement:false, //hold footer element
 
@@ -46,61 +29,9 @@ export default {
 
 	textDirection:"auto",
 
-	keybindings:[], //array for keybindings
-
-	tabEndNewRow:false, //create new row when tab to end of table
-
-	invalidOptionWarnings:true, //allow toggling of invalid option warnings
-
-	clipboard:false, //enable clipboard
-	clipboardCopyStyled:true, //formatted table data
-	clipboardCopyConfig:false, //clipboard config
-	clipboardCopyFormatter:false, //DEPRICATED - REMOVE in 5.0
-	clipboardCopyRowRange:"active", //restrict clipboard to visible rows only
-	clipboardPasteParser:"table", //convert pasted clipboard data to rows
-	clipboardPasteAction:"insert", //how to insert pasted data into the table
-
-	downloadReady:function(data, blob){return blob;}, //function to manipulate download data
-	downloadConfig:{},	//download config
-	downloadRowRange:"active", //restrict download to active rows only
-
-	dataTree:false, //enable data tree
-	dataTreeFilter:true, //filter child rows
-	dataTreeSort:true, //sort child rows
-	dataTreeElementColumn:false,
-	dataTreeBranchElement: true, //show data tree branch element
-	dataTreeChildIndent:9, //data tree child indent in px
-	dataTreeChildField:"_children", //data tre column field to look for child rows
-	dataTreeCollapseElement:false, //data tree row collapse element
-	dataTreeExpandElement:false, //data tree row expand element
-	dataTreeStartExpanded:false,
-	dataTreeChildColumnCalcs:false, //include visible data tree rows in column calculations
-	dataTreeSelectPropagate:false, //seleccting a parent row selects its children
-
-	printAsHtml:false, //enable print as html
-	printFormatter:false, //printing page formatter
-	printHeader:false, //page header contents
-	printFooter:false, //page footer contents
-	printStyled:true, //enable print as html styling
-	printRowRange:"visible", //restrict print to visible rows only
-	printConfig:{}, //print config options
-
 	addRowPos:"bottom", //position to insert blank rows, top|bottom
 
-	selectable:"highlight", //highlight rows on hover
-	selectableRangeMode: "drag", //highlight rows on hover
-	selectableRollingSelection:true, //roll selection once maximum number of selectable rows is reached
-	selectablePersistence:true, // maintain selection when table view is updated
-	selectableCheck:function(data, row){return true;}, //check wheather row is selectable
-
-	headerFilterLiveFilterDelay: 300, //delay before updating column after user types in header filter
-
 	headerVisible:true, //hide header
-
-	history:false, //enable edit history
-
-	locale:false, //current system language
-	langs:{},
 
 	virtualDom:true, //enable DOM virtualization
     virtualDomBuffer:0, // set virtual DOM buffer size
@@ -111,7 +42,6 @@ export default {
 	persistenceMode:true, //mode for storing persistence information
 	persistenceReaderFunc:false, //function for handling persistence data reading
 	persistenceWriterFunc:false, //function for handling persistence data writing
-
 
 	responsiveLayout:false, //responsive layout flags
 	responsiveLayoutCollapseStartOpen:true, //start showing collapsed data

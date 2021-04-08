@@ -12,6 +12,9 @@ class Keybindings extends Module{
 		this.pressedKeys = null;
 		this.keyupBinding = false;
 		this.keydownBinding = false;
+
+		this.registerTableOption("keybindings", []); //array for keybindings
+		this.registerTableOption("tabEndNewRow", false); //create new row when tab to end of table
 	}
 
 	initialize(){

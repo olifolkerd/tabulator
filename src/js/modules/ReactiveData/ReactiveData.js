@@ -9,6 +9,8 @@ class ReactiveData extends Module{
 		this.blocked = false; //block reactivity while performing update
 		this.origFuncs = {}; // hold original data array functions to allow replacement after data is done with
 		this.currentVersion = 0;
+
+		this.registerTableOption("reactiveData", false); //enable data reactivity
 	}
 
 	initialize(){

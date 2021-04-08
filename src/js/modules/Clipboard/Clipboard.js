@@ -14,6 +14,14 @@ class Clipboard extends Module{
 		this.customSelection = false;
 		this.rowRange = false;
 		this.blocked = true; //block copy actions not originating from this command
+
+		this.registerTableOption("clipboard", false); //enable clipboard
+		this.registerTableOption("clipboardCopyStyled", true); //formatted table data
+		this.registerTableOption("clipboardCopyConfig", false); //clipboard config
+		this.registerTableOption("clipboardCopyFormatter", false); //DEPRICATED - REMOVE in 5.0
+		this.registerTableOption("clipboardCopyRowRange", "active"); //restrict clipboard to visible rows only
+		this.registerTableOption("clipboardPasteParser", "table"); //convert pasted clipboard data to rows
+		this.registerTableOption("clipboardPasteAction", "insert"); //how to insert pasted data into the table
 	}
 
 	initialize(){

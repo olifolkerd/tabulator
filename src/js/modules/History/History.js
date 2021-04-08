@@ -10,6 +10,8 @@ class History extends Module{
 
 		this.history = [];
 		this.index = -1;
+
+		this.registerTableOption("history", false); //enable edit history
 	}
 
 	initialize(){

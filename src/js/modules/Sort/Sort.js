@@ -9,6 +9,8 @@ class Sort extends Module{
 
 	 	this.sortList = []; //holder current sort
 	 	this.changed = false; //has the sort changed since last render
+
+	 	this.registerTableOption("initialSort", false); //initial sorting criteria
 	 }
 
 	 initialize(){

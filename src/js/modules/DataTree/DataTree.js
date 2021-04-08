@@ -18,6 +18,19 @@ class DataTree extends Module{
 
 		this.displayIndex = 0;
 
+		this.registerTableOption("dataTree", false); //enable data tree
+		this.registerTableOption("dataTreeFilter", true); //filter child rows
+		this.registerTableOption("dataTreeSort", true); //sort child rows
+		this.registerTableOption("dataTreeElementColumn", false);
+		this.registerTableOption("dataTreeBranchElement", true);//show data tree branch element
+		this.registerTableOption("dataTreeChildIndent", 9); //data tree child indent in px
+		this.registerTableOption("dataTreeChildField", "_children");//data tre column field to look for child rows
+		this.registerTableOption("dataTreeCollapseElement", false);//data tree row collapse element
+		this.registerTableOption("dataTreeExpandElement", false);//data tree row expand element
+		this.registerTableOption("dataTreeStartExpanded", false);
+		this.registerTableOption("dataTreeChildColumnCalcs", false);//include visible data tree rows in column calculations
+		this.registerTableOption("dataTreeSelectPropagate", false);//seleccting a parent row selects its children
+
 		//register component functions
 		this.registerComponentFunction("row", "treeCollapse", this.collapseRow.bind(this));
 		this.registerComponentFunction("row", "treeExpand", this.expandRow.bind(this));

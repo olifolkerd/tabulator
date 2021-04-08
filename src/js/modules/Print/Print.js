@@ -7,6 +7,14 @@ class Print extends Module{
 
 		this.element = false;
 		this.manualBlock = false;
+
+		this.registerTableOption("printAsHtml", false); //enable print as html
+		this.registerTableOption("printFormatter", false); //printing page formatter
+		this.registerTableOption("printHeader", false); //page header contents
+		this.registerTableOption("printFooter", false); //page footer contents
+		this.registerTableOption("printStyled", true); //enable print as html styling
+		this.registerTableOption("printRowRange", "visible"); //restrict print to visible rows only
+		this.registerTableOption("printConfig", {}); //print config options
 	}
 
 	initialize(){

@@ -15,6 +15,8 @@ class ResizeTable extends Module{
 		this.containerWidth = 0;
 
 		this.autoResize = false;
+
+		this.registerTableOption("autoResize", true); //auto resize table
 	}
 
 	initialize(){

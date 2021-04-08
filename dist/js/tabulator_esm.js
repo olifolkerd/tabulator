@@ -824,6 +824,14 @@ class Clipboard extends Module{
 		this.customSelection = false;
 		this.rowRange = false;
 		this.blocked = true; //block copy actions not originating from this command
+
+		this.registerTableOption("clipboard", false); //enable clipboard
+		this.registerTableOption("clipboardCopyStyled", true); //formatted table data
+		this.registerTableOption("clipboardCopyConfig", false); //clipboard config
+		this.registerTableOption("clipboardCopyFormatter", false); //DEPRICATED - REMOVE in 5.0
+		this.registerTableOption("clipboardCopyRowRange", "active"); //restrict clipboard to visible rows only
+		this.registerTableOption("clipboardPasteParser", "table"); //convert pasted clipboard data to rows
+		this.registerTableOption("clipboardPasteAction", "insert"); //how to insert pasted data into the table
 	}
 
 	initialize(){
@@ -4117,6 +4125,19 @@ class DataTree extends Module{
 
 		this.displayIndex = 0;
 
+		this.registerTableOption("dataTree", false); //enable data tree
+		this.registerTableOption("dataTreeFilter", true); //filter child rows
+		this.registerTableOption("dataTreeSort", true); //sort child rows
+		this.registerTableOption("dataTreeElementColumn", false);
+		this.registerTableOption("dataTreeBranchElement", true);//show data tree branch element
+		this.registerTableOption("dataTreeChildIndent", 9); //data tree child indent in px
+		this.registerTableOption("dataTreeChildField", "_children");//data tre column field to look for child rows
+		this.registerTableOption("dataTreeCollapseElement", false);//data tree row collapse element
+		this.registerTableOption("dataTreeExpandElement", false);//data tree row expand element
+		this.registerTableOption("dataTreeStartExpanded", false);
+		this.registerTableOption("dataTreeChildColumnCalcs", false);//include visible data tree rows in column calculations
+		this.registerTableOption("dataTreeSelectPropagate", false);//seleccting a parent row selects its children
+
 		//register component functions
 		this.registerComponentFunction("row", "treeCollapse", this.collapseRow.bind(this));
 		this.registerComponentFunction("row", "treeExpand", this.expandRow.bind(this));
@@ -4985,6 +5006,10 @@ class Download extends Module{
 
 	constructor(table){
 		super(table);
+
+		this.registerTableOption("downloadReady", function(data, blob){return blob;}); //function to manipulate download data
+		this.registerTableOption("downloadConfig", {}); //download config
+		this.registerTableOption("downloadRowRange", "active"); //restrict download to active rows only
 	}
 
 	initialize(){
@@ -8156,6 +8181,9 @@ class Filter extends Module{
 
 		this.changed = false; //has filtering changed since last render
 
+		this.registerTableOption("initialFilter", false); //initial filtering criteria
+		this.registerTableOption("initialHeaderFilter", false); //initial header filtering criteria
+		this.registerTableOption("headerFilterLiveFilterDelay", 300); //delay before updating column after user types in header filter
 
 		this.registerTableFunction("searchRows", this.searchRows.bind(this));
 		this.registerTableFunction("searchData", this.searchData.bind(this));
@@ -11389,6 +11417,8 @@ class History extends Module{
 
 		this.history = [];
 		this.index = -1;
+
+		this.registerTableOption("history", false); //enable edit history
 	}
 
 	initialize(){
@@ -11955,6 +11985,9 @@ class Keybindings extends Module{
 		this.pressedKeys = null;
 		this.keyupBinding = false;
 		this.keydownBinding = false;
+
+		this.registerTableOption("keybindings", []); //array for keybindings
+		this.registerTableOption("tabEndNewRow", false); //create new row when tab to end of table
 	}
 
 	initialize(){
@@ -14703,6 +14736,14 @@ class Print extends Module{
 
 		this.element = false;
 		this.manualBlock = false;
+
+		this.registerTableOption("printAsHtml", false); //enable print as html
+		this.registerTableOption("printFormatter", false); //printing page formatter
+		this.registerTableOption("printHeader", false); //page header contents
+		this.registerTableOption("printFooter", false); //page footer contents
+		this.registerTableOption("printStyled", true); //enable print as html styling
+		this.registerTableOption("printRowRange", "visible"); //restrict print to visible rows only
+		this.registerTableOption("printConfig", {}); //print config options
 	}
 
 	initialize(){
@@ -14816,6 +14857,8 @@ class ReactiveData extends Module{
 		this.blocked = false; //block reactivity while performing update
 		this.origFuncs = {}; // hold original data array functions to allow replacement after data is done with
 		this.currentVersion = 0;
+
+		this.registerTableOption("reactiveData", false); //enable data reactivity
 	}
 
 	initialize(){
@@ -15348,6 +15391,8 @@ class ResizeRows extends Module{
 		this.startHeight = false;
 		this.handle = null;
 		this.prevHandle = null;
+
+		this.registerTableOption("resizableRows", false);
 	}
 
 	initialize(){
@@ -15460,6 +15505,8 @@ class ResizeTable extends Module{
 		this.containerWidth = 0;
 
 		this.autoResize = false;
+
+		this.registerTableOption("autoResize", true); //auto resize table
 	}
 
 	initialize(){
@@ -15902,6 +15949,12 @@ class SelectRow extends Module{
 		this.selectPrev = []; //hold previously selected element for drag drop selection
 		this.selectedRows = []; //hold selected rows
 		this.headerCheckboxElement = null; // hold header select element
+
+		this.registerTableOption("selectable", "highlight"); //highlight rows on hover
+		this.registerTableOption("selectableRangeMode", "drag");  //highlight rows on hover
+		this.registerTableOption("selectableRollingSelection", true); //roll selection once maximum number of selectable rows is reached
+		this.registerTableOption("selectablePersistence", true); // maintain selection when table view is updated
+		this.registerTableOption("selectableCheck", function(data, row){return true;}); //check wheather row is selectable
 
 		this.registerTableFunction("selectRow", this.selectRows.bind(this));
 		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
@@ -16577,6 +16630,8 @@ class Sort extends Module{
 
 	 	this.sortList = []; //holder current sort
 	 	this.changed = false; //has the sort changed since last render
+
+	 	this.registerTableOption("initialSort", false); //initial sorting criteria
 	 }
 
 	 initialize(){
@@ -17620,6 +17675,7 @@ var defaultOptions$1 = {
 
 	debugEvents:false, //flag to console log events
 	debugEventsInternal:false, //flag to console log events
+	invalidOptionWarnings:true, //allow toggling of invalid option warnings
 
 	height:false, //height of tabulator
 	minHeight:false, //minimum height of tabulator
@@ -17627,9 +17683,6 @@ var defaultOptions$1 = {
 
 	columnMaxWidth:false, //minimum global width for a column
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
-
-	resizablegroups:false, //resizable rows
-	autoResize:true, //auto resize table
 
 	columns:[],//store for colum header info
 	columnDefaults:{}, //store column default props
@@ -17639,21 +17692,9 @@ var defaultOptions$1 = {
 	autoColumns:false, //build columns from data row structure
 	autoColumnsDefinitions:false,
 
-	reactiveData:false, //enable data reactivity
-
 	nestedFieldSeparator:".", //seperatpr for nested data
 
 	tooltipGenerationMode:"load", //when to generate tooltips
-
-	initialSort:false, //initial sorting criteria
-	initialFilter:false, //initial filtering criteria
-	initialHeaderFilter:false, //initial header filtering criteria
-
-	columnHeaderSortMulti: true, //multiple or single column sorting
-
-	sortOrderReverse:false, //reverse internal sort ordering
-
-	headerSortElement:"<div class='tabulator-arrow'></div>", //header sort element
 
 	footerElement:false, //hold footer element
 
@@ -17661,61 +17702,9 @@ var defaultOptions$1 = {
 
 	textDirection:"auto",
 
-	keybindings:[], //array for keybindings
-
-	tabEndNewRow:false, //create new row when tab to end of table
-
-	invalidOptionWarnings:true, //allow toggling of invalid option warnings
-
-	clipboard:false, //enable clipboard
-	clipboardCopyStyled:true, //formatted table data
-	clipboardCopyConfig:false, //clipboard config
-	clipboardCopyFormatter:false, //DEPRICATED - REMOVE in 5.0
-	clipboardCopyRowRange:"active", //restrict clipboard to visible rows only
-	clipboardPasteParser:"table", //convert pasted clipboard data to rows
-	clipboardPasteAction:"insert", //how to insert pasted data into the table
-
-	downloadReady:function(data, blob){return blob;}, //function to manipulate download data
-	downloadConfig:{},	//download config
-	downloadRowRange:"active", //restrict download to active rows only
-
-	dataTree:false, //enable data tree
-	dataTreeFilter:true, //filter child rows
-	dataTreeSort:true, //sort child rows
-	dataTreeElementColumn:false,
-	dataTreeBranchElement: true, //show data tree branch element
-	dataTreeChildIndent:9, //data tree child indent in px
-	dataTreeChildField:"_children", //data tre column field to look for child rows
-	dataTreeCollapseElement:false, //data tree row collapse element
-	dataTreeExpandElement:false, //data tree row expand element
-	dataTreeStartExpanded:false,
-	dataTreeChildColumnCalcs:false, //include visible data tree rows in column calculations
-	dataTreeSelectPropagate:false, //seleccting a parent row selects its children
-
-	printAsHtml:false, //enable print as html
-	printFormatter:false, //printing page formatter
-	printHeader:false, //page header contents
-	printFooter:false, //page footer contents
-	printStyled:true, //enable print as html styling
-	printRowRange:"visible", //restrict print to visible rows only
-	printConfig:{}, //print config options
-
 	addRowPos:"bottom", //position to insert blank rows, top|bottom
 
-	selectable:"highlight", //highlight rows on hover
-	selectableRangeMode: "drag", //highlight rows on hover
-	selectableRollingSelection:true, //roll selection once maximum number of selectable rows is reached
-	selectablePersistence:true, // maintain selection when table view is updated
-	selectableCheck:function(data, row){return true;}, //check wheather row is selectable
-
-	headerFilterLiveFilterDelay: 300, //delay before updating column after user types in header filter
-
 	headerVisible:true, //hide header
-
-	history:false, //enable edit history
-
-	locale:false, //current system language
-	langs:{},
 
 	virtualDom:true, //enable DOM virtualization
     virtualDomBuffer:0, // set virtual DOM buffer size
@@ -17726,7 +17715,6 @@ var defaultOptions$1 = {
 	persistenceMode:true, //mode for storing persistence information
 	persistenceReaderFunc:false, //function for handling persistence data reading
 	persistenceWriterFunc:false, //function for handling persistence data writing
-
 
 	responsiveLayout:false, //responsive layout flags
 	responsiveLayoutCollapseStartOpen:true, //start showing collapsed data
@@ -21417,8 +21405,8 @@ class Layout extends Module{
 
 		this.mode = null;
 
-		this.registerTableOption("layout", "fitData");
-		this.registerTableOption("layoutColumnsOnNewData", false);
+		this.registerTableOption("layout", "fitData"); //layout type
+		this.registerTableOption("layoutColumnsOnNewData", false); //update column widths on setData
 	}
 
 	//initialize layout system
@@ -21828,10 +21816,10 @@ class OptionsList {
 
 		Object.assign(output, this.registeredDefaults);
 
-		if(userOptions.invalidOptionWarnings || this.table.options.invalidOptionWarnings){
+		if(userOptions.invalidOptionWarnings !== false || this.table.options.invalidOptionWarnings){
 			for (var key in userOptions){
 				if(!output.hasOwnProperty(key)){
-					console.warn("Invalid " + msgType + " option:", key);
+					console.warn("Invalid " + this.msgType + " option:", key);
 				}
 			}
 		}
