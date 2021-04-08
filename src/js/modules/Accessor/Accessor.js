@@ -1,5 +1,5 @@
 import Module from '../../core/Module.js';
-import Helpers from '../../core/Helpers.js';
+import Helpers from '../../core/tools/Helpers.js';
 
 import defautlAccessors from './defaults/accessors.js';
 

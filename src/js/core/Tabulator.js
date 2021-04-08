@@ -6,14 +6,14 @@ import ColumnManager from './ColumnManager.js';
 import RowManager from './RowManager.js';
 import FooterManager from './FooterManager.js';
 
-import InteractionMonitor from './InteractionMonitor.js';
-import ComponentFuctionBinder from './ComponentFuctionBinder.js';
+import InteractionMonitor from './tools/InteractionMonitor.js';
+import ComponentFuctionBinder from './tools/ComponentFuctionBinder.js';
 
-import ExternalEventBus from './ExternalEventBus.js';
-import InternalEventBus from './InternalEventBus.js';
+import ExternalEventBus from './tools/ExternalEventBus.js';
+import InternalEventBus from './tools/InternalEventBus.js';
 
-import TableRegistry from './TableRegistry.js';
-import ModuleBinder from './ModuleBinder.js';
+import TableRegistry from './tools/TableRegistry.js';
+import ModuleBinder from './tools/ModuleBinder.js';
 
 import VirtualDomHorizontal from './rendering/renderers/VirtualDomHorizontal.js';
 

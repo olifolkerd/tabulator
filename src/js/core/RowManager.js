@@ -1,7 +1,7 @@
 import CoreFeature from './CoreFeature.js';
 import Row from './row/Row.js';
 import RowComponent from './row/RowComponent.js';
-import Helpers from './Helpers.js';
+import Helpers from './tools/Helpers.js';
 
 import RendererClassic from './rendering/renderers/Classic.js';
 import RendererVirtualDomVertical from './rendering/renderers/VirtualDomVertical.js';

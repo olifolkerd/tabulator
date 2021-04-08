@@ -1,5 +1,5 @@
 import Module from '../../core/Module.js';
-import Helpers from '../../core/Helpers.js';
+import Helpers from '../../core/tools/Helpers.js';
 
 class Menu extends Module{
 

@@ -1,5 +1,5 @@
 import CoreFeature from '../CoreFeature.js';
-import Helpers from '../Helpers.js';
+import Helpers from '../tools/Helpers.js';
 
 export default class Renderer extends CoreFeature{
 	constructor(table){

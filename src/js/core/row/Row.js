@@ -1,6 +1,6 @@
 import CoreFeature from '../CoreFeature.js';
 import RowComponent from './RowComponent.js';
-import Helpers from '../Helpers.js';
+import Helpers from '../tools/Helpers.js';
 
 export default class Row extends CoreFeature{
 	constructor (data, parent, type = "row"){

@@ -1,4 +1,4 @@
-import Helpers from '../../../../core/Helpers.js';
+import Helpers from '../../../../core/tools/Helpers.js';
 
 //dropdown select editor
 export default function(cell, onRendered, success, cancel, editorParams){

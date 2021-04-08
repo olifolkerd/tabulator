@@ -1,5 +1,5 @@
 import Module from '../../core/Module.js';
-import TableRegistry from '../../core/TableRegistry.js';
+import TableRegistry from '../../core/tools/TableRegistry.js';
 
 class Comms extends Module{
 

@@ -1,7 +1,7 @@
 import CoreFeature from './CoreFeature.js';
 import Column from './column/Column.js';
 import ColumnComponent from './column/ColumnComponent.js';
-import Helpers from './Helpers.js';
+import Helpers from './tools/Helpers.js';
 
 export default class ColumnManager extends CoreFeature {
 

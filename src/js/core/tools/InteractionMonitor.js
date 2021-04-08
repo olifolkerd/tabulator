@@ -1,4 +1,4 @@
-import CoreFeature from './CoreFeature.js';
+import CoreFeature from '../CoreFeature.js';
 import Helpers from './Helpers.js';
 
 export default class InteractionManager extends CoreFeature {
