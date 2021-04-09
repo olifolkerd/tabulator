@@ -160,6 +160,19 @@ class Accessor extends Module{
 		super(table);
 
 		this.allowedTypes = ["", "data", "download", "clipboard", "print", "htmlOutput"]; //list of accessor types
+
+		this.registerColumnOption("accessor");
+		this.registerColumnOption("accessorParams");
+		this.registerColumnOption("accessorData");
+		this.registerColumnOption("accessorDataParams");
+		this.registerColumnOption("accessorDownload");
+		this.registerColumnOption("accessorDownloadParams");
+		this.registerColumnOption("accessorClipboard");
+		this.registerColumnOption("accessorClipboardParams");
+		this.registerColumnOption("accessorPrint");
+		this.registerColumnOption("accessorPrintParams");
+		this.registerColumnOption("accessorHtmlOutput");
+		this.registerColumnOption("accessorHtmlOutputParams");
 	}
 
 	initialize(){
@@ -1855,14 +1868,9 @@ var defaultOptions = {
 	"width": undefined,
 	"minWidth": 40,
 	"maxWidth": undefined,
-	"widthGrow": undefined,
-	"widthShrink": undefined,
-	"resizable": undefined,
-	"frozen": undefined,
-	"responsive": undefined,
 	"tooltip": undefined,
 	"cssClass": undefined,
-	"rowHandle": undefined,
+
 	"print": undefined,
 	"htmlOutput": undefined,
 	"sorter": undefined,
@@ -1874,36 +1882,10 @@ var defaultOptions = {
 	"editor": undefined,
 	"editorParams": undefined,
 	"validator": undefined,
-	"mutator": undefined,
-	"mutatorParams": undefined,
-	"mutatorData": undefined,
-	"mutatorDataParams": undefined,
-	"mutatorEdit": undefined,
-	"mutatorEditParams": undefined,
-	"mutatorClipboard": undefined,
-	"mutatorClipboardParams": undefined,
-	"accessor": undefined,
-	"accessorParams": undefined,
-	"accessorData": undefined,
-	"accessorDataParams": undefined,
-	"accessorDownload": undefined,
-	"accessorDownloadParams": undefined,
-	"accessorClipboard": undefined,
-	"accessorClipboardParams": undefined,
-	"accessorPrint": undefined,
-	"accessorPrintParams": undefined,
-	"accessorHtmlOutput": undefined,
-	"accessorHtmlOutputParams": undefined,
+
 	"clipboard": undefined,
 	"download": undefined,
-	"topCalc": undefined,
-	"topCalcParams": undefined,
-	"topCalcFormatter": undefined,
-	"topCalcFormatterParams": undefined,
-	"bottomCalc": undefined,
-	"bottomCalcParams": undefined,
-	"bottomCalcFormatter": undefined,
-	"bottomCalcFormatterParams": undefined,
+
 	"cellClick": undefined,
 	"cellDblClick": undefined,
 	"cellContext": undefined,
@@ -1939,25 +1921,9 @@ var defaultOptions = {
 	"editableTitle": undefined,
 	"titleFormatter": undefined,
 	"titleFormatterParams": undefined,
-	"headerFilter": undefined,
-	"headerFilterPlaceholder": undefined,
-	"headerFilterParams": undefined,
-	"headerFilterEmptyCheck": undefined,
-	"headerFilterFunc": undefined,
-	"headerFilterFuncParams": undefined,
-	"headerFilterLiveFilter": undefined,
+
 	"print": undefined,
-	"headerContextMenu": undefined,
-	"headerMenu": undefined,
-	"contextMenu": undefined,
-	// "headerClickMenu": undefined,
-	"clickMenu": undefined,
-	"formatterPrint": undefined,
-	"formatterPrintParams": undefined,
-	"formatterClipboard": undefined,
-	"formatterClipboardParams": undefined,
-	"formatterHtmlOutput": undefined,
-	"formatterHtmlOutputParams": undefined,
+
 	"titlePrint": undefined,
 	"titleClipboard": undefined,
 	"titleHtmlOutput": undefined,
@@ -3679,6 +3645,15 @@ class ColumnCalcs extends Module{
 		this.botInitialized = false;
 
 		this.registerTableOption("columnCalcs", true);
+
+		this.registerColumnOption("topCalc");
+		this.registerColumnOption("topCalcParams");
+		this.registerColumnOption("topCalcFormatter");
+		this.registerColumnOption("topCalcFormatterParams");
+		this.registerColumnOption("bottomCalc");
+		this.registerColumnOption("bottomCalcParams");
+		this.registerColumnOption("bottomCalcFormatter");
+		this.registerColumnOption("bottomCalcFormatterParams");
 	}
 
 	createElement (){
@@ -8208,6 +8183,14 @@ class Filter extends Module{
 		this.registerTableOption("initialHeaderFilter", false); //initial header filtering criteria
 		this.registerTableOption("headerFilterLiveFilterDelay", 300); //delay before updating column after user types in header filter
 
+		this.registerColumnOption("headerFilter");
+		this.registerColumnOption("headerFilterPlaceholder");
+		this.registerColumnOption("headerFilterParams");
+		this.registerColumnOption("headerFilterEmptyCheck");
+		this.registerColumnOption("headerFilterFunc");
+		this.registerColumnOption("headerFilterFuncParams");
+		this.registerColumnOption("headerFilterLiveFilter");
+
 		this.registerTableFunction("searchRows", this.searchRows.bind(this));
 		this.registerTableFunction("searchData", this.searchData.bind(this));
 
@@ -9607,6 +9590,17 @@ var defaultFormatters = {
 
 class Format extends Module{
 
+	constructor(table){
+		super(table);
+
+		this.registerColumnOption("formatterPrint");
+		this.registerColumnOption("formatterPrintParams");
+		this.registerColumnOption("formatterClipboard");
+		this.registerColumnOption("formatterClipboardParams");
+		this.registerColumnOption("formatterHtmlOutput");
+		this.registerColumnOption("formatterHtmlOutputParams");
+	}
+
 	initialize(){
 		this.subscribe("cell-format", this.formatValue.bind(this));
 		this.subscribe("cell-rendered", this.cellRendered.bind(this));
@@ -9806,6 +9800,8 @@ class FrozenColumns extends Module{
 		this.initializationMode = "left";
 		this.active = false;
 		this.scrollEndTimer = false;
+
+		this.registerColumnOption("frozen");
 	}
 
 	//reset initial state
@@ -12196,6 +12192,11 @@ class Menu extends Module{
 		this.registerTableOption("rowClickMenu", false);
 		this.registerTableOption("groupContextMenu", false);
 		this.registerTableOption("groupClickMenu", false);
+
+		this.registerColumnOption("headerContextMenu");
+		this.registerColumnOption("headerMenu");
+		this.registerColumnOption("contextMenu");
+		this.registerColumnOption("clickMenu");
 	}
 
 	initialize(){
@@ -12830,6 +12831,8 @@ class MoveRows extends Module{
 		this.registerTableOption("movableRowsConnectedElements", false); //other elements for movable rows to be connected to
 		this.registerTableOption("movableRowsSender", false);
 		this.registerTableOption("movableRowsReceiver", "insert");
+
+		this.registerColumnOption("rowHandle");
 	}
 
 	createPlaceholderElement(){
@@ -13429,6 +13432,15 @@ class Mutator extends Module{
 
 		this.allowedTypes = ["", "data", "edit", "clipboard"]; //list of muatation types
 		this.enabled = true;
+
+		this.registerColumnOption("mutator");
+		this.registerColumnOption("mutatorParams");
+		this.registerColumnOption("mutatorData");
+		this.registerColumnOption("mutatorDataParams");
+		this.registerColumnOption("mutatorEdit");
+		this.registerColumnOption("mutatorEditParams");
+		this.registerColumnOption("mutatorClipboard");
+		this.registerColumnOption("mutatorClipboardParams");
 	}
 
 	initialize(){
@@ -15262,6 +15274,8 @@ class ResizeColumns extends Module{
 		this.startWidth = false;
 		this.handle = null;
 		this.prevHandle = null;
+
+		this.registerColumnOption("resizable", true);
 	}
 
 	initialize(){
@@ -15701,6 +15715,8 @@ class ResponsiveLayout extends Module{
 		this.registerTableOption("responsiveLayoutCollapseStartOpen", true); //start showing collapsed data
 		this.registerTableOption("responsiveLayoutCollapseUseFormatters", true); //responsive layout collapse formatter
 		this.registerTableOption("responsiveLayoutCollapseFormatter", false); //responsive layout collapse formatter
+
+		this.registerColumnOption("responsive");
 	}
 
 	//generate resposive columns list
@@ -21431,6 +21447,9 @@ class Layout extends Module{
 
 		this.registerTableOption("layout", "fitData"); //layout type
 		this.registerTableOption("layoutColumnsOnNewData", false); //update column widths on setData
+
+		this.registerColumnOption("widthGrow");
+		this.registerColumnOption("widthShrink");
 	}
 
 	//initialize layout system

@@ -9,6 +9,15 @@ class Mutator extends Module{
 
 		this.allowedTypes = ["", "data", "edit", "clipboard"]; //list of muatation types
 		this.enabled = true;
+
+		this.registerColumnOption("mutator");
+		this.registerColumnOption("mutatorParams");
+		this.registerColumnOption("mutatorData");
+		this.registerColumnOption("mutatorDataParams");
+		this.registerColumnOption("mutatorEdit");
+		this.registerColumnOption("mutatorEditParams");
+		this.registerColumnOption("mutatorClipboard");
+		this.registerColumnOption("mutatorClipboardParams");
 	}
 
 	initialize(){

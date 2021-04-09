@@ -37,6 +37,8 @@ class MoveRows extends Module{
 		this.registerTableOption("movableRowsConnectedElements", false); //other elements for movable rows to be connected to
 		this.registerTableOption("movableRowsSender", false);
 		this.registerTableOption("movableRowsReceiver", "insert");
+
+		this.registerColumnOption("rowHandle");
 	}
 
 	createPlaceholderElement(){

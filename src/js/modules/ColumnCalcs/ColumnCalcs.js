@@ -24,6 +24,15 @@ class ColumnCalcs extends Module{
 		this.botInitialized = false;
 
 		this.registerTableOption("columnCalcs", true);
+
+		this.registerColumnOption("topCalc");
+		this.registerColumnOption("topCalcParams");
+		this.registerColumnOption("topCalcFormatter");
+		this.registerColumnOption("topCalcFormatterParams");
+		this.registerColumnOption("bottomCalc");
+		this.registerColumnOption("bottomCalcParams");
+		this.registerColumnOption("bottomCalcFormatter");
+		this.registerColumnOption("bottomCalcFormatterParams");
 	}
 
 	createElement (){

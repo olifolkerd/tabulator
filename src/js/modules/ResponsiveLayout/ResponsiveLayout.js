@@ -17,6 +17,8 @@ class ResponsiveLayout extends Module{
 		this.registerTableOption("responsiveLayoutCollapseStartOpen", true); //start showing collapsed data
 		this.registerTableOption("responsiveLayoutCollapseUseFormatters", true); //responsive layout collapse formatter
 		this.registerTableOption("responsiveLayoutCollapseFormatter", false); //responsive layout collapse formatter
+
+		this.registerColumnOption("responsive");
 	}
 
 	//generate resposive columns list

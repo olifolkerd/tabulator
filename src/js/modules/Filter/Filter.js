@@ -20,6 +20,14 @@ class Filter extends Module{
 		this.registerTableOption("initialHeaderFilter", false); //initial header filtering criteria
 		this.registerTableOption("headerFilterLiveFilterDelay", 300); //delay before updating column after user types in header filter
 
+		this.registerColumnOption("headerFilter");
+		this.registerColumnOption("headerFilterPlaceholder");
+		this.registerColumnOption("headerFilterParams");
+		this.registerColumnOption("headerFilterEmptyCheck");
+		this.registerColumnOption("headerFilterFunc");
+		this.registerColumnOption("headerFilterFuncParams");
+		this.registerColumnOption("headerFilterLiveFilter");
+
 		this.registerTableFunction("searchRows", this.searchRows.bind(this));
 		this.registerTableFunction("searchData", this.searchData.bind(this));
 

@@ -10,6 +10,8 @@ class ResizeColumns extends Module{
 		this.startWidth = false;
 		this.handle = null;
 		this.prevHandle = null;
+
+		this.registerColumnOption("resizable", true);
 	}
 
 	initialize(){

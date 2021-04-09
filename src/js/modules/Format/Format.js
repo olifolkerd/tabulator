@@ -4,6 +4,17 @@ import defaultFormatters from './defaults/formatters.js';
 
 class Format extends Module{
 
+	constructor(table){
+		super(table);
+
+		this.registerColumnOption("formatterPrint");
+		this.registerColumnOption("formatterPrintParams");
+		this.registerColumnOption("formatterClipboard");
+		this.registerColumnOption("formatterClipboardParams");
+		this.registerColumnOption("formatterHtmlOutput");
+		this.registerColumnOption("formatterHtmlOutputParams");
+	}
+
 	initialize(){
 		this.subscribe("cell-format", this.formatValue.bind(this));
 		this.subscribe("cell-rendered", this.cellRendered.bind(this));

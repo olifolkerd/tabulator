@@ -11,6 +11,9 @@ class Layout extends Module{
 
 		this.registerTableOption("layout", "fitData"); //layout type
 		this.registerTableOption("layoutColumnsOnNewData", false); //update column widths on setData
+
+		this.registerColumnOption("widthGrow");
+		this.registerColumnOption("widthShrink");
 	}
 
 	//initialize layout system

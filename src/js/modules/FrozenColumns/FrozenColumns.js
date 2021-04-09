@@ -13,6 +13,8 @@ class FrozenColumns extends Module{
 		this.initializationMode = "left";
 		this.active = false;
 		this.scrollEndTimer = false;
+
+		this.registerColumnOption("frozen");
 	}
 
 	//reset initial state

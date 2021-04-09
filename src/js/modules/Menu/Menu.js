@@ -16,6 +16,11 @@ class Menu extends Module{
 		this.registerTableOption("rowClickMenu", false);
 		this.registerTableOption("groupContextMenu", false);
 		this.registerTableOption("groupClickMenu", false);
+
+		this.registerColumnOption("headerContextMenu");
+		this.registerColumnOption("headerMenu");
+		this.registerColumnOption("contextMenu");
+		this.registerColumnOption("clickMenu");
 	}
 
 	initialize(){

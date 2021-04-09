@@ -9,6 +9,19 @@ class Accessor extends Module{
 		super(table);
 
 		this.allowedTypes = ["", "data", "download", "clipboard", "print", "htmlOutput"] //list of accessor types
+
+		this.registerColumnOption("accessor");
+		this.registerColumnOption("accessorParams");
+		this.registerColumnOption("accessorData");
+		this.registerColumnOption("accessorDataParams");
+		this.registerColumnOption("accessorDownload");
+		this.registerColumnOption("accessorDownloadParams");
+		this.registerColumnOption("accessorClipboard");
+		this.registerColumnOption("accessorClipboardParams");
+		this.registerColumnOption("accessorPrint");
+		this.registerColumnOption("accessorPrintParams");
+		this.registerColumnOption("accessorHtmlOutput");
+		this.registerColumnOption("accessorHtmlOutputParams");
 	}
 
 	initialize(){
