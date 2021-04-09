@@ -14,7 +14,6 @@ export default class RowManager extends CoreFeature{
 		this.element = this.createHolderElement(); //containing element
 		this.tableElement = this.createTableElement(); //table element
 		this.heightFixer = this.createTableElement(); //table element
-		this.columnManager = null; //hold column manager object
 
 		this.firstRender = false; //handle first render
 		this.renderMode = "virtual"; //current rendering mode
@@ -42,8 +41,6 @@ export default class RowManager extends CoreFeature{
 
 		this._bindEvents();
 	}
-
-
 
 	//////////////// Setup Functions /////////////////
 
@@ -85,11 +82,6 @@ export default class RowManager extends CoreFeature{
 		}else{
 			return this.rows.indexOf(row);
 		}
-	}
-
-	//link to column manager
-	setColumnManager(manager){
-		this.columnManager = manager;
 	}
 
 	initialize(){
@@ -1072,7 +1064,7 @@ export default class RowManager extends CoreFeature{
 		modExists;
 
 		if(this.renderer.verticalFillMode === "fill"){
-			let otherHeight =  Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
+			let otherHeight =  Math.floor(this.table.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
 
 			if(this.fixedHeight){
 				this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";

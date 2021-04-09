@@ -18002,7 +18002,6 @@ class ColumnManager extends CoreFeature {
 		this.blockHozScrollEvent = false;
 		this.headersElement = this.createHeadersElement();
 		this.element = this.createHeaderElement(); //containing element
-		this.rowManager = null; //hold row manager object
 		this.columns = []; // column definition object
 		this.columnsByIndex = []; //columns by index
 		this.columnsByField = {}; //columns by field
@@ -18042,12 +18041,6 @@ class ColumnManager extends CoreFeature {
 		}
 
 		return el;
-	}
-
-
-	//link to row manager
-	setRowManager(manager){
-		this.rowManager = manager;
 	}
 
 	//return containing element
@@ -18267,7 +18260,7 @@ class ColumnManager extends CoreFeature {
 			column.verticalAlign(this.table.options.columnHeaderVertAlign, minHeight);
 		});
 
-		this.rowManager.adjustTableSize();
+		this.table.rowManager.adjustTableSize();
 	}
 
 	//////////////// Column Details /////////////////
@@ -18543,8 +18536,8 @@ class ColumnManager extends CoreFeature {
 		fixedWidth = 0;
 
 		//adjust for vertical scrollbar if present
-		if(this.rowManager.element.scrollHeight > this.rowManager.element.clientHeight){
-			totalWidth -= this.rowManager.element.offsetWidth - this.rowManager.element.clientWidth;
+		if(this.table.rowManager.element.scrollHeight > this.table.rowManager.element.clientHeight){
+			totalWidth -= this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
 		}
 
 		this.columnsByIndex.forEach(function(column){
@@ -19432,7 +19425,6 @@ class RowManager extends CoreFeature{
 		this.element = this.createHolderElement(); //containing element
 		this.tableElement = this.createTableElement(); //table element
 		this.heightFixer = this.createTableElement(); //table element
-		this.columnManager = null; //hold column manager object
 
 		this.firstRender = false; //handle first render
 		this.renderMode = "virtual"; //current rendering mode
@@ -19460,8 +19452,6 @@ class RowManager extends CoreFeature{
 
 		this._bindEvents();
 	}
-
-
 
 	//////////////// Setup Functions /////////////////
 
@@ -19503,11 +19493,6 @@ class RowManager extends CoreFeature{
 		}else {
 			return this.rows.indexOf(row);
 		}
-	}
-
-	//link to column manager
-	setColumnManager(manager){
-		this.columnManager = manager;
 	}
 
 	initialize(){
@@ -20485,7 +20470,7 @@ class RowManager extends CoreFeature{
 		var initialHeight = this.element.clientHeight;
 
 		if(this.renderer.verticalFillMode === "fill"){
-			let otherHeight =  Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
+			let otherHeight =  Math.floor(this.table.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
 
 			if(this.fixedHeight){
 				this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
@@ -22430,9 +22415,6 @@ class Tabulator$1 {
 				this.modules.htmlTableImport.parseTable();
 			}
 		}
-
-		this.columnManager.setRowManager(this.rowManager);
-		this.rowManager.setColumnManager(this.columnManager);
 
 		if(this.options.virtualDomHoz){
 			this.vdomHoz = new VirtualDomHorizontal(this);

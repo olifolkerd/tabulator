@@ -12,7 +12,6 @@ export default class ColumnManager extends CoreFeature {
 		this.blockHozScrollEvent = false;
 		this.headersElement = this.createHeadersElement();
 		this.element = this.createHeaderElement(); //containing element
-		this.rowManager = null; //hold row manager object
 		this.columns = []; // column definition object
 		this.columnsByIndex = []; //columns by index
 		this.columnsByField = {}; //columns by field
@@ -52,12 +51,6 @@ export default class ColumnManager extends CoreFeature {
 		}
 
 		return el;
-	}
-
-
-	//link to row manager
-	setRowManager(manager){
-		this.rowManager = manager;
 	}
 
 	//return containing element
@@ -277,7 +270,7 @@ export default class ColumnManager extends CoreFeature {
 			column.verticalAlign(this.table.options.columnHeaderVertAlign, minHeight);
 		});
 
-		this.rowManager.adjustTableSize();
+		this.table.rowManager.adjustTableSize();
 	}
 
 	//////////////// Column Details /////////////////
@@ -553,8 +546,8 @@ export default class ColumnManager extends CoreFeature {
 		fixedWidth = 0;
 
 		//adjust for vertical scrollbar if present
-		if(this.rowManager.element.scrollHeight > this.rowManager.element.clientHeight){
-			totalWidth -= this.rowManager.element.offsetWidth - this.rowManager.element.clientWidth;
+		if(this.table.rowManager.element.scrollHeight > this.table.rowManager.element.clientHeight){
+			totalWidth -= this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
 		}
 
 		this.columnsByIndex.forEach(function(column){

@@ -151,9 +151,6 @@ class Tabulator {
 			}
 		}
 
-		this.columnManager.setRowManager(this.rowManager);
-		this.rowManager.setColumnManager(this.columnManager);
-
 		if(this.options.virtualDomHoz){
 			this.vdomHoz = new VirtualDomHorizontal(this);
 		}
