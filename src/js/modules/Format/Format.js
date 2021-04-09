@@ -7,12 +7,17 @@ class Format extends Module{
 	constructor(table){
 		super(table);
 
+		this.registerColumnOption("formatter");
+		this.registerColumnOption("formatterParams");
+
 		this.registerColumnOption("formatterPrint");
 		this.registerColumnOption("formatterPrintParams");
 		this.registerColumnOption("formatterClipboard");
 		this.registerColumnOption("formatterClipboardParams");
 		this.registerColumnOption("formatterHtmlOutput");
 		this.registerColumnOption("formatterHtmlOutputParams");
+		this.registerColumnOption("titleFormatter");
+		this.registerColumnOption("titleFormatterParams");
 	}
 
 	initialize(){

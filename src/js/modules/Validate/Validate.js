@@ -11,6 +11,8 @@ class Validate extends Module{
 
 		this.registerTableOption("validationMode", "blocking");
 
+		this.registerColumnOption("validator");
+
 		this.registerTableFunction("getInvalidCells", this.getInvalidCells.bind(this));
 		this.registerTableFunction("clearCellValidation", this.userClearCellValidation.bind(this));
 		this.registerTableFunction("validate", this.userValidate.bind(this));

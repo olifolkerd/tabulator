@@ -87,6 +87,30 @@ class Interaction extends Module{
 			}
 		}
 
+		this.registerColumnOption("headerClick");
+		this.registerColumnOption("headerDblClick");
+		this.registerColumnOption("headerContext");
+		this.registerColumnOption("headerMouseEnter");
+		this.registerColumnOption("headerMouseLeave");
+		this.registerColumnOption("headerMouseOver");
+		this.registerColumnOption("headerMouseOut");
+		this.registerColumnOption("headerMouseMove");
+		this.registerColumnOption("headerTap");
+		this.registerColumnOption("headerDblTap");
+		this.registerColumnOption("headerTapHold");
+
+		this.registerColumnOption("cellClick");
+		this.registerColumnOption("cellDblClick");
+		this.registerColumnOption("cellContext");
+		this.registerColumnOption("cellMouseEnter");
+		this.registerColumnOption("cellMouseLeave");
+		this.registerColumnOption("cellMouseOver");
+		this.registerColumnOption("cellMouseOut");
+		this.registerColumnOption("cellMouseMove");
+		this.registerColumnOption("cellTap");
+		this.registerColumnOption("cellDblTap");
+		this.registerColumnOption("cellTapHold");
+
 	}
 
 	initialize(){

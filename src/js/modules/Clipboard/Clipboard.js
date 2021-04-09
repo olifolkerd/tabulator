@@ -22,6 +22,9 @@ class Clipboard extends Module{
 		this.registerTableOption("clipboardCopyRowRange", "active"); //restrict clipboard to visible rows only
 		this.registerTableOption("clipboardPasteParser", "table"); //convert pasted clipboard data to rows
 		this.registerTableOption("clipboardPasteAction", "insert"); //how to insert pasted data into the table
+
+		this.registerColumnOption("clipboard");
+		this.registerColumnOption("titleClipboard");
 	}
 
 	initialize(){

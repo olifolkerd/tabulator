@@ -14,6 +14,14 @@ class Sort extends Module{
 	 	this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
 	 	this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
 	 	this.registerTableOption("headerSortElement", "<div class='tabulator-arrow'></div>"); //header sort element
+
+	 	this.registerColumnOption("sorter");
+	 	this.registerColumnOption("sorterParams");
+
+	 	this.registerColumnOption("headerSort", true);
+	 	this.registerColumnOption("headerSortStartingDir");
+	 	this.registerColumnOption("headerSortTristate");
+
 	 }
 
 	 initialize(){

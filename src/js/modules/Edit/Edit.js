@@ -15,6 +15,14 @@ class Edit extends Module{
 
 		this.editors = Edit.editors;
 
+		this.registerColumnOption("editable");
+		this.registerColumnOption("editor");
+		this.registerColumnOption("editorParams");
+
+		this.registerColumnOption("cellEditing");
+		this.registerColumnOption("cellEdited");
+		this.registerColumnOption("cellEditCancelled");
+
 		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
 		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
 

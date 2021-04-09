@@ -867,6 +867,9 @@ class Clipboard extends Module{
 		this.registerTableOption("clipboardCopyRowRange", "active"); //restrict clipboard to visible rows only
 		this.registerTableOption("clipboardPasteParser", "table"); //convert pasted clipboard data to rows
 		this.registerTableOption("clipboardPasteAction", "insert"); //how to insert pasted data into the table
+
+		this.registerColumnOption("clipboard");
+		this.registerColumnOption("titleClipboard");
 	}
 
 	initialize(){
@@ -1870,64 +1873,11 @@ var defaultOptions = {
 	"maxWidth": undefined,
 	"tooltip": undefined,
 	"cssClass": undefined,
-
-	"print": undefined,
-	"htmlOutput": undefined,
-	"sorter": undefined,
-	"sorterParams": undefined,
-	"formatter": undefined,
-	"formatterParams": undefined,
 	"variableHeight": undefined,
-	"editable": undefined,
-	"editor": undefined,
-	"editorParams": undefined,
-	"validator": undefined,
-
-	"clipboard": undefined,
-	"download": undefined,
-
-	"cellClick": undefined,
-	"cellDblClick": undefined,
-	"cellContext": undefined,
-	"cellTap": undefined,
-	"cellDblTap": undefined,
-	"cellTapHold": undefined,
-	"cellMouseEnter": undefined,
-	"cellMouseLeave": undefined,
-	"cellMouseOver": undefined,
-	"cellMouseOut": undefined,
-	"cellMouseMove": undefined,
-	"cellEditing": undefined,
-	"cellEdited": undefined,
-	"cellEditCancelled": undefined,
-	"headerSort": undefined,
-	"headerSortStartingDir": undefined,
-	"headerSortTristate": undefined,
-	"headerClick": undefined,
-	"headerDblClick": undefined,
-	"headerContext": undefined,
-	"headerMouseEnter": undefined,
-	"headerMouseLeave": undefined,
-	"headerMouseOver": undefined,
-	"headerMouseOut": undefined,
-	"headerMouseMove": undefined,
-	"headerTap": undefined,
-	"headerDblTap": undefined,
-	"headerTapHold": undefined,
-	"headerTapHold": undefined,
 	"headerTooltip": undefined,
 	"headerVertical": undefined,
 	"headerHozAlign": undefined,
 	"editableTitle": undefined,
-	"titleFormatter": undefined,
-	"titleFormatterParams": undefined,
-
-	"print": undefined,
-
-	"titlePrint": undefined,
-	"titleClipboard": undefined,
-	"titleHtmlOutput": undefined,
-	"titleDownload": undefined,
 };
 
 class Column$1 extends CoreFeature{
@@ -5006,6 +4956,9 @@ class Download extends Module{
 		this.registerTableOption("downloadReady", function(data, blob){return blob;}); //function to manipulate download data
 		this.registerTableOption("downloadConfig", {}); //download config
 		this.registerTableOption("downloadRowRange", "active"); //restrict download to active rows only
+
+		this.registerColumnOption("download");
+		this.registerColumnOption("titleDownload");
 	}
 
 	initialize(){
@@ -6922,6 +6875,14 @@ class Edit extends Module{
 
 		this.editors = Edit.editors;
 
+		this.registerColumnOption("editable");
+		this.registerColumnOption("editor");
+		this.registerColumnOption("editorParams");
+
+		this.registerColumnOption("cellEditing");
+		this.registerColumnOption("cellEdited");
+		this.registerColumnOption("cellEditCancelled");
+
 		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
 		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
 
@@ -7465,6 +7426,9 @@ class Export extends Module{
 		this.colVisProp = "";
 
 		this.registerTableOption("htmlOutputConfig", false); //html outypu config
+
+		this.registerColumnOption("htmlOutput");
+		this.registerColumnOption("titleHtmlOutput");
 	}
 
 	initialize(){
@@ -9593,12 +9557,17 @@ class Format extends Module{
 	constructor(table){
 		super(table);
 
+		this.registerColumnOption("formatter");
+		this.registerColumnOption("formatterParams");
+
 		this.registerColumnOption("formatterPrint");
 		this.registerColumnOption("formatterPrintParams");
 		this.registerColumnOption("formatterClipboard");
 		this.registerColumnOption("formatterClipboardParams");
 		this.registerColumnOption("formatterHtmlOutput");
 		this.registerColumnOption("formatterHtmlOutputParams");
+		this.registerColumnOption("titleFormatter");
+		this.registerColumnOption("titleFormatterParams");
 	}
 
 	initialize(){
@@ -14820,6 +14789,9 @@ class Print extends Module{
 		this.registerTableOption("printStyled", true); //enable print as html styling
 		this.registerTableOption("printRowRange", "visible"); //restrict print to visible rows only
 		this.registerTableOption("printConfig", {}); //print config options
+
+		this.registerColumnOption("print");
+		this.registerColumnOption("titlePrint");
 	}
 
 	initialize(){
@@ -16720,6 +16692,14 @@ class Sort extends Module{
 	 	this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
 	 	this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
 	 	this.registerTableOption("headerSortElement", "<div class='tabulator-arrow'></div>"); //header sort element
+
+	 	this.registerColumnOption("sorter");
+	 	this.registerColumnOption("sorterParams");
+
+	 	this.registerColumnOption("headerSort", true);
+	 	this.registerColumnOption("headerSortStartingDir");
+	 	this.registerColumnOption("headerSortTristate");
+
 	 }
 
 	 initialize(){
@@ -17230,6 +17210,8 @@ class Validate extends Module{
 
 		this.registerTableOption("validationMode", "blocking");
 
+		this.registerColumnOption("validator");
+
 		this.registerTableFunction("getInvalidCells", this.getInvalidCells.bind(this));
 		this.registerTableFunction("clearCellValidation", this.userClearCellValidation.bind(this));
 		this.registerTableFunction("validate", this.userValidate.bind(this));
@@ -17523,6 +17505,30 @@ class Interaction extends Module{
 				tapHold:null,
 			}
 		};
+
+		this.registerColumnOption("headerClick");
+		this.registerColumnOption("headerDblClick");
+		this.registerColumnOption("headerContext");
+		this.registerColumnOption("headerMouseEnter");
+		this.registerColumnOption("headerMouseLeave");
+		this.registerColumnOption("headerMouseOver");
+		this.registerColumnOption("headerMouseOut");
+		this.registerColumnOption("headerMouseMove");
+		this.registerColumnOption("headerTap");
+		this.registerColumnOption("headerDblTap");
+		this.registerColumnOption("headerTapHold");
+
+		this.registerColumnOption("cellClick");
+		this.registerColumnOption("cellDblClick");
+		this.registerColumnOption("cellContext");
+		this.registerColumnOption("cellMouseEnter");
+		this.registerColumnOption("cellMouseLeave");
+		this.registerColumnOption("cellMouseOver");
+		this.registerColumnOption("cellMouseOut");
+		this.registerColumnOption("cellMouseMove");
+		this.registerColumnOption("cellTap");
+		this.registerColumnOption("cellDblTap");
+		this.registerColumnOption("cellTapHold");
 
 	}
 

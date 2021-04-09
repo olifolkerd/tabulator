@@ -13,6 +13,9 @@ class Export extends Module{
 		this.colVisProp = "";
 
 		this.registerTableOption("htmlOutputConfig", false); //html outypu config
+
+		this.registerColumnOption("htmlOutput");
+		this.registerColumnOption("titleHtmlOutput");
 	}
 
 	initialize(){

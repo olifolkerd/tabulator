@@ -10,6 +10,9 @@ class Download extends Module{
 		this.registerTableOption("downloadReady", function(data, blob){return blob;}); //function to manipulate download data
 		this.registerTableOption("downloadConfig", {}); //download config
 		this.registerTableOption("downloadRowRange", "active"); //restrict download to active rows only
+
+		this.registerColumnOption("download");
+		this.registerColumnOption("titleDownload");
 	}
 
 	initialize(){

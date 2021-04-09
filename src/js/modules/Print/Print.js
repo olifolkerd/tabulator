@@ -15,6 +15,9 @@ class Print extends Module{
 		this.registerTableOption("printStyled", true); //enable print as html styling
 		this.registerTableOption("printRowRange", "visible"); //restrict print to visible rows only
 		this.registerTableOption("printConfig", {}); //print config options
+
+		this.registerColumnOption("print");
+		this.registerColumnOption("titlePrint");
 	}
 
 	initialize(){
