@@ -32,13 +32,9 @@ class Column extends CoreFeature{
 
 		this.titleFormatterRendered = false;
 
-		this.mapDefinitionDefaults();
+		this.mapDefinitions();
 
 		this.setField(this.definition.field);
-
-		if(this.table.options.invalidOptionWarnings){
-			this.checkDefinition();
-		}
 
 		this.modules = {}; //hold module variables;
 
@@ -53,8 +49,6 @@ class Column extends CoreFeature{
 		this.visible = true; //default visible state
 
 		this.component = null;
-
-		this._mapDepricatedFunctionality();
 
 		//initialize column
 		if(def.columns){
@@ -94,9 +88,10 @@ class Column extends CoreFeature{
 		return el;
 	}
 
-	mapDefinitionDefaults(){
+	mapDefinitions(){
 		var defaults = this.table.options.columnDefaults;
 
+		//map columnDefaults onto column definitions
 		if(defaults){
 			for(let key in defaults){
 				if(typeof this.definition[key] === "undefined"){
@@ -104,6 +99,8 @@ class Column extends CoreFeature{
 				}
 			}
 		}
+
+		this.defintion = this.table.columnManager.optionsList.generate(Column.defaultOptionList, this.definition)
 	}
 
 	checkDefinition(){
@@ -321,7 +318,7 @@ class Column extends CoreFeature{
 		}
 
 		//set min width if present
-		this.setMinWidth(typeof def.minWidth == "undefined" ? 40 : parseInt(def.minWidth));
+		this.setMinWidth(parseInt(def.minWidth));
 
 		if(def.maxWidth){
 			this.setMaxWidth(parseInt(def.maxWidth));

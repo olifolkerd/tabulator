@@ -1845,124 +1845,124 @@ class ColumnComponent {
 	}
 }
 
-var defaultOptions = [
-	"title",
-	"field",
-	"columns",
-	"visible",
-	"hozAlign",
-	"vertAlign",
-	"width",
-	"minWidth",
-	"maxWidth",
-	"widthGrow",
-	"widthShrink",
-	"resizable",
-	"frozen",
-	"responsive",
-	"tooltip",
-	"cssClass",
-	"rowHandle",
-	"print",
-	"htmlOutput",
-	"sorter",
-	"sorterParams",
-	"formatter",
-	"formatterParams",
-	"variableHeight",
-	"editable",
-	"editor",
-	"editorParams",
-	"validator",
-	"mutator",
-	"mutatorParams",
-	"mutatorData",
-	"mutatorDataParams",
-	"mutatorEdit",
-	"mutatorEditParams",
-	"mutatorClipboard",
-	"mutatorClipboardParams",
-	"accessor",
-	"accessorParams",
-	"accessorData",
-	"accessorDataParams",
-	"accessorDownload",
-	"accessorDownloadParams",
-	"accessorClipboard",
-	"accessorClipboardParams",
-	"accessorPrint",
-	"accessorPrintParams",
-	"accessorHtmlOutput",
-	"accessorHtmlOutputParams",
-	"clipboard",
-	"download",
-	"topCalc",
-	"topCalcParams",
-	"topCalcFormatter",
-	"topCalcFormatterParams",
-	"bottomCalc",
-	"bottomCalcParams",
-	"bottomCalcFormatter",
-	"bottomCalcFormatterParams",
-	"cellClick",
-	"cellDblClick",
-	"cellContext",
-	"cellTap",
-	"cellDblTap",
-	"cellTapHold",
-	"cellMouseEnter",
-	"cellMouseLeave",
-	"cellMouseOver",
-	"cellMouseOut",
-	"cellMouseMove",
-	"cellEditing",
-	"cellEdited",
-	"cellEditCancelled",
-	"headerSort",
-	"headerSortStartingDir",
-	"headerSortTristate",
-	"headerClick",
-	"headerDblClick",
-	"headerContext",
-	"headerMouseEnter",
-	"headerMouseLeave",
-	"headerMouseOver",
-	"headerMouseOut",
-	"headerMouseMove",
-	"headerTap",
-	"headerDblTap",
-	"headerTapHold",
-	"headerTapHold",
-	"headerTooltip",
-	"headerVertical",
-	"headerHozAlign",
-	"editableTitle",
-	"titleFormatter",
-	"titleFormatterParams",
-	"headerFilter",
-	"headerFilterPlaceholder",
-	"headerFilterParams",
-	"headerFilterEmptyCheck",
-	"headerFilterFunc",
-	"headerFilterFuncParams",
-	"headerFilterLiveFilter",
-	"print",
-	"headerContextMenu",
-	"headerMenu",
-	"contextMenu",
-	// "headerClickMenu",
-	"clickMenu",
-	"formatterPrint",
-	"formatterPrintParams",
-	"formatterClipboard",
-	"formatterClipboardParams",
-	"formatterHtmlOutput",
-	"formatterHtmlOutputParams",
-	"titlePrint",
-	"titleClipboard",
-	"titleHtmlOutput",
-	"titleDownload",
-];
+var defaultOptions = {
+	"title": undefined,
+	"field": undefined,
+	"columns": undefined,
+	"visible": undefined,
+	"hozAlign": undefined,
+	"vertAlign": undefined,
+	"width": undefined,
+	"minWidth": 40,
+	"maxWidth": undefined,
+	"widthGrow": undefined,
+	"widthShrink": undefined,
+	"resizable": undefined,
+	"frozen": undefined,
+	"responsive": undefined,
+	"tooltip": undefined,
+	"cssClass": undefined,
+	"rowHandle": undefined,
+	"print": undefined,
+	"htmlOutput": undefined,
+	"sorter": undefined,
+	"sorterParams": undefined,
+	"formatter": undefined,
+	"formatterParams": undefined,
+	"variableHeight": undefined,
+	"editable": undefined,
+	"editor": undefined,
+	"editorParams": undefined,
+	"validator": undefined,
+	"mutator": undefined,
+	"mutatorParams": undefined,
+	"mutatorData": undefined,
+	"mutatorDataParams": undefined,
+	"mutatorEdit": undefined,
+	"mutatorEditParams": undefined,
+	"mutatorClipboard": undefined,
+	"mutatorClipboardParams": undefined,
+	"accessor": undefined,
+	"accessorParams": undefined,
+	"accessorData": undefined,
+	"accessorDataParams": undefined,
+	"accessorDownload": undefined,
+	"accessorDownloadParams": undefined,
+	"accessorClipboard": undefined,
+	"accessorClipboardParams": undefined,
+	"accessorPrint": undefined,
+	"accessorPrintParams": undefined,
+	"accessorHtmlOutput": undefined,
+	"accessorHtmlOutputParams": undefined,
+	"clipboard": undefined,
+	"download": undefined,
+	"topCalc": undefined,
+	"topCalcParams": undefined,
+	"topCalcFormatter": undefined,
+	"topCalcFormatterParams": undefined,
+	"bottomCalc": undefined,
+	"bottomCalcParams": undefined,
+	"bottomCalcFormatter": undefined,
+	"bottomCalcFormatterParams": undefined,
+	"cellClick": undefined,
+	"cellDblClick": undefined,
+	"cellContext": undefined,
+	"cellTap": undefined,
+	"cellDblTap": undefined,
+	"cellTapHold": undefined,
+	"cellMouseEnter": undefined,
+	"cellMouseLeave": undefined,
+	"cellMouseOver": undefined,
+	"cellMouseOut": undefined,
+	"cellMouseMove": undefined,
+	"cellEditing": undefined,
+	"cellEdited": undefined,
+	"cellEditCancelled": undefined,
+	"headerSort": undefined,
+	"headerSortStartingDir": undefined,
+	"headerSortTristate": undefined,
+	"headerClick": undefined,
+	"headerDblClick": undefined,
+	"headerContext": undefined,
+	"headerMouseEnter": undefined,
+	"headerMouseLeave": undefined,
+	"headerMouseOver": undefined,
+	"headerMouseOut": undefined,
+	"headerMouseMove": undefined,
+	"headerTap": undefined,
+	"headerDblTap": undefined,
+	"headerTapHold": undefined,
+	"headerTapHold": undefined,
+	"headerTooltip": undefined,
+	"headerVertical": undefined,
+	"headerHozAlign": undefined,
+	"editableTitle": undefined,
+	"titleFormatter": undefined,
+	"titleFormatterParams": undefined,
+	"headerFilter": undefined,
+	"headerFilterPlaceholder": undefined,
+	"headerFilterParams": undefined,
+	"headerFilterEmptyCheck": undefined,
+	"headerFilterFunc": undefined,
+	"headerFilterFuncParams": undefined,
+	"headerFilterLiveFilter": undefined,
+	"print": undefined,
+	"headerContextMenu": undefined,
+	"headerMenu": undefined,
+	"contextMenu": undefined,
+	// "headerClickMenu": undefined,
+	"clickMenu": undefined,
+	"formatterPrint": undefined,
+	"formatterPrintParams": undefined,
+	"formatterClipboard": undefined,
+	"formatterClipboardParams": undefined,
+	"formatterHtmlOutput": undefined,
+	"formatterHtmlOutputParams": undefined,
+	"titlePrint": undefined,
+	"titleClipboard": undefined,
+	"titleHtmlOutput": undefined,
+	"titleDownload": undefined,
+};
 
 class Column$1 extends CoreFeature{
 
@@ -1992,13 +1992,9 @@ class Column$1 extends CoreFeature{
 
 		this.titleFormatterRendered = false;
 
-		this.mapDefinitionDefaults();
+		this.mapDefinitions();
 
 		this.setField(this.definition.field);
-
-		if(this.table.options.invalidOptionWarnings){
-			this.checkDefinition();
-		}
 
 		this.modules = {}; //hold module variables;
 
@@ -2013,8 +2009,6 @@ class Column$1 extends CoreFeature{
 		this.visible = true; //default visible state
 
 		this.component = null;
-
-		this._mapDepricatedFunctionality();
 
 		//initialize column
 		if(def.columns){
@@ -2054,9 +2048,10 @@ class Column$1 extends CoreFeature{
 		return el;
 	}
 
-	mapDefinitionDefaults(){
+	mapDefinitions(){
 		var defaults = this.table.options.columnDefaults;
 
+		//map columnDefaults onto column definitions
 		if(defaults){
 			for(let key in defaults){
 				if(typeof this.definition[key] === "undefined"){
@@ -2064,6 +2059,8 @@ class Column$1 extends CoreFeature{
 				}
 			}
 		}
+
+		this.defintion = this.table.columnManager.optionsList.generate(Column$1.defaultOptionList, this.definition);
 	}
 
 	checkDefinition(){
@@ -2281,7 +2278,7 @@ class Column$1 extends CoreFeature{
 		}
 
 		//set min width if present
-		this.setMinWidth(typeof def.minWidth == "undefined" ? 40 : parseInt(def.minWidth));
+		this.setMinWidth(parseInt(def.minWidth));
 
 		if(def.maxWidth){
 			this.setMaxWidth(parseInt(def.maxWidth));
@@ -17984,8 +17981,8 @@ class OptionsList {
 					output[key] = Object.assign([], output[key]);
 				}else if(typeof output[key] === "object" && output[key] !== null){
 					output[key] = Object.assign({}, output[key]);
-				}else {
-					output[key] = output[key];
+				}else if (typeof output[key] === "undefined"){
+					delete output[key];
 				}
 			}
 		}
@@ -18544,7 +18541,7 @@ class ColumnManager extends CoreFeature {
 
 				width = column.definition.width || 0;
 
-				minWidth = typeof column.minWidth == "undefined" ? 40 : parseInt(column.minWidth);
+				minWidth = parseInt(column.minWidth);
 
 				if(typeof(width) == "string"){
 					if(width.indexOf("%") > -1){

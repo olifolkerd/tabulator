@@ -554,7 +554,7 @@ export default class ColumnManager extends CoreFeature {
 
 				width = column.definition.width || 0;
 
-				minWidth = typeof column.minWidth == "undefined" ? 40 : parseInt(column.minWidth);
+				minWidth = parseInt(column.minWidth);
 
 				if(typeof(width) == "string"){
 					if(width.indexOf("%") > -1){

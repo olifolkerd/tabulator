@@ -30,8 +30,8 @@ export default class OptionsList {
 					output[key] = Object.assign([], output[key]);
 				}else if(typeof output[key] === "object" && output[key] !== null){
 					output[key] = Object.assign({}, output[key]);
-				}else{
-					output[key] = output[key];
+				}else if (typeof output[key] === "undefined"){
+					delete output[key];
 				}
 			}
 		}
