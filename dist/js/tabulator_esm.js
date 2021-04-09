@@ -76,6 +76,10 @@ class Module extends CoreFeature{
 		this.table.optionsList.register(key, value);
 	}
 
+	registerColumnOption(key, value){
+		this.table.columnManager.optionsList.register(key, value);
+	}
+
 	///////////////////////////////////
 	/// Public Function Registation ///
 	///////////////////////////////////
@@ -17948,6 +17952,48 @@ var defaultOptions$1 = {
 
 };
 
+class OptionsList {
+	constructor(table, msgType){
+		this.table = table;
+		this.msgType = msgType;
+		this.registeredDefaults = {};
+	}
+
+	register(option, value){
+		this.registeredDefaults[option] = value;
+	}
+
+	generate(defaultOptions, userOptions = {}){
+		var output = Object.assign({}, this.registeredDefaults);
+
+		Object.assign(output, defaultOptions);
+
+		if(userOptions.invalidOptionWarnings !== false || this.table.options.invalidOptionWarnings){
+			for (var key in userOptions){
+				if(!output.hasOwnProperty(key)){
+					console.warn("Invalid " + this.msgType + " option:", key);
+				}
+			}
+		}
+
+		for (var key in output){
+			if(key in userOptions){
+				output[key] = userOptions[key];
+			}else {
+				if(Array.isArray(output[key])){
+					output[key] = Object.assign([], output[key]);
+				}else if(typeof output[key] === "object" && output[key] !== null){
+					output[key] = Object.assign({}, output[key]);
+				}else {
+					output[key] = output[key];
+				}
+			}
+		}
+
+		return output;
+	}
+}
+
 class ColumnManager extends CoreFeature {
 
 	constructor (table){
@@ -17961,6 +18007,7 @@ class ColumnManager extends CoreFeature {
 		this.columnsByIndex = []; //columns by index
 		this.columnsByField = {}; //columns by field
 		this.scrollLeft = 0;
+		this.optionsList = new OptionsList(this.table, "column definition");
 
 		this.element.insertBefore(this.headersElement, this.element.firstChild);
 
@@ -21797,48 +21844,6 @@ class ModuleBinder {
 	}
 }
 
-class OptionsList {
-	constructor(table, msgType){
-		this.table = table;
-		this.msgType = msgType;
-		this.registeredDefaults = {};
-	}
-
-	register(option, value){
-		this.registeredDefaults[option] = value;
-	}
-
-	generate(defaultOptions, userOptions = {}){
-		var output = Object.assign({}, this.registeredDefaults);
-
-		Object.assign(output, defaultOptions);
-
-		if(userOptions.invalidOptionWarnings !== false || this.table.options.invalidOptionWarnings){
-			for (var key in userOptions){
-				if(!output.hasOwnProperty(key)){
-					console.warn("Invalid " + this.msgType + " option:", key);
-				}
-			}
-		}
-
-		for (var key in output){
-			if(key in userOptions){
-				output[key] = userOptions[key];
-			}else {
-				if(Array.isArray(output[key])){
-					output[key] = Object.assign([], output[key]);
-				}else if(typeof output[key] === "object" && output[key] !== null){
-					output[key] = Object.assign({}, output[key]);
-				}else {
-					output[key] = output[key];
-				}
-			}
-		}
-
-		return output;
-	}
-}
-
 class VirtualDomHorizontal {
 	constructor(table){
 		this.table = table;
@@ -22364,6 +22369,12 @@ class Tabulator$1 {
 
 		this.externalEvents = new ExternalEventBus(this.options, this.options.debugEvents);
 		this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
+
+		this.interactionMonitor = new InteractionManager(this);
+
+		this.columnManager = new ColumnManager(this);
+		this.rowManager = new RowManager(this);
+		this.footerManager = new FooterManager(this);
 	}
 
 	rtlCheck(){
@@ -22411,7 +22422,6 @@ class Tabulator$1 {
 
 	//concreate table
 	_create(){
-		this.InteractionMonitor = new InteractionManager(this);
 
 		this.rtlCheck();
 
@@ -22420,10 +22430,6 @@ class Tabulator$1 {
 				this.modules.htmlTableImport.parseTable();
 			}
 		}
-
-		this.columnManager = new ColumnManager(this);
-		this.rowManager = new RowManager(this);
-		this.footerManager = new FooterManager(this);
 
 		this.columnManager.setRowManager(this.rowManager);
 		this.rowManager.setColumnManager(this.columnManager);

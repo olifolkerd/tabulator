@@ -2,6 +2,7 @@ import CoreFeature from './CoreFeature.js';
 import Column from './column/Column.js';
 import ColumnComponent from './column/ColumnComponent.js';
 import Helpers from './tools/Helpers.js';
+import OptionsList from './tools/OptionsList.js';
 
 export default class ColumnManager extends CoreFeature {
 
@@ -16,6 +17,7 @@ export default class ColumnManager extends CoreFeature {
 		this.columnsByIndex = []; //columns by index
 		this.columnsByField = {}; //columns by field
 		this.scrollLeft = 0;
+		this.optionsList = new OptionsList(this.table, "column definition");
 
 		this.element.insertBefore(this.headersElement, this.element.firstChild);
 

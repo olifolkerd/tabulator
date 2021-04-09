@@ -21,6 +21,10 @@ class Module extends CoreFeature{
 		this.table.optionsList.register(key, value);
 	}
 
+	registerColumnOption(key, value){
+		this.table.columnManager.optionsList.register(key, value);
+	}
+
 	///////////////////////////////////
 	/// Public Function Registation ///
 	///////////////////////////////////
