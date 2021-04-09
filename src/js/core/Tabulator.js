@@ -88,6 +88,12 @@ class Tabulator {
 
 		this.externalEvents = new ExternalEventBus(this.options, this.options.debugEvents);
 		this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
+
+		this.interactionMonitor = new InteractionMonitor(this);
+
+		this.columnManager = new ColumnManager(this);
+		this.rowManager = new RowManager(this);
+		this.footerManager = new FooterManager(this);
 	}
 
 	rtlCheck(){
@@ -136,7 +142,6 @@ class Tabulator {
 
 	//concreate table
 	_create(){
-		this.InteractionMonitor = new InteractionMonitor(this);
 
 		this.rtlCheck();
 
@@ -145,10 +150,6 @@ class Tabulator {
 				this.modules.htmlTableImport.parseTable();
 			}
 		}
-
-		this.columnManager = new ColumnManager(this);
-		this.rowManager = new RowManager(this);
-		this.footerManager = new FooterManager(this);
 
 		this.columnManager.setRowManager(this.rowManager);
 		this.rowManager.setColumnManager(this.columnManager);
