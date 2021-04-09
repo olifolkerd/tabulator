@@ -78,6 +78,10 @@ class Tabulator {
 	}
 
 	initialzeCoreSystems(options){
+		this.columnManager = new ColumnManager(this);
+		this.rowManager = new RowManager(this);
+		this.footerManager = new FooterManager(this);
+
 		this.bindModules();
 
 		this.options = this.optionsList.generate(Tabulator.defaultOptions, options)
@@ -91,9 +95,9 @@ class Tabulator {
 
 		this.interactionMonitor = new InteractionMonitor(this);
 
-		this.columnManager = new ColumnManager(this);
-		this.rowManager = new RowManager(this);
-		this.footerManager = new FooterManager(this);
+		this.columnManager.initialize();
+		this.rowManager.initialize();
+		this.footerManager.initialize();
 	}
 
 	rtlCheck(){

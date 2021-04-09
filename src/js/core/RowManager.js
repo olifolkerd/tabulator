@@ -38,13 +38,11 @@ export default class RowManager extends CoreFeature{
 
 		this.dataPipeline = []; //hold data pipeline tasks
 		this.displayPipeline = []; //hold data display pipeline tasks
-
-		this._bindEvents();
 	}
 
 	//////////////// Setup Functions /////////////////
 
-	_bindEvents(){
+	initialize(){
 
 	}
 

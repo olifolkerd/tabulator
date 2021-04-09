@@ -10,7 +10,11 @@ export default class FooterManager extends CoreFeature{
 		this.external = false;
 		this.links = [];
 
-		this._initialize();
+		this.initializeElement();
+	}
+
+	initialize(){
+
 	}
 
 	createElement (){
@@ -21,7 +25,7 @@ export default class FooterManager extends CoreFeature{
 		return el;
 	}
 
-	_initialize(element){
+	initializeElement(element){
 		if(this.table.options.footerElement){
 
 			switch(typeof this.table.options.footerElement){

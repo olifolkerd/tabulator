@@ -10,27 +10,24 @@ export default class ColumnManager extends CoreFeature {
 		super(table);
 
 		this.blockHozScrollEvent = false;
-		this.headersElement = this.createHeadersElement();
-		this.element = this.createHeaderElement(); //containing element
+		this.headersElement = null;
+		this.element = null ; //containing element
 		this.columns = []; // column definition object
 		this.columnsByIndex = []; //columns by index
 		this.columnsByField = {}; //columns by field
 		this.scrollLeft = 0;
 		this.optionsList = new OptionsList(this.table, "column definition");
-
-		this.element.insertBefore(this.headersElement, this.element.firstChild);
-
-		this._bindEvents();
 	}
 
 	////////////// Setup Functions /////////////////
 
-	_bindEvents(){
+	initialize(){
+		this.headersElement = this.createHeadersElement();
+		this.element = this.createHeaderElement();
+
+		this.element.insertBefore(this.headersElement, this.element.firstChild);
+
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
-	}
-
-	initialize (){
-
 	}
 
 	createHeadersElement (){

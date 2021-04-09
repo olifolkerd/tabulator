@@ -18000,27 +18000,24 @@ class ColumnManager extends CoreFeature {
 		super(table);
 
 		this.blockHozScrollEvent = false;
-		this.headersElement = this.createHeadersElement();
-		this.element = this.createHeaderElement(); //containing element
+		this.headersElement = null;
+		this.element = null ; //containing element
 		this.columns = []; // column definition object
 		this.columnsByIndex = []; //columns by index
 		this.columnsByField = {}; //columns by field
 		this.scrollLeft = 0;
 		this.optionsList = new OptionsList(this.table, "column definition");
-
-		this.element.insertBefore(this.headersElement, this.element.firstChild);
-
-		this._bindEvents();
 	}
 
 	////////////// Setup Functions /////////////////
 
-	_bindEvents(){
+	initialize(){
+		this.headersElement = this.createHeadersElement();
+		this.element = this.createHeaderElement();
+
+		this.element.insertBefore(this.headersElement, this.element.firstChild);
+
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
-	}
-
-	initialize (){
-
 	}
 
 	createHeadersElement (){
@@ -19449,13 +19446,11 @@ class RowManager extends CoreFeature{
 
 		this.dataPipeline = []; //hold data pipeline tasks
 		this.displayPipeline = []; //hold data display pipeline tasks
-
-		this._bindEvents();
 	}
 
 	//////////////// Setup Functions /////////////////
 
-	_bindEvents(){
+	initialize(){
 
 	}
 
@@ -20578,7 +20573,11 @@ class FooterManager extends CoreFeature{
 		this.external = false;
 		this.links = [];
 
-		this._initialize();
+		this.initializeElement();
+	}
+
+	initialize(){
+
 	}
 
 	createElement (){
@@ -20589,7 +20588,7 @@ class FooterManager extends CoreFeature{
 		return el;
 	}
 
-	_initialize(element){
+	initializeElement(element){
 		if(this.table.options.footerElement){
 
 			switch(typeof this.table.options.footerElement){
@@ -22344,6 +22343,10 @@ class Tabulator$1 {
 	}
 
 	initialzeCoreSystems(options){
+		this.columnManager = new ColumnManager(this);
+		this.rowManager = new RowManager(this);
+		this.footerManager = new FooterManager(this);
+
 		this.bindModules();
 
 		this.options = this.optionsList.generate(Tabulator$1.defaultOptions, options);
@@ -22357,9 +22360,9 @@ class Tabulator$1 {
 
 		this.interactionMonitor = new InteractionManager(this);
 
-		this.columnManager = new ColumnManager(this);
-		this.rowManager = new RowManager(this);
-		this.footerManager = new FooterManager(this);
+		this.columnManager.initialize();
+		this.rowManager.initialize();
+		this.footerManager.initialize();
 	}
 
 	rtlCheck(){
