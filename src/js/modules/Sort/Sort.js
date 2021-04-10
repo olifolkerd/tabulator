@@ -11,7 +11,6 @@ class Sort extends Module{
 	 	this.changed = false; //has the sort changed since last render
 
 	 	this.registerTableOption("sortMode", "local"); //local or remote sorting
-	 	this.registerTableOption("sortRemoteParam", "sort"); //param name for remote filtering
 
 	 	this.registerTableOption("initialSort", false); //initial sorting criteria
 	 	this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
@@ -47,7 +46,7 @@ class Sort extends Module{
 	 		delete item.column;
 	 	});
 
-	 	params[this.table.options.sortRemoteParam] = sorters;
+	 	params[this.table.options.dataSentParams.sort || "sort"] = sorters;
 
 	 	return params;
 	 }
