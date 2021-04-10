@@ -104,7 +104,7 @@ export default class Cell extends CoreFeature{
 	_generateContents(){
 		var val;
 
-		val = this.chain("cell-format", this, () => {
+		val = this.chain("cell-format", this, null, () => {
 			return this.element.innerHTML = this.value;
 		});
 
@@ -214,7 +214,7 @@ export default class Cell extends CoreFeature{
 			changed = true;
 
 			if(mutate){
-				value = this.chain("cell-value-changing", [this, value], value);
+				value = this.chain("cell-value-changing", [this, value], null, value);
 			}
 		}
 

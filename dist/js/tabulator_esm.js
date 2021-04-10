@@ -1275,7 +1275,7 @@ class Cell$1 extends CoreFeature{
 	_generateContents(){
 		var val;
 
-		val = this.chain("cell-format", this, () => {
+		val = this.chain("cell-format", this, null, () => {
 			return this.element.innerHTML = this.value;
 		});
 
@@ -1385,7 +1385,7 @@ class Cell$1 extends CoreFeature{
 			changed = true;
 
 			if(mutate){
-				value = this.chain("cell-value-changing", [this, value], value);
+				value = this.chain("cell-value-changing", [this, value], null, value);
 			}
 		}
 
@@ -2186,7 +2186,7 @@ class Column$1 extends CoreFeature{
 	}
 
 	_formatColumnHeaderTitle(el, title){
-		var contents = this.chain("column-format", [this, title, el], () => {
+		var contents = this.chain("column-format", [this, title, el], null, () => {
 			return title;
 		});
 
@@ -3133,7 +3133,7 @@ class Row$1 extends CoreFeature{
 
 	//////////////// Data Management /////////////////
 	setData(data){
-		this.data = this.chain("row-data-init-before", [this, data], data);
+		this.data = this.chain("row-data-init-before", [this, data], null, data);
 
 		this.dispatch("row-data-init-after", this);
 	}
@@ -3157,7 +3157,7 @@ class Row$1 extends CoreFeature{
 				tempData = Object.assign(tempData, updatedData);
 			}
 
-			newRowData = this.chain("row-data-changing", [this, tempData, updatedData], updatedData);
+			newRowData = this.chain("row-data-changing", [this, tempData, updatedData], null, updatedData);
 
 			//set data
 			for (var attrname in newRowData) {
@@ -3216,7 +3216,7 @@ class Row$1 extends CoreFeature{
 
 	getData(transform){
 		if(transform){
-			return this.chain("row-data-retrieve", [this, transform], this.data);
+			return this.chain("row-data-retrieve", [this, transform], null, this.data);
 		}
 
 		return this.data;
@@ -18378,7 +18378,7 @@ class ColumnManager extends CoreFeature {
 
 			if(updateRows){
 
-				rows = this.chain("column-moving-rows", [from, to, after], []) || [];
+				rows = this.chain("column-moving-rows", [from, to, after], null, []) || [];
 
 				rows = rows.concat(this.table.rowManager.rows);
 
@@ -20266,7 +20266,7 @@ class RowManager extends CoreFeature{
 			break;
 
 			default:
-			rows = this.chain("rows-retrieve", type, this.rows) || this.rows;
+			rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
 		}
 
 		return rows;
@@ -20898,9 +20898,7 @@ class DataLoader extends CoreFeature{
 			//TODO - update chain function to take intitial value for the chain (pass in the params option)
 
 			//get params for request
-			var params = this.chain("data-requesting", data, {});
-
-			//TODO - loading table data - show spinner
+			var params = this.chain("data-requesting", data, {}, {});
 
 			this.showLoader();
 
@@ -21152,8 +21150,8 @@ class InternalEventBus {
 		return this.events[key] && this.events[key].length;
 	}
 
-	chain(key, args, fallback){
-		var value;
+	chain(key, args, initialValue, fallback){
+		var value = initialValue;
 
 		if(!Array.isArray(args)){
 			args = [args];
@@ -21161,7 +21159,7 @@ class InternalEventBus {
 
 		if(this.subscribed(key)){
 			this.events[key].forEach((subscriber, i) => {
-				value = subscriber.callback.apply(this, (i ? args.concat([value]) : args));
+				value = subscriber.callback.apply(this, args.concat([value]));
 			});
 
 			return value;

@@ -928,7 +928,7 @@ export default class RowManager extends CoreFeature{
 			break;
 
 			default:
-			rows = this.chain("rows-retrieve", type, this.rows) || this.rows;
+			rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
 		}
 
 		return rows;

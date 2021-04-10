@@ -63,8 +63,8 @@ export default class InternalEventBus {
 		return this.events[key] && this.events[key].length;
 	}
 
-	chain(key, args, fallback){
-		var value;
+	chain(key, args, initialValue, fallback){
+		var value = initialValue;
 
 		if(!Array.isArray(args)){
 			args = [args];
@@ -72,7 +72,7 @@ export default class InternalEventBus {
 
 		if(this.subscribed(key)){
 			this.events[key].forEach((subscriber, i) => {
-				value = subscriber.callback.apply(this, (i ? args.concat([value]) : args));
+				value = subscriber.callback.apply(this, args.concat([value]));
 			});
 
 			return value;

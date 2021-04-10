@@ -66,9 +66,7 @@ export default class DataLoader extends CoreFeature{
 			//TODO - update chain function to take intitial value for the chain (pass in the params option)
 
 			//get params for request
-			var params = this.chain("data-requesting", data, {});
-
-			//TODO - loading table data - show spinner
+			var params = this.chain("data-requesting", data, {}, {});
 
 			this.showLoader();
 

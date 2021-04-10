@@ -402,7 +402,7 @@ class Column extends CoreFeature{
 	}
 
 	_formatColumnHeaderTitle(el, title){
-		var contents = this.chain("column-format", [this, title, el], () => {
+		var contents = this.chain("column-format", [this, title, el], null, () => {
 			return title;
 		});
 

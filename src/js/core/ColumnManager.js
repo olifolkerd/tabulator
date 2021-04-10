@@ -454,7 +454,7 @@ export default class ColumnManager extends CoreFeature {
 
 			if(updateRows){
 
-				rows = this.chain("column-moving-rows", [from, to, after], []) || [];
+				rows = this.chain("column-moving-rows", [from, to, after], null, []) || [];
 
 				rows = rows.concat(this.table.rowManager.rows);
 

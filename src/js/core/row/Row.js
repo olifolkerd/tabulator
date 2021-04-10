@@ -216,7 +216,7 @@ export default class Row extends CoreFeature{
 
 	//////////////// Data Management /////////////////
 	setData(data){
-		this.data = this.chain("row-data-init-before", [this, data], data);
+		this.data = this.chain("row-data-init-before", [this, data], null, data);
 
 		this.dispatch("row-data-init-after", this);
 	}
@@ -240,7 +240,7 @@ export default class Row extends CoreFeature{
 				tempData = Object.assign(tempData, updatedData);
 			}
 
-			newRowData = this.chain("row-data-changing", [this, tempData, updatedData], updatedData);
+			newRowData = this.chain("row-data-changing", [this, tempData, updatedData], null, updatedData);
 
 			//set data
 			for (var attrname in newRowData) {
@@ -299,7 +299,7 @@ export default class Row extends CoreFeature{
 
 	getData(transform){
 		if(transform){
-			return this.chain("row-data-retrieve", [this, transform], this.data);
+			return this.chain("row-data-retrieve", [this, transform], null, this.data);
 		}
 
 		return this.data;
