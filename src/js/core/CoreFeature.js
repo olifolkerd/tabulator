@@ -32,6 +32,10 @@ export default class CoreFeature{
 		return this.table.eventBus.chain(...arguments);
 	}
 
+	confirm(){
+		return this.table.eventBus.confirm(...arguments);
+	}
+
 	dispatchExternal(){
 		this.table.externalEvents.dispatch(...arguments);
 	}

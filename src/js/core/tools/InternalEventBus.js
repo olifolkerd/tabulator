@@ -81,6 +81,24 @@ export default class InternalEventBus {
 		}
 	}
 
+	confirm(key, args){
+		var confirmed = false;
+
+		if(!Array.isArray(args)){
+			args = [args];
+		}
+
+		if(this.subscribed(key)){
+			this.events[key].forEach((subscriber, i) => {
+				if(subscriber.callback.apply(this, args)){
+					confirmed = true;
+				}
+			});
+		}
+
+		return confirmed;
+	}
+
 	_notifiySubscriptionChange(key, subscribed){
 		var notifiers = this.subscriptionNotifiers[key];
 
