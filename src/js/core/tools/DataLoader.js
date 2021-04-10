@@ -61,21 +61,23 @@ export default class DataLoader extends CoreFeature{
 			data = JSON.parse(data);
 		}
 
-		if(this.confirm("data-load", data)){
-			console.log("remote")
-			//TODO - update chain function to take intitial value for the chain (pass in the params option)
+		if(this.confirm("data-loading", data)){
+
+			this.showLoader();
 
 			//get params for request
 			var params = this.chain("data-params", data, params || {}, {});
 
-			console.log("params", params)
+			params = this.mapParams(params, this.table.options.dataSendParams);
 
-			this.showLoader();
-
-			var result = this.chain("data-request", [data, params], Promise.resolve([]));
+			var result = this.chain("data-load", [data, params], Promise.resolve([]));
 
 			result.then((response) => {
-				var rowData = this.chain("data-received", response, null, response);
+				if(!Array.isArray(response) && typeof response == "object"){
+					response = this.mapParams(response, this.objectInvert(this.table.options.dataReceiveParams));
+				}
+
+				var rowData = this.chain("data-loaded", response, null, response);
 
 				if(requestNo === this.requestOrder){
 					this.hideLoader();
@@ -100,6 +102,26 @@ export default class DataLoader extends CoreFeature{
 			//load data into table
 			this.table.rowManager.setData(data, replace, !replace);
 		}
+	}
+
+	mapParams(params, map){
+		var output = {};
+
+		for(let key in params){
+			output[map.hasOwnProperty(key) ? map[key] : key] = params[key];
+		}
+
+		return output;
+	}
+
+	objectInvert(obj){
+		var output = {};
+
+		for(let key in obj){
+			output[obj[key]] = key;
+		}
+
+		return output;
 	}
 
 	blockActiveLoad(){

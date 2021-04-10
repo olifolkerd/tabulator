@@ -20,7 +20,7 @@ class ReactiveData extends Module{
 			this.subscribe("row-data-save-before", this.block.bind(this));
 			this.subscribe("row-data-save-after", this.unblock.bind(this));
 			this.subscribe("row-data-init-after", this.watchRow.bind(this));
-			this.subscribe("data-loading", this.watchData.bind(this));
+			this.subscribe("data-processing", this.watchData.bind(this));
 		}
 	}
 

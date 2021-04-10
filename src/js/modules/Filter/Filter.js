@@ -64,7 +64,7 @@ class Filter extends Module{
 	}
 
 	remoteFilterParams(data, params){
-		params[this.table.options.dataSentParams.filter || "filter"] = this.getFilters(true, true);
+		params.filter = this.getFilters(true, true);
 		return params;
 	}
 

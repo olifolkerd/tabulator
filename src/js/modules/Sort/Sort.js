@@ -46,7 +46,7 @@ class Sort extends Module{
 	 		delete item.column;
 	 	});
 
-	 	params[this.table.options.dataSentParams.sort || "sort"] = sorters;
+	 	params.sort = sorters;
 
 	 	return params;
 	 }

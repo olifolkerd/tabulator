@@ -54,18 +54,9 @@ export default {
 	dataLoaderLoading:false,
 	dataLoaderError:false,
 
-	dataSentParams:{
-		"page":"page",
-		"size":"size",
-		"sorters":"sorters",
-		"filters":"filters",
-	},
+	dataSendParams:{},
 
-	dataReceivedParams:{
-		"current_page":"current_page",
-		"last_page":"last_page",
-		"data":"data",
-	},
+	dataReceiveParams:{},
 
 	//////////////////////////////////////
 	////////////// Events ////////////////

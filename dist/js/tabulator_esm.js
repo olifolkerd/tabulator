@@ -467,8 +467,8 @@ class Ajax extends Module{
 
 		this.registerTableFunction("getAjaxUrl", this.getUrl.bind(this));
 
-		this.subscribe("data-load", this.requestDataCheck.bind(this));
-		this.subscribe("data-request", this.requestData.bind(this));
+		this.subscribe("data-loading", this.requestDataCheck.bind(this));
+		this.subscribe("data-load", this.requestData.bind(this));
 	}
 
 
@@ -8098,7 +8098,7 @@ class Filter extends Module{
 	}
 
 	remoteFilterParams(data, params){
-		params[this.table.options.dataSentParams.filter || "filter"] = this.getFilters(true, true);
+		params.filter = this.getFilters(true, true);
 		return params;
 	}
 
@@ -13515,11 +13515,11 @@ class Page extends Module{
 
 	remotePageParams(data, params){
 		//configure request params
-		params[this.table.options.dataSentParams.page || "page"] = this.page;
+		params.page = this.page;
 
 		//set page size if defined
 		if(this.size){
-			params[this.table.options.dataSentParams.size || "size"] = this.size;
+			params.size = this.size;
 		}
 
 		return params;
@@ -14836,7 +14836,7 @@ class ReactiveData extends Module{
 			this.subscribe("row-data-save-before", this.block.bind(this));
 			this.subscribe("row-data-save-after", this.unblock.bind(this));
 			this.subscribe("row-data-init-after", this.watchRow.bind(this));
-			this.subscribe("data-loading", this.watchData.bind(this));
+			this.subscribe("data-processing", this.watchData.bind(this));
 		}
 	}
 
@@ -16644,7 +16644,7 @@ class Sort extends Module{
 	 		delete item.column;
 	 	});
 
-	 	params[this.table.options.dataSentParams.sort || "sort"] = sorters;
+	 	params.sort = sorters;
 
 	 	return params;
 	 }
@@ -17761,18 +17761,9 @@ var defaultOptions$1 = {
 	dataLoaderLoading:false,
 	dataLoaderError:false,
 
-	dataSentParams:{
-		"page":"page",
-		"size":"size",
-		"sorters":"sorters",
-		"filters":"filters",
-	},
+	dataSendParams:{},
 
-	dataReceivedParams:{
-		"current_page":"current_page",
-		"last_page":"last_page",
-		"data":"data",
-	},
+	dataReceiveParams:{},
 
 	//////////////////////////////////////
 	////////////// Events ////////////////
@@ -19582,7 +19573,7 @@ class RowManager extends CoreFeature{
 		this._wipeElements();
 
 		if(Array.isArray(data)){
-			this.dispatch("data-loading", data);
+			this.dispatch("data-processing", data);
 
 			data.forEach((def, i) => {
 				if(def && typeof def === "object"){
@@ -20933,21 +20924,23 @@ class DataLoader extends CoreFeature{
 			data = JSON.parse(data);
 		}
 
-		if(this.confirm("data-load", data)){
-			console.log("remote");
-			//TODO - update chain function to take intitial value for the chain (pass in the params option)
+		if(this.confirm("data-loading", data)){
+
+			this.showLoader();
 
 			//get params for request
 			var params = this.chain("data-params", data, params || {}, {});
 
-			console.log("params", params);
+			params = this.mapParams(params, this.table.options.dataSendParams);
 
-			this.showLoader();
-
-			var result = this.chain("data-request", [data, params], Promise.resolve([]));
+			var result = this.chain("data-load", [data, params], Promise.resolve([]));
 
 			result.then((response) => {
-				var rowData = this.chain("data-received", response, null, response);
+				if(!Array.isArray(response) && typeof response == "object"){
+					response = this.mapParams(response, this.objectInvert(this.table.options.dataReceiveParams));
+				}
+
+				var rowData = this.chain("data-loaded", response, null, response);
 
 				if(requestNo === this.requestOrder){
 					this.hideLoader();
@@ -20972,6 +20965,26 @@ class DataLoader extends CoreFeature{
 			//load data into table
 			this.table.rowManager.setData(data, replace, !replace);
 		}
+	}
+
+	mapParams(params, map){
+		var output = {};
+
+		for(let key in params){
+			output[map.hasOwnProperty(key) ? map[key] : key] = params[key];
+		}
+
+		return output;
+	}
+
+	objectInvert(obj){
+		var output = {};
+
+		for(let key in obj){
+			output[obj[key]] = key;
+		}
+
+		return output;
 	}
 
 	blockActiveLoad(){

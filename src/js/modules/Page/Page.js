@@ -69,11 +69,11 @@ class Page extends Module{
 
 	remotePageParams(data, params){
 		//configure request params
-		params[this.table.options.dataSentParams.page || "page"] = this.page;
+		params.page = this.page;
 
 		//set page size if defined
 		if(this.size){
-			params[this.table.options.dataSentParams.size || "size"] = this.size;
+			params.size = this.size;
 		}
 
 		return params;

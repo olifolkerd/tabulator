@@ -72,8 +72,8 @@ class Ajax extends Module{
 
 		this.registerTableFunction("getAjaxUrl", this.getUrl.bind(this));
 
-		this.subscribe("data-load", this.requestDataCheck.bind(this));
-		this.subscribe("data-request", this.requestData.bind(this));
+		this.subscribe("data-loading", this.requestDataCheck.bind(this));
+		this.subscribe("data-load", this.requestData.bind(this));
 	}
 
 

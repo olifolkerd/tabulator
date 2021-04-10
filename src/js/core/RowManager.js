@@ -200,7 +200,7 @@ export default class RowManager extends CoreFeature{
 		this._wipeElements();
 
 		if(Array.isArray(data)){
-			this.dispatch("data-loading", data);
+			this.dispatch("data-processing", data);
 
 			data.forEach((def, i) => {
 				if(def && typeof def === "object"){
