@@ -8,7 +8,7 @@ import FooterManager from './FooterManager.js';
 
 import InteractionMonitor from './tools/InteractionMonitor.js';
 import ComponentFuctionBinder from './tools/ComponentFuctionBinder.js';
-import DataNexus from './tools/DataNexus.js';
+import DataLoader from './tools/dataLoader.js';
 
 import ExternalEventBus from './tools/ExternalEventBus.js';
 import InternalEventBus from './tools/InternalEventBus.js';
@@ -39,7 +39,7 @@ class Tabulator {
 		this.rtl = false; //check if the table is in RTL mode
 
 		this.componentFunctionBinder = new ComponentFuctionBinder(this); //bind component functions
-		this.dataNexus = new DataNexus(this); //bind component functions
+		this.dataLoader = new DataLoader(this); //bind component functions
 
 		this.modules = {}; //hold all modules bound to this table
 		this.modulesCore = {}; //hold core modules bound to this table (for initialization purposes)

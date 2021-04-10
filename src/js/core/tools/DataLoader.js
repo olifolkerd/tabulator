@@ -1,12 +1,11 @@
 import CoreFeature from '../CoreFeature.js';
 
-export default class DataNexus extends CoreFeature{
+export default class dataLoader extends CoreFeature{
 	constructor(){
 		super(table);
 	}
 
-	setData(data, params, replace){
-
+	update(data, params, replace){
 		//parse json data to array
 		if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
 			data = JSON.parse(data);
@@ -26,7 +25,6 @@ export default class DataNexus extends CoreFeature{
 			result.then((rowData) => {
 
 				//TODO - table data loaded - hide spinner
-
 				this.rowManager.setData(data,  replace, !replace);
 			})
 
