@@ -51,11 +51,11 @@ class Column extends CoreFeature{
 		this.component = null;
 
 		//initialize column
-		if(def.columns){
+		if(this.definition.columns){
 
 			this.isGroup = true;
 
-			def.columns.forEach((def, i) => {
+			this.definition.columns.forEach((def, i) => {
 				var newCol = new Column(def, this);
 				this.attachColumn(newCol);
 			});
@@ -100,7 +100,7 @@ class Column extends CoreFeature{
 			}
 		}
 
-		this.defintion = this.table.columnManager.optionsList.generate(Column.defaultOptionList, this.definition)
+		this.definition = this.table.columnManager.optionsList.generate(Column.defaultOptionList, this.definition)
 	}
 
 	checkDefinition(){

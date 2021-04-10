@@ -1927,11 +1927,11 @@ class Column$1 extends CoreFeature{
 		this.component = null;
 
 		//initialize column
-		if(def.columns){
+		if(this.definition.columns){
 
 			this.isGroup = true;
 
-			def.columns.forEach((def, i) => {
+			this.definition.columns.forEach((def, i) => {
 				var newCol = new Column$1(def, this);
 				this.attachColumn(newCol);
 			});
@@ -1976,7 +1976,7 @@ class Column$1 extends CoreFeature{
 			}
 		}
 
-		this.defintion = this.table.columnManager.optionsList.generate(Column$1.defaultOptionList, this.definition);
+		this.definition = this.table.columnManager.optionsList.generate(Column$1.defaultOptionList, this.definition);
 	}
 
 	checkDefinition(){
