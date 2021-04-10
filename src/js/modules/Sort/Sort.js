@@ -10,6 +10,9 @@ class Sort extends Module{
 	 	this.sortList = []; //holder current sort
 	 	this.changed = false; //has the sort changed since last render
 
+	 	this.registerTableOption("sortMode", "local"); //local or remote sorting
+	 	this.registerTableOption("sortRemoteParam", "sort"); //param name for remote filtering
+
 	 	this.registerTableOption("initialSort", false); //initial sorting criteria
 	 	this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
 	 	this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
@@ -31,6 +34,22 @@ class Sort extends Module{
 	 	this.registerTableFunction("setSort", this.userSetSort.bind(this));
 	 	this.registerTableFunction("getSorters", this.getSort.bind(this));
 	 	this.registerTableFunction("clearSort", this.clearSort.bind(this));
+
+	 	if(this.table.options.sortMode === "remote"){
+	 		this.subscribe("data-requesting", this.remoteSortParams.bind(this));
+	 	}
+	 }
+
+	 remoteSortParams(data, params){
+	 	var sorters = this.getSort();
+
+	 	sorters.forEach((item) => {
+	 		delete item.column;
+	 	});
+
+	 	params[this.table.options.sortRemoteParam] = sorters;
+
+	 	return params;
 	 }
 
 

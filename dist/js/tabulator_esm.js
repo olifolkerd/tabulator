@@ -8052,6 +8052,9 @@ class Filter extends Module{
 
 		this.changed = false; //has filtering changed since last render
 
+		this.registerTableOption("filterMode", "local"); //local or remote filtering
+		this.registerTableOption("filterRemoteParam", "filter"); //param name for remote filtering
+
 		this.registerTableOption("initialFilter", false); //initial filtering criteria
 		this.registerTableOption("initialHeaderFilter", false); //initial header filtering criteria
 		this.registerTableOption("headerFilterLiveFilterDelay", 300); //delay before updating column after user types in header filter
@@ -8090,9 +8093,17 @@ class Filter extends Module{
 		this.subscribe("column-width-fit-before", this.hideHeaderFilterElements.bind(this));
 		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
 
+		if(this.table.options.filterMode === "remote"){
+			this.subscribe("data-requesting", this.remoteFilterParams.bind(this));
+		}
+
 		this.registerDataHandler(this.filter.bind(this), 10);
 	}
 
+	remoteFilterParams(data, params){
+		params[this.table.options.filterRemoteParam] = this.getFilters(true, true);
+		return params;
+	}
 
 	///////////////////////////////////
 	///////// Table Functions /////////
@@ -16599,6 +16610,9 @@ class Sort extends Module{
 	 	this.sortList = []; //holder current sort
 	 	this.changed = false; //has the sort changed since last render
 
+	 	this.registerTableOption("sortMode", "local"); //local or remote sorting
+	 	this.registerTableOption("sortRemoteParam", "sort"); //param name for remote filtering
+
 	 	this.registerTableOption("initialSort", false); //initial sorting criteria
 	 	this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
 	 	this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
@@ -16620,6 +16634,22 @@ class Sort extends Module{
 	 	this.registerTableFunction("setSort", this.userSetSort.bind(this));
 	 	this.registerTableFunction("getSorters", this.getSort.bind(this));
 	 	this.registerTableFunction("clearSort", this.clearSort.bind(this));
+
+	 	if(this.table.options.sortMode === "remote"){
+	 		this.subscribe("data-requesting", this.remoteSortParams.bind(this));
+	 	}
+	 }
+
+	 remoteSortParams(data, params){
+	 	var sorters = this.getSort();
+
+	 	sorters.forEach((item) => {
+	 		delete item.column;
+	 	});
+
+	 	params[this.table.options.sortRemoteParam] = sorters;
+
+	 	return params;
 	 }
 
 
@@ -20898,7 +20928,9 @@ class DataLoader extends CoreFeature{
 			//TODO - update chain function to take intitial value for the chain (pass in the params option)
 
 			//get params for request
-			var params = this.chain("data-requesting", data, {}, {});
+			var params = this.chain("data-requesting", data, params || {}, {});
+
+			console.log("params", params);
 
 			this.showLoader();
 

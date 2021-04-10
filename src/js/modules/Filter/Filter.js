@@ -16,6 +16,9 @@ class Filter extends Module{
 
 		this.changed = false; //has filtering changed since last render
 
+		this.registerTableOption("filterMode", "local"); //local or remote filtering
+		this.registerTableOption("filterRemoteParam", "filter"); //param name for remote filtering
+
 		this.registerTableOption("initialFilter", false); //initial filtering criteria
 		this.registerTableOption("initialHeaderFilter", false); //initial header filtering criteria
 		this.registerTableOption("headerFilterLiveFilterDelay", 300); //delay before updating column after user types in header filter
@@ -54,9 +57,17 @@ class Filter extends Module{
 		this.subscribe("column-width-fit-before", this.hideHeaderFilterElements.bind(this));
 		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
 
+		if(this.table.options.filterMode === "remote"){
+			this.subscribe("data-requesting", this.remoteFilterParams.bind(this));
+		}
+
 		this.registerDataHandler(this.filter.bind(this), 10);
 	}
 
+	remoteFilterParams(data, params){
+		params[this.table.options.filterRemoteParam] = this.getFilters(true, true);
+		return params;
+	}
 
 	///////////////////////////////////
 	///////// Table Functions /////////
