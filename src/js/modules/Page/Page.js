@@ -2,9 +2,6 @@ import Module from '../../core/Module.js';
 
 import Helpers from '../../core/tools/Helpers.js';
 
-import defaultDataSentNames from './defaults/dataSentNames.js';
-import defaultDataReceivedNames from './defaults/dataReceivedNames.js';
-
 class Page extends Module{
 
 	constructor(table){
@@ -24,17 +21,19 @@ class Page extends Module{
 
 		this.pageSizes = [];
 
-		this.dataReceivedNames = {};
-		this.dataSentNames = {};
+		this.dataReceivedNames = {}; //TODO - remove once pagimation update is complete
+		this.dataSentNames = {}; //TODO - remove once pagimation update is complete
 
 		this.registerTableOption("pagination", false); //set pagination type
+		this.registerTableOption("paginationMode", false); //local or remote pagination
+		this.registerTableOption("paginationSize", false); //set number of rows to a page
 		this.registerTableOption("paginationSize", false); //set number of rows to a page
 		this.registerTableOption("paginationInitialPage", 1); //initail page to show on load
 		this.registerTableOption("paginationButtonCount", 5);  // set count of page button
 		this.registerTableOption("paginationSizeSelector", false); //add pagination size selector element
 		this.registerTableOption("paginationElement", false); //element to hold pagination numbers
-		this.registerTableOption("paginationDataSent", {}); //pagination data sent to the server
-		this.registerTableOption("paginationDataReceived", {}); //pagination data received from the server
+		// this.registerTableOption("paginationDataSent", {}); //pagination data sent to the server
+		// this.registerTableOption("paginationDataReceived", {}); //pagination data received from the server
 		this.registerTableOption("paginationAddRow", "page"); //add rows on table or page
 
 		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
@@ -56,12 +55,28 @@ class Page extends Module{
 			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
 
+			if(this.table.options.paginationMode === "remote"){
+				this.subscribe("data-requesting", this.remotePageParams.bind(this));
+			}
+
 			this.registerDisplayHandler(this.restOnRenderBefore.bind(this), 40);
 			this.registerDisplayHandler(this.getRows.bind(this), 50);
 
 			this.createElements();
 			this.initializePaginator();
 		}
+	}
+
+	remotePageParams(data, params){
+		//configure request params
+		params[this.table.options.dataSentParams.page || "page"] = this.page;
+
+		//set page size if defined
+		if(this.size){
+			params[this.table.options.dataSentParams.size || "size"] = this.size;
+		}
+
+		return params;
 	}
 
 	///////////////////////////////////
@@ -195,12 +210,12 @@ class Page extends Module{
 		if(this.table.options.pagination || hidden){
 			var pageSelectLabel, testElRow, testElCell;
 
-			//update param names
-			this.dataSentNames = Object.assign({}, Page.defaultDataSentNames);
-			this.dataSentNames = Object.assign(this.dataSentNames, this.table.options.paginationDataSent);
+			// //update param names
+			// this.dataSentNames = Object.assign({}, Page.defaultDataSentNames);
+			// this.dataSentNames = Object.assign(this.dataSentNames, this.table.options.paginationDataSent);
 
-			this.dataReceivedNames = Object.assign({}, Page.defaultDataReceivedNames);
-			this.dataReceivedNames = Object.assign(this.dataReceivedNames, this.table.options.paginationDataReceived);
+			// this.dataReceivedNames = Object.assign({}, Page.defaultDataReceivedNames);
+			// this.dataReceivedNames = Object.assign(this.dataReceivedNames, this.table.options.paginationDataReceived);
 
 			//build pagination element
 
@@ -786,9 +801,5 @@ class Page extends Module{
 }
 
 Page.moduleName = "page";
-
-//load defaults
-Page.defaultDataSentNames = defaultDataSentNames;
-Page.defaultDataReceivedNames = defaultDataReceivedNames;
 
 export default Page;

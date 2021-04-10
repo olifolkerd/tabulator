@@ -421,8 +421,6 @@ class Ajax extends Module{
 		this.registerTableOption("ajaxConfig", "get"); //ajax request type
 		this.registerTableOption("ajaxContentType", "form"); //ajax request type
 		this.registerTableOption("ajaxRequestFunc", false); //promise function
-		this.registerTableOption("ajaxFiltering", false);
-		this.registerTableOption("ajaxSorting", false);
 		this.registerTableOption("ajaxProgressiveLoad", false); //progressive loading
 		this.registerTableOption("ajaxProgressiveLoadDelay", 0); //delay between requests
 		this.registerTableOption("ajaxProgressiveLoadScrollMargin", 0); //margin before scroll begins
@@ -8053,7 +8051,6 @@ class Filter extends Module{
 		this.changed = false; //has filtering changed since last render
 
 		this.registerTableOption("filterMode", "local"); //local or remote filtering
-		this.registerTableOption("filterRemoteParam", "filter"); //param name for remote filtering
 
 		this.registerTableOption("initialFilter", false); //initial filtering criteria
 		this.registerTableOption("initialHeaderFilter", false); //initial header filtering criteria
@@ -8101,7 +8098,7 @@ class Filter extends Module{
 	}
 
 	remoteFilterParams(data, params){
-		params[this.table.options.filterRemoteParam] = this.getFilters(true, true);
+		params[this.table.options.dataSentParams.filter || "filter"] = this.getFilters(true, true);
 		return params;
 	}
 
@@ -13451,19 +13448,6 @@ Mutator.moduleName = "mutator";
 //load defaults
 Mutator.mutators = defaultMutators;
 
-var defaultDataSentNames = {
-	"page":"page",
-	"size":"size",
-	"sorters":"sorters",
-	"filters":"filters",
-};
-
-var defaultDataReceivedNames = {
-	"current_page":"current_page",
-	"last_page":"last_page",
-	"data":"data",
-};
-
 class Page extends Module{
 
 	constructor(table){
@@ -13483,17 +13467,19 @@ class Page extends Module{
 
 		this.pageSizes = [];
 
-		this.dataReceivedNames = {};
-		this.dataSentNames = {};
+		this.dataReceivedNames = {}; //TODO - remove once pagimation update is complete
+		this.dataSentNames = {}; //TODO - remove once pagimation update is complete
 
 		this.registerTableOption("pagination", false); //set pagination type
+		this.registerTableOption("paginationMode", false); //local or remote pagination
+		this.registerTableOption("paginationSize", false); //set number of rows to a page
 		this.registerTableOption("paginationSize", false); //set number of rows to a page
 		this.registerTableOption("paginationInitialPage", 1); //initail page to show on load
 		this.registerTableOption("paginationButtonCount", 5);  // set count of page button
 		this.registerTableOption("paginationSizeSelector", false); //add pagination size selector element
 		this.registerTableOption("paginationElement", false); //element to hold pagination numbers
-		this.registerTableOption("paginationDataSent", {}); //pagination data sent to the server
-		this.registerTableOption("paginationDataReceived", {}); //pagination data received from the server
+		// this.registerTableOption("paginationDataSent", {}); //pagination data sent to the server
+		// this.registerTableOption("paginationDataReceived", {}); //pagination data received from the server
 		this.registerTableOption("paginationAddRow", "page"); //add rows on table or page
 
 		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
@@ -13515,12 +13501,28 @@ class Page extends Module{
 			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
 
+			if(this.table.options.paginationMode === "remote"){
+				this.subscribe("data-requesting", this.remotePageParams.bind(this));
+			}
+
 			this.registerDisplayHandler(this.restOnRenderBefore.bind(this), 40);
 			this.registerDisplayHandler(this.getRows.bind(this), 50);
 
 			this.createElements();
 			this.initializePaginator();
 		}
+	}
+
+	remotePageParams(data, params){
+		//configure request params
+		params[this.table.options.dataSentParams.page || "page"] = this.page;
+
+		//set page size if defined
+		if(this.size){
+			params[this.table.options.dataSentParams.size || "size"] = this.size;
+		}
+
+		return params;
 	}
 
 	///////////////////////////////////
@@ -13654,12 +13656,12 @@ class Page extends Module{
 		if(this.table.options.pagination || hidden){
 			var pageSelectLabel, testElRow, testElCell;
 
-			//update param names
-			this.dataSentNames = Object.assign({}, Page.defaultDataSentNames);
-			this.dataSentNames = Object.assign(this.dataSentNames, this.table.options.paginationDataSent);
+			// //update param names
+			// this.dataSentNames = Object.assign({}, Page.defaultDataSentNames);
+			// this.dataSentNames = Object.assign(this.dataSentNames, this.table.options.paginationDataSent);
 
-			this.dataReceivedNames = Object.assign({}, Page.defaultDataReceivedNames);
-			this.dataReceivedNames = Object.assign(this.dataReceivedNames, this.table.options.paginationDataReceived);
+			// this.dataReceivedNames = Object.assign({}, Page.defaultDataReceivedNames);
+			// this.dataReceivedNames = Object.assign(this.dataReceivedNames, this.table.options.paginationDataReceived);
 
 			//build pagination element
 
@@ -14241,10 +14243,6 @@ class Page extends Module{
 }
 
 Page.moduleName = "page";
-
-//load defaults
-Page.defaultDataSentNames = defaultDataSentNames;
-Page.defaultDataReceivedNames = defaultDataReceivedNames;
 
 // read peristence information from storage
 var defaultReaders = {
@@ -16611,7 +16609,6 @@ class Sort extends Module{
 	 	this.changed = false; //has the sort changed since last render
 
 	 	this.registerTableOption("sortMode", "local"); //local or remote sorting
-	 	this.registerTableOption("sortRemoteParam", "sort"); //param name for remote filtering
 
 	 	this.registerTableOption("initialSort", false); //initial sorting criteria
 	 	this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
@@ -16647,7 +16644,7 @@ class Sort extends Module{
 	 		delete item.column;
 	 	});
 
-	 	params[this.table.options.sortRemoteParam] = sorters;
+	 	params[this.table.options.dataSentParams.sort || "sort"] = sorters;
 
 	 	return params;
 	 }
@@ -17763,6 +17760,19 @@ var defaultOptions$1 = {
 	dataLoader:true,
 	dataLoaderLoading:false,
 	dataLoaderError:false,
+
+	dataSentParams:{
+		"page":"page",
+		"size":"size",
+		"sorters":"sorters",
+		"filters":"filters",
+	},
+
+	dataReceivedParams:{
+		"current_page":"current_page",
+		"last_page":"last_page",
+		"data":"data",
+	},
 
 	//////////////////////////////////////
 	////////////// Events ////////////////
