@@ -33,6 +33,10 @@ class CoreFeature{
 		return this.table.eventBus.chain(...arguments);
 	}
 
+	confirm(){
+		return this.table.eventBus.confirm(...arguments);
+	}
+
 	dispatchExternal(){
 		this.table.externalEvents.dispatch(...arguments);
 	}
@@ -13568,7 +13572,7 @@ class Page extends Module{
 
 		this.registerTableOption("pagination", false); //set pagination type
 		this.registerTableOption("paginationSize", false); //set number of rows to a page
-		this.registerTableOption("paginationInitialPage", 5); //initail page to show on load
+		this.registerTableOption("paginationInitialPage", 1); //initail page to show on load
 		this.registerTableOption("paginationButtonCount", 5);  // set count of page button
 		this.registerTableOption("paginationSizeSelector", false); //add pagination size selector element
 		this.registerTableOption("paginationElement", false); //element to hold pagination numbers
@@ -14130,6 +14134,8 @@ class Page extends Module{
 
 		if(this.mode == "local"){
 			output = [];
+
+			this.setMaxRows(data.length);
 
 			if(this.size === true){
 				start = 0;
@@ -20917,6 +20923,44 @@ class ComponentFuctionBinder{
 
 }
 
+class DataNexus extends CoreFeature{
+	constructor(){
+		super(table);
+	}
+
+	setData(data, params, replace){
+
+		//parse json data to array
+		if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
+			data = JSON.parse(data);
+		}
+
+		if(this.confirm("data-set", data)){
+
+			//TODO - update chain function to take intitial value for the chain (pass in the params option)
+
+			//get params for request
+			var params = this.chain("data-requesting", data, {});
+
+			//TODO - loading table data - show spinner
+
+			var result = this.chain("data-request", [data, params], Promise.resolve([]));
+
+			result.then((rowData) => {
+
+				//TODO - table data loaded - hide spinner
+
+				this.rowManager.setData(data,  replace, !replace);
+			});
+
+			//load data from module
+		}else {
+			//load data into table
+			this.rowManager.setData(data, replace, !replace);
+		}
+	}
+}
+
 class ExternalEventBus {
 
 	constructor(optionsList, debug){
@@ -21102,6 +21146,24 @@ class InternalEventBus {
 		}else {
 			return typeof fallback === "function" ? fallback() : fallback;
 		}
+	}
+
+	confirm(key, args){
+		var confirmed = false;
+
+		if(!Array.isArray(args)){
+			args = [args];
+		}
+
+		if(this.subscribed(key)){
+			this.events[key].forEach((subscriber, i) => {
+				if(subscriber.callback.apply(this, args)){
+					confirmed = true;
+				}
+			});
+		}
+
+		return confirmed;
 	}
 
 	_notifiySubscriptionChange(key, subscribed){
@@ -22325,6 +22387,7 @@ class Tabulator$1 {
 		this.rtl = false; //check if the table is in RTL mode
 
 		this.componentFunctionBinder = new ComponentFuctionBinder(this); //bind component functions
+		this.dataNexus = new DataNexus(this); //bind component functions
 
 		this.modules = {}; //hold all modules bound to this table
 		this.modulesCore = {}; //hold core modules bound to this table (for initialization purposes)

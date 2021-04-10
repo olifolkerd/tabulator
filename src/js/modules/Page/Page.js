@@ -596,6 +596,8 @@ class Page extends Module{
 		if(this.mode == "local"){
 			output = [];
 
+			this.setMaxRows(data.length);
+
 			if(this.size === true){
 				start = 0;
 				end = data.length;
