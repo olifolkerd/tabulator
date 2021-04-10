@@ -26,8 +26,6 @@ class Ajax extends Module{
 		this.registerTableOption("ajaxConfig", "get"); //ajax request type
 		this.registerTableOption("ajaxContentType", "form"); //ajax request type
 		this.registerTableOption("ajaxRequestFunc", false); //promise function
-		this.registerTableOption("ajaxFiltering", false);
-		this.registerTableOption("ajaxSorting", false);
 		this.registerTableOption("ajaxProgressiveLoad", false); //progressive loading
 		this.registerTableOption("ajaxProgressiveLoadDelay", 0); //delay between requests
 		this.registerTableOption("ajaxProgressiveLoadScrollMargin", 0); //margin before scroll begins

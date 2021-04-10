@@ -17,7 +17,6 @@ class Filter extends Module{
 		this.changed = false; //has filtering changed since last render
 
 		this.registerTableOption("filterMode", "local"); //local or remote filtering
-		this.registerTableOption("filterRemoteParam", "filter"); //param name for remote filtering
 
 		this.registerTableOption("initialFilter", false); //initial filtering criteria
 		this.registerTableOption("initialHeaderFilter", false); //initial header filtering criteria
@@ -65,7 +64,7 @@ class Filter extends Module{
 	}
 
 	remoteFilterParams(data, params){
-		params[this.table.options.filterRemoteParam] = this.getFilters(true, true);
+		params[this.table.options.dataSentParams.filter || "filter"] = this.getFilters(true, true);
 		return params;
 	}
 
