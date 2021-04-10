@@ -498,10 +498,33 @@ class Ajax extends Module{
 			if(this.table.options.ajaxProgressiveLoad === "scroll"){
 				this.subscribe("scroll-vertical", this.cellValueChanged.bind(this));
 			}
-
 		}
 
 		this.registerTableFunction("getAjaxUrl", this.getUrl.bind(this));
+
+		this.subscribe("data-load", this.requestDataCheck.bind(this));
+		this.subscribe("data-request", this.requestData.bind(this));
+	}
+
+
+	requestDataCheck(data){
+		return !!((!data && this.url) || typeof data === "string");
+	}
+
+	requestData(data, params, previousData){
+		if(this.requestDataCheck(data)){
+			if(data){
+				this.setUrl(data);
+			}
+
+			if(params){
+				this.setParams(params, true);
+			}
+
+			return this.sendRequest();
+		}else {
+			return previousData;
+		}
 	}
 
 	scrollVertical(top, dir){
@@ -17789,7 +17812,7 @@ var defaultOptions$1 = {
 	columns:[],//store for colum header info
 	columnDefaults:{}, //store column default props
 
-	data:[], //default starting data
+	data:false, //default starting data
 
 	autoColumns:false, //build columns from data row structure
 	autoColumnsDefinitions:false,
@@ -20923,20 +20946,19 @@ class ComponentFuctionBinder{
 
 }
 
-class DataNexus extends CoreFeature{
-	constructor(){
+class DataLoader extends CoreFeature{
+	constructor(table){
 		super(table);
 	}
 
-	setData(data, params, replace){
-
+	load(data, params, replace){
 		//parse json data to array
-		if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
+		if (data && (data.indexOf("{") == 0 || data.indexOf("[") == 0)){
 			data = JSON.parse(data);
 		}
 
-		if(this.confirm("data-set", data)){
-
+		if(this.confirm("data-load", data)){
+			console.log("remote");
 			//TODO - update chain function to take intitial value for the chain (pass in the params option)
 
 			//get params for request
@@ -20949,14 +20971,14 @@ class DataNexus extends CoreFeature{
 			result.then((rowData) => {
 
 				//TODO - table data loaded - hide spinner
-
-				this.rowManager.setData(data,  replace, !replace);
+				this.table.rowManager.setData(rowData,  replace, !replace);
 			});
 
 			//load data from module
 		}else {
+			console.log("local");
 			//load data into table
-			this.rowManager.setData(data, replace, !replace);
+			this.table.rowManager.setData(data, replace, !replace);
 		}
 	}
 }
@@ -22387,7 +22409,7 @@ class Tabulator$1 {
 		this.rtl = false; //check if the table is in RTL mode
 
 		this.componentFunctionBinder = new ComponentFuctionBinder(this); //bind component functions
-		this.dataNexus = new DataNexus(this); //bind component functions
+		this.dataLoader = new DataLoader(this); //bind component functions
 
 		this.modules = {}; //hold all modules bound to this table
 		this.modulesCore = {}; //hold core modules bound to this table (for initialization purposes)
@@ -22517,7 +22539,7 @@ class Tabulator$1 {
 	_clearObjectPointers(){
 		this.options.columns = this.options.columns.slice(0);
 
-		if(!this.options.reactiveData){
+		if(this.options.data && !this.options.reactiveData){
 			this.options.data = this.options.data.slice(0);
 		}
 	}
@@ -22651,47 +22673,48 @@ class Tabulator$1 {
 	}
 
 	_loadInitialData(){
-		if(this.options.pagination && this.modExists("page")){
-			this.modules.page.reset(true, true);
+		this.dataLoader.load(this.options.data);
+		// if(this.options.pagination && this.modExists("page")){
+			// this.modules.page.reset(true, true);
 
-			if(this.options.pagination == "local"){
-				if(this.options.data.length){
-					this.rowManager.setData(this.options.data, false, true);
-				}else {
-					if((this.options.ajaxURL || this.options.ajaxURLGenerator) && this.modExists("ajax")){
-						this.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{
-							if(this.options.paginationInitialPage){
-								this.modules.page.setPage(this.options.paginationInitialPage);
-							}
-						});
+		// 	if(this.options.pagination == "local"){
+		// 		if(this.options.data.length){
+		// 			this.rowManager.setData(this.options.data, false, true);
+		// 		}else{
+		// 			if((this.options.ajaxURL || this.options.ajaxURLGenerator) && this.modExists("ajax")){
+		// 				this.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{
+		// 					if(this.options.paginationInitialPage){
+		// 						this.modules.page.setPage(this.options.paginationInitialPage);
+		// 					}
+		// 				});
 
-						return;
-					}else {
-						this.rowManager.setData(this.options.data, false, true);
-					}
-				}
+		// 				return;
+		// 			}else{
+		// 				this.rowManager.setData(this.options.data, false, true);
+		// 			}
+		// 		}
 
-				if(this.options.paginationInitialPage){
-					this.modules.page.setPage(this.options.paginationInitialPage);
-				}
-			}else {
-				if(this.options.ajaxURL){
-					this.modules.page.setPage(this.options.paginationInitialPage).then(()=>{}).catch(()=>{});
-				}else {
-					this.rowManager.setData([], false, true);
-				}
-			}
-		}else {
-			if(this.options.data.length){
-				this.rowManager.setData(this.options.data);
-			}else {
-				if((this.options.ajaxURL || this.options.ajaxURLGenerator) && this.modExists("ajax")){
-					this.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{});
-				}else {
-					this.rowManager.setData(this.options.data, false, true);
-				}
-			}
-		}
+		// 		if(this.options.paginationInitialPage){
+		// 			this.modules.page.setPage(this.options.paginationInitialPage);
+		// 		}
+		// 	}else{
+		// 		if(this.options.ajaxURL){
+		// 			this.modules.page.setPage(this.options.paginationInitialPage).then(()=>{}).catch(()=>{});
+		// 		}else{
+		// 			this.rowManager.setData([], false, true);
+		// 		}
+		// 	}
+		// }else{
+		// 	if(this.options.data.length){
+		// 		this.rowManager.setData(this.options.data);
+		// 	}else{
+		// 		if((this.options.ajaxURL || this.options.ajaxURLGenerator) && this.modExists("ajax")){
+		// 			this.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{});
+		// 		}else{
+		// 			this.rowManager.setData(this.options.data, false, true);
+		// 		}
+		// 	}
+		// }
 	}
 
 	//deconstructor

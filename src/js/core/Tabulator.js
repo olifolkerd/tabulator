@@ -170,7 +170,7 @@ class Tabulator {
 	_clearObjectPointers(){
 		this.options.columns = this.options.columns.slice(0);
 
-		if(!this.options.reactiveData){
+		if(this.options.data && !this.options.reactiveData){
 			this.options.data = this.options.data.slice(0);
 		}
 	}
@@ -304,47 +304,48 @@ class Tabulator {
 	}
 
 	_loadInitialData(){
-		if(this.options.pagination && this.modExists("page")){
-			this.modules.page.reset(true, true);
+		this.dataLoader.load(this.options.data);
+		// if(this.options.pagination && this.modExists("page")){
+			// this.modules.page.reset(true, true);
 
-			if(this.options.pagination == "local"){
-				if(this.options.data.length){
-					this.rowManager.setData(this.options.data, false, true);
-				}else{
-					if((this.options.ajaxURL || this.options.ajaxURLGenerator) && this.modExists("ajax")){
-						this.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{
-							if(this.options.paginationInitialPage){
-								this.modules.page.setPage(this.options.paginationInitialPage);
-							}
-						});
+		// 	if(this.options.pagination == "local"){
+		// 		if(this.options.data.length){
+		// 			this.rowManager.setData(this.options.data, false, true);
+		// 		}else{
+		// 			if((this.options.ajaxURL || this.options.ajaxURLGenerator) && this.modExists("ajax")){
+		// 				this.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{
+		// 					if(this.options.paginationInitialPage){
+		// 						this.modules.page.setPage(this.options.paginationInitialPage);
+		// 					}
+		// 				});
 
-						return;
-					}else{
-						this.rowManager.setData(this.options.data, false, true);
-					}
-				}
+		// 				return;
+		// 			}else{
+		// 				this.rowManager.setData(this.options.data, false, true);
+		// 			}
+		// 		}
 
-				if(this.options.paginationInitialPage){
-					this.modules.page.setPage(this.options.paginationInitialPage);
-				}
-			}else{
-				if(this.options.ajaxURL){
-					this.modules.page.setPage(this.options.paginationInitialPage).then(()=>{}).catch(()=>{});
-				}else{
-					this.rowManager.setData([], false, true);
-				}
-			}
-		}else{
-			if(this.options.data.length){
-				this.rowManager.setData(this.options.data);
-			}else{
-				if((this.options.ajaxURL || this.options.ajaxURLGenerator) && this.modExists("ajax")){
-					this.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{});
-				}else{
-					this.rowManager.setData(this.options.data, false, true);
-				}
-			}
-		}
+		// 		if(this.options.paginationInitialPage){
+		// 			this.modules.page.setPage(this.options.paginationInitialPage);
+		// 		}
+		// 	}else{
+		// 		if(this.options.ajaxURL){
+		// 			this.modules.page.setPage(this.options.paginationInitialPage).then(()=>{}).catch(()=>{});
+		// 		}else{
+		// 			this.rowManager.setData([], false, true);
+		// 		}
+		// 	}
+		// }else{
+		// 	if(this.options.data.length){
+		// 		this.rowManager.setData(this.options.data);
+		// 	}else{
+		// 		if((this.options.ajaxURL || this.options.ajaxURLGenerator) && this.modExists("ajax")){
+		// 			this.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{});
+		// 		}else{
+		// 			this.rowManager.setData(this.options.data, false, true);
+		// 		}
+		// 	}
+		// }
 	}
 
 	//deconstructor

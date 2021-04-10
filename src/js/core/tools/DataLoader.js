@@ -1,18 +1,18 @@
 import CoreFeature from '../CoreFeature.js';
 
-export default class dataLoader extends CoreFeature{
-	constructor(){
+export default class DataLoader extends CoreFeature{
+	constructor(table){
 		super(table);
 	}
 
-	update(data, params, replace){
+	load(data, params, replace){
 		//parse json data to array
-		if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
+		if (data && (data.indexOf("{") == 0 || data.indexOf("[") == 0)){
 			data = JSON.parse(data);
 		}
 
-		if(this.confirm("data-set", data)){
-
+		if(this.confirm("data-load", data)){
+			console.log("remote")
 			//TODO - update chain function to take intitial value for the chain (pass in the params option)
 
 			//get params for request
@@ -25,13 +25,14 @@ export default class dataLoader extends CoreFeature{
 			result.then((rowData) => {
 
 				//TODO - table data loaded - hide spinner
-				this.rowManager.setData(data,  replace, !replace);
+				this.table.rowManager.setData(rowData,  replace, !replace);
 			})
 
 			//load data from module
 		}else{
+			console.log("local");
 			//load data into table
-			this.rowManager.setData(data, replace, !replace);
+			this.table.rowManager.setData(data, replace, !replace);
 		}
 	}
 }

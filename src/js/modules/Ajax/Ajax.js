@@ -103,10 +103,33 @@ class Ajax extends Module{
 			if(this.table.options.ajaxProgressiveLoad === "scroll"){
 				this.subscribe("scroll-vertical", this.cellValueChanged.bind(this));
 			}
-
 		}
 
 		this.registerTableFunction("getAjaxUrl", this.getUrl.bind(this));
+
+		this.subscribe("data-load", this.requestDataCheck.bind(this));
+		this.subscribe("data-request", this.requestData.bind(this));
+	}
+
+
+	requestDataCheck(data){
+		return !!((!data && this.url) || typeof data === "string");
+	}
+
+	requestData(data, params, previousData){
+		if(this.requestDataCheck(data)){
+			if(data){
+				this.setUrl(data);
+			}
+
+			if(params){
+				this.setParams(params, true);
+			}
+
+			return this.sendRequest();
+		}else{
+			return previousData;
+		}
 	}
 
 	scrollVertical(top, dir){

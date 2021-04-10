@@ -14,7 +14,7 @@ export default {
 	columns:[],//store for colum header info
 	columnDefaults:{}, //store column default props
 
-	data:[], //default starting data
+	data:false, //default starting data
 
 	autoColumns:false, //build columns from data row structure
 	autoColumnsDefinitions:false,
