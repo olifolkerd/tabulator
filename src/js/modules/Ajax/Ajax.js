@@ -15,10 +15,6 @@ class Ajax extends Module{
 		this.urlGenerator = false;
 		this.params = false; //request parameters
 
-		this.loaderElement = this.createLoaderElement(); //loader message div
-		this.msgElement = this.createMsgElement(); //message element
-		this.loadingElement = false;
-		this.errorElement = false;
 		this.loaderPromise = false;
 
 		this.progressiveLoad = false;
@@ -32,9 +28,6 @@ class Ajax extends Module{
 		this.registerTableOption("ajaxConfig", "get"); //ajax request type
 		this.registerTableOption("ajaxContentType", "form"); //ajax request type
 		this.registerTableOption("ajaxRequestFunc", false); //promise function
-		this.registerTableOption("ajaxLoader", true); //show loader
-		this.registerTableOption("ajaxLoaderLoading", false); //loader element
-		this.registerTableOption("ajaxLoaderError", false); //loader element
 		this.registerTableOption("ajaxFiltering", false);
 		this.registerTableOption("ajaxSorting", false);
 		this.registerTableOption("ajaxProgressiveLoad", false); //progressive loading
@@ -47,33 +40,9 @@ class Ajax extends Module{
 
 	//initialize setup options
 	initialize(){
-		var template;
-
-		this.loaderElement.appendChild(this.msgElement);
-
-		if(this.table.options.ajaxLoaderLoading){
-			if(typeof this.table.options.ajaxLoaderLoading == "string"){
-				template = document.createElement('template');
-				template.innerHTML = this.table.options.ajaxLoaderLoading.trim();
-				this.loadingElement = template.content.firstChild;
-			}else{
-				this.loadingElement = this.table.options.ajaxLoaderLoading;
-			}
-		}
-
 		this.loaderPromise = this.table.options.ajaxRequestFunc || Ajax.defaultLoaderPromise;
 
 		this.urlGenerator = this.table.options.ajaxURLGenerator || Ajax.defaultURLGenerator;
-
-		if(this.table.options.ajaxLoaderError){
-			if(typeof this.table.options.ajaxLoaderError == "string"){
-				template = document.createElement('template');
-				template.innerHTML = this.table.options.ajaxLoaderError.trim();
-				this.errorElement = template.content.firstChild;
-			}else{
-				this.errorElement = this.table.options.ajaxLoaderError;
-			}
-		}
 
 		if(this.table.options.ajaxParams){
 			this.setParams(this.table.options.ajaxParams);
@@ -136,21 +105,6 @@ class Ajax extends Module{
 		var el = this.table.rowManager.element;
 
 		this.nextPage(el.scrollHeight - el.clientHeight - top);
-	}
-
-	createLoaderElement(){
-		var el = document.createElement("div");
-		el.classList.add("tabulator-loader");
-		return el;
-	}
-
-	createMsgElement(){
-		var el = document.createElement("div");
-
-		el.classList.add("tabulator-loader-msg");
-		el.setAttribute("role", "alert");
-
-		return el;
 	}
 
 	//set ajax params
@@ -302,10 +256,6 @@ class Ajax extends Module{
 
 				this.loading = true;
 
-				if(!silent){
-					this.showLoader();
-				}
-
 				this.loaderPromise(url, this.config, this.params).then((data)=>{
 					if(requestNo === this.requestOrder){
 						if(this.table.options.ajaxResponse){
@@ -313,7 +263,6 @@ class Ajax extends Module{
 						}
 						resolve(data);
 
-						this.hideLoader();
 						this.loading = false;
 					}else{
 						console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
@@ -321,15 +270,6 @@ class Ajax extends Module{
 
 				})
 				.catch((error)=>{
-					console.error("Ajax Load Error: ", error);
-					this.dispatchExternal("ajaxError", error);
-
-					this.showError();
-
-					setTimeout(() => {
-						this.hideLoader();
-					}, 3000);
-
 					this.loading = false;
 
 					reject(error);
@@ -338,49 +278,6 @@ class Ajax extends Module{
 				reject();
 			}
 		});
-	}
-
-	showLoader(){
-		var shouldLoad = typeof this.table.options.ajaxLoader === "function" ? this.table.options.ajaxLoader() : this.table.options.ajaxLoader;
-
-		if(shouldLoad){
-
-			this.hideLoader();
-
-			while(this.msgElement.firstChild) this.msgElement.removeChild(this.msgElement.firstChild);
-			this.msgElement.classList.remove("tabulator-error");
-			this.msgElement.classList.add("tabulator-loading");
-
-			if(this.loadingElement){
-				this.msgElement.appendChild(this.loadingElement);
-			}else{
-				this.msgElement.innerHTML = this.table.modules.localize.getText("ajax|loading");
-			}
-
-			this.table.element.appendChild(this.loaderElement);
-		}
-	}
-
-	showError(){
-		this.hideLoader();
-
-		while(this.msgElement.firstChild) this.msgElement.removeChild(this.msgElement.firstChild);
-		this.msgElement.classList.remove("tabulator-loading");
-		this.msgElement.classList.add("tabulator-error");
-
-		if(this.errorElement){
-			this.msgElement.appendChild(this.errorElement);
-		}else{
-			this.msgElement.innerHTML = this.table.modules.localize.getText("ajax|error");
-		}
-
-		this.table.element.appendChild(this.loaderElement);
-	}
-
-	hideLoader(){
-		if(this.loaderElement.parentNode){
-			this.loaderElement.parentNode.removeChild(this.loaderElement);
-		}
 	}
 }
 

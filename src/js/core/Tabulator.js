@@ -39,7 +39,7 @@ class Tabulator {
 		this.rtl = false; //check if the table is in RTL mode
 
 		this.componentFunctionBinder = new ComponentFuctionBinder(this); //bind component functions
-		this.dataLoader = new DataLoader(this); //bind component functions
+		this.dataLoader = false; //bind component functions
 
 		this.modules = {}; //hold all modules bound to this table
 		this.modulesCore = {}; //hold core modules bound to this table (for initialization purposes)
@@ -83,6 +83,7 @@ class Tabulator {
 		this.columnManager = new ColumnManager(this);
 		this.rowManager = new RowManager(this);
 		this.footerManager = new FooterManager(this);
+		this.dataLoader = new DataLoader(this);
 
 		this.bindModules();
 
@@ -97,6 +98,7 @@ class Tabulator {
 
 		this.interactionMonitor = new InteractionMonitor(this);
 
+		this.dataLoader.initialize();
 		this.columnManager.initialize();
 		this.rowManager.initialize();
 		this.footerManager.initialize();

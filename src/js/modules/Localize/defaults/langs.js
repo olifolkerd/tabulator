@@ -6,7 +6,7 @@ export default {
 		},
 		"columns":{
 		},
-		"ajax":{
+		"data":{
 			"loading":"Loading",
 			"error":"Error",
 		},
