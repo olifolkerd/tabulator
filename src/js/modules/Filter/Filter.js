@@ -57,7 +57,7 @@ class Filter extends Module{
 		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
 
 		if(this.table.options.filterMode === "remote"){
-			this.subscribe("data-requesting", this.remoteFilterParams.bind(this));
+			this.subscribe("data-params", this.remoteFilterParams.bind(this));
 		}
 
 		this.registerDataHandler(this.filter.bind(this), 10);

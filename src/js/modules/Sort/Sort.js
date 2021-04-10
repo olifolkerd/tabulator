@@ -35,7 +35,7 @@ class Sort extends Module{
 	 	this.registerTableFunction("clearSort", this.clearSort.bind(this));
 
 	 	if(this.table.options.sortMode === "remote"){
-	 		this.subscribe("data-requesting", this.remoteSortParams.bind(this));
+	 		this.subscribe("data-params", this.remoteSortParams.bind(this));
 	 	}
 	 }
 

@@ -8091,7 +8091,7 @@ class Filter extends Module{
 		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
 
 		if(this.table.options.filterMode === "remote"){
-			this.subscribe("data-requesting", this.remoteFilterParams.bind(this));
+			this.subscribe("data-params", this.remoteFilterParams.bind(this));
 		}
 
 		this.registerDataHandler(this.filter.bind(this), 10);
@@ -13502,7 +13502,7 @@ class Page extends Module{
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
 
 			if(this.table.options.paginationMode === "remote"){
-				this.subscribe("data-requesting", this.remotePageParams.bind(this));
+				this.subscribe("data-params", this.remotePageParams.bind(this));
 			}
 
 			this.registerDisplayHandler(this.restOnRenderBefore.bind(this), 40);
@@ -16633,7 +16633,7 @@ class Sort extends Module{
 	 	this.registerTableFunction("clearSort", this.clearSort.bind(this));
 
 	 	if(this.table.options.sortMode === "remote"){
-	 		this.subscribe("data-requesting", this.remoteSortParams.bind(this));
+	 		this.subscribe("data-params", this.remoteSortParams.bind(this));
 	 	}
 	 }
 
@@ -20938,7 +20938,7 @@ class DataLoader extends CoreFeature{
 			//TODO - update chain function to take intitial value for the chain (pass in the params option)
 
 			//get params for request
-			var params = this.chain("data-requesting", data, params || {}, {});
+			var params = this.chain("data-params", data, params || {}, {});
 
 			console.log("params", params);
 
@@ -20946,7 +20946,9 @@ class DataLoader extends CoreFeature{
 
 			var result = this.chain("data-request", [data, params], Promise.resolve([]));
 
-			result.then((rowData) => {
+			result.then((response) => {
+				var rowData = this.chain("data-received", response, null, response);
+
 				if(requestNo === this.requestOrder){
 					this.hideLoader();
 					this.table.rowManager.setData(rowData,  replace, !replace);

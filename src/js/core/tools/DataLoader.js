@@ -66,7 +66,7 @@ export default class DataLoader extends CoreFeature{
 			//TODO - update chain function to take intitial value for the chain (pass in the params option)
 
 			//get params for request
-			var params = this.chain("data-requesting", data, params || {}, {});
+			var params = this.chain("data-params", data, params || {}, {});
 
 			console.log("params", params)
 
@@ -74,7 +74,9 @@ export default class DataLoader extends CoreFeature{
 
 			var result = this.chain("data-request", [data, params], Promise.resolve([]));
 
-			result.then((rowData) => {
+			result.then((response) => {
+				var rowData = this.chain("data-received", response, null, response);
+
 				if(requestNo === this.requestOrder){
 					this.hideLoader();
 					this.table.rowManager.setData(rowData,  replace, !replace);

@@ -56,7 +56,7 @@ class Page extends Module{
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
 
 			if(this.table.options.paginationMode === "remote"){
-				this.subscribe("data-requesting", this.remotePageParams.bind(this));
+				this.subscribe("data-params", this.remotePageParams.bind(this));
 			}
 
 			this.registerDisplayHandler(this.restOnRenderBefore.bind(this), 40);
