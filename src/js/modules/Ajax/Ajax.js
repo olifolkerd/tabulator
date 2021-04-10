@@ -20,8 +20,6 @@ class Ajax extends Module{
 		this.progressiveLoad = false;
 		this.loading = false;
 
-		this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
-
 		this.registerTableOption("ajaxURL", false); //url for ajax loading
 		this.registerTableOption("ajaxURLGenerator", false);
 		this.registerTableOption("ajaxParams", {});  //params for ajax loading
@@ -183,10 +181,6 @@ class Ajax extends Module{
 		}
 	}
 
-	blockActiveRequest(){
-		this.requestOrder ++;
-	}
-
 	_loadDataProgressive(){
 		this.table.rowManager.setData([]);
 		return this.table.modules.page.setPage(1);
@@ -244,10 +238,7 @@ class Ajax extends Module{
 	//send ajax request
 	sendRequest(silent){
 		var url = this.url,
-		requestNo, esc, query;
-
-		this.requestOrder ++;
-		requestNo = this.requestOrder;
+		esc, query;
 
 		this._loadDefaultConfig();
 
@@ -257,17 +248,12 @@ class Ajax extends Module{
 				this.loading = true;
 
 				this.loaderPromise(url, this.config, this.params).then((data)=>{
-					if(requestNo === this.requestOrder){
-						if(this.table.options.ajaxResponse){
-							data = this.table.options.ajaxResponse.call(this.table, this.url, this.params, data);
-						}
-						resolve(data);
-
-						this.loading = false;
-					}else{
-						console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
+					if(this.table.options.ajaxResponse){
+						data = this.table.options.ajaxResponse.call(this.table, this.url, this.params, data);
 					}
+					resolve(data);
 
+					this.loading = false;
 				})
 				.catch((error)=>{
 					this.loading = false;

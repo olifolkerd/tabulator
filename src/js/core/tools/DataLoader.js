@@ -8,6 +8,8 @@ export default class DataLoader extends CoreFeature{
 		this.msgElement = this.createMsgElement(); //message element
 		this.loadingElement = null;
 		this.errorElement = null;
+
+		this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
 	}
 
 	initialize(){
@@ -52,6 +54,8 @@ export default class DataLoader extends CoreFeature{
 	}
 
 	load(data, params, replace){
+		var requestNo = ++this.requestOrder;
+
 		//parse json data to array
 		if (data && (data.indexOf("{") == 0 || data.indexOf("[") == 0)){
 			data = JSON.parse(data);
@@ -71,8 +75,12 @@ export default class DataLoader extends CoreFeature{
 			var result = this.chain("data-request", [data, params], Promise.resolve([]));
 
 			result.then((rowData) => {
-				this.hideLoader();
-				this.table.rowManager.setData(rowData,  replace, !replace);
+				if(requestNo === this.requestOrder){
+					this.hideLoader();
+					this.table.rowManager.setData(rowData,  replace, !replace);
+				}else{
+					console.warn("Data Load Response Blocked - An active data load request was blocked by an attempt to change table data while the request was being made");
+				}
 			}).catch((error) => {
 				console.error("Data Load Error: ", error);
 				this.dispatchExternal("dataError", error);
@@ -90,6 +98,10 @@ export default class DataLoader extends CoreFeature{
 			//load data into table
 			this.table.rowManager.setData(data, replace, !replace);
 		}
+	}
+
+	blockActiveLoad(){
+		this.requestOrder++;
 	}
 
 	showLoader(){

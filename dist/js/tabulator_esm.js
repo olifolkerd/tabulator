@@ -415,8 +415,6 @@ class Ajax extends Module{
 		this.progressiveLoad = false;
 		this.loading = false;
 
-		this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
-
 		this.registerTableOption("ajaxURL", false); //url for ajax loading
 		this.registerTableOption("ajaxURLGenerator", false);
 		this.registerTableOption("ajaxParams", {});  //params for ajax loading
@@ -578,10 +576,6 @@ class Ajax extends Module{
 		}
 	}
 
-	blockActiveRequest(){
-		this.requestOrder ++;
-	}
-
 	_loadDataProgressive(){
 		this.table.rowManager.setData([]);
 		return this.table.modules.page.setPage(1);
@@ -638,11 +632,7 @@ class Ajax extends Module{
 
 	//send ajax request
 	sendRequest(silent){
-		var url = this.url,
-		requestNo;
-
-		this.requestOrder ++;
-		requestNo = this.requestOrder;
+		var url = this.url;
 
 		this._loadDefaultConfig();
 
@@ -652,17 +642,12 @@ class Ajax extends Module{
 				this.loading = true;
 
 				this.loaderPromise(url, this.config, this.params).then((data)=>{
-					if(requestNo === this.requestOrder){
-						if(this.table.options.ajaxResponse){
-							data = this.table.options.ajaxResponse.call(this.table, this.url, this.params, data);
-						}
-						resolve(data);
-
-						this.loading = false;
-					}else {
-						console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
+					if(this.table.options.ajaxResponse){
+						data = this.table.options.ajaxResponse.call(this.table, this.url, this.params, data);
 					}
+					resolve(data);
 
+					this.loading = false;
 				})
 				.catch((error)=>{
 					this.loading = false;
@@ -14102,7 +14087,7 @@ class Page extends Module{
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-				this.table.modules.ajax.blockActiveRequest();
+				this.table.dataLoader.blockActiveLoad();
 				this._getRemotePage()
 				.then(()=>{
 					resolve();
@@ -20855,6 +20840,8 @@ class DataLoader extends CoreFeature{
 		this.msgElement = this.createMsgElement(); //message element
 		this.loadingElement = null;
 		this.errorElement = null;
+
+		this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
 	}
 
 	initialize(){
@@ -20899,6 +20886,8 @@ class DataLoader extends CoreFeature{
 	}
 
 	load(data, params, replace){
+		var requestNo = ++this.requestOrder;
+
 		//parse json data to array
 		if (data && (data.indexOf("{") == 0 || data.indexOf("[") == 0)){
 			data = JSON.parse(data);
@@ -20918,8 +20907,12 @@ class DataLoader extends CoreFeature{
 			var result = this.chain("data-request", [data, params], Promise.resolve([]));
 
 			result.then((rowData) => {
-				this.hideLoader();
-				this.table.rowManager.setData(rowData,  replace, !replace);
+				if(requestNo === this.requestOrder){
+					this.hideLoader();
+					this.table.rowManager.setData(rowData,  replace, !replace);
+				}else {
+					console.warn("Data Load Response Blocked - An active data load request was blocked by an attempt to change table data while the request was being made");
+				}
 			}).catch((error) => {
 				console.error("Data Load Error: ", error);
 				this.dispatchExternal("dataError", error);
@@ -20937,6 +20930,10 @@ class DataLoader extends CoreFeature{
 			//load data into table
 			this.table.rowManager.setData(data, replace, !replace);
 		}
+	}
+
+	blockActiveLoad(){
+		this.requestOrder++;
 	}
 
 	showLoader(){
@@ -22831,10 +22828,6 @@ class Tabulator$1 {
 
 	//load data
 	setData(data, params, config){
-		if(this.modExists("ajax")){
-			this.modules.ajax.blockActiveRequest();
-		}
-
 		return this._setData(data, params, config, false, true);
 	}
 
@@ -22888,10 +22881,7 @@ class Tabulator$1 {
 
 	//clear data
 	clearData(){
-		if(this.modExists("ajax")){
-			this.modules.ajax.blockActiveRequest();
-		}
-
+		this.dataLoader.blockActiveLoad();
 		this.rowManager.clearData();
 	}
 
@@ -22907,10 +22897,6 @@ class Tabulator$1 {
 
 	//replace data, keeping table in position with same sort
 	replaceData(data, params, config){
-		if(this.modExists("ajax")){
-			this.modules.ajax.blockActiveRequest();
-		}
-
 		return this._setData(data, params, config, true);
 	}
 
@@ -22919,9 +22905,7 @@ class Tabulator$1 {
 		var responses = 0;
 
 		return new Promise((resolve, reject) => {
-			if(this.modExists("ajax")){
-				this.modules.ajax.blockActiveRequest();
-			}
+			this.dataLoader.blockActiveLoad();
 
 			if(typeof data === "string"){
 				data = JSON.parse(data);
@@ -22953,9 +22937,7 @@ class Tabulator$1 {
 
 	addData(data, pos, index){
 		return new Promise((resolve, reject) => {
-			if(this.modExists("ajax")){
-				this.modules.ajax.blockActiveRequest();
-			}
+			this.dataLoader.blockActiveLoad();
 
 			if(typeof data === "string"){
 				data = JSON.parse(data);
@@ -22985,9 +22967,7 @@ class Tabulator$1 {
 		responses = 0;
 
 		return new Promise((resolve, reject) => {
-			if(this.modExists("ajax")){
-				this.modules.ajax.blockActiveRequest();
-			}
+			this.dataLoader.blockActiveLoad();
 
 			if(typeof data === "string"){
 				data = JSON.parse(data);

@@ -459,10 +459,6 @@ class Tabulator {
 
 	//load data
 	setData(data, params, config){
-		if(this.modExists("ajax")){
-			this.modules.ajax.blockActiveRequest();
-		}
-
 		return this._setData(data, params, config, false, true);
 	}
 
@@ -516,10 +512,7 @@ class Tabulator {
 
 	//clear data
 	clearData(){
-		if(this.modExists("ajax")){
-			this.modules.ajax.blockActiveRequest();
-		}
-
+		this.dataLoader.blockActiveLoad();
 		this.rowManager.clearData();
 	}
 
@@ -535,10 +528,6 @@ class Tabulator {
 
 	//replace data, keeping table in position with same sort
 	replaceData(data, params, config){
-		if(this.modExists("ajax")){
-			this.modules.ajax.blockActiveRequest();
-		}
-
 		return this._setData(data, params, config, true);
 	}
 
@@ -547,9 +536,7 @@ class Tabulator {
 		var responses = 0;
 
 		return new Promise((resolve, reject) => {
-			if(this.modExists("ajax")){
-				this.modules.ajax.blockActiveRequest();
-			}
+			this.dataLoader.blockActiveLoad();
 
 			if(typeof data === "string"){
 				data = JSON.parse(data);
@@ -581,9 +568,7 @@ class Tabulator {
 
 	addData(data, pos, index){
 		return new Promise((resolve, reject) => {
-			if(this.modExists("ajax")){
-				this.modules.ajax.blockActiveRequest();
-			}
+			this.dataLoader.blockActiveLoad();
 
 			if(typeof data === "string"){
 				data = JSON.parse(data);
@@ -613,9 +598,7 @@ class Tabulator {
 		responses = 0;
 
 		return new Promise((resolve, reject) => {
-			if(this.modExists("ajax")){
-				this.modules.ajax.blockActiveRequest();
-			}
+			this.dataLoader.blockActiveLoad();
 
 			if(typeof data === "string"){
 				data = JSON.parse(data);

@@ -643,7 +643,7 @@ class Page extends Module{
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-				this.table.modules.ajax.blockActiveRequest();
+				this.table.dataLoader.blockActiveLoad();
 				this._getRemotePage()
 				.then(()=>{
 					resolve();
