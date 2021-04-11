@@ -13500,7 +13500,6 @@ class Page extends Module{
 		this.registerTableOption("pagination", false); //set pagination type
 		this.registerTableOption("paginationMode", false); //local or remote pagination
 		this.registerTableOption("paginationSize", false); //set number of rows to a page
-		this.registerTableOption("paginationSize", false); //set number of rows to a page
 		this.registerTableOption("paginationInitialPage", 1); //initail page to show on load
 		this.registerTableOption("paginationButtonCount", 5);  // set count of page button
 		this.registerTableOption("paginationSizeSelector", false); //add pagination size selector element
@@ -13530,6 +13529,7 @@ class Page extends Module{
 
 			if(this.table.options.paginationMode === "remote"){
 				this.subscribe("data-params", this.remotePageParams.bind(this));
+				this.subscribe("data-loaded", this._parseRemoteData.bind(this));
 			}
 
 			this.registerDisplayHandler(this.restOnRenderBefore.bind(this), 40);
@@ -13780,7 +13780,7 @@ class Page extends Module{
 			}
 
 			//set default values
-			this.mode = this.table.options.pagination;
+			this.mode = this.table.options.paginationMode;
 
 			if(this.table.options.paginationSize){
 				this.size = this.table.options.paginationSize;
@@ -14110,10 +14110,8 @@ class Page extends Module{
 	trigger(){
 		var left;
 
-		return new Promise((resolve, reject)=>{
-
-			switch(this.mode){
-				case "local":
+		switch(this.mode){
+			case "local":
 				left = this.table.rowManager.scrollLeft;
 
 				this.refreshData();
@@ -14121,98 +14119,88 @@ class Page extends Module{
 
 				this.dispatchExternal("pageLoaded", this.getPage());
 
-				resolve();
-				break;
+				return Promise.resolve();
 
-				case "remote":
-				case "progressive_load":
-				case "progressive_scroll":
-				this.table.dataLoader.blockActiveLoad();
-				this._getRemotePage()
-				.then(()=>{
-					resolve();
-				})
-				.catch(()=>{
-					reject();
-				});
-				break;
+			case "remote":
+			case "progressive_load":
+			case "progressive_scroll":
+				return this.table.dataLoader.load();
 
-				default:
+			default:
 				console.warn("Pagination Error - no such pagination mode:", this.mode);
-				reject();
-			}
-		});
+				return Promise.reject();
+		}
 	}
 
-	_getRemotePage(){
-		var oldParams, pageParams;
+	// _getRemotePage(){
+	// 	var oldParams, pageParams;
 
-		return new Promise((resolve, reject) => {
+	// 	return new Promise((resolve, reject) => {
 
-			if(!this.table.modExists("ajax", true)){
-				reject();
-			}
+	// 		if(!this.table.modExists("ajax", true)){
+	// 			reject();
+	// 		}
 
-			//record old params and restore after request has been made
-			oldParams = Helpers.deepClone(this.table.modules.ajax.getParams() || {});
-			pageParams = this.table.modules.ajax.getParams();
+	// 		//record old params and restore after request has been made
+	// 		oldParams = Helpers.deepClone(this.table.modules.ajax.getParams() || {});
+	// 		pageParams = this.table.modules.ajax.getParams();
 
-			//configure request params
-			pageParams[this.dataSentNames.page] = this.page;
+	// 		//configure request params
+	// 		pageParams[this.dataSentNames.page] = this.page;
 
-			//set page size if defined
-			if(this.size){
-				pageParams[this.dataSentNames.size] = this.size;
-			}
+	// 		//set page size if defined
+	// 		if(this.size){
+	// 			pageParams[this.dataSentNames.size] = this.size;
+	// 		}
 
-			//set sort data if defined
-			if(this.table.options.sortMode === "remote" && this.table.modExists("sort")){
-				let sorters = this.table.modules.sort.getSort();
+	// 		//set sort data if defined
+	// 		if(this.table.options.sortMode === "remote" && this.table.modExists("sort")){
+	// 			let sorters = this.table.modules.sort.getSort();
 
-				sorters.forEach((item) => {
-					delete item.column;
-				});
+	// 			sorters.forEach((item) => {
+	// 				delete item.column;
+	// 			});
 
-				pageParams[this.dataSentNames.sorters] = sorters;
-			}
+	// 			pageParams[this.dataSentNames.sorters] = sorters;
+	// 		}
 
-			//set filter data if defined
-			if(this.table.options.filterMode === "remote" && this.table.modExists("filter")){
-				let filters = this.table.modules.filter.getFilters(true, true);
-				pageParams[this.dataSentNames.filters] = filters;
-			}
+	// 		//set filter data if defined
+	// 		if(this.table.options.filterMode === "remote" && this.table.modExists("filter")){
+	// 			let filters = this.table.modules.filter.getFilters(true, true);
+	// 			pageParams[this.dataSentNames.filters] = filters;
+	// 		}
 
-			this.table.modules.ajax.setParams(pageParams);
+	// 		this.table.modules.ajax.setParams(pageParams);
 
-			this.table.modules.ajax.sendRequest(this.progressiveLoad)
-			.then((data)=>{
-				this._parseRemoteData(data);
-				resolve();
-			})
-			.catch((e)=>{reject();});
+	// 		this.table.modules.ajax.sendRequest(this.progressiveLoad)
+	// 		.then((data)=>{
+	// 			this._parseRemoteData(data);
+	// 			resolve();
+	// 		})
+	// 		.catch((e)=>{reject()});
 
-			this.table.modules.ajax.setParams(oldParams);
-		});
-	}
+	// 		this.table.modules.ajax.setParams(oldParams);
+	// 	});
+	// }
 
 	_parseRemoteData(data){
-		var left, data, margin;
+		var data, margin;
 
-		if(typeof data[this.dataReceivedNames.last_page] === "undefined"){
+		if(typeof data.last_page === "undefined"){
 			console.warn("Remote Pagination Error - Server response missing '" + this.dataReceivedNames.last_page + "' property");
 		}
 
-		if(data[this.dataReceivedNames.data]){
-			this.max = parseInt(data[this.dataReceivedNames.last_page]) || 1;
+		if(data.data){
+			this.max = parseInt(data.last_page) || 1;
 
 			if(this.progressiveLoad){
 				switch(this.mode){
 					case "progressive_load":
 
 					if(this.page == 1){
-						this.table.rowManager.setData(data[this.dataReceivedNames.data], false, this.initialLoad && this.page == 1);
+						this.table.rowManager.setData(data.data, false, this.initialLoad && this.page == 1);
 					}else {
-						this.table.rowManager.addRows(data[this.dataReceivedNames.data]);
+						this.table.rowManager.addRows(data.data);
 					}
 
 					if(this.page < this.max){
@@ -14223,7 +14211,7 @@ class Page extends Module{
 					break;
 
 					case "progressive_scroll":
-					data = this.table.rowManager.getData().concat(data[this.dataReceivedNames.data]);
+					data = this.table.rowManager.getData().concat(data.data);
 
 					this.table.rowManager.setData(data, true, this.initialLoad && this.page == 1);
 
@@ -14235,13 +14223,13 @@ class Page extends Module{
 					break;
 				}
 			}else {
-				left = this.table.rowManager.scrollLeft;
+				// left = this.table.rowManager.scrollLeft;
 
-				this.table.rowManager.setData(data[this.dataReceivedNames.data], false, this.initialLoad && this.page == 1);
+				// this.table.rowManager.setData(data.data, false, this.initialLoad && this.page == 1);
 
-				this.table.rowManager.scrollHorizontal(left);
+				// this.table.rowManager.scrollHorizontal(left);
 
-				this.table.columnManager.scrollHorizontal(left);
+				// this.table.columnManager.scrollHorizontal(left);
 
 				this.dispatchExternal("pageLoaded",  this.getPage());
 			}
@@ -14251,6 +14239,8 @@ class Page extends Module{
 		}else {
 			console.warn("Remote Pagination Error - Server response missing '" + this.dataReceivedNames.data + "' property");
 		}
+
+		return data.data;
 	}
 
 	//handle the footer element being redrawn
