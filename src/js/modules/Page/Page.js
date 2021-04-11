@@ -86,6 +86,10 @@ class Page extends Module{
 	}
 
 	remotePageParams(data, config, silent, params){
+		if(this.progressiveLoad && !silent){
+			this.reset(true);
+		}
+
 		//configure request params
 		params.page = this.page;
 
@@ -349,8 +353,6 @@ class Page extends Module{
 
 			this.table.rowManager.getTableElement().appendChild(testElRow);
 
-			console.log("size", this.table.rowManager.getElement().clientHeight , testElRow.offsetHeight, this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight)
-
 			this.size = Math.floor(this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
 
 			this.table.rowManager.getTableElement().removeChild(testElRow);
@@ -430,52 +432,34 @@ class Page extends Module{
 			break;
 		}
 
-		return new Promise((resolve, reject) => {
+		page = parseInt(page);
 
-			page = parseInt(page);
+		if((page > 0 && page <= this.max) || this.mode !== "local"){
+			this.page = page;
 
-			if((page > 0 && page <= this.max) || this.mode !== "local"){
-				this.page = page;
-				this.trigger()
-				.then(()=>{
-					resolve();
-				})
-				.catch(()=>{
-					reject();
-				});
-
-				if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
-					this.table.modules.persistence.save("page");
-				}
-
-			}else{
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + this.max + ":", page);
-				reject();
+			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
+				this.table.modules.persistence.save("page");
 			}
-		});
+
+			return this.trigger()
+		}else{
+			console.warn("Pagination Error - Requested page is out of range of 1 - " + this.max + ":", page);
+			return Promise.reject();
+		}
 	}
 
 	setPageToRow(row){
-		return new Promise((resolve, reject)=>{
+		var rows = this.table.rowManager.getDisplayRows(this.displayIndex - 1);
+		var index = rows.indexOf(row);
 
-			var rows = this.table.rowManager.getDisplayRows(this.displayIndex - 1);
-			var index = rows.indexOf(row);
+		if(index > -1){
+			var page = this.size === true ? 1 : Math.ceil((index + 1) / this.size);
 
-			if(index > -1){
-				var page = this.size === true ? 1 : Math.ceil((index + 1) / this.size);
-
-				this.setPage(page)
-				.then(()=>{
-					resolve();
-				})
-				.catch(()=>{
-					reject();
-				});
-			}else{
-				console.warn("Pagination Error - Requested row is not visible");
-				reject();
-			}
-		});
+			return this.setPage(page)
+		}else{
+			console.warn("Pagination Error - Requested row is not visible");
+			return Promise.reject();
+		}
 	}
 
 	setPageSize(size){
@@ -570,7 +554,7 @@ class Page extends Module{
 
 		}else{
 			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
-			return Promise.reject()
+			return Promise.reject();
 		}
 	}
 
@@ -650,25 +634,25 @@ class Page extends Module{
 
 		switch(this.mode){
 			case "local":
-				left = this.table.rowManager.scrollLeft;
+			left = this.table.rowManager.scrollLeft;
 
-				this.refreshData();
-				this.table.rowManager.scrollHorizontal(left);
+			this.refreshData();
+			this.table.rowManager.scrollHorizontal(left);
 
-				this.dispatchExternal("pageLoaded", this.getPage());
+			this.dispatchExternal("pageLoaded", this.getPage());
 
-				return Promise.resolve();
+			return Promise.resolve();
 			break;
 
 			case "remote":
 			case "progressive_load":
 			case "progressive_scroll":
-				return this.reloadData(null, true);
+			return this.reloadData(null, true);
 			break;
 
 			default:
-				console.warn("Pagination Error - no such pagination mode:", this.mode);
-				return Promise.reject();
+			console.warn("Pagination Error - no such pagination mode:", this.mode);
+			return Promise.reject();
 		}
 	}
 
