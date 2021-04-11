@@ -795,7 +795,7 @@ class Filter extends Module{
 			this.dispatchExternal("dataFiltering", this.getFilters());
 		}
 
-		if(!this.table.options.ajaxFiltering && (this.filterList.length || Object.keys(this.headerFilters).length)){
+		if(this.table.options.filterMode !== "remote" && (this.filterList.length || Object.keys(this.headerFilters).length)){
 
 			rowList.forEach((row) => {
 				if(this.filterRow(row)){

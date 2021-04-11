@@ -697,7 +697,7 @@ class Page extends Module{
 			}
 
 			//set sort data if defined
-			if(this.table.options.ajaxSorting && this.table.modExists("sort")){
+			if(this.table.options.sortMode === "remote" && this.table.modExists("sort")){
 				let sorters = this.table.modules.sort.getSort();
 
 				sorters.forEach((item) => {
@@ -708,7 +708,7 @@ class Page extends Module{
 			}
 
 			//set filter data if defined
-			if(this.table.options.ajaxFiltering && this.table.modExists("filter")){
+			if(this.table.options.filterMode === "remote" && this.table.modExists("filter")){
 				let filters = this.table.modules.filter.getFilters(true, true);
 				pageParams[this.dataSentNames.filters] = filters;
 			}

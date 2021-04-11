@@ -630,27 +630,27 @@ export default class RowManager extends CoreFeature{
 	// }
 
 	//choose the path to refresh data after a filter update
-	filterRefresh(){
-		var table = this.table,
-		options = table.options,
-		left = this.scrollLeft;
+	// filterRefresh(){
+	// 	var table = this.table,
+	// 	options = table.options,
+	// 	left = this.scrollLeft;
 
-		if(options.ajaxFiltering){
-			if(options.pagination == "remote" && table.modExists("page")){
-				table.modules.page.reset(true);
-				table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
-			}else if(options.ajaxProgressiveLoad){
-				table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
-			}else{
-				//assume data is url, make ajax call to url to get data
-				this._genRemoteRequest();
-			}
-		}else{
-			this.refreshActiveData("filter");
-		}
+	// 	if(options.ajaxFiltering){
+	// 		if(options.pagination == "remote" && table.modExists("page")){
+	// 			table.modules.page.reset(true);
+	// 			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
+	// 		}else if(options.ajaxProgressiveLoad){
+	// 			table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
+	// 		}else{
+	// 			//assume data is url, make ajax call to url to get data
+	// 			this._genRemoteRequest();
+	// 		}
+	// 	}else{
+	// 		this.refreshActiveData("filter");
+	// 	}
 
-		this.scrollHorizontal(left);
-	}
+	// 	this.scrollHorizontal(left);
+	// }
 
 	//choose the path to refresh data after a sorter update
 	// sorterRefresh(loadOrignalData){

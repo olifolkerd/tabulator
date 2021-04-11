@@ -8842,7 +8842,7 @@ class Filter extends Module{
 			this.dispatchExternal("dataFiltering", this.getFilters());
 		}
 
-		if(!this.table.options.ajaxFiltering && (this.filterList.length || Object.keys(this.headerFilters).length)){
+		if(this.table.options.filterMode !== "remote" && (this.filterList.length || Object.keys(this.headerFilters).length)){
 
 			rowList.forEach((row) => {
 				if(this.filterRow(row)){
@@ -14154,7 +14154,7 @@ class Page extends Module{
 			}
 
 			//set sort data if defined
-			if(this.table.options.ajaxSorting && this.table.modExists("sort")){
+			if(this.table.options.sortMode === "remote" && this.table.modExists("sort")){
 				let sorters = this.table.modules.sort.getSort();
 
 				sorters.forEach((item) => {
@@ -14165,7 +14165,7 @@ class Page extends Module{
 			}
 
 			//set filter data if defined
-			if(this.table.options.ajaxFiltering && this.table.modExists("filter")){
+			if(this.table.options.filterMode === "remote" && this.table.modExists("filter")){
 				let filters = this.table.modules.filter.getFilters(true, true);
 				pageParams[this.dataSentNames.filters] = filters;
 			}
@@ -16929,7 +16929,7 @@ class Sort extends Module{
 
 		self.clearColumnHeaders();
 
-		if(!self.table.options.ajaxSorting){
+		if(this.table.options.sortMode !== "remote"){
 
 			//build list of valid sorters and trigger column specific callbacks before sort begins
 			sortList.forEach(function(item, i){
@@ -16951,10 +16951,8 @@ class Sort extends Module{
 			});
 
 			//sort data
-			if(this.table.options.sortMode !== "remote"){
-				if (sortListActual.length) {
-					self._sortItems(data, sortListActual);
-				}
+			if (sortListActual.length) {
+				self._sortItems(data, sortListActual);
 			}
 
 		}else {
@@ -20033,27 +20031,27 @@ class RowManager extends CoreFeature{
 	// }
 
 	//choose the path to refresh data after a filter update
-	filterRefresh(){
-		var table = this.table,
-		options = table.options,
-		left = this.scrollLeft;
+	// filterRefresh(){
+	// 	var table = this.table,
+	// 	options = table.options,
+	// 	left = this.scrollLeft;
 
-		if(options.ajaxFiltering){
-			if(options.pagination == "remote" && table.modExists("page")){
-				table.modules.page.reset(true);
-				table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
-			}else if(options.ajaxProgressiveLoad){
-				table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
-			}else {
-				//assume data is url, make ajax call to url to get data
-				this._genRemoteRequest();
-			}
-		}else {
-			this.refreshActiveData("filter");
-		}
+	// 	if(options.ajaxFiltering){
+	// 		if(options.pagination == "remote" && table.modExists("page")){
+	// 			table.modules.page.reset(true);
+	// 			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
+	// 		}else if(options.ajaxProgressiveLoad){
+	// 			table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
+	// 		}else{
+	// 			//assume data is url, make ajax call to url to get data
+	// 			this._genRemoteRequest();
+	// 		}
+	// 	}else{
+	// 		this.refreshActiveData("filter");
+	// 	}
 
-		this.scrollHorizontal(left);
-	}
+	// 	this.scrollHorizontal(left);
+	// }
 
 	//choose the path to refresh data after a sorter update
 	// sorterRefresh(loadOrignalData){

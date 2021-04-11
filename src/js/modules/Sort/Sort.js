@@ -317,7 +317,7 @@ class Sort extends Module{
 
 		self.clearColumnHeaders();
 
-		if(!self.table.options.ajaxSorting){
+		if(this.table.options.sortMode !== "remote"){
 
 			//build list of valid sorters and trigger column specific callbacks before sort begins
 			sortList.forEach(function(item, i){
@@ -339,10 +339,8 @@ class Sort extends Module{
 			});
 
 			//sort data
-			if(this.table.options.sortMode !== "remote"){
-				if (sortListActual.length) {
-					self._sortItems(data, sortListActual);
-				}
+			if (sortListActual.length) {
+				self._sortItems(data, sortListActual);
 			}
 
 		}else{
