@@ -13442,6 +13442,7 @@ class Page extends Module{
 		if(this.table.options.pagination){
 			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
+			this.subscribe("data-processed", this.initialLoadComplete.bind(this));
 
 			if(this.table.options.paginationMode === "remote"){
 				this.subscribe("data-params", this.remotePageParams.bind(this));
@@ -13470,10 +13471,12 @@ class Page extends Module{
 		}
 	}
 
+	initialLoadComplete(){
+		this.initialLoad = false;
+	}
+
 	remotePageParams(data, config, silent, params){
-		if(this.initialLoad){
-			this.initialLoad = false;
-		}else if(this.progressiveLoad && !silent){
+		 if(!this.initialLoad && this.progressiveLoad && !silent){
 			this.reset(true);
 		}
 
@@ -13780,11 +13783,11 @@ class Page extends Module{
 
 	//reset to first page without triggering action
 	reset(force){
-		if(this.mode == "local" || force){
-			this.page = 1;
+		if(!this.initialLoad){
+			if(this.mode == "local" || force){
+				this.page = 1;
+			}
 		}
-
-		return true;
 	}
 
 	//set the maxmum page
@@ -13815,6 +13818,7 @@ class Page extends Module{
 			case "last":
 			return this.setPage(this.max);
 		}
+
 
 		page = parseInt(page);
 
@@ -19472,6 +19476,7 @@ class RowManager extends CoreFeature{
 			this.refreshActiveData(false, false, renderInPosition);
 
 			this.dispatchExternal("dataLoaded", data);
+			this.dispatch("data-processed", data);
 		}else {
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
@@ -20730,7 +20735,6 @@ class DataLoader extends CoreFeature{
 		}
 
 		if(this.confirm("data-loading", data, params, config, silent)){
-
 			this.loading = true;
 
 			if(!silent){
@@ -20775,11 +20779,7 @@ class DataLoader extends CoreFeature{
 			.finally(() => {
 				this.loading = false;
 			})
-
-			//load data from module
 		}else {
-			console.log("local");
-			//load data into table
 			this.table.rowManager.setData(data, replace, !replace);
 			return Promise.resolve();
 		}
