@@ -10,6 +10,7 @@ export default class DataLoader extends CoreFeature{
 		this.errorElement = null;
 
 		this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
+		this.loading = false;
 	}
 
 	initialize(){
@@ -63,6 +64,8 @@ export default class DataLoader extends CoreFeature{
 
 		if(this.confirm("data-loading", data, params, config, silent)){
 
+			this.loading = true;
+
 			if(!silent){
 				this.showLoader();
 			}
@@ -81,7 +84,7 @@ export default class DataLoader extends CoreFeature{
 
 				var rowData = this.chain("data-loaded", response, null, response);
 
-				if(requestNo === this.requestOrder){
+				if(requestNo == this.requestOrder){
 					this.hideLoader();
 
 					if(rowData !== false){
@@ -101,6 +104,9 @@ export default class DataLoader extends CoreFeature{
 				setTimeout(() => {
 					this.hideLoader();
 				}, 3000);
+			})
+			.finally(() => {
+				this.loading = false;
 			})
 
 			//load data from module
