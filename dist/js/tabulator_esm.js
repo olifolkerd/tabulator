@@ -13719,19 +13719,19 @@ class Page extends Module{
 
 			//click bindings
 			this.firstBut.addEventListener("click", () => {
-				this.setPage(1).then(()=>{}).catch(()=>{});
+				this.setPage(1);
 			});
 
 			this.prevBut.addEventListener("click", () => {
-				this.previousPage().then(()=>{}).catch(()=>{});
+				this.previousPage();
 			});
 
 			this.nextBut.addEventListener("click", () => {
-				this.nextPage().then(()=>{}).catch(()=>{});
+				this.nextPage();
 			});
 
 			this.lastBut.addEventListener("click", () => {
-				this.setPage(this.max).then(()=>{}).catch(()=>{});
+				this.setPage(this.max);
 			});
 
 			if(this.table.options.paginationElement){
@@ -13752,7 +13752,7 @@ class Page extends Module{
 
 				this.pageSizeSelect.addEventListener("change", (e) => {
 					this.setPageSize(this.pageSizeSelect.value == "true" ? true : this.pageSizeSelect.value);
-					this.setPage(1).then(()=>{}).catch(()=>{});
+					this.setPage(1);
 				});
 			}
 
@@ -13989,7 +13989,7 @@ class Page extends Module{
 		button.textContent = page;
 
 		button.addEventListener("click", (e) => {
-			this.setPage(page).then(()=>{}).catch(()=>{});
+			this.setPage(page);
 		});
 
 		return button;
@@ -13997,52 +13997,37 @@ class Page extends Module{
 
 	//previous page
 	previousPage(){
-		return new Promise((resolve, reject)=>{
-			if(this.page > 1){
-				this.page--;
-				this.trigger()
-				.then(()=>{
-					resolve();
-				})
-				.catch(()=>{
-					reject();
-				});
+		if(this.page > 1){
+			this.page--;
 
-				if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
-					this.table.modules.persistence.save("page");
-				}
-
-			}else {
-				console.warn("Pagination Error - Previous page would be less than page 1:", 0);
-				reject();
+			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
+				this.table.modules.persistence.save("page");
 			}
-		});
+
+			return this.trigger()
+
+		}else {
+			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
+			return Promise.reject()
+		}
 	}
 
 	//next page
 	nextPage(){
-		return new Promise((resolve, reject)=>{
-			if(this.page < this.max){
-				this.page++;
-				this.trigger()
-				.then(()=>{
-					resolve();
-				})
-				.catch(()=>{
-					reject();
-				});
+		if(this.page < this.max){
+			this.page++;
 
-				if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
-					this.table.modules.persistence.save("page");
-				}
-
-			}else {
-				if(!this.progressiveLoad){
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
-				}
-				reject();
+			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
+				this.table.modules.persistence.save("page");
 			}
-		});
+
+			return this.trigger();
+		}else {
+			if(!this.progressiveLoad){
+				console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
+			}
+			return Promise.reject();
+		}
 	}
 
 	//return current page number
@@ -14195,7 +14180,7 @@ class Page extends Module{
 
 					if(this.page < this.max){
 						setTimeout(() => {
-							this.nextPage().then(()=>{}).catch(()=>{});
+							this.nextPage();
 						}, this.table.options.progressiveLoadDelay);
 					}
 					break;
@@ -14208,7 +14193,7 @@ class Page extends Module{
 					margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 
 					if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
-						this.nextPage().then(()=>{}).catch(()=>{});
+						this.nextPage();
 					}
 					break;
 				}
