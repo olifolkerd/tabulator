@@ -22890,60 +22890,35 @@ class Tabulator$1 {
 
 	//add row to table
 	addRow(data, pos, index){
-		return new Promise((resolve, reject) => {
-			if(typeof data === "string"){
-				data = JSON.parse(data);
-			}
+		if(typeof data === "string"){
+			data = JSON.parse(data);
+		}
 
-			this.rowManager.addRows(data, pos, index)
-			.then((rows)=>{
-				//recalc column calculations if present
-				if(this.modExists("columnCalcs")){
-					this.modules.columnCalcs.recalc(this.rowManager.activeRows);
-				}
-
-				resolve(rows[0].getComponent());
-			});
+		return this.rowManager.addRows(data, pos, index)
+		.then((rows)=>{
+			return rows[0].getComponent();
 		});
 	}
 
 	//update a row if it exitsts otherwise create it
 	updateOrAddRow(index, data){
-		return new Promise((resolve, reject) => {
-			var row = this.rowManager.findRow(index);
+		var row = this.rowManager.findRow(index);
 
-			if(typeof data === "string"){
-				data = JSON.parse(data);
-			}
+		if(typeof data === "string"){
+			data = JSON.parse(data);
+		}
 
-			if(row){
-				row.updateData(data)
-				.then(()=>{
-					//recalc column calculations if present
-					if(this.modExists("columnCalcs")){
-						this.modules.columnCalcs.recalc(this.rowManager.activeRows);
-					}
-
-					resolve(row.getComponent());
-				})
-				.catch((err)=>{
-					reject(err);
-				});
-			}else {
-				row = this.rowManager.addRows(data)
-				.then((rows)=>{
-					//recalc column calculations if present
-					if(this.modExists("columnCalcs")){
-						this.modules.columnCalcs.recalc(this.rowManager.activeRows);
-					}
-
-					resolve(rows[0].getComponent());
-				})
-				.catch((err)=>{
-					reject(err);
-				});
-			}
-		});
+		if(row){
+			return row.updateData(data)
+			.then(()=>{
+				return row.getComponent();
+			})
+		}else {
+			return this.rowManager.addRows(data)
+			.then((rows)=>{
+				return rows[0].getComponent();
+			})
+		}
 	}
 
 	//update row data
@@ -22967,22 +22942,14 @@ class Tabulator$1 {
 
 	//scroll to row in DOM
 	scrollToRow(index, position, ifVisible){
-		return new Promise((resolve, reject) => {
-			var row = this.rowManager.findRow(index);
+		var row = this.rowManager.findRow(index);
 
-			if(row){
-				this.rowManager.scrollToRow(row, position, ifVisible)
-				.then(()=>{
-					resolve();
-				})
-				.catch((err)=>{
-					reject(err);
-				});
-			}else {
-				console.warn("Scroll Error - No matching row found:", index);
-				reject("Scroll Error - No matching row found");
-			}
-		});
+		if(row){
+			return this.rowManager.scrollToRow(row, position, ifVisible)
+		}else {
+			console.warn("Scroll Error - No matching row found:", index);
+			return Promise.reject("Scroll Error - No matching row found");
+		}
 	}
 
 	moveRow(from, to, after){
