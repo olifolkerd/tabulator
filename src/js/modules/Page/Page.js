@@ -137,7 +137,6 @@ class Page extends Module{
 			margin = this.table.options.progressiveLoadScrollMargin || (element.clientHeight * 2);
 
 			if(diff < margin){
-				console.log("scroll next", this.page);
 				this.nextPage();
 			}
 		}
@@ -670,57 +669,6 @@ class Page extends Module{
 		}
 	}
 
-	// _getRemotePage(){
-	// 	var oldParams, pageParams;
-
-	// 	return new Promise((resolve, reject) => {
-
-	// 		if(!this.table.modExists("ajax", true)){
-	// 			reject();
-	// 		}
-
-	// 		//record old params and restore after request has been made
-	// 		oldParams = Helpers.deepClone(this.table.modules.ajax.getParams() || {});
-	// 		pageParams = this.table.modules.ajax.getParams();
-
-	// 		//configure request params
-	// 		pageParams[this.dataSentNames.page] = this.page;
-
-	// 		//set page size if defined
-	// 		if(this.size){
-	// 			pageParams[this.dataSentNames.size] = this.size;
-	// 		}
-
-	// 		//set sort data if defined
-	// 		if(this.table.options.sortMode === "remote" && this.table.modExists("sort")){
-	// 			let sorters = this.table.modules.sort.getSort();
-
-	// 			sorters.forEach((item) => {
-	// 				delete item.column;
-	// 			});
-
-	// 			pageParams[this.dataSentNames.sorters] = sorters;
-	// 		}
-
-	// 		//set filter data if defined
-	// 		if(this.table.options.filterMode === "remote" && this.table.modExists("filter")){
-	// 			let filters = this.table.modules.filter.getFilters(true, true);
-	// 			pageParams[this.dataSentNames.filters] = filters;
-	// 		}
-
-	// 		this.table.modules.ajax.setParams(pageParams);
-
-	// 		this.table.modules.ajax.sendRequest(this.progressiveLoad)
-	// 		.then((data)=>{
-	// 			this._parseRemoteData(data);
-	// 			resolve();
-	// 		})
-	// 		.catch((e)=>{reject()});
-
-	// 		this.table.modules.ajax.setParams(oldParams);
-	// 	});
-	// }
-
 	_parseRemoteData(data){
 		var left, data, margin;
 
@@ -766,14 +714,9 @@ class Page extends Module{
 				return false;
 			}else{
 				// left = this.table.rowManager.scrollLeft;
-
-				// this.table.rowManager.setData(data.data, false, this.initialLoad && this.page == 1);
-
-				// this.table.rowManager.scrollHorizontal(left);
-
-				// this.table.columnManager.scrollHorizontal(left);
-
 				this.dispatchExternal("pageLoaded",  this.getPage());
+				// this.table.rowManager.scrollHorizontal(left);
+				// this.table.columnManager.scrollHorizontal(left);
 			}
 
 			this.initialLoad = false;

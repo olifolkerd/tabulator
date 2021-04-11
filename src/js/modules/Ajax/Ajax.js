@@ -17,9 +17,6 @@ class Ajax extends Module{
 
 		this.loaderPromise = false;
 
-		// this.progressiveLoad = false;
-		this.loading = false;
-
 		this.registerTableOption("ajaxURL", false); //url for ajax loading
 		this.registerTableOption("ajaxURLGenerator", false);
 		this.registerTableOption("ajaxParams", {});  //params for ajax loading
@@ -82,12 +79,6 @@ class Ajax extends Module{
 		}
 	}
 
-	scrollVertical(top, dir){
-		var el = this.table.rowManager.element;
-
-		this.nextPage(el.scrollHeight - el.clientHeight - top);
-	}
-
 	//set ajax params
 	setParams(params, update){
 		if(update){
@@ -141,41 +132,6 @@ class Ajax extends Module{
 		return this.url;
 	}
 
-	//lstandard loading function
-	// loadData(inPosition, columnsChanged){
-	// 	if(this.progressiveLoad){
-	// 		return this._loadDataProgressive();
-	// 	}else{
-	// 		return this._loadDataStandard(inPosition, columnsChanged);
-	// 	}
-	// }
-
-	// nextPage(diff){
-	// 	var margin;
-
-	// 	if(!this.loading){
-
-	// 		margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.getElement().clientHeight * 2);
-
-	// 		if(diff < margin){
-	// 			this.table.modules.page.nextPage()
-	// 			.then(()=>{}).catch(()=>{});
-	// 		}
-	// 	}
-	// }
-
-	// _loadDataProgressive(){
-	// 	this.table.rowManager.setData([]);
-	// 	return this.table.modules.page.setPage(1);
-	// }
-
-	// _loadDataStandard(inPosition, columnsChanged){
-	// 	return this.sendRequest(inPosition)
-	// 	.then((data)=>{
-	// 		this.table.rowManager.setData(data, inPosition, columnsChanged);
-	// 	})
-	// }
-
 	generateParamsList(data, prefix){
 		var output = [];
 
@@ -217,8 +173,6 @@ class Ajax extends Module{
 		return new Promise((resolve, reject)=>{
 			if(this.table.options.ajaxRequesting.call(this.table, this.url, this.params) !== false){
 
-				this.loading = true;
-
 				this.loaderPromise(url, this.config, this.params)
 				.then((data)=>{
 					if(this.table.options.ajaxResponse){
@@ -226,12 +180,8 @@ class Ajax extends Module{
 					}
 
 					resolve(data);
-
-					this.loading = false;
 				})
 				.catch((error)=>{
-					this.loading = false;
-
 					reject(error);
 				});
 			}else{

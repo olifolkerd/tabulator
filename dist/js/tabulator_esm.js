@@ -420,9 +420,6 @@ class Ajax extends Module{
 
 		this.loaderPromise = false;
 
-		// this.progressiveLoad = false;
-		this.loading = false;
-
 		this.registerTableOption("ajaxURL", false); //url for ajax loading
 		this.registerTableOption("ajaxURLGenerator", false);
 		this.registerTableOption("ajaxParams", {});  //params for ajax loading
@@ -485,12 +482,6 @@ class Ajax extends Module{
 		}
 	}
 
-	scrollVertical(top, dir){
-		var el = this.table.rowManager.element;
-
-		this.nextPage(el.scrollHeight - el.clientHeight - top);
-	}
-
 	//set ajax params
 	setParams(params, update){
 		if(update){
@@ -544,41 +535,6 @@ class Ajax extends Module{
 		return this.url;
 	}
 
-	//lstandard loading function
-	// loadData(inPosition, columnsChanged){
-	// 	if(this.progressiveLoad){
-	// 		return this._loadDataProgressive();
-	// 	}else{
-	// 		return this._loadDataStandard(inPosition, columnsChanged);
-	// 	}
-	// }
-
-	// nextPage(diff){
-	// 	var margin;
-
-	// 	if(!this.loading){
-
-	// 		margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.getElement().clientHeight * 2);
-
-	// 		if(diff < margin){
-	// 			this.table.modules.page.nextPage()
-	// 			.then(()=>{}).catch(()=>{});
-	// 		}
-	// 	}
-	// }
-
-	// _loadDataProgressive(){
-	// 	this.table.rowManager.setData([]);
-	// 	return this.table.modules.page.setPage(1);
-	// }
-
-	// _loadDataStandard(inPosition, columnsChanged){
-	// 	return this.sendRequest(inPosition)
-	// 	.then((data)=>{
-	// 		this.table.rowManager.setData(data, inPosition, columnsChanged);
-	// 	})
-	// }
-
 	generateParamsList(data, prefix){
 		var output = [];
 
@@ -619,8 +575,6 @@ class Ajax extends Module{
 		return new Promise((resolve, reject)=>{
 			if(this.table.options.ajaxRequesting.call(this.table, this.url, this.params) !== false){
 
-				this.loading = true;
-
 				this.loaderPromise(url, this.config, this.params)
 				.then((data)=>{
 					if(this.table.options.ajaxResponse){
@@ -628,12 +582,8 @@ class Ajax extends Module{
 					}
 
 					resolve(data);
-
-					this.loading = false;
 				})
 				.catch((error)=>{
-					this.loading = false;
-
 					reject(error);
 				});
 			}else {
@@ -13579,7 +13529,6 @@ class Page extends Module{
 			margin = this.table.options.progressiveLoadScrollMargin || (element.clientHeight * 2);
 
 			if(diff < margin){
-				console.log("scroll next", this.page);
 				this.nextPage();
 			}
 		}
@@ -14106,57 +14055,6 @@ class Page extends Module{
 		}
 	}
 
-	// _getRemotePage(){
-	// 	var oldParams, pageParams;
-
-	// 	return new Promise((resolve, reject) => {
-
-	// 		if(!this.table.modExists("ajax", true)){
-	// 			reject();
-	// 		}
-
-	// 		//record old params and restore after request has been made
-	// 		oldParams = Helpers.deepClone(this.table.modules.ajax.getParams() || {});
-	// 		pageParams = this.table.modules.ajax.getParams();
-
-	// 		//configure request params
-	// 		pageParams[this.dataSentNames.page] = this.page;
-
-	// 		//set page size if defined
-	// 		if(this.size){
-	// 			pageParams[this.dataSentNames.size] = this.size;
-	// 		}
-
-	// 		//set sort data if defined
-	// 		if(this.table.options.sortMode === "remote" && this.table.modExists("sort")){
-	// 			let sorters = this.table.modules.sort.getSort();
-
-	// 			sorters.forEach((item) => {
-	// 				delete item.column;
-	// 			});
-
-	// 			pageParams[this.dataSentNames.sorters] = sorters;
-	// 		}
-
-	// 		//set filter data if defined
-	// 		if(this.table.options.filterMode === "remote" && this.table.modExists("filter")){
-	// 			let filters = this.table.modules.filter.getFilters(true, true);
-	// 			pageParams[this.dataSentNames.filters] = filters;
-	// 		}
-
-	// 		this.table.modules.ajax.setParams(pageParams);
-
-	// 		this.table.modules.ajax.sendRequest(this.progressiveLoad)
-	// 		.then((data)=>{
-	// 			this._parseRemoteData(data);
-	// 			resolve();
-	// 		})
-	// 		.catch((e)=>{reject()});
-
-	// 		this.table.modules.ajax.setParams(oldParams);
-	// 	});
-	// }
-
 	_parseRemoteData(data){
 		var data, margin;
 
@@ -14202,14 +14100,9 @@ class Page extends Module{
 				return false;
 			}else {
 				// left = this.table.rowManager.scrollLeft;
-
-				// this.table.rowManager.setData(data.data, false, this.initialLoad && this.page == 1);
-
-				// this.table.rowManager.scrollHorizontal(left);
-
-				// this.table.columnManager.scrollHorizontal(left);
-
 				this.dispatchExternal("pageLoaded",  this.getPage());
+				// this.table.rowManager.scrollHorizontal(left);
+				// this.table.columnManager.scrollHorizontal(left);
 			}
 
 			this.initialLoad = false;
@@ -19974,87 +19867,6 @@ class RowManager extends CoreFeature{
 
 		return rows.length;
 	}
-
-	// _genRemoteRequest(){
-	// 	var table = this.table,
-	// 	options = table.options,
-	// 	params = {};
-
-	// 	if(table.modExists("page")){
-	// 		//set sort data if defined
-	// 		if(options.ajaxSorting){
-	// 			let sorters = this.table.modules.sort.getSort();
-
-	// 			sorters.forEach(function(item){
-	// 				delete item.column;
-	// 			});
-
-	// 			params[this.table.modules.page.paginationDataSentNames.sorters] = sorters;
-	// 		}
-
-	// 		//set filter data if defined
-	// 		if(options.ajaxFiltering){
-	// 			let filters = this.table.modules.filter.getFilters(true, true);
-
-	// 			params[this.table.modules.page.paginationDataSentNames.filters] = filters;
-	// 		}
-
-
-	// 		this.table.modules.ajax.setParams(params, true);
-	// 	}
-
-	// 	table.modules.ajax.sendRequest()
-	// 	.then((data)=>{
-	// 		this._setDataActual(data, true);
-	// 	})
-	// 	.catch((e)=>{});
-	// }
-
-	//choose the path to refresh data after a filter update
-	// filterRefresh(){
-	// 	var table = this.table,
-	// 	options = table.options,
-	// 	left = this.scrollLeft;
-
-	// 	if(options.ajaxFiltering){
-	// 		if(options.pagination == "remote" && table.modExists("page")){
-	// 			table.modules.page.reset(true);
-	// 			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
-	// 		}else if(options.progressiveLoad){
-	// 			table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
-	// 		}else{
-	// 			//assume data is url, make ajax call to url to get data
-	// 			this._genRemoteRequest();
-	// 		}
-	// 	}else{
-	// 		this.refreshActiveData("filter");
-	// 	}
-
-	// 	this.scrollHorizontal(left);
-	// }
-
-	//choose the path to refresh data after a sorter update
-	// sorterRefresh(loadOrignalData){
-	// 	var table = this.table,
-	// 	options = this.table.options,
-	// 	left = this.scrollLeft;
-
-	// 	if(options.ajaxSorting){
-	// 		if((options.pagination == "remote" || options.progressiveLoad) && table.modExists("page")){
-	// 			table.modules.page.reset(true);
-	// 			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
-	// 		}else if(options.progressiveLoad){
-	// 			table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
-	// 		}else{
-	// 			//assume data is url, make ajax call to url to get data
-	// 			this._genRemoteRequest();
-	// 		}
-	// 	}else{
-	// 		this.refreshActiveData(loadOrignalData ? "filter" : "sort");
-	// 	}
-
-	// 	this.scrollHorizontal(left);
-	// }
 
 	scrollHorizontal(left){
 		this.scrollLeft = left;
