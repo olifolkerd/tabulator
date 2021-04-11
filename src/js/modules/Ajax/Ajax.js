@@ -33,7 +33,6 @@ class Ajax extends Module{
 	//initialize setup options
 	initialize(){
 		this.loaderPromise = this.table.options.ajaxRequestFunc || Ajax.defaultLoaderPromise;
-
 		this.urlGenerator = this.table.options.ajaxURLGenerator || Ajax.defaultURLGenerator;
 
 		if(this.table.options.ajaxParams){
@@ -170,24 +169,18 @@ class Ajax extends Module{
 
 		this._loadDefaultConfig();
 
-		return new Promise((resolve, reject)=>{
-			if(this.table.options.ajaxRequesting.call(this.table, this.url, this.params) !== false){
+		if(this.table.options.ajaxRequesting.call(this.table, this.url, this.params) !== false){
+			return this.loaderPromise(url, this.config, this.params)
+			.then((data)=>{
+				if(this.table.options.ajaxResponse){
+					data = this.table.options.ajaxResponse.call(this.table, this.url, this.params, data);
+				}
 
-				this.loaderPromise(url, this.config, this.params)
-				.then((data)=>{
-					if(this.table.options.ajaxResponse){
-						data = this.table.options.ajaxResponse.call(this.table, this.url, this.params, data);
-					}
-
-					resolve(data);
-				})
-				.catch((error)=>{
-					reject(error);
-				});
-			}else{
-				reject();
-			}
-		});
+				return data;
+			});
+		}else{
+			return Promise.reject();
+		}
 	}
 }
 
