@@ -52,16 +52,26 @@ class ColumnCalcs extends Module{
 		this.subscribe("column-moved", this.recalcActiveRows.bind(this));
 		this.subscribe("column-add", this.recalcActiveRows.bind(this));
 		this.subscribe("data-refeshed", this.recalcActiveRows.bind(this));
+		this.subscribe("table-redraw", this.tableRedraw.bind(this));
 
 		this.registerTableFunction("getCalcResults", this.getResults.bind(this));
 		this.registerTableFunction("recalc", this.userRecalc.bind(this));
 	}
 
+	tableRedraw(force){
+		this.recalc(this.table.rowManager.activeRows);
+
+		if(force){
+			this.redraw();
+		}
+	}
+
+
 	///////////////////////////////////
 	///////// Table Functions /////////
 	///////////////////////////////////
 	userRecalc(){
-		this.recalcAll(this.table.rowManager.activeRows);
+		this.recalc(this.table.rowManager.activeRows);
 	}
 
 	///////////////////////////////////

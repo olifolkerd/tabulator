@@ -652,23 +652,7 @@ export default class ColumnManager extends CoreFeature {
 			}
 		}
 
-		if(this.table.modExists("frozenColumns")){
-			this.table.modules.frozenColumns.layout();
-		}
-
-		if(this.table.modExists("columnCalcs")){
-			this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-		}
-
-		if(force){
-			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
-				this.table.modules.persistence.save("columns");
-			}
-
-			if(this.table.modExists("columnCalcs")){
-				this.table.modules.columnCalcs.redraw();
-			}
-		}
+		this.dispatch("table-redraw", force);
 
 		this.table.footerManager.redraw();
 	}

@@ -3457,16 +3457,26 @@ class ColumnCalcs extends Module{
 		this.subscribe("column-moved", this.recalcActiveRows.bind(this));
 		this.subscribe("column-add", this.recalcActiveRows.bind(this));
 		this.subscribe("data-refeshed", this.recalcActiveRows.bind(this));
+		this.subscribe("table-redraw", this.tableRedraw.bind(this));
 
 		this.registerTableFunction("getCalcResults", this.getResults.bind(this));
 		this.registerTableFunction("recalc", this.userRecalc.bind(this));
 	}
 
+	tableRedraw(force){
+		this.recalc(this.table.rowManager.activeRows);
+
+		if(force){
+			this.redraw();
+		}
+	}
+
+
 	///////////////////////////////////
 	///////// Table Functions /////////
 	///////////////////////////////////
 	userRecalc(){
-		this.recalcAll(this.table.rowManager.activeRows);
+		this.recalc(this.table.rowManager.activeRows);
 	}
 
 	///////////////////////////////////
@@ -9652,6 +9662,7 @@ class FrozenColumns extends Module{
 		this.subscribe("table-layout", this.layout.bind(this));
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 		this.subscribe("columns-loading", this.reset.bind(this));
+		this.subscribe("table-redraw", this.layout.bind(this));
 	}
 
 	layoutCell(cell){
@@ -14357,10 +14368,18 @@ class Persistence extends Module{
 				this.subscribe("column-hide", this.save.bind(this, "columns"));
 				this.subscribe("column-moved", this.save.bind(this, "columns"));
 			}
+
+			this.subscribe("table-redraw", this.tableRedraw.bind(this));
 		}
 
 		this.registerTableFunction("getColumnLayout", this.getColumnLayout.bind(this));
 		this.registerTableFunction("setColumnLayout", this.setColumnLayout.bind(this));
+	}
+
+	tableRedraw(force){
+		if(force && this.config.columns){
+			this.save("columns");
+		}
 	}
 
 	///////////////////////////////////
@@ -18561,23 +18580,7 @@ class ColumnManager extends CoreFeature {
 			}
 		}
 
-		if(this.table.modExists("frozenColumns")){
-			this.table.modules.frozenColumns.layout();
-		}
-
-		if(this.table.modExists("columnCalcs")){
-			this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-		}
-
-		if(force){
-			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
-				this.table.modules.persistence.save("columns");
-			}
-
-			if(this.table.modExists("columnCalcs")){
-				this.table.modules.columnCalcs.redraw();
-			}
-		}
+		this.dispatch("table-redraw", force);
 
 		this.table.footerManager.redraw();
 	}

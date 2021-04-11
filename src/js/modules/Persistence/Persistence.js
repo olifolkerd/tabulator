@@ -132,10 +132,18 @@ class Persistence extends Module{
 				this.subscribe("column-hide", this.save.bind(this, "columns"));
 				this.subscribe("column-moved", this.save.bind(this, "columns"));
 			}
+
+			this.subscribe("table-redraw", this.tableRedraw.bind(this));
 		}
 
 		this.registerTableFunction("getColumnLayout", this.getColumnLayout.bind(this));
 		this.registerTableFunction("setColumnLayout", this.setColumnLayout.bind(this));
+	}
+
+	tableRedraw(force){
+		if(force && this.config.columns){
+			this.save("columns");
+		}
 	}
 
 	///////////////////////////////////
