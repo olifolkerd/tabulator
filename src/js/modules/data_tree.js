@@ -287,7 +287,11 @@ DataTree.prototype.generateChildren = function(row){
 	return children;
 };
 
+DataTree.prototype.isExpanded = function(row){
+	var config = row.modules.dataTree;
 
+    return config.open;
+};
 
 DataTree.prototype.expandRow = function(row, silent){
 	var config = row.modules.dataTree;

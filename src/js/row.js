@@ -105,6 +105,14 @@ RowComponent.prototype.isFrozen = function(){
 	return false;
 };
 
+RowComponent.prototype.isTreeExpanded = function(){
+	if (this._row.table.modExists("dataTree", true)) {
+		return this._row.table.modules.dataTree.isExpanded(this._row);
+	}
+
+	return false;
+};
+
 RowComponent.prototype.treeCollapse = function(){
 	if(this._row.table.modExists("dataTree", true)){
 		this._row.table.modules.dataTree.collapseRow(this._row);
