@@ -530,7 +530,7 @@ class Tabulator {
 
 	//replace data, keeping table in position with same sort
 	replaceData(data, params, config){
-		return this.dataLoader.load(data, params, config, true);
+		return this.dataLoader.load(data, params, config, true, true);
 	}
 
 	//update table data

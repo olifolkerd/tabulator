@@ -53,7 +53,7 @@ export default class DataLoader extends CoreFeature{
 		return el;
 	}
 
-	load(data, params, config, replace){
+	load(data, params, config, replace, silent){
 		var requestNo = ++this.requestOrder;
 
 		//parse json data to array
@@ -63,7 +63,9 @@ export default class DataLoader extends CoreFeature{
 
 		if(this.confirm("data-loading", data, params, config)){
 
-			this.showLoader();
+			if(!silent){
+				this.showLoader();
+			}
 
 			//get params for request
 			var params = this.chain("data-params", [data, config], params || {}, {});
@@ -92,7 +94,9 @@ export default class DataLoader extends CoreFeature{
 				console.error("Data Load Error: ", error);
 				this.dispatchExternal("dataError", error);
 
-				this.showError();
+				if(!silent){
+					this.showError();
+				}
 
 				setTimeout(() => {
 					this.hideLoader();

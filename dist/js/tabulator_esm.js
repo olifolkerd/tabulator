@@ -9,8 +9,8 @@ class CoreFeature{
 	/////////////// DataLoad /////////////////
 	//////////////////////////////////////////
 
-	reloadData(data){
-		this.table.dataLoader.load();
+	reloadData(data, silent){
+		this.table.dataLoader.load(data, undefined, undefined, undefined, silent);
 	}
 
 	//////////////////////////////////////////
@@ -14087,25 +14087,25 @@ class Page extends Module{
 
 		switch(this.mode){
 			case "local":
-			left = this.table.rowManager.scrollLeft;
+				left = this.table.rowManager.scrollLeft;
 
-			this.refreshData();
-			this.table.rowManager.scrollHorizontal(left);
+				this.refreshData();
+				this.table.rowManager.scrollHorizontal(left);
 
-			this.dispatchExternal("pageLoaded", this.getPage());
+				this.dispatchExternal("pageLoaded", this.getPage());
 
-			return Promise.resolve();
+				return Promise.resolve();
 
 			case "remote":
 			case "progressive_load":
 			case "progressive_scroll":
-			return this.table.dataLoader.load();
+				return this.reloadData(null, true);
 
-				default:
+			default:
 				console.warn("Pagination Error - no such pagination mode:", this.mode);
 				return Promise.reject();
-			}
 		}
+	}
 
 	// _getRemotePage(){
 	// 	var oldParams, pageParams;
@@ -18995,7 +18995,7 @@ class VirtualDomVertical extends Renderer{
 
 		this._virtualRenderFill((topRow === false ? this.rows.length - 1 : topRow), true, topOffset || 0);
 
-		this.scrollHorizontal(left);
+		// this.scrollHorizontal(left);
 	}
 
 	scrollRows(top, dir){
@@ -19010,7 +19010,7 @@ class VirtualDomVertical extends Renderer{
 			//if big scroll redraw table;
 			var left = this.scrollLeft;
 			this._virtualRenderFill(Math.floor((this.elementVertical.scrollTop / this.elementVertical.scrollHeight) * rows.length));
-			this.scrollHorizontal(left);
+			// this.scrollHorizontal(left);
 		}else {
 			if(dir){
 				//scrolling up
@@ -20924,7 +20924,7 @@ class DataLoader extends CoreFeature{
 		return el;
 	}
 
-	load(data, params, config, replace){
+	load(data, params, config, replace, silent){
 		var requestNo = ++this.requestOrder;
 
 		//parse json data to array
@@ -20934,7 +20934,9 @@ class DataLoader extends CoreFeature{
 
 		if(this.confirm("data-loading", data, params, config)){
 
-			this.showLoader();
+			if(!silent){
+				this.showLoader();
+			}
 
 			//get params for request
 			var params = this.chain("data-params", [data, config], params || {}, {});
@@ -20963,7 +20965,9 @@ class DataLoader extends CoreFeature{
 				console.error("Data Load Error: ", error);
 				this.dispatchExternal("dataError", error);
 
-				this.showError();
+				if(!silent){
+					this.showError();
+				}
 
 				setTimeout(() => {
 					this.hideLoader();
@@ -22964,7 +22968,7 @@ class Tabulator$1 {
 
 	//replace data, keeping table in position with same sort
 	replaceData(data, params, config){
-		return this.dataLoader.load(data, params, config, true);
+		return this.dataLoader.load(data, params, config, true, true);
 	}
 
 	//update table data

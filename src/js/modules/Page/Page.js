@@ -650,35 +650,27 @@ class Page extends Module{
 
 		switch(this.mode){
 			case "local":
-			left = this.table.rowManager.scrollLeft;
+				left = this.table.rowManager.scrollLeft;
 
-			this.refreshData();
-			this.table.rowManager.scrollHorizontal(left);
+				this.refreshData();
+				this.table.rowManager.scrollHorizontal(left);
 
-			this.dispatchExternal("pageLoaded", this.getPage());
+				this.dispatchExternal("pageLoaded", this.getPage());
 
-			return Promise.resolve();
+				return Promise.resolve();
 			break;
 
 			case "remote":
 			case "progressive_load":
 			case "progressive_scroll":
-			return this.table.dataLoader.load();
+				return this.reloadData(null, true);
+			break;
 
-				// this._getRemotePage()
-				// .then(()=>{
-				// 	resolve();
-				// })
-				// .catch(()=>{
-				// 	reject();
-				// });
-				break;
-
-				default:
+			default:
 				console.warn("Pagination Error - no such pagination mode:", this.mode);
 				return Promise.reject();
-			}
 		}
+	}
 
 	// _getRemotePage(){
 	// 	var oldParams, pageParams;

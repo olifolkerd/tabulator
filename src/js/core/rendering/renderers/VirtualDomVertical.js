@@ -96,7 +96,7 @@ export default class VirtualDomVertical extends Renderer{
 
 		this._virtualRenderFill((topRow === false ? this.rows.length - 1 : topRow), true, topOffset || 0);
 
-		this.scrollHorizontal(left);
+		// this.scrollHorizontal(left);
 	}
 
 	scrollRows(top, dir){
@@ -111,7 +111,7 @@ export default class VirtualDomVertical extends Renderer{
 			//if big scroll redraw table;
 			var left = this.scrollLeft;
 			this._virtualRenderFill(Math.floor((this.elementVertical.scrollTop / this.elementVertical.scrollHeight) * rows.length));
-			this.scrollHorizontal(left);
+			// this.scrollHorizontal(left);
 		}else{
 			if(dir){
 				//scrolling up
