@@ -429,9 +429,7 @@ class Ajax extends Module{
 		this.registerTableOption("ajaxConfig", "get"); //ajax request type
 		this.registerTableOption("ajaxContentType", "form"); //ajax request type
 		this.registerTableOption("ajaxRequestFunc", false); //promise function
-		this.registerTableOption("ajaxProgressiveLoad", false); //progressive loading
-		this.registerTableOption("ajaxProgressiveLoadDelay", 0); //delay between requests
-		this.registerTableOption("ajaxProgressiveLoadScrollMargin", 0); //margin before scroll begins
+
 		this.registerTableOption("ajaxRequesting", function(){});
 		this.registerTableOption("ajaxResponse", false);
 
@@ -456,20 +454,20 @@ class Ajax extends Module{
 			this.setUrl(this.table.options.ajaxURL);
 		}
 
-		if(this.table.options.ajaxProgressiveLoad){
+		if(this.table.options.progressiveLoad){
 			if(this.table.options.pagination){
 				this.progressiveLoad = false;
 				console.error("Progressive Load Error - Pagination and progressive load cannot be used at the same time");
 			}else {
 				if(this.table.modExists("page")){
-					this.progressiveLoad = this.table.options.ajaxProgressiveLoad;
+					this.progressiveLoad = this.table.options.progressiveLoad;
 					this.table.modules.page.initializeProgressive(this.progressiveLoad);
 				}else {
 					console.error("Pagination plugin is required for progressive ajax loading");
 				}
 			}
 
-			if(this.table.options.ajaxProgressiveLoad === "scroll"){
+			if(this.table.options.progressiveLoad === "scroll"){
 				this.subscribe("scroll-vertical", this.cellValueChanged.bind(this));
 			}
 		}
@@ -578,7 +576,7 @@ class Ajax extends Module{
 
 		if(!this.loading){
 
-			margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.getElement().clientHeight * 2);
+			margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.getElement().clientHeight * 2);
 
 			if(diff < margin){
 				this.table.modules.page.nextPage()
@@ -13508,6 +13506,10 @@ class Page extends Module{
 		// this.registerTableOption("paginationDataReceived", {}); //pagination data received from the server
 		this.registerTableOption("paginationAddRow", "page"); //add rows on table or page
 
+		this.registerTableOption("progressiveLoad", false); //progressive loading
+		this.registerTableOption("progressiveLoadDelay", 0); //delay between requests
+		this.registerTableOption("progressiveLoadScrollMargin", 0); //margin before scroll begins
+
 		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
 		this.registerTableFunction("setPage", this.setPage.bind(this));
 		this.registerTableFunction("setPageToRow", this.userSetPageToRow.bind(this));
@@ -14206,7 +14208,7 @@ class Page extends Module{
 					if(this.page < this.max){
 						setTimeout(() => {
 							this.nextPage().then(()=>{}).catch(()=>{});
-						}, this.table.options.ajaxProgressiveLoadDelay);
+						}, this.table.options.progressiveLoadDelay);
 					}
 					break;
 
@@ -14215,7 +14217,7 @@ class Page extends Module{
 
 					this.table.rowManager.setData(data, true, this.initialLoad && this.page == 1);
 
-					margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
+					margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 
 					if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
 						this.nextPage().then(()=>{}).catch(()=>{});
@@ -20042,7 +20044,7 @@ class RowManager extends CoreFeature{
 	// 		if(options.pagination == "remote" && table.modExists("page")){
 	// 			table.modules.page.reset(true);
 	// 			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
-	// 		}else if(options.ajaxProgressiveLoad){
+	// 		}else if(options.progressiveLoad){
 	// 			table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
 	// 		}else{
 	// 			//assume data is url, make ajax call to url to get data
@@ -20065,7 +20067,7 @@ class RowManager extends CoreFeature{
 	// 		if((options.pagination == "remote" || options.progressiveLoad) && table.modExists("page")){
 	// 			table.modules.page.reset(true);
 	// 			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
-	// 		}else if(options.ajaxProgressiveLoad){
+	// 		}else if(options.progressiveLoad){
 	// 			table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
 	// 		}else{
 	// 			//assume data is url, make ajax call to url to get data

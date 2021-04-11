@@ -35,6 +35,10 @@ class Page extends Module{
 		// this.registerTableOption("paginationDataReceived", {}); //pagination data received from the server
 		this.registerTableOption("paginationAddRow", "page"); //add rows on table or page
 
+		this.registerTableOption("progressiveLoad", false); //progressive loading
+		this.registerTableOption("progressiveLoadDelay", 0); //delay between requests
+		this.registerTableOption("progressiveLoadScrollMargin", 0); //margin before scroll begins
+
 		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
 		this.registerTableFunction("setPage", this.setPage.bind(this));
 		this.registerTableFunction("setPageToRow", this.userSetPageToRow.bind(this));
@@ -747,7 +751,7 @@ class Page extends Module{
 					if(this.page < this.max){
 						setTimeout(() => {
 							this.nextPage().then(()=>{}).catch(()=>{});
-						}, this.table.options.ajaxProgressiveLoadDelay);
+						}, this.table.options.progressiveLoadDelay);
 					}
 					break;
 
@@ -756,7 +760,7 @@ class Page extends Module{
 
 					this.table.rowManager.setData(data, true, this.initialLoad && this.page == 1);
 
-					margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
+					margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 
 					if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
 						this.nextPage().then(()=>{}).catch(()=>{});

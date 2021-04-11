@@ -26,9 +26,7 @@ class Ajax extends Module{
 		this.registerTableOption("ajaxConfig", "get"); //ajax request type
 		this.registerTableOption("ajaxContentType", "form"); //ajax request type
 		this.registerTableOption("ajaxRequestFunc", false); //promise function
-		this.registerTableOption("ajaxProgressiveLoad", false); //progressive loading
-		this.registerTableOption("ajaxProgressiveLoadDelay", 0); //delay between requests
-		this.registerTableOption("ajaxProgressiveLoadScrollMargin", 0); //margin before scroll begins
+
 		this.registerTableOption("ajaxRequesting", function(){});
 		this.registerTableOption("ajaxResponse", false);
 
@@ -53,20 +51,20 @@ class Ajax extends Module{
 			this.setUrl(this.table.options.ajaxURL);
 		}
 
-		if(this.table.options.ajaxProgressiveLoad){
+		if(this.table.options.progressiveLoad){
 			if(this.table.options.pagination){
 				this.progressiveLoad = false;
 				console.error("Progressive Load Error - Pagination and progressive load cannot be used at the same time");
 			}else{
 				if(this.table.modExists("page")){
-					this.progressiveLoad = this.table.options.ajaxProgressiveLoad;
+					this.progressiveLoad = this.table.options.progressiveLoad;
 					this.table.modules.page.initializeProgressive(this.progressiveLoad);
 				}else{
 					console.error("Pagination plugin is required for progressive ajax loading");
 				}
 			}
 
-			if(this.table.options.ajaxProgressiveLoad === "scroll"){
+			if(this.table.options.progressiveLoad === "scroll"){
 				this.subscribe("scroll-vertical", this.cellValueChanged.bind(this));
 			}
 		}
@@ -175,7 +173,7 @@ class Ajax extends Module{
 
 		if(!this.loading){
 
-			margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.getElement().clientHeight * 2);
+			margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.getElement().clientHeight * 2);
 
 			if(diff < margin){
 				this.table.modules.page.nextPage()

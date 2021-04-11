@@ -639,7 +639,7 @@ export default class RowManager extends CoreFeature{
 	// 		if(options.pagination == "remote" && table.modExists("page")){
 	// 			table.modules.page.reset(true);
 	// 			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
-	// 		}else if(options.ajaxProgressiveLoad){
+	// 		}else if(options.progressiveLoad){
 	// 			table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
 	// 		}else{
 	// 			//assume data is url, make ajax call to url to get data
@@ -662,7 +662,7 @@ export default class RowManager extends CoreFeature{
 	// 		if((options.pagination == "remote" || options.progressiveLoad) && table.modExists("page")){
 	// 			table.modules.page.reset(true);
 	// 			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
-	// 		}else if(options.ajaxProgressiveLoad){
+	// 		}else if(options.progressiveLoad){
 	// 			table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
 	// 		}else{
 	// 			//assume data is url, make ajax call to url to get data
