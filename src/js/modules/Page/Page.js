@@ -63,11 +63,25 @@ class Page extends Module{
 				this.subscribe("data-loaded", this._parseRemoteData.bind(this));
 			}
 
+			if(this.table.options.progressiveLoad){
+				console.error("Progressive Load Error - Pagination and progressive load cannot be used at the same time");
+			}
+
 			this.registerDisplayHandler(this.restOnRenderBefore.bind(this), 40);
 			this.registerDisplayHandler(this.getRows.bind(this), 50);
 
 			this.createElements();
 			this.initializePaginator();
+		}else if(this.table.options.progressiveLoad){
+
+			this.subscribe("data-params", this.remotePageParams.bind(this));
+			this.subscribe("data-loaded", this._parseRemoteData.bind(this));
+
+			this.initializeProgressive(this.table.options.progressiveLoad)
+
+			if(this.table.options.progressiveLoad === "scroll"){
+				this.subscribe("scroll-vertical", this.cellValueChanged.bind(this));
+			}
 		}
 	}
 
@@ -211,8 +225,9 @@ class Page extends Module{
 
 	//setup pageination
 	initializePaginator(hidden){
-		if(this.table.options.pagination || hidden){
-			var pageSelectLabel, testElRow, testElCell;
+		var pageSelectLabel, testElRow, testElCell;
+
+		if(!hidden){
 
 			// //update param names
 			// this.dataSentNames = Object.assign({}, Page.defaultDataSentNames);
@@ -310,33 +325,35 @@ class Page extends Module{
 				this.table.footerManager.append(this.element, this);
 			}
 
-			//set default values
-			this.mode = this.table.options.paginationMode;
-
-			if(this.table.options.paginationSize){
-				this.size = this.table.options.paginationSize;
-			}else{
-				testElRow = document.createElement("div");
-				testElRow.classList.add("tabulator-row");
-				testElRow.style.visibility = hidden;
-
-				testElCell = document.createElement("div");
-				testElCell.classList.add("tabulator-cell");
-				testElCell.innerHTML = "Page Row Test";
-
-				testElRow.appendChild(testElCell);
-
-				this.table.rowManager.getTableElement().appendChild(testElRow);
-
-				this.size =  Math.floor(this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
-
-				this.table.rowManager.getTableElement().removeChild(testElRow);
-			}
-
 			// this.page = this.table.options.paginationInitialPage || 1;
 			this.count = this.table.options.paginationButtonCount;
 
 			this.generatePageSizeSelectList();
+		}
+
+		//set default values
+		this.mode = this.table.options.paginationMode;
+
+		if(this.table.options.paginationSize){
+			this.size = this.table.options.paginationSize;
+		}else{
+			testElRow = document.createElement("div");
+			testElRow.classList.add("tabulator-row");
+			testElRow.style.visibility = hidden;
+
+			testElCell = document.createElement("div");
+			testElCell.classList.add("tabulator-cell");
+			testElCell.innerHTML = "Page Row Test";
+
+			testElRow.appendChild(testElCell);
+
+			this.table.rowManager.getTableElement().appendChild(testElRow);
+
+			console.log("size", this.table.rowManager.getElement().clientHeight , testElRow.offsetHeight, this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight)
+
+			this.size = Math.floor(this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
+
+			this.table.rowManager.getTableElement().removeChild(testElRow);
 		}
 	}
 
@@ -647,20 +664,20 @@ class Page extends Module{
 
 		switch(this.mode){
 			case "local":
-				left = this.table.rowManager.scrollLeft;
+			left = this.table.rowManager.scrollLeft;
 
-				this.refreshData();
-				this.table.rowManager.scrollHorizontal(left);
+			this.refreshData();
+			this.table.rowManager.scrollHorizontal(left);
 
-				this.dispatchExternal("pageLoaded", this.getPage());
+			this.dispatchExternal("pageLoaded", this.getPage());
 
-				return Promise.resolve();
+			return Promise.resolve();
 			break;
 
 			case "remote":
 			case "progressive_load":
 			case "progressive_scroll":
-				return this.table.dataLoader.load();
+			return this.table.dataLoader.load();
 
 				// this._getRemotePage()
 				// .then(()=>{
@@ -669,13 +686,13 @@ class Page extends Module{
 				// .catch(()=>{
 				// 	reject();
 				// });
-			break;
+				break;
 
-			default:
+				default:
 				console.warn("Pagination Error - no such pagination mode:", this.mode);
 				return Promise.reject();
+			}
 		}
-	}
 
 	// _getRemotePage(){
 	// 	var oldParams, pageParams;
@@ -767,6 +784,8 @@ class Page extends Module{
 					}
 					break;
 				}
+
+				return false;
 			}else{
 				// left = this.table.rowManager.scrollLeft;
 

@@ -17,7 +17,7 @@ class Ajax extends Module{
 
 		this.loaderPromise = false;
 
-		this.progressiveLoad = false;
+		// this.progressiveLoad = false;
 		this.loading = false;
 
 		this.registerTableOption("ajaxURL", false); //url for ajax loading
@@ -49,24 +49,6 @@ class Ajax extends Module{
 
 		if(this.table.options.ajaxURL){
 			this.setUrl(this.table.options.ajaxURL);
-		}
-
-		if(this.table.options.progressiveLoad){
-			if(this.table.options.pagination){
-				this.progressiveLoad = false;
-				console.error("Progressive Load Error - Pagination and progressive load cannot be used at the same time");
-			}else{
-				if(this.table.modExists("page")){
-					this.progressiveLoad = this.table.options.progressiveLoad;
-					this.table.modules.page.initializeProgressive(this.progressiveLoad);
-				}else{
-					console.error("Pagination plugin is required for progressive ajax loading");
-				}
-			}
-
-			if(this.table.options.progressiveLoad === "scroll"){
-				this.subscribe("scroll-vertical", this.cellValueChanged.bind(this));
-			}
 		}
 
 		this.registerTableFunction("getAjaxUrl", this.getUrl.bind(this));
@@ -160,50 +142,39 @@ class Ajax extends Module{
 	}
 
 	//lstandard loading function
-	loadData(inPosition, columnsChanged){
-		if(this.progressiveLoad){
-			return this._loadDataProgressive();
-		}else{
-			return this._loadDataStandard(inPosition, columnsChanged);
-		}
-	}
+	// loadData(inPosition, columnsChanged){
+	// 	if(this.progressiveLoad){
+	// 		return this._loadDataProgressive();
+	// 	}else{
+	// 		return this._loadDataStandard(inPosition, columnsChanged);
+	// 	}
+	// }
 
-	nextPage(diff){
-		var margin;
+	// nextPage(diff){
+	// 	var margin;
 
-		if(!this.loading){
+	// 	if(!this.loading){
 
-			margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.getElement().clientHeight * 2);
+	// 		margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.getElement().clientHeight * 2);
 
-			if(diff < margin){
-				this.table.modules.page.nextPage()
-				.then(()=>{}).catch(()=>{});
-			}
-		}
-	}
+	// 		if(diff < margin){
+	// 			this.table.modules.page.nextPage()
+	// 			.then(()=>{}).catch(()=>{});
+	// 		}
+	// 	}
+	// }
 
-	_loadDataProgressive(){
-		this.table.rowManager.setData([]);
-		return this.table.modules.page.setPage(1);
-	}
+	// _loadDataProgressive(){
+	// 	this.table.rowManager.setData([]);
+	// 	return this.table.modules.page.setPage(1);
+	// }
 
-	_loadDataStandard(inPosition, columnsChanged){
-		return new Promise((resolve, reject)=>{
-			this.sendRequest(inPosition)
-			.then((data)=>{
-				this.table.rowManager.setData(data, inPosition, columnsChanged)
-				.then(()=>{
-					resolve();
-				})
-				.catch((e)=>{
-					reject(e)
-				});
-			})
-			.catch((e)=>{
-				reject(e)
-			});
-		});
-	}
+	// _loadDataStandard(inPosition, columnsChanged){
+	// 	return this.sendRequest(inPosition)
+	// 	.then((data)=>{
+	// 		this.table.rowManager.setData(data, inPosition, columnsChanged);
+	// 	})
+	// }
 
 	generateParamsList(data, prefix){
 		var output = [];
