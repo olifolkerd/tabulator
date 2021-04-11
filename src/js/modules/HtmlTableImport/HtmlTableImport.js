@@ -9,6 +9,16 @@ class HtmlTableImport extends Module{
 		this.hasIndex = false;
 	}
 
+	initialize(){
+		this.subscribe("table-building", this.tableElementCheck.bind(this));
+	}
+
+	tableElementCheck(){
+		if(this.table.element.tagName === "TABLE"){
+			this.parseTable();
+		}
+	}
+
 	parseTable(){
 		var element = this.table.element,
 		options = this.table.options,

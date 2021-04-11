@@ -151,13 +151,10 @@ class Tabulator {
 	//concreate table
 	_create(){
 
-		this.rtlCheck();
+		this.externalEvents.dispatch("tableBuilding");
+		this.evnetBus.dispatch("table-building");
 
-		if(this.element.tagName === "TABLE"){
-			if(this.modExists("htmlTableImport", true)){
-				this.modules.htmlTableImport.parseTable();
-			}
-		}
+		this.rtlCheck();
 
 		if(this.options.virtualDomHoz){
 			this.vdomHoz = new VirtualDomHorizontal(this);
@@ -182,8 +179,6 @@ class Tabulator {
 		var element = this.element,
 		mods = this.modules,
 		options = this.options;
-
-		this.externalEvents.dispatch("tableBuilding");
 
 		element.classList.add("tabulator");
 		element.setAttribute("role", "grid");

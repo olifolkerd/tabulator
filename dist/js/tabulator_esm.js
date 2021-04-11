@@ -11474,6 +11474,16 @@ class HtmlTableImport extends Module{
 		this.hasIndex = false;
 	}
 
+	initialize(){
+		this.subscribe("table-building", this.tableElementCheck.bind(this));
+	}
+
+	tableElementCheck(){
+		if(this.table.element.tagName === "TABLE"){
+			this.parseTable();
+		}
+	}
+
 	parseTable(){
 		var element = this.table.element,
 		options = this.table.options,
@@ -22402,13 +22412,10 @@ class Tabulator$1 {
 	//concreate table
 	_create(){
 
-		this.rtlCheck();
+		this.externalEvents.dispatch("tableBuilding");
+		this.evnetBus.dispatch("table-building");
 
-		if(this.element.tagName === "TABLE"){
-			if(this.modExists("htmlTableImport", true)){
-				this.modules.htmlTableImport.parseTable();
-			}
-		}
+		this.rtlCheck();
 
 		if(this.options.virtualDomHoz){
 			this.vdomHoz = new VirtualDomHorizontal(this);
@@ -22433,8 +22440,6 @@ class Tabulator$1 {
 		var element = this.element,
 		mods = this.modules,
 		options = this.options;
-
-		this.externalEvents.dispatch("tableBuilding");
 
 		element.classList.add("tabulator");
 		element.setAttribute("role", "grid");
