@@ -15734,6 +15734,8 @@ class ResponsiveLayout extends Module{
 			column.modules.responsive.visible = column.visible;
 			this.initialize();
 		}
+
+		//this.update();
 	}
 
 	hideColumn(column){
@@ -22472,12 +22474,6 @@ class Tabulator$1 {
 
 		this.rtlCheck();
 
-		if(this.element.tagName === "TABLE"){
-			if(this.modExists("htmlTableImport", true)){
-				this.modules.htmlTableImport.parseTable();
-			}
-		}
-
 		if(this.options.virtualDomHoz){
 			this.vdomHoz = new VirtualDomHorizontal(this);
 		}
@@ -23007,10 +23003,6 @@ class Tabulator$1 {
 
 		if(column){
 			column.show();
-
-			if(this.options.responsiveLayout && this.modExists("responsiveLayout", true)){
-				this.modules.responsiveLayout.update();
-			}
 		}else {
 			console.warn("Column Show Error - No matching column found:", field);
 			return false;
@@ -23022,10 +23014,6 @@ class Tabulator$1 {
 
 		if(column){
 			column.hide();
-
-			if(this.options.responsiveLayout && this.modExists("responsiveLayout", true)){
-				this.modules.responsiveLayout.update();
-			}
 		}else {
 			console.warn("Column Hide Error - No matching column found:", field);
 			return false;

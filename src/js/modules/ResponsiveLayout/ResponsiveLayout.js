@@ -132,6 +132,8 @@ class ResponsiveLayout extends Module{
 			column.modules.responsive.visible = column.visible;
 			this.initialize();
 		}
+
+		//this.update();
 	}
 
 	hideColumn(column){
