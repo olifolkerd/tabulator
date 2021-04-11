@@ -648,6 +648,9 @@ class Page extends Module{
 			break;
 
 			case "remote":
+			return this.reloadData(null);
+			break;
+
 			case "progressive_load":
 			case "progressive_scroll":
 			return this.reloadData(null, true);

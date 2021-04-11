@@ -14028,6 +14028,8 @@ class Page extends Module{
 			return Promise.resolve();
 
 			case "remote":
+			return this.reloadData(null);
+
 			case "progressive_load":
 			case "progressive_scroll":
 			return this.reloadData(null, true);
