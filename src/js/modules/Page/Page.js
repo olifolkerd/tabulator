@@ -85,7 +85,7 @@ class Page extends Module{
 		}
 	}
 
-	remotePageParams(data, config, params){
+	remotePageParams(data, config, silent, params){
 		//configure request params
 		params.page = this.page;
 

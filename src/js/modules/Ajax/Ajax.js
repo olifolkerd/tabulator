@@ -58,11 +58,11 @@ class Ajax extends Module{
 	}
 
 
-	requestDataCheck(data, params, config){
+	requestDataCheck(data, params, config, silent){
 		return !!((!data && this.url) || typeof data === "string");
 	}
 
-	requestData(data, params, config, previousData){
+	requestData(data, params, config, silent, previousData){
 		if(this.requestDataCheck(data)){
 			if(data){
 				this.setUrl(data);

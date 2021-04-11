@@ -39,7 +39,7 @@ class Sort extends Module{
 	 	}
 	 }
 
-	 remoteSortParams(data, config, params){
+	 remoteSortParams(data, config, silent, params){
 	 	var sorters = this.getSort();
 
 	 	sorters.forEach((item) => {
