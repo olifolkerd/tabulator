@@ -686,7 +686,7 @@ export default class RowManager extends CoreFeature{
 
 			return;
 		}else{
-			this.dispatch("data-refesh");
+			this.dispatch("data-refeshing");
 
 			if(!handler){
 				this.activeRowsPipeline[0] = this.rows.slice(0);
@@ -741,9 +741,7 @@ export default class RowManager extends CoreFeature{
 				}
 			}
 
-			if(table.modExists("columnCalcs")){
-				table.modules.columnCalcs.recalc(this.activeRows);
-			}
+			this.dispatch("data-refeshed");
 		}
 	}
 

@@ -3456,6 +3456,7 @@ class ColumnCalcs extends Module{
 		this.subscribe("row-added", this.rowsUpdated.bind(this));
 		this.subscribe("column-moved", this.recalcActiveRows.bind(this));
 		this.subscribe("column-add", this.recalcActiveRows.bind(this));
+		this.subscribe("data-refeshed", this.recalcActiveRows.bind(this));
 
 		this.registerTableFunction("getCalcResults", this.getResults.bind(this));
 		this.registerTableFunction("recalc", this.userRecalc.bind(this));
@@ -6730,7 +6731,7 @@ class Edit extends Module{
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
-		this.subscribe("data-refesh", this.cancelEdit.bind(this));
+		this.subscribe("data-refeshing", this.cancelEdit.bind(this));
 	}
 
 	///////////////////////////////////
@@ -15841,7 +15842,7 @@ class SelectRow extends Module{
 			this.subscribe("rows-retrieve", this.clearSelectionData.bind(this));
 
 			if(this.table.options.selectable && this.table.options.selectablePersistence){
-				this.subscribe("data-refesh", this.deselectRows.bind(this));
+				this.subscribe("data-refeshing", this.deselectRows.bind(this));
 			}
 		}
 	}
@@ -19958,7 +19959,7 @@ class RowManager extends CoreFeature{
 
 			return;
 		}else {
-			this.dispatch("data-refesh");
+			this.dispatch("data-refeshing");
 
 			if(!handler){
 				this.activeRowsPipeline[0] = this.rows.slice(0);
@@ -20011,9 +20012,7 @@ class RowManager extends CoreFeature{
 				}
 			}
 
-			if(table.modExists("columnCalcs")){
-				table.modules.columnCalcs.recalc(this.activeRows);
-			}
+			this.dispatch("data-refeshed");
 		}
 	}
 

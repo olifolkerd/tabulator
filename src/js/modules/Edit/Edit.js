@@ -36,7 +36,7 @@ class Edit extends Module{
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
-		this.subscribe("data-refesh", this.cancelEdit.bind(this));
+		this.subscribe("data-refeshing", this.cancelEdit.bind(this));
 	}
 
 	///////////////////////////////////
