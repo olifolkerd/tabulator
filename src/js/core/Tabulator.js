@@ -302,6 +302,7 @@ class Tabulator {
 			});
 		}
 
+		this.eventBus.dispatch("table-built");
 		this.externalEvents.dispatch("tableBuilt");
 	}
 
