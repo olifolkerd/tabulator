@@ -13444,6 +13444,7 @@ class Page extends Module{
 			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
 			this.subscribe("data-processed", this.initialLoadComplete.bind(this));
+			this.subscribe("table-built", this.calculatePageSizes.bind(this));
 
 			if(this.table.options.paginationMode === "remote"){
 				this.subscribe("data-params", this.remotePageParams.bind(this));
@@ -13469,6 +13470,30 @@ class Page extends Module{
 			if(this.table.options.progressiveLoad === "scroll"){
 				this.subscribe("scroll-vertical", this.scrollVertical.bind(this));
 			}
+		}
+	}
+
+	calculatePageSizes(){
+		var testElRow, testElCell;
+
+		if(this.table.options.paginationSize){
+			this.size = this.table.options.paginationSize;
+		}else {
+			testElRow = document.createElement("div");
+			testElRow.classList.add("tabulator-row");
+			testElRow.style.visibility = "hidden";
+
+			testElCell = document.createElement("div");
+			testElCell.classList.add("tabulator-cell");
+			testElCell.innerHTML = "Page Row Test";
+
+			testElRow.appendChild(testElCell);
+
+			this.table.rowManager.getTableElement().appendChild(testElRow);
+
+			this.size = Math.floor(this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
+
+			this.table.rowManager.getTableElement().removeChild(testElRow);
 		}
 	}
 
@@ -13635,7 +13660,7 @@ class Page extends Module{
 
 	//setup pageination
 	initializePaginator(hidden){
-		var pageSelectLabel, testElRow, testElCell;
+		var pageSelectLabel;
 
 		if(!hidden){
 			//build pagination element
@@ -13735,26 +13760,6 @@ class Page extends Module{
 
 		//set default values
 		this.mode = this.table.options.paginationMode;
-
-		if(this.table.options.paginationSize){
-			this.size = this.table.options.paginationSize;
-		}else {
-			testElRow = document.createElement("div");
-			testElRow.classList.add("tabulator-row");
-			testElRow.style.visibility = hidden;
-
-			testElCell = document.createElement("div");
-			testElCell.classList.add("tabulator-cell");
-			testElCell.innerHTML = "Page Row Test";
-
-			testElRow.appendChild(testElCell);
-
-			this.table.rowManager.getTableElement().appendChild(testElRow);
-
-			this.size = Math.floor(this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
-
-			this.table.rowManager.getTableElement().removeChild(testElRow);
-		}
 	}
 
 	initializeProgressive(mode){
@@ -22549,6 +22554,7 @@ class Tabulator$1 {
 			});
 		}
 
+		this.eventBus.dispatch("table-built");
 		this.externalEvents.dispatch("tableBuilt");
 	}
 
