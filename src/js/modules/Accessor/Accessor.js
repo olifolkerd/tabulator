@@ -26,7 +26,7 @@ class Accessor extends Module{
 
 	initialize(){
 		this.subscribe("column-layout", this.initializeColumn.bind(this));
-		this.subscribe("row-data-retrieve", this.initializeColumn.bind(this));
+		this.subscribe("row-data-retrieve", this.transformRow.bind(this));
 	}
 
 	//initialize column accessor
