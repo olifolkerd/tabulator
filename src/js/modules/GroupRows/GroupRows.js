@@ -222,7 +222,7 @@ class GroupRows extends Module{
 		var fromGroup = from.getGroup();
 
 		if(toGroup === fromGroup){
-			this._moveRowInArray(toGroup.rows, from, to, after);
+			this.table.rowManager.moveRowInArray(toGroup.rows, from, to, after);
 		}else{
 			if(fromGroup){
 				fromGroup.removeRow(from);

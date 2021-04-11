@@ -26,7 +26,7 @@ class Page extends Module{
 		this.dataSentNames = {}; //TODO - remove once pagimation update is complete
 
 		this.registerTableOption("pagination", false); //set pagination type
-		this.registerTableOption("paginationMode", false); //local or remote pagination
+		this.registerTableOption("paginationMode", "local"); //local or remote pagination
 		this.registerTableOption("paginationSize", false); //set number of rows to a page
 		this.registerTableOption("paginationInitialPage", 1); //initail page to show on load
 		this.registerTableOption("paginationButtonCount", 5);  // set count of page button
@@ -57,6 +57,7 @@ class Page extends Module{
 	initialize(){
 		if(this.table.options.pagination){
 			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
+			this.subscribe("row-adding-position", this.rowAddingPosition.bind(this));
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
 			this.subscribe("data-processed", this.initialLoadComplete.bind(this));
 			this.subscribe("table-built", this.calculatePageSizes.bind(this));
@@ -86,6 +87,30 @@ class Page extends Module{
 				this.subscribe("scroll-vertical", this.scrollVertical.bind(this));
 			}
 		}
+	}
+
+	rowAddingPosition(top){
+		var rowManager = this.table.rowManager,
+		dispRows = rowManager.getDisplayRows(),
+		index;
+
+		if(top){
+			if(dispRows.length){
+				index = dispRows[0];
+			}else{
+				if(rowManager.activeRows.length){
+					index = rowManager.activeRows[rowManager.activeRows.length-1];
+					top = false;
+				}
+			}
+		}else{
+			if(dispRows.length){
+				index = dispRows[dispRows.length - 1];
+				top = dispRows.length < this.size ? false : true;
+			}
+		}
+
+		return {index, top}
 	}
 
 	calculatePageSizes(){

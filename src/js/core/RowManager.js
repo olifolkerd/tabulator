@@ -335,26 +335,13 @@ export default class RowManager extends CoreFeature{
 		var row = data instanceof Row ? data : new Row(data || {}, this),
 		top = this.findAddRowPos(pos),
 		allIndex = -1,
-		activeIndex, dispRows;
+		activeIndex, chainResult;
 
-		if(!index && this.table.options.pagination && this.table.options.paginationAddRow == "page"){
-			dispRows = this.getDisplayRows();
+		if(!index){
+			chainResult = this.chain("row-adding-position", top, null, {index, top});
 
-			if(top){
-				if(dispRows.length){
-					index = dispRows[0];
-				}else{
-					if(this.activeRows.length){
-						index = this.activeRows[this.activeRows.length-1];
-						top = false;
-					}
-				}
-			}else{
-				if(dispRows.length){
-					index = dispRows[dispRows.length - 1];
-					top = dispRows.length < this.table.modules.page.getPageSize() ? false : true;
-				}
-			}
+			index = chainResult.index;
+			top = chainResult.top;
 		}
 
 		if(typeof index !== "undefined"){
@@ -372,16 +359,16 @@ export default class RowManager extends CoreFeature{
 					if(top){
 						if(groupRows[0] !== row){
 							index = groupRows[0];
-							this._moveRowInArray(row.getGroup().rows, row, index, !top);
+							this.moveRowInArray(row.getGroup().rows, row, index, !top);
 						}
 					}else{
 						if(groupRows[groupRows.length -1] !== row){
 							index = groupRows[groupRows.length -1];
-							this._moveRowInArray(row.getGroup().rows, row, index, !top);
+							this.moveRowInArray(row.getGroup().rows, row, index, !top);
 						}
 					}
 				}else{
-					this._moveRowInArray(row.getGroup().rows, row, index, !top);
+					this.moveRowInArray(row.getGroup().rows, row, index, !top);
 				}
 			}
 		}
@@ -454,17 +441,17 @@ export default class RowManager extends CoreFeature{
 	}
 
 	moveRowActual(from, to, after){
-		this._moveRowInArray(this.rows, from, to, after);
-		this._moveRowInArray(this.activeRows, from, to, after);
+		this.moveRowInArray(this.rows, from, to, after);
+		this.moveRowInArray(this.activeRows, from, to, after);
 
 		this.displayRowIterator((rows) => {
-			this._moveRowInArray(rows, from, to, after);
+			this.moveRowInArray(rows, from, to, after);
 		});
 
 		this.dispatch("row-moving", from, to, after);
 	}
 
-	_moveRowInArray(rows, from, to, after){
+	moveRowInArray(rows, from, to, after){
 		var	fromIndex, toIndex, start, end;
 
 		if(from !== to){
@@ -770,18 +757,6 @@ export default class RowManager extends CoreFeature{
 		this.displayRows.push(this.activeRows.slice(0));
 
 		this.displayRowsCount = this.displayRows[0].length;
-
-		// if(this.table.modExists("frozenRows")){
-		// 	this.table.modules.frozenRows.setDisplayIndex(0);
-		// }
-
-		// if(this.table.options.groupBy && this.table.modExists("groupRows")){
-		// 	this.table.modules.groupRows.setDisplayIndex(0);
-		// }
-
-		// if(this.table.options.pagination && this.table.modExists("page")){
-		// 	this.table.modules.page.setDisplayIndex(0);
-		// }
 	}
 
 	getNextDisplayIndex(){
