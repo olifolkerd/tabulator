@@ -779,25 +779,21 @@ class Tabulator {
 
 	//update row data
 	updateRow(index, data){
-		return new Promise((resolve, reject) => {
-			var row = this.rowManager.findRow(index);
+		var row = this.rowManager.findRow(index);
 
-			if(typeof data === "string"){
-				data = JSON.parse(data);
-			}
+		if(typeof data === "string"){
+			data = JSON.parse(data);
+		}
 
-			if(row){
-				row.updateData(data).then(()=>{
-					resolve(row.getComponent());
-				})
-				.catch((err)=>{
-					reject(err);
-				});
-			}else{
-				console.warn("Update Error - No matching row found:", index);
-				reject("Update Error - No matching row found");
-			}
-		});
+		if(row){
+			return row.updateData(data)
+			.then(()=>{
+				resolve(row.getComponent());
+			})
+		}else{
+			console.warn("Update Error - No matching row found:", index);
+			return Promise.reject("Update Error - No matching row found");
+		}
 	}
 
 	//scroll to row in DOM
@@ -916,52 +912,34 @@ class Tabulator {
 	}
 
 	addColumn(definition, before, field){
-		return new Promise((resolve, reject) => {
-			var column = this.columnManager.findColumn(field);
+		var column = this.columnManager.findColumn(field);
 
-			this.columnManager.addColumn(definition, before, column)
-			.then((column) => {
-				resolve(column.getComponent());
-			}).catch((err) => {
-				reject(err);
-			});
+		return this.columnManager.addColumn(definition, before, column)
+		.then((column) => {
+			returncolumn.getComponent();
 		});
 	}
 
 	deleteColumn(field){
-		return new Promise((resolve, reject) => {
-			var column = this.columnManager.findColumn(field);
+		var column = this.columnManager.findColumn(field);
 
-			if(column){
-				column.delete()
-				.then(() => {
-					resolve();
-				}).catch((err) => {
-					reject(err);
-				});
-			}else{
-				console.warn("Column Delete Error - No matching column found:", field);
-				reject();
-			}
-		});
+		if(column){
+			return column.delete();
+		}else{
+			console.warn("Column Delete Error - No matching column found:", field);
+			return Promise.reject();
+		}
 	}
 
 	updateColumnDefinition(field, definition){
-		return new Promise((resolve, reject) => {
-			var column = this.columnManager.findColumn(field);
+		var column = this.columnManager.findColumn(field);
 
-			if(column){
-				column.updateDefinition(definition)
-				.then((col) => {
-					resolve(col);
-				}).catch((err) => {
-					reject(err);
-				});
-			}else{
-				console.warn("Column Update Error - No matching column found:", field);
-				reject();
-			}
-		});
+		if(column){
+			return column.updateDefinition(definition)
+		}else{
+			console.warn("Column Update Error - No matching column found:", field);
+			return Promise.reject();
+		}
 	}
 
 	moveColumn(from, to, after){
@@ -985,16 +963,10 @@ class Tabulator {
 			var column = this.columnManager.findColumn(field);
 
 			if(column){
-				this.columnManager.scrollToColumn(column, position, ifVisible)
-				.then(()=>{
-					resolve();
-				})
-				.catch((err)=>{
-					reject(err);
-				});
+				return this.columnManager.scrollToColumn(column, position, ifVisible)
 			}else{
 				console.warn("Scroll Error - No matching column found:", field);
-				reject("Scroll Error - No matching column found");
+				return Promise.reject("Scroll Error - No matching column found");
 			}
 		});
 	}
