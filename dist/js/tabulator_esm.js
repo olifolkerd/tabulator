@@ -13471,7 +13471,9 @@ class Page extends Module{
 	}
 
 	remotePageParams(data, config, silent, params){
-		if(this.progressiveLoad && !silent){
+		if(this.initialLoad){
+			this.initialLoad = false;
+		}else if(this.progressiveLoad && !silent){
 			this.reset(true);
 		}
 
@@ -13630,14 +13632,6 @@ class Page extends Module{
 		var pageSelectLabel, testElRow, testElCell;
 
 		if(!hidden){
-
-			// //update param names
-			// this.dataSentNames = Object.assign({}, Page.defaultDataSentNames);
-			// this.dataSentNames = Object.assign(this.dataSentNames, this.table.options.paginationDataSent);
-
-			// this.dataReceivedNames = Object.assign({}, Page.defaultDataReceivedNames);
-			// this.dataReceivedNames = Object.assign(this.dataReceivedNames, this.table.options.paginationDataReceived);
-
 			//build pagination element
 
 			//bind localizations
@@ -13727,7 +13721,7 @@ class Page extends Module{
 				this.table.footerManager.append(this.element, this);
 			}
 
-			// this.page = this.table.options.paginationInitialPage || 1;
+			this.page = this.table.options.paginationInitialPage;
 			this.count = this.table.options.paginationButtonCount;
 
 			this.generatePageSizeSelectList();
@@ -13785,13 +13779,9 @@ class Page extends Module{
 	}
 
 	//reset to first page without triggering action
-	reset(force, columnsChanged){
+	reset(force){
 		if(this.mode == "local" || force){
 			this.page = 1;
-		}
-
-		if(columnsChanged){
-			this.initialLoad = true;
 		}
 
 		return true;
@@ -14063,7 +14053,7 @@ class Page extends Module{
 					case "progressive_load":
 
 					if(this.page == 1){
-						this.table.rowManager.setData(data.data, false, this.initialLoad && this.page == 1);
+						this.table.rowManager.setData(data.data, false, this.page == 1);
 					}else {
 						this.table.rowManager.addRows(data.data);
 					}
@@ -14078,7 +14068,7 @@ class Page extends Module{
 					case "progressive_scroll":
 					data = this.table.rowManager.getData().concat(data.data);
 
-					this.table.rowManager.setData(data, this.page !== 1, this.initialLoad && this.page == 1);
+					this.table.rowManager.setData(data, this.page !== 1, this.page == 1);
 
 					margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 
@@ -14097,8 +14087,6 @@ class Page extends Module{
 				// this.table.rowManager.scrollHorizontal(left);
 				// this.table.columnManager.scrollHorizontal(left);
 			}
-
-			this.initialLoad = false;
 
 		}else {
 			console.warn("Remote Pagination Error - Server response missing '" + this.dataReceivedNames.data + "' property");
@@ -23029,25 +23017,21 @@ class Tabulator$1 {
 
 	//update row data
 	updateRow(index, data){
-		return new Promise((resolve, reject) => {
-			var row = this.rowManager.findRow(index);
+		var row = this.rowManager.findRow(index);
 
-			if(typeof data === "string"){
-				data = JSON.parse(data);
-			}
+		if(typeof data === "string"){
+			data = JSON.parse(data);
+		}
 
-			if(row){
-				row.updateData(data).then(()=>{
-					resolve(row.getComponent());
-				})
-				.catch((err)=>{
-					reject(err);
-				});
-			}else {
-				console.warn("Update Error - No matching row found:", index);
-				reject("Update Error - No matching row found");
-			}
-		});
+		if(row){
+			return row.updateData(data)
+			.then(()=>{
+				resolve(row.getComponent());
+			})
+		}else {
+			console.warn("Update Error - No matching row found:", index);
+			return Promise.reject("Update Error - No matching row found");
+		}
 	}
 
 	//scroll to row in DOM
@@ -23166,52 +23150,34 @@ class Tabulator$1 {
 	}
 
 	addColumn(definition, before, field){
-		return new Promise((resolve, reject) => {
-			var column = this.columnManager.findColumn(field);
+		var column = this.columnManager.findColumn(field);
 
-			this.columnManager.addColumn(definition, before, column)
-			.then((column) => {
-				resolve(column.getComponent());
-			}).catch((err) => {
-				reject(err);
-			});
+		return this.columnManager.addColumn(definition, before, column)
+		.then((column) => {
+			returncolumn.getComponent();
 		});
 	}
 
 	deleteColumn(field){
-		return new Promise((resolve, reject) => {
-			var column = this.columnManager.findColumn(field);
+		var column = this.columnManager.findColumn(field);
 
-			if(column){
-				column.delete()
-				.then(() => {
-					resolve();
-				}).catch((err) => {
-					reject(err);
-				});
-			}else {
-				console.warn("Column Delete Error - No matching column found:", field);
-				reject();
-			}
-		});
+		if(column){
+			return column.delete();
+		}else {
+			console.warn("Column Delete Error - No matching column found:", field);
+			return Promise.reject();
+		}
 	}
 
 	updateColumnDefinition(field, definition){
-		return new Promise((resolve, reject) => {
-			var column = this.columnManager.findColumn(field);
+		var column = this.columnManager.findColumn(field);
 
-			if(column){
-				column.updateDefinition(definition)
-				.then((col) => {
-					resolve(col);
-				}).catch((err) => {
-					reject(err);
-				});
-			}else {
-				console.warn("Column Update Error - No matching column found:", field);
-				reject();
-			}
-		});
+		if(column){
+			return column.updateDefinition(definition)
+		}else {
+			console.warn("Column Update Error - No matching column found:", field);
+			return Promise.reject();
+		}
 	}
 
 	moveColumn(from, to, after){
@@ -23235,16 +23201,10 @@ class Tabulator$1 {
 			var column = this.columnManager.findColumn(field);
 
 			if(column){
-				this.columnManager.scrollToColumn(column, position, ifVisible)
-				.then(()=>{
-					resolve();
-				})
-				.catch((err)=>{
-					reject(err);
-				});
+				return this.columnManager.scrollToColumn(column, position, ifVisible)
 			}else {
 				console.warn("Scroll Error - No matching column found:", field);
-				reject("Scroll Error - No matching column found");
+				return Promise.reject("Scroll Error - No matching column found");
 			}
 		});
 	}

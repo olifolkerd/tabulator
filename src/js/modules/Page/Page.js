@@ -86,7 +86,9 @@ class Page extends Module{
 	}
 
 	remotePageParams(data, config, silent, params){
-		if(this.progressiveLoad && !silent){
+		if(this.initialLoad){
+			this.initialLoad = false;
+		}else if(this.progressiveLoad && !silent){
 			this.reset(true);
 		}
 
@@ -245,14 +247,6 @@ class Page extends Module{
 		var pageSelectLabel, testElRow, testElCell;
 
 		if(!hidden){
-
-			// //update param names
-			// this.dataSentNames = Object.assign({}, Page.defaultDataSentNames);
-			// this.dataSentNames = Object.assign(this.dataSentNames, this.table.options.paginationDataSent);
-
-			// this.dataReceivedNames = Object.assign({}, Page.defaultDataReceivedNames);
-			// this.dataReceivedNames = Object.assign(this.dataReceivedNames, this.table.options.paginationDataReceived);
-
 			//build pagination element
 
 			//bind localizations
@@ -342,7 +336,7 @@ class Page extends Module{
 				this.table.footerManager.append(this.element, this);
 			}
 
-			// this.page = this.table.options.paginationInitialPage || 1;
+			this.page = this.table.options.paginationInitialPage;
 			this.count = this.table.options.paginationButtonCount;
 
 			this.generatePageSizeSelectList();
@@ -400,13 +394,9 @@ class Page extends Module{
 	}
 
 	//reset to first page without triggering action
-	reset(force, columnsChanged){
+	reset(force){
 		if(this.mode == "local" || force){
 			this.page = 1;
-		}
-
-		if(columnsChanged){
-			this.initialLoad = true;
 		}
 
 		return true;
@@ -684,7 +674,7 @@ class Page extends Module{
 					case "progressive_load":
 
 					if(this.page == 1){
-						this.table.rowManager.setData(data.data, false, this.initialLoad && this.page == 1)
+						this.table.rowManager.setData(data.data, false, this.page == 1)
 					}else{
 						this.table.rowManager.addRows(data.data);
 					}
@@ -699,7 +689,7 @@ class Page extends Module{
 					case "progressive_scroll":
 					data = this.table.rowManager.getData().concat(data.data);
 
-					this.table.rowManager.setData(data, this.page !== 1, this.initialLoad && this.page == 1);
+					this.table.rowManager.setData(data, this.page !== 1, this.page == 1);
 
 					margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 
@@ -718,8 +708,6 @@ class Page extends Module{
 				// this.table.rowManager.scrollHorizontal(left);
 				// this.table.columnManager.scrollHorizontal(left);
 			}
-
-			this.initialLoad = false;
 
 		}else{
 			console.warn("Remote Pagination Error - Server response missing '" + this.dataReceivedNames.data + "' property");
