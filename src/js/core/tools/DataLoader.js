@@ -81,7 +81,10 @@ export default class DataLoader extends CoreFeature{
 
 				if(requestNo === this.requestOrder){
 					this.hideLoader();
-					this.table.rowManager.setData(rowData,  replace, !replace);
+
+					if(rowData !== false){
+						this.table.rowManager.setData(rowData,  replace, !replace);
+					}
 				}else{
 					console.warn("Data Load Response Blocked - An active data load request was blocked by an attempt to change table data while the request was being made");
 				}
