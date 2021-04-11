@@ -8124,18 +8124,18 @@ class Filter extends Module{
 	//set standard filters
 	userSetFilter(field, type, value, params){
 		this.setFilter(field, type, value, params);
-		this.table.rowManager.filterRefresh();
+		this.refreshFilter();
 	}
 
 	//set standard filters
 	userRefreshFilter(){
-		this.table.rowManager.filterRefresh();
+		this.refreshFilter();
 	}
 
 	//add filter to array
 	userAddFilter(field, type, value, params){
 		this.addFilter(field, type, value, params);
-		this.table.rowManager.filterRefresh();
+		this.refreshFilter();
 	}
 
 	userSetHeaderFilterFocus(field){
@@ -8173,19 +8173,19 @@ class Filter extends Module{
 	//remove filter from array
 	userRemoveFilter(field, type, value){
 		this.removeFilter(field, type, value);
-		this.table.rowManager.filterRefresh();
+		this.refreshFilter();
 	}
 
 	//clear filters
 	userClearFilter(all){
 		this.clearFilter(all);
-		this.table.rowManager.filterRefresh();
+		this.refreshFilter();
 	}
 
 	//clear header filters
 	userClearHeaderFilter(){
 		this.clearHeaderFilter();
-		this.table.rowManager.filterRefresh();
+		this.refreshFilter();
 	}
 
 
@@ -8301,7 +8301,7 @@ class Filter extends Module{
 					self.prevHeaderFilterChangeCheck = filterChangeCheck;
 
 					self.changed = true;
-					self.table.rowManager.filterRefresh();
+					self.refreshFilter();
 				}
 			}
 
@@ -8570,6 +8570,18 @@ class Filter extends Module{
 				console.warn("Column Filter Error - No header filter set on column:", column.getField());
 			}
 		}
+	}
+
+	refreshFilter(){
+		if(this.table.options.filterMode === "remote"){
+			this.reloadData();
+		}else {
+			this.refreshData();
+		}
+
+		//TODO - Persist left position of row manager
+		// left = this.scrollLeft;
+		// this.scrollHorizontal(left);
 	}
 
 	//check if the filters has changed since last use
