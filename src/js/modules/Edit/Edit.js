@@ -25,6 +25,12 @@ class Edit extends Module{
 
 		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
 		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
+		this.registerTableFunction("navigatePrev", this.navigatePrev.bind(this));
+		this.registerTableFunction("navigateNext", this.navigateNext.bind(this));
+		this.registerTableFunction("navigateLeft", this.navigateLeft.bind(this));
+		this.registerTableFunction("navigateRight", this.navigateRight.bind(this));
+		this.registerTableFunction("navigateUp", this.navigateUp.bind(this));
+		this.registerTableFunction("navigateDown", this.navigateDown.bind(this));
 
 		this.registerComponentFunction("cell", "isEdited", this.cellisEdited.bind(this));
 		this.registerComponentFunction("cell", "clearEdited", this.clearEdited.bind(this));
@@ -62,6 +68,54 @@ class Edit extends Module{
 		cells.forEach((cell) => {
 			this.modules.edit.clearEdited(cell._getSelf());
 		});
+	}
+
+	navigatePrev(){
+		if(this.currentCell){
+			return cell.nav().prev();
+		}
+
+		return false;
+	}
+
+	navigateNext(){
+		if(this.currentCell){
+			return cell.nav().next();
+		}
+
+		return false;
+	}
+
+	navigateLeft(){
+		if(this.currentCell){
+			return cell.nav().left();
+		}
+
+		return false;
+	}
+
+	navigateRight(){
+		if(this.currentCell){
+			return cell.nav().right();
+		}
+
+		return false;
+	}
+
+	navigateUp(){
+		if(this.currentCell){
+			return cell.nav().up();
+		}
+
+		return false;
+	}
+
+	navigateDown(){
+		if(this.currentCell){
+			return cell.nav().down();
+		}
+
+		return false;
 	}
 
 	///////////////////////////////////
