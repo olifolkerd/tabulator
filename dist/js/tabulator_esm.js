@@ -6,6 +6,14 @@ class CoreFeature{
 	}
 
 	//////////////////////////////////////////
+	/////////////// DataLoad /////////////////
+	//////////////////////////////////////////
+
+	reloadData(){
+		this.table.dataLoader.load();
+	}
+
+	//////////////////////////////////////////
 	/////////////// Event Bus ////////////////
 	//////////////////////////////////////////
 
@@ -16663,12 +16671,14 @@ class Sort extends Module{
 
 	userSetSort(sortList, dir){
 		this.setSort(sortList, dir);
-		this.table.rowManager.sorterRefresh();
+		// this.table.rowManager.sorterRefresh();
+		this.refreshSort();
 	}
 
 	clearSort(){
 		this.clear();
-		this.table.rowManager.sorterRefresh();
+		// this.table.rowManager.sorterRefresh();
+		this.refreshSort();
 	}
 
 
@@ -16678,8 +16688,7 @@ class Sort extends Module{
 
 	//initialize column header for sorting
 	initializeColumn(column){
-		var self = this,
-		sorter = false,
+		var sorter = false,
 		colEl,
 		arrowEl;
 
@@ -16726,7 +16735,7 @@ class Sort extends Module{
 			column.modules.sort.element = arrowEl;
 
 			//sort on click
-			colEl.addEventListener("click", function(e){
+			colEl.addEventListener("click", (e) => {
 				var dir = "",
 				sorters=[],
 				match = false;
@@ -16758,10 +16767,10 @@ class Sort extends Module{
 					}
 
 
-					if (self.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
-						sorters = self.getSort();
+					if (this.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
+						sorters = this.getSort();
 
-						match = sorters.findIndex(function(sorter){
+						match = sorters.findIndex((sorter) => {
 							return sorter.field === column.getField();
 						});
 
@@ -16781,21 +16790,34 @@ class Sort extends Module{
 						}
 
 						//add to existing sort
-						self.setSort(sorters);
+						this.setSort(sorters);
 					}else {
 						if(dir == "none"){
-							self.clear();
+							this.clear();
 						}else {
 							//sort by column only
-							self.setSort(column, dir);
+							this.setSort(column, dir);
 						}
 
 					}
 
-					self.table.rowManager.sorterRefresh(!self.sortList.length);
+					// this.table.rowManager.sorterRefresh(!this.sortList.length);
+					this.refreshSort();
 				}
 			});
 		}
+	}
+
+	refreshSort(){
+		if(this.table.options.sortMode === "remote"){
+			this.reloadData();
+		}else {
+			this.refreshData();
+		}
+
+		//TODO - Persist left position of row manager
+		// left = this.scrollLeft;
+		// this.scrollHorizontal(left);
 	}
 
 	//check if the sorters have changed since last use
@@ -16929,8 +16951,10 @@ class Sort extends Module{
 			});
 
 			//sort data
-			if (sortListActual.length) {
-				self._sortItems(data, sortListActual);
+			if(this.table.options.sortMode !== "remote"){
+				if (sortListActual.length) {
+					self._sortItems(data, sortListActual);
+				}
 			}
 
 		}else {
@@ -19973,40 +19997,40 @@ class RowManager extends CoreFeature{
 		return rows.length;
 	}
 
-	_genRemoteRequest(){
-		var table = this.table,
-		options = table.options,
-		params = {};
+	// _genRemoteRequest(){
+	// 	var table = this.table,
+	// 	options = table.options,
+	// 	params = {};
 
-		if(table.modExists("page")){
-			//set sort data if defined
-			if(options.ajaxSorting){
-				let sorters = this.table.modules.sort.getSort();
+	// 	if(table.modExists("page")){
+	// 		//set sort data if defined
+	// 		if(options.ajaxSorting){
+	// 			let sorters = this.table.modules.sort.getSort();
 
-				sorters.forEach(function(item){
-					delete item.column;
-				});
+	// 			sorters.forEach(function(item){
+	// 				delete item.column;
+	// 			});
 
-				params[this.table.modules.page.paginationDataSentNames.sorters] = sorters;
-			}
+	// 			params[this.table.modules.page.paginationDataSentNames.sorters] = sorters;
+	// 		}
 
-			//set filter data if defined
-			if(options.ajaxFiltering){
-				let filters = this.table.modules.filter.getFilters(true, true);
+	// 		//set filter data if defined
+	// 		if(options.ajaxFiltering){
+	// 			let filters = this.table.modules.filter.getFilters(true, true);
 
-				params[this.table.modules.page.paginationDataSentNames.filters] = filters;
-			}
+	// 			params[this.table.modules.page.paginationDataSentNames.filters] = filters;
+	// 		}
 
 
-			this.table.modules.ajax.setParams(params, true);
-		}
+	// 		this.table.modules.ajax.setParams(params, true);
+	// 	}
 
-		table.modules.ajax.sendRequest()
-		.then((data)=>{
-			this._setDataActual(data, true);
-		})
-		.catch((e)=>{});
-	}
+	// 	table.modules.ajax.sendRequest()
+	// 	.then((data)=>{
+	// 		this._setDataActual(data, true);
+	// 	})
+	// 	.catch((e)=>{});
+	// }
 
 	//choose the path to refresh data after a filter update
 	filterRefresh(){
@@ -20032,27 +20056,27 @@ class RowManager extends CoreFeature{
 	}
 
 	//choose the path to refresh data after a sorter update
-	sorterRefresh(loadOrignalData){
-		var table = this.table,
-		options = this.table.options,
-		left = this.scrollLeft;
+	// sorterRefresh(loadOrignalData){
+	// 	var table = this.table,
+	// 	options = this.table.options,
+	// 	left = this.scrollLeft;
 
-		if(options.ajaxSorting){
-			if((options.pagination == "remote" || options.progressiveLoad) && table.modExists("page")){
-				table.modules.page.reset(true);
-				table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
-			}else if(options.ajaxProgressiveLoad){
-				table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
-			}else {
-				//assume data is url, make ajax call to url to get data
-				this._genRemoteRequest();
-			}
-		}else {
-			this.refreshActiveData(loadOrignalData ? "filter" : "sort");
-		}
+	// 	if(options.ajaxSorting){
+	// 		if((options.pagination == "remote" || options.progressiveLoad) && table.modExists("page")){
+	// 			table.modules.page.reset(true);
+	// 			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
+	// 		}else if(options.ajaxProgressiveLoad){
+	// 			table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
+	// 		}else{
+	// 			//assume data is url, make ajax call to url to get data
+	// 			this._genRemoteRequest();
+	// 		}
+	// 	}else{
+	// 		this.refreshActiveData(loadOrignalData ? "filter" : "sort");
+	// 	}
 
-		this.scrollHorizontal(left);
-	}
+	// 	this.scrollHorizontal(left);
+	// }
 
 	scrollHorizontal(left){
 		this.scrollLeft = left;

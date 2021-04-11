@@ -594,40 +594,40 @@ export default class RowManager extends CoreFeature{
 		return rows.length;
 	}
 
-	_genRemoteRequest(){
-		var table = this.table,
-		options = table.options,
-		params = {};
+	// _genRemoteRequest(){
+	// 	var table = this.table,
+	// 	options = table.options,
+	// 	params = {};
 
-		if(table.modExists("page")){
-			//set sort data if defined
-			if(options.ajaxSorting){
-				let sorters = this.table.modules.sort.getSort();
+	// 	if(table.modExists("page")){
+	// 		//set sort data if defined
+	// 		if(options.ajaxSorting){
+	// 			let sorters = this.table.modules.sort.getSort();
 
-				sorters.forEach(function(item){
-					delete item.column;
-				});
+	// 			sorters.forEach(function(item){
+	// 				delete item.column;
+	// 			});
 
-				params[this.table.modules.page.paginationDataSentNames.sorters] = sorters;
-			}
+	// 			params[this.table.modules.page.paginationDataSentNames.sorters] = sorters;
+	// 		}
 
-			//set filter data if defined
-			if(options.ajaxFiltering){
-				let filters = this.table.modules.filter.getFilters(true, true);
+	// 		//set filter data if defined
+	// 		if(options.ajaxFiltering){
+	// 			let filters = this.table.modules.filter.getFilters(true, true);
 
-				params[this.table.modules.page.paginationDataSentNames.filters] = filters;
-			}
+	// 			params[this.table.modules.page.paginationDataSentNames.filters] = filters;
+	// 		}
 
 
-			this.table.modules.ajax.setParams(params, true);
-		}
+	// 		this.table.modules.ajax.setParams(params, true);
+	// 	}
 
-		table.modules.ajax.sendRequest()
-		.then((data)=>{
-			this._setDataActual(data, true);
-		})
-		.catch((e)=>{});
-	}
+	// 	table.modules.ajax.sendRequest()
+	// 	.then((data)=>{
+	// 		this._setDataActual(data, true);
+	// 	})
+	// 	.catch((e)=>{});
+	// }
 
 	//choose the path to refresh data after a filter update
 	filterRefresh(){
@@ -653,27 +653,27 @@ export default class RowManager extends CoreFeature{
 	}
 
 	//choose the path to refresh data after a sorter update
-	sorterRefresh(loadOrignalData){
-		var table = this.table,
-		options = this.table.options,
-		left = this.scrollLeft;
+	// sorterRefresh(loadOrignalData){
+	// 	var table = this.table,
+	// 	options = this.table.options,
+	// 	left = this.scrollLeft;
 
-		if(options.ajaxSorting){
-			if((options.pagination == "remote" || options.progressiveLoad) && table.modExists("page")){
-				table.modules.page.reset(true);
-				table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
-			}else if(options.ajaxProgressiveLoad){
-				table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
-			}else{
-				//assume data is url, make ajax call to url to get data
-				this._genRemoteRequest();
-			}
-		}else{
-			this.refreshActiveData(loadOrignalData ? "filter" : "sort");
-		}
+	// 	if(options.ajaxSorting){
+	// 		if((options.pagination == "remote" || options.progressiveLoad) && table.modExists("page")){
+	// 			table.modules.page.reset(true);
+	// 			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
+	// 		}else if(options.ajaxProgressiveLoad){
+	// 			table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
+	// 		}else{
+	// 			//assume data is url, make ajax call to url to get data
+	// 			this._genRemoteRequest();
+	// 		}
+	// 	}else{
+	// 		this.refreshActiveData(loadOrignalData ? "filter" : "sort");
+	// 	}
 
-		this.scrollHorizontal(left);
-	}
+	// 	this.scrollHorizontal(left);
+	// }
 
 	scrollHorizontal(left){
 		this.scrollLeft = left;

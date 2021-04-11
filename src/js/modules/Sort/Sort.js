@@ -58,12 +58,14 @@ class Sort extends Module{
 
 	userSetSort(sortList, dir){
 		this.setSort(sortList, dir);
-		this.table.rowManager.sorterRefresh();
+		// this.table.rowManager.sorterRefresh();
+		this.refreshSort();
 	}
 
 	clearSort(){
 		this.clear();
-		this.table.rowManager.sorterRefresh();
+		// this.table.rowManager.sorterRefresh();
+		this.refreshSort();
 	}
 
 
@@ -73,8 +75,7 @@ class Sort extends Module{
 
 	//initialize column header for sorting
 	initializeColumn(column){
-		var self = this,
-		sorter = false,
+		var sorter = false,
 		colEl,
 		arrowEl;
 
@@ -121,7 +122,7 @@ class Sort extends Module{
 			column.modules.sort.element = arrowEl;
 
 			//sort on click
-			colEl.addEventListener("click", function(e){
+			colEl.addEventListener("click", (e) => {
 				var dir = "",
 				sorters=[],
 				match = false;
@@ -153,10 +154,10 @@ class Sort extends Module{
 					}
 
 
-					if (self.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
-						sorters = self.getSort();
+					if (this.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
+						sorters = this.getSort();
 
-						match = sorters.findIndex(function(sorter){
+						match = sorters.findIndex((sorter) => {
 							return sorter.field === column.getField();
 						});
 
@@ -176,21 +177,34 @@ class Sort extends Module{
 						}
 
 						//add to existing sort
-						self.setSort(sorters);
+						this.setSort(sorters);
 					}else{
 						if(dir == "none"){
-							self.clear();
+							this.clear();
 						}else{
 							//sort by column only
-							self.setSort(column, dir);
+							this.setSort(column, dir);
 						}
 
 					}
 
-					self.table.rowManager.sorterRefresh(!self.sortList.length);
+					// this.table.rowManager.sorterRefresh(!this.sortList.length);
+					this.refreshSort();
 				}
 			});
 		}
+	}
+
+	refreshSort(){
+		if(this.table.options.sortMode === "remote"){
+			this.reloadData();
+		}else{
+			this.refreshData()
+		}
+
+		//TODO - Persist left position of row manager
+		// left = this.scrollLeft;
+		// this.scrollHorizontal(left);
 	}
 
 	//check if the sorters have changed since last use
@@ -325,8 +339,10 @@ class Sort extends Module{
 			});
 
 			//sort data
-			if (sortListActual.length) {
-				self._sortItems(data, sortListActual);
+			if(this.table.options.sortMode !== "remote"){
+				if (sortListActual.length) {
+					self._sortItems(data, sortListActual);
+				}
 			}
 
 		}else{
