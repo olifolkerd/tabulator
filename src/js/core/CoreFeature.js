@@ -9,7 +9,7 @@ export default class CoreFeature{
 	//////////////////////////////////////////
 
 	reloadData(data, silent){
-		this.table.dataLoader.load(data, undefined, undefined, undefined, silent);
+		return this.table.dataLoader.load(data, undefined, undefined, undefined, silent);
 	}
 
 	//////////////////////////////////////////

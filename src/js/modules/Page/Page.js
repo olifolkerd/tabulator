@@ -18,6 +18,7 @@ class Page extends Module{
 		this.displayIndex = 0; //index in display pipeline
 
 		this.initialLoad = true;
+		this.dataChanging = false; //flag to check if data is being changed by this module
 
 		this.pageSizes = [];
 
@@ -91,8 +92,10 @@ class Page extends Module{
 	}
 
 	remotePageParams(data, config, silent, params){
-		 if(!this.initialLoad && this.progressiveLoad && !silent){
-			this.reset(true);
+		if(!this.initialLoad){
+			if((this.progressiveLoad && !silent) || (!this.progressiveLoad && !this.dataChanging)){
+				this.reset(true);
+			}
 		}
 
 		//configure request params
@@ -652,7 +655,11 @@ class Page extends Module{
 			break;
 
 			case "remote":
-			return this.reloadData(null);
+			this.dataChanging = true;
+			return this.reloadData(null)
+			.finally(() => {
+				this.dataChanging = false;
+			})
 			break;
 
 			case "progressive_load":

@@ -10,7 +10,7 @@ class CoreFeature{
 	//////////////////////////////////////////
 
 	reloadData(data, silent){
-		this.table.dataLoader.load(data, undefined, undefined, undefined, silent);
+		return this.table.dataLoader.load(data, undefined, undefined, undefined, silent);
 	}
 
 	//////////////////////////////////////////
@@ -13403,6 +13403,7 @@ class Page extends Module{
 		this.displayIndex = 0; //index in display pipeline
 
 		this.initialLoad = true;
+		this.dataChanging = false; //flag to check if data is being changed by this module
 
 		this.pageSizes = [];
 
@@ -13476,8 +13477,10 @@ class Page extends Module{
 	}
 
 	remotePageParams(data, config, silent, params){
-		 if(!this.initialLoad && this.progressiveLoad && !silent){
-			this.reset(true);
+		if(!this.initialLoad){
+			if((this.progressiveLoad && !silent) || (!this.progressiveLoad && !this.dataChanging)){
+				this.reset(true);
+			}
 		}
 
 		//configure request params
@@ -14032,7 +14035,11 @@ class Page extends Module{
 			return Promise.resolve();
 
 			case "remote":
-			return this.reloadData(null);
+			this.dataChanging = true;
+			return this.reloadData(null)
+			.finally(() => {
+				this.dataChanging = false;
+			})
 
 			case "progressive_load":
 			case "progressive_scroll":
@@ -19475,8 +19482,8 @@ class RowManager extends CoreFeature{
 
 			this.refreshActiveData(false, false, renderInPosition);
 
-			this.dispatchExternal("dataLoaded", data);
 			this.dispatch("data-processed", data);
+			this.dispatchExternal("dataLoaded", data);
 		}else {
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
