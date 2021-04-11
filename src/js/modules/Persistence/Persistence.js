@@ -131,6 +131,7 @@ class Persistence extends Module{
 				this.subscribe("column-show", this.save.bind(this, "columns"));
 				this.subscribe("column-hide", this.save.bind(this, "columns"));
 				this.subscribe("column-moved", this.save.bind(this, "columns"));
+				this.subscribe("table-built", this.tableBuilt.bind(this), 0);
 			}
 
 			this.subscribe("table-redraw", this.tableRedraw.bind(this));
@@ -138,6 +139,27 @@ class Persistence extends Module{
 
 		this.registerTableFunction("getColumnLayout", this.getColumnLayout.bind(this));
 		this.registerTableFunction("setColumnLayout", this.setColumnLayout.bind(this));
+	}
+
+	tableBuilt(){
+		var options = this.table.options,
+		sorters, filters;
+
+		if(this.config.sort){
+			sorters = this.load("sort");
+
+			if(!sorters === false){
+				this.table.initialSort = sorters;
+			}
+		}
+
+		if(this.config.filter){
+			filters = this.load("filter");
+
+			if(!filters === false){
+				this.table.initialFilter = filters;
+			}
+		}
 	}
 
 	tableRedraw(force){
@@ -158,7 +180,6 @@ class Persistence extends Module{
 		this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout))
 		return true;
 	}
-
 
 	///////////////////////////////////
 	///////// Internal Logic //////////

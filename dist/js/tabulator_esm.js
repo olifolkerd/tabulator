@@ -8025,12 +8025,33 @@ class Filter extends Module{
 		this.subscribe("column-init", this.initializeColumnHeaderFilter.bind(this));
 		this.subscribe("column-width-fit-before", this.hideHeaderFilterElements.bind(this));
 		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
+		this.subscribe("table-built", this.tableBuilt.bind(this));
 
 		if(this.table.options.filterMode === "remote"){
 			this.subscribe("data-params", this.remoteFilterParams.bind(this));
 		}
 
 		this.registerDataHandler(this.filter.bind(this), 10);
+	}
+
+	tableBuilt(){
+		if(this.table.options.initialFilter){
+			this.setFilter(this.table.options.initialFilter);
+		}
+
+		if(this.table.options.initialHeaderFilter){
+			this.table.options.initialHeaderFilter.forEach((item) => {
+
+				var column = this.table.columnManager.findColumn(item.field);
+
+				if(column){
+					this.setHeaderFilterValue(column, item.value);
+				}else {
+					console.warn("Column Filter Error - No matching column found:", item.field);
+					return false;
+				}
+			});
+		}
 	}
 
 	remoteFilterParams(data, config, silent, params){
@@ -14374,6 +14395,7 @@ class Persistence extends Module{
 				this.subscribe("column-show", this.save.bind(this, "columns"));
 				this.subscribe("column-hide", this.save.bind(this, "columns"));
 				this.subscribe("column-moved", this.save.bind(this, "columns"));
+				this.subscribe("table-built", this.tableBuilt.bind(this), 0);
 			}
 
 			this.subscribe("table-redraw", this.tableRedraw.bind(this));
@@ -14381,6 +14403,27 @@ class Persistence extends Module{
 
 		this.registerTableFunction("getColumnLayout", this.getColumnLayout.bind(this));
 		this.registerTableFunction("setColumnLayout", this.setColumnLayout.bind(this));
+	}
+
+	tableBuilt(){
+		var options = this.table.options,
+		sorters, filters;
+
+		if(this.config.sort){
+			sorters = this.load("sort");
+
+			if(!sorters === false){
+				this.table.initialSort = sorters;
+			}
+		}
+
+		if(this.config.filter){
+			filters = this.load("filter");
+
+			if(!filters === false){
+				this.table.initialFilter = filters;
+			}
+		}
 	}
 
 	tableRedraw(force){
@@ -14401,7 +14444,6 @@ class Persistence extends Module{
 		this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout));
 		return true;
 	}
-
 
 	///////////////////////////////////
 	///////// Internal Logic //////////
@@ -16592,6 +16634,7 @@ class Sort extends Module{
 
 	 initialize(){
 	 	this.subscribe("column-layout", this.initializeColumn.bind(this));
+	 	this.subscribe("table-built", this.tableBuilt.bind(this));
 	 	this.registerDataHandler(this.sort.bind(this), 20);
 
 	 	this.registerTableFunction("setSort", this.userSetSort.bind(this));
@@ -16600,6 +16643,12 @@ class Sort extends Module{
 
 	 	if(this.table.options.sortMode === "remote"){
 	 		this.subscribe("data-params", this.remoteSortParams.bind(this));
+	 	}
+	 }
+
+	 tableBuilt(){
+	 	if(this.table.options.initialSort){
+	 		this.setSort(this.table.options.initialSort);
 	 	}
 	 }
 
@@ -22413,9 +22462,15 @@ class Tabulator$1 {
 	_create(){
 
 		this.externalEvents.dispatch("tableBuilding");
-		this.evnetBus.dispatch("table-building");
+		this.eventBus.dispatch("table-building");
 
 		this.rtlCheck();
+
+		if(this.element.tagName === "TABLE"){
+			if(this.modExists("htmlTableImport", true)){
+				this.modules.htmlTableImport.parseTable();
+			}
+		}
 
 		if(this.options.virtualDomHoz){
 			this.vdomHoz = new VirtualDomHorizontal(this);
@@ -22438,7 +22493,6 @@ class Tabulator$1 {
 	//build tabulator element
 	_buildElement(){
 		var element = this.element,
-		mods = this.modules,
 		options = this.options;
 
 		element.classList.add("tabulator");
@@ -22511,52 +22565,6 @@ class Tabulator$1 {
 		}
 
 		this.columnManager.setColumns(options.columns);
-
-		if(((options.persistence && this.modExists("persistence", true) && mods.persistence.config.sort) || options.initialSort) && this.modExists("sort", true)){
-			var sorters = [];
-
-			if(options.persistence && this.modExists("persistence", true) && mods.persistence.config.sort){
-				sorters = mods.persistence.load("sort");
-
-				if(sorters === false && options.initialSort){
-					sorters = options.initialSort;
-				}
-			}else if(options.initialSort){
-				sorters = options.initialSort;
-			}
-
-			mods.sort.setSort(sorters);
-		}
-
-		if(((options.persistence && this.modExists("persistence", true) && mods.persistence.config.filter) || options.initialFilter) && this.modExists("filter", true)){
-			var filters = [];
-
-			if(options.persistence && this.modExists("persistence", true) && mods.persistence.config.filter){
-				filters = mods.persistence.load("filter");
-
-				if(filters === false && options.initialFilter){
-					filters = options.initialFilter;
-				}
-			}else if(options.initialFilter){
-				filters = options.initialFilter;
-			}
-
-			mods.filter.setFilter(filters);
-		}
-
-		if(options.initialHeaderFilter && this.modExists("filter", true)){
-			options.initialHeaderFilter.forEach((item) => {
-
-				var column = this.columnManager.findColumn(item.field);
-
-				if(column){
-					mods.filter.setHeaderFilterValue(column, item.value);
-				}else {
-					console.warn("Column Filter Error - No matching column found:", item.field);
-					return false;
-				}
-			});
-		}
 
 		this.eventBus.dispatch("table-built");
 		this.externalEvents.dispatch("tableBuilt");

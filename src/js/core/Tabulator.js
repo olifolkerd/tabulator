@@ -152,9 +152,15 @@ class Tabulator {
 	_create(){
 
 		this.externalEvents.dispatch("tableBuilding");
-		this.evnetBus.dispatch("table-building");
+		this.eventBus.dispatch("table-building");
 
 		this.rtlCheck();
+
+		if(this.element.tagName === "TABLE"){
+			if(this.modExists("htmlTableImport", true)){
+				this.modules.htmlTableImport.parseTable();
+			}
+		}
 
 		if(this.options.virtualDomHoz){
 			this.vdomHoz = new VirtualDomHorizontal(this);
@@ -177,7 +183,6 @@ class Tabulator {
 	//build tabulator element
 	_buildElement(){
 		var element = this.element,
-		mods = this.modules,
 		options = this.options;
 
 		element.classList.add("tabulator");
@@ -250,52 +255,6 @@ class Tabulator {
 		}
 
 		this.columnManager.setColumns(options.columns);
-
-		if(((options.persistence && this.modExists("persistence", true) && mods.persistence.config.sort) || options.initialSort) && this.modExists("sort", true)){
-			var sorters = [];
-
-			if(options.persistence && this.modExists("persistence", true) && mods.persistence.config.sort){
-				sorters = mods.persistence.load("sort");
-
-				if(sorters === false && options.initialSort){
-					sorters = options.initialSort;
-				}
-			}else if(options.initialSort){
-				sorters = options.initialSort;
-			}
-
-			mods.sort.setSort(sorters);
-		}
-
-		if(((options.persistence && this.modExists("persistence", true) && mods.persistence.config.filter) || options.initialFilter) && this.modExists("filter", true)){
-			var filters = [];
-
-			if(options.persistence && this.modExists("persistence", true) && mods.persistence.config.filter){
-				filters = mods.persistence.load("filter");
-
-				if(filters === false && options.initialFilter){
-					filters = options.initialFilter;
-				}
-			}else if(options.initialFilter){
-				filters = options.initialFilter;
-			}
-
-			mods.filter.setFilter(filters);
-		}
-
-		if(options.initialHeaderFilter && this.modExists("filter", true)){
-			options.initialHeaderFilter.forEach((item) => {
-
-				var column = this.columnManager.findColumn(item.field);
-
-				if(column){
-					mods.filter.setHeaderFilterValue(column, item.value);
-				}else{
-					console.warn("Column Filter Error - No matching column found:", item.field);
-					return false;
-				}
-			});
-		}
 
 		this.eventBus.dispatch("table-built");
 		this.externalEvents.dispatch("tableBuilt");

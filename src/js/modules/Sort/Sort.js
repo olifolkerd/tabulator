@@ -28,6 +28,7 @@ class Sort extends Module{
 
 	 initialize(){
 	 	this.subscribe("column-layout", this.initializeColumn.bind(this));
+	 	this.subscribe("table-built", this.tableBuilt.bind(this));
 	 	this.registerDataHandler(this.sort.bind(this), 20);
 
 	 	this.registerTableFunction("setSort", this.userSetSort.bind(this));
@@ -36,6 +37,12 @@ class Sort extends Module{
 
 	 	if(this.table.options.sortMode === "remote"){
 	 		this.subscribe("data-params", this.remoteSortParams.bind(this));
+	 	}
+	 }
+
+	 tableBuilt(){
+	 	if(this.table.options.initialSort){
+	 		this.setSort(this.table.options.initialSort);
 	 	}
 	 }
 

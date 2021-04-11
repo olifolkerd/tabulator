@@ -55,12 +55,33 @@ class Filter extends Module{
 		this.subscribe("column-init", this.initializeColumnHeaderFilter.bind(this));
 		this.subscribe("column-width-fit-before", this.hideHeaderFilterElements.bind(this));
 		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
+		this.subscribe("table-built", this.tableBuilt.bind(this));
 
 		if(this.table.options.filterMode === "remote"){
 			this.subscribe("data-params", this.remoteFilterParams.bind(this));
 		}
 
 		this.registerDataHandler(this.filter.bind(this), 10);
+	}
+
+	tableBuilt(){
+		if(this.table.options.initialFilter){
+			this.setFilter(this.table.options.initialFilter);
+		}
+
+		if(this.table.options.initialHeaderFilter){
+			this.table.options.initialHeaderFilter.forEach((item) => {
+
+				var column = this.table.columnManager.findColumn(item.field);
+
+				if(column){
+					this.setHeaderFilterValue(column, item.value);
+				}else{
+					console.warn("Column Filter Error - No matching column found:", item.field);
+					return false;
+				}
+			});
+		}
 	}
 
 	remoteFilterParams(data, config, silent, params){
