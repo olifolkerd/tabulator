@@ -23588,5 +23588,5 @@ class TabulatorFull extends Tabulator$1 {}
 //bind modules and static functionality
 new ModuleBinder(TabulatorFull, modules);
 
-export { CalcComponent, CellComponent, ColumnComponent, GroupComponent, RowComponent$1 as RowComponent, TabulatorFull as Tabulator, Tabulator$1 as TabulatorCore, modules };
+export { CalcComponent, CellComponent, ColumnComponent, GroupComponent, Module, RowComponent$1 as RowComponent, TabulatorFull as Tabulator, Tabulator$1 as TabulatorCore, modules };
 //# sourceMappingURL=tabulator_esm.js.map
