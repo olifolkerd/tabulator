@@ -89,7 +89,7 @@ class Page extends Module{
 		}
 	}
 
-	rowAddingPosition(top){
+	rowAddingPosition(row, top){
 		var rowManager = this.table.rowManager,
 		dispRows = rowManager.getDisplayRows(),
 		index;

@@ -10839,6 +10839,7 @@ class GroupRows extends Module{
 			this.subscribe("rows-wipe", this.wipe.bind(this));
 			this.subscribe("rows-added", this.rowsUpdated.bind(this));
 			this.subscribe("row-moving", this.rowMoving.bind(this));
+			this.subscribe("row-adding-index", this.rowAddingIndex.bind(this));
 
 			this.registerDisplayHandler(this.getRows.bind(this), 20);
 
@@ -10851,6 +10852,32 @@ class GroupRows extends Module{
 		this.registerTableFunction("setGroupHeader", this.setGroupHeader.bind(this));
 		this.registerTableFunction("getGroups", this.userGetGroups.bind(this));
 		this.registerTableFunction("getGroupedData", this.userGetGroupedData.bind(this));
+	}
+
+	rowAddingIndex(row, index, top){
+		this.assignRowToGroup(row);
+
+		var groupRows = row.getGroup().rows;
+
+		if(groupRows.length > 1){
+			if(!index || (index && groupRows.indexOf(index) == -1)){
+				if(top){
+					if(groupRows[0] !== row){
+						index = groupRows[0];
+						this.table.rowManager.moveRowInArray(row.getGroup().rows, row, index, !top);
+					}
+				}else {
+					if(groupRows[groupRows.length -1] !== row){
+						index = groupRows[groupRows.length -1];
+						this.table.rowManager.moveRowInArray(row.getGroup().rows, row, index, !top);
+					}
+				}
+			}else {
+				this.table.rowManager.moveRowInArray(row.getGroup().rows, row, index, !top);
+			}
+		}
+
+		return index;
 	}
 
 	///////////////////////////////////
@@ -10914,7 +10941,7 @@ class GroupRows extends Module{
 	// get grouped table data in the same format as getData()
 	userGetGroupedData(){
 		return this.table.options.groupBy ?
-			this.getGroupedData() : this.getData()
+		this.getGroupedData() : this.getData()
 	}
 
 	///////////////////////////////////
@@ -13475,7 +13502,7 @@ class Page extends Module{
 		}
 	}
 
-	rowAddingPosition(top){
+	rowAddingPosition(row, top){
 		var rowManager = this.table.rowManager,
 		dispRows = rowManager.getDisplayRows(),
 		index;
@@ -19637,7 +19664,7 @@ class RowManager extends CoreFeature{
 		activeIndex, chainResult;
 
 		if(!index){
-			chainResult = this.chain("row-adding-position", top, null, {index, top});
+			chainResult = this.chain("row-adding-position", [row, top], null, {index, top});
 
 			index = chainResult.index;
 			top = chainResult.top;
@@ -19647,30 +19674,7 @@ class RowManager extends CoreFeature{
 			index = this.findRow(index);
 		}
 
-		if(this.table.options.groupBy && this.table.modExists("groupRows")){
-			this.table.modules.groupRows.assignRowToGroup(row);
-
-			var groupRows = row.getGroup().rows;
-
-			if(groupRows.length > 1){
-
-				if(!index || (index && groupRows.indexOf(index) == -1)){
-					if(top){
-						if(groupRows[0] !== row){
-							index = groupRows[0];
-							this.moveRowInArray(row.getGroup().rows, row, index, !top);
-						}
-					}else {
-						if(groupRows[groupRows.length -1] !== row){
-							index = groupRows[groupRows.length -1];
-							this.moveRowInArray(row.getGroup().rows, row, index, !top);
-						}
-					}
-				}else {
-					this.moveRowInArray(row.getGroup().rows, row, index, !top);
-				}
-			}
-		}
+		index = this.chain("row-adding-index", [row, index, top], null, index);
 
 		if(index){
 			allIndex = this.rows.indexOf(index);

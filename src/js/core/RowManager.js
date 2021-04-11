@@ -338,7 +338,7 @@ export default class RowManager extends CoreFeature{
 		activeIndex, chainResult;
 
 		if(!index){
-			chainResult = this.chain("row-adding-position", top, null, {index, top});
+			chainResult = this.chain("row-adding-position", [row, top], null, {index, top});
 
 			index = chainResult.index;
 			top = chainResult.top;
@@ -348,30 +348,7 @@ export default class RowManager extends CoreFeature{
 			index = this.findRow(index);
 		}
 
-		if(this.table.options.groupBy && this.table.modExists("groupRows")){
-			this.table.modules.groupRows.assignRowToGroup(row);
-
-			var groupRows = row.getGroup().rows;
-
-			if(groupRows.length > 1){
-
-				if(!index || (index && groupRows.indexOf(index) == -1)){
-					if(top){
-						if(groupRows[0] !== row){
-							index = groupRows[0];
-							this.moveRowInArray(row.getGroup().rows, row, index, !top);
-						}
-					}else{
-						if(groupRows[groupRows.length -1] !== row){
-							index = groupRows[groupRows.length -1];
-							this.moveRowInArray(row.getGroup().rows, row, index, !top);
-						}
-					}
-				}else{
-					this.moveRowInArray(row.getGroup().rows, row, index, !top);
-				}
-			}
-		}
+		index = this.chain("row-adding-index", [row, index, top], null, index);
 
 		if(index){
 			allIndex = this.rows.indexOf(index);
