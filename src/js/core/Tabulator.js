@@ -268,11 +268,9 @@ class Tabulator {
 	destroy(){
 		var element = this.element;
 
-		comms(this); //deregister table from inderdevice communication
+		TableRegistry.deregister(this); //deregister table from inderdevice communication
 
-		if(this.options.reactiveData && this.modExists("reactiveData", true)){
-			this.modules.reactiveData.unwatchData();
-		}
+		this.eventBus.dispatch("table-destroy");
 
 		//clear row data
 		this.rowManager.rows.forEach(function(row){
@@ -282,15 +280,6 @@ class Tabulator {
 		this.rowManager.rows = [];
 		this.rowManager.activeRows = [];
 		this.rowManager.displayRows = [];
-
-		//clear event bindings
-		if(this.options.autoResize && this.modExists("resizeTable")){
-			this.modules.resizeTable.clearBindings();
-		}
-
-		if(this.modExists("keybindings")){
-			this.modules.keybindings.clearBindings();
-		}
 
 		//clear DOM
 		while(element.firstChild) element.removeChild(element.firstChild);

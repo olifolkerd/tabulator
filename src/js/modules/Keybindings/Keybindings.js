@@ -40,6 +40,8 @@ class Keybindings extends Module{
 			this.mapBindings(mergedBindings);
 			this.bindEvents();
 		}
+
+		this.subscribe("table-destroy", this.clearBindings.bind(this));
 	}
 
 	mapBindings(bindings){

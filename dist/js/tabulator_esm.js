@@ -11936,6 +11936,8 @@ class Keybindings extends Module{
 			this.mapBindings(mergedBindings);
 			this.bindEvents();
 		}
+
+		this.subscribe("table-destroy", this.clearBindings.bind(this));
 	}
 
 	mapBindings(bindings){
@@ -14845,6 +14847,8 @@ class ReactiveData extends Module{
 			this.subscribe("row-data-save-after", this.unblock.bind(this));
 			this.subscribe("row-data-init-after", this.watchRow.bind(this));
 			this.subscribe("data-processing", this.watchData.bind(this));
+			this.subscribe("data-processing", this.watchData.bind(this));
+			this.subscribe("table-destroy", this.unwatchData.bind(this));
 		}
 	}
 
@@ -15574,6 +15578,8 @@ class ResizeTable extends Module{
 
 				window.addEventListener("resize", this.binding);
 			}
+
+			this.subscribe("table-destroy", this.clearBindings.bind(this));
 		}
 	}
 
@@ -22578,11 +22584,9 @@ class Tabulator$1 {
 	destroy(){
 		var element = this.element;
 
-		comms(this); //deregister table from inderdevice communication
+		TableRegistry.deregister(this); //deregister table from inderdevice communication
 
-		if(this.options.reactiveData && this.modExists("reactiveData", true)){
-			this.modules.reactiveData.unwatchData();
-		}
+		this.eventBus.dispatch("table-destroy");
 
 		//clear row data
 		this.rowManager.rows.forEach(function(row){
@@ -22592,15 +22596,6 @@ class Tabulator$1 {
 		this.rowManager.rows = [];
 		this.rowManager.activeRows = [];
 		this.rowManager.displayRows = [];
-
-		//clear event bindings
-		if(this.options.autoResize && this.modExists("resizeTable")){
-			this.modules.resizeTable.clearBindings();
-		}
-
-		if(this.modExists("keybindings")){
-			this.modules.keybindings.clearBindings();
-		}
 
 		//clear DOM
 		while(element.firstChild) element.removeChild(element.firstChild);

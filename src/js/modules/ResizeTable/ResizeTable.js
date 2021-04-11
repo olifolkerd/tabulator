@@ -106,6 +106,8 @@ class ResizeTable extends Module{
 
 				window.addEventListener("resize", this.binding);
 			}
+
+			this.subscribe("table-destroy", this.clearBindings.bind(this));
 		}
 	}
 
