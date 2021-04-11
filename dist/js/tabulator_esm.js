@@ -486,6 +486,10 @@ class Ajax extends Module{
 				this.setParams(params, true);
 			}
 
+			if(config){
+				this.setConfig(config);
+			}
+
 			return this.sendRequest();
 		}else {
 			return previousData;
@@ -20935,7 +20939,7 @@ class DataLoader extends CoreFeature{
 
 			var result = this.chain("data-load", [data, params, config], Promise.resolve([]));
 
-			result.then((response) => {
+			return result.then((response) => {
 				if(!Array.isArray(response) && typeof response == "object"){
 					response = this.mapParams(response, this.objectInvert(this.table.options.dataReceiveParams));
 				}
@@ -20957,13 +20961,14 @@ class DataLoader extends CoreFeature{
 				setTimeout(() => {
 					this.hideLoader();
 				}, 3000);
-			});
+			})
 
 			//load data from module
 		}else {
 			console.log("local");
 			//load data into table
 			this.table.rowManager.setData(data, replace, !replace);
+			return Promise.resolve();
 		}
 	}
 
@@ -20993,14 +20998,12 @@ class DataLoader extends CoreFeature{
 
 	showLoader(){
 		var shouldLoad = typeof this.table.options.dataLoader === "function" ? this.table.options.dataLoader() : this.table.options.dataLoader;
-		console.log("show", this.table.options.dataLoader);
-		if(shouldLoad){
 
+		if(shouldLoad){
 			this.hideLoader();
 
-
-
 			while(this.msgElement.firstChild) this.msgElement.removeChild(this.msgElement.firstChild);
+
 			this.msgElement.classList.remove("tabulator-error");
 			this.msgElement.classList.add("tabulator-loading");
 
@@ -22883,56 +22886,58 @@ class Tabulator$1 {
 
 	//load data
 	setData(data, params, config){
-		return this._setData(data, params, config, false, true);
+		return this.dataLoader.load(data, params, config, false);
 	}
 
-	_setData(data, params, config, inPosition, columnsChanged){
-		if(typeof(data) === "string"){
-			if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
-				//data is a json encoded string
-				return this.rowManager.setData(JSON.parse(data), inPosition, columnsChanged);
-			}else {
+	// _setData(data, params, config, inPosition, columnsChanged){
 
-				if(this.modExists("ajax", true)){
-					if(params){
-						this.modules.ajax.setParams(params);
-					}
 
-					if(config){
-						this.modules.ajax.setConfig(config);
-					}
+		// if(typeof(data) === "string"){
+		// 	if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
+		// 		//data is a json encoded string
+		// 		return this.rowManager.setData(JSON.parse(data), inPosition, columnsChanged);
+		// 	}else{
 
-					this.modules.ajax.setUrl(data);
+		// 		if(this.modExists("ajax", true)){
+		// 			if(params){
+		// 				this.modules.ajax.setParams(params);
+		// 			}
 
-					if(this.options.pagination == "remote" && this.modExists("page", true)){
-						this.modules.page.reset(true, true);
-						return this.modules.page.setPage(1);
-					}else {
-						//assume data is url, make ajax call to url to get data
-						return this.modules.ajax.loadData(inPosition, columnsChanged);
-					}
-				}
-			}
-		}else {
-			if(data){
-				//asume data is already an object
-				return this.rowManager.setData(data, inPosition, columnsChanged);
-			}else {
-				//no data provided, check if ajaxURL is present;
-				if(this.modExists("ajax") && (this.modules.ajax.getUrl || this.options.ajaxURLGenerator)){
-					if(this.options.pagination == "remote" && this.modExists("page", true)){
-						this.modules.page.reset(true, true);
-						return this.modules.page.setPage(1);
-					}else {
-						return this.modules.ajax.loadData(inPosition, columnsChanged);
-					}
-				}else {
-					//empty data
-					return this.rowManager.setData([], inPosition, columnsChanged);
-				}
-			}
-		}
-	}
+		// 			if(config){
+		// 				this.modules.ajax.setConfig(config);
+		// 			}
+
+		// 			this.modules.ajax.setUrl(data);
+
+		// 			if(this.options.pagination == "remote" && this.modExists("page", true)){
+		// 				this.modules.page.reset(true, true);
+		// 				return this.modules.page.setPage(1);
+		// 			}else{
+		// 				//assume data is url, make ajax call to url to get data
+		// 				return this.modules.ajax.loadData(inPosition, columnsChanged);
+		// 			}
+		// 		}
+		// 	}
+		// }else{
+		// 	if(data){
+		// 		//asume data is already an object
+		// 		return this.rowManager.setData(data, inPosition, columnsChanged);
+		// 	}else{
+		// 		//no data provided, check if ajaxURL is present;
+		// 		if(this.modExists("ajax") && (this.modules.ajax.getUrl || this.options.ajaxURLGenerator)){
+		// 			if(this.options.pagination == "remote" && this.modExists("page", true)){
+		// 				this.modules.page.reset(true, true);
+		// 				return this.modules.page.setPage(1);
+		// 			}else{
+		// 				return this.modules.ajax.loadData(inPosition, columnsChanged);
+		// 			}
+		// 		}else{
+		// 			//empty data
+		// 			return this.rowManager.setData([], inPosition, columnsChanged);
+		// 		}
+		// 	}
+		// }
+	// }
 
 	//clear data
 	clearData(){
@@ -22952,7 +22957,7 @@ class Tabulator$1 {
 
 	//replace data, keeping table in position with same sort
 	replaceData(data, params, config){
-		return this._setData(data, params, config, true);
+		return this.dataLoader.load(data, params, config, true);
 	}
 
 	//update table data

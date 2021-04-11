@@ -72,7 +72,7 @@ export default class DataLoader extends CoreFeature{
 
 			var result = this.chain("data-load", [data, params, config], Promise.resolve([]));
 
-			result.then((response) => {
+			return result.then((response) => {
 				if(!Array.isArray(response) && typeof response == "object"){
 					response = this.mapParams(response, this.objectInvert(this.table.options.dataReceiveParams));
 				}
@@ -101,6 +101,7 @@ export default class DataLoader extends CoreFeature{
 			console.log("local");
 			//load data into table
 			this.table.rowManager.setData(data, replace, !replace);
+			return Promise.resolve();
 		}
 	}
 
@@ -130,14 +131,12 @@ export default class DataLoader extends CoreFeature{
 
 	showLoader(){
 		var shouldLoad = typeof this.table.options.dataLoader === "function" ? this.table.options.dataLoader() : this.table.options.dataLoader;
-		console.log("show", this.table.options.dataLoader);
-		if(shouldLoad){
 
+		if(shouldLoad){
 			this.hideLoader();
 
-
-
 			while(this.msgElement.firstChild) this.msgElement.removeChild(this.msgElement.firstChild);
+
 			this.msgElement.classList.remove("tabulator-error");
 			this.msgElement.classList.add("tabulator-loading");
 

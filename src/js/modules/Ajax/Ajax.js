@@ -91,6 +91,10 @@ class Ajax extends Module{
 				this.setParams(params, true);
 			}
 
+			if(config){
+				this.setConfig(config);
+			}
+
 			return this.sendRequest();
 		}else{
 			return previousData;
