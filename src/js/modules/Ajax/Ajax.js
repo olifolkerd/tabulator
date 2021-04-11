@@ -32,6 +32,7 @@ class Ajax extends Module{
 		this.registerTableOption("ajaxRequesting", function(){});
 		this.registerTableOption("ajaxResponse", false);
 
+		this.contentTypeFormatters = Ajax.contentTypeFormatters;
 	}
 
 	//initialize setup options
@@ -249,10 +250,12 @@ class Ajax extends Module{
 
 				this.loading = true;
 
-				this.loaderPromise(url, this.config, this.params).then((data)=>{
+				this.loaderPromise(url, this.config, this.params)
+				.then((data)=>{
 					if(this.table.options.ajaxResponse){
 						data = this.table.options.ajaxResponse.call(this.table, this.url, this.params, data);
 					}
+
 					resolve(data);
 
 					this.loading = false;
