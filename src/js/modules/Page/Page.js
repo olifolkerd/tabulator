@@ -80,7 +80,7 @@ class Page extends Module{
 			this.initializeProgressive(this.table.options.progressiveLoad)
 
 			if(this.table.options.progressiveLoad === "scroll"){
-				this.subscribe("scroll-vertical", this.cellValueChanged.bind(this));
+				this.subscribe("scroll-vertical", this.scrollVertical.bind(this));
 			}
 		}
 	}
@@ -128,6 +128,20 @@ class Page extends Module{
 	///////////////////////////////////
 	///////// Internal Logic //////////
 	///////////////////////////////////
+
+	scrollVertical(top, dir){
+		var element, diff, margin;
+		if(!dir && !this.table.dataLoader.loading){
+			element = this.table.rowManager.getElement();
+			diff = element.scrollHeight - element.clientHeight - top;
+			margin = this.table.options.progressiveLoadScrollMargin || (element.clientHeight * 2);
+
+			if(diff < margin){
+				console.log("scroll next", this.page);
+				this.nextPage();
+			}
+		}
+	}
 
 	restOnRenderBefore(rows, renderInPosition){
 		if(!renderInPosition){
@@ -567,7 +581,7 @@ class Page extends Module{
 				this.table.modules.persistence.save("page");
 			}
 
-			return this.trigger();;
+			return this.trigger();
 
 		}else{
 			if(!this.progressiveLoad){
@@ -737,12 +751,14 @@ class Page extends Module{
 					case "progressive_scroll":
 					data = this.table.rowManager.getData().concat(data.data);
 
-					this.table.rowManager.setData(data, true, this.initialLoad && this.page == 1);
+					this.table.rowManager.setData(data, this.page !== 1, this.initialLoad && this.page == 1);
 
 					margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 
 					if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
-						this.nextPage();
+						setTimeout(() => {
+							this.nextPage();
+						});
 					}
 					break;
 				}

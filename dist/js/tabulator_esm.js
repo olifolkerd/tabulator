@@ -189,7 +189,7 @@ class Accessor extends Module{
 
 	initialize(){
 		this.subscribe("column-layout", this.initializeColumn.bind(this));
-		this.subscribe("row-data-retrieve", this.initializeColumn.bind(this));
+		this.subscribe("row-data-retrieve", this.transformRow.bind(this));
 	}
 
 	//initialize column accessor
@@ -461,11 +461,11 @@ class Ajax extends Module{
 	}
 
 
-	requestDataCheck(data, params, config){
+	requestDataCheck(data, params, config, silent){
 		return !!((!data && this.url) || typeof data === "string");
 	}
 
-	requestData(data, params, config, previousData){
+	requestData(data, params, config, silent, previousData){
 		if(this.requestDataCheck(data)){
 			if(data){
 				this.setUrl(data);
@@ -8081,7 +8081,7 @@ class Filter extends Module{
 		this.registerDataHandler(this.filter.bind(this), 10);
 	}
 
-	remoteFilterParams(data, config, params){
+	remoteFilterParams(data, config, silent, params){
 		params.filter = this.getFilters(true, true);
 		return params;
 	}
@@ -13522,12 +13522,16 @@ class Page extends Module{
 			this.initializeProgressive(this.table.options.progressiveLoad);
 
 			if(this.table.options.progressiveLoad === "scroll"){
-				this.subscribe("scroll-vertical", this.cellValueChanged.bind(this));
+				this.subscribe("scroll-vertical", this.scrollVertical.bind(this));
 			}
 		}
 	}
 
-	remotePageParams(data, config, params){
+	remotePageParams(data, config, silent, params){
+		if(this.progressiveLoad && !silent){
+			this.reset(true);
+		}
+
 		//configure request params
 		params.page = this.page;
 
@@ -13566,6 +13570,20 @@ class Page extends Module{
 	///////////////////////////////////
 	///////// Internal Logic //////////
 	///////////////////////////////////
+
+	scrollVertical(top, dir){
+		var element, diff, margin;
+		if(!dir && !this.table.dataLoader.loading){
+			element = this.table.rowManager.getElement();
+			diff = element.scrollHeight - element.clientHeight - top;
+			margin = this.table.options.progressiveLoadScrollMargin || (element.clientHeight * 2);
+
+			if(diff < margin){
+				console.log("scroll next", this.page);
+				this.nextPage();
+			}
+		}
+	}
 
 	restOnRenderBefore(rows, renderInPosition){
 		if(!renderInPosition){
@@ -13791,8 +13809,6 @@ class Page extends Module{
 
 			this.table.rowManager.getTableElement().appendChild(testElRow);
 
-			console.log("size", this.table.rowManager.getElement().clientHeight , testElRow.offsetHeight, this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
-
 			this.size = Math.floor(this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
 
 			this.table.rowManager.getTableElement().removeChild(testElRow);
@@ -13868,52 +13884,34 @@ class Page extends Module{
 			return this.setPage(this.max);
 		}
 
-		return new Promise((resolve, reject) => {
+		page = parseInt(page);
 
-			page = parseInt(page);
+		if((page > 0 && page <= this.max) || this.mode !== "local"){
+			this.page = page;
 
-			if((page > 0 && page <= this.max) || this.mode !== "local"){
-				this.page = page;
-				this.trigger()
-				.then(()=>{
-					resolve();
-				})
-				.catch(()=>{
-					reject();
-				});
-
-				if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
-					this.table.modules.persistence.save("page");
-				}
-
-			}else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + this.max + ":", page);
-				reject();
+			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
+				this.table.modules.persistence.save("page");
 			}
-		});
+
+			return this.trigger()
+		}else {
+			console.warn("Pagination Error - Requested page is out of range of 1 - " + this.max + ":", page);
+			return Promise.reject();
+		}
 	}
 
 	setPageToRow(row){
-		return new Promise((resolve, reject)=>{
+		var rows = this.table.rowManager.getDisplayRows(this.displayIndex - 1);
+		var index = rows.indexOf(row);
 
-			var rows = this.table.rowManager.getDisplayRows(this.displayIndex - 1);
-			var index = rows.indexOf(row);
+		if(index > -1){
+			var page = this.size === true ? 1 : Math.ceil((index + 1) / this.size);
 
-			if(index > -1){
-				var page = this.size === true ? 1 : Math.ceil((index + 1) / this.size);
-
-				this.setPage(page)
-				.then(()=>{
-					resolve();
-				})
-				.catch(()=>{
-					reject();
-				});
-			}else {
-				console.warn("Pagination Error - Requested row is not visible");
-				reject();
-			}
-		});
+			return this.setPage(page)
+		}else {
+			console.warn("Pagination Error - Requested row is not visible");
+			return Promise.reject();
+		}
 	}
 
 	setPageSize(size){
@@ -14008,7 +14006,7 @@ class Page extends Module{
 
 		}else {
 			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
-			return Promise.reject()
+			return Promise.reject();
 		}
 	}
 
@@ -14022,6 +14020,7 @@ class Page extends Module{
 			}
 
 			return this.trigger();
+
 		}else {
 			if(!this.progressiveLoad){
 				console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
@@ -14087,23 +14086,23 @@ class Page extends Module{
 
 		switch(this.mode){
 			case "local":
-				left = this.table.rowManager.scrollLeft;
+			left = this.table.rowManager.scrollLeft;
 
-				this.refreshData();
-				this.table.rowManager.scrollHorizontal(left);
+			this.refreshData();
+			this.table.rowManager.scrollHorizontal(left);
 
-				this.dispatchExternal("pageLoaded", this.getPage());
+			this.dispatchExternal("pageLoaded", this.getPage());
 
-				return Promise.resolve();
+			return Promise.resolve();
 
 			case "remote":
 			case "progressive_load":
 			case "progressive_scroll":
-				return this.reloadData(null, true);
+			return this.reloadData(null, true);
 
 			default:
-				console.warn("Pagination Error - no such pagination mode:", this.mode);
-				return Promise.reject();
+			console.warn("Pagination Error - no such pagination mode:", this.mode);
+			return Promise.reject();
 		}
 	}
 
@@ -14188,12 +14187,14 @@ class Page extends Module{
 					case "progressive_scroll":
 					data = this.table.rowManager.getData().concat(data.data);
 
-					this.table.rowManager.setData(data, true, this.initialLoad && this.page == 1);
+					this.table.rowManager.setData(data, this.page !== 1, this.initialLoad && this.page == 1);
 
 					margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 
 					if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
-						this.nextPage();
+						setTimeout(() => {
+							this.nextPage();
+						});
 					}
 					break;
 				}
@@ -16631,7 +16632,7 @@ class Sort extends Module{
 	 	}
 	 }
 
-	 remoteSortParams(data, config, params){
+	 remoteSortParams(data, config, silent, params){
 	 	var sorters = this.getSort();
 
 	 	sorters.forEach((item) => {
@@ -20174,8 +20175,7 @@ class RowManager extends CoreFeature{
 
 				case "displayPipeline":
 				for(let i = index; i < this.displayPipeline.length; i++){
-					console.log("display", this.displayPipeline[i]);
-					var result = this.displayPipeline[i].handler(i ? this.getDisplayRows(i - 1) : this.activeRows, renderInPosition);
+					let result = this.displayPipeline[i].handler(i ? this.getDisplayRows(i - 1) : this.activeRows, renderInPosition);
 
 					this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
 				}
@@ -20282,6 +20282,7 @@ class RowManager extends CoreFeature{
 
 	//repeat action accross display rows
 	displayRowIterator(callback){
+		this.activeRowsPipeline.forEach(callback);
 		this.displayRows.forEach(callback);
 
 		this.displayRowsCount = this.displayRows[this.displayRows.length -1].length;
@@ -20881,6 +20882,7 @@ class DataLoader extends CoreFeature{
 		this.errorElement = null;
 
 		this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
+		this.loading = false;
 	}
 
 	initialize(){
@@ -20932,18 +20934,20 @@ class DataLoader extends CoreFeature{
 			data = JSON.parse(data);
 		}
 
-		if(this.confirm("data-loading", data, params, config)){
+		if(this.confirm("data-loading", data, params, config, silent)){
+
+			this.loading = true;
 
 			if(!silent){
 				this.showLoader();
 			}
 
 			//get params for request
-			var params = this.chain("data-params", [data, config], params || {}, {});
+			var params = this.chain("data-params", [data, config, silent], params || {}, {});
 
 			params = this.mapParams(params, this.table.options.dataSendParams);
 
-			var result = this.chain("data-load", [data, params, config], Promise.resolve([]));
+			var result = this.chain("data-load", [data, params, config, silent], Promise.resolve([]));
 
 			return result.then((response) => {
 				if(!Array.isArray(response) && typeof response == "object"){
@@ -20952,7 +20956,7 @@ class DataLoader extends CoreFeature{
 
 				var rowData = this.chain("data-loaded", response, null, response);
 
-				if(requestNo === this.requestOrder){
+				if(requestNo == this.requestOrder){
 					this.hideLoader();
 
 					if(rowData !== false){
@@ -20972,6 +20976,9 @@ class DataLoader extends CoreFeature{
 				setTimeout(() => {
 					this.hideLoader();
 				}, 3000);
+			})
+			.finally(() => {
+				this.loading = false;
 			})
 
 			//load data from module
