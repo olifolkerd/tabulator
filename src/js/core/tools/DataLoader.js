@@ -63,7 +63,6 @@ export default class DataLoader extends CoreFeature{
 		}
 
 		if(this.confirm("data-loading", data, params, config, silent)){
-
 			this.loading = true;
 
 			if(!silent){
@@ -108,11 +107,7 @@ export default class DataLoader extends CoreFeature{
 			.finally(() => {
 				this.loading = false;
 			})
-
-			//load data from module
 		}else{
-			console.log("local");
-			//load data into table
 			this.table.rowManager.setData(data, replace, !replace);
 			return Promise.resolve();
 		}
