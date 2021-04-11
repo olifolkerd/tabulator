@@ -307,47 +307,6 @@ class Tabulator {
 
 	_loadInitialData(){
 		this.dataLoader.load(this.options.data);
-		// if(this.options.pagination && this.modExists("page")){
-			// this.modules.page.reset(true, true);
-
-		// 	if(this.options.pagination == "local"){
-		// 		if(this.options.data.length){
-		// 			this.rowManager.setData(this.options.data, false, true);
-		// 		}else{
-		// 			if((this.options.ajaxURL || this.options.ajaxURLGenerator) && this.modExists("ajax")){
-		// 				this.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{
-		// 					if(this.options.paginationInitialPage){
-		// 						this.modules.page.setPage(this.options.paginationInitialPage);
-		// 					}
-		// 				});
-
-		// 				return;
-		// 			}else{
-		// 				this.rowManager.setData(this.options.data, false, true);
-		// 			}
-		// 		}
-
-		// 		if(this.options.paginationInitialPage){
-		// 			this.modules.page.setPage(this.options.paginationInitialPage);
-		// 		}
-		// 	}else{
-		// 		if(this.options.ajaxURL){
-		// 			this.modules.page.setPage(this.options.paginationInitialPage).then(()=>{}).catch(()=>{});
-		// 		}else{
-		// 			this.rowManager.setData([], false, true);
-		// 		}
-		// 	}
-		// }else{
-		// 	if(this.options.data.length){
-		// 		this.rowManager.setData(this.options.data);
-		// 	}else{
-		// 		if((this.options.ajaxURL || this.options.ajaxURLGenerator) && this.modExists("ajax")){
-		// 			this.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{});
-		// 		}else{
-		// 			this.rowManager.setData(this.options.data, false, true);
-		// 		}
-		// 	}
-		// }
 	}
 
 	//deconstructor
@@ -461,56 +420,6 @@ class Tabulator {
 	setData(data, params, config){
 		return this.dataLoader.load(data, params, config, false);
 	}
-
-	// _setData(data, params, config, inPosition, columnsChanged){
-
-
-		// if(typeof(data) === "string"){
-		// 	if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
-		// 		//data is a json encoded string
-		// 		return this.rowManager.setData(JSON.parse(data), inPosition, columnsChanged);
-		// 	}else{
-
-		// 		if(this.modExists("ajax", true)){
-		// 			if(params){
-		// 				this.modules.ajax.setParams(params);
-		// 			}
-
-		// 			if(config){
-		// 				this.modules.ajax.setConfig(config);
-		// 			}
-
-		// 			this.modules.ajax.setUrl(data);
-
-		// 			if(this.options.pagination == "remote" && this.modExists("page", true)){
-		// 				this.modules.page.reset(true, true);
-		// 				return this.modules.page.setPage(1);
-		// 			}else{
-		// 				//assume data is url, make ajax call to url to get data
-		// 				return this.modules.ajax.loadData(inPosition, columnsChanged);
-		// 			}
-		// 		}
-		// 	}
-		// }else{
-		// 	if(data){
-		// 		//asume data is already an object
-		// 		return this.rowManager.setData(data, inPosition, columnsChanged);
-		// 	}else{
-		// 		//no data provided, check if ajaxURL is present;
-		// 		if(this.modExists("ajax") && (this.modules.ajax.getUrl || this.options.ajaxURLGenerator)){
-		// 			if(this.options.pagination == "remote" && this.modExists("page", true)){
-		// 				this.modules.page.reset(true, true);
-		// 				return this.modules.page.setPage(1);
-		// 			}else{
-		// 				return this.modules.ajax.loadData(inPosition, columnsChanged);
-		// 			}
-		// 		}else{
-		// 			//empty data
-		// 			return this.rowManager.setData([], inPosition, columnsChanged);
-		// 		}
-		// 	}
-		// }
-	// }
 
 	//clear data
 	clearData(){
