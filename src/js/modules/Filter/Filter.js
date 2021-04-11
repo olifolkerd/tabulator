@@ -63,7 +63,7 @@ class Filter extends Module{
 		this.registerDataHandler(this.filter.bind(this), 10);
 	}
 
-	remoteFilterParams(data, params){
+	remoteFilterParams(data, config, params){
 		params.filter = this.getFilters(true, true);
 		return params;
 	}

@@ -472,11 +472,11 @@ class Ajax extends Module{
 	}
 
 
-	requestDataCheck(data){
+	requestDataCheck(data, params, config){
 		return !!((!data && this.url) || typeof data === "string");
 	}
 
-	requestData(data, params, previousData){
+	requestData(data, params, config, previousData){
 		if(this.requestDataCheck(data)){
 			if(data){
 				this.setUrl(data);
@@ -8097,7 +8097,7 @@ class Filter extends Module{
 		this.registerDataHandler(this.filter.bind(this), 10);
 	}
 
-	remoteFilterParams(data, params){
+	remoteFilterParams(data, config, params){
 		params.filter = this.getFilters(true, true);
 		return params;
 	}
@@ -13513,7 +13513,7 @@ class Page extends Module{
 		}
 	}
 
-	remotePageParams(data, params){
+	remotePageParams(data, config, params){
 		//configure request params
 		params.page = this.page;
 
@@ -16637,7 +16637,7 @@ class Sort extends Module{
 	 	}
 	 }
 
-	 remoteSortParams(data, params){
+	 remoteSortParams(data, config, params){
 	 	var sorters = this.getSort();
 
 	 	sorters.forEach((item) => {
@@ -20916,7 +20916,7 @@ class DataLoader extends CoreFeature{
 		return el;
 	}
 
-	load(data, params, replace){
+	load(data, params, config, replace){
 		var requestNo = ++this.requestOrder;
 
 		//parse json data to array
@@ -20924,16 +20924,16 @@ class DataLoader extends CoreFeature{
 			data = JSON.parse(data);
 		}
 
-		if(this.confirm("data-loading", data)){
+		if(this.confirm("data-loading", data, params, config)){
 
 			this.showLoader();
 
 			//get params for request
-			var params = this.chain("data-params", data, params || {}, {});
+			var params = this.chain("data-params", [data, config], params || {}, {});
 
 			params = this.mapParams(params, this.table.options.dataSendParams);
 
-			var result = this.chain("data-load", [data, params], Promise.resolve([]));
+			var result = this.chain("data-load", [data, params, config], Promise.resolve([]));
 
 			result.then((response) => {
 				if(!Array.isArray(response) && typeof response == "object"){
