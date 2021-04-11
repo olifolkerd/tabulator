@@ -287,7 +287,6 @@ class GroupRows extends Module{
 
 	//return appropriate rows with group headers
 	getRows(rows){
-		console.log("rows", rows)
 		if(this.groupIDLookups.length){
 
 			this.dispatchExternal("dataGrouping");

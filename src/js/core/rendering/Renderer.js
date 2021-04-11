@@ -130,8 +130,6 @@ export default class Renderer extends CoreFeature{
 					ifVisible = this.table.options.scrollToRowIfVisible;
 				}
 
-				console.log("if vis", ifVisible)
-
 				//check row visibility
 				if(!ifVisible){
 					if(Helpers.elVisible(rowEl)){

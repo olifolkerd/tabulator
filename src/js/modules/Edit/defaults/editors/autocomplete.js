@@ -283,8 +283,6 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 	function showList(){
 		if(!listEl.parentNode){
-
-			console.log("show", initialDisplayValue)
 			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
 
 			var offset = Helpers.elOffset(cellEl);

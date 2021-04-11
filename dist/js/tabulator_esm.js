@@ -6163,8 +6163,6 @@ function autocomplete(cell, onRendered, success, cancel, editorParams){
 
 	function showList(){
 		if(!listEl.parentNode){
-
-			console.log("show", initialDisplayValue);
 			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
 
 			var offset = Helpers.elOffset(cellEl);
@@ -11006,7 +11004,6 @@ class GroupRows extends Module{
 
 	//return appropriate rows with group headers
 	getRows(rows){
-		console.log("rows", rows);
 		if(this.groupIDLookups.length){
 
 			this.dispatchExternal("dataGrouping");
@@ -17559,8 +17556,6 @@ class Interaction extends Module{
 				}
 
 				this.columnSubscribers[key].push(column);
-
-				console.log("col sub", this.columnSubscribers);
 			}
 		}
 	}
@@ -18714,8 +18709,6 @@ class Renderer extends CoreFeature{
 				if(typeof ifVisible === "undefined"){
 					ifVisible = this.table.options.scrollToRowIfVisible;
 				}
-
-				console.log("if vis", ifVisible);
 
 				//check row visibility
 				if(!ifVisible){
@@ -20674,7 +20667,7 @@ class ComponentFuctionBinder{
 		}
 
 		if(this.bindings[type][funcName]){
-			console.log("Unable to bind component handler, a matching function name is already bound", type, funcName, hanlder);
+			console.warn("Unable to bind component handler, a matching function name is already bound", type, funcName, hanlder);
 		}else {
 			this.bindings[type][funcName] = handler;
 		}

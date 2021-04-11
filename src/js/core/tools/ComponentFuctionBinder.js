@@ -12,7 +12,7 @@ export default class ComponentFuctionBinder{
 		}
 
 		if(this.bindings[type][funcName]){
-			console.log("Unable to bind component handler, a matching function name is already bound", type, funcName, hanlder)
+			console.warn("Unable to bind component handler, a matching function name is already bound", type, funcName, hanlder)
 		}else{
 			this.bindings[type][funcName] = handler;
 		}

@@ -230,8 +230,6 @@ class Interaction extends Module{
 				}
 
 				this.columnSubscribers[key].push(column);
-
-				console.log("col sub", this.columnSubscribers)
 			}
 		}
 	}
