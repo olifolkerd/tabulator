@@ -795,8 +795,7 @@ export default class RowManager extends CoreFeature{
 
 				case "displayPipeline":
 				for(let i = index; i < this.displayPipeline.length; i++){
-					console.log("display", this.displayPipeline[i])
-					var result = this.displayPipeline[i].handler(i ? this.getDisplayRows(i - 1) : this.activeRows, renderInPosition);
+					let result = this.displayPipeline[i].handler(i ? this.getDisplayRows(i - 1) : this.activeRows, renderInPosition);
 
 					this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
 				}
@@ -905,6 +904,7 @@ export default class RowManager extends CoreFeature{
 
 	//repeat action accross display rows
 	displayRowIterator(callback){
+		this.activeRowsPipeline.forEach(callback);
 		this.displayRows.forEach(callback);
 
 		this.displayRowsCount = this.displayRows[this.displayRows.length -1].length;
