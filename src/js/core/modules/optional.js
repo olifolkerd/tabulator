@@ -13,6 +13,7 @@ export {default as FrozenRowsModule} from '../../modules/FrozenRows/FrozenRows.j
 export {default as GroupRowsModule} from '../../modules/GroupRows/GroupRows.js';
 export {default as HistoryModule} from '../../modules/History/History.js';
 export {default as HtmlTableImportModule} from '../../modules/HtmlTableImport/HtmlTableImport.js';
+export {default as InteractionModule} from '../../modules/Interaction/Interaction.js';
 export {default as KeybindingsModule} from '../../modules/Keybindings/Keybindings.js';
 export {default as MenuModule} from '../../modules/Menu/Menu.js';
 export {default as MoveColumnsModule} from '../../modules/MoveColumns/MoveColumns.js';
@@ -29,4 +30,3 @@ export {default as ResponsiveLayoutModule} from '../../modules/ResponsiveLayout/
 export {default as SelectRowModule} from '../../modules/SelectRow/SelectRow.js';
 export {default as SortModule} from '../../modules/Sort/Sort.js';
 export {default as ValidateModule} from '../../modules/Validate/Validate.js';
-export {default as InteractionModule} from '../../modules/Interaction/Interaction.js';
