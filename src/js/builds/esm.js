@@ -1,6 +1,6 @@
 export * as modules from '../core/modules/optional.js';
-export {default as TabulatorCore} from '../core/Tabulator.js';
-export {default as Tabulator} from '../core/TabulatorFull.js';
+export {default as Tabulator} from '../core/Tabulator.js';
+export {default as TabulatorFull} from '../core/TabulatorFull.js';
 
 export {default as CellComponent} from '../core/cell/CellComponent.js';
 export {default as ColumnComponent} from '../core/column/ColumnComponent.js';
