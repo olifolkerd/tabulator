@@ -13,6 +13,23 @@ export default class CoreFeature{
 	}
 
 	//////////////////////////////////////////
+	///////////// Localization ///////////////
+	//////////////////////////////////////////
+
+	langText(){
+		return this.table.modules.localize.getText(...arguments);
+	}
+
+	langBind(){
+		return this.table.modules.localize.bind(...arguments);
+	}
+
+	langLocale(){
+		return this.table.modules.localize.getLocale(...arguments);
+	}
+
+
+	//////////////////////////////////////////
 	/////////////// Event Bus ////////////////
 	//////////////////////////////////////////
 
@@ -55,7 +72,6 @@ export default class CoreFeature{
 	subscriptionChangeExternal(){
 		this.table.externalEvents.subscriptionChange(...arguments);
 	}
-
 
 	//////////////////////////////////////////
 	//////////////// Modules /////////////////

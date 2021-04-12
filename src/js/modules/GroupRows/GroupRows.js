@@ -45,7 +45,7 @@ class GroupRows extends Module{
 			this.headerGenerator = [function(){return "";}];
 			this.startOpen = [function(){return false;}]; //starting state of group
 
-			this.table.modules.localize.bind("groups|item", (langValue, lang) => {
+			this.langBind("groups|item", (langValue, lang) => {
 				this.headerGenerator[0] = (value, count, data) => { //header layout function
 					return (typeof value === "undefined" ? "" : value) + "<span>(" + count + " " + ((count === 1) ? langValue : lang.groups.items) + ")</span>";
 				};

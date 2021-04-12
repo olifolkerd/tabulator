@@ -282,7 +282,7 @@ class Page extends Module{
 				itemEl.value = item;
 
 				if(item === true){
-					this.table.modules.localize.bind("pagination|all", function(value){
+					this.langBind("pagination|all", function(value){
 						itemEl.innerHTML = value;
 					});
 				}else{
@@ -306,38 +306,38 @@ class Page extends Module{
 			//build pagination element
 
 			//bind localizations
-			this.table.modules.localize.bind("pagination|first", (value) => {
+			this.langBind("pagination|first", (value) => {
 				this.firstBut.innerHTML = value;
 			});
 
-			this.table.modules.localize.bind("pagination|first_title", (value) => {
+			this.langBind("pagination|first_title", (value) => {
 				this.firstBut.setAttribute("aria-label", value);
 				this.firstBut.setAttribute("title", value);
 			});
 
-			this.table.modules.localize.bind("pagination|prev", (value) => {
+			this.langBind("pagination|prev", (value) => {
 				this.prevBut.innerHTML = value;
 			});
 
-			this.table.modules.localize.bind("pagination|prev_title", (value) => {
+			this.langBind("pagination|prev_title", (value) => {
 				this.prevBut.setAttribute("aria-label", value);
 				this.prevBut.setAttribute("title", value);
 			});
 
-			this.table.modules.localize.bind("pagination|next", (value) => {
+			this.langBind("pagination|next", (value) => {
 				this.nextBut.innerHTML = value;
 			});
 
-			this.table.modules.localize.bind("pagination|next_title", (value) => {
+			this.langBind("pagination|next_title", (value) => {
 				this.nextBut.setAttribute("aria-label", value);
 				this.nextBut.setAttribute("title", value);
 			});
 
-			this.table.modules.localize.bind("pagination|last", (value) => {
+			this.langBind("pagination|last", (value) => {
 				this.lastBut.innerHTML = value;
 			});
 
-			this.table.modules.localize.bind("pagination|last_title", (value) => {
+			this.langBind("pagination|last_title", (value) => {
 				this.lastBut.setAttribute("aria-label", value);
 				this.lastBut.setAttribute("title", value);
 			});
@@ -366,7 +366,7 @@ class Page extends Module{
 			if(this.pageSizeSelect){
 				pageSelectLabel = document.createElement("label");
 
-				this.table.modules.localize.bind("pagination|page_size", (value) => {
+				this.langBind("pagination|page_size", (value) => {
 					this.pageSizeSelect.setAttribute("aria-label", value);
 					this.pageSizeSelect.setAttribute("title", value);
 					pageSelectLabel.innerHTML = value;
@@ -566,7 +566,7 @@ class Page extends Module{
 		button.setAttribute("type", "button");
 		button.setAttribute("role", "button");
 
-		this.table.modules.localize.bind("pagination|page_title", (value) => {
+		this.langBind("pagination|page_title", (value) => {
 			button.setAttribute("aria-label", value + " " + page);
 			button.setAttribute("title", value + " " + page);
 		});

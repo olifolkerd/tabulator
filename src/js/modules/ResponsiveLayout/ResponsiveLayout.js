@@ -307,7 +307,7 @@ class ResponsiveLayout extends Module{
 
 			var titleHighlight = document.createElement("strong");
 			titleData.appendChild(titleHighlight);
-			this.table.modules.localize.bind("columns|" + item.field, function(text){
+			this.langBind("columns|" + item.field, function(text){
 				titleHighlight.innerText = text || item.title;
 			});
 

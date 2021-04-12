@@ -151,7 +151,7 @@ export default class DataLoader extends CoreFeature{
 			if(this.loadingElement){
 				this.msgElement.appendChild(this.loadingElement);
 			}else{
-				this.msgElement.innerHTML = this.table.modules.localize.getText("data|loading");
+				this.msgElement.innerHTML = this.langText("data|loading");
 			}
 
 			this.table.element.appendChild(this.loaderElement);
@@ -168,7 +168,7 @@ export default class DataLoader extends CoreFeature{
 		if(this.errorElement){
 			this.msgElement.appendChild(this.errorElement);
 		}else{
-			this.msgElement.innerHTML = this.table.modules.localize.getText("data|error");
+			this.msgElement.innerHTML = this.langText("data|error");
 		}
 
 		this.table.element.appendChild(this.loaderElement);

@@ -14,7 +14,7 @@ export default function(a, b, aRow, bRow, column, dir, params){
 		switch(typeof params.locale){
 			case "boolean":
 			if(params.locale){
-				locale = this.table.modules.localize.getLocale();
+				locale = this.langLocale();
 			}
 			break;
 			case "string":

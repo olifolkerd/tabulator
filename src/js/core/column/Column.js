@@ -152,7 +152,7 @@ class Column extends CoreFeature{
 		if(tooltip){
 			if(tooltip === true){
 				if(def.field){
-					this.table.modules.localize.bind("columns|" + def.field, (value) => {
+					this.langBind("columns|" + def.field, (value) => {
 						this.element.setAttribute("title", value || def.title);
 					});
 				}else{
@@ -358,7 +358,6 @@ class Column extends CoreFeature{
 	//build title element of column
 	_buildColumnHeaderTitle(){
 		var def = this.definition,
-		table = this.table,
 		title;
 
 		var titleHolderElement = document.createElement("div");
@@ -381,7 +380,7 @@ class Column extends CoreFeature{
 			titleHolderElement.appendChild(titleElement);
 
 			if(def.field){
-				table.modules.localize.bind("columns|" + def.field, (text) => {
+				this.langBind("columns|" + def.field, (text) => {
 					titleElement.value = text || (def.title || "&nbsp;");
 				});
 			}else{
@@ -390,7 +389,7 @@ class Column extends CoreFeature{
 
 		}else{
 			if(def.field){
-				table.modules.localize.bind("columns|" + def.field, (text) => {
+				this.langBind("columns|" + def.field, (text) => {
 					this._formatColumnHeaderTitle(titleHolderElement, text || (def.title || "&nbsp;"));
 				});
 			}else{

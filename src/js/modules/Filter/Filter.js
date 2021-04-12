@@ -395,11 +395,11 @@ class Filter extends Module{
 
 				//set Placeholder Text
 				if(field){
-					self.table.modules.localize.bind("headerFilters|columns|" + column.definition.field, function(value){
-						editorElement.setAttribute("placeholder", typeof value !== "undefined" && value ? value : self.table.modules.localize.getText("headerFilters|default"));
+					self.langBind("headerFilters|columns|" + column.definition.field, function(value){
+						editorElement.setAttribute("placeholder", typeof value !== "undefined" && value ? value : self.langText("headerFilters|default"));
 					});
 				}else{
-					self.table.modules.localize.bind("headerFilters|default", function(value){
+					self.langBind("headerFilters|default", function(value){
 						editorElement.setAttribute("placeholder", value);
 					});
 				}
