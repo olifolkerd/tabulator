@@ -75,7 +75,7 @@ export default class Bundler{
 	}
 
 	copyStandaloneBuilds(){
-		var builds = ["polyfill.js", "jquery_wrapper.js"];
+		var builds = ["jquery_wrapper.js"];
 
 		builds.forEach((build) => {
 			fs.copySync("./src/js/builds/" + build, "./dist/js/" + build)
