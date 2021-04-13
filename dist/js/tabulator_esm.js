@@ -17813,7 +17813,7 @@ var defaultOptions$1 = {
 
 	debugEvents:false, //flag to console log events
 	debugEventsInternal:false, //flag to console log events
-	invalidOptionWarnings:true, //allow toggling of invalid option warnings
+	debugInvalidOptions:true, //allow toggling of invalid option warnings
 
 	height:false, //height of tabulator
 	minHeight:false, //minimum height of tabulator
@@ -18037,7 +18037,7 @@ class OptionsList {
 
 		Object.assign(output, defaultOptions);
 
-		if(userOptions.invalidOptionWarnings !== false || this.table.options.invalidOptionWarnings){
+		if(userOptions.debugInvalidOptions !== false || this.table.options.debugInvalidOptions){
 			for (var key in userOptions){
 				if(!output.hasOwnProperty(key)){
 					console.warn("Invalid " + this.msgType + " option:", key);

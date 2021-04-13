@@ -14,7 +14,7 @@ export default class OptionsList {
 
 		Object.assign(output, defaultOptions);
 
-		if(userOptions.invalidOptionWarnings !== false || this.table.options.invalidOptionWarnings){
+		if(userOptions.debugInvalidOptions !== false || this.table.options.debugInvalidOptions){
 			for (var key in userOptions){
 				if(!output.hasOwnProperty(key)){
 					console.warn("Invalid " + this.msgType + " option:", key)

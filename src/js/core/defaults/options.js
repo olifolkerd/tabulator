@@ -2,7 +2,7 @@ export default {
 
 	debugEvents:false, //flag to console log events
 	debugEventsInternal:false, //flag to console log events
-	invalidOptionWarnings:true, //allow toggling of invalid option warnings
+	debugInvalidOptions:true, //allow toggling of invalid option warnings
 
 	height:false, //height of tabulator
 	minHeight:false, //minimum height of tabulator
