@@ -145,9 +145,6 @@ class Interaction extends Module{
 
 	initializeExternalEvents(){
 		for(let key in this.eventMap){
-			if(this.table.options[key]){
-				this.subscriptionChanged(key, true);
-			}
 			this.subscriptionChangeExternal(key, this.subscriptionChanged.bind(this, key))
 		}
 	}
@@ -167,7 +164,7 @@ class Interaction extends Module{
 			}
 		}else{
 			if(this.eventMap[key].includes("-")){
-				if(this.subscribers[key] && !this.table.options[key] && !this.columnSubscribers[key]  && !this.subscribedExternal(key)){
+				if(this.subscribers[key] && !this.columnSubscribers[key]  && !this.subscribedExternal(key)){
 					this.unsubscribe(this.eventMap[key], this.subscribers[key]);
 					delete this.subscribers[key];
 				}
@@ -197,7 +194,7 @@ class Interaction extends Module{
 		var notouch = true,
 		type = this.eventMap[key];
 
-		if(this.subscribers[key] && !this.table.options[key]  && !this.subscribedExternal(key)){
+		if(this.subscribers[key] && !this.subscribedExternal(key)){
 			delete this.subscribers[key];
 
 			for(let i in this.eventMap){

@@ -57,7 +57,7 @@ export default class ExternalEventBus {
 	}
 
 	subscribed(key){
-		return this.optionsList[key] || (this.events[key] && this.events[key].length);
+		return this.events[key] && this.events[key].length;
 	}
 
 	_notifiySubscriptionChange(key, subscribed){
@@ -74,10 +74,6 @@ export default class ExternalEventBus {
 		var args = Array.from(arguments),
 		key = args.shift(),
 		result;
-
-		if(typeof this.optionsList[key] === "function"){
-			result = this.optionsList[key].apply(this, args);
-		}
 
 		if(this.events[key]){
 			this.events[key].forEach((callback, i) => {
