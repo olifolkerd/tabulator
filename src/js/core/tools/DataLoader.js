@@ -57,6 +57,8 @@ export default class DataLoader extends CoreFeature{
 	load(data, params, config, replace, silent){
 		var requestNo = ++this.requestOrder;
 
+		this.dispatchExternal("dataLoading", data);
+
 		//parse json data to array
 		if (data && (data.indexOf("{") == 0 || data.indexOf("[") == 0)){
 			data = JSON.parse(data);
@@ -87,6 +89,7 @@ export default class DataLoader extends CoreFeature{
 					this.hideLoader();
 
 					if(rowData !== false){
+						this.dispatchExternal("dataLoaded", data);
 						this.table.rowManager.setData(rowData,  replace, !replace);
 					}
 				}else{
@@ -94,7 +97,7 @@ export default class DataLoader extends CoreFeature{
 				}
 			}).catch((error) => {
 				console.error("Data Load Error: ", error);
-				this.dispatchExternal("dataError", error);
+				this.dispatchExternal("dataLoadError", error);
 
 				if(!silent){
 					this.showError();
@@ -108,6 +111,7 @@ export default class DataLoader extends CoreFeature{
 				this.loading = false;
 			})
 		}else{
+			this.dispatchExternal("dataLoaded", data);
 			this.table.rowManager.setData(data, replace, !replace);
 			return Promise.resolve();
 		}

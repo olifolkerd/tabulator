@@ -195,7 +195,7 @@ export default class RowManager extends CoreFeature{
 	}
 
 	_setDataActual(data, renderInPosition){
-		this.dispatchExternal("dataLoading", data);
+		this.dispatchExternal("dataProcessing", data);
 
 		this._wipeElements();
 
@@ -214,7 +214,7 @@ export default class RowManager extends CoreFeature{
 			this.refreshActiveData(false, false, renderInPosition);
 
 			this.dispatch("data-processed", data);
-			this.dispatchExternal("dataLoaded", data);
+			this.dispatchExternal("dataProcesed", data);
 		}else{
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}

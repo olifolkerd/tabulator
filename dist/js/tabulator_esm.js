@@ -19654,7 +19654,7 @@ class RowManager extends CoreFeature{
 	}
 
 	_setDataActual(data, renderInPosition){
-		this.dispatchExternal("dataLoading", data);
+		this.dispatchExternal("dataProcessing", data);
 
 		this._wipeElements();
 
@@ -19673,7 +19673,7 @@ class RowManager extends CoreFeature{
 			this.refreshActiveData(false, false, renderInPosition);
 
 			this.dispatch("data-processed", data);
-			this.dispatchExternal("dataLoaded", data);
+			this.dispatchExternal("dataProcesed", data);
 		}else {
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
@@ -20876,6 +20876,8 @@ class DataLoader extends CoreFeature{
 	load(data, params, config, replace, silent){
 		var requestNo = ++this.requestOrder;
 
+		this.dispatchExternal("dataLoading", data);
+
 		//parse json data to array
 		if (data && (data.indexOf("{") == 0 || data.indexOf("[") == 0)){
 			data = JSON.parse(data);
@@ -20906,6 +20908,7 @@ class DataLoader extends CoreFeature{
 					this.hideLoader();
 
 					if(rowData !== false){
+						this.dispatchExternal("dataLoaded", data);
 						this.table.rowManager.setData(rowData,  replace, !replace);
 					}
 				}else {
@@ -20913,7 +20916,7 @@ class DataLoader extends CoreFeature{
 				}
 			}).catch((error) => {
 				console.error("Data Load Error: ", error);
-				this.dispatchExternal("dataError", error);
+				this.dispatchExternal("dataLoadError", error);
 
 				if(!silent){
 					this.showError();
@@ -20927,6 +20930,7 @@ class DataLoader extends CoreFeature{
 				this.loading = false;
 			})
 		}else {
+			this.dispatchExternal("dataLoaded", data);
 			this.table.rowManager.setData(data, replace, !replace);
 			return Promise.resolve();
 		}
