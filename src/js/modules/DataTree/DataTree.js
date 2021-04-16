@@ -146,7 +146,7 @@ class DataTree extends Module{
 
 			if(visible){
 				this.layoutRow(row);
-				this.refreshData(false, true);
+				this.refreshData(, true);
 			}
 		}
 	}
@@ -364,7 +364,7 @@ class DataTree extends Module{
 
 			row.reinitialize();
 
-			this.refreshData(false, true);
+			this.refreshData(, true);
 
 			this.dispatchExternal("dataTreeRowExpanded", row.getComponent(), row.modules.dataTree.index);
 		}
@@ -378,7 +378,7 @@ class DataTree extends Module{
 
 			row.reinitialize();
 
-			this.refreshData(false, true);
+			this.refreshData(, true);
 
 			this.dispatchExternal("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
 		}
@@ -445,7 +445,7 @@ class DataTree extends Module{
 			this.layoutRow(parent);
 		}
 
-		this.refreshData(false, true);
+		this.refreshData(, true);
 	}
 
 	addTreeChildRow(row, data, top, index){
@@ -480,7 +480,7 @@ class DataTree extends Module{
 		this.initializeRow(row);
 		this.layoutRow(row);
 
-		this.refreshData(false, true);
+		this.refreshData(, true);
 	}
 
 	findChildIndex(subject, parent){

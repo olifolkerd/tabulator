@@ -138,13 +138,13 @@ class Module extends CoreFeature{
 		this._handler = handler;
 	}
 
-	refreshData(skipStage, renderInPosition, handler){
+	refreshData(renderInPosition, handler){
 		if(!handler){
 			handler = this._handler;
 		}
 
 		if(handler){
-			this.table.rowManager.refreshActiveData(handler, skipStage, renderInPosition);
+			this.table.rowManager.refreshActiveData(handler, false, renderInPosition);
 		}
 	}
 }
@@ -11908,7 +11908,6 @@ class Interaction extends Module{
 				}else {
 					this.subscribeTouchEvents(key);
 				}
-
 			}
 		}else {
 			if(this.eventMap[key].includes("-")){
@@ -11927,7 +11926,6 @@ class Interaction extends Module{
 		var type = this.eventMap[key];
 
 		if(!this.touchSubscribers[type + "-touchstart"]){
-
 			this.touchSubscribers[type + "-touchstart"] = this.handleTouch.bind(this, type, "start");
 			this.touchSubscribers[type + "-touchend"] = this.handleTouch.bind(this, type, "end");
 

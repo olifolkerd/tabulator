@@ -160,7 +160,6 @@ class Interaction extends Module{
 				}else{
 					this.subscribeTouchEvents(key);
 				}
-
 			}
 		}else{
 			if(this.eventMap[key].includes("-")){
@@ -179,7 +178,6 @@ class Interaction extends Module{
 		var type = this.eventMap[key];
 
 		if(!this.touchSubscribers[type + "-touchstart"]){
-
 			this.touchSubscribers[type + "-touchstart"] = this.handleTouch.bind(this, type, "start");
 			this.touchSubscribers[type + "-touchend"] = this.handleTouch.bind(this, type, "end");
 

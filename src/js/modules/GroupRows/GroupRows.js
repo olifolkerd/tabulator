@@ -179,7 +179,7 @@ class GroupRows extends Module{
 	setGroupBy(groups){
 		this.table.options.groupBy = groups;
 		this.initialize();
-		this.refreshData(false, false, "display");
+		this.refreshData(, false, "display");
 
 		if(this.table.options.persistence && this.table.modules.persistence.config.group){
 			this.table.modules.persistence.save("group");
@@ -189,7 +189,7 @@ class GroupRows extends Module{
 	setGroupValues(groupValues){
 		this.table.options.groupValues = groupValues;
 		this.initialize();
-		this.refreshData(false, false, "display");
+		this.refreshData(, false, "display");
 
 		if(this.table.options.persistence && this.table.modules.persistence.config.group){
 			this.table.modules.persistence.save("group");
@@ -469,7 +469,7 @@ class GroupRows extends Module{
 			if(!samePath) {
 				oldRowGroup.removeRow(row);
 				this.assignRowToGroup(row, this.groups);
-				this.refreshData(false, true);
+				this.refreshData(, true);
 			}
 		}
 	}
@@ -500,7 +500,7 @@ class GroupRows extends Module{
 				this.setDisplayIndex(displayIndex);
 			}
 
-			this.refreshData(false, true);
+			this.refreshData(, true);
 		}
 
 		return output;
