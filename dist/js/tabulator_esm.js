@@ -75,6 +75,14 @@ class CoreFeature{
 	}
 
 	//////////////////////////////////////////
+	//////////////// Options /////////////////
+	//////////////////////////////////////////
+
+	options(key){
+		return this.table.options[key];
+	}
+
+	//////////////////////////////////////////
 	//////////////// Modules /////////////////
 	//////////////////////////////////////////
 
@@ -4059,7 +4067,7 @@ class DataTree extends Module{
 
 			if(visible){
 				this.layoutRow(row);
-				this.refreshData(false, true);
+				this.refreshData(true);
 			}
 		}
 	}
@@ -4277,7 +4285,7 @@ class DataTree extends Module{
 
 			row.reinitialize();
 
-			this.refreshData(false, true);
+			this.refreshData(true);
 
 			this.dispatchExternal("dataTreeRowExpanded", row.getComponent(), row.modules.dataTree.index);
 		}
@@ -4291,7 +4299,7 @@ class DataTree extends Module{
 
 			row.reinitialize();
 
-			this.refreshData(false, true);
+			this.refreshData(true);
 
 			this.dispatchExternal("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
 		}
@@ -4358,7 +4366,7 @@ class DataTree extends Module{
 			this.layoutRow(parent);
 		}
 
-		this.refreshData(false, true);
+		this.refreshData(true);
 	}
 
 	addTreeChildRow(row, data, top, index){
@@ -4393,7 +4401,7 @@ class DataTree extends Module{
 		this.initializeRow(row);
 		this.layoutRow(row);
 
-		this.refreshData(false, true);
+		this.refreshData(true);
 	}
 
 	findChildIndex(subject, parent){
@@ -10986,7 +10994,7 @@ class GroupRows extends Module{
 	setGroupBy(groups){
 		this.table.options.groupBy = groups;
 		this.initialize();
-		this.refreshData(false, false, "display");
+		this.refreshData(false, "display");
 
 		if(this.table.options.persistence && this.table.modules.persistence.config.group){
 			this.table.modules.persistence.save("group");
@@ -10996,7 +11004,7 @@ class GroupRows extends Module{
 	setGroupValues(groupValues){
 		this.table.options.groupValues = groupValues;
 		this.initialize();
-		this.refreshData(false, false, "display");
+		this.refreshData(false, "display");
 
 		if(this.table.options.persistence && this.table.modules.persistence.config.group){
 			this.table.modules.persistence.save("group");
@@ -11276,7 +11284,7 @@ class GroupRows extends Module{
 			if(!samePath) {
 				oldRowGroup.removeRow(row);
 				this.assignRowToGroup(row, this.groups);
-				this.refreshData(false, true);
+				this.refreshData(true);
 			}
 		}
 	}
@@ -11306,7 +11314,7 @@ class GroupRows extends Module{
 				this.setDisplayIndex(displayIndex);
 			}
 
-			this.refreshData(false, true);
+			this.refreshData(true);
 		}
 
 		return output;
@@ -14035,7 +14043,7 @@ class Page extends Module{
 	}
 
 	rowsUpdated(){
-		this.refreshData(false, true, "all");
+		this.refreshData(true, "all");
 	}
 
 	createElements(){
@@ -19965,7 +19973,7 @@ class RowManager extends CoreFeature{
 				case "dataPipeline":
 
 				for(let i = index; i < this.dataPipeline.length; i++){
-					let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i]);
+					let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
 
 					this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
 				}
@@ -19980,7 +19988,7 @@ class RowManager extends CoreFeature{
 
 				case "displayPipeline":
 				for(let i = index; i < this.displayPipeline.length; i++){
-					let result = this.displayPipeline[i].handler(i ? this.getDisplayRows(i - 1) : this.activeRows, renderInPosition);
+					let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
 
 					this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
 				}
@@ -20999,8 +21007,6 @@ class InternalEventBus {
 					console.warn("Cannot remove event, no matching event found:", key, callback);
 					return;
 				}
-			}else {
-				delete this.events[key];
 			}
 		}else {
 			console.warn("Cannot remove event, no events set on:", key);
@@ -23078,5 +23084,51 @@ class TabulatorFull extends Tabulator$1 {}
 //bind modules and static functionality
 new ModuleBinder(TabulatorFull, modules);
 
-export { CalcComponent, CellComponent, ColumnComponent, GroupComponent, Module, RowComponent$1 as RowComponent, Tabulator$1 as Tabulator, TabulatorFull, modules };
+class PseudoRow {
+
+	constructor (type){
+		this.type = type;
+		this.element = this._createElement();
+	}
+
+	_createElement(){
+		var el = document.createElement("div");
+		el.classList.add("tabulator-row");
+		return el;
+	}
+
+	getElement(){
+		return this.element;
+	}
+
+	getComponent(){
+		return false;
+	}
+
+	getData(){
+		return {};
+	}
+
+	getHeight(){
+		return this.element.outerHeight;
+	}
+
+	initialize(){}
+
+	reinitialize(){}
+
+	normalizeHeight(){}
+
+	generateCells(){}
+
+	reinitializeHeight(){}
+
+	calcHeight(){}
+
+	setCellHeight(){}
+
+	clearCellHeight(){}
+}
+
+export { CalcComponent, CellComponent, ColumnComponent, GroupComponent, Module, PseudoRow, RowComponent$1 as RowComponent, Tabulator$1 as Tabulator, TabulatorFull, modules };
 //# sourceMappingURL=tabulator_esm.js.map

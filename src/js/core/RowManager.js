@@ -664,7 +664,7 @@ export default class RowManager extends CoreFeature{
 				case "dataPipeline":
 
 				for(let i = index; i < this.dataPipeline.length; i++){
-					let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i]);
+					let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
 
 					this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
 				}
@@ -679,7 +679,7 @@ export default class RowManager extends CoreFeature{
 
 				case "displayPipeline":
 				for(let i = index; i < this.displayPipeline.length; i++){
-					let result = this.displayPipeline[i].handler(i ? this.getDisplayRows(i - 1) : this.activeRows, renderInPosition);
+					let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
 
 					this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
 				}
