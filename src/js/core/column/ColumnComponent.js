@@ -9,7 +9,7 @@ export default class ColumnComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else{
-					return target._column.table.componentFunctionBinder.handle("row", target._column, name)
+					return target._column.table.componentFunctionBinder.handle("column", target._column, name)
 				}
 			}
 		})
