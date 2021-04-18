@@ -48,8 +48,6 @@ export default class InternalEventBus {
 					console.warn("Cannot remove event, no matching event found:", key, callback);
 					return;
 				}
-			}else{
-				delete this.events[key];
 			}
 		}else{
 			console.warn("Cannot remove event, no events set on:", key);
