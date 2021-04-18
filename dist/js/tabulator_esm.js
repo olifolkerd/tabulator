@@ -317,13 +317,44 @@ var defaultConfig = {
 	method: "GET",
 };
 
+function generateParamsList(data, prefix){
+	var output = [];
+
+	prefix = prefix || "";
+
+	if(Array.isArray(data)){
+		data.forEach((item, i) => {
+			output = output.concat(generateParamsList(item, prefix ? prefix + "[" + i + "]" : i));
+		});
+	}else if (typeof data === "object"){
+		for (var key in data){
+			output = output.concat(generateParamsList(data[key], prefix ? prefix + "[" + key + "]" : key));
+		}
+	}else {
+		output.push({key:prefix, value:data});
+	}
+
+	return output;
+}
+
+function serializeParams(params){
+	var output = generateParamsList(params),
+	encoded = [];
+
+	output.forEach(function(item){
+		encoded.push(encodeURIComponent(item.key) + "=" + encodeURIComponent(item.value));
+	});
+
+	return encoded.join("&");
+}
+
 function defaultURLGenerator(url, config, params){
 	if(url){
 		if(params && Object.keys(params).length){
 			if(!config.method || config.method.toLowerCase() == "get"){
 				config.method = "get";
 
-				url += (url.includes("?") ? "&" : "?") + this.modules.ajax.serializeParams(params);
+				url += (url.includes("?") ? "&" : "?") + serializeParams(params);
 			}
 		}
 	}
@@ -569,37 +600,6 @@ class Ajax extends Module{
 	//get request url
 	getUrl(){
 		return this.url;
-	}
-
-	generateParamsList(data, prefix){
-		var output = [];
-
-		prefix = prefix || "";
-
-		if(Array.isArray(data)){
-			data.forEach((item, i) => {
-				output = output.concat(this.generateParamsList(item, prefix ? prefix + "[" + i + "]" : i));
-			});
-		}else if (typeof data === "object"){
-			for (var key in data){
-				output = output.concat(this.generateParamsList(data[key], prefix ? prefix + "[" + key + "]" : key));
-			}
-		}else {
-			output.push({key:prefix, value:data});
-		}
-
-		return output;
-	}
-
-	serializeParams(params){
-		var output = this.generateParamsList(params),
-		encoded = [];
-
-		output.forEach(function(item){
-			encoded.push(encodeURIComponent(item.key) + "=" + encodeURIComponent(item.value));
-		});
-
-		return encoded.join("&");
 	}
 
 	//send ajax request
@@ -1589,7 +1589,7 @@ class ColumnComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._column.table.componentFunctionBinder.handle("row", target._column, name)
+					return target._column.table.componentFunctionBinder.handle("column", target._column, name)
 				}
 			}
 		})
