@@ -1,3 +1,5 @@
+import maskInput from '../../inputMask.js';
+
 //resizable text area element
 export default function(cell, onRendered, success, cancel, editorParams){
     var self = this,
@@ -103,7 +105,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
     });
 
     if(editorParams.mask){
-        this.table.modules.edit.maskInput(input, editorParams);
+        maskInput(input, editorParams);
     }
 
     return input;

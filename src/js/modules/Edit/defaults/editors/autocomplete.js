@@ -1,4 +1,5 @@
 import Helpers from '../../../../core/tools/Helpers.js';
+import maskInput from '../../inputMask.js';
 
 //autocomplete
 export default function(cell, onRendered, success, cancel, editorParams){
@@ -436,7 +437,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	});
 
 	if(editorParams.mask){
-		this.table.modules.edit.maskInput(input, editorParams);
+		maskInput(input, editorParams);
 	}
 
 	setTimeout(() => {

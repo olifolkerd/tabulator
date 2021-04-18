@@ -2861,10 +2861,6 @@ class RowComponent$1 {
 		return this._row.reinitialize();
 	}
 
-	getGroup(){
-		return this._row.getGroup().getComponent();
-	}
-
 	getTable(){
 		return this._row.table;
 	}
@@ -4967,6 +4963,81 @@ Download.moduleName = "download";
 //load defaults
 Download.downloaders = defaultDownloaders;
 
+function maskInput(el, options){
+	var mask = options.mask,
+	maskLetter = typeof options.maskLetterChar !== "undefined" ? options.maskLetterChar : "A",
+	maskNumber = typeof options.maskNumberChar !== "undefined" ? options.maskNumberChar : "9",
+	maskWildcard = typeof options.maskWildcardChar !== "undefined" ? options.maskWildcardChar : "*";
+
+	function fillSymbols(index){
+		var symbol = mask[index];
+		if(typeof symbol !== "undefined" && symbol !== maskWildcard && symbol !== maskLetter && symbol !== maskNumber){
+			el.value = el.value + "" + symbol;
+			fillSymbols(index+1);
+		}
+	}
+
+	el.addEventListener("keydown", (e) => {
+		var index = el.value.length,
+		char = e.key;
+
+		if(e.keyCode > 46){
+			if(index >= mask.length){
+				e.preventDefault();
+				e.stopPropagation();
+				return false;
+			}else {
+				switch(mask[index]){
+					case maskLetter:
+					if(char.toUpperCase() == char.toLowerCase()){
+						e.preventDefault();
+						e.stopPropagation();
+						return false;
+					}
+					break;
+
+					case maskNumber:
+					if(isNaN(char)){
+						e.preventDefault();
+						e.stopPropagation();
+						return false;
+					}
+					break;
+
+					case maskWildcard:
+					break;
+
+					default:
+					if(char !== mask[index]){
+						e.preventDefault();
+						e.stopPropagation();
+						return false;
+					}
+				}
+			}
+		}
+
+		return;
+	});
+
+	el.addEventListener("keyup", (e) => {
+		if(e.keyCode > 46){
+			if(options.maskAutoFill){
+				fillSymbols(el.value.length);
+			}
+		}
+	});
+
+
+	if(!el.placeholder){
+		el.placeholder = mask;
+	}
+
+	if(options.maskAutoFill){
+		fillSymbols(el.value.length);
+	}
+}
+
 //input element
 function input(cell, onRendered, success, cancel, editorParams){
 	//create and style input
@@ -5031,7 +5102,7 @@ function input(cell, onRendered, success, cancel, editorParams){
 	});
 
 	if(editorParams.mask){
-		this.table.modules.edit.maskInput(input, editorParams);
+		maskInput(input, editorParams);
 	}
 
 	return input;
@@ -5141,7 +5212,7 @@ function textarea(cell, onRendered, success, cancel, editorParams){
     });
 
     if(editorParams.mask){
-        this.table.modules.edit.maskInput(input, editorParams);
+        maskInput(input, editorParams);
     }
 
     return input;
@@ -5244,7 +5315,7 @@ function number(cell, onRendered, success, cancel, editorParams){
 	});
 
 	if(editorParams.mask){
-		this.table.modules.edit.maskInput(input, editorParams);
+		maskInput(input, editorParams);
 	}
 
 	return input;
@@ -6352,7 +6423,7 @@ function autocomplete(cell, onRendered, success, cancel, editorParams){
 	});
 
 	if(editorParams.mask){
-		this.table.modules.edit.maskInput(input, editorParams);
+		maskInput(input, editorParams);
 	}
 
 	setTimeout(() => {
@@ -7218,81 +7289,6 @@ class Edit extends Module{
 			this.mouseClick = false;
 			element.blur();
 			return false;
-		}
-	}
-
-	maskInput(el, options){
-		var mask = options.mask,
-		maskLetter = typeof options.maskLetterChar !== "undefined" ? options.maskLetterChar : "A",
-		maskNumber = typeof options.maskNumberChar !== "undefined" ? options.maskNumberChar : "9",
-		maskWildcard = typeof options.maskWildcardChar !== "undefined" ? options.maskWildcardChar : "*";
-
-		function fillSymbols(index){
-			var symbol = mask[index];
-			if(typeof symbol !== "undefined" && symbol !== maskWildcard && symbol !== maskLetter && symbol !== maskNumber){
-				el.value = el.value + "" + symbol;
-				fillSymbols(index+1);
-			}
-		}
-
-		el.addEventListener("keydown", (e) => {
-			var index = el.value.length,
-			char = e.key;
-
-			if(e.keyCode > 46){
-				if(index >= mask.length){
-					e.preventDefault();
-					e.stopPropagation();
-					return false;
-				}else {
-					switch(mask[index]){
-						case maskLetter:
-						if(char.toUpperCase() == char.toLowerCase()){
-							e.preventDefault();
-							e.stopPropagation();
-							return false;
-						}
-						break;
-
-						case maskNumber:
-						if(isNaN(char)){
-							e.preventDefault();
-							e.stopPropagation();
-							return false;
-						}
-						break;
-
-						case maskWildcard:
-						break;
-
-						default:
-						if(char !== mask[index]){
-							e.preventDefault();
-							e.stopPropagation();
-							return false;
-						}
-					}
-				}
-			}
-
-			return;
-		});
-
-		el.addEventListener("keyup", (e) => {
-			if(e.keyCode > 46){
-				if(options.maskAutoFill){
-					fillSymbols(el.value.length);
-				}
-			}
-		});
-
-
-		if(!el.placeholder){
-			el.placeholder = mask;
-		}
-
-		if(options.maskAutoFill){
-			fillSymbols(el.value.length);
 		}
 	}
 
@@ -10845,6 +10841,7 @@ class GroupRows extends Module{
 		this.groups = {}; //hold row groups
 		this.displayIndex = 0; //index in display pipeline
 
+		//register table options
 		this.registerTableOption("groupBy", false); //enable table grouping and set field to group by
 		this.registerTableOption("groupStartOpen", true); //starting state of group
 		this.registerTableOption("groupValues", false);
@@ -10856,6 +10853,17 @@ class GroupRows extends Module{
 		this.registerTableOption("groupHeaderDownload", null);
 		this.registerTableOption("groupToggleElement", "arrow");
 		this.registerTableOption("groupClosedShowCalcs", false);
+
+		//register table functions
+		this.registerTableFunction("setGroupBy", this.setGroupBy.bind(this));
+		this.registerTableFunction("setGroupValues", this.setGroupValues.bind(this));
+		this.registerTableFunction("setGroupStartOpen", this.setGroupStartOpen.bind(this));
+		this.registerTableFunction("setGroupHeader", this.setGroupHeader.bind(this));
+		this.registerTableFunction("getGroups", this.userGetGroups.bind(this));
+		this.registerTableFunction("getGroupedData", this.userGetGroupedData.bind(this));
+
+		//register component functions
+		this.registerComponentFunction("row", "getGroup", this.rowGetGroup.bind(this));
 	}
 
 	//initialize group configuration
@@ -10965,35 +10973,28 @@ class GroupRows extends Module{
 
 			this.initialized = true;
 		}
-
-		this.registerTableFunction("setGroupBy", this.setGroupBy.bind(this));
-		this.registerTableFunction("setGroupValues", this.setGroupValues.bind(this));
-		this.registerTableFunction("setGroupStartOpen", this.setGroupStartOpen.bind(this));
-		this.registerTableFunction("setGroupHeader", this.setGroupHeader.bind(this));
-		this.registerTableFunction("getGroups", this.userGetGroups.bind(this));
-		this.registerTableFunction("getGroupedData", this.userGetGroupedData.bind(this));
 	}
 
 	rowAddingIndex(row, index, top){
 		this.assignRowToGroup(row);
 
-		var groupRows = row.getGroup().rows;
+		var groupRows = row.modules.group.rows;
 
 		if(groupRows.length > 1){
 			if(!index || (index && groupRows.indexOf(index) == -1)){
 				if(top){
 					if(groupRows[0] !== row){
 						index = groupRows[0];
-						this.table.rowManager.moveRowInArray(row.getGroup().rows, row, index, !top);
+						this.table.rowManager.moveRowInArray(row.modules.group.rows, row, index, !top);
 					}
 				}else {
 					if(groupRows[groupRows.length -1] !== row){
 						index = groupRows[groupRows.length -1];
-						this.table.rowManager.moveRowInArray(row.getGroup().rows, row, index, !top);
+						this.table.rowManager.moveRowInArray(row.modules.group.rows, row, index, !top);
 					}
 				}
 			}else {
-				this.table.rowManager.moveRowInArray(row.getGroup().rows, row, index, !top);
+				this.table.rowManager.moveRowInArray(row.modules.group.rows, row, index, !top);
 			}
 		}
 
@@ -11064,6 +11065,15 @@ class GroupRows extends Module{
 		this.getGroupedData() : this.getData()
 	}
 
+
+	///////////////////////////////////////
+	///////// Component Functions /////////
+	///////////////////////////////////////
+
+	rowGetGroup(row){
+		return row.modules.group ? row.modules.group.getComponent() : false;
+	}
+
 	///////////////////////////////////
 	///////// Internal Logic //////////
 	///////////////////////////////////
@@ -11073,8 +11083,8 @@ class GroupRows extends Module{
 			to = this.table.rowManager.prevDisplayRow(from) || to;
 		}
 
-		var toGroup = to.getGroup();
-		var fromGroup = from.getGroup();
+		var toGroup = to.modules.group;
+		var fromGroup = from.modules.group;
 
 		if(toGroup === fromGroup){
 			this.table.rowManager.moveRowInArray(toGroup.rows, from, to, after);
@@ -11283,7 +11293,7 @@ class GroupRows extends Module{
 
 	reassignRowToGroup(row){
 		if(row.type === "row"){
-			var oldRowGroup = row.getGroup(),
+			var oldRowGroup = row.modules.group,
 			oldGroupPath = oldRowGroup.getPath(),
 			newGroupPath = this.getExpectedPath(row),
 			samePath = true;
@@ -11453,7 +11463,8 @@ class History extends Module{
 		var index, rows;
 
 		if(this.table.options.groupBy){
-			rows = row.getGroup().rows;
+
+			rows = row.getComponent().getGroup().rows;
 			index = rows.indexOf(row);
 
 			if(index){

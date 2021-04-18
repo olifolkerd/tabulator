@@ -247,7 +247,7 @@ class GroupRows extends Module{
 	///////////////////////////////////////
 
 	rowGetGroup(row){
-		return row.modules.group ? row.modules.group.getComponent() || false;
+		return row.modules.group ? row.modules.group.getComponent() : false;
 	}
 
 	///////////////////////////////////

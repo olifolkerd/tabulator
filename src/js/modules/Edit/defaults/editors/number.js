@@ -1,3 +1,5 @@
+import maskInput from '../../inputMask.js';
+
 //input element with type of number
 export default function(cell, onRendered, success, cancel, editorParams){
 	var cellValue = cell.getValue(),
@@ -95,7 +97,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	});
 
 	if(editorParams.mask){
-		this.table.modules.edit.maskInput(input, editorParams);
+		maskInput(input, editorParams);
 	}
 
 	return input;
