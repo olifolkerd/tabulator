@@ -16,6 +16,7 @@ class GroupRows extends Module{
 		this.groups = {}; //hold row groups
 		this.displayIndex = 0; //index in display pipeline
 
+		//register table options
 		this.registerTableOption("groupBy", false); //enable table grouping and set field to group by
 		this.registerTableOption("groupStartOpen", true); //starting state of group
 		this.registerTableOption("groupValues", false);
@@ -27,6 +28,17 @@ class GroupRows extends Module{
 		this.registerTableOption("groupHeaderDownload", null);
 		this.registerTableOption("groupToggleElement", "arrow");
 		this.registerTableOption("groupClosedShowCalcs", false);
+
+		//register table functions
+		this.registerTableFunction("setGroupBy", this.setGroupBy.bind(this));
+		this.registerTableFunction("setGroupValues", this.setGroupValues.bind(this));
+		this.registerTableFunction("setGroupStartOpen", this.setGroupStartOpen.bind(this));
+		this.registerTableFunction("setGroupHeader", this.setGroupHeader.bind(this));
+		this.registerTableFunction("getGroups", this.userGetGroups.bind(this));
+		this.registerTableFunction("getGroupedData", this.userGetGroupedData.bind(this));
+
+		//register component functions
+		this.registerComponentFunction("row", "getGroup", this.rowGetGroup.bind(this));
 	}
 
 	//initialize group configuration
@@ -137,35 +149,28 @@ class GroupRows extends Module{
 
 			this.initialized = true;
 		}
-
-		this.registerTableFunction("setGroupBy", this.setGroupBy.bind(this));
-		this.registerTableFunction("setGroupValues", this.setGroupValues.bind(this));
-		this.registerTableFunction("setGroupStartOpen", this.setGroupStartOpen.bind(this));
-		this.registerTableFunction("setGroupHeader", this.setGroupHeader.bind(this));
-		this.registerTableFunction("getGroups", this.userGetGroups.bind(this));
-		this.registerTableFunction("getGroupedData", this.userGetGroupedData.bind(this));
 	}
 
 	rowAddingIndex(row, index, top){
 		this.assignRowToGroup(row);
 
-		var groupRows = row.getGroup().rows;
+		var groupRows = row.modules.group.rows;
 
 		if(groupRows.length > 1){
 			if(!index || (index && groupRows.indexOf(index) == -1)){
 				if(top){
 					if(groupRows[0] !== row){
 						index = groupRows[0];
-						this.table.rowManager.moveRowInArray(row.getGroup().rows, row, index, !top);
+						this.table.rowManager.moveRowInArray(row.modules.group.rows, row, index, !top);
 					}
 				}else{
 					if(groupRows[groupRows.length -1] !== row){
 						index = groupRows[groupRows.length -1];
-						this.table.rowManager.moveRowInArray(row.getGroup().rows, row, index, !top);
+						this.table.rowManager.moveRowInArray(row.modules.group.rows, row, index, !top);
 					}
 				}
 			}else{
-				this.table.rowManager.moveRowInArray(row.getGroup().rows, row, index, !top);
+				this.table.rowManager.moveRowInArray(row.modules.group.rows, row, index, !top);
 			}
 		}
 
@@ -236,6 +241,15 @@ class GroupRows extends Module{
 		this.getGroupedData() : this.getData()
 	}
 
+
+	///////////////////////////////////////
+	///////// Component Functions /////////
+	///////////////////////////////////////
+
+	rowGetGroup(row){
+		return row.modules.group ? row.modules.group.getComponent() || false;
+	}
+
 	///////////////////////////////////
 	///////// Internal Logic //////////
 	///////////////////////////////////
@@ -245,8 +259,8 @@ class GroupRows extends Module{
 			to = this.table.rowManager.prevDisplayRow(from) || to;
 		}
 
-		var toGroup = to.getGroup();
-		var fromGroup = from.getGroup();
+		var toGroup = to.modules.group;
+		var fromGroup = from.modules.group;
 
 		if(toGroup === fromGroup){
 			this.table.rowManager.moveRowInArray(toGroup.rows, from, to, after);
@@ -455,7 +469,7 @@ class GroupRows extends Module{
 
 	reassignRowToGroup(row){
 		if(row.type === "row"){
-			var oldRowGroup = row.getGroup(),
+			var oldRowGroup = row.modules.group,
 			oldGroupPath = oldRowGroup.getPath(),
 			newGroupPath = this.getExpectedPath(row),
 			samePath = true;

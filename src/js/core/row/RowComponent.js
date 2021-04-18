@@ -78,10 +78,6 @@ export default class RowComponent {
 		return this._row.reinitialize();
 	}
 
-	getGroup(){
-		return this._row.getGroup().getComponent();
-	}
-
 	getTable(){
 		return this._row.table;
 	}
