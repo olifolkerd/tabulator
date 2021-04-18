@@ -211,7 +211,7 @@ class Page extends Module{
 	}
 
 	rowsUpdated(){
-		this.refreshData(, true, "all");
+		this.refreshData(true, "all");
 	}
 
 	createElements(){
