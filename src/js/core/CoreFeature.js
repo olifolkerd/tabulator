@@ -77,9 +77,22 @@ export default class CoreFeature{
 	//////////////// Options /////////////////
 	//////////////////////////////////////////
 
-	options(key){
+	options(key, value){
+		if(typeof value !== "undefined"){
+			this.table.options[key] = value;
+		}
+
 		return this.table.options[key];
 	}
+
+	setOption(key, value){
+		if(typeof value !== "undefined"){
+			this.table.options[key] = value;
+		}
+
+		return this.table.options[key];
+	}
+
 
 	//////////////////////////////////////////
 	//////////////// Modules /////////////////
