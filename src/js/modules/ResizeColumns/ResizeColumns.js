@@ -169,10 +169,7 @@ class ResizeColumns extends Module{
 
 			self.table.element.classList.remove("tabulator-block-select");
 
-			if(self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.columns){
-				self.table.modules.persistence.save("columns");
-			}
-
+			this.dispatch("column-resized", column);
 			self.table.externalEvents.dispatch("columnResized", column.getComponent());
 		}
 

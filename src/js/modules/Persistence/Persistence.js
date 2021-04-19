@@ -135,10 +135,24 @@ class Persistence extends Module{
 			}
 
 			this.subscribe("table-redraw", this.tableRedraw.bind(this));
+
+
+			this.subscribe("filter-changed", this.eventSave.bind(this, "filter"));
+			this.subscribe("sort-changed", this.eventSave.bind(this, "sort"));
+			this.subscribe("group-changed", this.eventSave.bind(this, "group"));
+			this.subscribe("page-changed", this.eventSave.bind(this, "page"));
+			this.subscribe("column-resized", this.eventSave.bind(this, "columns"));
+			this.subscribe("layout-refreshed", this.eventSave.bind(this, "columns"));
 		}
 
 		this.registerTableFunction("getColumnLayout", this.getColumnLayout.bind(this));
 		this.registerTableFunction("setColumnLayout", this.setColumnLayout.bind(this));
+	}
+
+	eventSave(type){
+		if(this.config[type]){
+			this.save(type);
+		}
 	}
 
 	tableBuilt(){

@@ -38,9 +38,7 @@ class Layout extends Module{
 	layout(){
 		Layout.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
 
-		if(this.mode.indexOf("fitData") === 0 && this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
-			this.table.modules.persistence.save("columns");
-		}
+		this.dispatch("layout-refreshed")
 	}
 }
 

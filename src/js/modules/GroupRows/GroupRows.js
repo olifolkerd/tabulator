@@ -177,6 +177,10 @@ class GroupRows extends Module{
 		return index;
 	}
 
+	trackChanges(){
+		this.dispatch("group-changed");
+	}
+
 	///////////////////////////////////
 	///////// Table Functions /////////
 	///////////////////////////////////
@@ -186,9 +190,7 @@ class GroupRows extends Module{
 		this.initialize();
 		this.refreshData(false, "display");
 
-		if(this.table.options.persistence && this.table.modules.persistence.config.group){
-			this.table.modules.persistence.save("group");
-		}
+		this.trackChanges();
 	}
 
 	setGroupValues(groupValues){
@@ -196,9 +198,7 @@ class GroupRows extends Module{
 		this.initialize();
 		this.refreshData(false, "display");
 
-		if(this.table.options.persistence && this.table.modules.persistence.config.group){
-			this.table.modules.persistence.save("group");
-		}
+		this.trackChanges();
 	}
 
 	setGroupStartOpen(values){
@@ -208,9 +208,7 @@ class GroupRows extends Module{
 		if(this.table.options.groupBy){
 			this.refreshData();
 
-			if(this.table.options.persistence && this.table.modules.persistence.config.group){
-				this.table.modules.persistence.save("group");
-			}
+			this.trackChanges();
 		}else{
 			console.warn("Grouping Update - cant refresh view, no groups have been set");
 		}
@@ -223,9 +221,7 @@ class GroupRows extends Module{
 		if(this.table.options.groupBy){
 			this.refreshData();
 
-			if(this.table.options.persistence && this.table.modules.persistence.config.group){
-				this.table.modules.persistence.save("group");
-			}
+			this.trackChanges();
 		}else{
 			console.warn("Grouping Update - cant refresh view, no groups have been set");
 		}

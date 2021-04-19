@@ -261,9 +261,7 @@ class Sort extends Module{
 
 		self.sortList = newSortList;
 
-		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.sort){
-			this.table.modules.persistence.save("sort");
-		}
+		this.dispatch("sort-changed");
 	}
 
 	//clear sorters

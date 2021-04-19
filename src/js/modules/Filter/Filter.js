@@ -273,7 +273,7 @@ class Filter extends Module{
 				if(self.prevHeaderFilterChangeCheck !== filterChangeCheck){
 					self.prevHeaderFilterChangeCheck = filterChangeCheck;
 
-					self.changed = true;
+					self.trackChanges();
 					self.refreshFilter();
 				}
 			}
@@ -558,6 +558,12 @@ class Filter extends Module{
 	}
 
 	//check if the filters has changed since last use
+	trackChanges(){
+		this.changed = true;
+		this.dispatch("filter-changed");
+	}
+
+	//check if the filters has changed since last use
 	hasChanged(){
 		var changed = this.changed;
 		this.changed = false;
@@ -592,7 +598,7 @@ class Filter extends Module{
 			if(filter){
 				self.filterList.push(filter);
 
-				self.changed = true;
+				self.trackChanges();
 			}
 		});
 
@@ -738,7 +744,7 @@ class Filter extends Module{
 
 			if(index > -1){
 				self.filterList.splice(index, 1);
-				self.changed = true;
+				self.trackChanges()
 			}else{
 				console.warn("Filter Error - No matching filter type found, ignoring: ", filter.type);
 			}
@@ -758,7 +764,7 @@ class Filter extends Module{
 			this.clearHeaderFilter();
 		}
 
-		this.changed = true;
+		this.trackChanges();
 
 		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.filter){
 			this.table.modules.persistence.save("filter");
@@ -780,7 +786,7 @@ class Filter extends Module{
 			self.reloadHeaderFilter(column);
 		});
 
-		this.changed = true;
+		this.trackChanges();
 	}
 
 	//search data and return matching rows

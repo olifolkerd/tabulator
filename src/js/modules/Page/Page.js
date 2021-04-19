@@ -408,6 +408,10 @@ class Page extends Module{
 		this.progressiveLoad = true;
 	}
 
+	trackChanges(){
+		this.dispatch("page-changed");
+	}
+
 	setDisplayIndex(index){
 		this.displayIndex = index;
 	}
@@ -477,11 +481,9 @@ class Page extends Module{
 		if((page > 0 && page <= this.max) || this.mode !== "local"){
 			this.page = page;
 
-			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
-				this.table.modules.persistence.save("page");
-			}
+			this.trackChanges();
 
-			return this.trigger()
+			return this.trigger();
 		}else{
 			console.warn("Pagination Error - Requested page is out of range of 1 - " + this.max + ":", page);
 			return Promise.reject();
@@ -516,9 +518,7 @@ class Page extends Module{
 			this.generatePageSizeSelectList();
 		}
 
-		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
-			this.table.modules.persistence.save("page");
-		}
+		this.trackChanges();
 	}
 
 	//setup the pagination buttons
@@ -586,9 +586,7 @@ class Page extends Module{
 		if(this.page > 1){
 			this.page--;
 
-			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
-				this.table.modules.persistence.save("page");
-			}
+			this.trackChanges();
 
 			return this.trigger()
 
@@ -603,9 +601,7 @@ class Page extends Module{
 		if(this.page < this.max){
 			this.page++;
 
-			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
-				this.table.modules.persistence.save("page");
-			}
+			this.trackChanges();
 
 			return this.trigger();
 

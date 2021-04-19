@@ -8328,7 +8328,7 @@ class Filter extends Module{
 				if(self.prevHeaderFilterChangeCheck !== filterChangeCheck){
 					self.prevHeaderFilterChangeCheck = filterChangeCheck;
 
-					self.changed = true;
+					self.trackChanges();
 					self.refreshFilter();
 				}
 			}
@@ -8613,6 +8613,12 @@ class Filter extends Module{
 	}
 
 	//check if the filters has changed since last use
+	trackChanges(){
+		this.changed = true;
+		this.dispatch("filter-changed");
+	}
+
+	//check if the filters has changed since last use
 	hasChanged(){
 		var changed = this.changed;
 		this.changed = false;
@@ -8647,7 +8653,7 @@ class Filter extends Module{
 			if(filter){
 				self.filterList.push(filter);
 
-				self.changed = true;
+				self.trackChanges();
 			}
 		});
 
@@ -8792,7 +8798,7 @@ class Filter extends Module{
 
 			if(index > -1){
 				self.filterList.splice(index, 1);
-				self.changed = true;
+				self.trackChanges();
 			}else {
 				console.warn("Filter Error - No matching filter type found, ignoring: ", filter.type);
 			}
@@ -8812,7 +8818,7 @@ class Filter extends Module{
 			this.clearHeaderFilter();
 		}
 
-		this.changed = true;
+		this.trackChanges();
 
 		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.filter){
 			this.table.modules.persistence.save("filter");
@@ -8834,7 +8840,7 @@ class Filter extends Module{
 			self.reloadHeaderFilter(column);
 		});
 
-		this.changed = true;
+		this.trackChanges();
 	}
 
 	//search data and return matching rows
@@ -11001,6 +11007,10 @@ class GroupRows extends Module{
 		return index;
 	}
 
+	trackChanges(){
+		this.dispatch("group-changed");
+	}
+
 	///////////////////////////////////
 	///////// Table Functions /////////
 	///////////////////////////////////
@@ -11010,9 +11020,7 @@ class GroupRows extends Module{
 		this.initialize();
 		this.refreshData(false, "display");
 
-		if(this.table.options.persistence && this.table.modules.persistence.config.group){
-			this.table.modules.persistence.save("group");
-		}
+		this.trackChanges();
 	}
 
 	setGroupValues(groupValues){
@@ -11020,9 +11028,7 @@ class GroupRows extends Module{
 		this.initialize();
 		this.refreshData(false, "display");
 
-		if(this.table.options.persistence && this.table.modules.persistence.config.group){
-			this.table.modules.persistence.save("group");
-		}
+		this.trackChanges();
 	}
 
 	setGroupStartOpen(values){
@@ -11032,9 +11038,7 @@ class GroupRows extends Module{
 		if(this.table.options.groupBy){
 			this.refreshData();
 
-			if(this.table.options.persistence && this.table.modules.persistence.config.group){
-				this.table.modules.persistence.save("group");
-			}
+			this.trackChanges();
 		}else {
 			console.warn("Grouping Update - cant refresh view, no groups have been set");
 		}
@@ -11047,9 +11051,7 @@ class GroupRows extends Module{
 		if(this.table.options.groupBy){
 			this.refreshData();
 
-			if(this.table.options.persistence && this.table.modules.persistence.config.group){
-				this.table.modules.persistence.save("group");
-			}
+			this.trackChanges();
 		}else {
 			console.warn("Grouping Update - cant refresh view, no groups have been set");
 		}
@@ -14264,6 +14266,10 @@ class Page extends Module{
 		this.progressiveLoad = true;
 	}
 
+	trackChanges(){
+		this.dispatch("page-changed");
+	}
+
 	setDisplayIndex(index){
 		this.displayIndex = index;
 	}
@@ -14329,11 +14335,9 @@ class Page extends Module{
 		if((page > 0 && page <= this.max) || this.mode !== "local"){
 			this.page = page;
 
-			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
-				this.table.modules.persistence.save("page");
-			}
+			this.trackChanges();
 
-			return this.trigger()
+			return this.trigger();
 		}else {
 			console.warn("Pagination Error - Requested page is out of range of 1 - " + this.max + ":", page);
 			return Promise.reject();
@@ -14368,9 +14372,7 @@ class Page extends Module{
 			this.generatePageSizeSelectList();
 		}
 
-		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
-			this.table.modules.persistence.save("page");
-		}
+		this.trackChanges();
 	}
 
 	//setup the pagination buttons
@@ -14438,9 +14440,7 @@ class Page extends Module{
 		if(this.page > 1){
 			this.page--;
 
-			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
-				this.table.modules.persistence.save("page");
-			}
+			this.trackChanges();
 
 			return this.trigger()
 
@@ -14455,9 +14455,7 @@ class Page extends Module{
 		if(this.page < this.max){
 			this.page++;
 
-			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
-				this.table.modules.persistence.save("page");
-			}
+			this.trackChanges();
 
 			return this.trigger();
 
@@ -14803,10 +14801,24 @@ class Persistence extends Module{
 			}
 
 			this.subscribe("table-redraw", this.tableRedraw.bind(this));
+
+
+			this.subscribe("filter-changed", this.eventSave.bind(this, "filter"));
+			this.subscribe("sort-changed", this.eventSave.bind(this, "sort"));
+			this.subscribe("group-changed", this.eventSave.bind(this, "group"));
+			this.subscribe("page-changed", this.eventSave.bind(this, "page"));
+			this.subscribe("column-resized", this.eventSave.bind(this, "columns"));
+			this.subscribe("layout-refreshed", this.eventSave.bind(this, "columns"));
 		}
 
 		this.registerTableFunction("getColumnLayout", this.getColumnLayout.bind(this));
 		this.registerTableFunction("setColumnLayout", this.setColumnLayout.bind(this));
+	}
+
+	eventSave(type){
+		if(this.config[type]){
+			this.save(type);
+		}
 	}
 
 	tableBuilt(){
@@ -15739,10 +15751,7 @@ class ResizeColumns extends Module{
 
 			self.table.element.classList.remove("tabulator-block-select");
 
-			if(self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.columns){
-				self.table.modules.persistence.save("columns");
-			}
-
+			this.dispatch("column-resized", column);
 			self.table.externalEvents.dispatch("columnResized", column.getComponent());
 		}
 
@@ -17277,9 +17286,7 @@ class Sort extends Module{
 
 		self.sortList = newSortList;
 
-		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.sort){
-			this.table.modules.persistence.save("sort");
-		}
+		this.dispatch("sort-changed");
 	}
 
 	//clear sorters
@@ -21456,9 +21463,7 @@ class Layout extends Module{
 	layout(){
 		Layout.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
 
-		if(this.mode.indexOf("fitData") === 0 && this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
-			this.table.modules.persistence.save("columns");
-		}
+		this.dispatch("layout-refreshed");
 	}
 }
 
