@@ -75,10 +75,6 @@ export default class CellComponent {
 		return this._cell.validate();
 	}
 
-	nav(){
-		return this._cell.nav();
-	}
-
 	checkHeight(){
 		this._cell.checkHeight();
 	}

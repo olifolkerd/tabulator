@@ -61,107 +61,27 @@ export default {
 		this.table.element.focus();
 	},
 	navPrev:function(e){
-		var cell = false;
-
-		if(this.table.modExists("edit")){
-			cell = this.table.modules.edit.currentCell;
-
-			if(cell){
-				e.preventDefault();
-				cell.nav().prev();
-			}
-		}
+		this.dispatch("keybinding-nav-prev", e);
 	},
 
 	navNext:function(e){
-		var cell = false;
-		var newRow = this.table.options.tabEndNewRow;
-		var nav;
-
-		if(this.table.modExists("edit")){
-			cell = this.table.modules.edit.currentCell;
-
-			if(cell){
-				e.preventDefault();
-
-				nav = cell.nav();
-
-				if(!nav.next()){
-					if(newRow){
-
-						cell.getElement().firstChild.blur();
-
-						if(newRow === true){
-							newRow = this.table.addRow({})
-						}else{
-							if(typeof newRow == "function"){
-								newRow = this.table.addRow(newRow(cell.row.getComponent()))
-							}else{
-								newRow = this.table.addRow(Object.assign({}, newRow));
-							}
-						}
-
-						newRow.then(() => {
-							setTimeout(() => {
-								nav.next();
-							})
-						});
-					}
-				}
-			}
-		}
+		this.dispatch("keybinding-nav-next", e);
 	},
 
 	navLeft:function(e){
-		var cell = false;
-
-		if(this.table.modExists("edit")){
-			cell = this.table.modules.edit.currentCell;
-
-			if(cell){
-				e.preventDefault();
-				cell.nav().left();
-			}
-		}
+		this.dispatch("keybinding-nav-left", e);
 	},
 
 	navRight:function(e){
-		var cell = false;
-
-		if(this.table.modExists("edit")){
-			cell = this.table.modules.edit.currentCell;
-
-			if(cell){
-				e.preventDefault();
-				cell.nav().right();
-			}
-		}
+		this.dispatch("keybinding-nav-right", e);
 	},
 
 	navUp:function(e){
-		var cell = false;
-
-		if(this.table.modExists("edit")){
-			cell = this.table.modules.edit.currentCell;
-
-			if(cell){
-				e.preventDefault();
-				cell.nav().up();
-			}
-		}
+		this.dispatch("keybinding-nav-up", e);
 	},
 
 	navDown:function(e){
-		var cell = false;
-
-		if(this.table.modExists("edit")){
-			cell = this.table.modules.edit.currentCell;
-
-			if(cell){
-				e.preventDefault();
-				cell.nav().down();
-			}
-		}
+		this.dispatch("keybinding-nav-down", e);
 	},
 
 	undo:function(e){

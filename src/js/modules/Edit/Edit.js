@@ -34,6 +34,13 @@ class Edit extends Module{
 
 		this.registerComponentFunction("cell", "isEdited", this.cellisEdited.bind(this));
 		this.registerComponentFunction("cell", "clearEdited", this.clearEdited.bind(this));
+
+		this.registerComponentFunction("cell", "navigatePrev", this.navigatePrev.bind(this));
+		this.registerComponentFunction("cell", "navigateNext", this.navigateNext.bind(this));
+		this.registerComponentFunction("cell", "navigateLeft", this.navigateLeft.bind(this));
+		this.registerComponentFunction("cell", "navigateRight", this.navigateRight.bind(this));
+		this.registerComponentFunction("cell", "navigateUp", this.navigateUp.bind(this));
+		this.registerComponentFunction("cell", "navigateDown", this.navigateDown.bind(this));
 	}
 
 	initialize(){
@@ -43,15 +50,57 @@ class Edit extends Module{
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 		this.subscribe("data-refeshing", this.cancelEdit.bind(this));
+
+		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this));
+		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
+		this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this));
+		this.subscribe("keybinding-nav-right", this.navigateRight.bind(this));
+		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this));
+		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this));
+	}
+
+
+	///////////////////////////////////
+	////// Keybinding Functions ///////
+	///////////////////////////////////
+
+	keybindingNavigateNext(e){
+		var cell = this.currentCell,
+		newRow = this.options("tabEndNewRow");
+
+		if(cell){
+			if(!this.navigateNext(e)){
+				if(newRow){
+					cell.getElement().firstChild.blur();
+
+					if(newRow === true){
+						newRow = this.table.addRow({})
+					}else{
+						if(typeof newRow == "function"){
+							newRow = this.table.addRow(newRow(cell.row.getComponent()))
+						}else{
+							newRow = this.table.addRow(Object.assign({}, newRow));
+						}
+					}
+
+					newRow.then(() => {
+						setTimeout(() => {
+							nav.next();
+						})
+					});
+				}
+			}
+		}
 	}
 
 	///////////////////////////////////
-	///////// Cell Functions /////////
+	///////// Cell Functions //////////
 	///////////////////////////////////
 
 	cellisEdited(cell){
 		return !! cell.modules.edit && cell.modules.edit.edited;
 	}
+
 
 	///////////////////////////////////
 	///////// Table Functions /////////
@@ -70,49 +119,151 @@ class Edit extends Module{
 		});
 	}
 
-	navigatePrev(){
-		if(this.currentCell){
-			return cell.nav().prev();
+	navigatePrev(e){
+		var cell = this.currentCell,
+		nextCell, prevRow;
+
+		if(cell){
+
+			if(e){
+				e.preventDefault();
+			}
+
+			nextCell = this.navigateLeft();
+
+			if(nextCell){
+				return true;
+			}else{
+				prevRow = this.table.rowManager.prevDisplayRow(cell.row, true);
+
+				if(prevRow){
+					nextCell = prevRow.findNextEditableCell(prevRow.cells.length);
+
+					if(nextCell){
+						nextCell.edit();
+						return true;
+					}
+				}
+			}
 		}
 
 		return false;
 	}
 
-	navigateNext(){
-		if(this.currentCell){
-			return cell.nav().next();
+	navigateNext(e){
+		var cell = this.currentCell,
+		nextCell, nextRow;
+
+		if(cell){
+
+			if(e){
+				e.preventDefault();
+			}
+
+			nextCell = this.navigateRight();
+
+			if(nextCell){
+				return true;
+			}else{
+				nextRow = this.table.rowManager.nextDisplayRow(cell.row, true);
+
+				if(nextRow){
+					nextCell = nextRow.findNextEditableCell(-1);
+
+					if(nextCell){
+						nextCell.edit();
+						return true;
+					}
+				}
+			}
 		}
 
 		return false;
 	}
 
-	navigateLeft(){
-		if(this.currentCell){
-			return cell.nav().left();
+	navigateLeft(e){
+		var cell = this.currentCell,
+		index, nextCell;
+
+		if(cell){
+
+			if(e){
+				e.preventDefault();
+			}
+
+			index = cell.getIndex();
+			nextCell = cell.row.findPrevEditableCell(index);
+
+			if(nextCell){
+				nextCell.edit();
+				return true;
+			}
 		}
 
 		return false;
 	}
 
-	navigateRight(){
-		if(this.currentCell){
-			return cell.nav().right();
+	navigateRight(e){
+		var cell = this.currentCell,
+		index, nextCell;
+
+		if(cell){
+
+			if(e){
+				e.preventDefault();
+			}
+
+			index = cell.getIndex();
+			nextCell = cell.row.findNextEditableCell(index);
+
+			if(nextCell){
+				nextCell.edit();
+				return true;
+			}
 		}
 
 		return false;
 	}
 
-	navigateUp(){
-		if(this.currentCell){
-			return cell.nav().up();
+	navigateUp(e){
+		var cell = this.currentCell,
+		index, nextRow;
+
+		if(cell){
+
+			if(e){
+				e.preventDefault();
+			}
+
+			index = cell.getIndex();
+			nextRow = this.table.rowManager.prevDisplayRow(cell.row, true);
+
+			if(nextRow){
+				nextRow.cells[index].edit();
+				return true;
+			}
 		}
 
 		return false;
 	}
 
-	navigateDown(){
-		if(this.currentCell){
-			return cell.nav().down();
+	navigateDown(e){
+		var cell = this.currentCell,
+		index, nextRow;
+
+		if(cell){
+
+			if(e){
+				e.preventDefault();
+			}
+
+			index = cell.getIndex();
+			nextRow = this.table.rowManager.nextDisplayRow(cell.row, true);
+
+			if(nextRow){
+				nextRow.cells[index].edit();
+				return true;
+			}
 		}
 
 		return false;

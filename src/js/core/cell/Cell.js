@@ -184,21 +184,14 @@ export default class Cell extends CoreFeature{
 
 	//////////////////// Actions ////////////////////
 	setValue(value, mutate){
-		var changed = this.setValueProcessData(value, mutate),
-		component;
+		var changed = this.setValueProcessData(value, mutate);
 
 		if(changed){
 			this.dispatch("cell-value-updated", this);
 
-			component = this.getComponent();
-
-			if(this.column.cellEvents.cellEdited){
-				this.column.cellEvents.cellEdited.call(this.table, component);
-			}
-
 			this.cellRendered();
 
-			this.dispatchExternal("cellEdited", component);
+			this.dispatchExternal("cellEdited", this.getComponent());
 
 			if(this.subscribedExternal("dataChanged")){
 				this.dispatchExternal("dataChanged", this.table.rowManager.getData());
@@ -342,97 +335,8 @@ export default class Cell extends CoreFeature{
 		this.calcs = {};
 	}
 
-	//////////////// Navigation /////////////////
-	nav(){
-		var self = this,
-		nextCell = false,
-		index = this.row.getCellIndex(this);
-
-		return {
-			next:function(){
-				var nextCell = this.right(),
-				nextRow;
-
-				if(!nextCell){
-					nextRow = self.table.rowManager.nextDisplayRow(self.row, true);
-
-					if(nextRow){
-						nextCell = nextRow.findNextEditableCell(-1);
-
-						if(nextCell){
-							nextCell.edit();
-							return true;
-						}
-					}
-				}else{
-					return true;
-				}
-
-				return false;
-			},
-			prev:function(){
-				var nextCell = this.left(),
-				prevRow;
-
-				if(!nextCell){
-					prevRow = self.table.rowManager.prevDisplayRow(self.row, true);
-
-					if(prevRow){
-						nextCell = prevRow.findPrevEditableCell(prevRow.cells.length);
-
-						if(nextCell){
-							nextCell.edit();
-							return true;
-						}
-					}
-
-				}else{
-					return true;
-				}
-
-				return false;
-			},
-			left:function(){
-
-				nextCell = self.row.findPrevEditableCell(index);
-
-				if(nextCell){
-					nextCell.edit();
-					return true;
-				}else{
-					return false;
-				}
-			},
-			right:function(){
-				nextCell = self.row.findNextEditableCell(index);
-
-				if(nextCell){
-					nextCell.edit();
-					return true;
-				}else{
-					return false;
-				}
-			},
-			up:function(){
-				var nextRow = self.table.rowManager.prevDisplayRow(self.row, true);
-
-				if(nextRow){
-					nextRow.cells[index].edit();
-				}
-			},
-			down:function(){
-				var nextRow = self.table.rowManager.nextDisplayRow(self.row, true);
-
-				if(nextRow){
-					nextRow.cells[index].edit();
-				}
-			},
-
-		};
-	}
-
 	getIndex(){
-		this.row.getCellIndex(this);
+		return this.row.getCellIndex(this);
 	}
 
 	//////////////// Object Generation /////////////////
