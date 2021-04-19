@@ -1,7 +1,10 @@
+import CoreFeature from '../../../../core/CoreFeature.js';
+
 export default function(list, options, setFileContents){
 	var self = this,
 	sheetName = options.sheetName || "Sheet1",
 	workbook = XLSX.utils.book_new(),
+	tableFeatures = new CoreFeature(this);
 	output;
 
 	workbook.SheetNames = [];
@@ -61,7 +64,7 @@ export default function(list, options, setFileContents){
 
 				workbook.SheetNames.push(sheet);
 
-				this.modules.comms.send(options.sheets[sheet], "download", "intercept",{
+				tableFeatures.commsSend(options.sheets[sheet], "download", "intercept",{
 					type:"xlsx",
 					options:{sheetOnly:true},
 					active:self.active,

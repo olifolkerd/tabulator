@@ -410,11 +410,11 @@ class MoveRows extends Module{
 		var connectionTables;
 
 		if(this.connectionSelectorsTables){
-			connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
+			connectionTables = this.commsConnections(this.connectionSelectorsTables);
 
 			this.dispatchExternal("movableRowsSendingStart", connectionTables);
 
-			this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "connect", {
+			this.commsSend(this.connectionSelectorsTables, "moveRow", "connect", {
 				row:row,
 			});
 		}
@@ -453,11 +453,11 @@ class MoveRows extends Module{
 		var connectionTables;
 
 		if(this.connectionSelectorsTables){
-			connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
+			connectionTables = this.commsConnections(this.connectionSelectorsTables);
 
 			this.dispatchExternal("movableRowsSendingStop", connectionTables);
 
-			this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "disconnect");
+			this.commsSend(this.connectionSelectorsTables, "moveRow", "disconnect");
 		}
 
 		this.connectionElements.forEach((element) => {
@@ -575,7 +575,7 @@ class MoveRows extends Module{
 			this.dispatchExternal("movableRowsReceivedFailed", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}
 
-		this.table.modules.comms.send(this.connectedTable, "moveRow", "dropcomplete", {
+		this.commsSend(this.connectedTable, "moveRow", "dropcomplete", {
 			row:row,
 			success:success,
 		});
