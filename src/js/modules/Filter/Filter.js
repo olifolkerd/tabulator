@@ -572,44 +572,40 @@ class Filter extends Module{
 
 	//set standard filters
 	setFilter(field, type, value, params){
-		var self = this;
-
-		self.filterList = [];
+		this.filterList = [];
 
 		if(!Array.isArray(field)){
 			field = [{field:field, type:type, value:value, params:params}];
 		}
 
-		self.addFilter(field);
+		this.addFilter(field);
 	}
 
 	//add filter to array
 	addFilter(field, type, value, params){
-		var self = this;
+		var changed = false;
 
 		if(!Array.isArray(field)){
 			field = [{field:field, type:type, value:value, params:params}];
 		}
 
-		field.forEach(function(filter){
+		field.forEach((filter) => {
 
-			filter = self.findFilter(filter);
+			filter = this.findFilter(filter);
 
 			if(filter){
-				self.filterList.push(filter);
-
-				self.trackChanges();
+				this.filterList.push(filter);
+				this.changed = true;
 			}
 		});
 
-		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.filter){
-			this.table.modules.persistence.save("filter");
+		if(changed){
+			this.trackChanges();
 		}
 	}
 
 	findFilter(filter){
-		var self = this,
-		column;
+		var column;
 
 		if(Array.isArray(filter)){
 			return this.findSubFilters(filter);
@@ -625,7 +621,7 @@ class Filter extends Module{
 
 			if(Filter.filters[filter.type]){
 
-				column = self.table.columnManager.getColumnByField(filter.field);
+				column = this.table.columnManager.getColumnByField(filter.field);
 
 				if(column){
 					filterFunc = function(data){
@@ -649,11 +645,10 @@ class Filter extends Module{
 	}
 
 	findSubFilters(filters){
-		var self = this,
-		output = [];
+		var output = [];
 
-		filters.forEach(function(filter){
-			filter = self.findFilter(filter);
+		filters.forEach((filter) => {
+			filter = this.findFilter(filter);
 
 			if(filter){
 				output.push(filter);
@@ -711,8 +706,7 @@ class Filter extends Module{
 
 	//get all filters
 	getHeaderFilters(){
-		var self = this,
-		output = [];
+		var output = [];
 
 		for(var key in this.headerFilters){
 			output.push({field:key, type:this.headerFilters[key].type, value:this.headerFilters[key].value});
@@ -723,37 +717,34 @@ class Filter extends Module{
 
 	//remove filter from array
 	removeFilter(field, type, value){
-		var self = this;
+		var changed = false;
 
 		if(!Array.isArray(field)){
 			field = [{field:field, type:type, value:value}];
 		}
 
-		field.forEach(function(filter){
+		field.forEach((filter) => {
 			var index = -1;
 
 			if(typeof filter.field == "object"){
-				index = self.filterList.findIndex(function(element){
+				index = this.filterList.findIndex((element) => {
 					return filter === element;
 				});
 			}else{
-				index = self.filterList.findIndex(function(element){
+				index = this.filterList.findIndex((element) => {
 					return filter.field === element.field && filter.type === element.type  && filter.value === element.value;
 				});
 			}
 
 			if(index > -1){
-				self.filterList.splice(index, 1);
-				self.trackChanges()
+				this.filterList.splice(index, 1);
+				changed = true;
 			}else{
 				console.warn("Filter Error - No matching filter type found, ignoring: ", filter.type);
 			}
-
 		});
 
-		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.filter){
-			this.table.modules.persistence.save("filter");
-		}
+		this.trackChanges();
 	}
 
 	//clear filters
@@ -765,25 +756,19 @@ class Filter extends Module{
 		}
 
 		this.trackChanges();
-
-		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.filter){
-			this.table.modules.persistence.save("filter");
-		}
 	}
 
 	//clear header filters
 	clearHeaderFilter(){
-		var self = this;
-
 		this.headerFilters = {};
-		self.prevHeaderFilterChangeCheck = "{}";
+		this.prevHeaderFilterChangeCheck = "{}";
 
-		this.headerFilterColumns.forEach(function(column){
+		this.headerFilterColumns.forEach((column) => {
 			if(typeof column.modules.filter.value !== "undefined"){
 				delete column.modules.filter.value;
 			}
 			column.modules.filter.prevSuccess = undefined;
-			self.reloadHeaderFilter(column);
+			this.reloadHeaderFilter(column);
 		});
 
 		this.trackChanges();
@@ -791,27 +776,26 @@ class Filter extends Module{
 
 	//search data and return matching rows
 	search (searchType, field, type, value){
-		var self = this,
-		activeRows = [],
+		var activeRows = [],
 		filterList = [];
 
 		if(!Array.isArray(field)){
 			field = [{field:field, type:type, value:value}];
 		}
 
-		field.forEach(function(filter){
-			filter = self.findFilter(filter);
+		field.forEach((filter) => {
+			filter = this.findFilter(filter);
 
 			if(filter){
 				filterList.push(filter);
 			}
 		});
 
-		this.table.rowManager.rows.forEach(function(row){
+		this.table.rowManager.rows.forEach((row) => {
 			var match = true;
 
-			filterList.forEach(function(filter){
-				if(!self.filterRecurse(filter, row.getData())){
+			filterList.forEach((filter) => {
+				if(!this.filterRecurse(filter, row.getData())){
 					match = false;
 				}
 			});
@@ -860,19 +844,18 @@ class Filter extends Module{
 
 	//filter individual row
 	filterRow(row, filters){
-		var self = this,
-		match = true,
+		var match = true,
 		data = row.getData();
 
-		self.filterList.forEach(function(filter){
-			if(!self.filterRecurse(filter, data)){
+		this.filterList.forEach((filter) => {
+			if(!this.filterRecurse(filter, data)){
 				match = false;
 			}
 		});
 
 
-		for(var field in self.headerFilters){
-			if(!self.headerFilters[field].func(data)){
+		for(var field in this.headerFilters){
+			if(!this.headerFilters[field].func(data)){
 				match = false;
 			}
 		}
@@ -881,12 +864,11 @@ class Filter extends Module{
 	}
 
 	filterRecurse(filter, data){
-		var self = this,
-		match = false;
+		var match = false;
 
 		if(Array.isArray(filter)){
-			filter.forEach(function(subFilter){
-				if(self.filterRecurse(subFilter, data)){
+			filter.forEach((subFilter) => {
+				if(this.filterRecurse(subFilter, data)){
 					match = true;
 				}
 			});
