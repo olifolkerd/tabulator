@@ -93,7 +93,7 @@ export default class ExternalEventBus {
 		var args = Array.from(arguments),
 		key = args[0];
 
-		args[0] = "Event:" + args[0];
+		args[0] = "ExternalEvent:" + args[0];
 
 		if(this.debug === true || this.debug.includes(key)){
 			console.log(...args);
