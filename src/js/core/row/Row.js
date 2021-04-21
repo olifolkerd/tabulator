@@ -403,18 +403,6 @@ export default class Row extends CoreFeature{
 		}
 	}
 
-	validate(){
-		var invalid = [];
-
-		this.cells.forEach(function(cell){
-			if(!cell.validate()){
-				invalid.push(cell.getComponent());
-			}
-		});
-
-		return invalid.length ? invalid : true;
-	}
-
 	///////////////////// Actions  /////////////////////
 	delete(){
 		return new Promise((resolve, reject) => {

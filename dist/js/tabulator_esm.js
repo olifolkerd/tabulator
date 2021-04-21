@@ -1118,10 +1118,6 @@ class CellComponent {
 		this._cell.setValueActual(this._cell.initialValue);
 	}
 
-	validate(){
-		return this._cell.validate();
-	}
-
 	checkHeight(){
 		this._cell.checkHeight();
 	}
@@ -1428,16 +1424,6 @@ class Cell$1 extends CoreFeature{
 		this.element.style.display = "none";
 	}
 
-	validate(){
-		if(this.column.modules.validate && this.table.modExists("validate", true)){
-			var valid = this.table.modules.validate.validate(this.column.modules.validate, this, this.getValue());
-
-			return valid === true;
-		}else {
-			return true;
-		}
-	}
-
 	delete(){
 		this.dispatch("cell-delete", this);
 
@@ -1612,10 +1598,6 @@ class ColumnComponent {
 		}
 
 		return result;
-	}
-
-	validate(){
-		return this._column.validate();
 	}
 }
 
@@ -2527,18 +2509,6 @@ class Column$1 extends CoreFeature{
 		}
 	}
 
-	validate(){
-		var invalid = [];
-
-		this.cells.forEach(function(cell){
-			if(!cell.validate()){
-				invalid.push(cell.getComponent());
-			}
-		});
-
-		return invalid.length ? invalid : true;
-	}
-
 	//////////////// Cell Management /////////////////
 	//generate cell for this column
 	generateCell(row){
@@ -2738,10 +2708,6 @@ class RowComponent$1 {
 
 	_getSelf(){
 		return this._row;
-	}
-
-	validate(){
-		return this._row.validate();
 	}
 
 	reformat(){
@@ -3162,18 +3128,6 @@ class Row$1 extends CoreFeature{
 		}else {
 			console.warn("Move Error - No matching row found:", to);
 		}
-	}
-
-	validate(){
-		var invalid = [];
-
-		this.cells.forEach(function(cell){
-			if(!cell.validate()){
-				invalid.push(cell.getComponent());
-			}
-		});
-
-		return invalid.length ? invalid : true;
 	}
 
 	///////////////////// Actions  /////////////////////
@@ -17547,6 +17501,10 @@ class Validate extends Module{
 
 		this.registerComponentFunction("cell", "isValid", this.cellIsValid.bind(this));
 		this.registerComponentFunction("cell", "clearValidation", this.clearValidation.bind(this));
+		this.registerComponentFunction("cell", "validate", this.cellValidate.bind(this));
+
+		this.registerComponentFunction("column", "validate", this.columnValidate.bind(this));
+		this.registerComponentFunction("row", "validate", this.rowValidate.bind(this));
 	}
 
 
@@ -17561,6 +17519,42 @@ class Validate extends Module{
 
 	cellIsValid(cell){
 		return cell.modules.validate ? !cell.modules.validate.invalid : true;
+	}
+
+	cellValidate(cell){
+		return this.validate(cell.column.modules.validate, cell, cell.getValue());
+	}
+
+	///////////////////////////////////
+	///////// Column Functions ////////
+	///////////////////////////////////
+
+	columnValidate(column){
+		var invalid = [];
+
+		column.cells.forEach(function(cell){
+			if(!this.cellValidate(cell)){
+				invalid.push(cell.getComponent());
+			}
+		});
+
+		return invalid.length ? invalid : true;
+	}
+
+	///////////////////////////////////
+	////////// Row Functions //////////
+	///////////////////////////////////
+
+	rowValidate(row){
+		var invalid = [];
+
+		row.cells.forEach(function(cell){
+			if(!this.cellValidate(cell)){
+				invalid.push(cell.getComponent());
+			}
+		});
+
+		return invalid.length ? invalid : true;
 	}
 
 	///////////////////////////////////

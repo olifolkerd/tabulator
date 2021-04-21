@@ -294,16 +294,6 @@ export default class Cell extends CoreFeature{
 		this.element.style.display = "none";
 	}
 
-	validate(){
-		if(this.column.modules.validate && this.table.modExists("validate", true)){
-			var valid = this.table.modules.validate.validate(this.column.modules.validate, this, this.getValue());
-
-			return valid === true;
-		}else{
-			return true;
-		}
-	}
-
 	delete(){
 		this.dispatch("cell-delete", this);
 

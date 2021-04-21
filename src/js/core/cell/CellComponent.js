@@ -63,10 +63,6 @@ export default class CellComponent {
 		this._cell.setValueActual(this._cell.initialValue);
 	}
 
-	validate(){
-		return this._cell.validate();
-	}
-
 	checkHeight(){
 		this._cell.checkHeight();
 	}

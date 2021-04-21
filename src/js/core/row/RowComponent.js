@@ -70,10 +70,6 @@ export default class RowComponent {
 		return this._row;
 	}
 
-	validate(){
-		return this._row.validate();
-	}
-
 	reformat(){
 		return this._row.reinitialize();
 	}

@@ -146,8 +146,4 @@ export default class ColumnComponent {
 
 		return result;
 	}
-
-	validate(){
-		return this._column.validate();
-	}
 }

@@ -19,6 +19,10 @@ class Validate extends Module{
 
 		this.registerComponentFunction("cell", "isValid", this.cellIsValid.bind(this));
 		this.registerComponentFunction("cell", "clearValidation", this.clearValidation.bind(this));
+		this.registerComponentFunction("cell", "validate", this.cellValidate.bind(this));
+
+		this.registerComponentFunction("column", "validate", this.columnValidate.bind(this));
+		this.registerComponentFunction("row", "validate", this.rowValidate.bind(this));
 	}
 
 
@@ -33,6 +37,42 @@ class Validate extends Module{
 
 	cellIsValid(cell){
 		return cell.modules.validate ? !cell.modules.validate.invalid : true;
+	}
+
+	cellValidate(cell){
+		return this.validate(cell.column.modules.validate, cell, cell.getValue());
+	}
+
+	///////////////////////////////////
+	///////// Column Functions ////////
+	///////////////////////////////////
+
+	columnValidate(column){
+		var invalid = [];
+
+		column.cells.forEach(function(cell){
+			if(!this.cellValidate(cell)){
+				invalid.push(cell.getComponent());
+			}
+		});
+
+		return invalid.length ? invalid : true;
+	}
+
+	///////////////////////////////////
+	////////// Row Functions //////////
+	///////////////////////////////////
+
+	rowValidate(row){
+		var invalid = [];
+
+		row.cells.forEach(function(cell){
+			if(!this.cellValidate(cell)){
+				invalid.push(cell.getComponent());
+			}
+		});
+
+		return invalid.length ? invalid : true;
 	}
 
 	///////////////////////////////////

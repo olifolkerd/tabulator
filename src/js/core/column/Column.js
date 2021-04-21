@@ -895,18 +895,6 @@ class Column extends CoreFeature{
 		}
 	}
 
-	validate(){
-		var invalid = [];
-
-		this.cells.forEach(function(cell){
-			if(!cell.validate()){
-				invalid.push(cell.getComponent());
-			}
-		});
-
-		return invalid.length ? invalid : true;
-	}
-
 	//////////////// Cell Management /////////////////
 	//generate cell for this column
 	generateCell(row){
