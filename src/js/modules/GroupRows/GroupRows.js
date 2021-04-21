@@ -145,10 +145,31 @@ class GroupRows extends Module{
 			this.subscribe("row-moving", this.rowMoving.bind(this));
 			this.subscribe("row-adding-index", this.rowAddingIndex.bind(this));
 
+			this.subscribe("render-virtual-fill", this.rowAddingIndex.bind(this));
+
 			this.registerDisplayHandler(this.getRows.bind(this), 20);
 
 			this.initialized = true;
 		}
+
+
+	}
+
+	virtualRenderFill(){
+		var el = this.table.rowManager.tableElement;
+		rows = this.table.rowManager.getVisibleRows();
+
+		rows = rows.filter((row) => {
+			return row.type !== "group";
+		});
+
+		el.style.minWidth = !rows.length ? this.table.columnManager.getWidth() + "px" : "";
+
+		// if(this.table.options.groupBy){
+		// 	if(this.layoutMode() != "fitDataFill" && rowsCount == this.table.modules.groupRows.countGroups()){
+		// 		el.style.minWidth = this.table.columnManager.getWidth() + "px";
+		// 	}
+		// }
 	}
 
 	rowAddingIndex(row, index, top){

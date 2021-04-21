@@ -216,7 +216,6 @@ export default class VirtualDomVertical extends Renderer{
 		rowsHeight = 0,
 		topPadHeight = 0,
 		i = 0,
-		onlyGroupHeaders = true,
 		rows = this.rows(),
 		rowsCount = rows.length;
 
@@ -277,10 +276,6 @@ export default class VirtualDomVertical extends Renderer{
 					this.vDomWindowBuffer = rowHeight * 2;
 				}
 
-				if(row.type !== "group"){
-					onlyGroupHeaders = false;
-				}
-
 				this.vDomBottom ++;
 				i++;
 			}
@@ -316,13 +311,7 @@ export default class VirtualDomVertical extends Renderer{
 
 			holder.scrollTop = this.scrollTop;
 
-			element.style.minWidth = onlyGroupHeaders ? this.table.columnManager.getWidth() + "px" : "";
-
-			if(this.table.options.groupBy){
-				if(this.table.modules.layout.getMode() != "fitDataFill" && rowsCount == this.table.modules.groupRows.countGroups()){
-					this.tableElement.style.minWidth = this.table.columnManager.getWidth();
-				}
-			}
+			this.dispatch("render-virtual-fill");
 		}
 	}
 
