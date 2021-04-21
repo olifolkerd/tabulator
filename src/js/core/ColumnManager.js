@@ -584,7 +584,7 @@ export default class ColumnManager extends CoreFeature {
 
 			this.redraw(true);
 
-			if(this.table.modules.layout.getMode() != "fitColumns"){
+			if(this.layoutMode() != "fitColumns"){
 				column.reinitializeWidth();
 			}
 
@@ -640,11 +640,11 @@ export default class ColumnManager extends CoreFeature {
 			this.table.rowManager.reinitialize();
 		}
 
-		if(["fitColumns", "fitDataStretch"].indexOf(this.table.modules.layout.getMode()) > -1){
-			this.table.modules.layout.layout();
+		if(["fitColumns", "fitDataStretch"].indexOf(this.layoutMode()) > -1){
+			this.layoutRefresh();
 		}else{
 			if(force){
-				this.table.modules.layout.layout();
+				this.layoutRefresh();
 			}else{
 				if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
 					this.table.modules.responsiveLayout.update();

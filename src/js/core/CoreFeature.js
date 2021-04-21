@@ -41,6 +41,18 @@ export default class CoreFeature{
 		return this.table.modules.comms.send(...arguments);
 	}
 
+	//////////////////////////////////////////
+	//////////////// Layout  /////////////////
+	//////////////////////////////////////////
+
+	layoutMode(){
+		return this.table.modules.layout.getMode();
+	}
+
+	layoutRefresh(){
+		return this.table.modules.layout.layout();
+	}
+
 
 	//////////////////////////////////////////
 	/////////////// Event Bus ////////////////

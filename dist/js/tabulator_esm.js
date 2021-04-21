@@ -42,6 +42,18 @@ class CoreFeature{
 		return this.table.modules.comms.send(...arguments);
 	}
 
+	//////////////////////////////////////////
+	//////////////// Layout  /////////////////
+	//////////////////////////////////////////
+
+	layoutMode(){
+		return this.table.modules.layout.getMode();
+	}
+
+	layoutRefresh(){
+		return this.table.modules.layout.layout();
+	}
+
 
 	//////////////////////////////////////////
 	/////////////// Event Bus ////////////////
@@ -10954,10 +10966,31 @@ class GroupRows extends Module{
 			this.subscribe("row-moving", this.rowMoving.bind(this));
 			this.subscribe("row-adding-index", this.rowAddingIndex.bind(this));
 
+			this.subscribe("render-virtual-fill", this.rowAddingIndex.bind(this));
+
 			this.registerDisplayHandler(this.getRows.bind(this), 20);
 
 			this.initialized = true;
 		}
+
+
+	}
+
+	virtualRenderFill(){
+		var el = this.table.rowManager.tableElement;
+		rows = this.table.rowManager.getVisibleRows();
+
+		rows = rows.filter((row) => {
+			return row.type !== "group";
+		});
+
+		el.style.minWidth = !rows.length ? this.table.columnManager.getWidth() + "px" : "";
+
+		// if(this.table.options.groupBy){
+		// 	if(this.layoutMode() != "fitDataFill" && rowsCount == this.table.modules.groupRows.countGroups()){
+		// 		el.style.minWidth = this.table.columnManager.getWidth() + "px";
+		// 	}
+		// }
 	}
 
 	rowAddingIndex(row, index, top){
@@ -18465,7 +18498,7 @@ class ColumnManager extends CoreFeature {
 
 			this.redraw(true);
 
-			if(this.table.modules.layout.getMode() != "fitColumns"){
+			if(this.layoutMode() != "fitColumns"){
 				column.reinitializeWidth();
 			}
 
@@ -18521,11 +18554,11 @@ class ColumnManager extends CoreFeature {
 			this.table.rowManager.reinitialize();
 		}
 
-		if(["fitColumns", "fitDataStretch"].indexOf(this.table.modules.layout.getMode()) > -1){
-			this.table.modules.layout.layout();
+		if(["fitColumns", "fitDataStretch"].indexOf(this.layoutMode()) > -1){
+			this.layoutRefresh();
 		}else {
 			if(force){
-				this.table.modules.layout.layout();
+				this.layoutRefresh();
 			}else {
 				if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
 					this.table.modules.responsiveLayout.update();
@@ -19015,7 +19048,6 @@ class VirtualDomVertical extends Renderer{
 		rowsHeight = 0,
 		topPadHeight = 0,
 		i = 0,
-		onlyGroupHeaders = true,
 		rows = this.rows(),
 		rowsCount = rows.length;
 
@@ -19076,10 +19108,6 @@ class VirtualDomVertical extends Renderer{
 					this.vDomWindowBuffer = rowHeight * 2;
 				}
 
-				if(row.type !== "group"){
-					onlyGroupHeaders = false;
-				}
-
 				this.vDomBottom ++;
 				i++;
 			}
@@ -19115,13 +19143,7 @@ class VirtualDomVertical extends Renderer{
 
 			holder.scrollTop = this.scrollTop;
 
-			element.style.minWidth = onlyGroupHeaders ? this.table.columnManager.getWidth() + "px" : "";
-
-			if(this.table.options.groupBy){
-				if(this.table.modules.layout.getMode() != "fitDataFill" && rowsCount == this.table.modules.groupRows.countGroups()){
-					this.tableElement.style.minWidth = this.table.columnManager.getWidth();
-				}
-			}
+			this.dispatch("render-virtual-fill");
 		}
 	}
 
@@ -20135,7 +20157,7 @@ class RowManager extends CoreFeature{
 
 			if(this.firstRender){
 				this.firstRender = false;
-				this.table.modules.layout.layout();
+				this.layoutRefresh();
 			}
 		}else {
 			this.renderEmptyScroll();
@@ -21964,7 +21986,7 @@ class VirtualDomHorizontal {
 			}
 		}else {
 			if(this.table.options.layout === "fitColumns"){
-				this.table.modules.layout.layout();
+				this.layoutRefresh();
 				this.table.vdomHoz.reinitialize(false, true);
 			}
 		}

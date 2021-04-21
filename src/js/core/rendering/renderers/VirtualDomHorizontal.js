@@ -154,7 +154,7 @@ export default class VirtualDomHorizontal {
 			}
 		}else{
 			if(this.table.options.layout === "fitColumns"){
-				this.table.modules.layout.layout();
+				this.layoutRefresh();
 				this.table.vdomHoz.reinitialize(false, true);
 			}
 		}
