@@ -147,7 +147,7 @@ class Edit extends Module{
 				prevRow = this.table.rowManager.prevDisplayRow(cell.row, true);
 
 				if(prevRow){
-					nextCell = prevRow.findNextEditableCell(prevRow.cells.length);
+					nextCell = this.findNextEditableCell(prevRow, prevRow.cells.length);
 
 					if(nextCell){
 						nextCell.edit();
@@ -178,7 +178,7 @@ class Edit extends Module{
 				nextRow = this.table.rowManager.nextDisplayRow(cell.row, true);
 
 				if(nextRow){
-					nextCell = nextRow.findNextEditableCell(-1);
+					nextCell = this.findNextEditableCell(nextRow, -1);
 
 					if(nextCell){
 						nextCell.edit();
@@ -202,7 +202,7 @@ class Edit extends Module{
 			}
 
 			index = cell.getIndex();
-			nextCell = cell.row.findPrevEditableCell(index);
+			nextCell = this.findPrevEditableCell(cell.row, index);
 
 			if(nextCell){
 				nextCell.edit();
@@ -224,7 +224,7 @@ class Edit extends Module{
 			}
 
 			index = cell.getIndex();
-			nextCell = cell.row.findNextEditableCell(index);
+			nextCell = this.findNextEditableCell(cell.row, index);
 
 			if(nextCell){
 				nextCell.edit();
@@ -277,6 +277,55 @@ class Edit extends Module{
 		}
 
 		return false;
+	}
+
+	findNextEditableCell(row, index){
+		var nextCell = false;
+
+		if(index < row.cells.length-1){
+			for(var i = index+1; i < row.cells.length; i++){
+				let cell = row.cells[i];
+
+				if(cell.column.modules.edit && Helpers.elVisible(cell.getElement())){
+					let allowEdit = true;
+
+					if(typeof cell.column.modules.edit.check == "function"){
+						allowEdit = cell.column.modules.edit.check(cell.getComponent());
+					}
+
+					if(allowEdit){
+						nextCell = cell;
+						break;
+					}
+				}
+			}
+		}
+
+		return nextCell;
+	}
+
+	findPrevEditableCell(row, index){
+		var prevCell = false;
+
+		if(index > 0){
+			for(var i = index-1; i >= 0; i--){
+				let cell = row.cells[i],
+				allowEdit = true;
+
+				if(cell.column.modules.edit && Helpers.elVisible(cell.getElement())){
+					if(typeof cell.column.modules.edit.check == "function"){
+						allowEdit = cell.column.modules.edit.check(cell.getComponent());
+					}
+
+					if(allowEdit){
+						prevCell = cell;
+						break;
+					}
+				}
+			}
+		}
+
+		return prevCell;
 	}
 
 	///////////////////////////////////

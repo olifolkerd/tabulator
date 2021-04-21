@@ -329,55 +329,6 @@ export default class Row extends CoreFeature{
 		});
 	}
 
-	findNextEditableCell(index){
-		var nextCell = false;
-
-		if(index < this.cells.length-1){
-			for(var i = index+1; i < this.cells.length; i++){
-				let cell = this.cells[i];
-
-				if(cell.column.modules.edit && Helpers.elVisible(cell.getElement())){
-					let allowEdit = true;
-
-					if(typeof cell.column.modules.edit.check == "function"){
-						allowEdit = cell.column.modules.edit.check(cell.getComponent());
-					}
-
-					if(allowEdit){
-						nextCell = cell;
-						break;
-					}
-				}
-			}
-		}
-
-		return nextCell;
-	}
-
-	findPrevEditableCell(index){
-		var prevCell = false;
-
-		if(index > 0){
-			for(var i = index-1; i >= 0; i--){
-				let cell = this.cells[i],
-				allowEdit = true;
-
-				if(cell.column.modules.edit && Helpers.elVisible(cell.getElement())){
-					if(typeof cell.column.modules.edit.check == "function"){
-						allowEdit = cell.column.modules.edit.check(cell.getComponent());
-					}
-
-					if(allowEdit){
-						prevCell = cell;
-						break;
-					}
-				}
-			}
-		}
-
-		return prevCell;
-	}
-
 	getCells(){
 		return this.cells;
 	}
