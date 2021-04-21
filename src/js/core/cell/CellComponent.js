@@ -63,14 +63,6 @@ export default class CellComponent {
 		this._cell.setValueActual(this._cell.initialValue);
 	}
 
-	edit(force){
-		return this._cell.edit(force);
-	}
-
-	cancelEdit(){
-		this._cell.cancelEdit();
-	}
-
 	validate(){
 		return this._cell.validate();
 	}

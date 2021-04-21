@@ -1118,14 +1118,6 @@ class CellComponent {
 		this._cell.setValueActual(this._cell.initialValue);
 	}
 
-	edit(force){
-		return this._cell.edit(force);
-	}
-
-	cancelEdit(){
-		this._cell.cancelEdit();
-	}
-
 	validate(){
 		return this._cell.validate();
 	}
@@ -1434,24 +1426,6 @@ class Cell$1 extends CoreFeature{
 
 	hide(){
 		this.element.style.display = "none";
-	}
-
-	edit(force){
-		if(this.table.modExists("edit", true)){
-			return this.table.modules.edit.editCell(this, force);
-		}
-	}
-
-	cancelEdit(){
-		if(this.table.modExists("edit", true)){
-			var editing = this.table.modules.edit.getCurrentCell();
-
-			if(editing && editing._getSelf() === this){
-				this.table.modules.edit.cancelEdit();
-			}else {
-				console.warn("Cancel Editor Error - This cell is not currently being edited ");
-			}
-		}
 	}
 
 	validate(){
@@ -6758,6 +6732,8 @@ class Edit extends Module{
 
 		this.registerComponentFunction("cell", "isEdited", this.cellisEdited.bind(this));
 		this.registerComponentFunction("cell", "clearEdited", this.clearEdited.bind(this));
+		this.registerComponentFunction("cell", "edit", this.editCell.bind(this));
+		this.registerComponentFunction("cell", "cancelEdit", this.cellCancelEdit.bind(this));
 
 		this.registerComponentFunction("cell", "navigatePrev", this.navigatePrev.bind(this));
 		this.registerComponentFunction("cell", "navigateNext", this.navigateNext.bind(this));
@@ -6823,6 +6799,14 @@ class Edit extends Module{
 
 	cellisEdited(cell){
 		return !! cell.modules.edit && cell.modules.edit.edited;
+	}
+
+	cellCancelEdit(cell){
+		if(cell === this.currentCell){
+			this.table.modules.edit.cancelEdit();
+		}else {
+			console.warn("Cancel Editor Error - This cell is not currently being edited ");
+		}
 	}
 
 

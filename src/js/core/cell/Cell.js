@@ -294,24 +294,6 @@ export default class Cell extends CoreFeature{
 		this.element.style.display = "none";
 	}
 
-	edit(force){
-		if(this.table.modExists("edit", true)){
-			return this.table.modules.edit.editCell(this, force);
-		}
-	}
-
-	cancelEdit(){
-		if(this.table.modExists("edit", true)){
-			var editing = this.table.modules.edit.getCurrentCell();
-
-			if(editing && editing._getSelf() === this){
-				this.table.modules.edit.cancelEdit();
-			}else{
-				console.warn("Cancel Editor Error - This cell is not currently being edited ");
-			}
-		}
-	}
-
 	validate(){
 		if(this.column.modules.validate && this.table.modExists("validate", true)){
 			var valid = this.table.modules.validate.validate(this.column.modules.validate, this, this.getValue());

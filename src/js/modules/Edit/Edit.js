@@ -34,6 +34,8 @@ class Edit extends Module{
 
 		this.registerComponentFunction("cell", "isEdited", this.cellisEdited.bind(this));
 		this.registerComponentFunction("cell", "clearEdited", this.clearEdited.bind(this));
+		this.registerComponentFunction("cell", "edit", this.editCell.bind(this));
+		this.registerComponentFunction("cell", "cancelEdit", this.cellCancelEdit.bind(this));
 
 		this.registerComponentFunction("cell", "navigatePrev", this.navigatePrev.bind(this));
 		this.registerComponentFunction("cell", "navigateNext", this.navigateNext.bind(this));
@@ -99,6 +101,14 @@ class Edit extends Module{
 
 	cellisEdited(cell){
 		return !! cell.modules.edit && cell.modules.edit.edited;
+	}
+
+	cellCancelEdit(cell){
+		if(cell === this.currentCell){
+			this.table.modules.edit.cancelEdit();
+		}else{
+			console.warn("Cancel Editor Error - This cell is not currently being edited ");
+		}
 	}
 
 
