@@ -1,6 +1,6 @@
 export default {
 
-	debugEvents:false, //flag to console log events
+	debugEventsExternal:false, //flag to console log events
 	debugEventsInternal:false, //flag to console log events
 	debugInvalidOptions:true, //allow toggling of invalid option warnings
 

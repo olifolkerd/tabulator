@@ -17806,7 +17806,7 @@ var modules = /*#__PURE__*/Object.freeze({
 
 var defaultOptions$1 = {
 
-	debugEvents:false, //flag to console log events
+	debugEventsExternal:false, //flag to console log events
 	debugEventsInternal:false, //flag to console log events
 	debugInvalidOptions:true, //allow toggling of invalid option warnings
 
@@ -22359,7 +22359,7 @@ class Tabulator$1 {
 
 		this._mapDepricatedFunctionality();
 
-		this.externalEvents = new ExternalEventBus(this.options, this.options.debugEvents);
+		this.externalEvents = new ExternalEventBus(this.options, this.options.debugEventsExternal);
 		this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
 
 		this.interactionMonitor = new InteractionManager(this);
