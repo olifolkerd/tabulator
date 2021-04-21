@@ -20857,6 +20857,7 @@ class ExternalEventBus {
 		this.subscriptionNotifiers = {};
 
 		this.dispatch = debug ? this._debugDispatch.bind(this) : this._dispatch.bind(this);
+		this.debug = debug;
 	}
 
 	subscriptionChange(key, callback){
@@ -20940,10 +20941,14 @@ class ExternalEventBus {
 	}
 
 	_debugDispatch(){
-		var args = Array.from(arguments);
+		var args = Array.from(arguments),
+		key = args[0];
+
 		args[0] = "Event:" + args[0];
 
-		console.log(...args);
+		if(this.debug === true || this.debug.includes(key)){
+			console.log(...args);
+		}
 
 		return this._dispatch(...arguments)
 	}
@@ -20956,6 +20961,9 @@ class InternalEventBus {
 		this.subscriptionNotifiers = {};
 
 		this.dispatch = debug ? this._debugDispatch.bind(this) : this._dispatch.bind(this);
+		this.chain = debug ? this._debugChain.bind(this) : this._chain.bind(this);
+		this.confirm = debug ? this._debugConfirm.bind(this) : this._confirm.bind(this);
+		this.debug = debug;
 	}
 
 	subscriptionChange(key, callback){
@@ -21012,7 +21020,7 @@ class InternalEventBus {
 		return this.events[key] && this.events[key].length;
 	}
 
-	chain(key, args, initialValue, fallback){
+	_chain(key, args, initialValue, fallback){
 		var value = initialValue;
 
 		if(!Array.isArray(args)){
@@ -21030,7 +21038,7 @@ class InternalEventBus {
 		}
 	}
 
-	confirm(key, args){
+	_confirm(key, args){
 		var confirmed = false;
 
 		if(!Array.isArray(args)){
@@ -21070,12 +21078,42 @@ class InternalEventBus {
 	}
 
 	_debugDispatch(){
-		var args = Array.from(arguments);
-		args[0] = "InternalEvent:" + args[0];
+		var args = Array.from(arguments),
+		key = args[0];
 
-		console.log(...args);
+		args[0] = "InternalEvent:" + key;
 
-		return this._dispatch(...arguments)
+		if(this.debug === true || this.debug.includes(key)){
+			console.log(...args);
+		}
+
+		return this._dispatch(...arguments);
+	}
+
+	_debugChain(){
+		var args = Array.from(arguments),
+		key = args[0];
+
+		args[0] = "InternalEvent:" + key;
+
+		if(this.debug === true || this.debug.includes(key)){
+			console.log(...args);
+		}
+
+		return this._chain(...arguments);
+	}
+
+	_debugConfirm(){
+		var args = Array.from(arguments),
+		key = args[0];
+
+		args[0] = "InternalEvent:" + key;
+
+		if(this.debug === true || this.debug.includes(key)){
+			console.log(...args);
+		}
+
+		return this._confirm(...arguments);
 	}
 }
 

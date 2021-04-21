@@ -6,6 +6,7 @@ export default class ExternalEventBus {
 		this.subscriptionNotifiers = {};
 
 		this.dispatch = debug ? this._debugDispatch.bind(this) : this._dispatch.bind(this);
+		this.debug = debug;
 	}
 
 	subscriptionChange(key, callback){
@@ -89,10 +90,14 @@ export default class ExternalEventBus {
 	}
 
 	_debugDispatch(){
-		var args = Array.from(arguments);
+		var args = Array.from(arguments),
+		key = args[0];
+
 		args[0] = "Event:" + args[0];
 
-		console.log(...args);
+		if(this.debug === true || this.debug.includes(key)){
+			console.log(...args);
+		}
 
 		return this._dispatch(...arguments)
 	}
