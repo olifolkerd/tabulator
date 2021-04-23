@@ -15980,9 +15980,19 @@ class ResponsiveLayout extends Module{
 			this.subscribe("column-add", this.initializeResponsivity.bind(this));
 			this.subscribe("column-delete", this.initializeResponsivity.bind(this));
 
+			this.subscribe("table-redrawing", this.tableRedraw.bind(this));
+
 			if(this.table.options.responsiveLayout === "collapse"){
 				this.subscribe("row-init", this.initializeRow.bind(this));
 				this.subscribe("row-layout", this.layoutRow.bind(this));
+			}
+		}
+	}
+
+	tableRedraw(force){
+		if(["fitColumns", "fitDataStretch"].indexOf(this.layoutMode()) === -1){
+			if(!force){
+				this.update();
 			}
 		}
 	}
@@ -18554,16 +18564,8 @@ class ColumnManager extends CoreFeature {
 			this.table.rowManager.reinitialize();
 		}
 
-		if(["fitColumns", "fitDataStretch"].indexOf(this.layoutMode()) > -1){
+		if(!this.confirm("table-redrawing", force)){
 			this.layoutRefresh();
-		}else {
-			if(force){
-				this.layoutRefresh();
-			}else {
-				if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-					this.table.modules.responsiveLayout.update();
-				}
-			}
 		}
 
 		this.dispatch("table-redraw", force);

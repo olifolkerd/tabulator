@@ -640,16 +640,8 @@ export default class ColumnManager extends CoreFeature {
 			this.table.rowManager.reinitialize();
 		}
 
-		if(["fitColumns", "fitDataStretch"].indexOf(this.layoutMode()) > -1){
+		if(!this.confirm("table-redrawing", force)){
 			this.layoutRefresh();
-		}else{
-			if(force){
-				this.layoutRefresh();
-			}else{
-				if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-					this.table.modules.responsiveLayout.update();
-				}
-			}
 		}
 
 		this.dispatch("table-redraw", force);
