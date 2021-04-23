@@ -10966,14 +10966,22 @@ class GroupRows extends Module{
 			this.subscribe("row-moving", this.rowMoving.bind(this));
 			this.subscribe("row-adding-index", this.rowAddingIndex.bind(this));
 
+			this.subscribe("rows-sample", this.rowSample.bind(this));
+
 			this.subscribe("render-virtual-fill", this.rowAddingIndex.bind(this));
 
 			this.registerDisplayHandler(this.getRows.bind(this), 20);
 
 			this.initialized = true;
 		}
+	}
 
+	rowSample(rows, prevValue){
+		var group = this.getGroups(false)[0];
 
+		prevValue.push(group.getRows(false)[0]);
+
+		return prevValue;
 	}
 
 	virtualRenderFill(){
@@ -21931,7 +21939,7 @@ class VirtualDomHorizontal {
 		var change = false,
 		collsWidth = 0,
 		colEnd = 0,
-		group, row, rowEl;
+		row, rowEl;
 
 		if(this.table.options.layout === "fitData"){
 			this.table.columnManager.columnsByIndex.forEach((column) => {
@@ -21945,13 +21953,9 @@ class VirtualDomHorizontal {
 
 					this.vDomScrollPosRight = this.scrollLeft + this.holderEl.clientWidth + this.window;
 
-					if(this.table.options.groupBy){
-						group = this.table.modules.groupRows.getGroups(false)[0];
-
-						row = group.getRows(false)[0];
-					}else {
-						row = this.table.rowManager.getDisplayRows()[0];
-					}
+					var row = this.chain("rows-sample", [1], [], function(){
+						return this.table.rowManager.getDisplayRows()[0];
+					})[0];
 
 					if(row){
 

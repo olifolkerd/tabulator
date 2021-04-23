@@ -111,13 +111,9 @@ export default class VirtualDomHorizontal {
 
 					this.vDomScrollPosRight = this.scrollLeft + this.holderEl.clientWidth + this.window;
 
-					if(this.table.options.groupBy){
-						group = this.table.modules.groupRows.getGroups(false)[0];
-
-						row = group.getRows(false)[0];
-					}else{
-						row = this.table.rowManager.getDisplayRows()[0];
-					}
+					var row = this.chain("rows-sample", [1], [], function(){
+						return this.table.rowManager.getDisplayRows()[0];
+					})[0];
 
 					if(row){
 

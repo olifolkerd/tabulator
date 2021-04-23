@@ -145,14 +145,22 @@ class GroupRows extends Module{
 			this.subscribe("row-moving", this.rowMoving.bind(this));
 			this.subscribe("row-adding-index", this.rowAddingIndex.bind(this));
 
+			this.subscribe("rows-sample", this.rowSample.bind(this));
+
 			this.subscribe("render-virtual-fill", this.rowAddingIndex.bind(this));
 
 			this.registerDisplayHandler(this.getRows.bind(this), 20);
 
 			this.initialized = true;
 		}
+	}
 
+	rowSample(rows, prevValue){
+		var group = this.getGroups(false)[0];
 
+		prevValue.push(group.getRows(false)[0]);
+
+		return prevValue;
 	}
 
 	virtualRenderFill(){
