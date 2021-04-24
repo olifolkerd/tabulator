@@ -72,7 +72,7 @@ export default class VirtualDomVertical extends Renderer{
 		var topRow = false;
 		var topOffset = false;
 
-		var left = this.scrollLeft;
+		var left = this.table.rowManager.scrollLeft;
 
 		var rows = this.rows();
 
@@ -96,7 +96,11 @@ export default class VirtualDomVertical extends Renderer{
 
 		this._virtualRenderFill((topRow === false ? this.rows.length - 1 : topRow), true, topOffset || 0);
 
-		// this.scrollHorizontal(left);
+		this.scrollColumns(left);
+	}
+
+	scrollColumns(left){
+		this.table.rowManager.scrollHorizontal(left);
 	}
 
 	scrollRows(top, dir){
@@ -107,11 +111,16 @@ export default class VirtualDomVertical extends Renderer{
 
 		this.scrollTop = top;
 
+		console.log("scroll")
+
+		// console.log("diff", topDiff, bottomDiff, margin)
+
 		if(-topDiff > margin || bottomDiff > margin){
+			// console.log("over")
 			//if big scroll redraw table;
-			var left = this.scrollLeft;
+			var left = this.table.rowManager.scrollLeft;
 			this._virtualRenderFill(Math.floor((this.elementVertical.scrollTop / this.elementVertical.scrollHeight) * rows.length));
-			// this.scrollHorizontal(left);
+			this.scrollColumns(left);
 		}else{
 			if(dir){
 				//scrolling up
@@ -128,19 +137,19 @@ export default class VirtualDomVertical extends Renderer{
 					}
 				}
 			}else{
+
+				if(bottomDiff >= 0){
+					this._addBottomRow(rows, bottomDiff);
+				}
+
 				//scrolling down
 				if(topDiff >= 0){
 					//hide top row if needed
 					if(this.scrollTop > this.vDomWindowBuffer){
-
 						this._removeTopRow(rows, topDiff);
 					}else{
 						this.vDomScrollPosTop = this.scrollTop;
 					}
-				}
-
-				if(bottomDiff >= 0){
-					this._addBottomRow(rows, bottomDiff);
 				}
 			}
 		}
@@ -286,7 +295,8 @@ export default class VirtualDomVertical extends Renderer{
 				this.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
 				this.vDomBottomPad = this.vDomRowHeight * (rowsCount - this.vDomBottom -1);
 
-				this.vDomScrollHeight = topPadHeight + rowsHeight + this.vDomBottomPad - this.height;
+				this.vDomScrollHeight = topPadHeight + rowsHeight + this.vDomBottomPad - this.elementVertical.clientHeight;
+				console.log(this.vDomScrollHeight, topPadHeight, rowsHeight ,this.vDomBottomPad ,this.elementVertical.clientHeight);
 			}else{
 				this.vDomTopPad = !forceMove ? this.scrollTop - topPadHeight : (this.vDomRowHeight * this.vDomTop) + offset;
 				this.vDomBottomPad = this.vDomBottom == rowsCount-1 ? 0 : Math.max(this.vDomScrollHeight - this.vDomTopPad - rowsHeight - topPadHeight, 0);
@@ -315,164 +325,268 @@ export default class VirtualDomVertical extends Renderer{
 		}
 	}
 
-	_addTopRow(rows, topDiff, i=0){
-		var table = this.tableElement;
+	_addTopRow(rows, fillableSpace){
+		var table = this.tableElement,
+		addedRows = [],
+		paddingAdjust = 0,
+		index = this.vDomTop -1,
+		i = 0;
 
-		if(this.vDomTop){
-			let index = this.vDomTop -1,
-			topRow = rows[index],
-			topRowHeight = topRow.getHeight() || this.vDomRowHeight;
+		while(true){
+			if(this.vDomTop){
+				let row = rows[index],
+				rowHeight, initialized;
 
-			//hide top row if needed
-			if(topDiff >= topRowHeight){
-				this.styleRow(topRow, index);
-				table.insertBefore(topRow.getElement(), table.firstChild);
-				if(!topRow.initialized || !topRow.heightInitialized){
-					this.vDomTopNewRows.push(topRow);
+				if(row && i < this.vDomMaxRenderChain){
+					rowHeight = row.getHeight() || this.vDomRowHeight;
+					initialized = row.initialized;
 
-					if(!topRow.heightInitialized){
-						topRow.clearCellHeight();
+					if(fillableSpace >= rowHeight){
+
+						this.styleRow(row, index);
+						table.insertBefore(row.getElement(), table.firstChild);
+
+						if(!row.initialized || !row.heightInitialized){
+							addedRows.push(row);
+						}
+
+						row.initialize();
+
+						if(!initialized){
+							rowHeight = row.getElement().offsetHeight;
+
+							if(rowHeight > this.vDomWindowBuffer){
+								this.vDomWindowBuffer = rowHeight * 2;
+							}
+						}
+
+						fillableSpace -= rowHeight;
+						paddingAdjust += rowHeight;
+
+						this.vDomTop--;
+						index--;
+						i++;
+
+					}else{
+						break;
 					}
+
+				}else{
+					if(i < this.vDomMaxRenderChain){
+						console.log("top add ---")
+					}
+					break;
 				}
 
-				topRow.initialize();
-
-				this.vDomTopPad -= topRowHeight;
-
-				if(this.vDomTopPad < 0){
-					this.vDomTopPad = index * this.vDomRowHeight;
-				}
-
-				if(!index){
-					this.vDomTopPad = 0;
-				}
-
-				table.style.paddingTop = this.vDomTopPad + "px";
-				this.vDomScrollPosTop -= topRowHeight;
-				this.vDomTop--;
-			}
-
-			topDiff = -(this.scrollTop - this.vDomScrollPosTop);
-
-			if(topRow.getHeight() > this.vDomWindowBuffer){
-				this.vDomWindowBuffer = topRow.getHeight() * 2;
-			}
-
-			if(i < this.vDomMaxRenderChain && this.vDomTop && topDiff >= (rows[this.vDomTop -1].getHeight() || this.vDomRowHeight)){
-				this._addTopRow(rows, topDiff, i+1);
 			}else{
-				this._quickNormalizeRowHeight(this.vDomTopNewRows);
+				break;
 			}
 		}
-	}
+		if(i){
+			console.log("top add", i)
+		}
 
-	_removeTopRow(rows, topDiff){
-		var table = this.tableElement,
-		topRow = rows[this.vDomTop],
-		topRowHeight = topRow.getHeight() || this.vDomRowHeight;
+		for (let row of addedRows){
+			row.clearCellHeight();
+		}
 
-		if(topDiff >= topRowHeight){
+		this._quickNormalizeRowHeight(addedRows);
 
-			var rowEl = topRow.getElement();
-			rowEl.parentNode.removeChild(rowEl);
+		if(paddingAdjust){
+			this.vDomTopPad -= paddingAdjust;
 
-			this.vDomTopPad += topRowHeight;
+			if(this.vDomTopPad < 0){
+				this.vDomTopPad = index * this.vDomRowHeight;
+			}
+
+			if(!index){
+				this.vDomTopPad = 0;
+			}
+
 			table.style.paddingTop = this.vDomTopPad + "px";
-			this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowBuffer;
-			this.vDomTop++;
-
-			topDiff = this.scrollTop - this.vDomScrollPosTop;
-
-			this._removeTopRow(rows, topDiff);
+			this.vDomScrollPosTop -= paddingAdjust;
 		}
 	}
 
-	_addBottomRow(rows, bottomDiff, i=0){
-		var table = this.tableElement;
+	_removeTopRow(rows, fillableSpace){
+		var removableRows = [],
+		paddingAdjust = 0,
+		i = 0;
 
-		if(this.vDomBottom < rows.length -1){
-			let index = this.vDomBottom + 1,
-			bottomRow = rows[index],
-			bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
+		while(true){
+			let row = rows[this.vDomTop],
+			rowHeight, diff;
 
-			//hide bottom row if needed
-			if(bottomDiff >= bottomRowHeight){
-				this.styleRow(bottomRow, index);
-				table.appendChild(bottomRow.getElement());
+			if(row && i < this.vDomMaxRenderChain){
+				rowHeight = row.getHeight() || this.vDomRowHeight;
 
-				if(!bottomRow.initialized || !bottomRow.heightInitialized){
-					this.vDomBottomNewRows.push(bottomRow);
+				if(fillableSpace >= rowHeight){
+					this.vDomTop++;
 
-					if(!bottomRow.heightInitialized){
-						bottomRow.clearCellHeight();
-					}
+					fillableSpace -= rowHeight;
+					paddingAdjust += rowHeight;
+
+					removableRows.push(row);
+					i++;
+				}else{
+					break;
 				}
-
-				bottomRow.initialize();
-
-				this.vDomBottomPad -= bottomRowHeight;
-
-				if(this.vDomBottomPad < 0 || index == rows.length -1){
-					this.vDomBottomPad = 0;
-				}
-
-				table.style.paddingBottom = this.vDomBottomPad + "px";
-				this.vDomScrollPosBottom += bottomRowHeight;
-				this.vDomBottom++;
-			}
-
-			bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
-
-			if(bottomRow.getHeight() > this.vDomWindowBuffer){
-				this.vDomWindowBuffer = bottomRow.getHeight() * 2;
-			}
-
-			if(i < this.vDomMaxRenderChain && this.vDomBottom < rows.length -1 && bottomDiff >= (rows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)){
-				this._addBottomRow(rows, bottomDiff, i+1);
 			}else{
-				this._quickNormalizeRowHeight(this.vDomBottomNewRows);
+				console.log("top rem-------------", i)
+				break;
 			}
 		}
-	}
 
-	_removeBottomRow(rows, bottomDiff){
-		var table = this.tableElement,
-		bottomRow = rows[this.vDomBottom],
-		bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
-
-		if(bottomDiff >= bottomRowHeight){
-
-			var rowEl = bottomRow.getElement();
+		for (let row of removableRows){
+			let rowEl = row.getElement();
 
 			if(rowEl.parentNode){
 				rowEl.parentNode.removeChild(rowEl);
 			}
+		}
+		if(i){
+			console.log("top rem", i)
+		}
 
-			this.vDomBottomPad += bottomRowHeight;
+		if(paddingAdjust){
+			this.vDomTopPad += paddingAdjust;
+			this.tableElement.style.paddingTop = this.vDomTopPad + "px";
+			this.vDomScrollPosTop += this.vDomTop ? paddingAdjust : paddingAdjust + this.vDomWindowBuffer;
+		}
+	}
+
+	_addBottomRow(rows, fillableSpace){
+		var table = this.tableElement,
+		addedRows = [],
+		paddingAdjust = 0,
+		index = this.vDomBottom + 1,
+		i = 0;
+
+		while(true){
+			let row = rows[index],
+			rowHeight, initialized;
+
+			if(row && i < this.vDomMaxRenderChain){
+				rowHeight = row.getHeight() || this.vDomRowHeight;
+				initialized = row.initialized;
+
+				if(fillableSpace >= rowHeight){
+
+					this.styleRow(row, index);
+					table.appendChild(row.getElement());
+
+					if(!row.initialized || !row.heightInitialized){
+						addedRows.push(row);
+					}
+
+					row.initialize();
+
+					if(!initialized){
+						rowHeight = row.getElement().offsetHeight;
+
+						if(rowHeight > this.vDomWindowBuffer){
+							this.vDomWindowBuffer = rowHeight * 2;
+						}
+					}
+
+					fillableSpace -= rowHeight;
+					paddingAdjust += rowHeight;
+
+					this.vDomBottom++;
+					index++;
+					i++;
+				}else{
+					break;
+				}
+			}else{
+				if(i < this.vDomMaxRenderChain){
+					console.log("bot add ---")
+				}
+				break;
+			}
+		}
+		if(i){
+			console.log("bot add", i)
+		}
+
+		for (let row of addedRows){
+			row.clearCellHeight();
+		}
+
+		this._quickNormalizeRowHeight(addedRows);
+
+		if(paddingAdjust){
+			this.vDomBottomPad -= paddingAdjust;
+
+			if(this.vDomBottomPad < 0 || index == rows.length -1){
+				this.vDomBottomPad = 0;
+			}
+
+			table.style.paddingBottom = this.vDomBottomPad + "px";
+			this.vDomScrollPosBottom += paddingAdjust;
+		}
+	}
+
+	_removeBottomRow(rows, fillableSpace){
+		var removableRows = [],
+		paddingAdjust = 0,
+		i = 0;
+
+		while(true){
+			let row = rows[this.vDomBottom],
+			rowHeight, diff;
+
+			if(row && i < this.vDomMaxRenderChain){
+				rowHeight = row.getHeight() || this.vDomRowHeight;
+
+				if(fillableSpace >= rowHeight){
+					this.vDomBottom --;
+
+					fillableSpace -= rowHeight;
+					paddingAdjust += rowHeight;
+
+					removableRows.push(row);
+					i++;
+				}else{
+					break;
+				}
+			}else{
+				console.log("botrem-------------", i)
+				break;
+			}
+		}
+
+		if(i){
+			console.log("bot rem", i)
+		}
+
+		for (let row of removableRows){
+			let rowEl = row.getElement();
+
+			if(rowEl.parentNode){
+				rowEl.parentNode.removeChild(rowEl);
+			}
+		}
+
+		if(paddingAdjust){
+			this.vDomBottomPad += paddingAdjust;
 
 			if(this.vDomBottomPad < 0){
 				this.vDomBottomPad = 0;
 			}
 
-			table.style.paddingBottom = this.vDomBottomPad + "px";
-			this.vDomScrollPosBottom -= bottomRowHeight;
-			this.vDomBottom--;
-
-			bottomDiff = -(this.scrollTop - this.vDomScrollPosBottom);
-
-			this._removeBottomRow(rows, bottomDiff);
+			this.tableElement.style.paddingBottom = this.vDomBottomPad + "px";
+			this.vDomScrollPosBottom -= paddingAdjust;
 		}
 	}
 
 	_quickNormalizeRowHeight(rows){
-		rows.forEach(function(row){
+		for(let row of rows){
 			row.calcHeight();
-		});
+		}
 
-		rows.forEach(function(row){
+		for(let row of rows){
 			row.setCellHeight();
-		});
-
-		rows.length = 0;
+		}
 	}
 }
