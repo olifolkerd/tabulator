@@ -18953,17 +18953,13 @@ class VirtualDomVertical extends Renderer{
 
 		this.scrollTop = top;
 
-		console.log("scroll");
-
-		// console.log("diff", topDiff, bottomDiff, margin)
-
 		if(-topDiff > margin || bottomDiff > margin){
-			// console.log("over")
 			//if big scroll redraw table;
 			var left = this.table.rowManager.scrollLeft;
 			this._virtualRenderFill(Math.floor((this.elementVertical.scrollTop / this.elementVertical.scrollHeight) * rows.length));
 			this.scrollColumns(left);
 		}else {
+
 			if(dir){
 				//scrolling up
 				if(topDiff < 0){
@@ -19065,10 +19061,12 @@ class VirtualDomVertical extends Renderer{
 		holder = this.elementVertical,
 		topPad = 0,
 		rowsHeight = 0,
+		heightOccupied = 0,
 		topPadHeight = 0,
 		i = 0,
 		rows = this.rows(),
-		rowsCount = rows.length;
+		rowsCount = rows.length,
+		containerHeight = this.elementVertical.clientHeight;
 
 		position = position || 0;
 
@@ -19080,11 +19078,10 @@ class VirtualDomVertical extends Renderer{
 			while(element.firstChild) element.removeChild(element.firstChild);
 
 			//check if position is too close to bottom of table
-			let heightOccupied  = (rowsCount - position + 1) * this.vDomRowHeight;
+			heightOccupied = (rowsCount - position + 1) * this.vDomRowHeight;
 
-			if(heightOccupied  < this.height){
-				position -= Math.ceil((this.height - heightOccupied) / this.vDomRowHeight);
-
+			if(heightOccupied < containerHeight){
+				position -= Math.ceil((containerHeight - heightOccupied) / this.vDomRowHeight);
 				if(position < 0){
 					position = 0;
 				}
@@ -19100,7 +19097,7 @@ class VirtualDomVertical extends Renderer{
 
 			this.vDomBottom = position -1;
 
-			while ((rowsHeight <= this.height + this.vDomWindowBuffer || i < this.vDomWindowMinTotalRows) && this.vDomBottom < rowsCount -1){
+			while ((rowsHeight <= containerHeight + this.vDomWindowBuffer || i < this.vDomWindowMinTotalRows) && this.vDomBottom < rowsCount -1){
 				var index = this.vDomBottom + 1,
 				row = rows[index],
 				rowHeight = 0;
@@ -19137,8 +19134,7 @@ class VirtualDomVertical extends Renderer{
 				this.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
 				this.vDomBottomPad = this.vDomRowHeight * (rowsCount - this.vDomBottom -1);
 
-				this.vDomScrollHeight = topPadHeight + rowsHeight + this.vDomBottomPad - this.elementVertical.clientHeight;
-				console.log(this.vDomScrollHeight, topPadHeight, rowsHeight ,this.vDomBottomPad ,this.elementVertical.clientHeight);
+				this.vDomScrollHeight = topPadHeight + rowsHeight + this.vDomBottomPad - containerHeight;
 			}else {
 				this.vDomTopPad = !forceMove ? this.scrollTop - topPadHeight : (this.vDomRowHeight * this.vDomTop) + offset;
 				this.vDomBottomPad = this.vDomBottom == rowsCount-1 ? 0 : Math.max(this.vDomScrollHeight - this.vDomTopPad - rowsHeight - topPadHeight, 0);
@@ -19148,14 +19144,14 @@ class VirtualDomVertical extends Renderer{
 			element.style.paddingBottom = this.vDomBottomPad + "px";
 
 			if(forceMove){
-				this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.elementVertical.scrollWidth > this.elementVertical.clientWidth ? this.elementVertical.offsetHeight - this.elementVertical.clientHeight : 0);
+				this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.elementVertical.scrollWidth > this.elementVertical.clientWidth ? this.elementVertical.offsetHeight - containerHeight : 0);
 			}
 
-			this.scrollTop = Math.min(this.scrollTop, this.elementVertical.scrollHeight - this.elementVertical.clientHeight);
+			this.scrollTop = Math.min(this.scrollTop, this.elementVertical.scrollHeight - containerHeight);
 
 			//adjust for horizontal scrollbar if present (and not at top of table)
 			if(this.elementVertical.scrollWidth > this.elementVertical.offsetWidth && forceMove){
-				this.scrollTop += this.elementVertical.offsetHeight - this.elementVertical.clientHeight;
+				this.scrollTop += this.elementVertical.offsetHeight - containerHeight;
 			}
 
 			this.vDomScrollPosTop = this.scrollTop;
@@ -19214,18 +19210,12 @@ class VirtualDomVertical extends Renderer{
 					}
 
 				}else {
-					if(i < this.vDomMaxRenderChain){
-						console.log("top add ---");
-					}
 					break;
 				}
 
 			}else {
 				break;
 			}
-		}
-		if(i){
-			console.log("top add", i);
 		}
 
 		for (let row of addedRows){
@@ -19241,7 +19231,7 @@ class VirtualDomVertical extends Renderer{
 				this.vDomTopPad = index * this.vDomRowHeight;
 			}
 
-			if(!index){
+			if(index < 1){
 				this.vDomTopPad = 0;
 			}
 
@@ -19274,7 +19264,6 @@ class VirtualDomVertical extends Renderer{
 					break;
 				}
 			}else {
-				console.log("top rem-------------", i);
 				break;
 			}
 		}
@@ -19285,9 +19274,6 @@ class VirtualDomVertical extends Renderer{
 			if(rowEl.parentNode){
 				rowEl.parentNode.removeChild(rowEl);
 			}
-		}
-		if(i){
-			console.log("top rem", i);
 		}
 
 		if(paddingAdjust){
@@ -19341,14 +19327,8 @@ class VirtualDomVertical extends Renderer{
 					break;
 				}
 			}else {
-				if(i < this.vDomMaxRenderChain){
-					console.log("bot add ---");
-				}
 				break;
 			}
-		}
-		if(i){
-			console.log("bot add", i);
 		}
 
 		for (let row of addedRows){
@@ -19393,13 +19373,8 @@ class VirtualDomVertical extends Renderer{
 					break;
 				}
 			}else {
-				console.log("botrem-------------", i);
 				break;
 			}
-		}
-
-		if(i){
-			console.log("bot rem", i);
 		}
 
 		for (let row of removableRows){
