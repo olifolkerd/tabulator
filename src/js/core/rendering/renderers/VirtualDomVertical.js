@@ -152,7 +152,7 @@ export default class VirtualDomVertical extends Renderer{
 	}
 
 	resize(){
-		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.elementVertical.clientHeight;
+		this.vDomWindowBuffer = this.table.options.renderVerticalBuffer || this.elementVertical.clientHeight;
 	}
 
 	scrollToRowNearestTop(row){

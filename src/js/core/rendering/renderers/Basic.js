@@ -1,7 +1,7 @@
 import Renderer from '../Renderer.js';
 import Helpers from '../../tools/Helpers.js';
 
-export default class Classic extends Renderer{
+export default class Baisc extends Renderer{
 	constructor(table){
 		super(table);
 

@@ -3,7 +3,7 @@ import Row from './row/Row.js';
 import RowComponent from './row/RowComponent.js';
 import Helpers from './tools/Helpers.js';
 
-import RendererClassic from './rendering/renderers/Classic.js';
+import RendererBasic from './rendering/renderers/Basic.js';
 import RendererVirtualDomVertical from './rendering/renderers/VirtualDomVertical.js';
 
 export default class RowManager extends CoreFeature{
@@ -83,7 +83,7 @@ export default class RowManager extends CoreFeature{
 	}
 
 	initialize(){
-		this.setRenderMode();
+		this.initializeRenderer();
 
 		//initialize manager
 		this.element.appendChild(this.tableElement);
@@ -818,14 +818,23 @@ export default class RowManager extends CoreFeature{
 		}
 	}
 
-	setRenderMode(){
-		if(this.table.options.virtualDom){
-			this.renderMode = "virtual";
+	initializeRenderer(){
+		var renderClass;
 
-			if(!this.renderer || !(this.renderer instanceof RendererVirtualDomVertical)){
-				this.renderer = new RendererVirtualDomVertical(this.table, this.element, this.tableElement)
-				this.renderer.initialize();
-			}
+		var renderers = {
+			"virtual":RendererVirtualDomVertical,
+			"basic":RendererBasic,
+		};
+
+		if(typeof this.table.options.renderVertical === "string"){
+			renderClass = renderers[this.table.options.renderVertical];
+		}else{
+			renderClass = this.table.options.renderVertical;
+		}
+
+		if(renderClass){
+			this.renderer = new renderClass(this.table, this.element, this.tableElement);
+			this.renderer.initialize();
 
 			if((this.table.element.clientHeight || this.table.options.height)){
 				this.fixedHeight = true;
@@ -833,12 +842,7 @@ export default class RowManager extends CoreFeature{
 				this.fixedHeight = false;
 			}
 		}else{
-			this.renderMode = "classic";
-
-			if(!this.renderer || !(this.renderer instanceof RendererClassic)){
-				this.renderer = new RendererClassic(this.table, this.element, this.tableElement)
-				this.renderer.initialize();
-			}
+			console.error("Unable to find matching renderer:", table.options.renderVertical);
 		}
 	}
 
@@ -997,12 +1001,6 @@ export default class RowManager extends CoreFeature{
 		this.table.tableWidth = this.table.element.clientWidth;
 
 		if(!force){
-			// if(this.renderMode == "classic"){
-			// 	if(this.table.options.groupBy){
-			// 		this.refreshActiveData("group", false, false);
-			// 	}
-			// }
-
 			this.reRenderInPosition();
 			this.scrollHorizontal(left);
 
@@ -1011,7 +1009,6 @@ export default class RowManager extends CoreFeature{
 					this.getElement().appendChild(this.table.options.placeholder);
 				}
 			}
-
 		}else{
 			this.renderTable();
 		}

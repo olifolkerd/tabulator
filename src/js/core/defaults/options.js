@@ -33,8 +33,10 @@ export default {
 
 	headerVisible:true, //hide header
 
-	virtualDom:true, //enable DOM virtualization
-    virtualDomBuffer:0, // set virtual DOM buffer size
+	renderVertical:"virtual",
+	renderHorizontal:"basic",
+	// virtualDom:true, //enable DOM virtualization
+    renderVerticalBuffer:0, // set virtual DOM buffer size
 	virtualDomHoz:false, //enable horizontal DOM virtualization
 
 	scrollToRowPosition:"top",

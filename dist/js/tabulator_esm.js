@@ -17868,8 +17868,10 @@ var defaultOptions$1 = {
 
 	headerVisible:true, //hide header
 
-	virtualDom:true, //enable DOM virtualization
-    virtualDomBuffer:0, // set virtual DOM buffer size
+	renderVertical:"virtual",
+	renderHorizontal:"basic",
+	// virtualDom:true, //enable DOM virtualization
+    renderVerticalBuffer:0, // set virtual DOM buffer size
 	virtualDomHoz:false, //enable horizontal DOM virtualization
 
 	scrollToRowPosition:"top",
@@ -18767,7 +18769,7 @@ class Renderer extends CoreFeature{
 	}
 }
 
-class Classic extends Renderer{
+class Baisc extends Renderer{
 	constructor(table){
 		super(table);
 
@@ -18994,7 +18996,7 @@ class VirtualDomVertical extends Renderer{
 	}
 
 	resize(){
-		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.elementVertical.clientHeight;
+		this.vDomWindowBuffer = this.table.options.renderVerticalBuffer || this.elementVertical.clientHeight;
 	}
 
 	scrollToRowNearestTop(row){
@@ -19485,7 +19487,7 @@ class RowManager extends CoreFeature{
 	}
 
 	initialize(){
-		this.setRenderMode();
+		this.initializeRenderer();
 
 		//initialize manager
 		this.element.appendChild(this.tableElement);
@@ -20216,14 +20218,23 @@ class RowManager extends CoreFeature{
 		}
 	}
 
-	setRenderMode(){
-		if(this.table.options.virtualDom){
-			this.renderMode = "virtual";
+	initializeRenderer(){
+		var renderClass;
 
-			if(!this.renderer || !(this.renderer instanceof VirtualDomVertical)){
-				this.renderer = new VirtualDomVertical(this.table, this.element, this.tableElement);
-				this.renderer.initialize();
-			}
+		var renderers = {
+			"virtual":VirtualDomVertical,
+			"basic":Baisc,
+		};
+
+		if(typeof this.table.options.renderVertical === "string"){
+			renderClass = renderers[this.table.options.renderVertical];
+		}else {
+			renderClass = this.table.options.renderVertical;
+		}
+
+		if(renderClass){
+			this.renderer = new renderClass(this.table, this.element, this.tableElement);
+			this.renderer.initialize();
 
 			if((this.table.element.clientHeight || this.table.options.height)){
 				this.fixedHeight = true;
@@ -20231,12 +20242,7 @@ class RowManager extends CoreFeature{
 				this.fixedHeight = false;
 			}
 		}else {
-			this.renderMode = "classic";
-
-			if(!this.renderer || !(this.renderer instanceof Classic)){
-				this.renderer = new Classic(this.table, this.element, this.tableElement);
-				this.renderer.initialize();
-			}
+			console.error("Unable to find matching renderer:", table.options.renderVertical);
 		}
 	}
 
@@ -20393,12 +20399,6 @@ class RowManager extends CoreFeature{
 		this.table.tableWidth = this.table.element.clientWidth;
 
 		if(!force){
-			// if(this.renderMode == "classic"){
-			// 	if(this.table.options.groupBy){
-			// 		this.refreshActiveData("group", false, false);
-			// 	}
-			// }
-
 			this.reRenderInPosition();
 			this.scrollHorizontal(left);
 
@@ -20407,7 +20407,6 @@ class RowManager extends CoreFeature{
 					this.getElement().appendChild(this.table.options.placeholder);
 				}
 			}
-
 		}else {
 			this.renderTable();
 		}
@@ -23145,14 +23144,10 @@ class Tabulator$1 {
 	}
 
 	setHeight(height){
-		if(this.rowManager.renderMode !== "classic"){
-			this.options.height = isNaN(height) ? height : height + "px";
-			this.element.style.height = this.options.height;
-			this.rowManager.setRenderMode();
-			this.rowManager.redraw();
-		}else {
-			console.warn("setHeight function is not available in classic render mode");
-		}
+		this.options.height = isNaN(height) ? height : height + "px";
+		this.element.style.height = this.options.height;
+		this.rowManager.initializeRenderer();
+		this.rowManager.redraw();
 	}
 
 	//////////////////// Event Bus ///////////////////

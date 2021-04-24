@@ -785,14 +785,10 @@ class Tabulator {
 	}
 
 	setHeight(height){
-		if(this.rowManager.renderMode !== "classic"){
-			this.options.height = isNaN(height) ? height : height + "px";
-			this.element.style.height = this.options.height;
-			this.rowManager.setRenderMode();
-			this.rowManager.redraw();
-		}else{
-			console.warn("setHeight function is not available in classic render mode");
-		}
+		this.options.height = isNaN(height) ? height : height + "px";
+		this.element.style.height = this.options.height;
+		this.rowManager.initializeRenderer();
+		this.rowManager.redraw();
 	}
 
 	//////////////////// Event Bus ///////////////////
