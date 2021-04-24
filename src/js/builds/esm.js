@@ -11,3 +11,4 @@ export {default as CalcComponent} from '../modules/ColumnCalcs/CalcComponent.js'
 export {default as PseudoRow} from '../core/row/PseudoRow.js';
 
 export {default as Module} from '../core/Module.js';
+export {default as Renderer} from '../core/rendering/Renderer.js';

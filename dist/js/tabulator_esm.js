@@ -23248,5 +23248,5 @@ class PseudoRow {
 	clearCellHeight(){}
 }
 
-export { CalcComponent, CellComponent, ColumnComponent, GroupComponent, Module, PseudoRow, RowComponent$1 as RowComponent, Tabulator$1 as Tabulator, TabulatorFull, modules };
+export { CalcComponent, CellComponent, ColumnComponent, GroupComponent, Module, PseudoRow, Renderer, RowComponent$1 as RowComponent, Tabulator$1 as Tabulator, TabulatorFull, modules };
 //# sourceMappingURL=tabulator_esm.js.map
