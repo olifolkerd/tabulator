@@ -36,14 +36,14 @@ export default class Renderer extends CoreFeature{
 		//render columns from a clean slate
 	}
 
-	rerenderRows(){
+	rerenderRows(callback){
 		// rerender rows and keep position
 		if(callback){
 			callback();
 		}
 	}
 
-	rerenderColumns(){
+	rerenderColumns(callback){
 		// rerender columns and keep position
 		if(callback){
 			callback();

@@ -3,7 +3,7 @@ import Row from './row/Row.js';
 import RowComponent from './row/RowComponent.js';
 import Helpers from './tools/Helpers.js';
 
-import RendererBasic from './rendering/renderers/Basic.js';
+import BasicVertical from './rendering/renderers/Basic.js';
 import RendererVirtualDomVertical from './rendering/renderers/VirtualDomVertical.js';
 
 export default class RowManager extends CoreFeature{
@@ -822,8 +822,8 @@ export default class RowManager extends CoreFeature{
 		var renderClass;
 
 		var renderers = {
-			"virtual":RendererVirtualDomVertical,
-			"basic":RendererBasic,
+			"virtual": RendererVirtualDomVertical,
+			"basic": BasicVertical,
 		};
 
 		if(typeof this.table.options.renderVertical === "string"){
