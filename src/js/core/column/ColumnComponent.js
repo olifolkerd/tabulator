@@ -140,9 +140,7 @@ export default class ColumnComponent {
 			result =  this._column.setWidth(width);
 		}
 
-		if(this._column.table.options.virtualDomHoz){
-			this._column.table.vdomHoz.reinitialize(true);
-		}
+		this._column.table.columnManager.renderer.rerenderColumns(true);
 
 		return result;
 	}

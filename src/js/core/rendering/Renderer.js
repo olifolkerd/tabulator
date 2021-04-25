@@ -6,6 +6,7 @@ export default class Renderer extends CoreFeature{
 		super(table);
 
 		this.elementVertical = table.rowManager.element;
+		this.elementHorizontal = table.columnManager.element;
 		this.tableElement =  table.rowManager.tableElement;
 
 		this.verticalFillMode = "fit"; // used by row manager to determin how to size the render area ("fit" - fits container to the contents, "fill" - fills the contianer without resizing it)
@@ -28,6 +29,12 @@ export default class Renderer extends CoreFeature{
 		//clear down existing columns layout
 	}
 
+
+	reinitializeColumnWidths(columns){
+		//resize columns to fit data
+	}
+
+
 	renderRows(){
 		//render rows from a clean slate
 	}
@@ -43,11 +50,16 @@ export default class Renderer extends CoreFeature{
 		}
 	}
 
-	rerenderColumns(callback){
-		// rerender columns and keep position
-		if(callback){
-			callback();
-		}
+	rerenderColumns(update, blockRedraw){
+		//rerender columns
+	}
+
+	renderRowCells(row){
+		//render the cells in a row
+	}
+
+	rerenderRowCells(row, force){
+		//rerender the cells in a row
 	}
 
 	scrollColumns(left, dir){

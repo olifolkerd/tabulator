@@ -18,8 +18,6 @@ import ModuleBinder from './tools/ModuleBinder.js';
 
 import OptionsList from './tools/OptionsList.js';
 
-import VirtualDomHorizontal from './rendering/renderers/VirtualDomHorizontal.js';
-
 class Tabulator {
 
 	constructor(element, options){
@@ -150,15 +148,10 @@ class Tabulator {
 
 	//concreate table
 	_create(){
-
 		this.externalEvents.dispatch("tableBuilding");
 		this.eventBus.dispatch("table-building");
 
 		this.rtlCheck();
-
-		if(this.options.virtualDomHoz){
-			this.vdomHoz = new VirtualDomHorizontal(this);
-		}
 
 		this._buildElement();
 

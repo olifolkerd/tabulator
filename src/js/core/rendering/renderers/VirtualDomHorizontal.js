@@ -1,9 +1,9 @@
-export default class VirtualDomHorizontal {
-	constructor(table){
-		this.table = table;
+import Renderer from '../Renderer.js';
+import Helpers from '../../tools/Helpers.js';
 
-		this.element = this.table.rowManager.tableElement;
-		this.holderEl = this.table.rowManager.element;
+export default class VirtualDomHorizontal extends Renderer{
+	constructor(table){
+		super(table);
 
 		this.leftCol = 0;
 		this.rightCol = 0;
@@ -22,34 +22,35 @@ export default class VirtualDomHorizontal {
 		this.initialized = false;
 
 		this.columns = [];
+	}
 
-		if(this.compatabilityCheck()){
-			this.initialize();
-		}
+	initialize(){
+		this.compatabilityCheck();
+		console.log("INIT")
 	}
 
 	compatabilityCheck(){
-		var options = this.table.options,
+		var columns = this.options("columns"),
 		frozen = false,
 		ok = true;
 
-		if(options.layout == "fitDataTable"){
+		if(this.options("layout") == "fitDataTable"){
 			console.warn("Horizontal Vitrual DOM is not compatible with fitDataTable layout mode");
 			ok = false;
 		}
 
-		if(options.responsiveLayout){
+		if(this.options("responsiveLayout")){
 			console.warn("Horizontal Vitrual DOM is not compatible with responsive columns");
 			ok = false;
 		}
 
-		if(this.table.rtl){
+		if(this.options("rtl")){
 			console.warn("Horizontal Vitrual DOM is not currently compatible with RTL text direction");
 			ok = false;
 		}
 
-		if(options.columns){
-			frozen = options.columns.find((col) => {
+		if(columns){
+			frozen = columns.find((col) => {
 				return col.frozen;
 			});
 
@@ -66,103 +67,23 @@ export default class VirtualDomHorizontal {
 		return ok;
 	}
 
-	initialize(){
-		this.holderEl.addEventListener("scroll", () => {
-			var left = this.holderEl.scrollLeft;
+	//////////////////////////////////////
+	///////// Public Functions ///////////
+	//////////////////////////////////////
 
-			if(this.scrollLeft != left){
-				this.scrollLeft = left;
-				this.scroll(left - (this.vDomScrollPosLeft + this.window));
-			}
-		});
+	renderColumns(row, force){
+		this.dataChange();
 	}
 
-	deinitialize(){
-		this.initialized = false;
-	}
+	scrollColumns(left, dir){
+		if(this.scrollLeft != left){
+			this.scrollLeft = left;
 
-	clear(){
-		this.columns = [];
-
-		this.leftCol = -1;
-		this.rightCol = 0;
-
-		this.vDomScrollPosLeft = 0;
-		this.vDomScrollPosRight = 0;
-		this.vDomPadLeft = 0;
-		this.vDomPadRight = 0;
-	}
-
-	dataChange(){
-		var change = false,
-		collsWidth = 0,
-		colEnd = 0,
-		group, row, rowEl;
-
-		if(this.table.options.layout === "fitData"){
-			this.table.columnManager.columnsByIndex.forEach((column) => {
-				if(!column.definition.width && column.visible){
-					change = true;
-				}
-			});
-
-			if(change){
-				if(change && this.table.rowManager.getDisplayRows().length){
-
-					this.vDomScrollPosRight = this.scrollLeft + this.holderEl.clientWidth + this.window;
-
-					var row = this.chain("rows-sample", [1], [], function(){
-						return this.table.rowManager.getDisplayRows()[0];
-					})[0];
-
-					if(row){
-
-						rowEl = row.getElement();
-
-						row.generateCells();
-
-						this.element.appendChild(rowEl);
-
-						for(var colEnd = 0; colEnd < row.cells.length; colEnd++){
-							let cell = row.cells[colEnd];
-							rowEl.appendChild(cell.getElement());
-
-							cell.column.reinitializeWidth();
-
-							collsWidth += cell.column.getWidth();
-
-							if(collsWidth > this.vDomScrollPosRight){
-								break;
-							}
-						}
-
-						rowEl.parentNode.removeChild(rowEl);
-
-						this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
-
-						for(colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++){
-							this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
-						}
-
-						this.reinitialize(false, true);
-					}
-				}
-			}
-		}else{
-			if(this.table.options.layout === "fitColumns"){
-				this.layoutRefresh();
-				this.table.vdomHoz.reinitialize(false, true);
-			}
+			this.scroll(left - (this.vDomScrollPosLeft + this.window));
 		}
 	}
 
-	fitDataLayoutOverride(){
-		for(let i = this.leftCol; i <= this.rightCol; i++){
-			this.columns[i].reinitializeWidth();
-		}
-	}
-
-	reinitialize(update, blockRedraw){
+	rerenderColumns(update, blockRedraw){
 		var old = {
 			cols:this.columns,
 			leftCol:this.leftCol,
@@ -175,10 +96,10 @@ export default class VirtualDomHorizontal {
 
 		this.clear();
 
-		this.scrollLeft = this.holderEl.scrollLeft;
+		this.scrollLeft = this.elementVertical.scrollLeft;
 
 		this.vDomScrollPosLeft = this.scrollLeft - this.window;
-		this.vDomScrollPosRight = this.scrollLeft + this.holderEl.clientWidth + this.window;
+		this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.window;
 
 		var colPos = 0;
 
@@ -193,8 +114,7 @@ export default class VirtualDomHorizontal {
 
 				config.width = width;
 
-				if (_this18.table.options.layout === "fitData") {
-
+				if (this.options("layout") === "fitData") {
 				    config.fitDataCheck = true;
 				}
 
@@ -222,8 +142,8 @@ export default class VirtualDomHorizontal {
 	        }
 	    });
 
-		this.element.style.paddingLeft = this.vDomPadLeft + "px";
-		this.element.style.paddingRight = this.vDomPadRight + "px";
+		this.tableElement.style.paddingLeft = this.vDomPadLeft + "px";
+		this.tableElement.style.paddingRight = this.vDomPadRight + "px";
 
 		this.initialized = true;
 
@@ -233,7 +153,111 @@ export default class VirtualDomHorizontal {
 			}
 		}
 
-		this.holderEl.scrollLeft = this.scrollLeft;
+		this.elementVertical.scrollLeft = this.scrollLeft;
+	}
+
+	renderRowCells(row){
+		if(this.initialized){
+			this.initializeRow(row);
+		}else{
+			row.cells.forEach((cell) => {
+				row.element.appendChild(cell.getElement());
+				cell.cellRendered();
+			});
+		}
+	}
+
+	rerenderRowCells(row, force){
+		this.reinitializeRow(row, force);
+	}
+
+	reinitializeColumnWidths(columns){
+		for(let i = this.leftCol; i <= this.rightCol; i++){
+			this.columns[i].reinitializeWidth();
+		}
+	}
+
+	//////////////////////////////////////
+	//////// Internal Rendering //////////
+	//////////////////////////////////////
+
+	deinitialize(){
+		this.initialized = false;
+	}
+
+	clear(){
+		this.columns = [];
+
+		this.leftCol = -1;
+		this.rightCol = 0;
+
+		this.vDomScrollPosLeft = 0;
+		this.vDomScrollPosRight = 0;
+		this.vDomPadLeft = 0;
+		this.vDomPadRight = 0;
+	}
+
+	dataChange(){
+		var change = false,
+		collsWidth = 0,
+		colEnd = 0,
+		group, row, rowEl;
+
+		if(this.options("layout") === "fitData"){
+			this.table.columnManager.columnsByIndex.forEach((column) => {
+				if(!column.definition.width && column.visible){
+					change = true;
+				}
+			});
+
+			if(change){
+				if(change && this.table.rowManager.getDisplayRows().length){
+
+					this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.window;
+
+					var row = this.chain("rows-sample", [1], [], () => {
+						return this.table.rowManager.getDisplayRows()[0];
+					})[0];
+
+					if(row){
+
+						rowEl = row.getElement();
+
+						row.generateCells();
+
+						this.tableElement.appendChild(rowEl);
+
+						for(var colEnd = 0; colEnd < row.cells.length; colEnd++){
+							let cell = row.cells[colEnd];
+							rowEl.appendChild(cell.getElement());
+
+							cell.column.reinitializeWidth();
+
+							collsWidth += cell.column.getWidth();
+
+							if(collsWidth > this.vDomScrollPosRight){
+								break;
+							}
+						}
+
+						rowEl.parentNode.removeChild(rowEl);
+
+						this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
+
+						for(colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++){
+							this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
+						}
+
+						this.rerenderColumns(false, true);
+					}
+				}
+			}
+		}else{
+			if(this.options("layout") === "fitColumns"){
+				this.layoutRefresh();
+				this.rerenderColumns(false, true);
+			}
+		}
 	}
 
 	reinitChanged(old){
@@ -263,8 +287,8 @@ export default class VirtualDomHorizontal {
 		this.vDomScrollPosLeft += diff;
 		this.vDomScrollPosRight += diff;
 
-		if(diff > (this.holderEl.clientWidth * .8)){
-			this.reinitialize();
+		if(diff > (this.elementVertical.clientWidth * .8)){
+			this.rerenderColumns();
 		}else{
 			if(diff > 0){
 				//scroll right
@@ -313,7 +337,7 @@ export default class VirtualDomHorizontal {
 				this.vDomPadRight -= column.getWidth();
 			}
 
-			this.element.style.paddingRight = this.vDomPadRight + "px";
+			this.tableElement.style.paddingRight = this.vDomPadRight + "px";
 
 			this.addColRight();
 		}
@@ -342,7 +366,7 @@ export default class VirtualDomHorizontal {
 				this.vDomPadLeft -= column.getWidth();
 			}
 
-			this.element.style.paddingLeft = this.vDomPadLeft + "px";
+			this.tableElement.style.paddingLeft = this.vDomPadLeft + "px";
 
 			this.leftCol--;
 
@@ -367,7 +391,7 @@ export default class VirtualDomHorizontal {
 			});
 
 			this.vDomPadRight += column.getWidth();
-			this.element.style.paddingRight = this.vDomPadRight + "px";
+			this.tableElement.style.paddingRight = this.vDomPadRight + "px";
 
 			this.rightCol --;
 
@@ -391,7 +415,7 @@ export default class VirtualDomHorizontal {
 			});
 
 			this.vDomPadLeft += column.getWidth();
-			this.element.style.paddingLeft = this.vDomPadLeft + "px";
+			this.tableElement.style.paddingLeft = this.vDomPadLeft + "px";
 
 			this.leftCol ++;
 

@@ -76,14 +76,7 @@ export default class Row extends CoreFeature{
 
 			this.generateCells();
 
-			if(this.table.options.virtualDomHoz && this.table.vdomHoz.initialized){
-				this.table.vdomHoz.initializeRow(this);
-			}else{
-				this.cells.forEach((cell) => {
-					this.element.appendChild(cell.getElement());
-					cell.cellRendered();
-				});
-			}
+			this.table.columnManager.renderer.renderRowCells(this);
 
 			if(force){
 				this.normalizeHeight();
@@ -99,9 +92,7 @@ export default class Row extends CoreFeature{
 
 			this.initialized = true;
 		}else{
-			if(this.table.options.virtualDomHoz){
-				this.table.vdomHoz.reinitializeRow(this);
-			}
+			this.table.columnManager.renderer.rerenderRowCells(this);
 		}
 	}
 

@@ -4,6 +4,9 @@ import ColumnComponent from './column/ColumnComponent.js';
 import Helpers from './tools/Helpers.js';
 import OptionsList from './tools/OptionsList.js';
 
+import RendererBasicHorizontal from './rendering/renderers/BasicHorizontal.js';
+import RendererVirtualDomHorizontal from './rendering/renderers/VirtualDomHorizontal.js';
+
 export default class ColumnManager extends CoreFeature {
 
 	constructor (table){
@@ -17,11 +20,15 @@ export default class ColumnManager extends CoreFeature {
 		this.columnsByField = {}; //columns by field
 		this.scrollLeft = 0;
 		this.optionsList = new OptionsList(this.table, "column definition");
+
+		this.renderer = null;
 	}
 
 	////////////// Setup Functions /////////////////
 
 	initialize(){
+		this.initializeRenderer();
+
 		this.headersElement = this.createHeadersElement();
 		this.element = this.createHeaderElement();
 
@@ -29,6 +36,29 @@ export default class ColumnManager extends CoreFeature {
 
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 	}
+
+	initializeRenderer(){
+		var renderClass;
+
+		var renderers = {
+			"virtual": RendererVirtualDomHorizontal,
+			"basic": RendererBasicHorizontal,
+		};
+
+		if(typeof this.table.options.renderVertical === "string"){
+			renderClass = renderers[this.table.options.renderVertical];
+		}else{
+			renderClass = this.table.options.renderVertical;
+		}
+
+		if(renderClass){
+			this.renderer = new renderClass(this.table, this.element, this.tableElement);
+			this.renderer.initialize();
+		}else{
+			console.error("Unable to find matching renderer:", table.options.renderVertical);
+		}
+	}
+
 
 	createHeadersElement (){
 		var el = document.createElement("div");
@@ -78,6 +108,7 @@ export default class ColumnManager extends CoreFeature {
 
 		this.scrollLeft = left;
 
+		this.renderer.scrollColumns(left);
 	}
 
 	///////////// Column Setup Functions /////////////
@@ -178,7 +209,6 @@ export default class ColumnManager extends CoreFeature {
 		this.columnsByIndex = [];
 		this.columnsByField = {};
 
-
 		this.dispatch("columns-loading");
 
 		cols.forEach((def, i) => {
@@ -189,9 +219,7 @@ export default class ColumnManager extends CoreFeature {
 
 		this.dispatch("columns-loaded");
 
-		if(this.table.options.virtualDomHoz){
-			this.table.vdomHoz.reinitialize(false, true);
-		}
+		this.renderer.rerenderColumns(false, true);
 
 		this.redraw(true);
 	}
@@ -419,9 +447,7 @@ export default class ColumnManager extends CoreFeature {
 
 		this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
-		if(this.table.options.virtualDomHoz){
-			this.table.vdomHoz.reinitialize(true);
-		}
+		this.renderer.rerenderColumns(true);
 
 		this.dispatch("column-moved", from, to, after);
 
@@ -592,9 +618,7 @@ export default class ColumnManager extends CoreFeature {
 
 			this.table.rowManager.reinitialize();
 
-			if(this.table.options.virtualDomHoz){
-				this.table.vdomHoz.reinitialize();
-			}
+			this.renderer.rerenderColumns();
 
 			resolve(column);
 		});

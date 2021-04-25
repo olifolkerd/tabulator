@@ -141,9 +141,7 @@ class ResizeColumns extends Module{
 				column.setWidth(self.startWidth + ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
 			}
 
-			if(self.table.options.virtualDomHoz){
-				self.table.vdomHoz.reinitialize(true);
-			}
+			self.table.columnManager.renderer.rerenderColumns(true);
 
 			if(!self.table.browserSlow && column.modules.resize && column.modules.resize.variableHeight){
 				column.checkCellHeights();

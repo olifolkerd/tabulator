@@ -513,9 +513,9 @@ class Edit extends Module{
 				rightEdge -= parseInt(this.table.modules.frozenColumns.rightMargin);
 			}
 
-			if(this.table.options.virtualDomHoz){
-				leftEdge -= parseInt(this.table.vdomHoz.vDomPadLeft);
-				rightEdge -= parseInt(this.table.vdomHoz.vDomPadLeft);
+			if(this.table.options.renderHorizontal === "virtual"){
+				leftEdge -= parseInt(this.table.columnManager.renderer.vDomPadLeft);
+				rightEdge -= parseInt(this.table.columnManager.renderer.vDomPadLeft);
 			}
 
 			if(cellEl.offsetLeft < leftEdge){

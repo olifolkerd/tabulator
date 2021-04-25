@@ -680,8 +680,8 @@ class Column extends CoreFeature{
 				this.parent.matchChildWidths();
 			}
 
-			if(!this.silent && this.table.options.virtualDomHoz){
-				this.table.vdomHoz.reinitialize();
+			if(!this.silent){
+				this.table.columnManager.renderer.rerenderColumns();
 			}
 		}
 	}
@@ -713,8 +713,8 @@ class Column extends CoreFeature{
 				this.parent.matchChildWidths();
 			}
 
-			if(!this.silent && this.table.options.virtualDomHoz){
-				this.table.vdomHoz.reinitialize();
+			if(!this.silent){
+				this.table.columnManager.renderer.rerenderColumns();
 			}
 		}
 	}
@@ -881,9 +881,7 @@ class Column extends CoreFeature{
 
 			this.table.columnManager.deregisterColumn(this);
 
-			if(this.table.options.virtualDomHoz){
-				this.table.vdomHoz.reinitialize(true);
-			}
+			this.table.columnManager.renderer.rerenderColumns(true);
 
 			resolve();
 		});

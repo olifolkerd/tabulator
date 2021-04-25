@@ -546,8 +546,8 @@ class GroupRows extends Module{
 	}
 
 	scrollHeaders(left){
-		if(this.table.options.virtualDomHoz){
-			left -= this.table.vdomHoz.vDomPadLeft;
+		if(this.table.options.renderHorizontal === "virtual"){
+			left -= this.table.columnManager.renderer.vDomPadLeft;
 		}
 
 		left = left + "px";

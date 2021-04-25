@@ -51,9 +51,7 @@ class ResizeTable extends Module{
 								this.containerWidth = table.element.parentNode.clientWidth;
 							}
 
-							if(table.options.virtualDomHoz){
-								table.vdomHoz.reinitialize(true);
-							}
+							this.table.columnManager.renderer.rerenderColumns(true);
 
 							table.redraw();
 						}
@@ -80,9 +78,7 @@ class ResizeTable extends Module{
 								this.tableWidth = table.element.clientWidth;
 							}
 
-							if(table.options.virtualDomHoz){
-								table.vdomHoz.reinitialize(true);
-							}
+							table.columnManager.renderer.rerenderColumns(true);
 
 							table.redraw();
 						}
@@ -96,9 +92,8 @@ class ResizeTable extends Module{
 			}else{
 				this.binding = function(){
 					if(!table.browserMobile || (table.browserMobile && !table.modules.edit.currentCell)){
-						if(table.options.virtualDomHoz){
-							table.vdomHoz.reinitialize(true);
-						}
+
+						table.columnManager.renderer.rerenderColumns(true);
 
 						table.redraw();
 					}

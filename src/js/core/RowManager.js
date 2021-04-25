@@ -3,7 +3,7 @@ import Row from './row/Row.js';
 import RowComponent from './row/RowComponent.js';
 import Helpers from './tools/Helpers.js';
 
-import BasicVertical from './rendering/renderers/Basic.js';
+import RendererBasicVertical from './rendering/renderers/BasicVertical.js';
 import RendererVirtualDomVertical from './rendering/renderers/VirtualDomVertical.js';
 
 export default class RowManager extends CoreFeature{
@@ -38,13 +38,11 @@ export default class RowManager extends CoreFeature{
 
 		this.dataPipeline = []; //hold data pipeline tasks
 		this.displayPipeline = []; //hold data display pipeline tasks
+
+		this.renderer = null;
 	}
 
 	//////////////// Setup Functions /////////////////
-
-	initialize(){
-
-	}
 
 	createHolderElement (){
 		var el = document.createElement("div");
@@ -693,8 +691,8 @@ export default class RowManager extends CoreFeature{
 					this.reRenderInPosition();
 				}else{
 
-					if(!handler && this.table.options.virtualDomHoz){
-						this.table.vdomHoz.dataChange();
+					if(!handler){
+						this.table.columnManager.renderer.renderColumns();
 					}
 
 					this.renderTable();
@@ -823,7 +821,7 @@ export default class RowManager extends CoreFeature{
 
 		var renderers = {
 			"virtual": RendererVirtualDomVertical,
-			"basic": BasicVertical,
+			"basic": RendererBasicVertical,
 		};
 
 		if(typeof this.table.options.renderVertical === "string"){
