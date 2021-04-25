@@ -26,7 +26,6 @@ export default class VirtualDomHorizontal extends Renderer{
 
 	initialize(){
 		this.compatabilityCheck();
-		console.log("INIT")
 	}
 
 	compatabilityCheck(){
