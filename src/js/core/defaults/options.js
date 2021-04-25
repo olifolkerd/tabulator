@@ -35,9 +35,7 @@ export default {
 
 	renderVertical:"virtual",
 	renderHorizontal:"basic",
-	// virtualDom:true, //enable DOM virtualization
-    renderVerticalBuffer:0, // set virtual DOM buffer size
-	virtualDomHoz:false, //enable horizontal DOM virtualization
+	renderVerticalBuffer:0, // set virtual DOM buffer size
 
 	scrollToRowPosition:"top",
 	scrollToRowIfVisible:true,
