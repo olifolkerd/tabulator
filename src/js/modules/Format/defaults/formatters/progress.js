@@ -82,7 +82,7 @@ export default function(cell, formatterParams, onRendered){ //progress bar
 
 	var barEl = document.createElement("div");
 	barEl.style.display = "inline-block";
-	barEl.style.position = "relative";
+	barEl.style.position = "absolute";
 	barEl.style.width = percentValue + "%";
 	barEl.style.backgroundColor = color;
 	barEl.style.height = "100%";
@@ -90,11 +90,15 @@ export default function(cell, formatterParams, onRendered){ //progress bar
 	barEl.setAttribute('data-max', max);
 	barEl.setAttribute('data-min', min);
 
+	var barContainer = document.createElement("div");
+	barContainer.style.position = "relative";
+	barContainer.style.width = "100%";
+	barContainer.style.height = "100%";
 
 	if(legend){
 		var legendEl = document.createElement("div");
 		legendEl.style.position = "absolute";
-		legendEl.style.top = "4px";
+		legendEl.style.top = 0;
 		legendEl.style.left = 0;
 		legendEl.style.textAlign = legendAlign;
 		legendEl.style.width = "100%";
@@ -118,10 +122,11 @@ export default function(cell, formatterParams, onRendered){ //progress bar
 			element = holderEl;
 		}
 
-		element.appendChild(barEl);
+		element.appendChild(barContainer);
+		barContainer.appendChild(barEl);
 
 		if(legend){
-			element.appendChild(legendEl);
+			barContainer.appendChild(legendEl);
 		}
 	});
 
