@@ -60,7 +60,7 @@ export default class VirtualDomHorizontal extends Renderer{
 		}
 
 		if(!ok){
-			options.virtualDomHoz = false;
+			this.options.virtualDomHoz = false;
 		}
 
 		return ok;
