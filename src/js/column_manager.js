@@ -646,7 +646,7 @@ ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
 			this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 		}
 
-		this.redraw(true);
+		this.redraw(true, true);
 
 		if(this.table.modules.layout.getMode() != "fitColumns"){
 			column.reinitializeWidth();
@@ -698,14 +698,16 @@ ColumnManager.prototype.deregisterColumn = function(column){
 };
 
 //redraw columns
-ColumnManager.prototype.redraw = function(force){
+ColumnManager.prototype.redraw = function(force, preserveScroll){
 	if(force){
 
 		if(Tabulator.prototype.helpers.elVisible(this.element)){
 			this._verticalAlignHeaders();
 		}
 
-		this.table.rowManager.resetScroll();
+		if(!preserveScroll){
+			this.table.rowManager.resetScroll();
+		}
 		this.table.rowManager.reinitialize();
 	}
 
