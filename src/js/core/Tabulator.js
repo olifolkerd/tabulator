@@ -715,7 +715,7 @@ class Tabulator {
 
 		return this.columnManager.addColumn(definition, before, column)
 		.then((column) => {
-			returncolumn.getComponent();
+			return column.getComponent();
 		});
 	}
 
