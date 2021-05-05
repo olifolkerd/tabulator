@@ -147,7 +147,7 @@ class GroupRows extends Module{
 
 			this.subscribe("rows-sample", this.rowSample.bind(this));
 
-			this.subscribe("render-virtual-fill", this.rowAddingIndex.bind(this));
+			this.subscribe("render-virtual-fill", this.virtualRenderFill.bind(this));
 
 			this.registerDisplayHandler(this.getRows.bind(this), 20);
 
@@ -165,7 +165,7 @@ class GroupRows extends Module{
 
 	virtualRenderFill(){
 		var el = this.table.rowManager.tableElement;
-		rows = this.table.rowManager.getVisibleRows();
+		var rows = this.table.rowManager.getVisibleRows();
 
 		rows = rows.filter((row) => {
 			return row.type !== "group";
