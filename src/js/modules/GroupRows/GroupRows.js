@@ -531,14 +531,14 @@ class GroupRows extends Module{
 			output = output.concat(group.getHeadersAndRows());
 		});
 
+		var displayIndex = this.table.rowManager.setDisplayRows(output, this.getDisplayIndex());
+
+		if(displayIndex !== true){
+			this.setDisplayIndex(displayIndex);
+		}
+
 		//force update of table display
 		if(force){
-			var displayIndex = this.table.rowManager.setDisplayRows(output, this.getDisplayIndex());
-
-			if(displayIndex !== true){
-				this.setDisplayIndex(displayIndex);
-			}
-
 			this.refreshData(true);
 		}
 
