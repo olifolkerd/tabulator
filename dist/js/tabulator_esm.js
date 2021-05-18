@@ -9340,7 +9340,7 @@ function progress$1(cell, formatterParams, onRendered){ //progress bar
 
 	var barEl = document.createElement("div");
 	barEl.style.display = "inline-block";
-	barEl.style.position = "relative";
+	barEl.style.position = "absolute";
 	barEl.style.width = percentValue + "%";
 	barEl.style.backgroundColor = color;
 	barEl.style.height = "100%";
@@ -9348,11 +9348,15 @@ function progress$1(cell, formatterParams, onRendered){ //progress bar
 	barEl.setAttribute('data-max', max);
 	barEl.setAttribute('data-min', min);
 
+	var barContainer = document.createElement("div");
+	barContainer.style.position = "relative";
+	barContainer.style.width = "100%";
+	barContainer.style.height = "100%";
 
 	if(legend){
 		var legendEl = document.createElement("div");
 		legendEl.style.position = "absolute";
-		legendEl.style.top = "4px";
+		legendEl.style.top = 0;
 		legendEl.style.left = 0;
 		legendEl.style.textAlign = legendAlign;
 		legendEl.style.width = "100%";
@@ -9376,10 +9380,11 @@ function progress$1(cell, formatterParams, onRendered){ //progress bar
 			element = holderEl;
 		}
 
-		element.appendChild(barEl);
+		element.appendChild(barContainer);
+		barContainer.appendChild(barEl);
 
 		if(legend){
-			element.appendChild(legendEl);
+			barContainer.appendChild(legendEl);
 		}
 	});
 
@@ -10955,7 +10960,7 @@ class GroupRows extends Module{
 
 			this.subscribe("rows-sample", this.rowSample.bind(this));
 
-			this.subscribe("render-virtual-fill", this.rowAddingIndex.bind(this));
+			this.subscribe("render-virtual-fill", this.virtualRenderFill.bind(this));
 
 			this.registerDisplayHandler(this.getRows.bind(this), 20);
 
@@ -10973,7 +10978,7 @@ class GroupRows extends Module{
 
 	virtualRenderFill(){
 		var el = this.table.rowManager.tableElement;
-		rows = this.table.rowManager.getVisibleRows();
+		var rows = this.table.rowManager.getVisibleRows();
 
 		rows = rows.filter((row) => {
 			return row.type !== "group";
@@ -18190,9 +18195,9 @@ class VirtualDomHorizontal extends Renderer{
 			}
 		}
 
-		if(!ok){
-			options.virtualDomHoz = false;
-		}
+		// if(!ok){
+		// 	options.virtualDomHoz = false;
+		// }
 
 		return ok;
 	}
@@ -21283,7 +21288,7 @@ class DataLoader extends CoreFeature{
 			if(typeof this.table.options.dataLoaderLoading == "string"){
 				template = document.createElement('template');
 				template.innerHTML = this.table.options.dataLoaderLoading.trim();
-				this.loadingElement = template.content.firstChild;
+				this.loadingElement = template.firstElementChild;
 			}else {
 				this.loadingElement = this.table.options.dataLoaderLoading;
 			}
@@ -21293,7 +21298,7 @@ class DataLoader extends CoreFeature{
 			if(typeof this.table.options.dataLoaderError == "string"){
 				template = document.createElement('template');
 				template.innerHTML = this.table.options.dataLoaderError.trim();
-				this.errorElement = template.content.firstChild;
+				this.errorElement = template.firstElementChild;
 			}else {
 				this.errorElement = this.table.options.dataLoaderError;
 			}
@@ -23118,7 +23123,7 @@ class Tabulator$1 {
 
 		return this.columnManager.addColumn(definition, before, column)
 		.then((column) => {
-			returncolumn.getComponent();
+			return column.getComponent();
 		});
 	}
 

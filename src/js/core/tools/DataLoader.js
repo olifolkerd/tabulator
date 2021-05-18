@@ -22,7 +22,7 @@ export default class DataLoader extends CoreFeature{
 			if(typeof this.table.options.dataLoaderLoading == "string"){
 				template = document.createElement('template');
 				template.innerHTML = this.table.options.dataLoaderLoading.trim();
-				this.loadingElement = template.content.firstChild;
+				this.loadingElement = template.firstElementChild;
 			}else{
 				this.loadingElement = this.table.options.dataLoaderLoading;
 			}
@@ -32,7 +32,7 @@ export default class DataLoader extends CoreFeature{
 			if(typeof this.table.options.dataLoaderError == "string"){
 				template = document.createElement('template');
 				template.innerHTML = this.table.options.dataLoaderError.trim();
-				this.errorElement = template.content.firstChild;
+				this.errorElement = template.firstElementChild;
 			}else{
 				this.errorElement = this.table.options.dataLoaderError;
 			}
