@@ -274,7 +274,7 @@ class ColumnCalcs extends Module{
 			if(this.table.options.groupBy && this.table.options.columnCalcs !== "table"){
 
 
-				var groups = table.modules.groupRows.getChildGroups();
+				var groups = this.table.modules.groupRows.getChildGroups();
 
 				groups.forEach((group) => {
 					this.recalcGroup(group);
