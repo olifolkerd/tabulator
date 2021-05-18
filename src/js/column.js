@@ -227,6 +227,7 @@ var Column = function(def, parent){
 	this.width = null; //column width
 	this.widthStyled = ""; //column width prestyled to improve render efficiency
 	this.maxWidth = null; //column maximum width
+	this.maxInitialWidth = null;
 	this.maxWidthStyled = ""; //column maximum prestyled to improve render efficiency
 	this.minWidth = null; //column minimum width
 	this.minWidthStyled = ""; //column minimum prestyled to improve render efficiency
@@ -651,6 +652,12 @@ Column.prototype._buildColumnHeader = function(){
 	if(def.maxWidth || this.table.options.columnMaxWidth){
 		if(def.maxWidth !== false){
 			this.setMaxWidth(typeof def.maxWidth == "undefined" ? this.table.options.columnMaxWidth : parseInt(def.maxWidth));
+		}
+	}
+
+	if(def.maxInitialWidth || this.table.options.columnMaxInitialWidth) {
+		if(def.maxInitialWidth !== false) {
+			this.maxInitialWidth = typeof def.maxInitialWidth == 'undefined' ? this.table.options.columnMaxInitialWidth : parseInt(def.maxInitialWidth);
 		}
 	}
 
@@ -1336,17 +1343,21 @@ Column.prototype._prevVisibleColumn = function(index){
 Column.prototype.reinitializeWidth = function(force){
 	this.widthFixed = false;
 
+
 	//set width if present
 	if(typeof this.definition.width !== "undefined" && !force){
+		// maxInitialWidth ignored here as width specified
 		this.setWidth(this.definition.width);
 	}
+
+	// maxInitialWidth needs to bet set in fitToData.
 
 	//hide header filters to prevent them altering column width
 	if(this.table.modExists("filter")){
 		this.table.modules.filter.hideHeaderFilterElements();
 	}
 
-	this.fitToData();
+	this.fitToData(force);
 
 	//show header filters again after layout is complete
 	if(this.table.modExists("filter")){
@@ -1355,7 +1366,7 @@ Column.prototype.reinitializeWidth = function(force){
 };
 
 //set column width to maximum cell width
-Column.prototype.fitToData = function(){
+Column.prototype.fitToData = function(force){
 	var self = this;
 
 	if(!this.widthFixed){
@@ -1367,7 +1378,6 @@ Column.prototype.fitToData = function(){
 	}
 
 	var maxWidth = this.element.offsetWidth;
-
 	if(!self.width || !this.widthFixed){
 		self.cells.forEach(function(cell){
 			var width = cell.getWidth();
@@ -1378,7 +1388,11 @@ Column.prototype.fitToData = function(){
 		});
 
 		if(maxWidth){
-			self.setWidthActual(maxWidth + 1);
+			var setTo = maxWidth + 1;
+			if (this.maxInitialWidth && !force) {
+				setTo = Math.min(setTo, this.maxInitialWidth);
+			}
+			self.setWidthActual(setTo);
 		}
 
 	}
@@ -1442,6 +1456,7 @@ Column.prototype.defaultOptionList = [
 "width",
 "minWidth",
 "maxWidth",
+"maxInitialWidth",
 "widthGrow",
 "widthShrink",
 "resizable",
