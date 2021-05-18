@@ -1357,7 +1357,7 @@ Column.prototype.reinitializeWidth = function(force){
 		this.table.modules.filter.hideHeaderFilterElements();
 	}
 
-	this.fitToData();
+	this.fitToData(force);
 
 	//show header filters again after layout is complete
 	if(this.table.modExists("filter")){
@@ -1366,7 +1366,7 @@ Column.prototype.reinitializeWidth = function(force){
 };
 
 //set column width to maximum cell width
-Column.prototype.fitToData = function(){
+Column.prototype.fitToData = function(force){
 	var self = this;
 
 	if(!this.widthFixed){
@@ -1389,7 +1389,7 @@ Column.prototype.fitToData = function(){
 
 		if(maxWidth){
 			var setTo = maxWidth + 1;
-			if (this.maxInitialWidth) {
+			if (this.maxInitialWidth && !force) {
 				setTo = Math.min(setTo, this.maxInitialWidth);
 			}
 			self.setWidthActual(setTo);
