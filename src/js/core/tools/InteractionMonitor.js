@@ -106,7 +106,8 @@ export default class InteractionManager extends CoreFeature {
 	}
 
 	track(type, e){
-		var targets = this.findTargets(e.path);
+		var path = (e.composedPath && e.composedPath()) || e.path;
+		var targets = this.findTargets(path);
 		targets = this.bindComponents(type, targets);
 		this.triggerEvents(type, e, targets);
 	}
