@@ -1398,7 +1398,7 @@ Edit.prototype.editors = {
 				break;
 
 				default:
-				if(self.currentCell === false){
+				if(self.currentCell === false && multiselect){
 					e.preventDefault();
 				}
 
