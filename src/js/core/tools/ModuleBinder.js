@@ -54,6 +54,17 @@ export default class ModuleBinder {
 			return Array.isArray(results) && !results.length ? false : results;
 		}
 
+		tabulator.prototype.getVerticalScroll = function () {
+			var rowHolder = this.rowManager.getElement();
+			var scrollTop = rowHolder.scrollTop;
+			return scrollTop;
+		};
+		
+		tabulator.prototype.setVerticalScroll = function (top) {
+			var rowHolder = this.rowManager.getElement();
+			rowHolder.scrollTop = top;
+		};
+
 		//ensure that module are bound to instantiated function
 		tabulator.prototype.bindModules = function(){
 			this.modules = {};
