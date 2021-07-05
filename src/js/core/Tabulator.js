@@ -8,7 +8,7 @@ import FooterManager from './FooterManager.js';
 
 import InteractionMonitor from './tools/InteractionMonitor.js';
 import ComponentFuctionBinder from './tools/ComponentFuctionBinder.js';
-import DataLoader from './tools/dataLoader.js';
+import DataLoader from './tools/DataLoader.js';
 
 import ExternalEventBus from './tools/ExternalEventBus.js';
 import InternalEventBus from './tools/InternalEventBus.js';

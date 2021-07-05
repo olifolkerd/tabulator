@@ -556,7 +556,7 @@ class DataTree extends Module{
 	}
 
 	checkForRestyle(cell){
-		if(!cell.row.cells.indexOf(cell)){
+		if(!cell.row.cells.indexOf(cell) ||  this.table.options.dataTreeElementColumn === cell.column.getField()){
 			cell.row.reinitialize();
 		}
 	}
