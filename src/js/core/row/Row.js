@@ -301,6 +301,10 @@ export default class Row extends CoreFeature{
 
 		column = this.table.columnManager.findColumn(column);
 
+		if(!this.initialized){
+			this.generateCells();
+		}
+
 		match = this.cells.find(function(cell){
 			return cell.column === column;
 		});
@@ -321,6 +325,10 @@ export default class Row extends CoreFeature{
 	}
 
 	getCells(){
+		if(!this.initialized){
+			this.generateCells();
+		}
+
 		return this.cells;
 	}
 

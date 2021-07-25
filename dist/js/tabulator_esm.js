@@ -2562,8 +2562,12 @@ class Column$1 extends CoreFeature{
 		this.dispatch("column-width-fit-after", this);
 	}
 
-	//set column width to maximum cell width
+	//set column width to maximum cell width for non group columns
 	fitToData(){
+		if(this.isGroup){
+			return;
+		}
+		
 		if(!this.widthFixed){
 			this.element.style.width = "";
 
@@ -3036,6 +3040,10 @@ class Row$1 extends CoreFeature{
 
 		column = this.table.columnManager.findColumn(column);
 
+		if(!this.initialized){
+			this.generateCells();
+		}
+
 		match = this.cells.find(function(cell){
 			return cell.column === column;
 		});
@@ -3056,6 +3064,10 @@ class Row$1 extends CoreFeature{
 	}
 
 	getCells(){
+		if(!this.initialized){
+			this.generateCells();
+		}
+
 		return this.cells;
 	}
 
