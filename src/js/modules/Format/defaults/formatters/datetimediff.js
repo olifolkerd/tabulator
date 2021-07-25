@@ -1,21 +1,21 @@
 export default function datetime(cell, formatterParams, onRendered) {
-	var inputFormat = formatterParams.inputFormat || "YYYY-MM-DD hh:mm:ss";
+	var DT = window.DateTime || luxon.DateTime;
+	var inputFormat = formatterParams.inputFormat || "yyyy-MM-dd HH:mm:ss";
 	var invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";
 	var suffix = typeof formatterParams.suffix !== "undefined" ? formatterParams.suffix : false;
-	var unit = typeof formatterParams.unit !== "undefined" ? formatterParams.unit : undefined;
+	var unit = typeof formatterParams.unit !== "undefined" ? formatterParams.unit : "days";
 	var humanize = typeof formatterParams.humanize !== "undefined" ? formatterParams.humanize : false;
-	var date = typeof formatterParams.date !== "undefined" ? formatterParams.date : moment();
+	var date = typeof formatterParams.date !== "undefined" ? formatterParams.date : DT.now();
 	var value = cell.getValue();
 
-	var newDatetime = moment(value, inputFormat);
+	var newDatetime = DT.fromFormat(value, inputFormat);
 
-	if (newDatetime.isValid()) {
+	if (newDatetime.isValid){
 		if(humanize){
-			return moment.duration(newDatetime.diff(date)).humanize(suffix);
+			// return moment.duration(newDatetime.diff(date)).humanize(suffix);
 		}else{
-			return newDatetime.diff(date, unit) + (suffix ? " " + suffix : "");
+			return parseInt(newDatetime.diff(date, unit)[unit]) + (suffix ? " " + suffix : "");
 		}
-
 	} else {
 
 		if (invalid === true) {
