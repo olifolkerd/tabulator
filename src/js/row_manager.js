@@ -14,6 +14,7 @@ var RowManager = function(table){
 	this.rows = []; //hold row data objects
 	this.activeRows = []; //rows currently available to on display in the table
 	this.activeRowsCount = 0; //count of active rows
+	this.defaultPos = 
 
 	this.displayRows = []; //rows currently on display in the table
 	this.displayRowsCount = 0; //count of display rows
@@ -423,7 +424,7 @@ RowManager.prototype.deleteRow = function(row, blockRedraw){
 };
 
 RowManager.prototype.addRow = function(data, pos, index, blockRedraw){
-
+	if (!pos && this.table.options.addRowPos == "bottom") {pos = 0}
 	var row = this.addRowActual(data, pos, index, blockRedraw);
 
 	if(this.table.options.history && this.table.modExists("history")){
