@@ -190,8 +190,15 @@ Format.prototype.formatters = {
 		if(isNaN(floatVal)){
 			return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 		}
+                
+                var sign = "";
 
-		number = precision !== false ? floatVal.toFixed(precision) : floatVal;
+                if(floatVal < 0){
+                     sign = "-";
+                     floatVal = floatVal * -1;
+                }
+ 
+  		number = precision !== false ? floatVal.toFixed(precision) : floatVal;
 		number = String(number).split(".");
 
 		integer = number[0];
@@ -203,7 +210,7 @@ Format.prototype.formatters = {
 			integer = integer.replace(rgx, "$1" + thousandSym + "$2");
 		}
 
-		return after ? integer + decimal + symbol : symbol + integer + decimal;
+		return after ? sign + integer + decimal + symbol : sign + symbol + integer + decimal;
 	},
 
 	//clickable anchor tag
