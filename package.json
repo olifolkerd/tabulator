@@ -2,6 +2,7 @@
   "name": "tabulator-tables",
   "version": "4.9.3",
   "description": "Interactive table generation JavaScript library",
+  "style": "dist/css/tabulator.css",
   "main": "dist/js/tabulator.js",
   "module": "dist/js/tabulator.es2015.js",
   "scripts": {
