@@ -88,9 +88,9 @@ export default class Row extends CoreFeature{
 				this.table.options.rowFormatter(this.getComponent());
 			}
 
-			this.dispatch("row-layout-after", this);
-
 			this.initialized = true;
+
+			this.dispatch("row-layout-after", this);
 		}else{
 			this.table.columnManager.renderer.rerenderRowCells(this);
 		}
