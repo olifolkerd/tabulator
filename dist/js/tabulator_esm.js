@@ -17343,6 +17343,8 @@ class Sort extends Module{
 
 			this.dispatchExternal("dataSorted", self.getSort(), rowComponents);
 		}
+
+		return data;
 	}
 
 	//clear sort arrows on columns
