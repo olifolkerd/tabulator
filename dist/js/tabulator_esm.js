@@ -15225,74 +15225,72 @@ class ReactiveData extends Module{
 			this.subscribe("row-data-save-after", this.unblock.bind(this));
 			this.subscribe("row-data-init-after", this.watchRow.bind(this));
 			this.subscribe("data-processing", this.watchData.bind(this));
-			this.subscribe("data-processing", this.watchData.bind(this));
 			this.subscribe("table-destroy", this.unwatchData.bind(this));
 		}
 	}
 
 	watchData(data){
-		var self = this,
-		version;
+		var version;
 
 		this.currentVersion ++;
 
 		version = this.currentVersion;
 
-		self.unwatchData();
+		this.unwatchData();
 
-		self.data = data;
+		this.data = data;
 
 		//override array push function
-		self.origFuncs.push = data.push;
+		this.origFuncs.push = data.push;
 
-		Object.defineProperty(self.data, "push", {
+		Object.defineProperty(this.data, "push", {
 			enumerable: false,
 			configurable: true,
-			value: function () {
+			value: () => {
 				var args = Array.from(arguments);
 
-				if(!self.blocked && version === self.currentVersion){
-					args.forEach(function (arg){
-						self.table.rowManager.addRowActual(arg, false);
+				if(!this.blocked && version === this.currentVersion){
+					args.forEach((arg) => {
+						this.table.rowManager.addRowActual(arg, false);
 					});
 				}
 
-				return self.origFuncs.push.apply(data, arguments);
+				return this.origFuncs.push.apply(data, arguments);
 			}
 		});
 
 		//override array unshift function
-		self.origFuncs.unshift = data.unshift;
+		this.origFuncs.unshift = data.unshift;
 
-		Object.defineProperty(self.data, "unshift", {
+		Object.defineProperty(this.data, "unshift", {
 			enumerable: false,
 			configurable: true,
-			value: function () {
+			value: () => {
 				var args = Array.from(arguments);
 
-				if(!self.blocked && version === self.currentVersion){
-					args.forEach(function (arg){
-						self.table.rowManager.addRowActual(arg, true);
+				if(!this.blocked && version === this.currentVersion){
+					args.forEach((arg) => {
+						this.table.rowManager.addRowActual(arg, true);
 					});
 				}
 
-				return self.origFuncs.unshift.apply(data, arguments);
+				return this.origFuncs.unshift.apply(data, arguments);
 			}
 		});
 
 
 		//override array shift function
-		self.origFuncs.shift = data.shift;
+		this.origFuncs.shift = data.shift;
 
-		Object.defineProperty(self.data, "shift", {
+		Object.defineProperty(this.data, "shift", {
 			enumerable: false,
 			configurable: true,
-			value: function () {
+			value: () => {
 				var row;
 
-				if(!self.blocked && version === self.currentVersion){
-					if(self.data.length){
-						row = self.table.rowManager.getRowFromDataObject(self.data[0]);
+				if(!this.blocked && version === this.currentVersion){
+					if(this.data.length){
+						row = this.table.rowManager.getRowFromDataObject(this.data[0]);
 
 						if(row){
 							row.deleteActual();
@@ -15300,60 +15298,60 @@ class ReactiveData extends Module{
 					}
 				}
 
-				return self.origFuncs.shift.call(data);
+				return this.origFuncs.shift.call(data);
 			}
 		});
 
 		//override array pop function
-		self.origFuncs.pop = data.pop;
+		this.origFuncs.pop = data.pop;
 
-		Object.defineProperty(self.data, "pop", {
+		Object.defineProperty(this.data, "pop", {
 			enumerable: false,
 			configurable: true,
-			value: function () {
+			value: () => {
 				var row;
-				if(!self.blocked && version === self.currentVersion){
-					if(self.data.length){
-						row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
+				if(!this.blocked && version === this.currentVersion){
+					if(this.data.length){
+						row = this.table.rowManager.getRowFromDataObject(this.data[this.data.length - 1]);
 
 						if(row){
 							row.deleteActual();
 						}
 					}
 				}
-				return self.origFuncs.pop.call(data);
+				return this.origFuncs.pop.call(data);
 			}
 		});
 
 
 		//override array splice function
-		self.origFuncs.splice = data.splice;
+		this.origFuncs.splice = data.splice;
 
-		Object.defineProperty(self.data, "splice", {
+		Object.defineProperty(this.data, "splice", {
 			enumerable: false,
 			configurable: true,
-			value: function () {
+			value: () => {
 				var args = Array.from(arguments),
 				start = args[0] < 0 ? data.length + args[0] : args[0],
 				end = args[1],
 				newRows = args[2] ? args.slice(2) : false,
 				startRow;
 
-				if(!self.blocked && version === self.currentVersion){
+				if(!this.blocked && version === this.currentVersion){
 
 					//add new rows
 					if(newRows){
-						startRow = data[start] ? self.table.rowManager.getRowFromDataObject(data[start]) : false;
+						startRow = data[start] ? this.table.rowManager.getRowFromDataObject(data[start]) : false;
 
 						if(startRow){
-							newRows.forEach(function(rowData){
-								self.table.rowManager.addRowActual(rowData, true, startRow, true);
+							newRows.forEach((rowData) => {
+								this.table.rowManager.addRowActual(rowData, true, startRow, true);
 							});
 						}else {
 							newRows = newRows.slice().reverse();
 
-							newRows.forEach(function(rowData){
-								self.table.rowManager.addRowActual(rowData, true, false, true);
+							newRows.forEach((rowData) => {
+								this.table.rowManager.addRowActual(rowData, true, false, true);
 							});
 						}
 					}
@@ -15362,8 +15360,8 @@ class ReactiveData extends Module{
 					if(end !== 0){
 						var oldRows = data.slice(start, typeof args[1] === "undefined" ? args[1] : start + end);
 
-						oldRows.forEach(function(rowData, i){
-							var row = self.table.rowManager.getRowFromDataObject(rowData);
+						oldRows.forEach((rowData, i) => {
+							var row = this.table.rowManager.getRowFromDataObject(rowData);
 
 							if(row){
 								row.deleteActual(i !== oldRows.length - 1);
@@ -15372,11 +15370,11 @@ class ReactiveData extends Module{
 					}
 
 					if(newRows || end !== 0){
-						self.table.rowManager.reRenderInPosition();
+						this.table.rowManager.reRenderInPosition();
 					}
 				}
 
-				return self.origFuncs.splice.apply(data, arguments);
+				return this.origFuncs.splice.apply(data, arguments);
 			}
 		});
 	}
@@ -15411,14 +15409,13 @@ class ReactiveData extends Module{
 	}
 
 	watchTreeChildren (row){
-		var self = this,
-		childField = row.getData()[this.table.options.dataTreeChildField],
+		var childField = row.getData()[this.table.options.dataTreeChildField],
 		origFuncs = {};
 
 		function rebuildTree(){
-			self.table.modules.dataTree.initializeRow(row);
-			self.table.modules.dataTree.layoutRow(row);
-			self.table.rowManager.refreshActiveData("tree", false, true);
+			this.table.modules.dataTree.initializeRow(row);
+			this.table.modules.dataTree.layoutRow(row);
+			this.table.rowManager.refreshActiveData("tree", false, true);
 		}
 
 		if(childField){
@@ -15428,7 +15425,7 @@ class ReactiveData extends Module{
 			Object.defineProperty(childField, "push", {
 				enumerable: false,
 				configurable: true,
-				value: function value() {
+				value: () => {
 					var result = origFuncs.push.apply(childField, arguments);
 
 					rebuildTree();
@@ -15442,7 +15439,7 @@ class ReactiveData extends Module{
 			Object.defineProperty(childField, "unshift", {
 				enumerable: false,
 				configurable: true,
-				value: function value() {
+				value: () => {
 					var result =  origFuncs.unshift.apply(childField, arguments);
 
 					rebuildTree();
@@ -15456,7 +15453,7 @@ class ReactiveData extends Module{
 			Object.defineProperty(childField, "shift", {
 				enumerable: false,
 				configurable: true,
-				value: function value() {
+				value: () => {
 					var result =  origFuncs.shift.call(childField);
 
 					rebuildTree();
@@ -15470,7 +15467,7 @@ class ReactiveData extends Module{
 			Object.defineProperty(childField, "pop", {
 				enumerable: false,
 				configurable: true,
-				value: function value() {
+				value: () => {
 					var result =  origFuncs.pop.call(childField);
 
 					rebuildTree();
@@ -15484,7 +15481,7 @@ class ReactiveData extends Module{
 			Object.defineProperty(childField, "splice", {
 				enumerable: false,
 				configurable: true,
-				value: function value() {
+				value: () => {
 					var result =  origFuncs.splice.apply(childField, arguments);
 
 					rebuildTree();
@@ -15496,15 +15493,14 @@ class ReactiveData extends Module{
 	}
 
 	watchKey(row, data, key){
-		var self = this,
-		props = Object.getOwnPropertyDescriptor(data, key),
+		var props = Object.getOwnPropertyDescriptor(data, key),
 		value = data[key],
 		version = this.currentVersion;
 
 		Object.defineProperty(data, key, {
-			set: function(newValue){
+			set: (newValue) => {
 				value = newValue;
-				if(!self.blocked && version === self.currentVersion){
+				if(!this.blocked && version === this.currentVersion){
 					var update = {};
 					update[key] = newValue;
 					row.updateData(update);
@@ -15514,7 +15510,7 @@ class ReactiveData extends Module{
 					props.set(newValue);
 				}
 			},
-			get:function(){
+			get:() => {
 
 				if(props.get){
 					props.get();
