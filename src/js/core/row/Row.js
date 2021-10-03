@@ -207,7 +207,7 @@ export default class Row extends CoreFeature{
 
 	//////////////// Data Management /////////////////
 	setData(data){
-		this.data = this.chain("row-data-init-before", [this, data], null, data);
+		this.data = this.chain("row-data-init-before", [this, data], undefined, data);
 
 		this.dispatch("row-data-init-after", this);
 	}
