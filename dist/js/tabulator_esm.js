@@ -12981,12 +12981,18 @@ class MoveColumns extends Module{
 		if(after){
 			column.getCells().forEach(function(cell, i){
 				var cellEl = cell.getElement(true);
-				cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl.nextSibling);
+
+				if(cellEl.parentNode){
+					cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl.nextSibling);
+				}
 			});
 		}else {
 			column.getCells().forEach(function(cell, i){
 				var cellEl = cell.getElement(true);
-				cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl);
+
+				if(cellEl.parentNode){
+					cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl);
+				}
 			});
 		}
 	}
