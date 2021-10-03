@@ -87,7 +87,7 @@ export default function(list, options, setFileContents){
 
 
 	//configure PDF
-	var doc = new jsPDF(jsPDFParams); //set document to landscape, better for most tables
+	var doc = new jspdf.jsPDF(jsPDFParams); //set document to landscape, better for most tables
 
 	if(options && options.autoTable){
 		if(typeof options.autoTable === "function"){
