@@ -114,7 +114,7 @@ export default class VirtualDomHorizontal extends Renderer{
 				config.width = width;
 
 				if (this.options("layout") === "fitData") {
-				    config.fitDataCheck = true;
+					config.fitDataCheck = true;
 				}
 
 				if((colPos + width > this.vDomScrollPosLeft) && (colPos < this.vDomScrollPosRight)){
@@ -409,7 +409,9 @@ export default class VirtualDomHorizontal extends Renderer{
 			rows.forEach((row) => {
 				if(row.type !== "group"){
 					var cell = row.getCell(column);
-					row.getElement().removeChild(cell.getElement());
+					if(cell.parentNode){
+						row.getElement().removeChild(cell.getElement());
+					}
 				}
 			});
 
@@ -423,22 +425,22 @@ export default class VirtualDomHorizontal extends Renderer{
 	}
 
 	fitDataColActualWidthCheck(column){
-	    var newWidth, widthDiff;
+		var newWidth, widthDiff;
 
-	    if(column.modules.vdomHoz.fitDataCheck){
-	        column.reinitializeWidth();
+		if(column.modules.vdomHoz.fitDataCheck){
+			column.reinitializeWidth();
 
-	        newWidth = column.getWidth();
-	        widthDiff = newWidth - column.modules.vdomHoz.width;
+			newWidth = column.getWidth();
+			widthDiff = newWidth - column.modules.vdomHoz.width;
 
-	        if(widthDiff){
-	            column.modules.vdomHoz.rightPos += widthDiff;
-	            column.modules.vdomHoz.width = newWidth;
-	            this.colPositionAdjust(this.rightCol + 2, this.columns.length, widthDiff);
-	        }
+			if(widthDiff){
+				column.modules.vdomHoz.rightPos += widthDiff;
+				column.modules.vdomHoz.width = newWidth;
+				this.colPositionAdjust(this.rightCol + 2, this.columns.length, widthDiff);
+			}
 
-	        column.modules.vdomHoz.fitDataCheck = false;
-	    }
+			column.modules.vdomHoz.fitDataCheck = false;
+		}
 	};
 
 	initializeRow(row){
