@@ -410,7 +410,9 @@ class Edit extends Module{
 			cellEl = cell.getElement();
 
 			if(cancel){
-				cell.validate();
+				if(cell.validate){
+					cell.validate();
+				}
 			}else{
 				cellEl.classList.remove("tabulator-validation-fail");
 			}
