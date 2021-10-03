@@ -16022,6 +16022,8 @@ class ResponsiveLayout extends Module{
 	}
 
 	initializeResponsivity(){
+		var columns = [];
+
 		this.mode = this.table.options.responsiveLayout;
 		this.collapseFormatter = this.table.options.responsiveLayoutCollapseFormatter || this.formatCollapsedData;
 		this.collapseStartOpen = this.table.options.responsiveLayoutCollapseStartOpen;
