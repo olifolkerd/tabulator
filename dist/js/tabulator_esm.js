@@ -10078,7 +10078,7 @@ class FrozenRows extends Module{
 
 			this.rows.push(row);
 
-			this.table.rowManager.refreshActiveData("display");
+			this.refreshData(false, "display");
 
 			this.styleRows();
 
@@ -10098,7 +10098,7 @@ class FrozenRows extends Module{
 
 			this.table.rowManager.adjustTableSize();
 
-			this.table.rowManager.refreshActiveData("display");
+			this.refreshData(false, "display");
 
 			if(this.rows.length){
 				this.styleRows();
@@ -20160,7 +20160,7 @@ class RowManager extends CoreFeature{
 			this.refreshActiveData(false, false, renderInPosition);
 
 			this.dispatch("data-processed", data);
-			this.dispatchExternal("dataProcesed", data);
+			this.dispatchExternal("dataProcessed", data);
 		}else {
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
