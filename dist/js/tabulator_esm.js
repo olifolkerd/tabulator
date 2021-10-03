@@ -13901,6 +13901,7 @@ class Page extends Module{
 
 			this.subscribe("data-params", this.remotePageParams.bind(this));
 			this.subscribe("data-loaded", this._parseRemoteData.bind(this));
+			this.subscribe("table-built", this.calculatePageSizes.bind(this));
 
 			this.initializeProgressive(this.table.options.progressiveLoad);
 
