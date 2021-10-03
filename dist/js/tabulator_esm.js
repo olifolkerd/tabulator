@@ -21415,6 +21415,11 @@ class DataLoader extends CoreFeature{
 			})
 		}else {
 			this.dispatchExternal("dataLoaded", data);
+
+			if(!data){
+				data = [];
+			}
+
 			this.table.rowManager.setData(data, replace, !replace);
 			return Promise.resolve();
 		}
