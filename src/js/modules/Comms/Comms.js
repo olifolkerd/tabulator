@@ -15,7 +15,7 @@ class Comms extends Module{
 		var connections = [],
 		connection;
 
-		connection = Tabulator.comms.lookupTable(selectors);
+		connection = TableRegistry.lookupTable(selectors);
 
 		connection.forEach((con) =>{
 			if(this.table !== con){
