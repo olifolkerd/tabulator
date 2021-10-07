@@ -508,7 +508,8 @@ class Tabulator {
 	//delete row from table
 	deleteRow(index){
 		return new Promise((resolve, reject) => {
-			var count = 0,
+			var self = this,
+			count = 0,
 			successCount = 0,
 			foundRows = [];
 
@@ -517,7 +518,7 @@ class Tabulator {
 
 				if(count == index.length){
 					if(successCount){
-						this.rowManager.reRenderInPosition();
+						self.rowManager.reRenderInPosition();
 						resolve();
 					}
 				}
