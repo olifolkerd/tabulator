@@ -16,11 +16,11 @@ class History extends Module{
 
 	initialize(){
 		if(this.table.options.history){
-			this.subscribe("cell-value-updated", this.layoutCell.bind(this));
+			this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
 			this.subscribe("cell-delete", this.clearComponentHistory.bind(this));
 			this.subscribe("row-delete", this.rowDeleted.bind(this));
 			this.subscribe("rows-wipe", this.clear.bind(this));
-			this.subscribe("row-added", this.clear.bind(this));
+			this.subscribe("row-added", this.rowAdded.bind(this));
 			this.subscribe("row-move", this.rowMoved.bind(this));
 		}
 
