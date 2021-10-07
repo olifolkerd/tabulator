@@ -16850,7 +16850,7 @@ function datetime$1(a, b, aRow, bRow, column, dir, params){
 //sort date
 function date(a, b, aRow, bRow, column, dir, params){
 	if(!params.format){
-		params.format = "DD/MM/YYYY";
+		params.format = "dd/MM/yyyy";
 	}
 
 	return datetime$1.call(this, a, b, aRow, bRow, column, dir, params);
