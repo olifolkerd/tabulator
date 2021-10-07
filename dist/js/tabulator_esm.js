@@ -12470,7 +12470,7 @@ class Menu extends Module{
 		var def = column.definition;
 
 		if(def.headerContextMenu || def.headerClickMenu || def.headerMenu){
-			this.initializeColumnHeader(this);
+			this.initializeColumnHeader(column);
 		}
 	}
 
