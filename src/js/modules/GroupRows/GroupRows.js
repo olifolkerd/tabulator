@@ -284,8 +284,8 @@ class GroupRows extends Module{
 			to = this.table.rowManager.prevDisplayRow(from) || to;
 		}
 
-		var toGroup = to.modules.group;
-		var fromGroup = from.modules.group;
+		var toGroup = to instanceof Group ? to : to.modules.group;
+		var fromGroup = from instanceof Group ? from : from.modules.group;
 
 		if(toGroup === fromGroup){
 			this.table.rowManager.moveRowInArray(toGroup.rows, from, to, after);
