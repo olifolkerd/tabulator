@@ -21294,7 +21294,9 @@ class ComponentFuctionBinder{
 		if(this.bindings[type] && this.bindings[type][name]){
 			return this.bindings[type][name].bind(null, component);
 		}else {
-			console.error("The " + type + " component does not have a " + name + " function, have you checked that you have the correct Tabulator module installed?");
+			if(name !== "then"){
+				console.error("The " + type + " component does not have a " + name + " function, have you checked that you have the correct Tabulator module installed?");
+			}
 		}
 	}
 
