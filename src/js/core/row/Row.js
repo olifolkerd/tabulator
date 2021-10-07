@@ -280,7 +280,7 @@ export default class Row extends CoreFeature{
 
 			this.dispatchExternal("rowUpdated", this.getComponent());
 
-			if(this.subscribedExternal.subscribed("dataChanged")){
+			if(this.subscribedExternal("dataChanged")){
 				this.dispatchExternal("dataChanged", this.table.rowManager.getData());
 			}
 
