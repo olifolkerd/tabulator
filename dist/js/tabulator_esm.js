@@ -13314,7 +13314,7 @@ class MoveRows extends Module{
 
 	_bindMouseMove(){
 		this.table.rowManager.getDisplayRows().forEach((row) => {
-			if((row.type === "row" || row.type === "group") && row.modules.moveRow.mousemove){
+			if((row.type === "row" || row.type === "group") && row.modules.moveRow && row.modules.moveRow.mousemove){
 				row.getElement().addEventListener("mousemove", row.modules.moveRow.mousemove);
 			}
 		});
@@ -13322,7 +13322,7 @@ class MoveRows extends Module{
 
 	_unbindMouseMove(){
 		this.table.rowManager.getDisplayRows().forEach((row) => {
-			if((row.type === "row" || row.type === "group")  && row.modules.moveRow.mousemove){
+			if((row.type === "row" || row.type === "group") && row.modules.moveRow && row.modules.moveRow.mousemove){
 				row.getElement().removeEventListener("mousemove", row.modules.moveRow.mousemove);
 			}
 		});
@@ -13450,9 +13450,7 @@ class MoveRows extends Module{
 	}
 
 	elementRowDrop(e, element, row){
-		if(this.table.options.movableRowsElementDrop){
-			this.dispatchExternal("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
-		}
+		this.dispatchExternal("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
 	}
 
 	//establish connection with other tables
@@ -20210,6 +20208,10 @@ class RowManager extends CoreFeature{
 
 		this.dispatchExternal("rowDeleted", row.getComponent());
 
+		if(!this.displayRowsCount){
+			this._showPlaceholder();
+		}
+
 		if(this.subscribedExternal("dataChanged")){
 			this.dispatchExternal("dataChanged", this.getData());
 		}
@@ -20252,6 +20254,10 @@ class RowManager extends CoreFeature{
 			}
 
 			this.regenerateRowNumbers();
+
+			if(rows.length){
+				this._clearPlaceholder();
+			}
 
 			resolve(rows);
 		});
@@ -20814,13 +20820,7 @@ class RowManager extends CoreFeature{
 		this.dispatch("table-layout");
 
 		if(!this.displayRowsCount){
-			if(this.table.options.placeholder){
-
-				this.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
-
-				this.getElement().appendChild(this.table.options.placeholder);
-				this.table.options.placeholder.style.width = this.table.columnManager.getWidth() + "px";
-			}
+			this._showPlaceholder();
 		}
 
 		this.dispatchExternal("renderComplete");
@@ -20840,14 +20840,28 @@ class RowManager extends CoreFeature{
 	_clearTable(){
 		var element = this.tableElement;
 
-		if(this.table.options.placeholder && this.table.options.placeholder.parentNode){
-			this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
-		}
+		this._clearPlaceholder();
 
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
 
 		this.renderer.clearRows();
+	}
+
+	_showPlaceholder(){
+		if(this.table.options.placeholder){
+
+			this.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
+
+			this.getElement().appendChild(this.table.options.placeholder);
+			this.table.options.placeholder.style.width = this.table.columnManager.getWidth() + "px";
+		}
+	}
+
+	_clearPlaceholder(){
+		if(this.table.options.placeholder && this.table.options.placeholder.parentNode){
+			this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
+		}
 	}
 
 	styleRow(row, index){
@@ -21792,7 +21806,7 @@ class TableRegistry {
 				}
 			}
 
-		}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof Tabulator$1){
+		}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof Tabulator){
 			match = TableRegistry.matchElement(query);
 
 			if(match){
@@ -21813,7 +21827,7 @@ class TableRegistry {
 
 	static matchElement(element){
 		return TableRegistry.tables.find(function(table){
-			return element instanceof Tabulator$1 ? table === element : table.element === element;
+			return element instanceof Tabulator ? table === element : table.element === element;
 		});
 	}
 }
@@ -22343,7 +22357,7 @@ class Comms extends Module{
 		var connections = [],
 		connection;
 
-		connection = Tabulator.comms.lookupTable(selectors);
+		connection = TableRegistry.lookupTable(selectors);
 
 		connection.forEach((con) =>{
 			if(this.table !== con){
@@ -22468,7 +22482,7 @@ class ModuleBinder {
 	}
 }
 
-class Tabulator$1 {
+class Tabulator {
 
 	constructor(element, options){
 
@@ -22535,7 +22549,7 @@ class Tabulator$1 {
 
 		this.bindModules();
 
-		this.options = this.optionsList.generate(Tabulator$1.defaultOptions, options);
+		this.options = this.optionsList.generate(Tabulator.defaultOptions, options);
 
 		this._clearObjectPointers();
 
@@ -22957,7 +22971,8 @@ class Tabulator$1 {
 	//delete row from table
 	deleteRow(index){
 		return new Promise((resolve, reject) => {
-			var count = 0,
+			var self = this,
+			count = 0,
 			successCount = 0,
 			foundRows = [];
 
@@ -22966,7 +22981,7 @@ class Tabulator$1 {
 
 				if(count == index.length){
 					if(successCount){
-						this.rowManager.reRenderInPosition();
+						self.rowManager.reRenderInPosition();
 						resolve();
 					}
 				}
@@ -23274,14 +23289,14 @@ class Tabulator$1 {
 }
 
 //default setup options
-Tabulator$1.defaultOptions = defaultOptions$1;
+Tabulator.defaultOptions = defaultOptions$1;
 
 //bind modules and static functionality
-new ModuleBinder(Tabulator$1);
+new ModuleBinder(Tabulator);
 
 //tabulator with all modules installed
 
-class TabulatorFull extends Tabulator$1 {}
+class TabulatorFull extends Tabulator {}
 //bind modules and static functionality
 new ModuleBinder(TabulatorFull, modules);
 
@@ -23331,5 +23346,5 @@ class PseudoRow {
 	clearCellHeight(){}
 }
 
-export { CalcComponent, CellComponent, ColumnComponent, GroupComponent, Module, PseudoRow, Renderer, RowComponent$1 as RowComponent, Tabulator$1 as Tabulator, TabulatorFull, modules };
+export { CalcComponent, CellComponent, ColumnComponent, GroupComponent, Module, PseudoRow, Renderer, RowComponent$1 as RowComponent, Tabulator, TabulatorFull, modules };
 //# sourceMappingURL=tabulator_esm.js.map

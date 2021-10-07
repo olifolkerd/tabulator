@@ -263,7 +263,7 @@ class MoveRows extends Module{
 
 	_bindMouseMove(){
 		this.table.rowManager.getDisplayRows().forEach((row) => {
-			if((row.type === "row" || row.type === "group") && row.modules.moveRow.mousemove){
+			if((row.type === "row" || row.type === "group") && row.modules.moveRow && row.modules.moveRow.mousemove){
 				row.getElement().addEventListener("mousemove", row.modules.moveRow.mousemove);
 			}
 		});
@@ -271,7 +271,7 @@ class MoveRows extends Module{
 
 	_unbindMouseMove(){
 		this.table.rowManager.getDisplayRows().forEach((row) => {
-			if((row.type === "row" || row.type === "group")  && row.modules.moveRow.mousemove){
+			if((row.type === "row" || row.type === "group") && row.modules.moveRow && row.modules.moveRow.mousemove){
 				row.getElement().removeEventListener("mousemove", row.modules.moveRow.mousemove);
 			}
 		});
@@ -400,9 +400,7 @@ class MoveRows extends Module{
 	}
 
 	elementRowDrop(e, element, row){
-		if(this.table.options.movableRowsElementDrop){
-			this.dispatchExternal("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
-		}
+		this.dispatchExternal("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
 	}
 
 	//establish connection with other tables
