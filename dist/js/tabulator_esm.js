@@ -9488,7 +9488,7 @@ function rowSelection(cell, formatterParams, onRendered){
 		if(typeof cell.getRow == 'function'){
 			var row = cell.getRow();
 
-			if(row instanceof RowComponent){
+			if(row instanceof RowComponent$1){
 
 				checkbox.addEventListener("change", (e) => {
 					row.toggleSelect();
