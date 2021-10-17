@@ -212,7 +212,7 @@
     border-top: 1px solid #3FB449;
     background-color: #222;
     text-align: right;
-    color: #fff;
+    color: #222;
     font-weight: bold;
     white-space: nowrap;
     user-select: none;
@@ -237,7 +237,7 @@
         margin-bottom: -5px;
         border-bottom: none; }
     .tabulator .tabulator-footer .tabulator-paginator {
-      color: #fff;
+      color: #222;
       font-family: inherit;
       font-weight: inherit;
       font-size: inherit; }
@@ -792,7 +792,8 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
     .tabulator .tabulator-footer .tabulator-paginator label {
       color: #fff; }
     .tabulator .tabulator-footer .tabulator-page {
-      color: #fff;
+      background-color: #fff;
+      color: #222;
       font-family: inherit;
       font-weight: inherit;
       font-size: inherit; }
