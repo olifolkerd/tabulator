@@ -303,13 +303,10 @@ export default class RowManager extends CoreFeature{
 			data.forEach((item, i) => {
 				var row = this.addRow(item, pos, index, true);
 				rows.push(row);
+				this.dispatch("row-added", row, data, pos, index);
 			});
 
-			if(this.subscribed("row-added")){
-				this.dispatch("row-added", row, data, pos, index);
-			}else{
-				this.reRenderInPosition();
-			}
+			this.reRenderInPosition();
 
 			this.regenerateRowNumbers();
 
