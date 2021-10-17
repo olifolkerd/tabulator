@@ -6163,7 +6163,8 @@
     }, {
       key: "track",
       value: function track(type, e) {
-        var targets = this.findTargets(e.path);
+        var path = e.composedPath && e.composedPath() || e.path;
+        var targets = this.findTargets(path);
         targets = this.bindComponents(type, targets);
         this.triggerEvents(type, e, targets);
       }
@@ -8801,6 +8802,10 @@
         }
 
         if (config.mode == "cors") {
+          if (typeof config.headers["Origin"] === "undefined") {
+            config.headers["Origin"] = window.location.origin;
+          }
+
           if (typeof config.credentials === "undefined") {
             config.credentials = 'same-origin';
           }
@@ -10510,7 +10515,7 @@
           config.open = false;
           row.reinitialize();
           this.refreshData(true);
-          this.dispatchExternal("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
+          this.dispatchExternal("dataTreeRowCollapsed", row.getComponent(), row.modules.dataTree.index);
         }
       }
     }, {

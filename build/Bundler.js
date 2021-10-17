@@ -100,6 +100,7 @@ export default class Bundler{
 			            extract: true,
 			            minimize: minify,
 			            sourceMap: true,
+			            plugins: [require('postcss-prettify')]
 			        }),
 			    ]
 			};
