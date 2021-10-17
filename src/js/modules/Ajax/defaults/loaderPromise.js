@@ -46,6 +46,10 @@ export default function(url, config, params){
 			}
 
 			if(config.mode == "cors"){
+				if(typeof config.headers["Origin"] === "undefined"){
+					config.headers["Origin"] = window.location.origin;
+				}
+        
 				if(typeof config.credentials === "undefined"){
 					config.credentials = 'same-origin';
 				}
