@@ -4100,7 +4100,7 @@ class DataTree extends Module{
 
 			this.refreshData(true);
 
-			this.dispatchExternal("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
+			this.dispatchExternal("dataTreeRowCollapsed", row.getComponent(), row.modules.dataTree.index);
 		}
 	}
 
