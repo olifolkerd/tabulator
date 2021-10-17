@@ -69,7 +69,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		}
 	}
 
-	.tabulator-tableHolder{
+	.tabulator-tableholder{
 		.tabulator-placeholder{
 			span{
 				color:#000;
@@ -114,7 +114,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			.tabulator-table{
 				.tabulator-row{
 					.tabulator-cell{
@@ -134,7 +134,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			.tabulator-table{
 				.tabulator-row{
 					min-height:$textSize + ($cellPaddingCondensed * 2);
@@ -149,7 +149,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 
 	//row colors
-	.tabulator-tableHolder{
+	.tabulator-tableholder{
 		.tabulator-table{
 			.tabulator-row{
 				&.active{

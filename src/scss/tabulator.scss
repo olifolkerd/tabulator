@@ -56,7 +56,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	transform: translatez(0);
 
 	&[tabulator-layout="fitDataFill"]{
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			.tabulator-table{
 				min-width:100%;
 			}
@@ -368,7 +368,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	}
 
 	//scrolling element to hold table
-	.tabulator-tableHolder{
+	.tabulator-tableholder{
 		position:relative;
 		width:100%;
 		white-space: nowrap;

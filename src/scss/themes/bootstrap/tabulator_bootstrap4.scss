@@ -100,7 +100,7 @@ $table-cell-padding-sm: 5px;
 		}
 	}
 
-	.tabulator-tableHolder{
+	.tabulator-tableholder{
 		.tabulator-placeholder{
 			span{
 				color:#000;
@@ -192,7 +192,7 @@ $table-cell-padding-sm: 5px;
 			}
 		}
 
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			color: $table-dark-color;
 		}
 
@@ -274,7 +274,7 @@ $table-cell-padding-sm: 5px;
 			}
 		}
 
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			.tabulator-table{
 				.tabulator-row{
 					.tabulator-cell{
@@ -305,7 +305,7 @@ $table-cell-padding-sm: 5px;
 			}
 		}
 
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			.tabulator-table{
 				.tabulator-row{
 					min-height:$textSize + ($table-cell-padding-sm * 2);
@@ -320,7 +320,7 @@ $table-cell-padding-sm: 5px;
 
 
 	//row colors
-	.tabulator-tableHolder{
+	.tabulator-tableholder{
 		.tabulator-table{
 			.tabulator-row{
 				&.table-primary{

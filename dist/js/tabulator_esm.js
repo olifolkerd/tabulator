@@ -19974,7 +19974,7 @@ class RowManager extends CoreFeature{
 	createHolderElement (){
 		var el = document.createElement("div");
 
-		el.classList.add("tabulator-tableHolder");
+		el.classList.add("tabulator-tableholder");
 		el.setAttribute("tabindex", 0);
 
 		return el;

@@ -67,7 +67,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		}
 	}
 
-	.tabulator-tableHolder{
+	.tabulator-tableholder{
 		.tabulator-table{
 			background-color:transparent;
 			.tabulator-row{
@@ -117,7 +117,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		}
 	}
 
-	.tabulator-tableHolder{
+	.tabulator-tableholder{
 		.tabulator-table{
 			.tabulator-row{
 				&.positive, .tabulator-cell.positive{
@@ -200,7 +200,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			.tabulator-table{
 				.tabulator-row{
 					color: $invertedCellColor;
@@ -219,7 +219,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	}
 
 	&.striped{
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			.tabulator-table{
 				.tabulator-row{
 					&:nth-child(even){
@@ -239,7 +239,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			.tabulator-table{
 				.tabulator-row{
 					.tabulator-cell{
@@ -253,7 +253,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 
 	&[class*="single line"]{
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			.tabulator-table{
 				.tabulator-row{
 					.tabulator-cell{
@@ -394,7 +394,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				}
 			}
 		}
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			.tabulator-table{
 				.tabulator-row{
 					.tabulator-cell{
@@ -416,7 +416,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					}
 				}
 			}
-			.tabulator-tableHolder{
+			.tabulator-tableholder{
 				.tabulator-table{
 					.tabulator-row{
 						.tabulator-cell{
@@ -440,7 +440,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				}
 			}
 		}
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			.tabulator-table{
 				.tabulator-row{
 					.tabulator-cell{
@@ -462,7 +462,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					}
 				}
 			}
-			.tabulator-tableHolder{
+			.tabulator-tableholder{
 				.tabulator-table{
 					.tabulator-row{
 						.tabulator-cell{
