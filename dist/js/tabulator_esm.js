@@ -60,23 +60,23 @@ class CoreFeature{
 	//////////////////////////////////////////
 
 	subscribe(){
-		this.table.eventBus.subscribe(...arguments);
+		return this.table.eventBus.subscribe(...arguments);
 	}
 
 	unsubscribe(){
-		this.table.eventBus.unsubscribe(...arguments);
+		return this.table.eventBus.unsubscribe(...arguments);
 	}
 
 	subscribed(key){
-		this.table.eventBus.subscribed(key);
+		return this.table.eventBus.subscribed(key);
 	}
 
 	subscriptionChange(){
-		this.table.eventBus.subscriptionChange(...arguments);
+		return this.table.eventBus.subscriptionChange(...arguments);
 	}
 
 	dispatch(){
-		this.table.eventBus.dispatch(...arguments);
+		return this.table.eventBus.dispatch(...arguments);
 	}
 
 	chain(){
@@ -88,15 +88,15 @@ class CoreFeature{
 	}
 
 	dispatchExternal(){
-		this.table.externalEvents.dispatch(...arguments);
+		return this.table.externalEvents.dispatch(...arguments);
 	}
 
 	subscribedExternal(key){
-		this.table.externalEvents.subscribed(key);
+		return this.table.externalEvents.subscribed(key);
 	}
 
 	subscriptionChangeExternal(){
-		this.table.externalEvents.subscriptionChange(...arguments);
+		return this.table.externalEvents.subscriptionChange(...arguments);
 	}
 
 	//////////////////////////////////////////
@@ -3019,7 +3019,7 @@ class Row$1 extends CoreFeature{
 
 			this.dispatchExternal("rowUpdated", this.getComponent());
 
-			if(this.subscribedExternal.subscribed("dataChanged")){
+			if(this.subscribedExternal("dataChanged")){
 				this.dispatchExternal("dataChanged", this.table.rowManager.getData());
 			}
 
@@ -4502,7 +4502,7 @@ function pdf(list, options, setFileContents){
 	}
 
 	if(title){
-		autoTableParams.addPageContent = function(data) {
+		autoTableParams.didDrawPage = function(data) {
 			doc.text(title, 40, 30);
 		};
 	}
@@ -10855,6 +10855,8 @@ class GroupRows extends Module{
 		this.groups = {}; //hold row groups
 		this.displayIndex = 0; //index in display pipeline
 
+		this.displayHandler = this.getRows.bind(this);
+
 		//register table options
 		this.registerTableOption("groupBy", false); //enable table grouping and set field to group by
 		this.registerTableOption("groupStartOpen", true); //starting state of group
@@ -10987,7 +10989,7 @@ class GroupRows extends Module{
 
 			this.subscribe("render-virtual-fill", this.virtualRenderFill.bind(this));
 
-			this.registerDisplayHandler(this.getRows.bind(this), 20);
+			this.registerDisplayHandler(this.displayHandler, 20);
 
 			this.initialized = true;
 		}
@@ -11122,8 +11124,8 @@ class GroupRows extends Module{
 			to = this.table.rowManager.prevDisplayRow(from) || to;
 		}
 
-		var toGroup = to.modules.group;
-		var fromGroup = from.modules.group;
+		var toGroup = to instanceof Group ? to : to.modules.group;
+		var fromGroup = from instanceof Group ? from : from.modules.group;
 
 		if(toGroup === fromGroup){
 			this.table.rowManager.moveRowInArray(toGroup.rows, from, to, after);
@@ -11166,12 +11168,14 @@ class GroupRows extends Module{
 	getRows(rows){
 		if(this.groupIDLookups.length){
 
-			this.dispatchExternal("dataGrouping");
+			if(!Object.keys(this.groups).length){
+				this.dispatchExternal("dataGrouping");
 
-			this.generateGroups(rows);
+				this.generateGroups(rows);
 
-			if(this.subscribedExternal("dataGrouped")){
-				this.dispatchExternal("dataGrouped", this.getGroups(true));
+				if(this.subscribedExternal("dataGrouped")){
+					this.dispatchExternal("dataGrouped", this.getGroups(true));
+				}
 			}
 
 			return this.updateGroupRows();
@@ -11368,15 +11372,8 @@ class GroupRows extends Module{
 			output = output.concat(group.getHeadersAndRows());
 		});
 
-		//force update of table display
 		if(force){
-			var displayIndex = this.table.rowManager.setDisplayRows(output, this.getDisplayIndex());
-
-			if(displayIndex !== true){
-				this.setDisplayIndex(displayIndex);
-			}
-
-			this.refreshData(true);
+			this.refreshData(true, this.displayHandler);
 		}
 
 		return output;

@@ -16,6 +16,8 @@ class GroupRows extends Module{
 		this.groups = {}; //hold row groups
 		this.displayIndex = 0; //index in display pipeline
 
+		this.displayHandler = this.getRows.bind(this);
+
 		//register table options
 		this.registerTableOption("groupBy", false); //enable table grouping and set field to group by
 		this.registerTableOption("groupStartOpen", true); //starting state of group
@@ -149,7 +151,7 @@ class GroupRows extends Module{
 
 			this.subscribe("render-virtual-fill", this.virtualRenderFill.bind(this));
 
-			this.registerDisplayHandler(this.getRows.bind(this), 20);
+			this.registerDisplayHandler(this.displayHandler, 20);
 
 			this.initialized = true;
 		}
@@ -328,12 +330,14 @@ class GroupRows extends Module{
 	getRows(rows){
 		if(this.groupIDLookups.length){
 
-			this.dispatchExternal("dataGrouping");
+			if(!Object.keys(this.groups).length){
+				this.dispatchExternal("dataGrouping");
 
-			this.generateGroups(rows);
+				this.generateGroups(rows);
 
-			if(this.subscribedExternal("dataGrouped")){
-				this.dispatchExternal("dataGrouped", this.getGroups(true));
+				if(this.subscribedExternal("dataGrouped")){
+					this.dispatchExternal("dataGrouped", this.getGroups(true));
+				}
 			}
 
 			return this.updateGroupRows();
@@ -531,15 +535,8 @@ class GroupRows extends Module{
 			output = output.concat(group.getHeadersAndRows());
 		});
 
-		//force update of table display
 		if(force){
-			var displayIndex = this.table.rowManager.setDisplayRows(output, this.getDisplayIndex());
-
-			if(displayIndex !== true){
-				this.setDisplayIndex(displayIndex);
-			}
-
-			this.refreshData(true);
+			this.refreshData(true, this.displayHandler);
 		}
 
 		return output;
