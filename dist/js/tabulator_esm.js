@@ -2567,7 +2567,7 @@ class Column$1 extends CoreFeature{
 		if(this.isGroup){
 			return;
 		}
-		
+
 		if(!this.widthFixed){
 			this.element.style.width = "";
 
@@ -2594,40 +2594,34 @@ class Column$1 extends CoreFeature{
 	}
 
 	updateDefinition(updates){
-		return new Promise((resolve, reject) => {
-			var definition;
+		var definition;
 
-			if(!this.isGroup){
-				if(!this.parent.isGroup){
-					definition = Object.assign({}, this.getDefinition());
-					definition = Object.assign(definition, updates);
+		if(!this.isGroup){
+			if(!this.parent.isGroup){
+				definition = Object.assign({}, this.getDefinition());
+				definition = Object.assign(definition, updates);
 
-					this.table.columnManager.addColumn(definition, false, this)
-					.then((column) => {
+				return this.table.columnManager.addColumn(definition, false, this)
+				.then((column) => {
 
-						if(definition.field == this.field){
-							this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
-						}
+					if(definition.field == this.field){
+						this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+					}
 
-						this.delete()
-						.then(() => {
-							resolve(column.getComponent());
-						}).catch((err) => {
-							reject(err);
-						});
-
-					}).catch((err) => {
-						reject(err);
+					return this.delete()
+					.then(() => {
+						return column.getComponent();
 					});
-				}else {
-					console.warn("Column Update Error - The updateDefinition function is only available on ungrouped columns");
-					reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
-				}
+
+				});
 			}else {
-				console.warn("Column Update Error - The updateDefinition function is only available on ungrouped columns");
-				reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+				console.error("Column Update Error - The updateDefinition function is only available on ungrouped columns");
+				return Promise.reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
 			}
-		});
+		}else {
+			console.error("Column Update Error - The updateDefinition function is only available on ungrouped columns");
+			return Promise.reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+		}
 	}
 
 	deleteCell(cell){
@@ -2966,8 +2960,8 @@ class Row$1 extends CoreFeature{
 			this.dispatch("row-data-save-before", this);
 
 			if(this.subscribed("row-data-changing")){
-				Object.assign(tempData, this.data);
-				Object.assign(tempData, updatedData);
+				tempData = Object.assign(tempData, this.data);
+				tempData = Object.assign(tempData, updatedData);
 			}
 
 			newRowData = this.chain("row-data-changing", [this, tempData, updatedData], null, updatedData);
@@ -3040,8 +3034,6 @@ class Row$1 extends CoreFeature{
 
 		column = this.table.columnManager.findColumn(column);
 
-		// console.log("init", this.initialized)
-
 		if(!this.initialized){
 			this.generateCells();
 		}
@@ -3096,13 +3088,11 @@ class Row$1 extends CoreFeature{
 
 	///////////////////// Actions  /////////////////////
 	delete(){
-		return new Promise((resolve, reject) => {
-			this.dispatch("row-delete", this);
+		this.dispatch("row-delete", this);
 
-			this.deleteActual();
+		this.deleteActual();
 
-			resolve();
-		});
+		return Promise.resolve();
 	}
 
 	deleteActual(blockRedraw){
@@ -9991,7 +9981,7 @@ class FrozenColumns extends Module{
 	}
 
 	layoutElement(element, column){
-
+		// console.log("el", element)
 		if(column.modules.frozen){
 			element.style.position = "absolute";
 			element.style.left = column.modules.frozen.margin;
@@ -22969,57 +22959,37 @@ class Tabulator {
 
 	//delete row from table
 	deleteRow(index){
-		return new Promise((resolve, reject) => {
-			var self = this,
-			count = 0,
-			successCount = 0,
-			foundRows = [];
+		var foundRows = [];
 
-			function doneCheck(){
-				count++;
+		if(!Array.isArray(index)){
+			index = [index];
+		}
 
-				if(count == index.length){
-					if(successCount){
-						self.rowManager.reRenderInPosition();
-						resolve();
-					}
-				}
+		//find matching rows
+		for(let item of index){
+			let row = this.rowManager.findRow(item, true);
+
+			if(row){
+				foundRows.push(row);
+			}else {
+				console.error("Delete Error - No matching row found:", item);
+				return Promise.reject("Delete Error - No matching row found")
 			}
+		}
 
-			if(!Array.isArray(index)){
-				index = [index];
-			}
-
-			//find matching rows
-			index.forEach((item) =>{
-				var row = this.rowManager.findRow(item, true);
-
-				if(row){
-					foundRows.push(row);
-				}else {
-					console.warn("Delete Error - No matching row found:", item);
-					reject("Delete Error - No matching row found");
-					doneCheck();
-				}
-			});
-
-			//sort rows into correct order to ensure smooth delete from table
-			foundRows.sort((a, b) => {
-				return this.rowManager.rows.indexOf(a) > this.rowManager.rows.indexOf(b) ? 1 : -1;
-			});
-
-			foundRows.forEach((row) =>{
-				row.delete()
-				.then(() => {
-					successCount++;
-					doneCheck();
-				})
-				.catch((err) => {
-					doneCheck();
-					reject(err);
-				});
-			});
+		//sort rows into correct order to ensure smooth delete from table
+		foundRows.sort((a, b) => {
+			return this.rowManager.rows.indexOf(a) > this.rowManager.rows.indexOf(b) ? 1 : -1;
 		});
+
+		//delete rows
+		foundRows.forEach((row) =>{
+			row.delete();
+		});
+
+		this.rowManager.reRenderInPosition();
+
+		return Promise.resolve();
 	}
 
 	//add row to table

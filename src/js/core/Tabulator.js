@@ -507,39 +507,38 @@ class Tabulator {
 
 	//delete row from table
 	deleteRow(index){
-			var foundRows = [];
+		var foundRows = [];
 
-			if(!Array.isArray(index)){
-				index = [index];
+		if(!Array.isArray(index)){
+			index = [index];
+		}
+
+		//find matching rows
+		for(let item of index){
+			let row = this.rowManager.findRow(item, true);
+
+			if(row){
+				foundRows.push(row);
+			}else{
+				console.error("Delete Error - No matching row found:", item);
+				return Promise.reject("Delete Error - No matching row found")
+				break;
 			}
+		}
 
-			//find matching rows
-			for(item of index){
-				let row = this.rowManager.findRow(item, true);
-
-				if(row){
-					foundRows.push(row);
-				}else{
-					console.error("Delete Error - No matching row found:", item);
-					return Promise.reject("Delete Error - No matching row found")
-					break;
-				}
-			}
-
-			//sort rows into correct order to ensure smooth delete from table
-			foundRows.sort((a, b) => {
-				return this.rowManager.rows.indexOf(a) > this.rowManager.rows.indexOf(b) ? 1 : -1;
-			});
-
-			//delete rows
-			foundRows.forEach((row) =>{
-				row.delete()
-			});
-
-			self.rowManager.reRenderInPosition();
-
-			return Promise.resolve();
+		//sort rows into correct order to ensure smooth delete from table
+		foundRows.sort((a, b) => {
+			return this.rowManager.rows.indexOf(a) > this.rowManager.rows.indexOf(b) ? 1 : -1;
 		});
+
+		//delete rows
+		foundRows.forEach((row) =>{
+			row.delete()
+		});
+
+		this.rowManager.reRenderInPosition();
+
+		return Promise.resolve();
 	}
 
 	//add row to table
