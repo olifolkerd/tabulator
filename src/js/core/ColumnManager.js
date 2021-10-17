@@ -45,17 +45,17 @@ export default class ColumnManager extends CoreFeature {
 			"basic": RendererBasicHorizontal,
 		};
 
-		if(typeof this.table.options.renderVertical === "string"){
-			renderClass = renderers[this.table.options.renderVertical];
+		if(typeof this.table.options.renderHorizontal === "string"){
+			renderClass = renderers[this.table.options.renderHorizontal];
 		}else{
-			renderClass = this.table.options.renderVertical;
+			renderClass = this.table.options.renderHorizontal;
 		}
 
 		if(renderClass){
 			this.renderer = new renderClass(this.table, this.element, this.tableElement);
 			this.renderer.initialize();
 		}else{
-			console.error("Unable to find matching renderer:", table.options.renderVertical);
+			console.error("Unable to find matching renderer:", table.options.renderHorizontal);
 		}
 	}
 

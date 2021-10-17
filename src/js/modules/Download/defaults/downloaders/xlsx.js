@@ -4,7 +4,7 @@ export default function(list, options, setFileContents){
 	var self = this,
 	sheetName = options.sheetName || "Sheet1",
 	workbook = XLSX.utils.book_new(),
-	tableFeatures = new CoreFeature(this);
+	tableFeatures = new CoreFeature(this),
 	output;
 
 	workbook.SheetNames = [];

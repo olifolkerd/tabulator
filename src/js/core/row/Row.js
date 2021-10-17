@@ -88,9 +88,9 @@ export default class Row extends CoreFeature{
 				this.table.options.rowFormatter(this.getComponent());
 			}
 
-			this.dispatch("row-layout-after", this);
-
 			this.initialized = true;
+
+			this.dispatch("row-layout-after", this);
 		}else{
 			this.table.columnManager.renderer.rerenderRowCells(this);
 		}
@@ -207,7 +207,7 @@ export default class Row extends CoreFeature{
 
 	//////////////// Data Management /////////////////
 	setData(data){
-		this.data = this.chain("row-data-init-before", [this, data], null, data);
+		this.data = this.chain("row-data-init-before", [this, data], undefined, data);
 
 		this.dispatch("row-data-init-after", this);
 	}
@@ -280,7 +280,7 @@ export default class Row extends CoreFeature{
 
 			this.dispatchExternal("rowUpdated", this.getComponent());
 
-			if(this.subscribedExternal.subscribed("dataChanged")){
+			if(this.subscribedExternal("dataChanged")){
 				this.dispatchExternal("dataChanged", this.table.rowManager.getData());
 			}
 
@@ -300,6 +300,10 @@ export default class Row extends CoreFeature{
 		var match = false;
 
 		column = this.table.columnManager.findColumn(column);
+
+		if(!this.initialized){
+			this.generateCells();
+		}
 
 		match = this.cells.find(function(cell){
 			return cell.column === column;
@@ -321,6 +325,10 @@ export default class Row extends CoreFeature{
 	}
 
 	getCells(){
+		if(!this.initialized){
+			this.generateCells();
+		}
+
 		return this.cells;
 	}
 
@@ -347,13 +355,11 @@ export default class Row extends CoreFeature{
 
 	///////////////////// Actions  /////////////////////
 	delete(){
-		return new Promise((resolve, reject) => {
-			this.dispatch("row-delete", this);
+		this.dispatch("row-delete", this);
 
-			this.deleteActual();
+		this.deleteActual();
 
-			resolve();
-		});
+		return Promise.resolve();
 	}
 
 	deleteActual(blockRedraw){

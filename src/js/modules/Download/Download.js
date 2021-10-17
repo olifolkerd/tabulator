@@ -28,7 +28,6 @@ class Download extends Module{
 		this.download(type, filename, options, active, true);
 	}
 
-
 	///////////////////////////////////
 	///////// Internal Logic //////////
 	///////////////////////////////////
@@ -63,7 +62,7 @@ class Download extends Module{
 		if(downloadFunc){
 			var list = this.generateExportList(range);
 
-			downloadFunc.call(this.table, list , options || {}, buildLink);
+			downloadFunc.call(this.table, list , options || {}, buildLink.bind(this));
 		}
 	}
 

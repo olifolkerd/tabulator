@@ -60,23 +60,23 @@ class CoreFeature{
 	//////////////////////////////////////////
 
 	subscribe(){
-		this.table.eventBus.subscribe(...arguments);
+		return this.table.eventBus.subscribe(...arguments);
 	}
 
 	unsubscribe(){
-		this.table.eventBus.unsubscribe(...arguments);
+		return this.table.eventBus.unsubscribe(...arguments);
 	}
 
 	subscribed(key){
-		this.table.eventBus.subscribed(key);
+		return this.table.eventBus.subscribed(key);
 	}
 
 	subscriptionChange(){
-		this.table.eventBus.subscriptionChange(...arguments);
+		return this.table.eventBus.subscriptionChange(...arguments);
 	}
 
 	dispatch(){
-		this.table.eventBus.dispatch(...arguments);
+		return this.table.eventBus.dispatch(...arguments);
 	}
 
 	chain(){
@@ -88,15 +88,15 @@ class CoreFeature{
 	}
 
 	dispatchExternal(){
-		this.table.externalEvents.dispatch(...arguments);
+		return this.table.externalEvents.dispatch(...arguments);
 	}
 
 	subscribedExternal(key){
-		this.table.externalEvents.subscribed(key);
+		return this.table.externalEvents.subscribed(key);
 	}
 
 	subscriptionChangeExternal(){
-		this.table.externalEvents.subscriptionChange(...arguments);
+		return this.table.externalEvents.subscriptionChange(...arguments);
 	}
 
 	//////////////////////////////////////////
@@ -435,11 +435,6 @@ function defaultLoaderPromise(url, config, params){
 			}
 
 			if(config.mode == "cors"){
-
-				if(typeof config.headers["Access-Control-Allow-Origin"] === "undefined"){
-					config.headers["Access-Control-Allow-Origin"] = window.location.origin;
-				}
-
 				if(typeof config.credentials === "undefined"){
 					config.credentials = 'same-origin';
 				}
@@ -2562,8 +2557,12 @@ class Column$1 extends CoreFeature{
 		this.dispatch("column-width-fit-after", this);
 	}
 
-	//set column width to maximum cell width
+	//set column width to maximum cell width for non group columns
 	fitToData(){
+		if(this.isGroup){
+			return;
+		}
+
 		if(!this.widthFixed){
 			this.element.style.width = "";
 
@@ -2590,40 +2589,34 @@ class Column$1 extends CoreFeature{
 	}
 
 	updateDefinition(updates){
-		return new Promise((resolve, reject) => {
-			var definition;
+		var definition;
 
-			if(!this.isGroup){
-				if(!this.parent.isGroup){
-					definition = Object.assign({}, this.getDefinition());
-					definition = Object.assign(definition, updates);
+		if(!this.isGroup){
+			if(!this.parent.isGroup){
+				definition = Object.assign({}, this.getDefinition());
+				definition = Object.assign(definition, updates);
 
-					this.table.columnManager.addColumn(definition, false, this)
-					.then((column) => {
+				return this.table.columnManager.addColumn(definition, false, this)
+				.then((column) => {
 
-						if(definition.field == this.field){
-							this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
-						}
+					if(definition.field == this.field){
+						this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+					}
 
-						this.delete()
-						.then(() => {
-							resolve(column.getComponent());
-						}).catch((err) => {
-							reject(err);
-						});
-
-					}).catch((err) => {
-						reject(err);
+					return this.delete()
+					.then(() => {
+						return column.getComponent();
 					});
-				}else {
-					console.warn("Column Update Error - The updateDefinition function is only available on ungrouped columns");
-					reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
-				}
+
+				});
 			}else {
-				console.warn("Column Update Error - The updateDefinition function is only available on ungrouped columns");
-				reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+				console.error("Column Update Error - The updateDefinition function is only available on ungrouped columns");
+				return Promise.reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
 			}
-		});
+		}else {
+			console.error("Column Update Error - The updateDefinition function is only available on ungrouped columns");
+			return Promise.reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+		}
 	}
 
 	deleteCell(cell){
@@ -2823,9 +2816,9 @@ class Row$1 extends CoreFeature{
 				this.table.options.rowFormatter(this.getComponent());
 			}
 
-			this.dispatch("row-layout-after", this);
-
 			this.initialized = true;
+
+			this.dispatch("row-layout-after", this);
 		}else {
 			this.table.columnManager.renderer.rerenderRowCells(this);
 		}
@@ -2942,7 +2935,7 @@ class Row$1 extends CoreFeature{
 
 	//////////////// Data Management /////////////////
 	setData(data){
-		this.data = this.chain("row-data-init-before", [this, data], null, data);
+		this.data = this.chain("row-data-init-before", [this, data], undefined, data);
 
 		this.dispatch("row-data-init-after", this);
 	}
@@ -3015,7 +3008,7 @@ class Row$1 extends CoreFeature{
 
 			this.dispatchExternal("rowUpdated", this.getComponent());
 
-			if(this.subscribedExternal.subscribed("dataChanged")){
+			if(this.subscribedExternal("dataChanged")){
 				this.dispatchExternal("dataChanged", this.table.rowManager.getData());
 			}
 
@@ -3035,6 +3028,10 @@ class Row$1 extends CoreFeature{
 		var match = false;
 
 		column = this.table.columnManager.findColumn(column);
+
+		if(!this.initialized){
+			this.generateCells();
+		}
 
 		match = this.cells.find(function(cell){
 			return cell.column === column;
@@ -3056,6 +3053,10 @@ class Row$1 extends CoreFeature{
 	}
 
 	getCells(){
+		if(!this.initialized){
+			this.generateCells();
+		}
+
 		return this.cells;
 	}
 
@@ -3082,13 +3083,11 @@ class Row$1 extends CoreFeature{
 
 	///////////////////// Actions  /////////////////////
 	delete(){
-		return new Promise((resolve, reject) => {
-			this.dispatch("row-delete", this);
+		this.dispatch("row-delete", this);
 
-			this.deleteActual();
+		this.deleteActual();
 
-			resolve();
-		});
+		return Promise.resolve();
 	}
 
 	deleteActual(blockRedraw){
@@ -3837,7 +3836,7 @@ class DataTree extends Module{
 			}
 
 			this.subscribe("row-init", this.initializeRow.bind(this));
-			this.subscribe("row-layout", this.layoutRow.bind(this));
+			this.subscribe("row-layout-after", this.layoutRow.bind(this));
 			this.subscribe("row-relayout", this.layoutRow.bind(this));
 			this.subscribe("row-deleted", this.rowDelete.bind(this),0);
 			this.subscribe("row-data-changed", this.rowDataChanged.bind(this), 10);
@@ -4479,7 +4478,7 @@ function pdf(list, options, setFileContents){
 
 
 	//configure PDF
-	var doc = new jsPDF(jsPDFParams); //set document to landscape, better for most tables
+	var doc = new jspdf.jsPDF(jsPDFParams); //set document to landscape, better for most tables
 
 	if(options && options.autoTable){
 		if(typeof options.autoTable === "function"){
@@ -4490,7 +4489,7 @@ function pdf(list, options, setFileContents){
 	}
 
 	if(title){
-		autoTableParams.addPageContent = function(data) {
+		autoTableParams.didDrawPage = function(data) {
 			doc.text(title, 40, 30);
 		};
 	}
@@ -4511,7 +4510,7 @@ function xlsx(list, options, setFileContents){
 	var self = this,
 	sheetName = options.sheetName || "Sheet1",
 	workbook = XLSX.utils.book_new(),
-	tableFeatures = new CoreFeature(this);
+	tableFeatures = new CoreFeature(this),
 	output;
 
 	workbook.SheetNames = [];
@@ -4643,7 +4642,6 @@ class Download extends Module{
 		this.download(type, filename, options, active, true);
 	}
 
-
 	///////////////////////////////////
 	///////// Internal Logic //////////
 	///////////////////////////////////
@@ -4678,7 +4676,7 @@ class Download extends Module{
 		if(downloadFunc){
 			var list = this.generateExportList(range);
 
-			downloadFunc.call(this.table, list , options || {}, buildLink);
+			downloadFunc.call(this.table, list , options || {}, buildLink.bind(this));
 		}
 	}
 
@@ -7011,7 +7009,9 @@ class Edit extends Module{
 			cellEl = cell.getElement();
 
 			if(cancel){
-				cell.validate();
+				if(cell.validate){
+					cell.validate();
+				}
 			}else {
 				cellEl.classList.remove("tabulator-validation-fail");
 			}
@@ -9109,54 +9109,66 @@ function tickCross$1(cell, formatterParams, onRendered){
 }
 
 function datetime(cell, formatterParams, onRendered){
-	var inputFormat = formatterParams.inputFormat || "YYYY-MM-DD hh:mm:ss";
-	var	outputFormat = formatterParams.outputFormat || "DD/MM/YYYY hh:mm:ss";
+	var DT = window.DateTime || luxon.DateTime;
+	var inputFormat = formatterParams.inputFormat || "yyyy-MM-dd HH:mm:ss";
+	var	outputFormat = formatterParams.outputFormat || "dd/MM/yyyy HH:mm:ss";
 	var	invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";
 	var value = cell.getValue();
 
-	var newDatetime = moment(value, inputFormat);
+	if(typeof DT != "undefined"){
+		var newDatetime = (window.DateTime || luxon.DateTime).fromFormat(value, inputFormat);
 
-	if(newDatetime.isValid()){
-		return formatterParams.timezone ? newDatetime.tz(formatterParams.timezone).format(outputFormat) : newDatetime.format(outputFormat);
-	}else {
+		if(newDatetime.isValid){
 
-		if(invalid === true){
-			return value;
-		}else if(typeof invalid === "function"){
-			return invalid(value);
+			if(formatterParams.timezone){
+				newDatetime = newDatetime.shiftTimezone(formatterParams.timezone);
+			}
+
+			return newDatetime.toFormat(outputFormat);
 		}else {
-			return invalid;
+
+			if(invalid === true){
+				return value;
+			}else if(typeof invalid === "function"){
+				return invalid(value);
+			}else {
+				return invalid;
+			}
 		}
+	}else {
+		console.error("Format Error - 'datetime' formatter is dependant on luxon.js");
 	}
 }
 
-function datetime$1(cell, formatterParams, onRendered) {
-	var inputFormat = formatterParams.inputFormat || "YYYY-MM-DD hh:mm:ss";
+function datetimediff (cell, formatterParams, onRendered) {
+	var DT = window.DateTime || luxon.DateTime;
+	var inputFormat = formatterParams.inputFormat || "yyyy-MM-dd HH:mm:ss";
 	var invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";
 	var suffix = typeof formatterParams.suffix !== "undefined" ? formatterParams.suffix : false;
-	var unit = typeof formatterParams.unit !== "undefined" ? formatterParams.unit : undefined;
+	var unit = typeof formatterParams.unit !== "undefined" ? formatterParams.unit : "days";
 	var humanize = typeof formatterParams.humanize !== "undefined" ? formatterParams.humanize : false;
-	var date = typeof formatterParams.date !== "undefined" ? formatterParams.date : moment();
+	var date = typeof formatterParams.date !== "undefined" ? formatterParams.date : DT.now();
 	var value = cell.getValue();
 
-	var newDatetime = moment(value, inputFormat);
+	if(typeof DT != "undefined"){
+		var newDatetime = DT.fromFormat(value, inputFormat);
 
-	if (newDatetime.isValid()) {
-		if(humanize){
-			return moment.duration(newDatetime.diff(date)).humanize(suffix);
-		}else {
-			return newDatetime.diff(date, unit) + (suffix ? " " + suffix : "");
-		}
-
-	} else {
-
-		if (invalid === true) {
-			return value;
-		} else if (typeof invalid === "function") {
-			return invalid(value);
+		if (newDatetime.isValid){
+			if(humanize);else {
+				return parseInt(newDatetime.diff(date, unit)[unit]) + (suffix ? " " + suffix : "");
+			}
 		} else {
-			return invalid;
+
+			if (invalid === true) {
+				return value;
+			} else if (typeof invalid === "function") {
+				return invalid(value);
+			} else {
+				return invalid;
+			}
 		}
+	}else {
+		console.error("Format Error - 'datetimediff' formatter is dependant on luxon.js");
 	}
 }
 
@@ -9463,7 +9475,7 @@ function rowSelection(cell, formatterParams, onRendered){
 		if(typeof cell.getRow == 'function'){
 			var row = cell.getRow();
 
-			if(row instanceof RowComponent){
+			if(row instanceof RowComponent$1){
 
 				checkbox.addEventListener("change", (e) => {
 					row.toggleSelect();
@@ -9499,7 +9511,7 @@ var defaultFormatters = {
 	image:image,
 	tickCross:tickCross$1,
 	datetime:datetime,
-	datetimediff:datetime$1,
+	datetimediff:datetimediff,
 	lookup:lookup,
 	star:star$1,
 	traffic:traffic,
@@ -10053,7 +10065,7 @@ class FrozenRows extends Module{
 
 			this.rows.push(row);
 
-			this.table.rowManager.refreshActiveData("display");
+			this.refreshData(false, "display");
 
 			this.styleRows();
 
@@ -10073,7 +10085,7 @@ class FrozenRows extends Module{
 
 			this.table.rowManager.adjustTableSize();
 
-			this.table.rowManager.refreshActiveData("display");
+			this.refreshData(false, "display");
 
 			if(this.rows.length){
 				this.styleRows();
@@ -10830,6 +10842,8 @@ class GroupRows extends Module{
 		this.groups = {}; //hold row groups
 		this.displayIndex = 0; //index in display pipeline
 
+		this.displayHandler = this.getRows.bind(this);
+
 		//register table options
 		this.registerTableOption("groupBy", false); //enable table grouping and set field to group by
 		this.registerTableOption("groupStartOpen", true); //starting state of group
@@ -10962,7 +10976,7 @@ class GroupRows extends Module{
 
 			this.subscribe("render-virtual-fill", this.virtualRenderFill.bind(this));
 
-			this.registerDisplayHandler(this.getRows.bind(this), 20);
+			this.registerDisplayHandler(this.displayHandler, 20);
 
 			this.initialized = true;
 		}
@@ -11097,8 +11111,8 @@ class GroupRows extends Module{
 			to = this.table.rowManager.prevDisplayRow(from) || to;
 		}
 
-		var toGroup = to.modules.group;
-		var fromGroup = from.modules.group;
+		var toGroup = to instanceof Group ? to : to.modules.group;
+		var fromGroup = from instanceof Group ? from : from.modules.group;
 
 		if(toGroup === fromGroup){
 			this.table.rowManager.moveRowInArray(toGroup.rows, from, to, after);
@@ -11141,12 +11155,14 @@ class GroupRows extends Module{
 	getRows(rows){
 		if(this.groupIDLookups.length){
 
-			this.dispatchExternal("dataGrouping");
+			if(!Object.keys(this.groups).length){
+				this.dispatchExternal("dataGrouping");
 
-			this.generateGroups(rows);
+				this.generateGroups(rows);
 
-			if(this.subscribedExternal("dataGrouped")){
-				this.dispatchExternal("dataGrouped", this.getGroups(true));
+				if(this.subscribedExternal("dataGrouped")){
+					this.dispatchExternal("dataGrouped", this.getGroups(true));
+				}
 			}
 
 			return this.updateGroupRows();
@@ -11343,15 +11359,8 @@ class GroupRows extends Module{
 			output = output.concat(group.getHeadersAndRows());
 		});
 
-		//force update of table display
 		if(force){
-			var displayIndex = this.table.rowManager.setDisplayRows(output, this.getDisplayIndex());
-
-			if(displayIndex !== true){
-				this.setDisplayIndex(displayIndex);
-			}
-
-			this.refreshData(true);
+			this.refreshData(true, this.displayHandler);
 		}
 
 		return output;
@@ -11450,11 +11459,11 @@ class History extends Module{
 
 	initialize(){
 		if(this.table.options.history){
-			this.subscribe("cell-value-updated", this.layoutCell.bind(this));
+			this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
 			this.subscribe("cell-delete", this.clearComponentHistory.bind(this));
 			this.subscribe("row-delete", this.rowDeleted.bind(this));
 			this.subscribe("rows-wipe", this.clear.bind(this));
-			this.subscribe("row-added", this.clear.bind(this));
+			this.subscribe("row-added", this.rowAdded.bind(this));
 			this.subscribe("row-move", this.rowMoved.bind(this));
 		}
 
@@ -12445,7 +12454,7 @@ class Menu extends Module{
 		var def = column.definition;
 
 		if(def.headerContextMenu || def.headerClickMenu || def.headerMenu){
-			this.initializeColumnHeader(this);
+			this.initializeColumnHeader(column);
 		}
 	}
 
@@ -12958,12 +12967,18 @@ class MoveColumns extends Module{
 		if(after){
 			column.getCells().forEach(function(cell, i){
 				var cellEl = cell.getElement(true);
-				cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl.nextSibling);
+
+				if(cellEl.parentNode){
+					cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl.nextSibling);
+				}
 			});
 		}else {
 			column.getCells().forEach(function(cell, i){
 				var cellEl = cell.getElement(true);
-				cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl);
+
+				if(cellEl.parentNode){
+					cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl);
+				}
 			});
 		}
 	}
@@ -13283,7 +13298,7 @@ class MoveRows extends Module{
 
 	_bindMouseMove(){
 		this.table.rowManager.getDisplayRows().forEach((row) => {
-			if((row.type === "row" || row.type === "group") && row.modules.moveRow.mousemove){
+			if((row.type === "row" || row.type === "group") && row.modules.moveRow && row.modules.moveRow.mousemove){
 				row.getElement().addEventListener("mousemove", row.modules.moveRow.mousemove);
 			}
 		});
@@ -13291,7 +13306,7 @@ class MoveRows extends Module{
 
 	_unbindMouseMove(){
 		this.table.rowManager.getDisplayRows().forEach((row) => {
-			if((row.type === "row" || row.type === "group")  && row.modules.moveRow.mousemove){
+			if((row.type === "row" || row.type === "group") && row.modules.moveRow && row.modules.moveRow.mousemove){
 				row.getElement().removeEventListener("mousemove", row.modules.moveRow.mousemove);
 			}
 		});
@@ -13419,9 +13434,7 @@ class MoveRows extends Module{
 	}
 
 	elementRowDrop(e, element, row){
-		if(this.table.options.movableRowsElementDrop){
-			this.dispatchExternal("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
-		}
+		this.dispatchExternal("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
 	}
 
 	//establish connection with other tables
@@ -13870,6 +13883,7 @@ class Page extends Module{
 
 			this.subscribe("data-params", this.remotePageParams.bind(this));
 			this.subscribe("data-loaded", this._parseRemoteData.bind(this));
+			this.subscribe("table-built", this.calculatePageSizes.bind(this));
 
 			this.initializeProgressive(this.table.options.progressiveLoad);
 
@@ -15193,74 +15207,72 @@ class ReactiveData extends Module{
 			this.subscribe("row-data-save-after", this.unblock.bind(this));
 			this.subscribe("row-data-init-after", this.watchRow.bind(this));
 			this.subscribe("data-processing", this.watchData.bind(this));
-			this.subscribe("data-processing", this.watchData.bind(this));
 			this.subscribe("table-destroy", this.unwatchData.bind(this));
 		}
 	}
 
 	watchData(data){
-		var self = this,
-		version;
+		var version;
 
 		this.currentVersion ++;
 
 		version = this.currentVersion;
 
-		self.unwatchData();
+		this.unwatchData();
 
-		self.data = data;
+		this.data = data;
 
 		//override array push function
-		self.origFuncs.push = data.push;
+		this.origFuncs.push = data.push;
 
-		Object.defineProperty(self.data, "push", {
+		Object.defineProperty(this.data, "push", {
 			enumerable: false,
 			configurable: true,
-			value: function () {
+			value: () => {
 				var args = Array.from(arguments);
 
-				if(!self.blocked && version === self.currentVersion){
-					args.forEach(function (arg){
-						self.table.rowManager.addRowActual(arg, false);
+				if(!this.blocked && version === this.currentVersion){
+					args.forEach((arg) => {
+						this.table.rowManager.addRowActual(arg, false);
 					});
 				}
 
-				return self.origFuncs.push.apply(data, arguments);
+				return this.origFuncs.push.apply(data, arguments);
 			}
 		});
 
 		//override array unshift function
-		self.origFuncs.unshift = data.unshift;
+		this.origFuncs.unshift = data.unshift;
 
-		Object.defineProperty(self.data, "unshift", {
+		Object.defineProperty(this.data, "unshift", {
 			enumerable: false,
 			configurable: true,
-			value: function () {
+			value: () => {
 				var args = Array.from(arguments);
 
-				if(!self.blocked && version === self.currentVersion){
-					args.forEach(function (arg){
-						self.table.rowManager.addRowActual(arg, true);
+				if(!this.blocked && version === this.currentVersion){
+					args.forEach((arg) => {
+						this.table.rowManager.addRowActual(arg, true);
 					});
 				}
 
-				return self.origFuncs.unshift.apply(data, arguments);
+				return this.origFuncs.unshift.apply(data, arguments);
 			}
 		});
 
 
 		//override array shift function
-		self.origFuncs.shift = data.shift;
+		this.origFuncs.shift = data.shift;
 
-		Object.defineProperty(self.data, "shift", {
+		Object.defineProperty(this.data, "shift", {
 			enumerable: false,
 			configurable: true,
-			value: function () {
+			value: () => {
 				var row;
 
-				if(!self.blocked && version === self.currentVersion){
-					if(self.data.length){
-						row = self.table.rowManager.getRowFromDataObject(self.data[0]);
+				if(!this.blocked && version === this.currentVersion){
+					if(this.data.length){
+						row = this.table.rowManager.getRowFromDataObject(this.data[0]);
 
 						if(row){
 							row.deleteActual();
@@ -15268,60 +15280,60 @@ class ReactiveData extends Module{
 					}
 				}
 
-				return self.origFuncs.shift.call(data);
+				return this.origFuncs.shift.call(data);
 			}
 		});
 
 		//override array pop function
-		self.origFuncs.pop = data.pop;
+		this.origFuncs.pop = data.pop;
 
-		Object.defineProperty(self.data, "pop", {
+		Object.defineProperty(this.data, "pop", {
 			enumerable: false,
 			configurable: true,
-			value: function () {
+			value: () => {
 				var row;
-				if(!self.blocked && version === self.currentVersion){
-					if(self.data.length){
-						row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
+				if(!this.blocked && version === this.currentVersion){
+					if(this.data.length){
+						row = this.table.rowManager.getRowFromDataObject(this.data[this.data.length - 1]);
 
 						if(row){
 							row.deleteActual();
 						}
 					}
 				}
-				return self.origFuncs.pop.call(data);
+				return this.origFuncs.pop.call(data);
 			}
 		});
 
 
 		//override array splice function
-		self.origFuncs.splice = data.splice;
+		this.origFuncs.splice = data.splice;
 
-		Object.defineProperty(self.data, "splice", {
+		Object.defineProperty(this.data, "splice", {
 			enumerable: false,
 			configurable: true,
-			value: function () {
+			value: () => {
 				var args = Array.from(arguments),
 				start = args[0] < 0 ? data.length + args[0] : args[0],
 				end = args[1],
 				newRows = args[2] ? args.slice(2) : false,
 				startRow;
 
-				if(!self.blocked && version === self.currentVersion){
+				if(!this.blocked && version === this.currentVersion){
 
 					//add new rows
 					if(newRows){
-						startRow = data[start] ? self.table.rowManager.getRowFromDataObject(data[start]) : false;
+						startRow = data[start] ? this.table.rowManager.getRowFromDataObject(data[start]) : false;
 
 						if(startRow){
-							newRows.forEach(function(rowData){
-								self.table.rowManager.addRowActual(rowData, true, startRow, true);
+							newRows.forEach((rowData) => {
+								this.table.rowManager.addRowActual(rowData, true, startRow, true);
 							});
 						}else {
 							newRows = newRows.slice().reverse();
 
-							newRows.forEach(function(rowData){
-								self.table.rowManager.addRowActual(rowData, true, false, true);
+							newRows.forEach((rowData) => {
+								this.table.rowManager.addRowActual(rowData, true, false, true);
 							});
 						}
 					}
@@ -15330,8 +15342,8 @@ class ReactiveData extends Module{
 					if(end !== 0){
 						var oldRows = data.slice(start, typeof args[1] === "undefined" ? args[1] : start + end);
 
-						oldRows.forEach(function(rowData, i){
-							var row = self.table.rowManager.getRowFromDataObject(rowData);
+						oldRows.forEach((rowData, i) => {
+							var row = this.table.rowManager.getRowFromDataObject(rowData);
 
 							if(row){
 								row.deleteActual(i !== oldRows.length - 1);
@@ -15340,11 +15352,11 @@ class ReactiveData extends Module{
 					}
 
 					if(newRows || end !== 0){
-						self.table.rowManager.reRenderInPosition();
+						this.table.rowManager.reRenderInPosition();
 					}
 				}
 
-				return self.origFuncs.splice.apply(data, arguments);
+				return this.origFuncs.splice.apply(data, arguments);
 			}
 		});
 	}
@@ -15379,14 +15391,13 @@ class ReactiveData extends Module{
 	}
 
 	watchTreeChildren (row){
-		var self = this,
-		childField = row.getData()[this.table.options.dataTreeChildField],
+		var childField = row.getData()[this.table.options.dataTreeChildField],
 		origFuncs = {};
 
 		function rebuildTree(){
-			self.table.modules.dataTree.initializeRow(row);
-			self.table.modules.dataTree.layoutRow(row);
-			self.table.rowManager.refreshActiveData("tree", false, true);
+			this.table.modules.dataTree.initializeRow(row);
+			this.table.modules.dataTree.layoutRow(row);
+			this.table.rowManager.refreshActiveData("tree", false, true);
 		}
 
 		if(childField){
@@ -15396,7 +15407,7 @@ class ReactiveData extends Module{
 			Object.defineProperty(childField, "push", {
 				enumerable: false,
 				configurable: true,
-				value: function value() {
+				value: () => {
 					var result = origFuncs.push.apply(childField, arguments);
 
 					rebuildTree();
@@ -15410,7 +15421,7 @@ class ReactiveData extends Module{
 			Object.defineProperty(childField, "unshift", {
 				enumerable: false,
 				configurable: true,
-				value: function value() {
+				value: () => {
 					var result =  origFuncs.unshift.apply(childField, arguments);
 
 					rebuildTree();
@@ -15424,7 +15435,7 @@ class ReactiveData extends Module{
 			Object.defineProperty(childField, "shift", {
 				enumerable: false,
 				configurable: true,
-				value: function value() {
+				value: () => {
 					var result =  origFuncs.shift.call(childField);
 
 					rebuildTree();
@@ -15438,7 +15449,7 @@ class ReactiveData extends Module{
 			Object.defineProperty(childField, "pop", {
 				enumerable: false,
 				configurable: true,
-				value: function value() {
+				value: () => {
 					var result =  origFuncs.pop.call(childField);
 
 					rebuildTree();
@@ -15452,7 +15463,7 @@ class ReactiveData extends Module{
 			Object.defineProperty(childField, "splice", {
 				enumerable: false,
 				configurable: true,
-				value: function value() {
+				value: () => {
 					var result =  origFuncs.splice.apply(childField, arguments);
 
 					rebuildTree();
@@ -15464,15 +15475,14 @@ class ReactiveData extends Module{
 	}
 
 	watchKey(row, data, key){
-		var self = this,
-		props = Object.getOwnPropertyDescriptor(data, key),
+		var props = Object.getOwnPropertyDescriptor(data, key),
 		value = data[key],
 		version = this.currentVersion;
 
 		Object.defineProperty(data, key, {
-			set: function(newValue){
+			set: (newValue) => {
 				value = newValue;
-				if(!self.blocked && version === self.currentVersion){
+				if(!this.blocked && version === this.currentVersion){
 					var update = {};
 					update[key] = newValue;
 					row.updateData(update);
@@ -15482,7 +15492,7 @@ class ReactiveData extends Module{
 					props.set(newValue);
 				}
 			},
-			get:function(){
+			get:() => {
 
 				if(props.get){
 					props.get();
@@ -15991,6 +16001,8 @@ class ResponsiveLayout extends Module{
 	}
 
 	initializeResponsivity(){
+		var columns = [];
+
 		this.mode = this.table.options.responsiveLayout;
 		this.collapseFormatter = this.table.options.responsiveLayoutCollapseFormatter || this.formatCollapsedData;
 		this.collapseStartOpen = this.table.options.responsiveLayoutCollapseStartOpen;
@@ -16787,18 +16799,18 @@ function string(a, b, aRow, bRow, column, dir, params){
 }
 
 //sort datetime
-function datetime$2(a, b, aRow, bRow, column, dir, params){
-	var format = params.format || "DD/MM/YYYY HH:mm:ss",
+function datetime$1(a, b, aRow, bRow, column, dir, params){
+	var DT = window.DateTime || luxon.DateTime;
+	var format = params.format || "dd/MM/yyyy HH:mm:ss",
 	alignEmptyValues = params.alignEmptyValues,
 	emptyAlign = 0;
 
-	if(typeof moment != "undefined"){
-		a = moment(a, format);
-		b = moment(b, format);
-
-		if(!a.isValid()){
-			emptyAlign = !b.isValid() ? 0 : -1;
-		}else if(!b.isValid()){
+	if(typeof DT != "undefined"){
+		a = DT.fromFormat(a, format);
+		b = DT.fromFormat(b, format);
+		if(!a.isValid){
+			emptyAlign = !b.isValid ? 0 : -1;
+		}else if(!b.isValid){
 			emptyAlign =  1;
 		}else {
 			//compare valid values
@@ -16813,17 +16825,17 @@ function datetime$2(a, b, aRow, bRow, column, dir, params){
 		return emptyAlign;
 
 	}else {
-		console.error("Sort Error - 'datetime' sorter is dependant on moment.js");
+		console.error("Sort Error - 'datetime' sorter is dependant on luxon.js");
 	}
 }
 
 //sort date
 function date(a, b, aRow, bRow, column, dir, params){
 	if(!params.format){
-		params.format = "DD/MM/YYYY";
+		params.format = "dd/MM/yyyy";
 	}
 
-	return datetime$2.call(this, a, b, aRow, bRow, column, dir, params);
+	return datetime$1.call(this, a, b, aRow, bRow, column, dir, params);
 }
 
 //sort times
@@ -16832,7 +16844,7 @@ function time(a, b, aRow, bRow, column, dir, params){
 		params.format = "HH:mm";
 	}
 
-	return datetime$2.call(this, a, b, aRow, bRow, column, dir, params);
+	return datetime$1.call(this, a, b, aRow, bRow, column, dir, params);
 }
 
 //sort booleans
@@ -16955,7 +16967,7 @@ var defaultSorters = {
 	string:string,
 	date:date,
 	time:time,
-	datetime:datetime$2,
+	datetime:datetime$1,
 	boolean:boolean,
 	array:array,
 	exists:exists,
@@ -17320,6 +17332,8 @@ class Sort extends Module{
 
 			this.dispatchExternal("dataSorted", self.getSort(), rowComponents);
 		}
+
+		return data;
 	}
 
 	//clear sort arrows on columns
@@ -18250,7 +18264,7 @@ class VirtualDomHorizontal extends Renderer{
 				config.width = width;
 
 				if (this.options("layout") === "fitData") {
-				    config.fitDataCheck = true;
+					config.fitDataCheck = true;
 				}
 
 				if((colPos + width > this.vDomScrollPosLeft) && (colPos < this.vDomScrollPosRight)){
@@ -18545,7 +18559,9 @@ class VirtualDomHorizontal extends Renderer{
 			rows.forEach((row) => {
 				if(row.type !== "group"){
 					var cell = row.getCell(column);
-					row.getElement().removeChild(cell.getElement());
+					if(cell.parentNode){
+						row.getElement().removeChild(cell.getElement());
+					}
 				}
 			});
 
@@ -18559,22 +18575,22 @@ class VirtualDomHorizontal extends Renderer{
 	}
 
 	fitDataColActualWidthCheck(column){
-	    var newWidth, widthDiff;
+		var newWidth, widthDiff;
 
-	    if(column.modules.vdomHoz.fitDataCheck){
-	        column.reinitializeWidth();
+		if(column.modules.vdomHoz.fitDataCheck){
+			column.reinitializeWidth();
 
-	        newWidth = column.getWidth();
-	        widthDiff = newWidth - column.modules.vdomHoz.width;
+			newWidth = column.getWidth();
+			widthDiff = newWidth - column.modules.vdomHoz.width;
 
-	        if(widthDiff){
-	            column.modules.vdomHoz.rightPos += widthDiff;
-	            column.modules.vdomHoz.width = newWidth;
-	            this.colPositionAdjust(this.rightCol + 2, this.columns.length, widthDiff);
-	        }
+			if(widthDiff){
+				column.modules.vdomHoz.rightPos += widthDiff;
+				column.modules.vdomHoz.width = newWidth;
+				this.colPositionAdjust(this.rightCol + 2, this.columns.length, widthDiff);
+			}
 
-	        column.modules.vdomHoz.fitDataCheck = false;
-	    }
+			column.modules.vdomHoz.fitDataCheck = false;
+		}
 	};
 
 	initializeRow(row){
@@ -18647,17 +18663,17 @@ class ColumnManager extends CoreFeature {
 			"basic": BaiscHorizontal,
 		};
 
-		if(typeof this.table.options.renderVertical === "string"){
-			renderClass = renderers[this.table.options.renderVertical];
+		if(typeof this.table.options.renderHorizontal === "string"){
+			renderClass = renderers[this.table.options.renderHorizontal];
 		}else {
-			renderClass = this.table.options.renderVertical;
+			renderClass = this.table.options.renderHorizontal;
 		}
 
 		if(renderClass){
 			this.renderer = new renderClass(this.table, this.element, this.tableElement);
 			this.renderer.initialize();
 		}else {
-			console.error("Unable to find matching renderer:", table.options.renderVertical);
+			console.error("Unable to find matching renderer:", table.options.renderHorizontal);
 		}
 	}
 
@@ -20123,7 +20139,7 @@ class RowManager extends CoreFeature{
 			this.refreshActiveData(false, false, renderInPosition);
 
 			this.dispatch("data-processed", data);
-			this.dispatchExternal("dataProcesed", data);
+			this.dispatchExternal("dataProcessed", data);
 		}else {
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
@@ -20176,6 +20192,10 @@ class RowManager extends CoreFeature{
 
 		this.dispatchExternal("rowDeleted", row.getComponent());
 
+		if(!this.displayRowsCount){
+			this._showPlaceholder();
+		}
+
 		if(this.subscribedExternal("dataChanged")){
 			this.dispatchExternal("dataChanged", this.getData());
 		}
@@ -20209,15 +20229,16 @@ class RowManager extends CoreFeature{
 			data.forEach((item, i) => {
 				var row = this.addRow(item, pos, index, true);
 				rows.push(row);
+				this.dispatch("row-added", row, data, pos, index);
 			});
 
-			if(this.subscribed("row-added")){
-				this.dispatch("row-added", row, data, pos, index);
-			}else {
-				this.reRenderInPosition();
-			}
+			this.reRenderInPosition();
 
 			this.regenerateRowNumbers();
+
+			if(rows.length){
+				this._clearPlaceholder();
+			}
 
 			resolve(rows);
 		});
@@ -20780,13 +20801,7 @@ class RowManager extends CoreFeature{
 		this.dispatch("table-layout");
 
 		if(!this.displayRowsCount){
-			if(this.table.options.placeholder){
-
-				this.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
-
-				this.getElement().appendChild(this.table.options.placeholder);
-				this.table.options.placeholder.style.width = this.table.columnManager.getWidth() + "px";
-			}
+			this._showPlaceholder();
 		}
 
 		this.dispatchExternal("renderComplete");
@@ -20806,14 +20821,28 @@ class RowManager extends CoreFeature{
 	_clearTable(){
 		var element = this.tableElement;
 
-		if(this.table.options.placeholder && this.table.options.placeholder.parentNode){
-			this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
-		}
+		this._clearPlaceholder();
 
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
 
 		this.renderer.clearRows();
+	}
+
+	_showPlaceholder(){
+		if(this.table.options.placeholder){
+
+			this.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
+
+			this.getElement().appendChild(this.table.options.placeholder);
+			this.table.options.placeholder.style.width = this.table.columnManager.getWidth() + "px";
+		}
+	}
+
+	_clearPlaceholder(){
+		if(this.table.options.placeholder && this.table.options.placeholder.parentNode){
+			this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
+		}
 	}
 
 	styleRow(row, index){
@@ -21260,7 +21289,9 @@ class ComponentFuctionBinder{
 		if(this.bindings[type] && this.bindings[type][name]){
 			return this.bindings[type][name].bind(null, component);
 		}else {
-			console.error("The " + type + " component does not have a " + name + " function, have you checked that you have the correct Tabulator module installed?");
+			if(name !== "then"){
+				console.error("The " + type + " component does not have a " + name + " function, have you checked that you have the correct Tabulator module installed?");
+			}
 		}
 	}
 
@@ -21378,6 +21409,11 @@ class DataLoader extends CoreFeature{
 			})
 		}else {
 			this.dispatchExternal("dataLoaded", data);
+
+			if(!data){
+				data = [];
+			}
+
 			this.table.rowManager.setData(data, replace, !replace);
 			return Promise.resolve();
 		}
@@ -21751,7 +21787,7 @@ class TableRegistry {
 				}
 			}
 
-		}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof Tabulator$1){
+		}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof Tabulator){
 			match = TableRegistry.matchElement(query);
 
 			if(match){
@@ -21772,7 +21808,7 @@ class TableRegistry {
 
 	static matchElement(element){
 		return TableRegistry.tables.find(function(table){
-			return element instanceof Tabulator$1 ? table === element : table.element === element;
+			return element instanceof Tabulator ? table === element : table.element === element;
 		});
 	}
 }
@@ -22302,7 +22338,7 @@ class Comms extends Module{
 		var connections = [],
 		connection;
 
-		connection = Tabulator.comms.lookupTable(selectors);
+		connection = TableRegistry.lookupTable(selectors);
 
 		connection.forEach((con) =>{
 			if(this.table !== con){
@@ -22427,7 +22463,7 @@ class ModuleBinder {
 	}
 }
 
-class Tabulator$1 {
+class Tabulator {
 
 	constructor(element, options){
 
@@ -22494,7 +22530,7 @@ class Tabulator$1 {
 
 		this.bindModules();
 
-		this.options = this.optionsList.generate(Tabulator$1.defaultOptions, options);
+		this.options = this.optionsList.generate(Tabulator.defaultOptions, options);
 
 		this._clearObjectPointers();
 
@@ -22915,56 +22951,37 @@ class Tabulator$1 {
 
 	//delete row from table
 	deleteRow(index){
-		return new Promise((resolve, reject) => {
-			var count = 0,
-			successCount = 0,
-			foundRows = [];
+		var foundRows = [];
 
-			function doneCheck(){
-				count++;
+		if(!Array.isArray(index)){
+			index = [index];
+		}
 
-				if(count == index.length){
-					if(successCount){
-						this.rowManager.reRenderInPosition();
-						resolve();
-					}
-				}
+		//find matching rows
+		for(let item of index){
+			let row = this.rowManager.findRow(item, true);
+
+			if(row){
+				foundRows.push(row);
+			}else {
+				console.error("Delete Error - No matching row found:", item);
+				return Promise.reject("Delete Error - No matching row found")
 			}
+		}
 
-			if(!Array.isArray(index)){
-				index = [index];
-			}
-
-			//find matching rows
-			index.forEach((item) =>{
-				var row = this.rowManager.findRow(item, true);
-
-				if(row){
-					foundRows.push(row);
-				}else {
-					console.warn("Delete Error - No matching row found:", item);
-					reject("Delete Error - No matching row found");
-					doneCheck();
-				}
-			});
-
-			//sort rows into correct order to ensure smooth delete from table
-			foundRows.sort((a, b) => {
-				return this.rowManager.rows.indexOf(a) > this.rowManager.rows.indexOf(b) ? 1 : -1;
-			});
-
-			foundRows.forEach((row) =>{
-				row.delete()
-				.then(() => {
-					successCount++;
-					doneCheck();
-				})
-				.catch((err) => {
-					doneCheck();
-					reject(err);
-				});
-			});
+		//sort rows into correct order to ensure smooth delete from table
+		foundRows.sort((a, b) => {
+			return this.rowManager.rows.indexOf(a) > this.rowManager.rows.indexOf(b) ? 1 : -1;
 		});
+
+		//delete rows
+		foundRows.forEach((row) =>{
+			row.delete();
+		});
+
+		this.rowManager.reRenderInPosition();
+
+		return Promise.resolve();
 	}
 
 	//add row to table
@@ -23233,14 +23250,14 @@ class Tabulator$1 {
 }
 
 //default setup options
-Tabulator$1.defaultOptions = defaultOptions$1;
+Tabulator.defaultOptions = defaultOptions$1;
 
 //bind modules and static functionality
-new ModuleBinder(Tabulator$1);
+new ModuleBinder(Tabulator);
 
 //tabulator with all modules installed
 
-class TabulatorFull extends Tabulator$1 {}
+class TabulatorFull extends Tabulator {}
 //bind modules and static functionality
 new ModuleBinder(TabulatorFull, modules);
 
@@ -23290,5 +23307,5 @@ class PseudoRow {
 	clearCellHeight(){}
 }
 
-export { CalcComponent, CellComponent, ColumnComponent, GroupComponent, Module, PseudoRow, Renderer, RowComponent$1 as RowComponent, Tabulator$1 as Tabulator, TabulatorFull, modules };
+export { CalcComponent, CellComponent, ColumnComponent, GroupComponent, Module, PseudoRow, Renderer, RowComponent$1 as RowComponent, Tabulator, TabulatorFull, modules };
 //# sourceMappingURL=tabulator_esm.js.map

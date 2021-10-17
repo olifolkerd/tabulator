@@ -212,7 +212,7 @@ export default class RowManager extends CoreFeature{
 			this.refreshActiveData(false, false, renderInPosition);
 
 			this.dispatch("data-processed", data);
-			this.dispatchExternal("dataProcesed", data);
+			this.dispatchExternal("dataProcessed", data);
 		}else{
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
@@ -265,6 +265,10 @@ export default class RowManager extends CoreFeature{
 
 		this.dispatchExternal("rowDeleted", row.getComponent());
 
+		if(!this.displayRowsCount){
+			this._showPlaceholder();
+		}
+
 		if(this.subscribedExternal("dataChanged")){
 			this.dispatchExternal("dataChanged", this.getData());
 		}
@@ -299,15 +303,16 @@ export default class RowManager extends CoreFeature{
 			data.forEach((item, i) => {
 				var row = this.addRow(item, pos, index, true);
 				rows.push(row);
+				this.dispatch("row-added", row, data, pos, index);
 			});
 
-			if(this.subscribed("row-added")){
-				this.dispatch("row-added", row, data, pos, index);
-			}else{
-				this.reRenderInPosition();
-			}
+			this.reRenderInPosition();
 
 			this.regenerateRowNumbers();
+
+			if(rows.length){
+				this._clearPlaceholder();
+			}
 
 			resolve(rows);
 		});
@@ -873,13 +878,7 @@ export default class RowManager extends CoreFeature{
 		this.dispatch("table-layout");
 
 		if(!this.displayRowsCount){
-			if(this.table.options.placeholder){
-
-				this.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
-
-				this.getElement().appendChild(this.table.options.placeholder);
-				this.table.options.placeholder.style.width = this.table.columnManager.getWidth() + "px";
-			}
+			this._showPlaceholder();
 		}
 
 		this.dispatchExternal("renderComplete");
@@ -899,14 +898,28 @@ export default class RowManager extends CoreFeature{
 	_clearTable(){
 		var element = this.tableElement;
 
-		if(this.table.options.placeholder && this.table.options.placeholder.parentNode){
-			this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
-		}
+		this._clearPlaceholder();
 
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
 
 		this.renderer.clearRows();
+	}
+
+	_showPlaceholder(){
+		if(this.table.options.placeholder){
+
+			this.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
+
+			this.getElement().appendChild(this.table.options.placeholder);
+			this.table.options.placeholder.style.width = this.table.columnManager.getWidth() + "px";
+		}
+	}
+
+	_clearPlaceholder(){
+		if(this.table.options.placeholder && this.table.options.placeholder.parentNode){
+			this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
+		}
 	}
 
 	styleRow(row, index){

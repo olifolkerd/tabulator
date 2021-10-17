@@ -1,3 +1,5 @@
+import RowComponent from '../../../../core/row/RowComponent.js';
+
 export default function(cell, formatterParams, onRendered){
 	var checkbox = document.createElement("input");
 
