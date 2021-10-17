@@ -10,7 +10,7 @@
   -ms-transform: translatez(0);
   -o-transform: translatez(0);
   transform: translatez(0); }
-  .tabulator[tabulator-layout="fitDataFill"] .tabulator-tableHolder .tabulator-table {
+  .tabulator[tabulator-layout="fitDataFill"] .tabulator-tableholder .tabulator-table {
     min-width: 100%; }
   .tabulator[tabulator-layout="fitDataTable"] {
     display: inline-block; }
@@ -170,42 +170,42 @@
       min-width: 600%; }
       .tabulator .tabulator-header .tabulator-frozen-rows-holder:empty {
         display: none; }
-  .tabulator .tabulator-tableHolder {
+  .tabulator .tabulator-tableholder {
     position: relative;
     width: 100%;
     white-space: nowrap;
     overflow: auto;
     -webkit-overflow-scrolling: touch; }
-    .tabulator .tabulator-tableHolder:focus {
+    .tabulator .tabulator-tableholder:focus {
       outline: none; }
-    .tabulator .tabulator-tableHolder .tabulator-placeholder {
+    .tabulator .tabulator-tableholder .tabulator-placeholder {
       box-sizing: border-box;
       display: flex;
       align-items: center;
       width: 100%; }
-      .tabulator .tabulator-tableHolder .tabulator-placeholder[tabulator-render-mode="virtual"] {
+      .tabulator .tabulator-tableholder .tabulator-placeholder[tabulator-render-mode="virtual"] {
         min-height: 100%;
         min-width: 100%; }
-      .tabulator .tabulator-tableHolder .tabulator-placeholder span {
+      .tabulator .tabulator-tableholder .tabulator-placeholder span {
         display: inline-block;
         margin: 0 auto;
         padding: 10px;
         color: #ccc;
         font-weight: bold;
         font-size: 20px; }
-    .tabulator .tabulator-tableHolder .tabulator-table {
+    .tabulator .tabulator-tableholder .tabulator-table {
       position: relative;
       display: inline-block;
       background-color: #fff;
       white-space: nowrap;
       overflow: visible;
       color: #333; }
-      .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs {
+      .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs {
         font-weight: bold;
         background: #ececec !important; }
-        .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
+        .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
           border-bottom: 2px solid #dee2e6; }
-        .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-bottom {
+        .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-bottom {
           border-top: 2px solid #dee2e6; }
   .tabulator .tabulator-footer {
     padding: 5px 10px;
@@ -784,9 +784,9 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
     .tabulator .tabulator-header .tabulator-calcs-holder {
       width: 100%;
       border-bottom: 1px solid #dee2e6; }
-  .tabulator .tabulator-tableHolder .tabulator-placeholder span {
+  .tabulator .tabulator-tableholder .tabulator-placeholder span {
     color: #000; }
-  .tabulator .tabulator-tableHolder .tabulator-table {
+  .tabulator .tabulator-tableholder .tabulator-table {
     color: inherit; }
   .tabulator .tabulator-footer {
     color: inherit; }
@@ -835,7 +835,7 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
         border-color: #32383e;
         background-color: #212529;
         color: #fff; }
-    .tabulator.table-dark .tabulator-tableHolder {
+    .tabulator.table-dark .tabulator-tableholder {
       color: #fff; }
     .tabulator.table-dark .tabulator-row {
       border-color: #32383e;
@@ -872,7 +872,7 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
     border: 1px solid #dee2e6; }
     .tabulator.table-bordered .tabulator-header .tabulator-col {
       border-right: 1px solid #dee2e6; }
-    .tabulator.table-bordered .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+    .tabulator.table-bordered .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
       border-right: 1px solid #dee2e6; }
   .tabulator.table-borderless .tabulator-header {
     border: none; }
@@ -880,81 +880,81 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
     border: none; }
   .tabulator.table-sm .tabulator-header .tabulator-col .tabulator-col-content {
     padding: 5px !important; }
-  .tabulator.table-sm .tabulator-tableHolder .tabulator-table .tabulator-row {
+  .tabulator.table-sm .tabulator-tableholder .tabulator-table .tabulator-row {
     min-height: 26px; }
-    .tabulator.table-sm .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+    .tabulator.table-sm .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
       padding: 5px !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.table-primary {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-primary {
     background: #b8daff !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.table-secondary {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-secondary {
     background: #d6d8db !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.table-success {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-success {
     background: #c3e6cb !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.table-info {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-info {
     background: #bee5eb !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.table-warning {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-warning {
     background: #ffeeba !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.table-danger {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-danger {
     background: #f5c6cb !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.table-light {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-light {
     background: #fdfdfe !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.table-dark {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-dark {
     background: #c6c8ca !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.table-active {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-active {
     background: #f5f5f5 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.bg-primary {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-primary {
     background: #007bff !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.bg-secondary {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-secondary {
     background: #6c757d !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.bg-success {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-success {
     background: #28a745 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.bg-info {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-info {
     background: #17a2b8 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.bg-warning {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-warning {
     background: #ffc107 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.bg-danger {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-danger {
     background: #dc3545 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.bg-light {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-light {
     background: #f8f9fa !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.bg-dark {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-dark {
     background: #343a40 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.bg-active {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-active {
     background: #f5f5f5 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.table-primary {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-primary {
     background: #b8daff !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.table-secondary {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-secondary {
     background: #d6d8db !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.table-success {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-success {
     background: #c3e6cb !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.table-info {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-info {
     background: #bee5eb !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.table-warning {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-warning {
     background: #ffeeba !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.table-danger {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-danger {
     background: #f5c6cb !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.table-light {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-light {
     background: #fdfdfe !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.table-dark {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-dark {
     background: #c6c8ca !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.table-active {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-active {
     background: #f5f5f5 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.bg-primary {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-primary {
     background: #007bff !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.bg-secondary {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-secondary {
     background: #6c757d !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.bg-success {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-success {
     background: #28a745 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.bg-info {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-info {
     background: #17a2b8 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.bg-warning {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-warning {
     background: #ffc107 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.bg-danger {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-danger {
     background: #dc3545 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.bg-light {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-light {
     background: #f8f9fa !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.bg-dark {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-dark {
     background: #343a40 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.bg-active {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-active {
     background: #f5f5f5 !important; }
 
 .tabulator-row {

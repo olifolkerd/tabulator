@@ -10,7 +10,7 @@
   -ms-transform: translatez(0);
   -o-transform: translatez(0);
   transform: translatez(0); }
-  .tabulator[tabulator-layout="fitDataFill"] .tabulator-tableHolder .tabulator-table {
+  .tabulator[tabulator-layout="fitDataFill"] .tabulator-tableholder .tabulator-table {
     min-width: 100%; }
   .tabulator[tabulator-layout="fitDataTable"] {
     display: inline-block; }
@@ -170,42 +170,42 @@
       min-width: 600%; }
       .tabulator .tabulator-header .tabulator-frozen-rows-holder:empty {
         display: none; }
-  .tabulator .tabulator-tableHolder {
+  .tabulator .tabulator-tableholder {
     position: relative;
     width: 100%;
     white-space: nowrap;
     overflow: auto;
     -webkit-overflow-scrolling: touch; }
-    .tabulator .tabulator-tableHolder:focus {
+    .tabulator .tabulator-tableholder:focus {
       outline: none; }
-    .tabulator .tabulator-tableHolder .tabulator-placeholder {
+    .tabulator .tabulator-tableholder .tabulator-placeholder {
       box-sizing: border-box;
       display: flex;
       align-items: center;
       width: 100%; }
-      .tabulator .tabulator-tableHolder .tabulator-placeholder[tabulator-render-mode="virtual"] {
+      .tabulator .tabulator-tableholder .tabulator-placeholder[tabulator-render-mode="virtual"] {
         min-height: 100%;
         min-width: 100%; }
-      .tabulator .tabulator-tableHolder .tabulator-placeholder span {
+      .tabulator .tabulator-tableholder .tabulator-placeholder span {
         display: inline-block;
         margin: 0 auto;
         padding: 10px;
         color: #ccc;
         font-weight: bold;
         font-size: 20px; }
-    .tabulator .tabulator-tableHolder .tabulator-table {
+    .tabulator .tabulator-tableholder .tabulator-table {
       position: relative;
       display: inline-block;
       background-color: #fff;
       white-space: nowrap;
       overflow: visible;
       color: #333; }
-      .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs {
+      .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs {
         font-weight: bold;
         background: #ececec !important; }
-        .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
+        .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
           border-bottom: 2px solid #ddd; }
-        .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-bottom {
+        .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-bottom {
           border-top: 2px solid #ddd; }
   .tabulator .tabulator-footer {
     padding: 5px 10px;
@@ -768,9 +768,9 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
     .tabulator .tabulator-header .tabulator-calcs-holder {
       width: 100%;
       border-bottom: 1px solid #ddd; }
-  .tabulator .tabulator-tableHolder .tabulator-placeholder span {
+  .tabulator .tabulator-tableholder .tabulator-placeholder span {
     color: #000; }
-  .tabulator .tabulator-tableHolder .tabulator-table {
+  .tabulator .tabulator-tableholder .tabulator-table {
     color: inherit; }
   .tabulator .tabulator-footer {
     border-top: 2px solid #ddd;
@@ -786,23 +786,23 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
     border: 1px solid #ddd; }
     .tabulator.table-bordered .tabulator-header .tabulator-col {
       border-right: 1px solid #ddd; }
-    .tabulator.table-bordered .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+    .tabulator.table-bordered .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
       border-right: 1px solid #ddd; }
   .tabulator.table-condensed .tabulator-header .tabulator-col .tabulator-col-content {
     padding: 5px; }
-  .tabulator.table-condensed .tabulator-tableHolder .tabulator-table .tabulator-row {
+  .tabulator.table-condensed .tabulator-tableholder .tabulator-table .tabulator-row {
     min-height: 24px; }
-    .tabulator.table-condensed .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+    .tabulator.table-condensed .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
       padding: 5px; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.active {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.active {
     background: #f5f5f5 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.success {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.success {
     background: #dff0d8 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.info {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.info {
     background: #d9edf7 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.warning {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.warning {
     background: #fcf8e3 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.danger {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.danger {
     background: #f2dede !important; }
 
 .tabulator-row {

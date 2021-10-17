@@ -234,7 +234,7 @@
   -ms-transform: translatez(0);
   -o-transform: translatez(0);
   transform: translatez(0); }
-  .tabulator[tabulator-layout="fitDataFill"] .tabulator-tableHolder .tabulator-table {
+  .tabulator[tabulator-layout="fitDataFill"] .tabulator-tableholder .tabulator-table {
     min-width: 100%; }
   .tabulator[tabulator-layout="fitDataTable"] {
     display: inline-block; }
@@ -394,42 +394,42 @@
       min-width: 600%; }
       .tabulator .tabulator-header .tabulator-frozen-rows-holder:empty {
         display: none; }
-  .tabulator .tabulator-tableHolder {
+  .tabulator .tabulator-tableholder {
     position: relative;
     width: 100%;
     white-space: nowrap;
     overflow: auto;
     -webkit-overflow-scrolling: touch; }
-    .tabulator .tabulator-tableHolder:focus {
+    .tabulator .tabulator-tableholder:focus {
       outline: none; }
-    .tabulator .tabulator-tableHolder .tabulator-placeholder {
+    .tabulator .tabulator-tableholder .tabulator-placeholder {
       box-sizing: border-box;
       display: flex;
       align-items: center;
       width: 100%; }
-      .tabulator .tabulator-tableHolder .tabulator-placeholder[tabulator-render-mode="virtual"] {
+      .tabulator .tabulator-tableholder .tabulator-placeholder[tabulator-render-mode="virtual"] {
         min-height: 100%;
         min-width: 100%; }
-      .tabulator .tabulator-tableHolder .tabulator-placeholder span {
+      .tabulator .tabulator-tableholder .tabulator-placeholder span {
         display: inline-block;
         margin: 0 auto;
         padding: 10px;
         color: #ccc;
         font-weight: bold;
         font-size: 20px; }
-    .tabulator .tabulator-tableHolder .tabulator-table {
+    .tabulator .tabulator-tableholder .tabulator-table {
       position: relative;
       display: inline-block;
       background-color: #fff;
       white-space: nowrap;
       overflow: visible;
       color: #333; }
-      .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs {
+      .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs {
         font-weight: bold;
         background: #e2e2e2 !important; }
-        .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
+        .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
           border-bottom: 2px solid #ddd; }
-        .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-bottom {
+        .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-bottom {
           border-top: 2px solid #ddd; }
   .tabulator .tabulator-footer {
     padding: 5px 10px;
@@ -1008,13 +1008,13 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
       background-color: #F9FAFB; }
       .tabulator .tabulator-header .tabulator-col .tabulator-col-content {
         padding: 0.92857em 0.78571em; }
-  .tabulator .tabulator-tableHolder .tabulator-table {
+  .tabulator .tabulator-tableholder .tabulator-table {
     background-color: transparent; }
-    .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs {
+    .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs {
       background: #f2f2f2 !important; }
-      .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
+      .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
         border-bottom: 2px solid #ddd; }
-      .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-bottom {
+      .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-bottom {
         border-top: 2px solid #ddd; }
   .tabulator .tabulator-footer {
     padding: 0.78571em 0.78571em;
@@ -1034,42 +1034,42 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
       .tabulator .tabulator-footer .tabulator-calcs-holder:only-child {
         margin-bottom: -0.78571em;
         border-bottom: none; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.positive, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.positive {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.positive, .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.positive {
     box-shadow: 0px 0px 0px #A3C293 inset;
     background: #FCFFF5 !important;
     color: #21BA45 !important; }
-    .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.positive:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.positive:hover {
+    .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.positive:hover, .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.positive:hover {
       background: #f7ffe6 !important;
       color: #13ae38 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.negative, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.negative {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.negative, .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.negative {
     box-shadow: 0px 0px 0px #E0B4B4 inset;
     background: #FFF6F6 !important;
     color: #DB2828 !important; }
-    .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.negative:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.negative:hover {
+    .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.negative:hover, .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.negative:hover {
       background: #ffe7e7 !important;
       color: #d41616 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.error, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.error {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.error, .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.error {
     box-shadow: 0px 0px 0px #E0B4B4 inset;
     background: #FFF6F6 !important;
     color: #DB2828 !important; }
-    .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.error:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.error:hover {
+    .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.error:hover, .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.error:hover {
       background: #ffe7e7 !important;
       color: #d12323 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.warning, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.warning {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.warning, .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.warning {
     box-shadow: 0px 0px 0px #C9BA9B inset;
     background: #FFFAF3 !important;
     color: #F2C037 !important; }
-    .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.warning:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.warning:hover {
+    .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.warning:hover, .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.warning:hover {
       background: #fff4e4 !important;
       color: #f1bb29 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.active, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.active {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.active, .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.active {
     box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.87) inset;
     background: #E0E0E0 !important;
     color: rgba(0, 0, 0, 0.87) !important; }
-    .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.active:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.active:hover {
+    .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.active:hover, .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.active:hover {
       background: #f7ffe6 !important;
       color: #13ae38 !important; }
-  .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.active, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.disabled:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.active {
+  .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.active, .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.disabled:hover, .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.active {
     pointer-events: none;
     color: rgba(0, 0, 0, 0.2); }
   .tabulator.inverted {
@@ -1082,22 +1082,22 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
       color: rgba(255, 255, 255, 0.9); }
       .tabulator.inverted .tabulator-header .tabulator-col {
         border-color: rgba(255, 255, 255, 0.1) !important; }
-    .tabulator.inverted .tabulator-tableHolder .tabulator-table .tabulator-row {
+    .tabulator.inverted .tabulator-tableholder .tabulator-table .tabulator-row {
       color: rgba(255, 255, 255, 0.9);
       border: none; }
-      .tabulator.inverted .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+      .tabulator.inverted .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
         border-color: rgba(255, 255, 255, 0.1) !important; }
     .tabulator.inverted .tabulator-footer {
       background: #FFFFFF; }
-  .tabulator.striped .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+  .tabulator.striped .tabulator-tableholder .tabulator-table .tabulator-row:nth-child(even) {
     background-color: rgba(0, 0, 0, 0.05) !important; }
   .tabulator.celled {
     border: 1px solid rgba(34, 36, 38, 0.15); }
     .tabulator.celled .tabulator-header .tabulator-col {
       border-right: 1px solid rgba(34, 36, 38, 0.1); }
-    .tabulator.celled .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+    .tabulator.celled .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
       border-right: 1px solid rgba(34, 36, 38, 0.1); }
-  .tabulator[class*="single line"] .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+  .tabulator[class*="single line"] .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
     border-right: none; }
   .tabulator.red {
     border-top: 0.2em solid #DB2828; }
@@ -1168,25 +1168,25 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
     padding: 1em 1em; }
     .tabulator.padded .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow {
       top: 20px; }
-  .tabulator.padded .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+  .tabulator.padded .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
     padding: 1em 1em; }
   .tabulator.padded.very .tabulator-header .tabulator-col .tabulator-col-content {
     padding: 1.5em 1.5em; }
     .tabulator.padded.very .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow {
       top: 26px; }
-  .tabulator.padded.very .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+  .tabulator.padded.very .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
     padding: 1.5em 1.5em; }
   .tabulator.compact .tabulator-header .tabulator-col .tabulator-col-content {
     padding: 0.5em 0.7em; }
     .tabulator.compact .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow {
       top: 12px; }
-  .tabulator.compact .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+  .tabulator.compact .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
     padding: 0.5em 0.7em; }
   .tabulator.compact.very .tabulator-header .tabulator-col .tabulator-col-content {
     padding: 0.4em 0.6em; }
     .tabulator.compact.very .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow {
       top: 10px; }
-  .tabulator.compact.very .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+  .tabulator.compact.very .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell {
     padding: 0.4em 0.6em; }
 
 .tabulator-row {
