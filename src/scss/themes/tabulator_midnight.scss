@@ -1,0 +1,154 @@
+
+//Main Theme Variables
+$backgroundColor: #222 !default; //background color of tabulator
+$borderColor:#333 !default; //border to tabulator
+$textSize:14px !default; //table text size
+
+//header themeing
+$headerBackgroundColor:#333 !default; //border to tabulator
+$headerTextColor:#fff !default; //header text colour
+$headerBorderColor:#aaa !default;  //header border color
+$headerSeperatorColor:#999 !default; //header bottom seperator color
+$headerMargin:4px !default; //padding round header
+
+//column header arrows
+$sortArrowActive: #666 !default;
+$sortArrowInactive: #bbb !default;
+
+//row themeing
+$rowBackgroundColor:#666 !default; //table row background color
+$rowAltBackgroundColor:#444 !default; //table row background color
+$rowBorderColor:#888 !default; //table border color
+$rowTextColor:#fff !default; //table text color
+$rowHoverBackground:#999 !default; //row background color on hover
+
+$rowSelectedBackground: #000 !default; //row background color when selected
+$rowSelectedBackgroundHover: #888 !default;//row background color when selected and hovered
+
+$editBoxColor:#999 !default; //border color for edit boxes
+$errorColor:#dd0000 !default; //error indication
+
+//footer themeing
+$footerBackgroundColor:#333 !default; //border to tabulator
+$footerTextColor:#333 !default; //footer text colour
+$footerBorderColor:#aaa !default; //footer border color
+$footerSeperatorColor:#999 !default; //footer bottom seperator color
+$footerActiveColor:#fff !default; //footer bottom active text color
+
+@import "../tabulator.scss";
+
+//Tabulator Containing Element
+.tabulator{
+	background-color: $backgroundColor;
+
+	.tabulator-header{
+
+		.tabulator-col{
+			background-color: $headerBackgroundColor;
+
+			.tabulator-col-content{
+				.tabulator-col-title{
+					.tabulator-title-editor{
+						color: #fff;
+					}
+				}
+			}
+
+			.tabulator-header-filter{
+				input, select{
+					border:1px solid #999;
+					background: #444;
+					color: #fff;
+				}
+			}
+		}
+
+		.tabulator-calcs-holder{
+			background:darken($headerBackgroundColor, 10%) !important;
+
+			.tabulator-row{
+				background:darken($headerBackgroundColor, 10%) !important;
+			}
+		}
+	}
+
+	//footer element
+	.tabulator-footer{
+
+		.tabulator-calcs-holder{
+			background:darken($footerBackgroundColor, 5%) !important;
+
+			.tabulator-row{
+				background:darken($footerBackgroundColor, 5%) !important;
+			}
+		}
+
+		//pagination container element
+		.tabulator-paginator{
+			label{
+				color:#fff;
+			}
+		}
+
+		//pagination button
+		.tabulator-page{
+			color: $footerTextColor;
+			font-family:inherit;
+			font-weight:inherit;
+			font-size:inherit;
+		}
+	}
+}
+
+//row element
+.tabulator-row{
+
+	//row grouping element
+	&.tabulator-group{
+		min-width: 100%;
+
+		color:#333;
+
+		&:hover{
+			cursor:pointer;
+			background-color:rgba(0,0,0,.1);
+		}
+
+		span{
+			color:#666;
+		}
+	}
+}
+
+.tabulator-edit-select-list{
+	background:$rowTextColor;
+
+	.tabulator-edit-select-list-item{
+		color:$rowBackgroundColor;
+
+		&.active{
+			color:$editBoxColor;
+			background:$rowAltBackgroundColor;
+
+			&.focused{
+				outline:1px solid rgba($editBoxColor, .5);
+			}
+		}
+
+		&.focused{
+			outline:1px solid $rowAltBackgroundColor;
+		}
+
+		&:hover{
+			color:$editBoxColor;
+			background:$rowBackgroundColor;
+		}
+	}
+}
+
+.tabulator-print-table{
+	.tabulator-print-table-group{
+		color:#333;
+	}
+}
+

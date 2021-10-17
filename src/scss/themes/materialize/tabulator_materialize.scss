@@ -1,0 +1,264 @@
+@import "variables.scss";
+
+// Style conversion file, bootstrap to tabulator
+
+//Main Theme Variables
+$backgroundColor: #fff !default; //background color of tabulator
+$borderColor:$table-border-color !default; //border to tabulator
+$textSize:16px !default; //table text size
+
+//header themeing
+$headerBackgroundColor:#fff !default; //border to tabulator
+$headerSeperatorColor:$table-border-color !default; //header bottom seperator color
+
+$cellPadding:15px !default; //padding round header
+
+//column header arrows
+$sortArrowActive: #666 !default;
+$sortArrowInactive: #bbb !default;
+
+//row themeing
+$rowBackgroundColor:transparent !default; //table row background color
+$rowAltBackgroundColor: $table-striped-color !default; //table row background color
+$rowBorderColor:$table-border-color !default; //table border color
+$rowHoverBackground:$table-striped-color !default; //row background color on hover
+
+$rowSelectedBackground:$primary-color !default; //row background color when selected
+$rowSelectedBackgroundHover: $primary-color !default;//row background color when selected and hovered
+
+
+$editBoxColor:$primary-color !default; //border color for edit boxes
+$errorColor:#dd0000 !default; //error indication
+
+//footer themeing
+$footerBorderColor:$table-border-color !default; //footer border color
+$footerSeperatorColor:$table-border-color !default; //footer bottom seperator color
+$footerActiveColor:$primary-color !default; //footer bottom active text color
+
+@import "../../tabulator.scss";
+
+.tabulator{
+	border:none;
+	background-color: $backgroundColor;
+
+	width: 100%;
+	max-width: 100%;
+
+	.tabulator-header{
+		color:inherit;
+
+		.tabulator-col{
+			border-right:none;
+
+			.tabulator-col-content{
+				padding:$cellPadding;
+
+				.tabulator-col-sorter{
+					right:-10px;
+				}
+			}
+
+			&.tabulator-col-group{
+				.tabulator-col-group-cols{
+					border-top:1px solid $borderColor;
+				}
+			}
+
+			&.tabulator-sortable{
+				.tabulator-col-title{
+					padding-right:10px;
+				}
+			}
+		}
+
+		.tabulator-calcs-holder{
+			width:100%;
+
+			border-bottom:1px solid $headerSeperatorColor;
+		}
+
+		.tabulator-frozen-rows-holder{
+			min-width:600%;
+
+			&:empty{
+				display: none;
+			}
+		}
+	}
+
+	.tabulator-tableholder{
+		.tabulator-table{
+			color:inherit;
+		}
+	}
+
+	.tabulator-footer{
+		background-color:transparent;
+		color:inherit;
+
+		.tabulator-paginator{
+			color:inherit;
+		}
+
+		.tabulator-page{
+			margin:0;
+			margin-top:5px;
+			padding:8px 12px;
+
+			border-right:none;
+
+			background:rgba(255,255,255,.2);
+
+			&[data-page="first"]{
+				border-top-left-radius:4px;
+				border-bottom-left-radius:4px;
+			}
+
+			&[data-page="last"]{
+				border:1px solid $footerBorderColor;
+				border-top-right-radius:4px;
+				border-bottom-right-radius:4px;
+			}
+
+			&.active{
+				color:$footerActiveColor;
+			}
+		}
+	}
+
+	//materialize theming classes
+	&.striped{
+		.tabulator-row{
+			&:nth-child(even){
+				background-color: $rowAltBackgroundColor;
+
+				&.tabulator-selected{
+					background-color:$rowSelectedBackground;
+				}
+
+				&.tabulator-selectable:hover{
+					background-color:$rowHoverBackground;
+					cursor: pointer;
+				}
+
+				&.tabulator-selected:hover{
+					background-color:$rowSelectedBackgroundHover;
+					cursor: pointer;
+				}
+			}
+		}
+	}
+}
+
+//row element
+.tabulator-row{
+	min-height:$textSize + ($cellPadding * 2);
+	border-bottom:1px solid $rowBorderColor;
+
+	&.tabulator-row-even{
+		background-color: transparent;
+	}
+
+	.tabulator-cell{
+		padding:$cellPadding;
+		border-right:none;
+
+		&:last-of-type{
+			border-right: none;
+		}
+
+		.tabulator-data-tree-control{
+			border:1px solid #ccc;
+
+			.tabulator-data-tree-control-collapse{
+				&:after {
+					background: #ccc;
+				}
+			}
+
+			.tabulator-data-tree-control-expand{
+				background: #ccc;
+
+				&:after {
+					background: #ccc;
+				}
+			}
+		}
+	}
+
+	&.tabulator-group{
+		background:#fafafa;
+
+		span{
+			margin-left:10px;
+			color:#666;
+		}
+	}
+}
+
+.tabulator-edit-select-list{
+	background:$headerBackgroundColor;
+
+	.tabulator-edit-select-list-item{
+		color:inherit;
+
+		&.active{
+			color:$headerBackgroundColor;
+
+			&.focused{
+				outline:1px solid rgba($headerBackgroundColor, .5);
+			}
+		}
+
+		&:hover{
+			color:$headerBackgroundColor;
+		}
+	}
+
+	.tabulator-edit-select-list-notice{
+		color: inherit;
+	}
+
+	.tabulator-edit-select-list-group{
+		color: inherit;
+	}
+}
+
+.tabulator.tabulator-rtl{
+	.tabulator-header {
+		.tabulator-col{
+			border-left:none;
+			border-right:none;
+		}
+	}
+}
+
+.tabulator-print-table{
+	.tabulator-print-table-group{
+		background:#fafafa;
+
+		span{
+			margin-left:10px;
+			color:#666;
+		}
+	}
+
+	.tabulator-data-tree-control{
+		border:1px solid #ccc;
+
+		.tabulator-data-tree-control-collapse{
+			&:after {
+				background: #ccc;
+			}
+		}
+
+		.tabulator-data-tree-control-expand{
+			background: #ccc;
+
+			&:after {
+				background: #ccc;
+			}
+		}
+	}
+}
+

@@ -56,7 +56,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	transform: translatez(0);
 
 	&[tabulator-layout="fitDataFill"]{
-		.tabulator-tableHolder{
+		.tabulator-tableholder{
 			.tabulator-table{
 				min-width:100%;
 			}
@@ -108,7 +108,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 			&.tabulator-moving{
 				position: absolute;
-				border:1px solid  $headerSeperatorColor;
+				border:1px solid $headerSeperatorColor;
 				background:darken($headerBackgroundColor, 10%);
 				pointer-events: none;
 			}
@@ -368,7 +368,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	}
 
 	//scrolling element to hold table
-	.tabulator-tableHolder{
+	.tabulator-tableholder{
 		position:relative;
 		width:100%;
 		white-space: nowrap;
@@ -458,6 +458,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			text-align: left;
 
 			background:lighten($footerBackgroundColor, 5%) !important;
+			border-bottom:1px solid $rowBorderColor;
+			border-top:1px solid $rowBorderColor;
+
+			overflow: hidden;
 
 			.tabulator-row{
 				background:lighten($footerBackgroundColor, 5%) !important;
@@ -467,10 +471,6 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				}
 			}
 
-			border-bottom:1px solid $rowBorderColor;
-			border-top:1px solid $rowBorderColor;
-
-			overflow: hidden;
 
 			&:only-child{
 				margin-bottom:-5px;
@@ -708,7 +708,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		text-overflow:ellipsis;
 
 		&.tabulator-editing{
-			border:1px solid  $editBoxColor;
+			border:1px solid $editBoxColor;
 			outline:none;
 
 			padding: 0;
@@ -721,6 +721,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 		&.tabulator-validation-fail{
 			border:1px solid $errorColor;
+
 			input, select{
 				border:1px;
 				background:transparent;

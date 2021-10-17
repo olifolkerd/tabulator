@@ -1,0 +1,231 @@
+
+$primary: #3759D7 !default; //the base text color from which the rest of the theme derives
+
+//Main Theme Variables
+$backgroundColor: #fff !default; //background color of tabulator
+$borderColor:#fff !default; //border to tabulator
+$textSize:16px !default; //table text size
+
+//header themeing
+$headerBackgroundColor:#fff !default; //border to tabulator
+$headerTextColor:$primary !default; //header text colour
+$headerBorderColor:#fff !default;  //header border color
+$headerSeperatorColor:$primary !default; //header bottom seperator color
+$headerMargin:4px !default; //padding round header
+
+//column header arrows
+$sortArrowActive: $primary !default;
+$sortArrowInactive: lighten($primary, 30%) !default;
+
+//row themeing
+$rowBackgroundColor:#f3f3f3 !default; //table row background color
+$rowAltBackgroundColor:#fff !default; //table row background color
+$rowBorderColor:#fff !default; //table border color
+$rowTextColor:#333 !default; //table text color
+$rowHoverBackground:#bbb !default; //row background color on hover
+
+$rowSelectedBackground: #9ABCEA !default; //row background color when selected
+$rowSelectedBackgroundHover: #769BCC !default;//row background color when selected and hovered
+
+$editBoxColor:#1D68CD !default; //border color for edit boxes
+$errorColor:#dd0000 !default; //error indication
+
+//footer themeing
+$footerBackgroundColor:#fff !default; //border to tabulator
+$footerTextColor:$primary !default; //footer text colour
+$footerBorderColor:#aaa !default; //footer border color
+$footerSeperatorColor:#999 !default; //footer bottom seperator color
+$footerActiveColor:$primary !default; //footer bottom active text color
+
+$handleWidth:10px !default; //width of the row handle
+$handleColor: $primary !default; //color for odd numbered rows
+$handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
+
+@import "../tabulator.scss";
+
+.tabulator{
+
+	.tabulator-header{
+		border-bottom:3px solid $headerSeperatorColor;
+		margin-bottom:4px;
+		padding-left:$handleWidth;
+
+		font-size: 1.1em;
+
+		.tabulator-col{
+			border-right:2px solid $headerBorderColor;
+			background-color: $headerBackgroundColor;
+
+			.tabulator-col-content{
+				.tabulator-col-title{
+					.tabulator-title-editor{
+						border:1px solid $primary;
+
+						font-size: 1em;
+						color: $primary;
+					}
+				}
+			}
+
+			&.tabulator-col-group{
+				.tabulator-col-group-cols{
+					border-top:2px solid $headerSeperatorColor;
+				}
+			}
+		}
+
+		.tabulator-frozen{
+			&.tabulator-frozen-left{
+				padding-left: $handleWidth;
+			}
+		}
+
+		.tabulator-calcs-holder{
+			border-top:2px solid $headerSeperatorColor !important;
+
+			.tabulator-row{
+				padding-left: 0 !important;
+
+				.tabulator-cell{
+					background:none;
+				}
+			}
+		}
+	}
+
+	.tabulator-tableholder{
+		.tabulator-placeholder{
+			span{
+				color:$primary;
+			}
+		}
+
+		.tabulator-table{
+			.tabulator-row{
+				&.tabulator-calcs{
+					&.tabulator-calcs-top{
+						border-bottom:2px solid $headerSeperatorColor;
+					}
+
+					&.tabulator-calcs-bottom{
+						border-top:2px solid $headerSeperatorColor;
+					}
+				}
+			}
+		}
+	}
+
+	.tabulator-footer{
+		.tabulator-calcs-holder{
+			border-top:3px solid $headerSeperatorColor !important;
+			border-bottom:2px solid $headerSeperatorColor !important;
+
+			.tabulator-row{
+				background:lighten($footerBackgroundColor, 5%) !important;
+
+				.tabulator-cell{
+					background:none;
+
+					&:first-child{
+						border-left: $handleWidth solid transparent;
+					}
+				}
+			}
+
+			&:only-child{
+				border-bottom:none !important;
+			}
+		}
+	}
+}
+
+
+.tabulator-row{
+	margin-bottom: 2px;
+
+	.tabulator-cell{
+		&:first-child{
+			border-left: $handleWidth solid $handleColor;
+		}
+	}
+
+
+	&:nth-child(even){
+		background-color: $handleColorAlt;
+
+		.tabulator-cell{
+			background-color: $rowAltBackgroundColor;
+
+			&:first-child{
+				border-left: $handleWidth solid $handleColorAlt;
+			}
+		}
+	}
+
+	&.tabulator-selectable:hover{
+		cursor: pointer;
+
+		.tabulator-cell{
+			background-color:$rowHoverBackground;
+		}
+	}
+
+	&.tabulator-selected{
+		.tabulator-cell{
+			background-color:$rowSelectedBackground;
+		}
+	}
+
+	&.tabulator-selected:hover{
+		.tabulator-cell{
+			background-color:$rowSelectedBackgroundHover;
+			cursor: pointer;
+		}
+	}
+
+	&.tabulator-moving{
+		pointer-events: none !important;
+	}
+
+	.tabulator-cell{
+		padding:6px 4px;
+		border-right:2px solid $rowBorderColor;
+
+		background-color: $rowBackgroundColor;
+	}
+
+	&.tabulator-group{
+		min-width: 100%;
+
+		margin-bottom: 2px;
+
+		border-bottom:2px solid $primary;
+		border-top:2px solid $primary;
+		border-right:none;
+
+		background:lighten($primary, 20%);
+
+		span{
+			color:$primary;
+		}
+	}
+}
+
+.tabulator-edit-select-list{
+	border:1px solid $editBoxColor;
+}
+
+.tabulator-print-table{
+
+	.tabulator-print-table-group{
+		border-bottom:2px solid $primary;
+		border-top:2px solid $primary;
+		background:lighten($primary, 20%);
+		margin-bottom: 2px;
+
+		span{
+			color:$primary;
+		}
+	}
+}
+

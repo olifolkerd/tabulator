@@ -1,5 +1,3 @@
-/* Tabulator v4.9.3 (c) Oliver Folkerd */
-
 /*
  * This file is part of the Tabulator package.
  *
@@ -12,41 +10,46 @@
  *
  */
 
-(function (factory) {
-  "use strict";
+ (function (factory) {
+ 	"use strict";
+ 	if (typeof define === 'function' && define.amd) {
+ 		define(['jquery', 'tabulator', 'jquery-ui'], factory);
+ 	}
+ 	else if(typeof module !== 'undefined' && module.exports) {
+ 		module.exports = factory(
+ 			require('jquery'),
+ 			require('tabulator'),
+ 			require('jquery-ui')
+ 		);
+ 	}
+ 	else {
+ 		factory(jQuery, Tabulator);
+ 	}
+ }(function ($, Tabulator) {
 
-  if (typeof define === 'function' && define.amd) {
-    define(['jquery', 'tabulator', 'jquery-ui'], factory);
-  } else if (typeof module !== 'undefined' && module.exports) {
-    module.exports = factory(require('jquery'), require('tabulator'), require('jquery-ui'));
-  } else {
-    factory(jQuery, Tabulator);
-  }
-})(function ($, Tabulator) {
+ 	$.widget("ui.tabulator", {
+ 		_create:function(){
+ 			var options = Object.assign({}, this.options);
 
-  $.widget("ui.tabulator", {
-    _create: function _create() {
-      var options = Object.assign({}, this.options);
+ 			delete options.create;
+ 			delete options.disabled;
 
-      delete options.create;
-      delete options.disabled;
+ 			this.table = new Tabulator(this.element[0], options);
 
-      this.table = new Tabulator(this.element[0], options);
+ 			//map tabulator functions to jquery wrapper
+ 			for(var key in Tabulator.prototype){
+ 				if(typeof Tabulator.prototype[key] === "function" && key.charAt(0) !== "_"){
+ 					this[key] = this.table[key].bind(this.table);
+ 				}
+ 			}
+ 		},
 
-      //map tabulator functions to jquery wrapper
-      for (var key in Tabulator.prototype) {
-        if (typeof Tabulator.prototype[key] === "function" && key.charAt(0) !== "_") {
-          this[key] = this.table[key].bind(this.table);
-        }
-      }
-    },
+ 		_setOption: function(option, value){
+ 			console.error("Tabulator jQuery wrapper does not support setting options after the table has been instantiated");
+ 		},
 
-    _setOption: function _setOption(option, value) {
-      console.error("Tabulator jQuery wrapper does not support setting options after the table has been instantiated");
-    },
-
-    _destroy: function _destroy(option, value) {
-      this.table.destroy();
-    }
-  });
-});
+ 		_destroy: function(option, value){
+ 			this.table.destroy();
+ 		},
+ 	});
+ }));

@@ -1,0 +1,18 @@
+export default {
+	"title": undefined,
+	"field": undefined,
+	"columns": undefined,
+	"visible": undefined,
+	"hozAlign": undefined,
+	"vertAlign": undefined,
+	"width": undefined,
+	"minWidth": 40,
+	"maxWidth": undefined,
+	"tooltip": undefined,
+	"cssClass": undefined,
+	"variableHeight": undefined,
+	"headerTooltip": undefined,
+	"headerVertical": undefined,
+	"headerHozAlign": undefined,
+	"editableTitle": undefined,
+}
