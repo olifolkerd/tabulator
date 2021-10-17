@@ -46,11 +46,6 @@ export default function(url, config, params){
 			}
 
 			if(config.mode == "cors"){
-
-				if(typeof config.headers["Access-Control-Allow-Origin"] === "undefined"){
-					config.headers["Access-Control-Allow-Origin"] = window.location.origin;
-				}
-
 				if(typeof config.credentials === "undefined"){
 					config.credentials = 'same-origin';
 				}
