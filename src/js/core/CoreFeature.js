@@ -59,23 +59,23 @@ export default class CoreFeature{
 	//////////////////////////////////////////
 
 	subscribe(){
-		this.table.eventBus.subscribe(...arguments);
+		return this.table.eventBus.subscribe(...arguments);
 	}
 
 	unsubscribe(){
-		this.table.eventBus.unsubscribe(...arguments);
+		return this.table.eventBus.unsubscribe(...arguments);
 	}
 
 	subscribed(key){
-		this.table.eventBus.subscribed(key);
+		return this.table.eventBus.subscribed(key);
 	}
 
 	subscriptionChange(){
-		this.table.eventBus.subscriptionChange(...arguments);
+		return this.table.eventBus.subscriptionChange(...arguments);
 	}
 
 	dispatch(){
-		this.table.eventBus.dispatch(...arguments);
+		return this.table.eventBus.dispatch(...arguments);
 	}
 
 	chain(){
@@ -87,15 +87,15 @@ export default class CoreFeature{
 	}
 
 	dispatchExternal(){
-		this.table.externalEvents.dispatch(...arguments);
+		return this.table.externalEvents.dispatch(...arguments);
 	}
 
 	subscribedExternal(key){
-		this.table.externalEvents.subscribed(key);
+		return this.table.externalEvents.subscribed(key);
 	}
 
 	subscriptionChangeExternal(){
-		this.table.externalEvents.subscriptionChange(...arguments);
+		return this.table.externalEvents.subscriptionChange(...arguments);
 	}
 
 	//////////////////////////////////////////
