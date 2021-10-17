@@ -1,7 +1,7 @@
 {
   "name": "tabulator",
   "main": "dist/js/tabulator.js",
-  "version": "4.9.3",
+  "version": "5.0.0",
   "description": "Interactive table generation JavaScript library",
   "keywords": [
     "table",
