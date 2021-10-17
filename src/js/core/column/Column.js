@@ -943,7 +943,7 @@ class Column extends CoreFeature{
 		if(this.isGroup){
 			return;
 		}
-		
+
 		if(!this.widthFixed){
 			this.element.style.width = "";
 
@@ -970,40 +970,34 @@ class Column extends CoreFeature{
 	}
 
 	updateDefinition(updates){
-		return new Promise((resolve, reject) => {
-			var definition;
+		var definition;
 
-			if(!this.isGroup){
-				if(!this.parent.isGroup){
-					definition = Object.assign({}, this.getDefinition());
-					definition = Object.assign(definition, updates);
+		if(!this.isGroup){
+			if(!this.parent.isGroup){
+				definition = Object.assign({}, this.getDefinition());
+				definition = Object.assign(definition, updates);
 
-					this.table.columnManager.addColumn(definition, false, this)
-					.then((column) => {
+				return this.table.columnManager.addColumn(definition, false, this)
+				.then((column) => {
 
-						if(definition.field == this.field){
-							this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
-						}
+					if(definition.field == this.field){
+						this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+					}
 
-						this.delete()
-						.then(() => {
-							resolve(column.getComponent());
-						}).catch((err) => {
-							reject(err);
-						});
-
-					}).catch((err) => {
-						reject(err);
+					return this.delete()
+					.then(() => {
+						return column.getComponent();
 					});
-				}else{
-					console.warn("Column Update Error - The updateDefinition function is only available on ungrouped columns");
-					reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
-				}
+
+				});
 			}else{
-				console.warn("Column Update Error - The updateDefinition function is only available on ungrouped columns");
-				reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+				console.error("Column Update Error - The updateDefinition function is only available on ungrouped columns");
+				return Promise.reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
 			}
-		});
+		}else{
+			console.error("Column Update Error - The updateDefinition function is only available on ungrouped columns");
+			return Promise.reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+		}
 	}
 
 	deleteCell(cell){
