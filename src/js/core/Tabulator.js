@@ -507,56 +507,38 @@ class Tabulator {
 
 	//delete row from table
 	deleteRow(index){
-		return new Promise((resolve, reject) => {
-			var self = this,
-			count = 0,
-			successCount = 0,
-			foundRows = [];
-
-			function doneCheck(){
-				count++;
-
-				if(count == index.length){
-					if(successCount){
-						self.rowManager.reRenderInPosition();
-						resolve();
-					}
-				}
-			}
+			var foundRows = [];
 
 			if(!Array.isArray(index)){
 				index = [index];
 			}
 
 			//find matching rows
-			index.forEach((item) =>{
-				var row = this.rowManager.findRow(item, true);
+			for(item of index){
+				let row = this.rowManager.findRow(item, true);
 
 				if(row){
 					foundRows.push(row);
 				}else{
-					console.warn("Delete Error - No matching row found:", item);
-					reject("Delete Error - No matching row found")
-					doneCheck();
+					console.error("Delete Error - No matching row found:", item);
+					return Promise.reject("Delete Error - No matching row found")
+					break;
 				}
-			});
+			}
 
 			//sort rows into correct order to ensure smooth delete from table
 			foundRows.sort((a, b) => {
 				return this.rowManager.rows.indexOf(a) > this.rowManager.rows.indexOf(b) ? 1 : -1;
 			});
 
+			//delete rows
 			foundRows.forEach((row) =>{
 				row.delete()
-				.then(() => {
-					successCount++;
-					doneCheck();
-				})
-				.catch((err) => {
-					doneCheck();
-					reject(err);
-				});
 			});
+
+			self.rowManager.reRenderInPosition();
+
+			return Promise.resolve();
 		});
 	}
 

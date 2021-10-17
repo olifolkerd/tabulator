@@ -2966,8 +2966,8 @@ class Row$1 extends CoreFeature{
 			this.dispatch("row-data-save-before", this);
 
 			if(this.subscribed("row-data-changing")){
-				tempData = Object.assign(tempData, this.data);
-				tempData = Object.assign(tempData, updatedData);
+				Object.assign(tempData, this.data);
+				Object.assign(tempData, updatedData);
 			}
 
 			newRowData = this.chain("row-data-changing", [this, tempData, updatedData], null, updatedData);
@@ -3039,6 +3039,8 @@ class Row$1 extends CoreFeature{
 		var match = false;
 
 		column = this.table.columnManager.findColumn(column);
+
+		// console.log("init", this.initialized)
 
 		if(!this.initialized){
 			this.generateCells();

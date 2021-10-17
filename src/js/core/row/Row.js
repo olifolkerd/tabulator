@@ -355,13 +355,11 @@ export default class Row extends CoreFeature{
 
 	///////////////////// Actions  /////////////////////
 	delete(){
-		return new Promise((resolve, reject) => {
-			this.dispatch("row-delete", this);
+		this.dispatch("row-delete", this);
 
-			this.deleteActual();
+		this.deleteActual();
 
-			resolve();
-		});
+		return Promise.resolve();
 	}
 
 	deleteActual(blockRedraw){
