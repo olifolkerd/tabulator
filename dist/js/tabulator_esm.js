@@ -22494,6 +22494,8 @@ class Tabulator {
 
 		this.optionsList = new OptionsList(this, "table constructor");
 
+		this.initialized = false;
+
 		if(this.initializeElement(element)){
 
 			this.initialzeCoreSystems(options);
@@ -22604,6 +22606,8 @@ class Tabulator {
 		this._buildElement();
 
 		this._loadInitialData();
+
+		this.initialized = true;
 	}
 
 	//clear pointers to objects in default config object
@@ -22797,7 +22801,11 @@ class Tabulator {
 
 	//load data
 	setData(data, params, config){
-		return this.dataLoader.load(data, params, config, false);
+		if(this.initialized){
+			return this.dataLoader.load(data, params, config, false);
+		}else {
+			console.warn("setData failed - table not yet initialized. To set initial data please use the 'data' property in the table constructor.");
+		}
 	}
 
 	//clear data
