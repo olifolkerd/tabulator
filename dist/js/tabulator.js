@@ -1,4 +1,4 @@
-/* Tabulator v5.0.0 (c) Oliver Folkerd 2021 */
+/* Tabulator v5.0.1 (c) Oliver Folkerd 2021 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -6337,7 +6337,7 @@
         if (this.bindings[type] && this.bindings[type][name]) {
           return this.bindings[type][name].bind(null, component);
         } else {
-          if (name !== "then") {
+          if (name !== "then" && typeof name === "string" && !name.startsWith("_")) {
             console.error("The " + type + " component does not have a " + name + " function, have you checked that you have the correct Tabulator module installed?");
           }
         }
@@ -7765,6 +7765,7 @@
       this.modulesRegular = {}; //hold regular modules bound to this table (for initialization purposes)
 
       this.optionsList = new OptionsList(this, "table constructor");
+      this.initialized = false;
 
       if (this.initializeElement(element)) {
         this.initialzeCoreSystems(options); //delay table creation to allow event bindings immediatly after the constructor
@@ -7878,6 +7879,8 @@
         this._buildElement();
 
         this._loadInitialData();
+
+        this.initialized = true;
       } //clear pointers to objects in default config object
 
     }, {
@@ -8069,7 +8072,11 @@
     }, {
       key: "setData",
       value: function setData(data, params, config) {
-        return this.dataLoader.load(data, params, config, false);
+        if (this.initialized) {
+          return this.dataLoader.load(data, params, config, false);
+        } else {
+          console.warn("setData failed - table not yet initialized. To set initial data please use the 'data' property in the table constructor.");
+        }
       } //clear data
 
     }, {
