@@ -136,6 +136,8 @@ class Page extends Module{
 
 			this.table.rowManager.getTableElement().removeChild(testElRow);
 		}
+
+		this.generatePageSizeSelectList();
 	}
 
 	initialLoadComplete(){
@@ -257,6 +259,8 @@ class Page extends Module{
 			if(Array.isArray(this.table.options.paginationSizeSelector)){
 				pageSizes = this.table.options.paginationSizeSelector;
 				this.pageSizes = pageSizes;
+
+				console.log("gen",this.size)
 
 				if(this.pageSizes.indexOf(this.size) == -1){
 					pageSizes.unshift(this.size);
@@ -395,8 +399,6 @@ class Page extends Module{
 
 			this.page = this.table.options.paginationInitialPage;
 			this.count = this.table.options.paginationButtonCount;
-
-			this.generatePageSizeSelectList();
 		}
 
 		//set default values
@@ -518,6 +520,8 @@ class Page extends Module{
 			// this.pageSizeSelect.value = size;
 			this.generatePageSizeSelectList();
 		}
+
+		console.log("set", size, this.size)
 
 		this.trackChanges();
 	}
