@@ -1,4 +1,4 @@
-/* Tabulator v5.0.1 (c) Oliver Folkerd 2021 */
+/* Tabulator v5.0.2 (c) Oliver Folkerd 2021 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -3849,6 +3849,11 @@
         }
       }
     }, {
+      key: "deinitializeHeight",
+      value: function deinitializeHeight() {
+        this.heightInitialized = false;
+      }
+    }, {
       key: "reinitialize",
       value: function reinitialize(children) {
         this.initialized = false;
@@ -4364,6 +4369,10 @@
             }
           }
         }
+
+        rows.forEach(function (row) {
+          row.deinitializeHeight();
+        });
 
         if (callback) {
           callback();
@@ -5065,7 +5074,7 @@
               });
             }
           } else {
-            if (_this4.table.options.autoColumns && columnsChanged) {
+            if (_this4.table.options.autoColumns && columnsChanged && _this4.table.initialized) {
               _this4.table.columnManager.generateColumnsFromRowData(data);
             }
 
@@ -5957,7 +5966,9 @@
 
     _createClass(FooterManager, [{
       key: "initialize",
-      value: function initialize() {}
+      value: function initialize() {
+        this.initializeElement();
+      }
     }, {
       key: "createElement",
       value: function createElement() {
@@ -5967,7 +5978,7 @@
       }
     }, {
       key: "initializeElement",
-      value: function initializeElement(element) {
+      value: function initializeElement() {
         if (this.table.options.footerElement) {
           switch (_typeof(this.table.options.footerElement)) {
             case "string":
@@ -7654,7 +7665,7 @@
 
         tabulator.extendModule = function (name, property, values) {
           if (tabulator.moduleBindings[name]) {
-            var source = tabulator.moduleBindings[name].prototype[property];
+            var source = tabulator.moduleBindings[name][property];
 
             if (source) {
               if (_typeof(values) == "object") {
@@ -7881,6 +7892,7 @@
         this._loadInitialData();
 
         this.initialized = true;
+        this.externalEvents.dispatch("tableBuilt");
       } //clear pointers to objects in default config object
 
     }, {
@@ -7952,7 +7964,7 @@
           this.footerManager.activate();
         }
 
-        if (options.autoColumns && this.options.data) {
+        if (options.autoColumns && options.data) {
           this.columnManager.generateColumnsFromRowData(this.options.data);
         } //initialize regular modules
 
@@ -7965,7 +7977,6 @@
 
         this.columnManager.setColumns(options.columns);
         this.eventBus.dispatch("table-built");
-        this.externalEvents.dispatch("tableBuilt");
       }
     }, {
       key: "_loadInitialData",
@@ -20710,6 +20721,8 @@
           this.size = Math.floor(this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
           this.table.rowManager.getTableElement().removeChild(testElRow);
         }
+
+        this.generatePageSizeSelectList();
       }
     }, {
       key: "initialLoadComplete",
@@ -20833,6 +20846,7 @@
           if (Array.isArray(this.table.options.paginationSizeSelector)) {
             pageSizes = this.table.options.paginationSizeSelector;
             this.pageSizes = pageSizes;
+            console.log("gen", this.size);
 
             if (this.pageSizes.indexOf(this.size) == -1) {
               pageSizes.unshift(this.size);
@@ -20964,7 +20978,6 @@
 
           this.page = this.table.options.paginationInitialPage;
           this.count = this.table.options.paginationButtonCount;
-          this.generatePageSizeSelectList();
         } //set default values
 
 
@@ -21087,6 +21100,7 @@
           this.generatePageSizeSelectList();
         }
 
+        console.log("set", size, this.size);
         this.trackChanges();
       } //setup the pagination buttons
 
