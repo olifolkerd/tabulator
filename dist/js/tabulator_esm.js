@@ -22402,7 +22402,7 @@ class ModuleBinder {
 
 		tabulator.extendModule = function(name, property, values){
 			if(tabulator.moduleBindings[name]){
-				var source = tabulator.moduleBindings[name].prototype[property];
+				var source = tabulator.moduleBindings[name][property];
 
 				if(source){
 					if(typeof values == "object"){
