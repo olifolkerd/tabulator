@@ -14,7 +14,7 @@ export default class FooterManager extends CoreFeature{
 	}
 
 	initialize(){
-
+		this.initializeElement();
 	}
 
 	createElement (){
@@ -25,7 +25,7 @@ export default class FooterManager extends CoreFeature{
 		return el;
 	}
 
-	initializeElement(element){
+	initializeElement(){
 		if(this.table.options.footerElement){
 
 			switch(typeof this.table.options.footerElement){
