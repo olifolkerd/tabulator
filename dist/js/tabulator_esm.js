@@ -2836,6 +2836,10 @@ class Row$1 extends CoreFeature{
 		}
 	}
 
+	deinitializeHeight(){
+		this.heightInitialized = false;
+	}
+
 	reinitialize(children){
 		this.initialized = false;
 		this.heightInitialized = false;
@@ -2892,7 +2896,6 @@ class Row$1 extends CoreFeature{
 
 	//normalize the height of elements in the row
 	normalizeHeight(force){
-
 		if(force){
 			this.clearCellHeight();
 		}
@@ -19464,6 +19467,10 @@ class VirtualDomVertical extends Renderer{
 				}
 			}
 		}
+
+		rows.forEach((row) => {
+			row.deinitializeHeight();
+		});
 
 		if(callback){
 			callback();

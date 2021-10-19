@@ -104,6 +104,10 @@ export default class Row extends CoreFeature{
 		}
 	}
 
+	deinitializeHeight(){
+		this.heightInitialized = false;
+	}
+
 	reinitialize(children){
 		this.initialized = false;
 		this.heightInitialized = false;
@@ -160,7 +164,6 @@ export default class Row extends CoreFeature{
 
 	//normalize the height of elements in the row
 	normalizeHeight(force){
-
 		if(force){
 			this.clearCellHeight();
 		}

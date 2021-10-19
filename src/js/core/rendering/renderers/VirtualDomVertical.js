@@ -90,6 +90,10 @@ export default class VirtualDomVertical extends Renderer{
 			}
 		}
 
+		rows.forEach((row) => {
+			row.deinitializeHeight();
+		});
+
 		if(callback){
 			callback();
 		}
