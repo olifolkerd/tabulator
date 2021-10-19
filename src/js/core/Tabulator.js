@@ -161,7 +161,6 @@ class Tabulator {
 
 		this.initialized = true;
 
-		this.eventBus.dispatch("table-built");
 		this.externalEvents.dispatch("tableBuilt");
 	}
 
@@ -249,6 +248,8 @@ class Tabulator {
 		}
 
 		this.columnManager.setColumns(options.columns);
+
+		this.eventBus.dispatch("table-built");
 	}
 
 	_loadInitialData(){
