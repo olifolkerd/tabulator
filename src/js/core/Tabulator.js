@@ -236,7 +236,8 @@ class Tabulator {
 			this.footerManager.activate();
 		}
 
-		if(options.autoColumns && this.options.data){
+		if(options.autoColumns && options.data){
+
 			this.columnManager.generateColumnsFromRowData(this.options.data);
 		}
 

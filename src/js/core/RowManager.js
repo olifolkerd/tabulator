@@ -179,13 +179,12 @@ export default class RowManager extends CoreFeature{
 					});
 				}
 			}else{
-				if(this.table.options.autoColumns && columnsChanged){
+				if(this.table.options.autoColumns && columnsChanged && this.table.initialized){
 					this.table.columnManager.generateColumnsFromRowData(data);
 				}
 				this.resetScroll();
 
 				this._setDataActual(data);
-
 			}
 
 			resolve();

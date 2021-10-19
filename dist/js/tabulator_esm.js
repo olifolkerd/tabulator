@@ -20114,13 +20114,12 @@ class RowManager extends CoreFeature{
 					});
 				}
 			}else {
-				if(this.table.options.autoColumns && columnsChanged){
+				if(this.table.options.autoColumns && columnsChanged && this.table.initialized){
 					this.table.columnManager.generateColumnsFromRowData(data);
 				}
 				this.resetScroll();
 
 				this._setDataActual(data);
-
 			}
 
 			resolve();
@@ -22688,7 +22687,8 @@ class Tabulator {
 			this.footerManager.activate();
 		}
 
-		if(options.autoColumns && this.options.data){
+		if(options.autoColumns && options.data){
+
 			this.columnManager.generateColumnsFromRowData(this.options.data);
 		}
 
