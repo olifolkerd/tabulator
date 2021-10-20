@@ -15219,7 +15219,8 @@ class ReactiveData extends Module{
 	}
 
 	watchData(data){
-		var version;
+		var self = this,
+		version;
 
 		this.currentVersion ++;
 
@@ -15235,16 +15236,16 @@ class ReactiveData extends Module{
 		Object.defineProperty(this.data, "push", {
 			enumerable: false,
 			configurable: true,
-			value: () => {
+			value: function(){
 				var args = Array.from(arguments);
 
-				if(!this.blocked && version === this.currentVersion){
+				if(!self.blocked && version === self.currentVersion){
 					args.forEach((arg) => {
-						this.table.rowManager.addRowActual(arg, false);
+						self.table.rowManager.addRowActual(arg, false);
 					});
 				}
 
-				return this.origFuncs.push.apply(data, arguments);
+				return self.origFuncs.push.apply(data, arguments);
 			}
 		});
 
@@ -15254,16 +15255,16 @@ class ReactiveData extends Module{
 		Object.defineProperty(this.data, "unshift", {
 			enumerable: false,
 			configurable: true,
-			value: () => {
+			value: function(){
 				var args = Array.from(arguments);
 
-				if(!this.blocked && version === this.currentVersion){
+				if(!self.blocked && version === self.currentVersion){
 					args.forEach((arg) => {
-						this.table.rowManager.addRowActual(arg, true);
+						self.table.rowManager.addRowActual(arg, true);
 					});
 				}
 
-				return this.origFuncs.unshift.apply(data, arguments);
+				return self.origFuncs.unshift.apply(data, arguments);
 			}
 		});
 
@@ -15274,12 +15275,12 @@ class ReactiveData extends Module{
 		Object.defineProperty(this.data, "shift", {
 			enumerable: false,
 			configurable: true,
-			value: () => {
+			value: function(){
 				var row;
 
-				if(!this.blocked && version === this.currentVersion){
-					if(this.data.length){
-						row = this.table.rowManager.getRowFromDataObject(this.data[0]);
+				if(!self.blocked && version === self.currentVersion){
+					if(self.data.length){
+						row = self.table.rowManager.getRowFromDataObject(self.data[0]);
 
 						if(row){
 							row.deleteActual();
@@ -15287,7 +15288,7 @@ class ReactiveData extends Module{
 					}
 				}
 
-				return this.origFuncs.shift.call(data);
+				return self.origFuncs.shift.call(data);
 			}
 		});
 
@@ -15297,18 +15298,18 @@ class ReactiveData extends Module{
 		Object.defineProperty(this.data, "pop", {
 			enumerable: false,
 			configurable: true,
-			value: () => {
+			value: function(){
 				var row;
-				if(!this.blocked && version === this.currentVersion){
-					if(this.data.length){
-						row = this.table.rowManager.getRowFromDataObject(this.data[this.data.length - 1]);
+				if(!self.blocked && version === self.currentVersion){
+					if(self.data.length){
+						row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
 
 						if(row){
 							row.deleteActual();
 						}
 					}
 				}
-				return this.origFuncs.pop.call(data);
+				return self.origFuncs.pop.call(data);
 			}
 		});
 
@@ -15319,28 +15320,28 @@ class ReactiveData extends Module{
 		Object.defineProperty(this.data, "splice", {
 			enumerable: false,
 			configurable: true,
-			value: () => {
+			value: function(){
 				var args = Array.from(arguments),
 				start = args[0] < 0 ? data.length + args[0] : args[0],
 				end = args[1],
 				newRows = args[2] ? args.slice(2) : false,
 				startRow;
 
-				if(!this.blocked && version === this.currentVersion){
+				if(!self.blocked && version === self.currentVersion){
 
 					//add new rows
 					if(newRows){
-						startRow = data[start] ? this.table.rowManager.getRowFromDataObject(data[start]) : false;
+						startRow = data[start] ? self.table.rowManager.getRowFromDataObject(data[start]) : false;
 
 						if(startRow){
 							newRows.forEach((rowData) => {
-								this.table.rowManager.addRowActual(rowData, true, startRow, true);
+								self.table.rowManager.addRowActual(rowData, true, startRow, true);
 							});
 						}else {
 							newRows = newRows.slice().reverse();
 
 							newRows.forEach((rowData) => {
-								this.table.rowManager.addRowActual(rowData, true, false, true);
+								self.table.rowManager.addRowActual(rowData, true, false, true);
 							});
 						}
 					}
@@ -15350,7 +15351,7 @@ class ReactiveData extends Module{
 						var oldRows = data.slice(start, typeof args[1] === "undefined" ? args[1] : start + end);
 
 						oldRows.forEach((rowData, i) => {
-							var row = this.table.rowManager.getRowFromDataObject(rowData);
+							var row = self.table.rowManager.getRowFromDataObject(rowData);
 
 							if(row){
 								row.deleteActual(i !== oldRows.length - 1);
@@ -15359,11 +15360,11 @@ class ReactiveData extends Module{
 					}
 
 					if(newRows || end !== 0){
-						this.table.rowManager.reRenderInPosition();
+						self.table.rowManager.reRenderInPosition();
 					}
 				}
 
-				return this.origFuncs.splice.apply(data, arguments);
+				return self.origFuncs.splice.apply(data, arguments);
 			}
 		});
 	}
