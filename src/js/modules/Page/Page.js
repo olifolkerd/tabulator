@@ -260,8 +260,6 @@ class Page extends Module{
 				pageSizes = this.table.options.paginationSizeSelector;
 				this.pageSizes = pageSizes;
 
-				console.log("gen",this.size)
-
 				if(this.pageSizes.indexOf(this.size) == -1){
 					pageSizes.unshift(this.size);
 				}
@@ -520,8 +518,6 @@ class Page extends Module{
 			// this.pageSizeSelect.value = size;
 			this.generatePageSizeSelectList();
 		}
-
-		console.log("set", size, this.size)
 
 		this.trackChanges();
 	}
