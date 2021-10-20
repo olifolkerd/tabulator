@@ -21500,7 +21500,8 @@ class DataLoader extends CoreFeature{
 
 class ExternalEventBus {
 
-	constructor(optionsList, debug){
+	constructor(table, optionsList, debug){
+		this.table = table;
 		this.events = {};
 		this.optionsList = optionsList || {};
 		this.subscriptionNotifiers = {};
@@ -21578,7 +21579,7 @@ class ExternalEventBus {
 
 		if(this.events[key]){
 			this.events[key].forEach((callback, i) => {
-				let callResult = callback.apply(this, args);
+				let callResult = callback.apply(this.table, args);
 
 				if(!i){
 					result = callResult;
@@ -22548,7 +22549,7 @@ class Tabulator {
 
 		this._mapDepricatedFunctionality();
 
-		this.externalEvents = new ExternalEventBus(this.options, this.options.debugEventsExternal);
+		this.externalEvents = new ExternalEventBus(this, this.options, this.options.debugEventsExternal);
 		this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
 
 		this.interactionMonitor = new InteractionManager(this);

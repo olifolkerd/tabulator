@@ -1,6 +1,7 @@
 export default class ExternalEventBus {
 
-	constructor(optionsList, debug){
+	constructor(table, optionsList, debug){
+		this.table = table;
 		this.events = {};
 		this.optionsList = optionsList || {};
 		this.subscriptionNotifiers = {};
@@ -78,7 +79,7 @@ export default class ExternalEventBus {
 
 		if(this.events[key]){
 			this.events[key].forEach((callback, i) => {
-				let callResult = callback.apply(this, args);
+				let callResult = callback.apply(this.table, args);
 
 				if(!i){
 					result = callResult;

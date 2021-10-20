@@ -93,7 +93,7 @@ class Tabulator {
 
 		this._mapDepricatedFunctionality();
 
-		this.externalEvents = new ExternalEventBus(this.options, this.options.debugEventsExternal);
+		this.externalEvents = new ExternalEventBus(this, this.options, this.options.debugEventsExternal);
 		this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
 
 		this.interactionMonitor = new InteractionMonitor(this);
