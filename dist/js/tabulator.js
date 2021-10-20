@@ -1,4 +1,4 @@
-/* Tabulator v5.0.2 (c) Oliver Folkerd 2021 */
+/* Tabulator v5.0.3 (c) Oliver Folkerd 2021 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -2165,15 +2165,26 @@
       }
     }, {
       key: "deepClone",
-      value: function deepClone(obj) {
-        var clone = Object.assign(Array.isArray(obj) ? [] : {}, obj);
+      value: function deepClone(obj, clone) {
+        var list = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+        if (!clone) {
+          clone = Object.assign(Array.isArray(obj) ? [] : {}, obj);
+        }
 
         for (var i in obj) {
-          if (obj[i] != null && _typeof(obj[i]) === "object") {
-            if (obj[i] instanceof Date) {
-              clone[i] = new Date(obj[i]);
+          var subject = obj[i];
+
+          if (subject != null && _typeof(subject) === "object") {
+            if (subject instanceof Date) {
+              clone[i] = new Date(subject);
             } else {
-              clone[i] = this.deepClone(obj[i]);
+              if (list[subject]) {
+                clone[i] = list[subject];
+              } else {
+                list[subject] = Object.assign(Array.isArray(obj) ? [] : {}, obj);
+                clone[i] = this.deepClone(subject, list[subject], list);
+              }
             }
           }
         }
@@ -6456,7 +6467,7 @@
               _this2.hideLoader();
 
               if (rowData !== false) {
-                _this2.dispatchExternal("dataLoaded", data);
+                _this2.dispatchExternal("dataLoaded", rowData);
 
                 _this2.table.rowManager.setData(rowData, replace, !replace);
               }
@@ -6573,9 +6584,10 @@
   }(CoreFeature);
 
   var ExternalEventBus = /*#__PURE__*/function () {
-    function ExternalEventBus(optionsList, debug) {
+    function ExternalEventBus(table, optionsList, debug) {
       _classCallCheck(this, ExternalEventBus);
 
+      this.table = table;
       this.events = {};
       this.optionsList = optionsList || {};
       this.subscriptionNotifiers = {};
@@ -6661,7 +6673,7 @@
 
         if (this.events[key]) {
           this.events[key].forEach(function (callback, i) {
-            var callResult = callback.apply(_this, args);
+            var callResult = callback.apply(_this.table, args);
 
             if (!i) {
               result = callResult;
@@ -7823,7 +7835,7 @@
 
         this._mapDepricatedFunctionality();
 
-        this.externalEvents = new ExternalEventBus(this.options, this.options.debugEventsExternal);
+        this.externalEvents = new ExternalEventBus(this, this.options, this.options.debugEventsExternal);
         this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
         this.interactionMonitor = new InteractionManager(this);
         this.dataLoader.initialize();
@@ -8391,7 +8403,11 @@
     }, {
       key: "setColumns",
       value: function setColumns(definition) {
-        this.columnManager.setColumns(definition);
+        if (this.initialized) {
+          this.columnManager.setColumns(definition);
+        } else {
+          console.warn("setColumns failed - table not yet initialized. To set initial data please use the 'columns' property in the table constructor.");
+        }
       }
     }, {
       key: "getColumns",
@@ -8644,6 +8660,8 @@
     }, {
       key: "initializeColumn",
       value: function initializeColumn(column) {
+        var _this2 = this;
+
         var match = false,
             config = {};
         this.allowedTypes.forEach(function (type) {
@@ -8651,7 +8669,7 @@
               accessor;
 
           if (column.definition[key]) {
-            accessor = this.lookupAccessor(column.definition[key]);
+            accessor = _this2.lookupAccessor(column.definition[key]);
 
             if (accessor) {
               match = true;
@@ -17365,7 +17383,10 @@
       value: function setCellHeight() {}
     }, {
       key: "clearCellHeight",
-      value: function clearCellHeight() {} //////////////// Object Generation /////////////////
+      value: function clearCellHeight() {}
+    }, {
+      key: "deinitializeHeight",
+      value: function deinitializeHeight() {} //////////////// Object Generation /////////////////
 
     }, {
       key: "getComponent",
@@ -17738,13 +17759,11 @@
       key: "getRows",
       value: function getRows(rows) {
         if (this.groupIDLookups.length) {
-          if (!Object.keys(this.groups).length) {
-            this.dispatchExternal("dataGrouping");
-            this.generateGroups(rows);
+          this.dispatchExternal("dataGrouping");
+          this.generateGroups(rows);
 
-            if (this.subscribedExternal("dataGrouped")) {
-              this.dispatchExternal("dataGrouped", this.getGroups(true));
-            }
+          if (this.subscribedExternal("dataGrouped")) {
+            this.dispatchExternal("dataGrouped", this.getGroups(true));
           }
 
           return this.updateGroupRows();
@@ -20846,7 +20865,6 @@
           if (Array.isArray(this.table.options.paginationSizeSelector)) {
             pageSizes = this.table.options.paginationSizeSelector;
             this.pageSizes = pageSizes;
-            console.log("gen", this.size);
 
             if (this.pageSizes.indexOf(this.size) == -1) {
               pageSizes.unshift(this.size);
@@ -21100,7 +21118,6 @@
           this.generatePageSizeSelectList();
         }
 
-        console.log("set", size, this.size);
         this.trackChanges();
       } //setup the pagination buttons
 
@@ -22054,10 +22071,8 @@
     }, {
       key: "watchData",
       value: function watchData(data) {
-        var _arguments = arguments,
-            _this2 = this;
-
-        var version;
+        var self = this,
+            version;
         this.currentVersion++;
         version = this.currentVersion;
         this.unwatchData();
@@ -22068,15 +22083,15 @@
           enumerable: false,
           configurable: true,
           value: function value() {
-            var args = Array.from(_arguments);
+            var args = Array.from(arguments);
 
-            if (!_this2.blocked && version === _this2.currentVersion) {
+            if (!self.blocked && version === self.currentVersion) {
               args.forEach(function (arg) {
-                _this2.table.rowManager.addRowActual(arg, false);
+                self.table.rowManager.addRowActual(arg, false);
               });
             }
 
-            return _this2.origFuncs.push.apply(data, _arguments);
+            return self.origFuncs.push.apply(data, arguments);
           }
         }); //override array unshift function
 
@@ -22085,15 +22100,15 @@
           enumerable: false,
           configurable: true,
           value: function value() {
-            var args = Array.from(_arguments);
+            var args = Array.from(arguments);
 
-            if (!_this2.blocked && version === _this2.currentVersion) {
+            if (!self.blocked && version === self.currentVersion) {
               args.forEach(function (arg) {
-                _this2.table.rowManager.addRowActual(arg, true);
+                self.table.rowManager.addRowActual(arg, true);
               });
             }
 
-            return _this2.origFuncs.unshift.apply(data, _arguments);
+            return self.origFuncs.unshift.apply(data, arguments);
           }
         }); //override array shift function
 
@@ -22104,9 +22119,9 @@
           value: function value() {
             var row;
 
-            if (!_this2.blocked && version === _this2.currentVersion) {
-              if (_this2.data.length) {
-                row = _this2.table.rowManager.getRowFromDataObject(_this2.data[0]);
+            if (!self.blocked && version === self.currentVersion) {
+              if (self.data.length) {
+                row = self.table.rowManager.getRowFromDataObject(self.data[0]);
 
                 if (row) {
                   row.deleteActual();
@@ -22114,7 +22129,7 @@
               }
             }
 
-            return _this2.origFuncs.shift.call(data);
+            return self.origFuncs.shift.call(data);
           }
         }); //override array pop function
 
@@ -22125,9 +22140,9 @@
           value: function value() {
             var row;
 
-            if (!_this2.blocked && version === _this2.currentVersion) {
-              if (_this2.data.length) {
-                row = _this2.table.rowManager.getRowFromDataObject(_this2.data[_this2.data.length - 1]);
+            if (!self.blocked && version === self.currentVersion) {
+              if (self.data.length) {
+                row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
 
                 if (row) {
                   row.deleteActual();
@@ -22135,7 +22150,7 @@
               }
             }
 
-            return _this2.origFuncs.pop.call(data);
+            return self.origFuncs.pop.call(data);
           }
         }); //override array splice function
 
@@ -22144,25 +22159,25 @@
           enumerable: false,
           configurable: true,
           value: function value() {
-            var args = Array.from(_arguments),
+            var args = Array.from(arguments),
                 start = args[0] < 0 ? data.length + args[0] : args[0],
                 end = args[1],
                 newRows = args[2] ? args.slice(2) : false,
                 startRow;
 
-            if (!_this2.blocked && version === _this2.currentVersion) {
+            if (!self.blocked && version === self.currentVersion) {
               //add new rows
               if (newRows) {
-                startRow = data[start] ? _this2.table.rowManager.getRowFromDataObject(data[start]) : false;
+                startRow = data[start] ? self.table.rowManager.getRowFromDataObject(data[start]) : false;
 
                 if (startRow) {
                   newRows.forEach(function (rowData) {
-                    _this2.table.rowManager.addRowActual(rowData, true, startRow, true);
+                    self.table.rowManager.addRowActual(rowData, true, startRow, true);
                   });
                 } else {
                   newRows = newRows.slice().reverse();
                   newRows.forEach(function (rowData) {
-                    _this2.table.rowManager.addRowActual(rowData, true, false, true);
+                    self.table.rowManager.addRowActual(rowData, true, false, true);
                   });
                 }
               } //delete removed rows
@@ -22171,7 +22186,7 @@
               if (end !== 0) {
                 var oldRows = data.slice(start, typeof args[1] === "undefined" ? args[1] : start + end);
                 oldRows.forEach(function (rowData, i) {
-                  var row = _this2.table.rowManager.getRowFromDataObject(rowData);
+                  var row = self.table.rowManager.getRowFromDataObject(rowData);
 
                   if (row) {
                     row.deleteActual(i !== oldRows.length - 1);
@@ -22180,11 +22195,11 @@
               }
 
               if (newRows || end !== 0) {
-                _this2.table.rowManager.reRenderInPosition();
+                self.table.rowManager.reRenderInPosition();
               }
             }
 
-            return _this2.origFuncs.splice.apply(data, _arguments);
+            return self.origFuncs.splice.apply(data, arguments);
           }
         });
       }
@@ -22221,7 +22236,7 @@
     }, {
       key: "watchTreeChildren",
       value: function watchTreeChildren(row) {
-        var _arguments2 = arguments;
+        var _arguments = arguments;
         var childField = row.getData()[this.table.options.dataTreeChildField],
             origFuncs = {};
 
@@ -22237,7 +22252,7 @@
             enumerable: false,
             configurable: true,
             value: function value() {
-              var result = origFuncs.push.apply(childField, _arguments2);
+              var result = origFuncs.push.apply(childField, _arguments);
               rebuildTree();
               return result;
             }
@@ -22247,7 +22262,7 @@
             enumerable: false,
             configurable: true,
             value: function value() {
-              var result = origFuncs.unshift.apply(childField, _arguments2);
+              var result = origFuncs.unshift.apply(childField, _arguments);
               rebuildTree();
               return result;
             }
@@ -22277,7 +22292,7 @@
             enumerable: false,
             configurable: true,
             value: function value() {
-              var result = origFuncs.splice.apply(childField, _arguments2);
+              var result = origFuncs.splice.apply(childField, _arguments);
               rebuildTree();
               return result;
             }
@@ -22287,7 +22302,7 @@
     }, {
       key: "watchKey",
       value: function watchKey(row, data, key) {
-        var _this3 = this;
+        var _this2 = this;
 
         var props = Object.getOwnPropertyDescriptor(data, key),
             value = data[key],
@@ -22296,7 +22311,7 @@
           set: function set(newValue) {
             value = newValue;
 
-            if (!_this3.blocked && version === _this3.currentVersion) {
+            if (!_this2.blocked && version === _this2.currentVersion) {
               var update = {};
               update[key] = newValue;
               row.updateData(update);
