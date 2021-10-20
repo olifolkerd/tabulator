@@ -1458,10 +1458,6 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   border-bottom: 1px solid #dee2e6;
 }
 
-.tabulator-row.tabulator-row-even {
-  background-color: transparent;
-}
-
 .tabulator-row .tabulator-cell {
   padding: 12px;
   border-right: none;

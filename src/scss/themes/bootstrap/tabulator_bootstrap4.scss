@@ -445,10 +445,6 @@ $table-cell-padding-sm: 5px;
 	min-height:$textSize + ($cellPadding * 2);
 	border-bottom:1px solid $rowBorderColor;
 
-	&.tabulator-row-even{
-		background-color: transparent;
-	}
-
 	.tabulator-cell{
 		padding:$cellPadding;
 		border-right:none;
