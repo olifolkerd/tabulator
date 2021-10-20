@@ -89,7 +89,7 @@ export default class DataLoader extends CoreFeature{
 					this.hideLoader();
 
 					if(rowData !== false){
-						this.dispatchExternal("dataLoaded", data);
+						this.dispatchExternal("dataLoaded", rowData);
 						this.table.rowManager.setData(rowData,  replace, !replace);
 					}
 				}else{
