@@ -13,18 +13,29 @@ export default class Helpers{
 		};
 	}
 
-	static deepClone(obj){
-		var clone = Object.assign(Array.isArray(obj) ? [] : {}, obj);
+	static deepClone(obj, clone, list = {}){
+		if (!clone){
+			clone = Object.assign(Array.isArray(obj) ? [] : {}, obj);
+		}
 
 		for(var i in obj) {
-			if(obj[i] != null && typeof(obj[i])  === "object"){
-				if (obj[i] instanceof Date) {
-					clone[i] = new Date(obj[i]);
+			let subject = obj[i];
+
+			if(subject != null && typeof(subject)  === "object"){
+				if (subject instanceof Date) {
+					clone[i] = new Date(subject);
 				} else {
-					clone[i] = this.deepClone(obj[i]);
+					if(list[subject]){
+						clone[i] = list[subject];
+					}else{
+						list[subject] = Object.assign(Array.isArray(obj) ? [] : {}, obj);
+						clone[i] = this.deepClone(subject, list[subject], list);
+					}
+
 				}
 			}
 		}
+
 		return clone;
 	}
 }
