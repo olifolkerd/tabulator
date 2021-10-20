@@ -643,7 +643,11 @@ class Tabulator {
 
 	/////////////// Column Functions  ///////////////
 	setColumns(definition){
-		this.columnManager.setColumns(definition);
+		if(this.initialized){
+			this.columnManager.setColumns(definition);
+		}else{
+			console.warn("setColumns failed - table not yet initialized. To set initial data please use the 'columns' property in the table constructor.")
+		}
 	}
 
 	getColumns(structured){
