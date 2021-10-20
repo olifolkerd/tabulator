@@ -34,7 +34,7 @@ class Accessor extends Module{
 		var match = false,
 		config = {};
 
-		this.allowedTypes.forEach(function(type){
+		this.allowedTypes.forEach((type) => {
 			var key = "accessor" + (type.charAt(0).toUpperCase() + type.slice(1)),
 			accessor;
 
