@@ -10826,6 +10826,8 @@ class Group{
 
 	clearCellHeight(){}
 
+	deinitializeHeight(){}
+
 	//////////////// Object Generation /////////////////
 	getComponent(){
 		if(!this.component){
