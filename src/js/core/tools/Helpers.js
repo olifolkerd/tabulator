@@ -13,24 +13,31 @@ export default class Helpers{
 		};
 	}
 
-	static deepClone(obj, clone, list = {}){
+	static deepClone(obj, clone, list = []){
+		var objectProto = {}.__proto__,
+		arrayProto = [].__proto__;
+
 		if (!clone){
 			clone = Object.assign(Array.isArray(obj) ? [] : {}, obj);
 		}
 
 		for(var i in obj) {
-			let subject = obj[i];
+			let subject = obj[i],
+			match, copy;
 
-			if(subject != null && typeof subject === "object" && subject.__proto__ === {}.__proto__){
-				if (subject instanceof Date) {
-					clone[i] = new Date(subject);
-				} else {
-					if(list[subject]){
-						clone[i] = list[subject];
-					}else{
-						list[subject] = Object.assign(Array.isArray(obj) ? [] : {}, obj);
-						clone[i] = this.deepClone(subject, list[subject], list);
-					}
+			if(subject != null && typeof subject === "object" && (subject.__proto__ === objectProto || subject.__proto__ === arrayProto)){
+				match = list.findIndex((item) => {
+					return item.subject === subject;
+				});
+
+				if(match > -1){
+					clone[i] = list[match].copy;
+				}else{
+					copy = Object.assign(Array.isArray(subject) ? [] : {}, subject);
+
+					list.unshift({subject, copy});
+
+					clone[i] = this.deepClone(subject, copy, list);
 				}
 			}
 		}
