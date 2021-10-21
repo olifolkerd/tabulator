@@ -1,4 +1,4 @@
-/* Tabulator v5.0.3 (c) Oliver Folkerd 2021 */
+/* Tabulator v5.0.4 (c) Oliver Folkerd 2021 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -2166,27 +2166,41 @@
     }, {
       key: "deepClone",
       value: function deepClone(obj, clone) {
-        var list = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+        var _this = this;
+
+        var list = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+        var objectProto = {}.__proto__,
+            arrayProto = [].__proto__;
 
         if (!clone) {
           clone = Object.assign(Array.isArray(obj) ? [] : {}, obj);
         }
 
-        for (var i in obj) {
-          var subject = obj[i];
+        var _loop = function _loop() {
+          var subject = obj[i],
+              match = void 0,
+              copy = void 0;
 
-          if (subject != null && _typeof(subject) === "object" && typeof object.constructor !== "function") {
-            if (subject instanceof Date) {
-              clone[i] = new Date(subject);
+          if (subject != null && _typeof(subject) === "object" && (subject.__proto__ === objectProto || subject.__proto__ === arrayProto)) {
+            match = list.findIndex(function (item) {
+              return item.subject === subject;
+            });
+
+            if (match > -1) {
+              clone[i] = list[match].copy;
             } else {
-              if (list[subject]) {
-                clone[i] = list[subject];
-              } else {
-                list[subject] = Object.assign(Array.isArray(obj) ? [] : {}, obj);
-                clone[i] = this.deepClone(subject, list[subject], list);
-              }
+              copy = Object.assign(Array.isArray(subject) ? [] : {}, subject);
+              list.unshift({
+                subject: subject,
+                copy: copy
+              });
+              clone[i] = _this.deepClone(subject, copy, list);
             }
           }
+        };
+
+        for (var i in obj) {
+          _loop();
         }
 
         return clone;
