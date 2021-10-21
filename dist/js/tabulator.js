@@ -2175,7 +2175,7 @@
         for (var i in obj) {
           var subject = obj[i];
 
-          if (subject != null && _typeof(subject) === "object") {
+          if (subject != null && _typeof(subject) === "object" && typeof object.constructor !== "function") {
             if (subject instanceof Date) {
               clone[i] = new Date(subject);
             } else {

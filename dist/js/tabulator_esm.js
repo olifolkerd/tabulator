@@ -218,7 +218,7 @@ class Helpers$1{
 		for(var i in obj) {
 			let subject = obj[i];
 
-			if(subject != null && typeof(subject)  === "object"){
+			if(subject != null && typeof subject === "object" && subject.__proto__ === {}.__proto__){
 				if (subject instanceof Date) {
 					clone[i] = new Date(subject);
 				} else {
@@ -228,7 +228,6 @@ class Helpers$1{
 						list[subject] = Object.assign(Array.isArray(obj) ? [] : {}, obj);
 						clone[i] = this.deepClone(subject, list[subject], list);
 					}
-
 				}
 			}
 		}
