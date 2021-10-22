@@ -1,4 +1,5 @@
 import Module from '../../core/Module.js';
+import Helpers from '../../core/tools/Helpers.js';
 
 import defaultEditors from './defaults/editors.js';
 

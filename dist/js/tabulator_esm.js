@@ -195,7 +195,7 @@ class Module extends CoreFeature{
 	}
 }
 
-class Helpers$1{
+class Helpers{
 
 	static elVisible(el){
 		return !(el.offsetWidth <= 0 && el.offsetHeight <= 0);
@@ -326,7 +326,7 @@ class Accessor extends Module{
 		rowComponent = row.getComponent();
 
 		//clone data object with deep copy to isolate internal data from returned result
-		var data = Helpers$1.deepClone(row.data || {});
+		var data = Helpers.deepClone(row.data || {});
 
 		this.table.columnManager.traverse(function(column){
 			var value, accessor, params, colCompnent;
@@ -2966,7 +2966,7 @@ class Row$1 extends CoreFeature{
 
 	//update the rows data
 	updateData(updatedData){
-		var visible = this.element && Helpers$1.elVisible(this.element),
+		var visible = this.element && Helpers.elVisible(this.element),
 		tempData = {},
 		newRowData;
 
@@ -5609,7 +5609,7 @@ function select(cell, onRendered, success, cancel, editorParams){
 			}
 
 
-			var offset = Helpers$1.elOffset(cellEl);
+			var offset = Helpers.elOffset(cellEl);
 
 			listEl.style.minWidth = cellEl.offsetWidth + "px";
 
@@ -6086,7 +6086,7 @@ function autocomplete(cell, onRendered, success, cancel, editorParams){
 		if(!listEl.parentNode){
 			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
 
-			var offset = Helpers$1.elOffset(cellEl);
+			var offset = Helpers.elOffset(cellEl);
 
 			listEl.style.minWidth = cellEl.offsetWidth + "px";
 
@@ -10814,7 +10814,7 @@ class Group{
 		this.initialized = false;
 		this.height = 0;
 
-		if(Helpers$1.elVisible(this.element)){
+		if(Helpers.elVisible(this.element)){
 			this.initialize(true);
 		}
 	}
@@ -12702,7 +12702,7 @@ class Menu extends Module{
 
 			this.positionReversedX = false;
 		}else {
-			parentOffset = Helpers$1.elOffset(parentEl);
+			parentOffset = Helpers.elOffset(parentEl);
 			x = parentOffset.left + parentEl.offsetWidth;
 			y = parentOffset.top - 1;
 		}
@@ -12820,7 +12820,7 @@ class MoveColumns extends Module{
 
 			config.mousemove = function(e){
 				if(column.parent === self.moving.parent){
-					if((((self.touchMove ? e.touches[0].pageX : e.pageX) - Helpers$1.elOffset(colEl).left) + self.table.columnManager.element.scrollLeft) > (column.getWidth() / 2)){
+					if((((self.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(colEl).left) + self.table.columnManager.element.scrollLeft) > (column.getWidth() / 2)){
 						if(self.toCol !== column || !self.toColAfter){
 							colEl.parentNode.insertBefore(self.placeholderElement, colEl.nextSibling);
 							self.moveColumn(column, true);
@@ -12936,7 +12936,7 @@ class MoveColumns extends Module{
 		var element = column.getElement();
 
 		this.moving = column;
-		this.startX = (this.touchMove ? e.touches[0].pageX : e.pageX) - Helpers$1.elOffset(element).left;
+		this.startX = (this.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(element).left;
 
 		this.table.element.classList.add("tabulator-block-select");
 
@@ -13035,7 +13035,7 @@ class MoveColumns extends Module{
 	moveHover(e){
 		var columnHolder = this.table.columnManager.getElement(),
 		scrollLeft = columnHolder.scrollLeft,
-		xPos = ((this.touchMove ? e.touches[0].pageX : e.pageX) - Helpers$1.elOffset(columnHolder).left) + scrollLeft,
+		xPos = ((this.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(columnHolder).left) + scrollLeft,
 		scrollPos;
 
 		this.hoverElement.style.left = (xPos - this.startX) + "px";
@@ -13137,7 +13137,7 @@ class MoveRows extends Module{
 
 		//same table drag drop
 		config.mousemove = function(e){
-			if(((e.pageY - Helpers$1.elOffset(group.element).top) + self.table.rowManager.element.scrollTop) > (group.getHeight() / 2)){
+			if(((e.pageY - Helpers.elOffset(group.element).top) + self.table.rowManager.element.scrollTop) > (group.getHeight() / 2)){
 				if(self.toRow !== group || !self.toRowAfter){
 					var rowEl = group.getElement();
 					rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
@@ -13171,7 +13171,7 @@ class MoveRows extends Module{
 		config.mousemove = function(e){
 			var rowEl = row.getElement();
 
-			if(((e.pageY - Helpers$1.elOffset(rowEl).top) + self.table.rowManager.element.scrollTop) > (row.getHeight() / 2)){
+			if(((e.pageY - Helpers.elOffset(rowEl).top) + self.table.rowManager.element.scrollTop) > (row.getHeight() / 2)){
 				if(self.toRow !== row || !self.toRowAfter){
 					rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
 					self.moveRow(row, true);
@@ -18103,8 +18103,8 @@ class Renderer extends CoreFeature{
 
 				//check row visibility
 				if(!ifVisible){
-					if(Helpers$1.elVisible(rowEl)){
-						offset = Helpers$1.elOffset(rowEl).top - Helpers$1.elOffset(this.elementVertical).top;
+					if(Helpers.elVisible(rowEl)){
+						offset = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.elementVertical).top;
 
 						if(offset > 0 && offset < this.elementVertical.clientHeight - rowEl.offsetHeight){
 							return false;
@@ -19299,7 +19299,7 @@ class ColumnManager extends CoreFeature {
 	//redraw columns
 	redraw(force){
 		if(force){
-			if(Helpers$1.elVisible(this.element)){
+			if(Helpers.elVisible(this.element)){
 				this._verticalAlignHeaders();
 			}
 
@@ -19376,7 +19376,7 @@ class BaiscVertical extends Renderer{
 	}
 
 	scrollToRowNearestTop(row){
-		var rowTop = Helpers$1.elOffset(row.getElement()).top;
+		var rowTop = Helpers.elOffset(row.getElement()).top;
 
 		return !(Math.abs(this.elementVertical.scrollTop - rowTop) > Math.abs(this.elementVertical.scrollTop + this.elementVertical.clientHeight - rowTop));
 	}
@@ -19384,7 +19384,7 @@ class BaiscVertical extends Renderer{
 	scrollToRow(row){
 		var rowEl = row.getElement();
 
-		this.elementVertical.scrollTop = Helpers$1.elOffset(rowEl).top - Helpers$1.elOffset(this.elementVertical).top + this.elementVertical.scrollTop;
+		this.elementVertical.scrollTop = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.elementVertical).top + this.elementVertical.scrollTop;
 	}
 
 	visibleRows(includingBuffer){
@@ -19646,7 +19646,7 @@ class VirtualDomVertical extends Renderer{
 			position -= topPad;
 		}
 
-		if(rowsCount && Helpers$1.elVisible(this.elementVertical)){
+		if(rowsCount && Helpers.elVisible(this.elementVertical)){
 			this.vDomTop = position;
 
 			this.vDomBottom = position -1;
@@ -20642,7 +20642,7 @@ class RowManager extends CoreFeature{
 				//case to handle scenario when trying to skip past end stage
 			}
 
-			if(Helpers$1.elVisible(this.element)){
+			if(Helpers.elVisible(this.element)){
 				if(renderInPosition){
 					this.reRenderInPosition();
 				}else {
@@ -22180,7 +22180,7 @@ class Localize extends Module{
 	}
 
 	initialize(){
-		this.langList = Helpers$1.deepClone(Localize.langs);
+		this.langList = Helpers.deepClone(Localize.langs);
 
 		if(this.table.options.columnDefaults.headerFilterPlaceholder !== false){
 			this.setHeaderFilterPlaceholder(this.table.options.columnDefaults.headerFilterPlaceholder);
@@ -22272,7 +22272,7 @@ class Localize extends Module{
 		this.locale = desiredLocale;
 
 		//load default lang template
-		this.lang = Helpers$1.deepClone(this.langList.default || {});
+		this.lang = Helpers.deepClone(this.langList.default || {});
 
 		if(desiredLocale != "default"){
 			traverseLang(this.langList[desiredLocale], this.lang);
