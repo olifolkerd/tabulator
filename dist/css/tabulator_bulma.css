@@ -1203,8 +1203,12 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   background-color: inherit;
 }
 
+.tabulator-row.tabulator-selected {
+  background-color: #00d1b2 !important;
+}
+
 .tabulator-row.tabulator-selected:hover {
-  background-color: #009e86;
+  background-color: #009e86 !important;
 }
 
 .tabulator-row .tabulator-cell {

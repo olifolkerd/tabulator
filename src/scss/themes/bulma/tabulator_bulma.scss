@@ -204,8 +204,12 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 		background-color: inherit;
 	}
 
+	&.tabulator-selected{
+		background-color:$rowSelectedBackground !important;
+	}
+
 	&.tabulator-selected:hover{
-		background-color:darken($rowSelectedBackground, 10%);
+		background-color:darken($rowSelectedBackground, 10%) !important;
 	}
 
 	.tabulator-cell{
