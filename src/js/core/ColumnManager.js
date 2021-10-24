@@ -230,7 +230,6 @@ export default class ColumnManager extends CoreFeature {
 		index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
 
 		if(nextToColumn && index > -1){
-
 			var parentIndex = this.columns.indexOf(nextToColumn.getTopColumn());
 			var nextEl = nextToColumn.getElement();
 
@@ -241,7 +240,6 @@ export default class ColumnManager extends CoreFeature {
 				this.columns.splice(parentIndex + 1, 0, column);
 				nextEl.parentNode.insertBefore(colEl, nextEl.nextSibling);
 			}
-
 		}else{
 			if(before){
 				this.columns.unshift(column);
@@ -250,9 +248,9 @@ export default class ColumnManager extends CoreFeature {
 				this.columns.push(column);
 				this.headersElement.appendChild(column.getElement());
 			}
-
-			column.columnRendered();
 		}
+
+		column.columnRendered();
 
 		return column;
 	}
