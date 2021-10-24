@@ -16267,10 +16267,14 @@ class ResponsiveLayout extends Module{
 						},
 					};
 
+					function onRendered(callback){
+						callback();
+					}
+
 					output.push({
 						field: column.field,
 						title: column.definition.title,
-						value: column.modules.format.formatter.call(self.table.modules.format, mockCellComponent, column.modules.format.params)
+						value: column.modules.format.formatter.call(self.table.modules.format, mockCellComponent, column.modules.format.params, onRendered)
 					});
 				}else {
 					output.push({
