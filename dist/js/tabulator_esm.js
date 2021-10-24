@@ -11665,17 +11665,17 @@ class HtmlTableImport extends Module{
 	}
 
 	initialize(){
-		this.subscribe("table-building", this.tableElementCheck.bind(this));
+		this.tableElementCheck();
 	}
 
 	tableElementCheck(){
-		if(this.table.element.tagName === "TABLE"){
+		if(this.table.originalElement && this.table.originalElement.tagName === "TABLE"){
 			this.parseTable();
 		}
 	}
 
 	parseTable(){
-		var element = this.table.element,
+		var element = this.table.originalElement,
 		options = this.table.options,
 		columns = options.columns,
 		headers = element.getElementsByTagName("th"),
@@ -11719,28 +11719,9 @@ class HtmlTableImport extends Module{
 			data.push(item);
 		}
 
-		//create new element
-		var newElement = document.createElement("div");
-
-		//transfer attributes to new element
-		var attributes = element.attributes;
-
-		// loop through attributes and apply them on div
-
-		for(var i in attributes){
-			if(typeof attributes[i] == "object"){
-				newElement.setAttribute(attributes[i].name, attributes[i].value);
-			}
-		}
-
-		// replace table with div element
-		element.parentNode.replaceChild(newElement, element);
-
 		options.data = data;
 
 		this.dispatchExternal("htmlImported");
-
-		this.table.element = newElement;
 	}
 
 	//extract tabulator attribute options
@@ -22530,6 +22511,7 @@ class Tabulator {
 		this.browserSlow = false; //handle reduced functionality for slower browsers
 		this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
 		this.rtl = false; //check if the table is in RTL mode
+		this.originalElement = null; //hold original table element if it has been replaced
 
 		this.componentFunctionBinder = new ComponentFuctionBinder(this); //bind component functions
 		this.dataLoader = false; //bind component functions
@@ -22599,27 +22581,6 @@ class Tabulator {
 		this.footerManager.initialize();
 	}
 
-	rtlCheck(){
-		var style = window.getComputedStyle(this.element);
-
-		switch(this.options.textDirection){
-			case"auto":
-			if(style.direction !== "rtl"){
-				break;
-			}
-			case "rtl":
-			this.element.classList.add("tabulator-rtl");
-			this.rtl = true;
-			break;
-
-			case "ltr":
-			this.element.classList.add("tabulator-ltr");
-
-			default:
-			this.rtl = false;
-		}
-	}
-
 	//convert depricated functionality to new functions
 	_mapDepricatedFunctionality(){
 		//all previously deprecated functionality removed in the 5.0 release
@@ -22647,15 +22608,38 @@ class Tabulator {
 		this.externalEvents.dispatch("tableBuilding");
 		this.eventBus.dispatch("table-building");
 
-		this.rtlCheck();
+		this._rtlCheck();
 
 		this._buildElement();
+
+		this._initializeTable();
 
 		this._loadInitialData();
 
 		this.initialized = true;
 
 		this.externalEvents.dispatch("tableBuilt");
+	}
+
+	_rtlCheck(){
+		var style = window.getComputedStyle(this.element);
+
+		switch(this.options.textDirection){
+			case"auto":
+			if(style.direction !== "rtl"){
+				break;
+			}
+			case "rtl":
+			this.element.classList.add("tabulator-rtl");
+			this.rtl = true;
+			break;
+
+			case "ltr":
+			this.element.classList.add("tabulator-ltr");
+
+			default:
+			this.rtl = false;
+		}
 	}
 
 	//clear pointers to objects in default config object
@@ -22670,7 +22654,28 @@ class Tabulator {
 	//build tabulator element
 	_buildElement(){
 		var element = this.element,
-		options = this.options;
+		options = this.options,
+		newElement;
+
+		if(element.tagName === "TABLE"){
+			this.originalElement = this.element;
+			newElement = document.createElement("div");
+
+			//transfer attributes to new element
+			var attributes = element.attributes;
+
+			// loop through attributes and apply them on div
+			for(var i in attributes){
+				if(typeof attributes[i] == "object"){
+					newElement.setAttribute(attributes[i].name, attributes[i].value);
+				}
+			}
+
+			// replace table with div element
+			element.parentNode.replaceChild(newElement, element);
+
+			this.element = element = newElement;
+		}
 
 		element.classList.add("tabulator");
 		element.setAttribute("role", "grid");
@@ -22695,6 +22700,12 @@ class Tabulator {
 			options.maxHeight = isNaN(options.maxHeight) ? options.maxHeight : options.maxHeight + "px";
 			element.style.maxHeight = options.maxHeight;
 		}
+	}
+
+	//initialize core systems and modules
+	_initializeTable(){
+		var element = this.element,
+		options = this.options;
 
 		this.columnManager.initialize();
 		this.rowManager.initialize();
@@ -22710,7 +22721,6 @@ class Tabulator {
 
 		//configure placeholder element
 		if(typeof options.placeholder == "string"){
-
 			var el = document.createElement("div");
 			el.classList.add("tabulator-placeholder");
 

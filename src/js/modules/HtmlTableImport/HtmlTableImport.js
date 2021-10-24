@@ -10,17 +10,17 @@ class HtmlTableImport extends Module{
 	}
 
 	initialize(){
-		this.subscribe("table-building", this.tableElementCheck.bind(this));
+		this.tableElementCheck();
 	}
 
 	tableElementCheck(){
-		if(this.table.element.tagName === "TABLE"){
+		if(this.table.originalElement && this.table.originalElement.tagName === "TABLE"){
 			this.parseTable();
 		}
 	}
 
 	parseTable(){
-		var element = this.table.element,
+		var element = this.table.originalElement,
 		options = this.table.options,
 		columns = options.columns,
 		headers = element.getElementsByTagName("th"),
@@ -65,28 +65,9 @@ class HtmlTableImport extends Module{
 			data.push(item);
 		}
 
-		//create new element
-		var newElement = document.createElement("div");
-
-		//transfer attributes to new element
-		var attributes = element.attributes;
-
-		// loop through attributes and apply them on div
-
-		for(var i in attributes){
-			if(typeof attributes[i] == "object"){
-				newElement.setAttribute(attributes[i].name, attributes[i].value);
-			}
-		}
-
-		// replace table with div element
-		element.parentNode.replaceChild(newElement, element);
-
 		options.data = data;
 
 		this.dispatchExternal("htmlImported");
-
-		this.table.element = newElement;
 	}
 
 	//extract tabulator attribute options
