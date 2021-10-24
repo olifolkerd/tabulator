@@ -557,7 +557,7 @@ class DataTree extends Module{
 
 	checkForRestyle(cell){
 		if(!cell.row.cells.indexOf(cell)){
-			cell.row.reinitialize();
+			this.layoutRow(cell.row);
 		}
 	}
 
