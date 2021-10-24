@@ -853,13 +853,13 @@ export default class RowManager extends CoreFeature{
 	}
 
 	renderTable(){
-
 		this.dispatchExternal("renderStarted");
 
 		this.element.scrollTop = 0;
 
+		this._clearTable();
+
 		if(this.displayRowsCount){
-			this._clearTable();
 			this.renderer.renderRows();
 
 			if(this.firstRender){
