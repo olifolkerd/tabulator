@@ -1196,6 +1196,15 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   background-color: #f5f5f5 !important;
 }
 
+.tabulator-row.tabulator-selected {
+  background-color: #9ABCEA !important;
+}
+
+.tabulator-row.tabulator-selected:hover {
+  background-color: #769BCC !important;
+  cursor: pointer;
+}
+
 .tabulator-row .tabulator-cell {
   padding: 8px;
   border-right: none;

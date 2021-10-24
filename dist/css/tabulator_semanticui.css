@@ -1614,8 +1614,8 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   background: #FFFFFF;
 }
 
-.tabulator.striped .tabulator-tableholder .tabulator-table .tabulator-row:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.05) !important;
+.tabulator.striped .tabulator-row:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .tabulator.celled {
@@ -1811,6 +1811,15 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.87) inset;
   background: #E0E0E0 !important;
   color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.tabulator-row.tabulator-selected {
+  background-color: #9ABCEA !important;
+}
+
+.tabulator-row.tabulator-selected:hover {
+  background-color: #769BCC !important;
+  cursor: pointer;
 }
 
 .tabulator-row.tabulator-moving {

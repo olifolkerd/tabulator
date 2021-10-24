@@ -185,6 +185,15 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		background-color:$rowHoverBackground !important;
 	}
 
+	&.tabulator-selected{
+		background-color:$rowSelectedBackground !important;
+	}
+
+	&.tabulator-selected:hover{
+		background-color:$rowSelectedBackgroundHover !important;
+		cursor: pointer;
+	}
+
 	.tabulator-cell{
 		padding:$cellPadding;
 		border-right:none;
