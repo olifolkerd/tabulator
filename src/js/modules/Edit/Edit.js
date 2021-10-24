@@ -151,7 +151,7 @@ class Edit extends Module{
 					nextCell = this.findNextEditableCell(prevRow, prevRow.cells.length);
 
 					if(nextCell){
-						nextCell.edit();
+						nextCell.getComponent().edit();
 						return true;
 					}
 				}
@@ -182,7 +182,7 @@ class Edit extends Module{
 					nextCell = this.findNextEditableCell(nextRow, -1);
 
 					if(nextCell){
-						nextCell.edit();
+						nextCell.getComponent().edit();
 						return true;
 					}
 				}
@@ -206,7 +206,7 @@ class Edit extends Module{
 			nextCell = this.findPrevEditableCell(cell.row, index);
 
 			if(nextCell){
-				nextCell.edit();
+				nextCell.getComponent().edit();
 				return true;
 			}
 		}
@@ -228,7 +228,7 @@ class Edit extends Module{
 			nextCell = this.findNextEditableCell(cell.row, index);
 
 			if(nextCell){
-				nextCell.edit();
+				nextCell.getComponent().edit();
 				return true;
 			}
 		}
@@ -250,7 +250,7 @@ class Edit extends Module{
 			nextRow = this.table.rowManager.prevDisplayRow(cell.row, true);
 
 			if(nextRow){
-				nextRow.cells[index].edit();
+				nextRow.cells[index].getComponent().edit();
 				return true;
 			}
 		}
@@ -272,7 +272,7 @@ class Edit extends Module{
 			nextRow = this.table.rowManager.nextDisplayRow(cell.row, true);
 
 			if(nextRow){
-				nextRow.cells[index].edit();
+				nextRow.cells[index].getComponent().edit();
 				return true;
 			}
 		}
