@@ -20262,7 +20262,7 @@ class RowManager extends CoreFeature{
 				this.dispatch("row-added", row, data, pos, index);
 			});
 
-			this.reRenderInPosition();
+			this.refreshActiveData(false, false, true);
 
 			this.regenerateRowNumbers();
 
