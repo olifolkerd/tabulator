@@ -49,6 +49,7 @@ export default class RowManager extends CoreFeature{
 
 		el.classList.add("tabulator-tableholder");
 		el.setAttribute("tabindex", 0);
+		el.setAttribute("role", "rowgroup");
 
 		return el;
 	}
@@ -57,6 +58,7 @@ export default class RowManager extends CoreFeature{
 		var el = document.createElement("div");
 
 		el.classList.add("tabulator-table");
+		el.setAttribute("role", "rowgroup");
 
 		return el;
 	}

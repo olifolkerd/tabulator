@@ -64,6 +64,7 @@ export default class ColumnManager extends CoreFeature {
 		var el = document.createElement("div");
 
 		el.classList.add("tabulator-headers");
+		el.setAttribute("role", "row");
 
 		return el;
 	}
@@ -72,6 +73,7 @@ export default class ColumnManager extends CoreFeature {
 		var el = document.createElement("div");
 
 		el.classList.add("tabulator-header");
+		el.setAttribute("role", "rowgroup");
 
 		if(!this.table.options.headerVisible){
 			el.classList.add("tabulator-header-hidden");

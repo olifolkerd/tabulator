@@ -18709,6 +18709,7 @@ class ColumnManager extends CoreFeature {
 		var el = document.createElement("div");
 
 		el.classList.add("tabulator-headers");
+		el.setAttribute("role", "row");
 
 		return el;
 	}
@@ -18717,6 +18718,7 @@ class ColumnManager extends CoreFeature {
 		var el = document.createElement("div");
 
 		el.classList.add("tabulator-header");
+		el.setAttribute("role", "rowgroup");
 
 		if(!this.table.options.headerVisible){
 			el.classList.add("tabulator-header-hidden");
@@ -20005,6 +20007,7 @@ class RowManager extends CoreFeature{
 
 		el.classList.add("tabulator-tableholder");
 		el.setAttribute("tabindex", 0);
+		el.setAttribute("role", "rowgroup");
 
 		return el;
 	}
@@ -20013,6 +20016,7 @@ class RowManager extends CoreFeature{
 		var el = document.createElement("div");
 
 		el.classList.add("tabulator-table");
+		el.setAttribute("role", "rowgroup");
 
 		return el;
 	}
