@@ -1,6 +1,7 @@
 export default {
 	cellEdit: function(action){
 		action.component.setValueProcessData(action.data.newValue);
+		action.component.cellRendered();
 	},
 
 	rowAdd: function(action){

@@ -11444,6 +11444,7 @@ GroupRows.moduleName = "groupRows";
 var defaultUndoers = {
 	cellEdit: function(action){
 		action.component.setValueProcessData(action.data.oldValue);
+		action.component.cellRendered();
 	},
 
 	rowAdd: function(action){
@@ -11469,6 +11470,7 @@ var defaultUndoers = {
 var defaultRedoers = {
 	cellEdit: function(action){
 		action.component.setValueProcessData(action.data.newValue);
+		action.component.cellRendered();
 	},
 
 	rowAdd: function(action){
