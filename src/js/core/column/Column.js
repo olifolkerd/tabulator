@@ -668,7 +668,7 @@ class Column extends CoreFeature{
 				this.reinitializeWidth();
 			}
 
-			this.table.columnManager._verticalAlignHeaders();
+			this.table.columnManager.verticalAlignHeaders();
 
 			this.dispatch("column-show", this, responsiveToggle);
 
@@ -693,7 +693,7 @@ class Column extends CoreFeature{
 
 			this.element.style.display = "none";
 
-			this.table.columnManager._verticalAlignHeaders();
+			this.table.columnManager.verticalAlignHeaders();
 
 			if(this.parent.isGroup){
 				this.parent.checkColumnVisibility();

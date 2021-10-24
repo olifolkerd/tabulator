@@ -276,7 +276,7 @@ export default class ColumnManager extends CoreFeature {
 	}
 
 	//ensure column headers take up the correct amount of space in column groups
-	_verticalAlignHeaders(){
+	verticalAlignHeaders(){
 		var minHeight = 0;
 
 		this.columns.forEach((column) => {
@@ -433,7 +433,7 @@ export default class ColumnManager extends CoreFeature {
 			to.element.parentNode.insertBefore(to.element, from.element);
 		}
 
-		this._verticalAlignHeaders();
+		this.verticalAlignHeaders();
 
 		this.table.rowManager.reinitialize();
 	}
@@ -614,7 +614,7 @@ export default class ColumnManager extends CoreFeature {
 				column.reinitializeWidth();
 			}
 
-			this._verticalAlignHeaders();
+			this.verticalAlignHeaders();
 
 			this.table.rowManager.reinitialize();
 
@@ -648,18 +648,18 @@ export default class ColumnManager extends CoreFeature {
 			this.columns.splice(index, 1);
 		}
 
-		this._verticalAlignHeaders();
+		this.verticalAlignHeaders();
 
 		this.redraw();
 	}
 
 	//redraw columns
 	redraw(force){
-		if(force){
-			if(Helpers.elVisible(this.element)){
-				this._verticalAlignHeaders();
-			}
+		if(Helpers.elVisible(this.element)){
+			this.verticalAlignHeaders();
+		}
 
+		if(force){
 			this.table.rowManager.resetScroll();
 			this.table.rowManager.reinitialize();
 		}
