@@ -135,10 +135,31 @@ class FrozenColumns extends Module{
 			if(this.table.modules.columnCalcs.topInitialized && this.table.modules.columnCalcs.topRow){
 				this.layoutRow(this.table.modules.columnCalcs.topRow);
 			}
+
 			if(this.table.modules.columnCalcs.botInitialized && this.table.modules.columnCalcs.botRow){
 				this.layoutRow(this.table.modules.columnCalcs.botRow);
 			}
+
+			if(this.table.modExists("groupRows")){
+				this.layoutGroupCalcs(this.table.modules.groupRows.getGroups())
+			}
 		}
+	}
+
+	layoutGroupCalcs(groups){
+		groups.forEach((group) => {
+			if(group.calcs.top){
+				this.layoutRow(group.calcs.top);
+			}
+
+			if(group.calcs.bottom){
+				this.layoutRow(group.calcs.bottom);
+			}
+
+			if(group.groupList && group.groupList.length){
+				this.layoutGroupCalcs(group.groupList && group.groupList);
+			}
+		});
 	}
 
 	//calculate column positions and layout headers
