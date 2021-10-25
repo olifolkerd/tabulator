@@ -11821,7 +11821,7 @@ class HtmlTableImport extends Module{
 			header.attributes;
 
 			// //check for tablator inline options
-			this._extractOptions(header, col, Column.prototype.defaultOptionList);
+			this._extractOptions(header, col, Column$1.prototype.defaultOptionList);
 
 			this.fieldIndex[index] = col.field;
 

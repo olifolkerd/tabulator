@@ -1,4 +1,5 @@
 import Module from '../../core/Module.js';
+import Column from '../../core/column/Column.js';
 
 class HtmlTableImport extends Module{
 
