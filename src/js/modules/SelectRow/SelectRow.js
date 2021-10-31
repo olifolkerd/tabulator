@@ -35,7 +35,7 @@ class SelectRow extends Module{
 			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
 			this.subscribe("rows-wipe", this.clearSelectionData.bind(this));
-			this.subscribe("rows-retrieve", this.clearSelectionData.bind(this));
+			this.subscribe("rows-retrieve", this.rowRetrieve.bind(this));
 
 			if(this.table.options.selectable && this.table.options.selectablePersistence){
 				this.subscribe("data-refeshing", this.deselectRows.bind(this));
@@ -50,7 +50,6 @@ class SelectRow extends Module{
 	rowDeleted(row){
 		this._deselectRow(row, true);
 	}
-
 
 	clearSelectionData(silent){
 		this.selecting = false;
