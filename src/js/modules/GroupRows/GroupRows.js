@@ -46,6 +46,34 @@ class GroupRows extends Module{
 	//initialize group configuration
 	initialize(){
 		if(this.table.options.groupBy){
+
+			this.configureGroupSetup();
+
+			if(this.table.options.groupUpdateOnCellEdit){
+				this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
+				this.subscribe("row-data-changed", this.reassignRowToGroup.bind(this), 0);
+			}
+
+			this.subscribe("row-deleting", this.rowDeleting.bind(this));
+			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
+			this.subscribe("scroll-horizontal", this.scrollHeaders.bind(this));
+			this.subscribe("rows-wipe", this.wipe.bind(this));
+			this.subscribe("rows-added", this.rowsUpdated.bind(this));
+			this.subscribe("row-moving", this.rowMoving.bind(this));
+			this.subscribe("row-adding-index", this.rowAddingIndex.bind(this));
+
+			this.subscribe("rows-sample", this.rowSample.bind(this));
+
+			this.subscribe("render-virtual-fill", this.virtualRenderFill.bind(this));
+
+			this.registerDisplayHandler(this.displayHandler, 20);
+
+			this.initialized = true;
+		}
+	}
+
+	configureGroupSetup(){
+		if(this.table.options.groupBy){
 			var groupBy = this.table.options.groupBy,
 			startOpen = this.table.options.groupStartOpen,
 			groupHeader = this.table.options.groupHeader;
@@ -133,27 +161,6 @@ class GroupRows extends Module{
 			if(groupHeader){
 				this.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
 			}
-
-			if(this.table.options.groupUpdateOnCellEdit){
-				this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
-				this.subscribe("row-data-changed", this.reassignRowToGroup.bind(this), 0);
-			}
-
-			this.subscribe("row-deleting", this.rowDeleting.bind(this));
-			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
-			this.subscribe("scroll-horizontal", this.scrollHeaders.bind(this));
-			this.subscribe("rows-wipe", this.wipe.bind(this));
-			this.subscribe("rows-added", this.rowsUpdated.bind(this));
-			this.subscribe("row-moving", this.rowMoving.bind(this));
-			this.subscribe("row-adding-index", this.rowAddingIndex.bind(this));
-
-			this.subscribe("rows-sample", this.rowSample.bind(this));
-
-			this.subscribe("render-virtual-fill", this.virtualRenderFill.bind(this));
-
-			this.registerDisplayHandler(this.displayHandler, 20);
-
-			this.initialized = true;
 		}
 	}
 
@@ -218,23 +225,23 @@ class GroupRows extends Module{
 
 	setGroupBy(groups){
 		this.table.options.groupBy = groups;
-		this.initialize();
-		this.refreshData(false, "display");
+		this.configureGroupSetup();
+		this.refreshData();
 
 		this.trackChanges();
 	}
 
 	setGroupValues(groupValues){
 		this.table.options.groupValues = groupValues;
-		this.initialize();
-		this.refreshData(false, "display");
+		this.configureGroupSetup();
+		this.refreshData();
 
 		this.trackChanges();
 	}
 
 	setGroupStartOpen(values){
 		this.table.options.groupStartOpen = values;
-		this.initialize();
+		this.configureGroupSetup();
 
 		if(this.table.options.groupBy){
 			this.refreshData();
@@ -247,7 +254,7 @@ class GroupRows extends Module{
 
 	setGroupHeader(values){
 		this.table.options.groupHeader = values;
-		this.initialize();
+		this.configureGroupSetup();
 
 		if(this.table.options.groupBy){
 			this.refreshData();
@@ -328,7 +335,7 @@ class GroupRows extends Module{
 
 	//return appropriate rows with group headers
 	getRows(rows){
-		if(this.groupIDLookups.length){
+		if(this.table.options.groupBy && this.groupIDLookups.length){
 
 			this.dispatchExternal("dataGrouping");
 
@@ -443,7 +450,7 @@ class GroupRows extends Module{
 		var oldGroups = this.groups;
 
 		this.groups = {};
-		this.groupList =[];
+		this.groupList = [];
 
 		if(this.allowedValues && this.allowedValues[0]){
 			this.allowedValues[0].forEach((value) => {
