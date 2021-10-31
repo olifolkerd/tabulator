@@ -232,8 +232,9 @@ export default class ColumnManager extends CoreFeature {
 		index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
 
 		if(nextToColumn && index > -1){
-			var parentIndex = this.columns.indexOf(nextToColumn.getTopColumn());
-			var nextEl = nextToColumn.getElement();
+			var topColumn = nextToColumn.getTopColumn()
+			var parentIndex = this.columns.indexOf(topColumn);
+			var nextEl = topColumn.getElement();
 
 			if(before){
 				this.columns.splice(parentIndex, 0, column);
@@ -608,13 +609,11 @@ export default class ColumnManager extends CoreFeature {
 
 			this.dispatch("column-add", definition, before, nextToColumn);
 
-			this.redraw(true);
-
 			if(this.layoutMode() != "fitColumns"){
 				column.reinitializeWidth();
 			}
 
-			this.verticalAlignHeaders();
+			this.redraw(true);
 
 			this.table.rowManager.reinitialize();
 
