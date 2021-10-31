@@ -1180,7 +1180,7 @@ class CellComponent {
 	}
 }
 
-class Cell$1 extends CoreFeature{
+class Cell extends CoreFeature{
 	constructor(column, row){
 		super(column.table);
 
@@ -2557,7 +2557,7 @@ class Column$1 extends CoreFeature{
 	//////////////// Cell Management /////////////////
 	//generate cell for this column
 	generateCell(row){
-		var cell = new Cell$1(this, row);
+		var cell = new Cell(this, row);
 
 		this.cells.push(cell);
 
@@ -2772,7 +2772,7 @@ class RowComponent$1 {
 	}
 }
 
-class Row$1 extends CoreFeature{
+class Row extends CoreFeature{
 	constructor (data, parent, type = "row"){
 		super(parent.table);
 
@@ -3614,7 +3614,7 @@ class ColumnCalcs extends Module{
 			this.table.modules.mutator.disable();
 		}
 
-		row = new Row$1(rowData, this, "calc");
+		row = new Row(rowData, this, "calc");
 
 		if(this.table.modExists("mutator")){
 			this.table.modules.mutator.enable();
@@ -3658,7 +3658,7 @@ class ColumnCalcs extends Module{
 					this.genColumn.definition.cssClass = column.definition.cssClass;
 
 					//generate cell and assign to correct column
-					var cell = new Cell$1(this.genColumn, row);
+					var cell = new Cell(this.genColumn, row);
 					cell.getElement();
 					cell.column = column;
 					cell.setWidth();
@@ -4041,7 +4041,7 @@ class DataTree extends Module{
 
 			output.push(row);
 
-			if(row instanceof Row$1){
+			if(row instanceof Row){
 
 				row.create();
 
@@ -4105,7 +4105,7 @@ class DataTree extends Module{
 		}
 
 		childArray.forEach((childData) => {
-			var childRow = new Row$1(childData || {}, this.table.rowManager);
+			var childRow = new Row(childData || {}, this.table.rowManager);
 
 			childRow.create();
 
@@ -4182,7 +4182,7 @@ class DataTree extends Module{
 			}
 
 			children.forEach((childRow) => {
-				if(childRow instanceof Row$1){
+				if(childRow instanceof Row){
 					output.push(childRow);
 				}
 			});
@@ -4253,7 +4253,7 @@ class DataTree extends Module{
 
 		if(typeof subject == "object"){
 
-			if(subject instanceof Row$1){
+			if(subject instanceof Row){
 				//subject is row element
 				match = subject.data;
 			}else if(subject instanceof RowComponent){
@@ -4262,7 +4262,7 @@ class DataTree extends Module{
 			}else if(typeof HTMLElement !== "undefined" && subject instanceof HTMLElement){
 				if(parent.modules.dataTree){
 					match = parent.modules.dataTree.children.find((childRow) => {
-						return childRow instanceof Row$1 ? childRow.element === subject : false;
+						return childRow instanceof Row ? childRow.element === subject : false;
 					});
 
 					if(match){
@@ -4307,7 +4307,7 @@ class DataTree extends Module{
 			}
 
 			config.children.forEach((childRow) => {
-				if(childRow instanceof Row$1){
+				if(childRow instanceof Row){
 					output.push(component ? childRow.getComponent() : childRow);
 
 					if(recurse){
@@ -11579,7 +11579,7 @@ class History extends Module{
 			}
 		}
 
-		this.history.action("rowDelete", row, {data:row.getData(), pos:!index, index:index});
+		this.action("rowDelete", row, {data:row.getData(), pos:!index, index:index});
 	}
 
 	cellUpdated(cell){
@@ -12151,7 +12151,7 @@ class Interaction extends Module{
 
 		if(this.columnSubscribers[action]){
 
-			if(component instanceof Cell$1){
+			if(component instanceof Cell){
 				callback = component.column.definition[action];
 			}else if(component instanceof Column$1){
 				callback = component.definition[action];
@@ -20117,7 +20117,7 @@ class RowManager extends CoreFeature{
 	////////////////// Row Manipulation //////////////////
 	findRow(subject){
 		if(typeof subject == "object"){
-			if(subject instanceof Row$1){
+			if(subject instanceof Row){
 				//subject is row element
 				return subject;
 			}else if(subject instanceof RowComponent$1){
@@ -20200,7 +20200,7 @@ class RowManager extends CoreFeature{
 
 			data.forEach((def, i) => {
 				if(def && typeof def === "object"){
-					var row = new Row$1(def, this);
+					var row = new Row(def, this);
 					this.rows.push(row);
 				}else {
 					console.warn("Data Loading Warning - Invalid row data detected and ignored, expecting object but received:", def);
@@ -20332,7 +20332,7 @@ class RowManager extends CoreFeature{
 	}
 
 	addRowActual(data, pos, index, blockRedraw){
-		var row = data instanceof Row$1 ? data : new Row$1(data || {}, this),
+		var row = data instanceof Row ? data : new Row(data || {}, this),
 		top = this.findAddRowPos(pos),
 		allIndex = -1,
 		activeIndex, chainResult;
@@ -20491,7 +20491,7 @@ class RowManager extends CoreFeature{
 			nextRow = this.getDisplayRows()[index+1];
 		}
 
-		if(nextRow && (!(nextRow instanceof Row$1) || nextRow.type != "row")){
+		if(nextRow && (!(nextRow instanceof Row) || nextRow.type != "row")){
 			return this.nextDisplayRow(nextRow, rowOnly);
 		}
 
@@ -20506,7 +20506,7 @@ class RowManager extends CoreFeature{
 			prevRow = this.getDisplayRows()[index-1];
 		}
 
-		if(rowOnly && prevRow && (!(prevRow instanceof Row$1) || prevRow.type != "row")){
+		if(rowOnly && prevRow && (!(prevRow instanceof Row) || prevRow.type != "row")){
 			return this.prevDisplayRow(prevRow, rowOnly);
 		}
 
