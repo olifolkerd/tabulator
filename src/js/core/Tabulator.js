@@ -409,68 +409,80 @@ class Tabulator {
 
 	//replace data, keeping table in position with same sort
 	replaceData(data, params, config){
-		return this.dataLoader.load(data, params, config, true, true);
+		if(this.initialized){
+			return this.dataLoader.load(data, params, config, true, true);
+		}else{
+			console.warn("replaceData failed - table not yet initialized. Please wait for the `tableBuilt` event before calling this function.");
+		}
 	}
 
 	//update table data
 	updateData(data){
 		var responses = 0;
 
-		return new Promise((resolve, reject) => {
-			this.dataLoader.blockActiveLoad();
+		if(this.initialized){
+			return new Promise((resolve, reject) => {
+				this.dataLoader.blockActiveLoad();
 
-			if(typeof data === "string"){
-				data = JSON.parse(data);
-			}
+				if(typeof data === "string"){
+					data = JSON.parse(data);
+				}
 
-			if(data){
-				data.forEach((item) => {
-					var row = this.rowManager.findRow(item[this.options.index]);
+				if(data){
+					data.forEach((item) => {
+						var row = this.rowManager.findRow(item[this.options.index]);
 
-					if(row){
-						responses++;
+						if(row){
+							responses++;
 
-						row.updateData(item)
-						.then(()=>{
-							responses--;
+							row.updateData(item)
+							.then(()=>{
+								responses--;
 
-							if(!responses){
-								resolve();
-							}
-						});
-					}
-				});
-			}else{
-				console.warn("Update Error - No data provided");
-				reject("Update Error - No data provided");
-			}
-		});
+								if(!responses){
+									resolve();
+								}
+							});
+						}
+					});
+				}else{
+					console.warn("Update Error - No data provided");
+					reject("Update Error - No data provided");
+				}
+			});
+		}else{
+			console.warn("updateData failed - table not yet initialized. Please wait for the `tableBuilt` event before calling this function.");
+		}
 	}
 
 	addData(data, pos, index){
-		return new Promise((resolve, reject) => {
-			this.dataLoader.blockActiveLoad();
+		if(this.initialized){
+			return new Promise((resolve, reject) => {
+				this.dataLoader.blockActiveLoad();
 
-			if(typeof data === "string"){
-				data = JSON.parse(data);
-			}
+				if(typeof data === "string"){
+					data = JSON.parse(data);
+				}
 
-			if(data){
-				this.rowManager.addRows(data, pos, index)
-				.then((rows) => {
-					var output = [];
+				if(data){
+					this.rowManager.addRows(data, pos, index)
+					.then((rows) => {
+						var output = [];
 
-					rows.forEach(function(row){
-						output.push(row.getComponent());
+						rows.forEach(function(row){
+							output.push(row.getComponent());
+						});
+
+						resolve(output);
 					});
-
-					resolve(output);
-				});
-			}else{
-				console.warn("Update Error - No data provided");
-				reject("Update Error - No data provided");
-			}
-		});
+				}else{
+					console.warn("Update Error - No data provided");
+					reject("Update Error - No data provided");
+				}
+			});
+		}else{
+			console.warn("addData failed - table not yet initialized. Please wait for the `tableBuilt` event before calling this function.");
+		}
 	}
 
 	//update table data
@@ -478,46 +490,50 @@ class Tabulator {
 		var rows = [],
 		responses = 0;
 
-		return new Promise((resolve, reject) => {
-			this.dataLoader.blockActiveLoad();
+		if(this.initialized){
+			return new Promise((resolve, reject) => {
+				this.dataLoader.blockActiveLoad();
 
-			if(typeof data === "string"){
-				data = JSON.parse(data);
-			}
+				if(typeof data === "string"){
+					data = JSON.parse(data);
+				}
 
-			if(data){
-				data.forEach((item) => {
-					var row = this.rowManager.findRow(item[this.options.index]);
+				if(data){
+					data.forEach((item) => {
+						var row = this.rowManager.findRow(item[this.options.index]);
 
-					responses++;
+						responses++;
 
-					if(row){
-						row.updateData(item)
-						.then(()=>{
-							responses--;
-							rows.push(row.getComponent());
+						if(row){
+							row.updateData(item)
+							.then(()=>{
+								responses--;
+								rows.push(row.getComponent());
 
-							if(!responses){
-								resolve(rows);
-							}
-						});
-					}else{
-						this.rowManager.addRows(item)
-						.then((newRows)=>{
-							responses--;
-							rows.push(newRows[0].getComponent());
+								if(!responses){
+									resolve(rows);
+								}
+							});
+						}else{
+							this.rowManager.addRows(item)
+							.then((newRows)=>{
+								responses--;
+								rows.push(newRows[0].getComponent());
 
-							if(!responses){
-								resolve(rows);
-							}
-						});
-					}
-				});
-			}else{
-				console.warn("Update Error - No data provided");
-				reject("Update Error - No data provided");
-			}
-		});
+								if(!responses){
+									resolve(rows);
+								}
+							});
+						}
+					});
+				}else{
+					console.warn("Update Error - No data provided");
+					reject("Update Error - No data provided");
+				}
+			});
+		}else{
+			console.warn("updateOrAddData failed - table not yet initialized. Please wait for the `tableBuilt` event before calling this function.");
+		}
 	}
 
 	//get row object
@@ -582,14 +598,18 @@ class Tabulator {
 
 	//add row to table
 	addRow(data, pos, index){
-		if(typeof data === "string"){
-			data = JSON.parse(data);
-		}
+		if(this.initialized){
+			if(typeof data === "string"){
+				data = JSON.parse(data);
+			}
 
-		return this.rowManager.addRows(data, pos, index)
-		.then((rows)=>{
-			return rows[0].getComponent();
-		});
+			return this.rowManager.addRows(data, pos, index)
+			.then((rows)=>{
+				return rows[0].getComponent();
+			});
+		}else{
+			console.warn("addRow failed - table not yet initialized. Please wait for the `tableBuilt` event before calling this function.");
+		}
 	}
 
 	//update a row if it exitsts otherwise create it
@@ -655,7 +675,11 @@ class Tabulator {
 	}
 
 	getRows(active){
-		return this.rowManager.getComponents(active);
+		if(this.initialized){
+			return this.rowManager.getComponents(active);
+		}else{
+			console.warn("getRows failed - table not yet initialized. Please wait for the `tableBuilt` event before calling this function.");
+		}
 	}
 
 	//get position of row in table
@@ -798,8 +822,12 @@ class Tabulator {
 	//////////// General Public Functions ////////////
 	//redraw list without updating data
 	redraw(force){
-		this.columnManager.redraw(force);
-		this.rowManager.redraw(force);
+		if(this.initialized){
+			this.columnManager.redraw(force);
+			this.rowManager.redraw(force);
+		}else{
+			console.warn("redraw failed - table not yet initialized. Please wait for the `tableBuilt` event before calling this function.");
+		}
 	}
 
 	setHeight(height){

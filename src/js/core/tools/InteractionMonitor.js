@@ -94,7 +94,6 @@ export default class InteractionManager extends CoreFeature {
 				if(!listener.handler){
 					listener.handler = this.track.bind(this, key);
 					this.el.addEventListener(key, listener.handler)
-					console.log("add", key)
 					// this.el.addEventListener(key, listener.handler, {passive: true})
 				}
 			}else{
