@@ -58,7 +58,7 @@ class History extends Module{
 			}
 		}
 
-		this.history.action("rowDelete", row, {data:row.getData(), pos:!index, index:index});
+		this.action("rowDelete", row, {data:row.getData(), pos:!index, index:index});
 	}
 
 	cellUpdated(cell){
