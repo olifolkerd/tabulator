@@ -8118,6 +8118,7 @@ class Filter extends Module{
 		this.prevHeaderFilterChangeCheck = "{}";
 
 		this.changed = false; //has filtering changed since last render
+		this.tableInitialized = false;
 
 		this.registerTableOption("filterMode", "local"); //local or remote filtering
 
@@ -8185,6 +8186,8 @@ class Filter extends Module{
 				}
 			});
 		}
+
+		this.tableInitialized = true;
 	}
 
 	remoteFilterParams(data, config, silent, params){
@@ -8648,10 +8651,12 @@ class Filter extends Module{
 	}
 
 	refreshFilter(){
-		if(this.table.options.filterMode === "remote"){
-			this.reloadData();
-		}else {
-			this.refreshData();
+		if(this.tableInitialized){
+			if(this.table.options.filterMode === "remote"){
+				this.reloadData();
+			}else {
+				this.refreshData();
+			}
 		}
 
 		//TODO - Persist left position of row manager
