@@ -165,7 +165,9 @@ class MoveColumns extends Module{
 	}
 
 	startMove(e, column){
-		var element = column.getElement();
+		var element = column.getElement(),
+		headerElement = this.table.columnManager.getElement(),
+		headersElement = this.table.columnManager.getHeadersElement();
 
 		this.moving = column;
 		this.startX = (this.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(element).left;
@@ -186,7 +188,7 @@ class MoveColumns extends Module{
 		this.table.columnManager.getElement().appendChild(this.hoverElement);
 
 		this.hoverElement.style.left = "0";
-		this.hoverElement.style.bottom = "0";
+		this.hoverElement.style.bottom = (headerElement.clientHeight - headersElement.offsetHeight) + "px";
 
 		if(!this.touchMove){
 			this._bindMouseMove();
@@ -224,7 +226,7 @@ class MoveColumns extends Module{
 			column.getCells().forEach(function(cell, i){
 				var cellEl = cell.getElement(true);
 
-				if(cellEl.parentNode){
+				if(cellEl.parentNode && movingCells[i]){
 					cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl.nextSibling);
 				}
 			});
@@ -232,7 +234,7 @@ class MoveColumns extends Module{
 			column.getCells().forEach(function(cell, i){
 				var cellEl = cell.getElement(true);
 
-				if(cellEl.parentNode){
+				if(cellEl.parentNode && movingCells[i]){
 					cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl);
 				}
 			});
