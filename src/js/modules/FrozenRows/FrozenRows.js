@@ -99,7 +99,10 @@ class FrozenRows extends Module{
 
 		if(index > -1){
 			var rowEl = row.getElement();
-			rowEl.parentNode.removeChild(rowEl);
+
+			if(rowEl.parentNode){
+				rowEl.parentNode.removeChild(rowEl);
+			}
 
 			this.rows.splice(index, 1);
 		}
