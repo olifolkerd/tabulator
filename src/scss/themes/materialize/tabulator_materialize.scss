@@ -105,16 +105,17 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 			margin-top:5px;
 			padding:8px 12px;
 
+			border-radius:0;
 			border-right:none;
 
 			background:rgba(255,255,255,.2);
 
-			&[data-page="first"]{
+			&[data-page="next"], &:first-of-type {
 				border-top-left-radius:4px;
 				border-bottom-left-radius:4px;
 			}
 
-			&[data-page="last"]{
+			&[data-page="prev"], &:last-of-type {
 				border:1px solid $footerBorderColor;
 				border-top-right-radius:4px;
 				border-bottom-right-radius:4px;
