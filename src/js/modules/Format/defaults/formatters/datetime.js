@@ -1,12 +1,18 @@
 export default function(cell, formatterParams, onRendered){
 	var DT = window.DateTime || luxon.DateTime;
-	var inputFormat = formatterParams.inputFormat || "yyyy-MM-dd HH:mm:ss";
+	var inputFormat = formatterParams.inputFormat || undefined
 	var	outputFormat = formatterParams.outputFormat || "dd/MM/yyyy HH:mm:ss";
 	var	invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";
 	var value = cell.getValue();
 
 	if(typeof DT != "undefined"){
-		var newDatetime = (window.DateTime || luxon.DateTime).fromFormat(value, inputFormat);
+		if (inputFormat == undefined){
+			var newDatetime = (window.DateTime || luxon.DateTime).fromISO(value);
+		}
+		else {
+			var newDatetime = (window.DateTime || luxon.DateTime).fromFormat(value, inputFormat);
+		}
+		
 
 		if(newDatetime.isValid){
 
