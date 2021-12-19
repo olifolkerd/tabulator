@@ -677,11 +677,7 @@ class Tabulator {
 	}
 
 	getRows(active){
-		if(this.initialized){
-			return this.rowManager.getComponents(active);
-		}else{
-			console.warn("getRows failed - table not yet initialized. Please wait for the `tableBuilt` event before calling this function.");
-		}
+		return this.rowManager.getComponents(active);
 	}
 
 	//get position of row in table
