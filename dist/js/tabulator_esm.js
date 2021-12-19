@@ -16443,8 +16443,6 @@ class SelectRow extends Module{
 		var self = this,
 		element = row.getElement();
 
-		console.log("init");
-
 		// trigger end of row selection
 		var endSelect = function(){
 
