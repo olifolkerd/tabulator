@@ -1,8 +1,8 @@
 export default class OptionsList {
-	constructor(table, msgType){
+	constructor(table, msgType, defaults = {}){
 		this.table = table;
 		this.msgType = msgType;
-		this.registeredDefaults = {};
+		this.registeredDefaults = Object.assign({}, defaults)
 	}
 
 	register(option, value){

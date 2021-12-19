@@ -7,6 +7,8 @@ import OptionsList from './tools/OptionsList.js';
 import RendererBasicHorizontal from './rendering/renderers/BasicHorizontal.js';
 import RendererVirtualDomHorizontal from './rendering/renderers/VirtualDomHorizontal.js';
 
+import defaultColumnOptions from './column/defaults/options.js';
+
 export default class ColumnManager extends CoreFeature {
 
 	constructor (table){
@@ -19,7 +21,7 @@ export default class ColumnManager extends CoreFeature {
 		this.columnsByIndex = []; //columns by index
 		this.columnsByField = {}; //columns by field
 		this.scrollLeft = 0;
-		this.optionsList = new OptionsList(this.table, "column definition");
+		this.optionsList = new OptionsList(this.table, "column definition", defaultColumnOptions);
 
 		this.renderer = null;
 	}
