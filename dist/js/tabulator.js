@@ -1,4 +1,4 @@
-/* Tabulator v5.0.7 (c) Oliver Folkerd 2021 */
+/* Tabulator v5.0.8 (c) Oliver Folkerd 2021 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -616,7 +616,7 @@
     return ColumnComponent;
   }();
 
-  var defaultOptions$1 = {
+  var defaultColumnOptions = {
     "title": undefined,
     "field": undefined,
     "columns": undefined,
@@ -2140,7 +2140,7 @@
     return Column;
   }(CoreFeature);
 
-  Column$1.defaultOptionList = defaultOptions$1;
+  Column$1.defaultOptionList = defaultColumnOptions;
 
   var Helpers = /*#__PURE__*/function () {
     function Helpers() {
@@ -2210,11 +2210,13 @@
 
   var OptionsList = /*#__PURE__*/function () {
     function OptionsList(table, msgType) {
+      var defaults = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
       _classCallCheck(this, OptionsList);
 
       this.table = table;
       this.msgType = msgType;
-      this.registeredDefaults = {};
+      this.registeredDefaults = Object.assign({}, defaults);
     }
 
     _createClass(OptionsList, [{
@@ -2988,7 +2990,7 @@
       _this.columnsByField = {}; //columns by field
 
       _this.scrollLeft = 0;
-      _this.optionsList = new OptionsList(_this.table, "column definition");
+      _this.optionsList = new OptionsList(_this.table, "column definition", defaultColumnOptions);
       _this.renderer = null;
       return _this;
     } ////////////// Setup Functions /////////////////
@@ -6095,7 +6097,7 @@
       _classCallCheck(this, InteractionManager);
 
       _this = _super.call(this, table);
-      _this.el = _this.table.element;
+      _this.el = null;
       _this.abortClasses = ["tabulator-headers", "tabulator-table"];
       _this.previousTargets = {};
       _this.listeners = ["click", "dblclick", "contextmenu", "mouseenter", "mouseleave", "mouseover", "mouseout", "mousemove", "touchstart", "touchend"];
@@ -6105,15 +6107,17 @@
         "tabulator-group": "group",
         "tabulator-col": "column"
       };
-
-      _this.buildListenerMap();
-
-      _this.bindSubscriptionWatchers();
-
       return _this;
     }
 
     _createClass(InteractionManager, [{
+      key: "initialize",
+      value: function initialize() {
+        this.el = this.table.element;
+        this.buildListenerMap();
+        this.bindSubscriptionWatchers();
+      }
+    }, {
       key: "buildListenerMap",
       value: function buildListenerMap() {
         var listenerMap = {};
@@ -6344,15 +6348,15 @@
     return InteractionManager;
   }(CoreFeature);
 
-  var ComponentFuctionBinder = /*#__PURE__*/function () {
-    function ComponentFuctionBinder(table) {
-      _classCallCheck(this, ComponentFuctionBinder);
+  var ComponentFunctionBinder = /*#__PURE__*/function () {
+    function ComponentFunctionBinder(table) {
+      _classCallCheck(this, ComponentFunctionBinder);
 
       this.table = table;
       this.bindings = {};
     }
 
-    _createClass(ComponentFuctionBinder, [{
+    _createClass(ComponentFunctionBinder, [{
       key: "bind",
       value: function bind(type, funcName, handler) {
         if (!this.bindings[type]) {
@@ -6378,7 +6382,7 @@
       }
     }]);
 
-    return ComponentFuctionBinder;
+    return ComponentFunctionBinder;
   }();
 
   var DataLoader = /*#__PURE__*/function (_CoreFeature) {
@@ -7785,13 +7789,13 @@
 
       this.browserSlow = false; //handle reduced functionality for slower browsers
 
-      this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
+      this.browserMobile = false; //check if running on mobile, prevent resize cancelling edit on keyboard appearance
 
       this.rtl = false; //check if the table is in RTL mode
 
       this.originalElement = null; //hold original table element if it has been replaced
 
-      this.componentFunctionBinder = new ComponentFuctionBinder(this); //bind component functions
+      this.componentFunctionBinder = new ComponentFunctionBinder(this); //bind component functions
 
       this.dataLoader = false; //bind component functions
 
@@ -7805,14 +7809,14 @@
       this.initialized = false;
 
       if (this.initializeElement(element)) {
-        this.initialzeCoreSystems(options); //delay table creation to allow event bindings immediatly after the constructor
+        this.initialzeCoreSystems(options); //delay table creation to allow event bindings immediately after the constructor
 
         setTimeout(function () {
           _this._create();
         });
       }
 
-      TableRegistry.register(this); //register table for inderdevice communication
+      TableRegistry.register(this); //register table for inter-device communication
     }
 
     _createClass(Tabulator, [{
@@ -7847,7 +7851,7 @@
 
         this._clearObjectPointers();
 
-        this._mapDepricatedFunctionality();
+        this._mapDeprecatedFunctionality();
 
         this.externalEvents = new ExternalEventBus(this, this.options, this.options.debugEventsExternal);
         this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
@@ -7856,11 +7860,11 @@
         this.columnManager.initialize();
         this.rowManager.initialize();
         this.footerManager.initialize();
-      } //convert depricated functionality to new functions
+      } //convert deprecated functionality to new functions
 
     }, {
-      key: "_mapDepricatedFunctionality",
-      value: function _mapDepricatedFunctionality() {//all previously deprecated functionality removed in the 5.0 release
+      key: "_mapDeprecatedFunctionality",
+      value: function _mapDeprecatedFunctionality() {//all previously deprecated functionality removed in the 5.0 release
       }
     }, {
       key: "_clearSelection",
@@ -7881,7 +7885,7 @@
         }
 
         this.element.classList.remove("tabulator-block-select");
-      } //concreate table
+      } //create table
 
     }, {
       key: "_create",
@@ -7989,6 +7993,7 @@
       value: function _initializeTable() {
         var element = this.element,
             options = this.options;
+        this.interactionMonitor.initialize();
         this.columnManager.initialize();
         this.rowManager.initialize();
 
@@ -8042,7 +8047,7 @@
       key: "destroy",
       value: function destroy() {
         var element = this.element;
-        TableRegistry.deregister(this); //deregister table from inderdevice communication
+        TableRegistry.deregister(this); //deregister table from inter-device communication
 
         this.eventBus.dispatch("table-destroy"); //clear row data
 
@@ -8414,7 +8419,7 @@
 
         if (row) {
           return row.updateData(data).then(function () {
-            resolve(row.getComponent());
+            return Promise.resolve(row.getComponent());
           });
         } else {
           console.warn("Update Error - No matching row found:", index);
@@ -8448,11 +8453,7 @@
     }, {
       key: "getRows",
       value: function getRows(active) {
-        if (this.initialized) {
-          return this.rowManager.getComponents(active);
-        } else {
-          console.warn("getRows failed - table not yet initialized. Please wait for the `tableBuilt` event before calling this function.");
-        }
+        return this.rowManager.getComponents(active);
       } //get position of row in table
 
     }, {
@@ -10082,7 +10083,7 @@
 
         row.getComponent = function () {
           if (!row.component) {
-            row.component = new CalcComponent(_this4);
+            row.component = new CalcComponent(row);
           }
 
           return row.component;
@@ -12890,11 +12891,9 @@
 
   //draggable progress bar
   function progress (cell, onRendered, success, cancel, editorParams) {
-    var _element$getElementsB, _element$getElementsB2;
-
     var element = cell.getElement(),
-        max = typeof editorParams.max === "undefined" ? ((_element$getElementsB = element.getElementsByTagName("div")[0]) === null || _element$getElementsB === void 0 ? void 0 : _element$getElementsB.getAttribute("max")) || 100 : editorParams.max,
-        min = typeof editorParams.min === "undefined" ? ((_element$getElementsB2 = element.getElementsByTagName("div")[0]) === null || _element$getElementsB2 === void 0 ? void 0 : _element$getElementsB2.getAttribute("min")) || 0 : editorParams.min,
+        max = typeof editorParams.max === "undefined" ? element.getElementsByTagName("div")[0] && element.getElementsByTagName("div")[0].getAttribute("max") || 100 : editorParams.max,
+        min = typeof editorParams.min === "undefined" ? element.getElementsByTagName("div")[0] && element.getElementsByTagName("div")[0].getAttribute("min") || 0 : editorParams.min,
         percent = (max - min) / 100,
         value = cell.getValue() || 0,
         handle = document.createElement("div"),
@@ -15188,7 +15187,7 @@
           if (this.table.options.filterMode === "remote") {
             this.reloadData();
           } else {
-            this.refreshData();
+            this.refreshData(true);
           }
         } //TODO - Persist left position of row manager
         // left = this.scrollLeft;
@@ -15741,7 +15740,7 @@
     var value = cell.getValue();
 
     if (typeof DT != "undefined") {
-      var newDatetime = (window.DateTime || luxon.DateTime).fromFormat(value, inputFormat);
+      var newDatetime = DT.fromFormat(String(value), inputFormat);
 
       if (newDatetime.isValid) {
         if (formatterParams.timezone) {
@@ -15750,7 +15749,7 @@
 
         return newDatetime.toFormat(outputFormat);
       } else {
-        if (invalid === true) {
+        if (invalid === true || !value) {
           return value;
         } else if (typeof invalid === "function") {
           return invalid(value);
@@ -15774,7 +15773,7 @@
     var value = cell.getValue();
 
     if (typeof DT != "undefined") {
-      var newDatetime = DT.fromFormat(value, inputFormat);
+      var newDatetime = DT.fromFormat(String(value), inputFormat);
 
       if (newDatetime.isValid) {
         if (humanize) ; else {
@@ -16921,10 +16920,16 @@
             group.wipe();
           });
         } else {
-          this.element = false;
-          this.arrowElement = false;
-          this.elementContents = false;
+          this.rows.forEach(function (row) {
+            if (row.modules) {
+              delete row.modules.group;
+            }
+          });
         }
+
+        this.element = false;
+        this.arrowElement = false;
+        this.elementContents = false;
       }
     }, {
       key: "createElements",
@@ -17789,7 +17794,13 @@
       key: "setGroupBy",
       value: function setGroupBy(groups) {
         this.table.options.groupBy = groups;
-        this.configureGroupSetup();
+
+        if (!this.initialized) {
+          this.initialize();
+        } else {
+          this.configureGroupSetup();
+        }
+
         this.refreshData();
         this.trackChanges();
       }
@@ -18417,7 +18428,7 @@
             data = [];
         this.hasIndex = false;
         this.dispatchExternal("htmlImporting");
-        rows = rows ? rows.getElementsByTagName("tr") : []; //check for tablator inline options
+        rows = rows ? rows.getElementsByTagName("tr") : []; //check for Tabulator inline options
 
         this._extractOptions(element, options);
 
@@ -18457,7 +18468,7 @@
       key: "_extractOptions",
       value: function _extractOptions(element, options, defaultOptions) {
         var attributes = element.attributes;
-        var optionsArr = defaultOptions ? Object.assign([], defaultOptions) : Object.keys(options);
+        var optionsArr = defaultOptions ? Object.keys(defaultOptions) : Object.keys(options);
         var optionsList = {};
         optionsArr.forEach(function (item) {
           optionsList[item.toLowerCase()] = item;
@@ -18525,12 +18536,10 @@
 
           if (width && !col.width) {
             col.width = width;
-          } //check for tablator inline options
+          } //check for Tabulator inline options
 
 
-          header.attributes; // //check for tablator inline options
-
-          this._extractOptions(header, col, Column$1.prototype.defaultOptionList);
+          this._extractOptions(header, col, this.table.columnManager.optionsList.registeredDefaults);
 
           this.fieldIndex[index] = col.field;
 
@@ -19628,7 +19637,9 @@
     }, {
       key: "initialize",
       value: function initialize() {
-        this.subscribe("column-init", this.initializeColumn.bind(this));
+        if (this.table.options.movableColumns) {
+          this.subscribe("column-init", this.initializeColumn.bind(this));
+        }
       }
     }, {
       key: "initializeColumn",
@@ -20939,7 +20950,7 @@
           margin = this.table.options.progressiveLoadScrollMargin || element.clientHeight * 2;
 
           if (diff < margin) {
-            this.nextPage();
+            this.nextPage()["catch"](function () {}); //consume the exception thrown when on the last page
           }
         }
       }
@@ -23378,7 +23389,7 @@
           this.subscribe("rows-wipe", this.clearSelectionData.bind(this));
           this.subscribe("rows-retrieve", this.rowRetrieve.bind(this));
 
-          if (this.table.options.selectable && this.table.options.selectablePersistence) {
+          if (this.table.options.selectable && !this.table.options.selectablePersistence) {
             this.subscribe("data-refeshing", this.deselectRows.bind(this));
           }
         }
@@ -23641,6 +23652,7 @@
       value: function deselectRows(rows, silent) {
         var self = this,
             rowCount;
+        console.trace("deselect");
 
         if (typeof rows == "undefined") {
           rowCount = self.selectedRows.length;
@@ -23885,8 +23897,8 @@
         emptyAlign = 0;
 
     if (typeof DT != "undefined") {
-      a = DT.fromFormat(a, format);
-      b = DT.fromFormat(b, format);
+      a = DT.fromFormat(String(a), format);
+      b = DT.fromFormat(String(b), format);
 
       if (!a.isValid) {
         emptyAlign = !b.isValid ? 0 : -1;
@@ -24274,7 +24286,7 @@
         if (this.table.options.sortMode === "remote") {
           this.reloadData();
         } else {
-          this.refreshData();
+          this.refreshData(true);
         } //TODO - Persist left position of row manager
         // left = this.scrollLeft;
         // this.scrollHorizontal(left);
