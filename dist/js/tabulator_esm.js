@@ -3626,7 +3626,7 @@ class ColumnCalcs extends Module{
 
 		row.getComponent = () => {
 			if(!row.component){
-				row.component = new CalcComponent(this);
+				row.component = new CalcComponent(row);
 			}
 
 			return row.component;
