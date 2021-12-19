@@ -46,7 +46,6 @@ class MoveColumns extends Module{
 		colEl;
 		
 		if(!column.modules.frozen){
-			console.log("MOVABLE")
 			colEl = column.getElement();
 			
 			config.mousemove = function(e){
