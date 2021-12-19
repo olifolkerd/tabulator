@@ -1648,7 +1648,7 @@ class ColumnComponent {
 	}
 }
 
-var defaultOptions = {
+var defaultColumnOptions = {
 	"title": undefined,
 	"field": undefined,
 	"columns": undefined,
@@ -2679,7 +2679,7 @@ class Column$1 extends CoreFeature{
 	}
 }
 
-Column$1.defaultOptionList = defaultOptions;
+Column$1.defaultOptionList = defaultColumnOptions;
 
 //public row object
 class RowComponent$1 {
@@ -11744,7 +11744,7 @@ class HtmlTableImport extends Module{
 
 		rows = rows ? rows.getElementsByTagName("tr") : [];
 
-		//check for tablator inline options
+		//check for Tabulator inline options
 		this._extractOptions(element, options);
 
 		if(headers.length){
@@ -11783,7 +11783,7 @@ class HtmlTableImport extends Module{
 	//extract tabulator attribute options
 	_extractOptions(element, options, defaultOptions){
 		var attributes = element.attributes;
-		var optionsArr = defaultOptions ? Object.assign([], defaultOptions) : Object.keys(options);
+		var optionsArr = defaultOptions ? Object.keys(defaultOptions) : Object.keys(options);
 		var optionsList = {};
 
 		optionsArr.forEach((item) => {
@@ -11850,11 +11850,8 @@ class HtmlTableImport extends Module{
 				col.width = width;
 			}
 
-			//check for tablator inline options
-			header.attributes;
-
-			// //check for tablator inline options
-			this._extractOptions(header, col, Column$1.prototype.defaultOptionList);
+			//check for Tabulator inline options
+			this._extractOptions(header, col, this.table.columnManager.optionsList.registeredDefaults);
 
 			this.fieldIndex[index] = col.field;
 
@@ -17925,7 +17922,7 @@ var modules = /*#__PURE__*/Object.freeze({
 	ValidateModule: Validate
 });
 
-var defaultOptions$1 = {
+var defaultOptions = {
 
 	debugEventsExternal:false, //flag to console log events
 	debugEventsInternal:false, //flag to console log events
@@ -17987,10 +17984,10 @@ var defaultOptions$1 = {
 };
 
 class OptionsList {
-	constructor(table, msgType){
+	constructor(table, msgType, defaults = {}){
 		this.table = table;
 		this.msgType = msgType;
-		this.registeredDefaults = {};
+		this.registeredDefaults = Object.assign({}, defaults);
 	}
 
 	register(option, value){
@@ -18730,7 +18727,7 @@ class ColumnManager extends CoreFeature {
 		this.columnsByIndex = []; //columns by index
 		this.columnsByField = {}; //columns by field
 		this.scrollLeft = 0;
-		this.optionsList = new OptionsList(this.table, "column definition");
+		this.optionsList = new OptionsList(this.table, "column definition", defaultColumnOptions);
 
 		this.renderer = null;
 	}
@@ -23425,7 +23422,7 @@ class Tabulator {
 }
 
 //default setup options
-Tabulator.defaultOptions = defaultOptions$1;
+Tabulator.defaultOptions = defaultOptions;
 
 //bind modules and static functionality
 new ModuleBinder(Tabulator);

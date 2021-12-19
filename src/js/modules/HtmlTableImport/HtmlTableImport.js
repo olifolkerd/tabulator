@@ -35,7 +35,7 @@ class HtmlTableImport extends Module{
 
 		rows = rows ? rows.getElementsByTagName("tr") : [];
 
-		//check for tablator inline options
+		//check for Tabulator inline options
 		this._extractOptions(element, options);
 
 		if(headers.length){
@@ -74,7 +74,7 @@ class HtmlTableImport extends Module{
 	//extract tabulator attribute options
 	_extractOptions(element, options, defaultOptions){
 		var attributes = element.attributes;
-		var optionsArr = defaultOptions ? Object.assign([], defaultOptions) : Object.keys(options);
+		var optionsArr = defaultOptions ? Object.keys(defaultOptions) : Object.keys(options);
 		var optionsList = {};
 
 		optionsArr.forEach((item) => {
@@ -141,11 +141,8 @@ class HtmlTableImport extends Module{
 				col.width = width;
 			}
 
-			//check for tablator inline options
-			attributes = header.attributes;
-
-			// //check for tablator inline options
-			this._extractOptions(header, col, Column.prototype.defaultOptionList);
+			//check for Tabulator inline options
+			this._extractOptions(header, col, this.table.columnManager.optionsList.registeredDefaults);
 
 			this.fieldIndex[index] = col.field;
 
