@@ -553,7 +553,7 @@ class Filter extends Module{
 			if(this.table.options.filterMode === "remote"){
 				this.reloadData();
 			}else{
-				this.refreshData();
+				this.refreshData(true);
 			}
 		}
 
