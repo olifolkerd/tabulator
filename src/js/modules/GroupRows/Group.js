@@ -43,10 +43,16 @@ class Group{
 				group.wipe();
 			});
 		}else{
-			this.element = false;
-			this.arrowElement = false;
-			this.elementContents = false;
+			this.rows.forEach((row) => {
+				if(row.modules){
+					delete row.modules.group;
+				}
+			});
 		}
+
+		this.element = false;
+		this.arrowElement = false;
+		this.elementContents = false;
 	}
 
 	createElements(){
@@ -268,7 +274,7 @@ class Group{
 			}
 
 			this.generateGroupHeaderContents();
-
+			
 			if(this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table"){
 				this.groupManager.table.modules.columnCalcs.recalcGroup(this);
 			}
