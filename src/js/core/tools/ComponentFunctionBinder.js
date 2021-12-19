@@ -1,4 +1,4 @@
-export default class ComponentFuctionBinder{
+export default class ComponentFunctionBinder{
 
 	constructor(table){
 		this.table = table;

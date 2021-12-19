@@ -7,7 +7,7 @@ import RowManager from './RowManager.js';
 import FooterManager from './FooterManager.js';
 
 import InteractionMonitor from './tools/InteractionMonitor.js';
-import ComponentFuctionBinder from './tools/ComponentFuctionBinder.js';
+import ComponentFunctionBinder from './tools/ComponentFunctionBinder.js';
 import DataLoader from './tools/DataLoader.js';
 
 import ExternalEventBus from './tools/ExternalEventBus.js';
@@ -33,11 +33,11 @@ class Tabulator {
 		this.interactionMonitor = false; //track user interaction
 		this.browser = ""; //hold current browser type
 		this.browserSlow = false; //handle reduced functionality for slower browsers
-		this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
+		this.browserMobile = false; //check if running on mobile, prevent resize cancelling edit on keyboard appearance
 		this.rtl = false; //check if the table is in RTL mode
 		this.originalElement = null; //hold original table element if it has been replaced
 
-		this.componentFunctionBinder = new ComponentFuctionBinder(this); //bind component functions
+		this.componentFunctionBinder = new ComponentFunctionBinder(this); //bind component functions
 		this.dataLoader = false; //bind component functions
 
 		this.modules = {}; //hold all modules bound to this table
@@ -92,7 +92,7 @@ class Tabulator {
 
 		this._clearObjectPointers();
 
-		this._mapDepricatedFunctionality();
+		this._mapDeprecatedFunctionality();
 
 		this.externalEvents = new ExternalEventBus(this, this.options, this.options.debugEventsExternal);
 		this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
@@ -105,8 +105,8 @@ class Tabulator {
 		this.footerManager.initialize();
 	}
 
-	//convert depricated functionality to new functions
-	_mapDepricatedFunctionality(){
+	//convert deprecated functionality to new functions
+	_mapDeprecatedFunctionality(){
 		//all previously deprecated functionality removed in the 5.0 release
 	}
 
@@ -127,7 +127,7 @@ class Tabulator {
 		this.element.classList.remove("tabulator-block-select");
 	}
 
-	//concreate table
+	//create table
 	_create(){
 		this.externalEvents.dispatch("tableBuilding");
 		this.eventBus.dispatch("table-building");
@@ -290,7 +290,7 @@ class Tabulator {
 	destroy(){
 		var element = this.element;
 
-		TableRegistry.deregister(this); //deregister table from inderdevice communication
+		TableRegistry.deregister(this); //deregister table from inter-device communication
 
 		this.eventBus.dispatch("table-destroy");
 
