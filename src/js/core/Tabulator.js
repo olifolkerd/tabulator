@@ -52,13 +52,13 @@ class Tabulator {
 
 			this.initialzeCoreSystems(options);
 
-			//delay table creation to allow event bindings immediatly after the constructor
+			//delay table creation to allow event bindings immediately after the constructor
 			setTimeout(() => {
 				this._create();
 			})
 		}
 
-		TableRegistry.register(this); //register table for inderdevice communication
+		TableRegistry.register(this); //register table for inter-device communication
 	}
 
 	initializeElement(element){
