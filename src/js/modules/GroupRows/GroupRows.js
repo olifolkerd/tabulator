@@ -225,7 +225,12 @@ class GroupRows extends Module{
 
 	setGroupBy(groups){
 		this.table.options.groupBy = groups;
-		this.configureGroupSetup();
+		if(!this.initialized){
+			this.initialize();
+		}else{
+			this.configureGroupSetup();
+		}
+
 		this.refreshData();
 
 		this.trackChanges();
