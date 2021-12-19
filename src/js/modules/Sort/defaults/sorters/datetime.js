@@ -6,8 +6,9 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	emptyAlign = 0;
 
 	if(typeof DT != "undefined"){
-		a = DT.fromFormat(a, format);
-		b = DT.fromFormat(b, format);
+		a = DT.fromFormat(String(a), format);
+		b = DT.fromFormat(String(b), format);
+
 		if(!a.isValid){
 			emptyAlign = !b.isValid ? 0 : -1;
 		}else if(!b.isValid){

@@ -9173,7 +9173,7 @@ function datetime(cell, formatterParams, onRendered){
 	var value = cell.getValue();
 
 	if(typeof DT != "undefined"){
-		var newDatetime = (window.DateTime || luxon.DateTime).fromFormat(value, inputFormat);
+		var newDatetime = DT.fromFormat(String(value), inputFormat);
 
 		if(newDatetime.isValid){
 
@@ -9184,7 +9184,7 @@ function datetime(cell, formatterParams, onRendered){
 			return newDatetime.toFormat(outputFormat);
 		}else {
 
-			if(invalid === true){
+			if(invalid === true || !value){
 				return value;
 			}else if(typeof invalid === "function"){
 				return invalid(value);
@@ -9208,7 +9208,7 @@ function datetimediff (cell, formatterParams, onRendered) {
 	var value = cell.getValue();
 
 	if(typeof DT != "undefined"){
-		var newDatetime = DT.fromFormat(value, inputFormat);
+		var newDatetime = DT.fromFormat(String(value), inputFormat);
 
 		if (newDatetime.isValid){
 			if(humanize);else {
@@ -12870,7 +12870,6 @@ class MoveColumns extends Module{
 		colEl;
 		
 		if(!column.modules.frozen){
-			console.log("MOVABLE");
 			colEl = column.getElement();
 			
 			config.mousemove = function(e){
@@ -16891,8 +16890,9 @@ function datetime$1(a, b, aRow, bRow, column, dir, params){
 	emptyAlign = 0;
 
 	if(typeof DT != "undefined"){
-		a = DT.fromFormat(a, format);
-		b = DT.fromFormat(b, format);
+		a = DT.fromFormat(String(a), format);
+		b = DT.fromFormat(String(b), format);
+
 		if(!a.isValid){
 			emptyAlign = !b.isValid ? 0 : -1;
 		}else if(!b.isValid){
