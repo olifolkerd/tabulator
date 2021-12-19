@@ -198,7 +198,8 @@ class Page extends Module{
 			margin = this.table.options.progressiveLoadScrollMargin || (element.clientHeight * 2);
 
 			if(diff < margin){
-				this.nextPage();
+				this.nextPage()
+				.catch(() => {}}); //consume the exception thrown when on the last page
 			}
 		}
 	}

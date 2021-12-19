@@ -14083,7 +14083,8 @@ class Page extends Module{
 			margin = this.table.options.progressiveLoadScrollMargin || (element.clientHeight * 2);
 
 			if(diff < margin){
-				this.nextPage();
+				this.nextPage()
+				.catch(() => {console.log("end");});
 			}
 		}
 	}
@@ -21239,7 +21240,6 @@ class InteractionManager extends CoreFeature {
 	}
 
 	updateEventListeners(){
-		console.log("e update");
 		for(let key in this.listeners){
 			let listener = this.listeners[key];
 

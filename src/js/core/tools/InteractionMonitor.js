@@ -90,7 +90,6 @@ export default class InteractionManager extends CoreFeature {
 	}
 
 	updateEventListeners(){
-		console.log("e update")
 		for(let key in this.listeners){
 			let listener = this.listeners[key];
 
