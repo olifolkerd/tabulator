@@ -232,6 +232,8 @@ class Tabulator {
 		var element = this.element,
 		options = this.options;
 
+		this.interactionMonitor.initialize();
+
 		this.columnManager.initialize();
 		this.rowManager.initialize();
 

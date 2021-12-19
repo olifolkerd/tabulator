@@ -6,7 +6,7 @@ export default class InteractionManager extends CoreFeature {
 	constructor (table){
 		super(table);
 
-		this.el = this.table.element;
+		this.el = null;
 
 		this.abortClasses = ["tabulator-headers", "tabulator-table"];
 
@@ -31,7 +31,10 @@ export default class InteractionManager extends CoreFeature {
 			"tabulator-group":"group",
 			"tabulator-col":"column",
 		};
+	}
 
+	initialize(){
+		this.el = this.table.element;
 		this.buildListenerMap();
 		this.bindSubscriptionWatchers();
 	}
@@ -87,6 +90,7 @@ export default class InteractionManager extends CoreFeature {
 	}
 
 	updateEventListeners(){
+		console.log("e update")
 		for(let key in this.listeners){
 			let listener = this.listeners[key];
 
