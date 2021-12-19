@@ -37,7 +37,7 @@ class SelectRow extends Module{
 			this.subscribe("rows-wipe", this.clearSelectionData.bind(this));
 			this.subscribe("rows-retrieve", this.rowRetrieve.bind(this));
 
-			if(this.table.options.selectable && this.table.options.selectablePersistence){
+			if(this.table.options.selectable && !this.table.options.selectablePersistence){
 				this.subscribe("data-refeshing", this.deselectRows.bind(this));
 			}
 		}
@@ -65,6 +65,8 @@ class SelectRow extends Module{
 	initializeRow(row){
 		var self = this,
 		element = row.getElement();
+
+		console.log("init")
 
 		// trigger end of row selection
 		var endSelect = function(){
@@ -299,6 +301,7 @@ class SelectRow extends Module{
 		var self = this,
 		rowCount;
 
+		console.trace("deselect")
 		if(typeof rows == "undefined"){
 
 			rowCount = self.selectedRows.length;
