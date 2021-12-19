@@ -14084,7 +14084,7 @@ class Page extends Module{
 
 			if(diff < margin){
 				this.nextPage()
-				.catch(() => {console.log("end");});
+				.catch(() => {}); //consume the exception thrown when on the last page
 			}
 		}
 	}
