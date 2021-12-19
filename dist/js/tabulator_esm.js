@@ -23188,7 +23188,7 @@ class Tabulator {
 		if(row){
 			return row.updateData(data)
 			.then(()=>{
-				resolve(row.getComponent());
+				return Promise.resolve(row.getComponent());
 			})
 		}else {
 			console.warn("Update Error - No matching row found:", index);
