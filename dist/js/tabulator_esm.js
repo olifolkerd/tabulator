@@ -21465,7 +21465,7 @@ class DataLoader extends CoreFeature{
 			}
 
 			//get params for request
-			var params = this.chain("data-params", [data, config, silent], params || {}, {});
+			params = this.chain("data-params", [data, config, silent], params || {}, params || {});
 
 			params = this.mapParams(params, this.table.options.dataSendParams);
 
