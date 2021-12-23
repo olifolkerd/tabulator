@@ -3808,12 +3808,10 @@ class DataTree extends Module{
 	initialize(){
 		if(this.table.options.dataTree){
 			var dummyEl = null,
-			firstCol = this.table.columnManager.getFirstVisibileColumn(),
 			options = this.table.options;
 
 			this.field = options.dataTreeChildField;
 			this.indent = options.dataTreeChildIndent;
-			this.elementField = options.dataTreeElementColumn || (firstCol ? firstCol.field : false);
 
 			if(options.dataTreeBranchElement){
 
@@ -3885,11 +3883,18 @@ class DataTree extends Module{
 			this.subscribe("row-deleted", this.rowDelete.bind(this),0);
 			this.subscribe("row-data-changed", this.rowDataChanged.bind(this), 10);
 			this.subscribe("column-moving-rows", this.columnMoving.bind(this));
+			this.subscribe("table-built", this.initializeElementField.bind(this));
 
 			this.registerDisplayHandler(this.getRows.bind(this), 30);
 		}
 	}
 
+	initializeElementField(){
+		var firstCol = this.table.columnManager.getFirstVisibleColumn();
+
+		this.elementField = this.table.options.dataTreeElementColumn || (firstCol ? firstCol.field : false);
+	}
+	
 	getRowChildren(row){
 		return this.getTreeChildren(row, true);
 	}
@@ -19054,7 +19059,7 @@ class ColumnManager extends CoreFeature {
 		return this.columnsByIndex[index];
 	}
 
-	getFirstVisibileColumn(index){
+	getFirstVisibleColumn(index){
 		var index = this.columnsByIndex.findIndex((col) => {
 			return col.visible;
 		});

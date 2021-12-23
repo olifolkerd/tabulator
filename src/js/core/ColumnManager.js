@@ -350,7 +350,7 @@ export default class ColumnManager extends CoreFeature {
 		return this.columnsByIndex[index];
 	}
 
-	getFirstVisibileColumn(index){
+	getFirstVisibleColumn(index){
 		var index = this.columnsByIndex.findIndex((col) => {
 			return col.visible;
 		});
