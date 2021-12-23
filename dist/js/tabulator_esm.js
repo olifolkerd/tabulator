@@ -1810,7 +1810,7 @@ class Column$1 extends CoreFeature{
 		var def = this.definition;
 
 		//set header tooltips
-		var tooltip = typeof def.headerTooltip === "undefined" ? def.tooltip : def.headerTooltip;
+		var tooltip = def.headerTooltip;
 
 		if(tooltip){
 			if(tooltip === true){
