@@ -16692,8 +16692,7 @@ class SelectRow extends Module{
 	deselectRows(rows, silent){
 		var self = this,
 		rowCount;
-
-		console.trace("deselect");
+		
 		if(typeof rows == "undefined"){
 
 			rowCount = self.selectedRows.length;
