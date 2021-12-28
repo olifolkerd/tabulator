@@ -53,6 +53,7 @@ class ColumnCalcs extends Module{
 		this.subscribe("column-add", this.recalcActiveRows.bind(this));
 		this.subscribe("data-refeshed", this.recalcActiveRows.bind(this));
 		this.subscribe("table-redraw", this.tableRedraw.bind(this));
+		this.subscribe("rows-visible", this.visibleRows.bind(this));
 
 		this.registerTableFunction("getCalcResults", this.getResults.bind(this));
 		this.registerTableFunction("recalc", this.userRecalc.bind(this));
@@ -77,6 +78,18 @@ class ColumnCalcs extends Module{
 	///////////////////////////////////
 	///////// Internal Logic //////////
 	///////////////////////////////////
+
+	visibleRows(viewable, rows){
+		if(this.topRow){
+			rows.unshift(this.topRow);
+		}
+
+		if(this.botRow){
+			rows.push(this.botRow);
+		}
+	
+		return rows;
+	}
 
 	rowsUpdated(row){
 		if(this.table.options.groupBy){

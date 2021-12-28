@@ -3325,6 +3325,7 @@ class ColumnCalcs extends Module{
 		this.subscribe("column-add", this.recalcActiveRows.bind(this));
 		this.subscribe("data-refeshed", this.recalcActiveRows.bind(this));
 		this.subscribe("table-redraw", this.tableRedraw.bind(this));
+		this.subscribe("rows-visible", this.visibleRows.bind(this));
 
 		this.registerTableFunction("getCalcResults", this.getResults.bind(this));
 		this.registerTableFunction("recalc", this.userRecalc.bind(this));
@@ -3349,6 +3350,18 @@ class ColumnCalcs extends Module{
 	///////////////////////////////////
 	///////// Internal Logic //////////
 	///////////////////////////////////
+
+	visibleRows(viewable, rows){
+		if(this.topRow){
+			rows.unshift(this.topRow);
+		}
+
+		if(this.botRow){
+			rows.push(this.botRow);
+		}
+	
+		return rows;
+	}
 
 	rowsUpdated(row){
 		if(this.table.options.groupBy){
@@ -7456,7 +7469,7 @@ class Export extends Module{
 			switch(range){
 				case true:
 				case "visible":
-				rows = this.table.rowManager.getVisibleRows(true);
+				rows = this.table.rowManager.getVisibleRows(false, true);
 				break;
 
 				case "all":
@@ -20791,8 +20804,14 @@ class RowManager extends CoreFeature{
 		}
 	}
 
-	getVisibleRows(viewable){
-		return this.renderer.visibleRows(!viewable);
+	getVisibleRows(chain, viewable){
+		var rows =  Object.assign([], this.renderer.visibleRows(!viewable));
+
+		if(chain){
+			rows = this.chain("rows-visible", [viewable], rows, rows);
+		}
+
+		return rows;
 	}
 
 	//repeat action accross display rows
@@ -21382,7 +21401,7 @@ class InteractionManager extends CoreFeature {
 					case "row":
 					case "group":
 					if(listener.components.includes("row") || listener.components.includes("cell")){
-						let rows = this.table.rowManager.getVisibleRows();
+						let rows = this.table.rowManager.getVisibleRows(true);
 						
 						component = rows.find((row) => {
 							return row.getElement() === target;

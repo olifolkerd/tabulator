@@ -63,7 +63,7 @@ class Export extends Module{
 			switch(range){
 				case true:
 				case "visible":
-				rows = this.table.rowManager.getVisibleRows(true);
+				rows = this.table.rowManager.getVisibleRows(false, true);
 				break;
 
 				case "all":

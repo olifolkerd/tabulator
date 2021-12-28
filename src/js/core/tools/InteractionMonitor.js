@@ -228,7 +228,7 @@ export default class InteractionManager extends CoreFeature {
 					case "row":
 					case "group":
 					if(listener.components.includes("row") || listener.components.includes("cell")){
-						let rows = this.table.rowManager.getVisibleRows();
+						let rows = this.table.rowManager.getVisibleRows(true);
 						
 						component = rows.find((row) => {
 							return row.getElement() === target;

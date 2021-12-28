@@ -772,8 +772,14 @@ export default class RowManager extends CoreFeature{
 		}
 	}
 
-	getVisibleRows(viewable){
-		return this.renderer.visibleRows(!viewable);
+	getVisibleRows(chain, viewable){
+		var rows =  Object.assign([], this.renderer.visibleRows(!viewable));
+
+		if(chain){
+			rows = this.chain("rows-visible", [viewable], rows, rows);
+		}
+
+		return rows;
 	}
 
 	//repeat action accross display rows
