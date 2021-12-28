@@ -30,6 +30,7 @@ class Column extends CoreFeature{
 		this.getFieldValue = "";
 		this.setFieldValue = "";
 
+    this.titleDownload = null;
 		this.titleFormatterRendered = false;
 
 		this.mapDefinitions();
@@ -570,6 +571,10 @@ class Column extends CoreFeature{
 	getField(){
 		return this.field;
 	}
+
+  getTitleDownload() {
+    return this.titleDownload;
+  }
 
 	//return the first column in a group
 	getFirstColumn(){
