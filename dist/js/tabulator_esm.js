@@ -21185,12 +21185,20 @@ class InteractionManager extends CoreFeature {
 			"tabulator-group":"group",
 			"tabulator-col":"column",
 		};
+
+		this.pseudoTrackers = {
+			"row":null,
+			"cell":null,
+			"group":null,
+			"column":null,
+		};
 	}
 	
 	initialize(){
 		this.el = this.table.element;
 		this.buildListenerMap();
 		this.bindSubscriptionWatchers();
+		this.bindPseudoEvents();
 	}
 	
 	buildListenerMap(){
@@ -21205,6 +21213,53 @@ class InteractionManager extends CoreFeature {
 		
 		this.listeners = listenerMap;
 	}
+
+	bindPseudoEvents(){
+		Object.keys(this.pseudoTrackers).forEach((key) => {
+			this.subscribe(key + "-mouseover", this.pseudoMouseEnter.bind(this, key));
+			// this.subscribe(key + "-mouseout", this.pseudoMouseLeave.bind(this, key));
+		});
+	}
+
+	pseudoMouseEnter(key, e, target){
+		if(this.pseudoTrackers[key] !== target){
+			
+			if(this.pseudoTrackers[key]){
+				this.dispatch(key + "-mouseleave", e, target);
+			}
+
+			this.pseudoMouseLeave(key, e);
+
+			this.pseudoTrackers[key] = target;
+
+			this.dispatch(key + "-mouseenter", e, target);
+		}
+	}
+
+	pseudoMouseLeave(key, e){
+		var leaveList = Object.keys(this.pseudoTrackers),
+		linkedKeys = {
+			"row":["cell"],
+			"cell":["row"],
+		};
+
+		leaveList = leaveList.filter((item) => {
+			var links = linkedKeys[key];
+			return item !== key && (!links || (links && !links.includes(item)));
+		});
+
+	
+		leaveList.forEach((key) => {
+			var target = this.pseudoTrackers[key];
+
+			if(this.pseudoTrackers[key]){
+				this.dispatch(key + "-mouseleave", e, target);
+
+				this.pseudoTrackers[key] = null;
+			}
+		});
+	}
+
 	
 	bindSubscriptionWatchers(){
 		var listeners = Object.keys(this.listeners),
@@ -21266,9 +21321,15 @@ class InteractionManager extends CoreFeature {
 	
 	track(type, e){
 		var path = (e.composedPath && e.composedPath()) || e.path;
+		
 		var targets = this.findTargets(path);
 		targets = this.bindComponents(type, targets);
+
 		this.triggerEvents(type, e, targets);
+
+		if((type == "mouseover" || type == "mouseleave") && !Object.keys(targets).length){
+			this.pseudoMouseLeave("none", e);
+		}
 	}
 	
 	findTargets(path){
