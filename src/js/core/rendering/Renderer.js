@@ -146,8 +146,9 @@ export default class Renderer extends CoreFeature{
 				if(!ifVisible){
 					if(Helpers.elVisible(rowEl)){
 						offset = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.elementVertical).top;
-
+						
 						if(offset > 0 && offset < this.elementVertical.clientHeight - rowEl.offsetHeight){
+							resolve();
 							return false;
 						}
 					}
