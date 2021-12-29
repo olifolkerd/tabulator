@@ -77,8 +77,6 @@ export default function(list, options, setFileContents){
 				}
 
 				rowData.push(cell);
-			}else{
-				rowData.push("");
 			}
 		});
 

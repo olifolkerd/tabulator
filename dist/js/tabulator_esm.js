@@ -4531,8 +4531,6 @@ function pdf(list, options, setFileContents){
 				}
 
 				rowData.push(cell);
-			}else {
-				rowData.push("");
 			}
 		});
 
