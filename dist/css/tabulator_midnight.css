@@ -903,6 +903,10 @@
   right: initial;
 }
 
+.tabulator.tabulator-rtl .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-sorter {
+  position: initial;
+}
+
 .tabulator.tabulator-rtl .tabulator-row .tabulator-cell {
   border-right: initial;
   border-left: 1px solid #888;
