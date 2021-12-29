@@ -10728,7 +10728,7 @@ class Group{
 
 			this.element.classList.add("tabulator-group-visible");
 
-			var prev = this.getElement();
+			var prev = this.generateElement();
 
 			if(this.groupList.length){
 				this.groupList.forEach((group) => {
@@ -10846,7 +10846,11 @@ class Group{
 	////////////// Standard Row Functions //////////////
 
 	getElement(){
-		this.addBindingsd = false;
+		return this.elementContents ? this.element : this.generateElement();
+	}
+
+	generateElement(){
+		this.addBindings = false;
 
 		this._visSet();
 
