@@ -19,7 +19,7 @@ export default {
 	autoColumns:false, //build columns from data row structure
 	autoColumnsDefinitions:false,
 
-	nestedFieldSeparator:".", //seperatpr for nested data
+	nestedFieldSeparator:".", //separator for nested data
 
 	tooltipGenerationMode:"load", //when to generate tooltips
 
