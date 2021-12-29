@@ -3891,6 +3891,8 @@ class DataTree extends Module{
 			this.subscribe("row-layout-after", this.layoutRow.bind(this));
 			this.subscribe("row-deleted", this.rowDelete.bind(this),0);
 			this.subscribe("row-data-changed", this.rowDataChanged.bind(this), 10);
+			this.subscribe("cell-value-updated", this.cellValueChanged.bind(this));
+			this.subscribe("edit-cancelled", this.cellValueChanged.bind(this));
 			this.subscribe("column-moving-rows", this.columnMoving.bind(this));
 			this.subscribe("table-built", this.initializeElementField.bind(this));
 
@@ -3926,6 +3928,14 @@ class DataTree extends Module{
 				this.layoutRow(row);
 				this.refreshData(true);
 			}
+		}
+	}
+
+	cellValueChanged(cell){
+		var field = cell.column.getField();
+
+		if(field === this.elementField){
+			this.layoutRow(cell.row);
 		}
 	}
 
@@ -4333,17 +4343,12 @@ class DataTree extends Module{
 		return output;
 	}
 
-	checkForRestyle(cell){
-		if(!cell.row.cells.indexOf(cell)){
-			this.layoutRow(cell.row);
-		}
-	}
-
 	getChildField(){
 		return this.field;
 	}
 
 	redrawNeeded(data){
+		console.log("needed?", data);
 		return (this.field ? typeof data[this.field] !== "undefined" : false) || (this.elementField ? typeof data[this.elementField] !== "undefined" : false);
 	}
 }
@@ -7098,6 +7103,7 @@ class Edit extends Module{
 				cell.column.definition.cellEditCancelled.call(this.table, component);
 			}
 
+			this.dispatch("edit-cancelled", cell);
 			this.dispatchExternal("cellEditCancelled", component);
 		}
 	}
@@ -7228,10 +7234,6 @@ class Edit extends Module{
 
 					cell.setValue(value, true);
 
-					if(self.table.options.dataTree && self.table.modExists("dataTree")){
-						self.table.modules.dataTree.checkForRestyle(cell);
-					}
-
 					if(valid !== true){
 						element.classList.add("tabulator-validation-fail");
 						self.table.externalEvents.dispatch("validationFailed", cell.getComponent(), value, valid);
@@ -7254,10 +7256,6 @@ class Edit extends Module{
 		function cancel(){
 			if(self.currentCell === cell){
 				self.cancelEdit();
-
-				if(self.table.options.dataTree && self.table.modExists("dataTree")){
-					self.table.modules.dataTree.checkForRestyle(cell);
-				}
 			}
 		}
 

@@ -442,6 +442,7 @@ class Edit extends Module{
 				cell.column.definition.cellEditCancelled.call(this.table, component);
 			}
 
+			this.dispatch("edit-cancelled", cell);
 			this.dispatchExternal("cellEditCancelled", component);
 		}
 	}
@@ -572,10 +573,6 @@ class Edit extends Module{
 
 					cell.setValue(value, true);
 
-					if(self.table.options.dataTree && self.table.modExists("dataTree")){
-						self.table.modules.dataTree.checkForRestyle(cell);
-					}
-
 					if(valid !== true){
 						element.classList.add("tabulator-validation-fail");
 						self.table.externalEvents.dispatch("validationFailed", cell.getComponent(), value, valid);
@@ -600,10 +597,6 @@ class Edit extends Module{
 		function cancel(){
 			if(self.currentCell === cell){
 				self.cancelEdit();
-
-				if(self.table.options.dataTree && self.table.modExists("dataTree")){
-					self.table.modules.dataTree.checkForRestyle(cell);
-				}
 			}else{
 				// console.warn("Edit Success Error - cannot call cancel on a cell that is no longer being edited");
 			}
