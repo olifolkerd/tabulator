@@ -1129,6 +1129,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					left:8px;
 					right:initial;
 				}
+				
+				.tabulator-col-sorter{
+					position: initial;
+				}
 			}
 		}
 	}
