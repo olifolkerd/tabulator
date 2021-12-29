@@ -22,13 +22,10 @@ class Page extends Module{
 
 		this.pageSizes = [];
 
-		this.dataReceivedNames = {}; //TODO - remove once pagimation update is complete
-		this.dataSentNames = {}; //TODO - remove once pagimation update is complete
-
 		this.registerTableOption("pagination", false); //set pagination type
 		this.registerTableOption("paginationMode", "local"); //local or remote pagination
 		this.registerTableOption("paginationSize", false); //set number of rows to a page
-		this.registerTableOption("paginationInitialPage", 1); //initail page to show on load
+		this.registerTableOption("paginationInitialPage", 1); //initial page to show on load
 		this.registerTableOption("paginationButtonCount", 5);  // set count of page button
 		this.registerTableOption("paginationSizeSelector", false); //add pagination size selector element
 		this.registerTableOption("paginationElement", false); //element to hold pagination numbers
@@ -77,10 +74,10 @@ class Page extends Module{
 			this.createElements();
 			this.initializePaginator();
 		}else if(this.table.options.progressiveLoad){
-
 			this.subscribe("data-params", this.remotePageParams.bind(this));
 			this.subscribe("data-loaded", this._parseRemoteData.bind(this));
 			this.subscribe("table-built", this.calculatePageSizes.bind(this));
+			this.subscribe("data-processed", this.initialLoadComplete.bind(this));
 
 			this.initializeProgressive(this.table.options.progressiveLoad)
 
@@ -444,7 +441,7 @@ class Page extends Module{
 		}
 	}
 
-	//set the maxmum page
+	//set the maximum page
 	setMaxPage(max){
 
 		max = parseInt(max);
@@ -705,7 +702,7 @@ class Page extends Module{
 		var left, data, margin;
 
 		if(typeof data.last_page === "undefined"){
-			console.warn("Remote Pagination Error - Server response missing '" + this.dataReceivedNames.last_page + "' property");
+			console.warn("Remote Pagination Error - Server response missing '" + (this.options("dataReceiveParams").last_page || "last_page") + "' property");
 		}
 
 		if(data.data){
@@ -729,7 +726,7 @@ class Page extends Module{
 					break;
 
 					case "progressive_scroll":
-					data = this.table.rowManager.getData().concat(data.data);
+					data = this.page === 1 ? data.data : this.table.rowManager.getData().concat(data.data);
 
 					this.table.rowManager.setData(data, this.page !== 1, this.page == 1);
 
@@ -752,7 +749,7 @@ class Page extends Module{
 			}
 
 		}else{
-			console.warn("Remote Pagination Error - Server response missing '" + this.dataReceivedNames.data + "' property");
+			console.warn("Remote Pagination Error - Server response missing '" + (this.options("dataReceiveParams").data || "data") + "' property");
 		}
 
 		return data.data;
