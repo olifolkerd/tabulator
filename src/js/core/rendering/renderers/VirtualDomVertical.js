@@ -44,7 +44,7 @@ export default class VirtualDomVertical extends Renderer{
 
 		element.style.paddingTop = "";
 		element.style.paddingBottom = "";
-		element.style.minWidth = "";
+		// element.style.minWidth = "";
 		element.style.minHeight = "";
 		element.style.display = "";
 		element.style.visibility = "";
