@@ -64,7 +64,7 @@ export default class DataLoader extends CoreFeature{
 			data = JSON.parse(data);
 		}
 
-		if(this.confirm("data-loading", data, params, config, silent)){
+		if(this.confirm("data-loading", [data, params, config, silent])){
 			this.loading = true;
 
 			if(!silent){
