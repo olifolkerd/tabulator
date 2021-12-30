@@ -1,4 +1,4 @@
-/* Tabulator v5.0.9 (c) Oliver Folkerd 2021 */
+/* Tabulator v5.0.10 (c) Oliver Folkerd 2021 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -1814,7 +1814,7 @@
           this.cells.forEach(function (cell) {
             cell.hide();
           });
-          this.dispatch("column-hide", this);
+          this.dispatch("column-hide", this, responsiveToggle);
 
           if (!silent) {
             this.dispatchExternal("columnVisibilityChanged", this.getComponent(), false);
@@ -2340,7 +2340,7 @@
       }
     }, {
       key: "scrollToRowNearestTop",
-      value: function scrollToRowNearestTop(row) {//determin weather the row is nearest the top or bottom of the table, retur true for top or false for bottom
+      value: function scrollToRowNearestTop(row) {//determine weather the row is nearest the top or bottom of the table, retur true for top or false for bottom
       }
     }, {
       key: "visibleRows",
@@ -2535,17 +2535,17 @@
             ok = true;
 
         if (this.options("layout") == "fitDataTable") {
-          console.warn("Horizontal Vitrual DOM is not compatible with fitDataTable layout mode");
+          console.warn("Horizontal Virtual DOM is not compatible with fitDataTable layout mode");
           ok = false;
         }
 
         if (this.options("responsiveLayout")) {
-          console.warn("Horizontal Vitrual DOM is not compatible with responsive columns");
+          console.warn("Horizontal Virtual DOM is not compatible with responsive columns");
           ok = false;
         }
 
         if (this.options("rtl")) {
-          console.warn("Horizontal Vitrual DOM is not currently compatible with RTL text direction");
+          console.warn("Horizontal Virtual DOM is not currently compatible with RTL text direction");
           ok = false;
         }
 
@@ -2555,7 +2555,7 @@
           });
 
           if (frozen) {
-            console.warn("Horizontal Vitrual DOM is not compatible with frozen columns");
+            console.warn("Horizontal Virtual DOM is not compatible with frozen columns");
             ok = false;
           }
         } // if(!ok){
@@ -2641,7 +2641,7 @@
 
         if (!blockRedraw) {
           if (!update || this.reinitChanged(old)) {
-            this.renitializeRows();
+            this.reinitializeRows();
           }
         }
 
@@ -2768,8 +2768,8 @@
         return !match;
       }
     }, {
-      key: "renitializeRows",
-      value: function renitializeRows() {
+      key: "reinitializeRows",
+      value: function reinitializeRows() {
         var _this5 = this;
 
         var rows = this.table.rowManager.getVisibleRows();
@@ -2892,11 +2892,17 @@
         if (column && column.modules.vdomHoz.rightPos < this.vDomScrollPosLeft) {
           rows = this.table.rowManager.getVisibleRows();
           rows.forEach(function (row) {
-            if (row.type !== "group") {
-              var cell = row.getCell(column);
+            var cell, el;
 
-              if (cell.parentNode) {
-                row.getElement().removeChild(cell.getElement());
+            if (row.type !== "group") {
+              cell = row.getCell(column);
+
+              if (cell) {
+                el = cell.getElement();
+
+                if (el.parentNode) {
+                  row.getElement().removeChild(el);
+                }
               }
             }
           });
@@ -6111,11 +6117,24 @@
         "tabulator-col": "column"
       };
       _this.pseudoTrackers = {
-        "row": null,
-        "cell": null,
-        "group": null,
-        "column": null
+        "row": {
+          subscriber: null,
+          target: null
+        },
+        "cell": {
+          subscriber: null,
+          target: null
+        },
+        "group": {
+          subscriber: null,
+          target: null
+        },
+        "column": {
+          subscriber: null,
+          target: null
+        }
       };
+      _this.pseudoTracking = false;
       return _this;
     }
 
@@ -6125,7 +6144,6 @@
         this.el = this.table.element;
         this.buildListenerMap();
         this.bindSubscriptionWatchers();
-        this.bindPseudoEvents();
       }
     }, {
       key: "buildListenerMap",
@@ -6145,20 +6163,22 @@
         var _this2 = this;
 
         Object.keys(this.pseudoTrackers).forEach(function (key) {
-          _this2.subscribe(key + "-mouseover", _this2.pseudoMouseEnter.bind(_this2, key)); // this.subscribe(key + "-mouseout", this.pseudoMouseLeave.bind(this, key));
+          _this2.pseudoTrackers[key].subscriber = _this2.pseudoMouseEnter.bind(_this2, key);
 
+          _this2.subscribe(key + "-mouseover", _this2.pseudoTrackers[key].subscriber);
         });
+        this.pseudoTracking = true;
       }
     }, {
       key: "pseudoMouseEnter",
       value: function pseudoMouseEnter(key, e, target) {
-        if (this.pseudoTrackers[key] !== target) {
-          if (this.pseudoTrackers[key]) {
+        if (this.pseudoTrackers[key].target !== target) {
+          if (this.pseudoTrackers[key].target) {
             this.dispatch(key + "-mouseleave", e, target);
           }
 
           this.pseudoMouseLeave(key, e);
-          this.pseudoTrackers[key] = target;
+          this.pseudoTrackers[key].target = target;
           this.dispatch(key + "-mouseenter", e, target);
         }
       }
@@ -6177,12 +6197,12 @@
           return item !== key && (!links || links && !links.includes(item));
         });
         leaveList.forEach(function (key) {
-          var target = _this3.pseudoTrackers[key];
+          var target = _this3.pseudoTrackers[key].target;
 
-          if (_this3.pseudoTrackers[key]) {
+          if (_this3.pseudoTrackers[key].target) {
             _this3.dispatch(key + "-mouseleave", e, target);
 
-            _this3.pseudoTrackers[key] = null;
+            _this3.pseudoTrackers[key].target = null;
           }
         });
       }
@@ -6234,6 +6254,10 @@
           }
         }
 
+        if ((key === "mouseenter" || key === "mouseleave") && !this.pseudoTracking) {
+          this.bindPseudoEvents();
+        }
+
         if (changed) {
           this.updateEventListeners();
         }
@@ -6265,7 +6289,7 @@
         targets = this.bindComponents(type, targets);
         this.triggerEvents(type, e, targets);
 
-        if ((type == "mouseover" || type == "mouseleave") && !Object.keys(targets).length) {
+        if (this.pseudoTracking && (type == "mouseover" || type == "mouseleave") && !Object.keys(targets).length) {
           this.pseudoMouseLeave("none", e);
         }
       }
@@ -6536,7 +6560,7 @@
           data = JSON.parse(data);
         }
 
-        if (this.confirm("data-loading", data, params, config, silent)) {
+        if (this.confirm("data-loading", [data, params, config, silent])) {
           this.loading = true;
 
           if (!silent) {
@@ -13648,14 +13672,15 @@
         var cell = this.currentCell,
             cellEl;
         this.invalidEdit = false;
+        console.log("clear", cancel, cell, cell.validate);
 
         if (cell) {
           this.currentCell = false;
           cellEl = cell.getElement();
 
           if (cancel) {
-            if (cell.validate) {
-              cell.validate();
+            if (cell.column.modules.validate && this.table.modExists("validate")) {
+              this.table.modules.validate.cellValidate(cell);
             }
           } else {
             cellEl.classList.remove("tabulator-validation-fail");
@@ -16499,7 +16524,7 @@
         this.subscribe("cell-layout", this.layoutCell.bind(this));
         this.subscribe("column-init", this.initializeColumn.bind(this));
         this.subscribe("column-width", this.layout.bind(this));
-        this.subscribe("row-layout-before", this.layoutRow.bind(this));
+        this.subscribe("row-layout-after", this.layoutRow.bind(this));
         this.subscribe("table-layout", this.layout.bind(this));
         this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
         this.subscribe("columns-loading", this.reset.bind(this));
@@ -23076,7 +23101,7 @@
       _this.registerColumnOption("responsive");
 
       return _this;
-    } //generate resposive columns list
+    } //generate responsive columns list
 
 
     _createClass(ResponsiveLayout, [{
@@ -23115,7 +23140,7 @@
         this.mode = this.table.options.responsiveLayout;
         this.collapseFormatter = this.table.options.responsiveLayoutCollapseFormatter || this.formatCollapsedData;
         this.collapseStartOpen = this.table.options.responsiveLayoutCollapseStartOpen;
-        this.hiddenColumns = []; //detemine level of responsivity for each column
+        this.hiddenColumns = []; //determine level of responsivity for each column
 
         this.table.columnManager.columnsByIndex.forEach(function (column, i) {
           if (column.modules.responsive) {
@@ -23212,9 +23237,8 @@
       value: function updateColumnVisibility(column, responsiveToggle) {
         if (!responsiveToggle && column.modules.responsive) {
           column.modules.responsive.visible = column.visible;
-          this.initialize();
-        } //this.update();
-
+          this.initializeResponsivity();
+        }
       }
     }, {
       key: "hideColumn",
