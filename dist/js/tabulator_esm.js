@@ -21202,18 +21202,31 @@ class InteractionManager extends CoreFeature {
 		};
 
 		this.pseudoTrackers = {
-			"row":null,
-			"cell":null,
-			"group":null,
-			"column":null,
+			"row":{
+				subscriber:null,
+				target:null,
+			},
+			"cell":{
+				subscriber:null,
+				target:null,
+			},
+			"group":{
+				subscriber:null,
+				target:null,
+			},
+			"column":{
+				subscriber:null,
+				target:null,
+			},
 		};
+
+		this.pseudoTracking = false;
 	}
 	
 	initialize(){
 		this.el = this.table.element;
 		this.buildListenerMap();
 		this.bindSubscriptionWatchers();
-		this.bindPseudoEvents();
 	}
 	
 	buildListenerMap(){
@@ -21231,21 +21244,23 @@ class InteractionManager extends CoreFeature {
 
 	bindPseudoEvents(){
 		Object.keys(this.pseudoTrackers).forEach((key) => {
-			this.subscribe(key + "-mouseover", this.pseudoMouseEnter.bind(this, key));
-			// this.subscribe(key + "-mouseout", this.pseudoMouseLeave.bind(this, key));
+			this.pseudoTrackers[key].subscriber = this.pseudoMouseEnter.bind(this, key);
+			this.subscribe(key + "-mouseover", this.pseudoTrackers[key].subscriber);
 		});
+
+		this.pseudoTracking = true;
 	}
 
 	pseudoMouseEnter(key, e, target){
-		if(this.pseudoTrackers[key] !== target){
+		if(this.pseudoTrackers[key].target !== target){
 			
-			if(this.pseudoTrackers[key]){
+			if(this.pseudoTrackers[key].target){
 				this.dispatch(key + "-mouseleave", e, target);
 			}
 
 			this.pseudoMouseLeave(key, e);
 
-			this.pseudoTrackers[key] = target;
+			this.pseudoTrackers[key].target = target;
 
 			this.dispatch(key + "-mouseenter", e, target);
 		}
@@ -21265,12 +21280,12 @@ class InteractionManager extends CoreFeature {
 
 	
 		leaveList.forEach((key) => {
-			var target = this.pseudoTrackers[key];
+			var target = this.pseudoTrackers[key].target;
 
-			if(this.pseudoTrackers[key]){
+			if(this.pseudoTrackers[key].target){
 				this.dispatch(key + "-mouseleave", e, target);
 
-				this.pseudoTrackers[key] = null;
+				this.pseudoTrackers[key].target = null;
 			}
 		});
 	}
@@ -21295,7 +21310,7 @@ class InteractionManager extends CoreFeature {
 		var listener = this.listeners[key].components,
 		index = listener.indexOf(component),
 		changed = false;
-		
+
 		if(added){
 			if(index === -1){
 				listener.push(component);
@@ -21308,6 +21323,10 @@ class InteractionManager extends CoreFeature {
 					changed = true;
 				}
 			}
+		}
+
+		if((key === "mouseenter" || key === "mouseleave") && !this.pseudoTracking){
+			this.bindPseudoEvents();
 		}
 		
 		if(changed){
@@ -21342,7 +21361,7 @@ class InteractionManager extends CoreFeature {
 
 		this.triggerEvents(type, e, targets);
 
-		if((type == "mouseover" || type == "mouseleave") && !Object.keys(targets).length){
+		if(this.pseudoTracking && (type == "mouseover" || type == "mouseleave") && !Object.keys(targets).length){
 			this.pseudoMouseLeave("none", e);
 		}
 	}
