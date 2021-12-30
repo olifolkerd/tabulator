@@ -703,7 +703,7 @@ class Column extends CoreFeature{
 				cell.hide();
 			});
 
-			this.dispatch("column-hide", this);
+			this.dispatch("column-hide", this, responsiveToggle);
 
 			if(!silent){
 				this.dispatchExternal("columnVisibilityChanged", this.getComponent(), false);

@@ -2361,7 +2361,7 @@ class Column$1 extends CoreFeature{
 				cell.hide();
 			});
 
-			this.dispatch("column-hide", this);
+			this.dispatch("column-hide", this, responsiveToggle);
 
 			if(!silent){
 				this.dispatchExternal("columnVisibilityChanged", this.getComponent(), false);
@@ -16066,7 +16066,7 @@ class ResponsiveLayout extends Module{
 		this.registerColumnOption("responsive");
 	}
 
-	//generate resposive columns list
+	//generate responsive columns list
 	initialize(){
 
 		if(this.table.options.responsiveLayout){
@@ -16103,7 +16103,7 @@ class ResponsiveLayout extends Module{
 		this.collapseStartOpen = this.table.options.responsiveLayoutCollapseStartOpen;
 		this.hiddenColumns = [];
 
-		//detemine level of responsivity for each column
+		//determine level of responsivity for each column
 		this.table.columnManager.columnsByIndex.forEach(function(column, i){
 			if(column.modules.responsive){
 				if(column.modules.responsive.order && column.modules.responsive.visible){
@@ -16185,10 +16185,8 @@ class ResponsiveLayout extends Module{
 	updateColumnVisibility(column, responsiveToggle){
 		if(!responsiveToggle && column.modules.responsive){
 			column.modules.responsive.visible = column.visible;
-			this.initialize();
+			this.initializeResponsivity();
 		}
-
-		//this.update();
 	}
 
 	hideColumn(column){
