@@ -7065,20 +7065,23 @@ class Edit extends Module{
 
 		this.invalidEdit = false;
 
+		console.log("clear", cancel, cell, cell.validate);
+
 		if(cell){
 			this.currentCell = false;
 
 			cellEl = cell.getElement();
 
 			if(cancel){
-				if(cell.validate){
-					cell.validate();
+				if(cell.column.modules.validate && this.table.modExists("validate")){
+					this.table.modules.validate.cellValidate(cell);
 				}
 			}else {
 				cellEl.classList.remove("tabulator-validation-fail");
 			}
 
 			cellEl.classList.remove("tabulator-editing");
+
 			while(cellEl.firstChild) cellEl.removeChild(cellEl.firstChild);
 
 			cell.row.getElement().classList.remove("tabulator-row-editing");
