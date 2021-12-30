@@ -79,7 +79,7 @@ export default class Renderer extends CoreFeature{
 	}
 
 	scrollToRowNearestTop(row){
-		//determin weather the row is nearest the top or bottom of the table, retur true for top or false for bottom
+		//determine weather the row is nearest the top or bottom of the table, retur true for top or false for bottom
 	}
 
 	visibleRows(includingBuffer){
