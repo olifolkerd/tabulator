@@ -83,7 +83,7 @@ class Keybindings extends Module{
 				break;
 
 				default:
-				symbol = parseInt(symbol);
+				symbol = isNaN(symbol) ? symbol.toUpperCase().charCodeAt(0) : parseInt(symbol);
 				binding.keys.push(symbol);
 
 				if(!this.watchKeys[symbol]){
