@@ -405,8 +405,6 @@ class Edit extends Module{
 
 		this.invalidEdit = false;
 
-		console.log("clear", cancel, cell, cell.validate)
-
 		if(cell){
 			this.currentCell = false;
 
