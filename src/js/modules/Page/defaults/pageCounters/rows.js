@@ -1,6 +1,5 @@
 export default function(pageSize, currentRow, currentPage, totalRows, totalPages){
-
-    var el = document.createElement("span"),
+	var el = document.createElement("span"),
 	showingEl = document.createElement("span"),
 	valueEl = document.createElement("span"),
 	ofEl = document.createElement("span"),
@@ -11,15 +10,15 @@ export default function(pageSize, currentRow, currentPage, totalRows, totalPages
 		showingEl.innerHTML = value;
 	});
 	
-	valueEl.innerHTML = " " + currentPage + " ";
+	valueEl.innerHTML = " " + currentRow + "-" + Math.min((currentRow + pageSize - 1), totalRows) + " ";
 	
 	this.table.modules.localize.langBind("pagination|counter|of", (value) => {
 		ofEl.innerHTML = value;
 	});
 	
-	totalEl.innerHTML = " " + totalPages + " ";
+	totalEl.innerHTML = " " + totalRows + " ";
 	
-	this.table.modules.localize.langBind("pagination|counter|pages", (value) => {
+	this.table.modules.localize.langBind("pagination|counter|rows", (value) => {
 		rowsEl.innerHTML = value;
 	});
 	

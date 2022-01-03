@@ -13883,17 +13883,75 @@ Mutator.moduleName = "mutator";
 //load defaults
 Mutator.mutators = defaultMutators;
 
-function records(pageSize, currentRow, currentPage, totalRows, totalPages){
-    console.log("records", pageSize, currentRow, currentPage, totalRows, totalPages);
-	return "Showing " + currentRow + "-" + Math.min((currentRow + pageSize - 1), totalRows) +  " of " + totalRows + " records";
+function rows(pageSize, currentRow, currentPage, totalRows, totalPages){
+	var el = document.createElement("span"),
+	showingEl = document.createElement("span"),
+	valueEl = document.createElement("span"),
+	ofEl = document.createElement("span"),
+	totalEl = document.createElement("span"),
+	rowsEl = document.createElement("span");
+	
+	this.table.modules.localize.langBind("pagination|counter|showing", (value) => {
+		showingEl.innerHTML = value;
+	});
+	
+	valueEl.innerHTML = " " + currentRow + "-" + Math.min((currentRow + pageSize - 1), totalRows) + " ";
+	
+	this.table.modules.localize.langBind("pagination|counter|of", (value) => {
+		ofEl.innerHTML = value;
+	});
+	
+	totalEl.innerHTML = " " + totalRows + " ";
+	
+	this.table.modules.localize.langBind("pagination|counter|rows", (value) => {
+		rowsEl.innerHTML = value;
+	});
+	
+	el.appendChild(showingEl);
+	el.appendChild(valueEl);
+	el.appendChild(ofEl);
+	el.appendChild(totalEl);
+	el.appendChild(rowsEl);
+	
+	return el;
 }
 
 function pages(pageSize, currentRow, currentPage, totalRows, totalPages){
-	return "Showing " + currentPage + " of " + totalPages + " pages";
+
+    var el = document.createElement("span"),
+	showingEl = document.createElement("span"),
+	valueEl = document.createElement("span"),
+	ofEl = document.createElement("span"),
+	totalEl = document.createElement("span"),
+	rowsEl = document.createElement("span");
+	
+	this.table.modules.localize.langBind("pagination|counter|showing", (value) => {
+		showingEl.innerHTML = value;
+	});
+	
+	valueEl.innerHTML = " " + currentPage + " ";
+	
+	this.table.modules.localize.langBind("pagination|counter|of", (value) => {
+		ofEl.innerHTML = value;
+	});
+	
+	totalEl.innerHTML = " " + totalPages + " ";
+	
+	this.table.modules.localize.langBind("pagination|counter|pages", (value) => {
+		rowsEl.innerHTML = value;
+	});
+	
+	el.appendChild(showingEl);
+	el.appendChild(valueEl);
+	el.appendChild(ofEl);
+	el.appendChild(totalEl);
+	el.appendChild(rowsEl);
+	
+	return el;
 }
 
 var defaultPageCounters = {
-	records:records,
+	rows:rows,
 	pages:pages,
 };
 
@@ -22402,6 +22460,12 @@ var defaultLangs = {
 			"next":"Next",
 			"next_title":"Next Page",
 			"all":"All",
+			"counter":{
+				"showing": "Showing",
+				"of": "of",
+				"rows": "rows",
+				"pages": "pages",
+			}
 		},
 		"headerFilters":{
 			"default":"filter column...",

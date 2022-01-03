@@ -1,8 +1,8 @@
-import records from './pageCounters/records.js';
+import rows from './pageCounters/rows.js';
 import pages from './pageCounters/pages.js';
 
 
 export default {
-	records:records,
+	rows:rows,
 	pages:pages,
 };

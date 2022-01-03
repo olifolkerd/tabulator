@@ -22,6 +22,12 @@ export default {
 			"next":"Next",
 			"next_title":"Next Page",
 			"all":"All",
+			"counter":{
+				"showing": "Showing",
+				"of": "of",
+				"rows": "rows",
+				"pages": "pages",
+			}
 		},
 		"headerFilters":{
 			"default":"filter column...",
