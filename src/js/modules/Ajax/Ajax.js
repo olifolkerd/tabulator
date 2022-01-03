@@ -54,7 +54,7 @@ class Ajax extends Module{
 		
 		if(ajaxParams){
 			if(typeof ajaxParams === "function"){
-				ajaxParams = ajaxParams.call(this.table, data);
+				ajaxParams = ajaxParams.call(this.table);
 			}
 			
 			params = Object.assign(params, ajaxParams);
