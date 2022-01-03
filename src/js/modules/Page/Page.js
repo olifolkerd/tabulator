@@ -18,6 +18,8 @@ class Page extends Module{
 		this.page = 1;
 		this.count = 5;
 		this.max = 1;
+
+		this.remoteRowCountEstimate = null;
 		
 		this.displayIndex = 0; //index in display pipeline
 		
@@ -506,7 +508,6 @@ class Page extends Module{
 			break;
 		}
 		
-		
 		page = parseInt(page);
 		
 		if((page > 0 && page <= this.max) || this.mode !== "local"){
@@ -557,6 +558,10 @@ class Page extends Module{
 		
 		if(this.pageCounter){
 			currentRow = ((this.page - 1) * this.size) + 1;
+
+			if(this.mode === "remote"){
+				totalRows = this.remoteRowCountEstimate;
+			}
 
 			content = this.pageCounter.call(this, this.size, currentRow, this.page, totalRows, this.max);
 			
@@ -727,7 +732,7 @@ class Page extends Module{
 			return output;
 		}else{
 			this._setPageButtons();
-			// this._setPageCounter();
+			this._setPageCounter(data.length);
 			
 			return data.slice(0);
 		}
@@ -776,6 +781,8 @@ class Page extends Module{
 		
 		if(data.data){
 			this.max = parseInt(data.last_page) || 1;
+
+			this.remoteRowCountEstimate = typeof data.last_row !== "undefined" ? data.last_row : (data.last_page * this.size - (this.page == data.last_page ? (this.size - data.data.length) : 0));
 			
 			if(this.progressiveLoad){
 				switch(this.mode){
