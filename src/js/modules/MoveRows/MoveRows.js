@@ -322,6 +322,8 @@ class MoveRows extends Module{
 		document.body.addEventListener("mousemove", this.moveHover);
 		document.body.addEventListener("mouseup", this.endMove);
 
+		this.dispatchExternal("rowMoving", row.getComponent());
+
 		this.moveHover(e);
 	}
 
@@ -356,6 +358,8 @@ class MoveRows extends Module{
 
 			if(this.toRow){
 				this.table.rowManager.moveRow(this.moving, this.toRow, this.toRowAfter);
+			}else{
+				this.dispatchExternal("rowMoveCancelled", this.moving.getComponent());
 			}
 
 			this.moving = false;
