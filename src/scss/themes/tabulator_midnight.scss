@@ -90,6 +90,10 @@ $footerActiveColor:#fff !default; //footer bottom active text color
 			}
 		}
 
+		.tabulator-page-counter {
+			color: #fff;
+		}
+
 		//pagination button
 		.tabulator-page{
 			color: $footerTextColor;

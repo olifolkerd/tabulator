@@ -1139,6 +1139,10 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   color: #fff;
 }
 
+.tabulator .tabulator-footer .tabulator-page-counter {
+  color: #fff;
+}
+
 .tabulator .tabulator-footer .tabulator-page {
   color: #333;
   font-family: inherit;
