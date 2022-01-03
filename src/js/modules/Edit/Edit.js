@@ -72,9 +72,9 @@ class Edit extends Module{
 		newRow = this.options("tabEndNewRow");
 
 		if(cell){
-			if(!this.navigateNext(e)){
+			if(!this.navigateNext(cell, e)){
 				if(newRow){
-					cell.getElement().firstChild.blur();
+					// cell.getElement().firstChild.blur();
 
 					if(newRow === true){
 						newRow = this.table.addRow({})
@@ -88,7 +88,7 @@ class Edit extends Module{
 
 					newRow.then(() => {
 						setTimeout(() => {
-							nav.next();
+							cell.getComponent().navigateNext();
 						})
 					});
 				}
@@ -130,9 +130,8 @@ class Edit extends Module{
 		});
 	}
 
-	navigatePrev(e){
-		var cell = this.currentCell,
-		nextCell, prevRow;
+	navigatePrev(cell = this.currentCell, e){
+		var nextCell, prevRow;
 
 		if(cell){
 
@@ -161,9 +160,8 @@ class Edit extends Module{
 		return false;
 	}
 
-	navigateNext(e){
-		var cell = this.currentCell,
-		nextCell, nextRow;
+	navigateNext(cell = this.currentCell, e){
+		var nextCell, nextRow;
 
 		if(cell){
 
@@ -192,9 +190,8 @@ class Edit extends Module{
 		return false;
 	}
 
-	navigateLeft(e){
-		var cell = this.currentCell,
-		index, nextCell;
+	navigateLeft(cell = this.currentCell, e){
+		var index, nextCell;
 
 		if(cell){
 
@@ -214,9 +211,8 @@ class Edit extends Module{
 		return false;
 	}
 
-	navigateRight(e){
-		var cell = this.currentCell,
-		index, nextCell;
+	navigateRight(cell = this.currentCell, e){
+		var index, nextCell;
 
 		if(cell){
 
@@ -236,9 +232,8 @@ class Edit extends Module{
 		return false;
 	}
 
-	navigateUp(e){
-		var cell = this.currentCell,
-		index, nextRow;
+	navigateUp(cell = this.currentCell, e){
+		var index, nextRow;
 
 		if(cell){
 
@@ -258,9 +253,8 @@ class Edit extends Module{
 		return false;
 	}
 
-	navigateDown(e){
-		var cell = this.currentCell,
-		index, nextRow;
+	navigateDown(cell = this.currentCell, e){
+		var index, nextRow;
 
 		if(cell){
 
