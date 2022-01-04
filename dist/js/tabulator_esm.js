@@ -11823,6 +11823,17 @@ class HtmlTableImport extends Module{
 
 HtmlTableImport.moduleName = "htmlTableImport";
 
+class Import extends Module{
+
+constructor(table){
+		super(table);
+
+	}
+
+}
+
+Import.moduleName = "import";
+
 class Interaction extends Module{
 
 	constructor(table){
@@ -18027,6 +18038,7 @@ var modules = /*#__PURE__*/Object.freeze({
 	GroupRowsModule: GroupRows,
 	HistoryModule: History,
 	HtmlTableImportModule: HtmlTableImport,
+	ImportModule: Import,
 	InteractionModule: Interaction,
 	KeybindingsModule: Keybindings,
 	MenuModule: Menu,
@@ -23709,5 +23721,5 @@ class PseudoRow {
 	clearCellHeight(){}
 }
 
-export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent$1 as RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Validate as ValidateModule };
+export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent$1 as RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Validate as ValidateModule };
 //# sourceMappingURL=tabulator_esm.js.map
