@@ -38,6 +38,7 @@ class DataTree extends Module{
 		this.registerComponentFunction("row", "getTreeParent", this.getTreeParent.bind(this));
 		this.registerComponentFunction("row", "getTreeChildren", this.getRowChildren.bind(this));
 		this.registerComponentFunction("row", "addTreeChild", this.addTreeChildRow.bind(this));
+		this.registerComponentFunction("row", "isTreeExpanded", this.isRowExpanded.bind(this));
 	}
 
 	initialize(){
@@ -408,6 +409,10 @@ class DataTree extends Module{
 				this.expandRow(row);
 			}
 		}
+	}
+
+	isRowExpanded(row){
+		return row.modules.dataTree.open;
 	}
 
 	getTreeParent(row){
