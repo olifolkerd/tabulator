@@ -68,7 +68,7 @@ class Import extends Module{
     }
     
     importData(importer, fileContents){
-        var data = importer(fileContents);
+        var data = importer.call(this.table, fileContents);
         
         if(data instanceof Promise){
             return data;
@@ -78,7 +78,6 @@ class Import extends Module{
     }
     
     loadData(data){
-        console.log("DATA", data)
         return this.table.setData(data);
     }
 }
