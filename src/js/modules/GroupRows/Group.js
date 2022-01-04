@@ -18,6 +18,7 @@ class Group{
 		this.groups = [];
 		this.groupList = [];
 		this.generator = generator;
+		this.element = false;
 		this.elementContents = false;
 		this.height = 0;
 		this.outerHeight = 0;
@@ -86,62 +87,6 @@ class Group{
 
 	addBindings(){
 		var dblTap,	tapHold, tap, toggleElement;
-
-		if (this.groupManager.table.options.groupTap){
-			tap = false;
-
-			this.element.addEventListener("touchstart", (e) => {
-				tap = true;
-			}, {passive: true});
-
-			this.element.addEventListener("touchend", (e) => {
-				if(tap){
-					this.groupManager.table.options.groupTap(e, this.getComponent());
-				}
-
-				tap = false;
-			});
-		}
-
-		if (this.groupManager.table.options.groupDblTap){
-			dblTap = null;
-
-			this.element.addEventListener("touchend", (e) => {
-				if(dblTap){
-					clearTimeout(dblTap);
-					dblTap = null;
-
-					this.groupManager.table.options.groupDblTap(e, this.getComponent());
-				}else{
-
-					dblTap = setTimeout(() => {
-						clearTimeout(dblTap);
-						dblTap = null;
-					}, 300);
-				}
-			});
-		}
-
-		if (this.groupManager.table.options.groupTapHold){
-			tapHold = null;
-
-			this.element.addEventListener("touchstart", (e) => {
-				clearTimeout(tapHold);
-
-				tapHold = setTimeout(() => {
-					clearTimeout(tapHold);
-					tapHold = null;
-					tap = false;
-					this.groupManager.table.options.groupTapHold(e, this.getComponent());
-				}, 1000);
-
-			}, {passive: true});
-
-			this.element.addEventListener("touchend", (e) => {
-				clearTimeout(tapHold);
-				tapHold = null;
-			});
-		}
 
 		if(this.groupManager.table.options.groupToggleElement){
 			toggleElement = this.groupManager.table.options.groupToggleElement == "arrow" ? this.arrowElement : this.element;

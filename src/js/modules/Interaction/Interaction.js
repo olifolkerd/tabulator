@@ -84,6 +84,11 @@ class Interaction extends Module{
 				tap:null,
 				tapDbl:null,
 				tapHold:null,
+			},
+			group:{
+				tap:null,
+				tapDbl:null,
+				tapHold:null,
 			}
 		}
 
