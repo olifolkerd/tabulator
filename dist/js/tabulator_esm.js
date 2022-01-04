@@ -10335,10 +10335,6 @@ class Group{
 	addBindings(){
 		var dblTap,	tapHold, tap, toggleElement;
 
-		if ((this.groupManager.table.options.groupContextMenu || this.groupManager.table.options.groupClickMenu) && this.groupManager.table.modExists("menu")){
-			this.groupManager.table.modules.menu.initializeGroup.call(this.groupManager.table.modules.menu, this);
-		}
-
 		if (this.groupManager.table.options.groupTap){
 			tap = false;
 
@@ -12492,6 +12488,8 @@ class Menu extends Module{
 		this.positionReversedX = false;
 
 		this.currentComponent = null;
+
+		this.columnSubscribers = {};
 		
 		this.registerTableOption("rowContextMenu", false);
 		this.registerTableOption("rowClickMenu", false);
@@ -12499,67 +12497,107 @@ class Menu extends Module{
 		this.registerTableOption("groupClickMenu", false);
 		
 		this.registerColumnOption("headerContextMenu");
+		this.registerColumnOption("headerClickMenu");
 		this.registerColumnOption("headerMenu");
 		this.registerColumnOption("contextMenu");
 		this.registerColumnOption("clickMenu");
 	}
 	
 	initialize(){
-		this.subscribe("cell-layout", this.layoutCell.bind(this));
 		this.subscribe("column-init", this.initializeColumn.bind(this));
-		this.subscribe("row-init", this.initializeRow.bind(this));
+		this.initializeRowWatchers();
+		this.initializeGroupWatchers();
 	}
-	
-	layoutCell(cell){
-		if(cell.column.definition.contextMenu || cell.column.definition.clickMenu){
-			this.initializeCell(cell);
+
+	initializeRowWatchers(){
+		if(this.table.options.rowContextMenu){
+			this.subscribe("row-contextmenu", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
+			// this.tapHold(row, this.table.options.rowContextMenu); TODO - move tap events to the interaction monitor so they can be subscribed to here
+		}
+		
+		if(this.table.options.rowClickMenu){
+			this.subscribe("row-click", this.loadMenuEvent.bind(this, this.table.options.rowClickMenu));
+		}
+	}
+
+	initializeGroupWatchers(){
+		if(this.table.options.groupContextMenu){
+			this.subscribe("group-contextmenu", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
+			// this.tapHold(group, this.table.options.groupContextMenu); TODO - move tap events to the interaction monitor so they can be subscribed to here
+		}
+		
+		if(this.table.options.groupClickMenu){
+			this.subscribe("group-click", this.loadMenuEvent.bind(this, this.table.options.groupClickMenu));
 		}
 	}
 	
 	initializeColumn(column){
 		var def = column.definition;
+
+		//handle column events
+		if(def.headerContextMenu && !this.columnSubscribers.headerContextMenu){
+			this.columnSubscribers.headerContextMenu = this.loadMenuTableColumnEvent.bind(this, "headerContextMenu");
+			this.subscribe("column-contextmenu", this.columnSubscribers.headerContextMenu);
+
+			//TODO - Handle Tap Hold Events
+		}
+
+		if(def.headerClickMenu && !this.columnSubscribers.headerClickMenu){
+			this.columnSubscribers.headerClickMenu = this.loadMenuTableColumnEvent.bind(this, "headerClickMenu");
+			this.subscribe("column-click", this.columnSubscribers.headerClickMenu);
+		}
 		
-		if(def.headerContextMenu || def.headerClickMenu || def.headerMenu){
-			this.initializeColumnHeader(column);
+		//handle cell events
+		if(def.contextMenu && !this.columnSubscribers.contextMenu){
+			this.columnSubscribers.contextMenu = this.loadMenuTableCellEvent.bind(this, "contextMenu");
+			this.subscribe("cell-contextmenu", this.columnSubscribers.contextMenu);
+
+			//TODO - Handle Tap Hold Events
+		}
+
+		if(def.clickMenu && !this.columnSubscribers.clickMenu){
+			this.columnSubscribers.clickMenu = this.loadMenuTableCellEvent.bind(this, "clickMenu");
+			this.subscribe("cell-click", this.columnSubscribers.clickMenu);
+		}
+		
+		if(def.headerMenu){
+			this.initializeColumnHeaderMenu(column);
 		}
 	}
 	
-	initializeColumnHeader(column){
+	initializeColumnHeaderMenu(column){
 		var headerMenuEl;
-		
-		if(column.definition.headerContextMenu){
-			column.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, column, column.definition.headerContextMenu));
-			this.tapHold(column, column.definition.headerContextMenu);
-		}
-		
-		// if(column.definition.headerClickMenu){
-		// 	column.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, column, column.definition.headerClickMenu));
-		// }
-		
-		if(column.definition.headerMenu){
 			
-			headerMenuEl = document.createElement("span");
-			headerMenuEl.classList.add("tabulator-header-menu-button");
-			headerMenuEl.innerHTML = "&vellip;";
+		headerMenuEl = document.createElement("span");
+		headerMenuEl.classList.add("tabulator-header-menu-button");
+		headerMenuEl.innerHTML = "&vellip;";
+		
+		headerMenuEl.addEventListener("click", (e) => {
+			e.stopPropagation();
+			e.preventDefault();
 			
-			headerMenuEl.addEventListener("click", (e) => {
-				e.stopPropagation();
-				e.preventDefault();
-				
-				this.LoadMenuEvent(column, column.definition.headerMenu, e);
-			});
-			
-			column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
+			this.loadMenuEvent(column.definition.headerMenu, e, column);
+		});
+		
+		column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
+	}
+
+	loadMenuTableCellEvent(option, e, cell){
+		if(cell.column.definition[option]){
+			this.loadMenuEvent(cell.column.definition[option], e, cell);
 		}
 	}
 	
-	LoadMenuEvent(component, menu, e){
+	loadMenuTableColumnEvent(option, e, column){
+		console.log("event", option);
+		if(column.definition[option]){
+			this.loadMenuEvent(column.definition[option], e, column);
+		}
+	}
+
+	loadMenuEvent(menu, e, component){
 		menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
-		
-		// if(component instanceof Cell){
-		// 	e.stopImmediatePropagation();
-		// }
-		
+
 		this.loadMenu(e, component, menu);
 	}
 	
@@ -12577,7 +12615,7 @@ class Menu extends Module{
 				tapHold = null;
 				loaded = true;
 				
-				this.LoadMenuEvent(component, menu, e);
+				this.loadMenuEvent(menu, e, component);
 			}, 1000);
 			
 		}, {passive: true});
@@ -12590,39 +12628,6 @@ class Menu extends Module{
 				e.preventDefault();
 			}
 		});
-	}
-	
-	initializeCell(cell){
-		if(cell.column.definition.contextMenu){
-			cell.getElement(true).addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
-			this.tapHold(cell, cell.column.definition.contextMenu);
-		}
-		
-		if(cell.column.definition.clickMenu){
-			cell.getElement(true).addEventListener("click", this.LoadMenuEvent.bind(this, cell, cell.column.definition.clickMenu));
-		}
-	}
-	
-	initializeRow(row){
-		if(this.table.options.rowContextMenu){
-			row.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, row, this.table.options.rowContextMenu));
-			this.tapHold(row, this.table.options.rowContextMenu);
-		}
-		
-		if(this.table.options.rowClickMenu){
-			row.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, row, this.table.options.rowClickMenu));
-		}
-	}
-	
-	initializeGroup (group){
-		if(this.table.options.groupContextMenu){
-			group.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, group, this.table.options.groupContextMenu));
-			this.tapHold(group, this.table.options.groupContextMenu);
-		}
-		
-		if(this.table.options.groupClickMenu){
-			group.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, group, this.table.options.groupClickMenu));
-		}
 	}
 	
 	loadMenu(e, component, menu, parentEl){

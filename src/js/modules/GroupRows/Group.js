@@ -87,10 +87,6 @@ class Group{
 	addBindings(){
 		var dblTap,	tapHold, tap, toggleElement;
 
-		if ((this.groupManager.table.options.groupContextMenu || this.groupManager.table.options.groupClickMenu) && this.groupManager.table.modExists("menu")){
-			this.groupManager.table.modules.menu.initializeGroup.call(this.groupManager.table.modules.menu, this);
-		}
-
 		if (this.groupManager.table.options.groupTap){
 			tap = false;
 
