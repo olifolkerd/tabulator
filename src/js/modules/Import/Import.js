@@ -7,14 +7,27 @@ class Import extends Module{
     constructor(table){
         super(table);
         
-        this.registerTableOption("importFormat", "json"); //import data to the table
+        this.registerTableOption("importFormat"); //import data to the table
     }
     
     initialize(){
         this.registerTableFunction("import", this.importFromFile.bind(this));
+
+        if(this.table.options.importFormat){
+            this.subscribe("data-loading", this.loadDataCheck.bind(this), 10);
+            this.subscribe("data-load", this.loadData.bind(this), 10);
+        }
     }
-    
-    importFromFile(importFormat, extension){
+
+    loadDataCheck(data){
+        return typeof data === "string";
+    }
+
+    loadData(data, params, config, silent, previousData){
+        return this.importData(this.lookupImporter(), data);
+    }
+
+    lookupImporter(importFormat){
         var importer;
         
         if(!importFormat){
@@ -26,17 +39,25 @@ class Import extends Module{
         }else{
             importer = importFormat;
         }
+
+        if(!importer){
+            console.error("Import Error - Importer not found:", importFormat);
+        }
+        
+        return importer;
+    }
+    
+    importFromFile(importFormat, extension){
+        var importer = this.lookupImporter(importFormat);
         
         if(importer){
             return this.pickFile(extension)
             .then(this.importData.bind(this, importer))
-            .then(this.loadData.bind(this))
+            .then(this.setData.bind(this))
             .catch((err) => {
                 console.error("Import Error:", err || "Unable to import file")
                 return Promise.reject(err);
             })
-        }else{
-            console.error("Import Error - Importer not found:", importer);
         }
     }
     
@@ -77,7 +98,7 @@ class Import extends Module{
         }
     }
     
-    loadData(data){
+    setData(data){
         return this.table.setData(data);
     }
 }

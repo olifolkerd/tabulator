@@ -599,7 +599,7 @@ class Ajax extends Module{
 	requestData(url, params, config, silent, previousData){
 		var ajaxConfig;
 		
-		if(this.requestDataCheck(url)){
+		if(!previousData && this.requestDataCheck(url)){
 			if(url){
 				this.setUrl(url);
 			}
@@ -11824,10 +11824,8 @@ class HtmlTableImport extends Module{
 HtmlTableImport.moduleName = "htmlTableImport";
 
 function mapToColumns(rawData){
-    var data = [];
-
-    console.log("this", this);
-    var columns = this.getColumns();
+    var data = [],
+    columns = this.getColumns();
 
     //remove first row if it is the column names
     if(columns[0] && rawData[0][0]){
@@ -11860,7 +11858,7 @@ function csvImporter(input){
     col = 0,
     inQuote = false;
     
-    //Itterate over each character
+    //Iterate over each character
     for (let index = 0; index < input.length; index++) {
         let char = input[index], 
         nextChar = input[index+1];      
@@ -11935,14 +11933,27 @@ class Import extends Module{
     constructor(table){
         super(table);
         
-        this.registerTableOption("importFormat", "json"); //import data to the table
+        this.registerTableOption("importFormat"); //import data to the table
     }
     
     initialize(){
         this.registerTableFunction("import", this.importFromFile.bind(this));
+
+        if(this.table.options.importFormat){
+            this.subscribe("data-loading", this.loadDataCheck.bind(this), 10);
+            this.subscribe("data-load", this.loadData.bind(this), 10);
+        }
     }
-    
-    importFromFile(importFormat, extension){
+
+    loadDataCheck(data){
+        return typeof data === "string";
+    }
+
+    loadData(data, params, config, silent, previousData){
+        return this.importData(this.lookupImporter(), data);
+    }
+
+    lookupImporter(importFormat){
         var importer;
         
         if(!importFormat){
@@ -11954,17 +11965,25 @@ class Import extends Module{
         }else {
             importer = importFormat;
         }
+
+        if(!importer){
+            console.error("Import Error - Importer not found:", importFormat);
+        }
+        
+        return importer;
+    }
+    
+    importFromFile(importFormat, extension){
+        var importer = this.lookupImporter(importFormat);
         
         if(importer){
             return this.pickFile(extension)
             .then(this.importData.bind(this, importer))
-            .then(this.loadData.bind(this))
+            .then(this.setData.bind(this))
             .catch((err) => {
                 console.error("Import Error:", err || "Unable to import file");
                 return Promise.reject(err);
             })
-        }else {
-            console.error("Import Error - Importer not found:", importer);
         }
     }
     
@@ -12004,7 +12023,7 @@ class Import extends Module{
         }
     }
     
-    loadData(data){
+    setData(data){
         return this.table.setData(data);
     }
 }
@@ -21892,7 +21911,7 @@ class DataLoader extends CoreFeature{
 			params = this.mapParams(params, this.table.options.dataSendParams);
 
 			var result = this.chain("data-load", [data, params, config, silent], Promise.resolve([]));
-
+			
 			return result.then((response) => {
 				if(!Array.isArray(response) && typeof response == "object"){
 					response = this.mapParams(response, this.objectInvert(this.table.options.dataReceiveParams));

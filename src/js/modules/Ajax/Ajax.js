@@ -70,7 +70,7 @@ class Ajax extends Module{
 	requestData(url, params, config, silent, previousData){
 		var ajaxConfig;
 		
-		if(this.requestDataCheck(url)){
+		if(!previousData && this.requestDataCheck(url)){
 			if(url){
 				this.setUrl(url);
 			}

@@ -1,8 +1,6 @@
 function mapToColumns(rawData){
-    var data = [];
-
-    console.log("this", this)
-    var columns = this.getColumns();
+    var data = [],
+    columns = this.getColumns();
 
     //remove first row if it is the column names
     if(columns[0] && rawData[0][0]){
@@ -35,7 +33,7 @@ function csvImporter(input){
     col = 0,
     inQuote = false;
     
-    //Itterate over each character
+    //Iterate over each character
     for (let index = 0; index < input.length; index++) {
         let char = input[index], 
         nextChar = input[index+1];      
