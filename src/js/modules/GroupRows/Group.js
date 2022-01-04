@@ -86,7 +86,7 @@ class Group{
 	}
 
 	addBindings(){
-		var dblTap,	tapHold, tap, toggleElement;
+		var toggleElement;
 
 		if(this.groupManager.table.options.groupToggleElement){
 			toggleElement = this.groupManager.table.options.groupToggleElement == "arrow" ? this.arrowElement : this.element;
