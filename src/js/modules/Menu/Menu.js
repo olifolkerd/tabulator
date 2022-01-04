@@ -37,7 +37,7 @@ class Menu extends Module{
 	initializeRowWatchers(){
 		if(this.table.options.rowContextMenu){
 			this.subscribe("row-contextmenu", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
-			// this.tapHold(row, this.table.options.rowContextMenu); TODO - move tap events to the interaction monitor so they can be subscribed to here
+			this.table.on("rowTapHold", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
 		}
 		
 		if(this.table.options.rowClickMenu){
@@ -48,7 +48,7 @@ class Menu extends Module{
 	initializeGroupWatchers(){
 		if(this.table.options.groupContextMenu){
 			this.subscribe("group-contextmenu", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
-			// this.tapHold(group, this.table.options.groupContextMenu); TODO - move tap events to the interaction monitor so they can be subscribed to here
+			this.table.on("groupTapHold", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
 		}
 		
 		if(this.table.options.groupClickMenu){
@@ -64,8 +64,7 @@ class Menu extends Module{
 		if(def.headerContextMenu && !this.columnSubscribers.headerContextMenu){
 			this.columnSubscribers.headerContextMenu = this.loadMenuTableColumnEvent.bind(this, "headerContextMenu");
 			this.subscribe("column-contextmenu", this.columnSubscribers.headerContextMenu);
-
-			//TODO - Handle Tap Hold Events
+			this.table.on("headerTapHold", this.loadMenuTableColumnEvent.bind(this, "headerContextMenu"))
 		}
 
 		if(def.headerClickMenu && !this.columnSubscribers.headerClickMenu){
@@ -77,8 +76,7 @@ class Menu extends Module{
 		if(def.contextMenu && !this.columnSubscribers.contextMenu){
 			this.columnSubscribers.contextMenu = this.loadMenuTableCellEvent.bind(this, "contextMenu");
 			this.subscribe("cell-contextmenu", this.columnSubscribers.contextMenu);
-
-			//TODO - Handle Tap Hold Events
+			this.table.on("cellTapHold", this.loadMenuTableCellEvent.bind(this, "contextMenu"))
 		}
 
 		if(def.clickMenu && !this.columnSubscribers.clickMenu){
@@ -109,51 +107,35 @@ class Menu extends Module{
 	}
 
 	loadMenuTableCellEvent(option, e, cell){
+		if(cell._cell){
+			cell = cell._cell;
+		}
+
 		if(cell.column.definition[option]){
 			this.loadMenuEvent(cell.column.definition[option], e, cell);
 		}
 	}
 	
 	loadMenuTableColumnEvent(option, e, column){
-		console.log("event", option)
+		if(column._column){
+			column = column._column;
+		}
+
 		if(column.definition[option]){
 			this.loadMenuEvent(column.definition[option], e, column);
 		}
 	}
 
 	loadMenuEvent(menu, e, component){
+		if(component._group){
+			component = component._group;
+		}else if(component._row){
+			component = component._row;
+		}
+
 		menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
 
 		this.loadMenu(e, component, menu);
-	}
-	
-	tapHold(component, menu){
-		var element = component.getElement(),
-		tapHold = null,
-		loaded = false;
-		
-		element.addEventListener("touchstart", (e) => {
-			clearTimeout(tapHold);
-			loaded = false;
-			
-			tapHold = setTimeout(() => {
-				clearTimeout(tapHold);
-				tapHold = null;
-				loaded = true;
-				
-				this.loadMenuEvent(menu, e, component);
-			}, 1000);
-			
-		}, {passive: true});
-		
-		element.addEventListener("touchend", (e) => {
-			clearTimeout(tapHold);
-			tapHold = null;
-			
-			if(loaded){
-				e.preventDefault();
-			}
-		});
 	}
 	
 	loadMenu(e, component, menu, parentEl){
