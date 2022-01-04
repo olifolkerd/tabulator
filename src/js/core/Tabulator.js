@@ -341,49 +341,6 @@ class Tabulator {
 		return this.rowManager.restoreRedraw();
 	}
 
-	//local data from local file
-	setDataFromLocalFile(extensions){
-		return new Promise((resolve, reject) => {
-			var input = document.createElement("input");
-			input.type = "file";
-			input.accept = extensions || ".json,application/json";
-
-			input.addEventListener("change", (e) => {
-				var file = input.files[0],
-				reader = new FileReader(),
-				data;
-
-				reader.readAsText(file);
-
-				reader.onload = (e) => {
-
-					try {
-						data = JSON.parse(reader.result);
-					} catch(e) {
-						console.warn("File Load Error - File contents is invalid JSON", e);
-						reject(e);
-						return;
-					}
-
-					this.setData(data)
-					.then((data) => {
-						resolve(data);
-					})
-					.catch((err) => {
-						resolve(err);
-					});
-				};
-
-				reader.onerror = (e) => {
-					console.warn("File Load Error - Unable to read file");
-					reject();
-				};
-			});
-
-			input.click();
-		});
-	}
-
 	//load data
 	setData(data, params, config){
 		if(this.initialized){
