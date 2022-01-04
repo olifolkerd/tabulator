@@ -12495,6 +12495,10 @@ class Menu extends Module{
 			this.columnSubscribers.headerClickMenu = this.loadMenuTableColumnEvent.bind(this, "headerClickMenu");
 			this.subscribe("column-click", this.columnSubscribers.headerClickMenu);
 		}
+
+		if(def.headerMenu){
+			this.initializeColumnHeaderMenu(column);
+		}
 		
 		//handle cell events
 		if(def.contextMenu && !this.columnSubscribers.contextMenu){
@@ -12506,10 +12510,6 @@ class Menu extends Module{
 		if(def.clickMenu && !this.columnSubscribers.clickMenu){
 			this.columnSubscribers.clickMenu = this.loadMenuTableCellEvent.bind(this, "clickMenu");
 			this.subscribe("cell-click", this.columnSubscribers.clickMenu);
-		}
-		
-		if(def.headerMenu){
-			this.initializeColumnHeaderMenu(column);
 		}
 	}
 	
