@@ -7,7 +7,8 @@ class Import extends Module{
     constructor(table){
         super(table);
         
-        this.registerTableOption("importFormat"); //import data to the table
+        this.registerTableOption("importFormat");
+        this.registerTableOption("importReader", "text");
     }
     
     initialize(){
@@ -78,8 +79,24 @@ class Import extends Module{
                 reader = new FileReader(),
                 data;
                 
-                reader.readAsText(file);
-                
+                switch(this.table.options.importReader){
+                    case "buffer":
+                        reader.readAsArrayBuffer(file);
+                    break;
+
+                    case "binary":
+                        reader.readAsBinaryString(file);
+                    break;
+
+                    case "url":
+                        reader.readAsDataURL(file);
+                    break;
+
+                    case "text":
+                    default:
+                        reader.readAsText(file);
+                }
+                  
                 reader.onload = (e) => {
                     resolve(reader.result)
                 };
