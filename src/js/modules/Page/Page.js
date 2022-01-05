@@ -33,6 +33,7 @@ class Page extends Module{
 		this.registerTableOption("paginationSize", false); //set number of rows to a page
 		this.registerTableOption("paginationInitialPage", 1); //initial page to show on load
 		this.registerTableOption("paginationCounter", false);  // set pagination counter
+		this.registerTableOption("paginationCounterElement", false);  // set pagination counter
 		this.registerTableOption("paginationButtonCount", 5);  // set count of page button
 		this.registerTableOption("paginationSizeSelector", false); //add pagination size selector element
 		this.registerTableOption("paginationElement", false); //element to hold pagination numbers
@@ -331,7 +332,7 @@ class Page extends Module{
 	
 	//setup pagination
 	initializePaginator(hidden){
-		var pageSelectLabel;
+		var pageSelectLabel, paginationCounterHolder;
 		
 		if(!hidden){
 			//build pagination element
@@ -421,7 +422,25 @@ class Page extends Module{
 			
 			if(!this.table.options.paginationElement && !hidden){
 				if(this.table.options.paginationCounter){
-					this.table.footerManager.append(this.pageCounterElement, this);
+
+					paginationCounterHolder 
+
+					if(this.table.options.paginationCounterElement){
+						if(this.table.options.paginationCounterElement instanceof HTMLElement){
+							this.table.options.paginationCounterElement.appendChild(this.pageCounterElement);
+						}else if(typeof this.table.options.paginationCounterElement === "string"){
+							paginationCounterHolder = document.querySelector(this.table.options.paginationCounterElement);
+							
+							if(paginationCounterHolder){
+								paginationCounterHolder.appendChild(this.pageCounterElement);
+							}else{
+								console.warn("Pagination Error - Unable to find element matching paginationCounterElement selector:", this.table.options.paginationCounterElement);
+							}
+						}
+					}else{
+						this.table.footerManager.append(this.pageCounterElement);
+					}
+					
 				}
 				
 				this.table.footerManager.append(this.element, this);
