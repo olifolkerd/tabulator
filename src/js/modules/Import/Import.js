@@ -24,7 +24,12 @@ class Import extends Module{
     }
 
     loadData(data, params, config, silent, previousData){
-        return this.importData(this.lookupImporter(), data);
+        return this.importData(this.lookupImporter(), data)
+        .then(this.structureData.bind(this))
+        .catch((err) => {
+            console.error("Import Error:", err || "Unable to import data")
+            return Promise.reject(err);
+        })
     }
 
     lookupImporter(importFormat){
@@ -53,6 +58,7 @@ class Import extends Module{
         if(importer){
             return this.pickFile(extension)
             .then(this.importData.bind(this, importer))
+            .then(this.structureData.bind(this))
             .then(this.setData.bind(this))
             .catch((err) => {
                 console.error("Import Error:", err || "Unable to import file")
@@ -96,6 +102,69 @@ class Import extends Module{
         }else{
             return data ? Promise.resolve(data) : Promise.reject();
         }
+    }
+
+    structureData(parsedData){
+        var data = [];
+
+        console.log("structure", parsedData)
+
+        if(Array.isArray(parsedData) && parsedData.length && Array.isArray(parsedData[0])){
+            if(this.table.options.autoColumns){
+                data = this.structureArrayToObject(parsedData);
+            }else{
+                data = this.structureArrayToColumns(parsedData);
+            }
+
+            return data;
+        }else{
+            return parsedData;
+        }
+    }
+
+    structureArrayToObject(parsedData){
+        var columns = parsedData.shift();
+
+        var data = parsedData.map((values) => {
+            var row = {};
+
+            columns.forEach((key, i) => {
+                row[key] = values[i];
+            })
+
+            return row;
+        })
+
+        return data;
+    }
+
+    structureArrayToColumns(parsedData){
+        var data = [],
+        columns = this.table.getColumns();
+
+        //remove first row if it is the column names
+        if(columns[0] && parsedData[0][0]){
+            if(columns[0].getDefinition().title === parsedData[0][0]){
+                parsedData.shift();
+            }
+        }
+        
+        //convert row arrays to objects
+        parsedData.forEach((rowData) => {
+            var row = {};
+
+            rowData.forEach((value, index) => {
+                var column = columns[index];
+
+                if(column){
+                    row[column.getField()] = value;
+                }
+            })
+
+            data.push(row);
+        });
+
+        return data;
     }
     
     setData(data){

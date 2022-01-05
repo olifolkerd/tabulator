@@ -1,32 +1,3 @@
-function mapToColumns(rawData){
-    var data = [],
-    columns = this.getColumns();
-
-    //remove first row if it is the column names
-    if(columns[0] && rawData[0][0]){
-        if(columns[0].getDefinition().title === rawData[0][0]){
-            rawData.shift();
-        }
-    }
-    
-    //convert row arrays to objects
-    rawData.forEach((rowData) => {
-        var row = {};
-
-        rowData.forEach((value, index) => {
-            var column = columns[index];
-
-            if(column){
-                row[column.getField()] = value;
-            }
-        })
-
-        data.push(row);
-    });
-
-    return data;
-}
-
 function csvImporter(input){
     var data = [],
     row = 0, 
@@ -86,7 +57,7 @@ function csvImporter(input){
         data[row][col] += char;
     }
 
-    return mapToColumns.call(this, data);
+    return data;
 }
 
 export default csvImporter;
