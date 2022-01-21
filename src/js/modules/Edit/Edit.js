@@ -118,7 +118,7 @@ class Edit extends Module{
 	///////////////////////////////////
 	clearCellEdited(cells){
 		if(!cells){
-			cells = this.modules.edit.getEditedCells();
+			cells = this.table.modules.edit.getEditedCells();
 		}
 
 		if(!Array.isArray(cells)){
@@ -126,7 +126,7 @@ class Edit extends Module{
 		}
 
 		cells.forEach((cell) => {
-			this.modules.edit.clearEdited(cell._getSelf());
+			this.table.modules.edit.clearEdited(cell._getSelf());
 		});
 	}
 
