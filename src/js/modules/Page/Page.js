@@ -353,7 +353,7 @@ class Page extends Module{
 			});
 
 			this.nextBut.addEventListener("click", () => {
-				this.nextPage()
+				this.nextPage().catch(() => {})
 			});
 
 			this.lastBut.addEventListener("click", () => {
@@ -720,7 +720,7 @@ class Page extends Module{
 
 					if(this.page < this.max){
 						setTimeout(() => {
-							this.nextPage();
+							this.nextPage().catch(() => {});
 						}, this.table.options.progressiveLoadDelay);
 					}
 					break;
@@ -734,7 +734,7 @@ class Page extends Module{
 
 					if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
 						setTimeout(() => {
-							this.nextPage();
+							this.nextPage().catch(() => {});
 						});
 					}
 					break;
