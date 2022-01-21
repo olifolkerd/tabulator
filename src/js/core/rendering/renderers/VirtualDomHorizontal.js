@@ -384,7 +384,11 @@ export default class VirtualDomHorizontal extends Renderer{
 			rows.forEach((row) => {
 				if(row.type !== "group"){
 					var cell = row.getCell(column);
-					row.getElement().removeChild(cell.getElement());
+					try {
+						row.getElement().removeChild(cell.getElement());
+					} catch (ex) {
+						console.warn("Could not removeColRight", ex.message)
+					}
 				}
 			});
 			
@@ -414,7 +418,11 @@ export default class VirtualDomHorizontal extends Renderer{
 						el = cell.getElement();
 
 						if(el.parentNode){
-							row.getElement().removeChild(el);
+							try {
+								row.getElement().removeChild(el);
+							} catch (ex) {
+								console.warn("Could not removeColLeft", ex.message)
+							}
 						}
 					}
 				}
