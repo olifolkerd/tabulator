@@ -8,7 +8,7 @@ import jsonLines from './downloaders/jsonLines.js';
 export default {
 	csv:csv,
 	json:json,
-  jsonl:jsonLines,
+	jsonl:jsonLines,
 	pdf:pdf,
 	xlsx:xlsx,
 	html:html,
