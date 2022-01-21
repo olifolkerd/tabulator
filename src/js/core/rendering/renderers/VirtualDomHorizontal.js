@@ -360,7 +360,7 @@ export default class VirtualDomHorizontal extends Renderer{
 			
 			this.leftCol--; // don't move this below the <= check below
 
-			if(!this.leftCol <= 0){ // replicating logic in addColRight
+			if(this.leftCol <= 0){ // replicating logic in addColRight
 				this.vDomPadLeft = 0;
 			}else{
 				this.vDomPadLeft -= column.getWidth();
