@@ -402,6 +402,7 @@ class Edit extends Module{
 	clearEditor(cancel){
 		var cell = this.currentCell,
 		cellEl;
+		var component = this.currentCell.getComponent();
 
 		this.invalidEdit = false;
 
@@ -423,6 +424,12 @@ class Edit extends Module{
 			while(cellEl.firstChild) cellEl.removeChild(cellEl.firstChild);
 
 			cell.row.getElement().classList.remove("tabulator-row-editing");
+
+			if(cell.column.definition.cellEdited) {
+				cell.column.definition.cellEdited.call(this.table, component);
+			}
+
+			this.dispatchExternal("cellEdited", component);
 		}
 	}
 
