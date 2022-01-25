@@ -402,7 +402,6 @@ class Edit extends Module{
 	clearEditor(cancel){
 		var cell = this.currentCell,
 		cellEl;
-		var component = this.currentCell.getComponent();
 
 		this.invalidEdit = false;
 
@@ -425,11 +424,6 @@ class Edit extends Module{
 
 			cell.row.getElement().classList.remove("tabulator-row-editing");
 
-			if(cell.column.definition.cellEdited) {
-				cell.column.definition.cellEdited.call(this.table, component);
-			}
-
-			this.dispatchExternal("cellEdited", component);
 		}
 	}
 
@@ -586,6 +580,13 @@ class Edit extends Module{
 						self.table.externalEvents.dispatch("validationFailed", cell.getComponent(), value, valid);
 						return false;
 					}
+
+					// Fire cellEdited event
+					if(cell.column.definition.cellEdited) {
+						cell.column.definition.cellEdited.call(self.table, cell.getComponent());
+					}
+					// TODO: is this needed?
+					//self.dispatchExternal("cellEdited", cell.getComponent());
 
 					return true;
 				}else{
