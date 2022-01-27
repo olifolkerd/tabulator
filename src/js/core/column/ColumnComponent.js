@@ -27,6 +27,10 @@ export default class ColumnComponent {
 		return this._column.getField();
 	}
 
+	getTitleDownload() {
+		return this._column.getTitleDownload();
+	}
+
 	getCells(){
 		var cells = [];
 
