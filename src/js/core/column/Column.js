@@ -322,9 +322,10 @@ class Column extends CoreFeature{
 		//set min width if present
 		this.setMinWidth(parseInt(def.minWidth));
 
-		if (def.maxInitialWidth || this.table.options.columnMaxInitialWidth) {
-			this.maxInitialWidth = typeof def.maxInitialWidth == 'undefined' ? parseInt(this.table.options.columnMaxInitialWidth) : parseInt(def.maxInitialWidth);
+		if (def.maxInitialWidth) {
+			this.maxInitialWidth = parseInt(def.maxInitialWidth);
 		}
+		
 		if(def.maxWidth){
 			this.setMaxWidth(parseInt(def.maxWidth));
 		}
