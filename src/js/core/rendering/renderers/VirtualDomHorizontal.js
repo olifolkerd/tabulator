@@ -327,7 +327,7 @@ export default class VirtualDomHorizontal extends Renderer{
 			
 			this.fitDataColActualWidthCheck(column);
 			
-			this.rightCol++;
+			this.rightCol++; // Don't move this below the >= check below
 			
 			if(this.rightCol >= (this.columns.length - 1)){
 				this.vDomPadRight = 0;
@@ -358,7 +358,9 @@ export default class VirtualDomHorizontal extends Renderer{
 			
 			this.fitDataColActualWidthCheck(column);
 			
-			if(!this.leftCol){
+			this.leftCol--; // don't move this below the <= check below
+
+			if(this.leftCol <= 0){ // replicating logic in addColRight
 				this.vDomPadLeft = 0;
 			}else{
 				this.vDomPadLeft -= column.getWidth();
@@ -366,7 +368,6 @@ export default class VirtualDomHorizontal extends Renderer{
 			
 			this.tableElement.style.paddingLeft = this.vDomPadLeft + "px";
 			
-			this.leftCol--;
 			
 			this.addColLeft();
 		}
