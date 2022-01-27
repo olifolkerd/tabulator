@@ -8,6 +8,7 @@ export default {
 	"width": undefined,
 	"minWidth": 40,
 	"maxWidth": undefined,
+	"maxInitialWidth": undefined,
 	"tooltip": undefined,
 	"cssClass": undefined,
 	"variableHeight": undefined,

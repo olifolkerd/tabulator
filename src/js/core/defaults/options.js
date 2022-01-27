@@ -9,6 +9,7 @@ export default {
 	maxHeight:false, //maximum height of tabulator
 
 	columnMaxWidth:false, //minimum global width for a column
+	columnMaxInitialWidth: false, // maximum initial width on first render
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
 
 	columns:[],//store for colum header info
