@@ -43,6 +43,7 @@ class Column extends CoreFeature{
 		this.widthStyled = ""; //column width prestyled to improve render efficiency
 		this.maxWidth = null; //column maximum width
 		this.maxWidthStyled = ""; //column maximum prestyled to improve render efficiency
+		this.maxInitialWidth = null;
 		this.minWidth = null; //column minimum width
 		this.minWidthStyled = ""; //column minimum prestyled to improve render efficiency
 		this.widthFixed = false; //user has specified a width for this column
@@ -321,6 +322,9 @@ class Column extends CoreFeature{
 		//set min width if present
 		this.setMinWidth(parseInt(def.minWidth));
 
+		if (def.maxInitialWidth || this.table.options.columnMaxInitialWidth) {
+			this.maxInitialWidth = typeof def.maxInitialWidth == 'undefined' ? parseInt(this.table.options.columnMaxInitialWidth) : parseInt(def.maxInitialWidth);
+		}
 		if(def.maxWidth){
 			this.setMaxWidth(parseInt(def.maxWidth));
 		}
@@ -933,18 +937,19 @@ class Column extends CoreFeature{
 
 		//set width if present
 		if(typeof this.definition.width !== "undefined" && !force){
+			// maxInitialWidth ignored here as width specified
 			this.setWidth(this.definition.width);
 		}
 
 		this.dispatch("column-width-fit-before", this);
 
-		this.fitToData();
+		this.fitToData(force);
 
 		this.dispatch("column-width-fit-after", this);
 	}
 
 	//set column width to maximum cell width for non group columns
-	fitToData(){
+	fitToData(force){
 		if(this.isGroup){
 			return;
 		}
@@ -969,7 +974,11 @@ class Column extends CoreFeature{
 			});
 
 			if(maxWidth){
-				this.setWidthActual(maxWidth + 1);
+				var setTo = maxWidth + 1;
+				if (this.maxInitialWidth && !force) {
+					setTo = Math.min(setTo, this.maxInitialWidth);
+				}
+				this.setWidthActual(setTo);
 			}
 		}
 	}
