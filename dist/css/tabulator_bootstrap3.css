@@ -314,10 +314,13 @@
 }
 
 .tabulator .tabulator-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   padding: 5px 10px;
   border-top: 1px solid #ddd;
   background-color: #e6e6e6;
-  text-align: right;
   color: #555;
   font-weight: bold;
   white-space: nowrap;
@@ -352,7 +355,17 @@
   border-bottom: none;
 }
 
+.tabulator .tabulator-footer > * + .tabulator-page-counter {
+  margin-left: 10px;
+}
+
+.tabulator .tabulator-footer .tabulator-page-counter {
+  font-weight: normal;
+}
+
 .tabulator .tabulator-footer .tabulator-paginator {
+  flex: 1;
+  text-align: right;
   color: #555;
   font-family: inherit;
   font-weight: inherit;

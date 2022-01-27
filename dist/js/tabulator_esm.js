@@ -1,4 +1,4 @@
-/* Tabulator v5.0.10 (c) Oliver Folkerd 2021 */
+/* Tabulator v5.0.10 (c) Oliver Folkerd 2022 */
 class CoreFeature{
 
 	constructor(table){
@@ -535,144 +535,125 @@ var defaultContentTypeFormatters = {
 };
 
 class Ajax extends Module{
-
+	
 	constructor(table){
 		super(table);
-
-		this.config = false; //hold config object for ajax request
+		
+		this.config = {}; //hold config object for ajax request
 		this.url = ""; //request URL
 		this.urlGenerator = false;
 		this.params = false; //request parameters
-
+		
 		this.loaderPromise = false;
-
+		
 		this.registerTableOption("ajaxURL", false); //url for ajax loading
 		this.registerTableOption("ajaxURLGenerator", false);
 		this.registerTableOption("ajaxParams", {});  //params for ajax loading
 		this.registerTableOption("ajaxConfig", "get"); //ajax request type
 		this.registerTableOption("ajaxContentType", "form"); //ajax request type
 		this.registerTableOption("ajaxRequestFunc", false); //promise function
-
+		
 		this.registerTableOption("ajaxRequesting", function(){});
 		this.registerTableOption("ajaxResponse", false);
-
+		
 		this.contentTypeFormatters = Ajax.contentTypeFormatters;
 	}
-
+	
 	//initialize setup options
 	initialize(){
 		this.loaderPromise = this.table.options.ajaxRequestFunc || Ajax.defaultLoaderPromise;
 		this.urlGenerator = this.table.options.ajaxURLGenerator || Ajax.defaultURLGenerator;
-
-		if(this.table.options.ajaxParams){
-			this.setParams(this.table.options.ajaxParams);
-		}
-
-		if(this.table.options.ajaxConfig){
-			this.setConfig(this.table.options.ajaxConfig);
-		}
-
+		
 		if(this.table.options.ajaxURL){
 			this.setUrl(this.table.options.ajaxURL);
 		}
 
-		this.registerTableFunction("getAjaxUrl", this.getUrl.bind(this));
 
+		this.setDefaultConfig(this.table.options.ajaxConfig);
+		
+		this.registerTableFunction("getAjaxUrl", this.getUrl.bind(this));
+		
 		this.subscribe("data-loading", this.requestDataCheck.bind(this));
+		this.subscribe("data-params", this.requestParams.bind(this));
 		this.subscribe("data-load", this.requestData.bind(this));
 	}
-
-
+	
+	requestParams(data, config, silent, params){
+		var ajaxParams = this.table.options.ajaxParams;
+		
+		if(ajaxParams){
+			if(typeof ajaxParams === "function"){
+				ajaxParams = ajaxParams.call(this.table);
+			}
+			
+			params = Object.assign(params, ajaxParams);
+		}		
+		
+		return params;
+	}
+	
 	requestDataCheck(data, params, config, silent){
 		return !!((!data && this.url) || typeof data === "string");
 	}
-
-	requestData(data, params, config, silent, previousData){
-		if(this.requestDataCheck(data)){
-			if(data){
-				this.setUrl(data);
+	
+	requestData(url, params, config, silent, previousData){
+		var ajaxConfig;
+		
+		if(!previousData && this.requestDataCheck(url)){
+			if(url){
+				this.setUrl(url);
 			}
-
-			if(params){
-				this.setParams(params, true);
-			}
-
-			if(config){
-				this.setConfig(config);
-			}
-
-			return this.sendRequest();
+			
+			ajaxConfig = this.generateConfig(config);
+			
+			return this.sendRequest(this.url, params, ajaxConfig);
 		}else {
 			return previousData;
 		}
 	}
-
-	//set ajax params
-	setParams(params, update){
-		if(update){
-			this.params = this.params || {};
-
-			for(let key in params){
-				this.params[key] = params[key];
-			}
-		}else {
-			this.params = params;
-		}
-	}
-
-	getParams(){
-		return this.params || {};
-	}
-
-	//load config object
-	setConfig(config){
-		this._loadDefaultConfig();
+	
+	setDefaultConfig(config = {}){
+		this.config = Object.assign({}, Ajax.defaultConfig);
 
 		if(typeof config == "string"){
 			this.config.method = config;
 		}else {
-			for(let key in config){
-				this.config[key] = config[key];
-			}
+			Object.assign(this.config, config);
 		}
 	}
-
-	//create config object from default
-	_loadDefaultConfig(force){
-		if(!this.config || force){
-
-			this.config = {};
-
-			//load base config from defaults
-			for(let key in Ajax.defaultConfig){
-				this.config[key] = Ajax.defaultConfig[key];
-			}
+	
+	//load config object
+	generateConfig(config = {}){
+		var ajaxConfig = Object.assign({}, this.config);
+		
+		if(typeof config == "string"){
+			ajaxConfig.method = config;
+		}else {
+			Object.assign(ajaxConfig, config);
 		}
+		
+		return ajaxConfig;
 	}
-
+	
 	//set request url
 	setUrl(url){
 		this.url = url;
 	}
-
+	
 	//get request url
 	getUrl(){
 		return this.url;
 	}
-
+	
 	//send ajax request
-	sendRequest(silent){
-		var url = this.url;
-
-		this._loadDefaultConfig();
-
-		if(this.table.options.ajaxRequesting.call(this.table, this.url, this.params) !== false){
-			return this.loaderPromise(url, this.config, this.params)
+	sendRequest(url, params, config){
+		if(this.table.options.ajaxRequesting.call(this.table, url, params) !== false){
+			return this.loaderPromise(url, config, params)
 			.then((data)=>{
 				if(this.table.options.ajaxResponse){
-					data = this.table.options.ajaxResponse.call(this.table, this.url, this.params, data);
+					data = this.table.options.ajaxResponse.call(this.table, url, params, data);
 				}
-
+				
 				return data;
 			});
 		}else {
@@ -3812,6 +3793,7 @@ class DataTree extends Module{
 		this.registerComponentFunction("row", "getTreeParent", this.getTreeParent.bind(this));
 		this.registerComponentFunction("row", "getTreeChildren", this.getRowChildren.bind(this));
 		this.registerComponentFunction("row", "addTreeChild", this.addTreeChildRow.bind(this));
+		this.registerComponentFunction("row", "isTreeExpanded", this.isRowExpanded.bind(this));
 	}
 
 	initialize(){
@@ -4182,6 +4164,10 @@ class DataTree extends Module{
 				this.expandRow(row);
 			}
 		}
+	}
+
+	isRowExpanded(row){
+		return row.modules.dataTree.open;
 	}
 
 	getTreeParent(row){
@@ -6715,12 +6701,12 @@ class Edit extends Module{
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 		this.subscribe("data-refeshing", this.cancelEdit.bind(this));
 
-		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this));
+		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
-		this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this));
-		this.subscribe("keybinding-nav-right", this.navigateRight.bind(this));
-		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this));
-		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this));
+		this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
+		this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
+		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
+		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
 	}
 
 
@@ -6733,9 +6719,9 @@ class Edit extends Module{
 		newRow = this.options("tabEndNewRow");
 
 		if(cell){
-			if(!this.navigateNext(e)){
+			if(!this.navigateNext(cell, e)){
 				if(newRow){
-					cell.getElement().firstChild.blur();
+					// cell.getElement().firstChild.blur();
 
 					if(newRow === true){
 						newRow = this.table.addRow({});
@@ -6749,7 +6735,7 @@ class Edit extends Module{
 
 					newRow.then(() => {
 						setTimeout(() => {
-							nav.next();
+							cell.getComponent().navigateNext();
 						});
 					});
 				}
@@ -6791,9 +6777,8 @@ class Edit extends Module{
 		});
 	}
 
-	navigatePrev(e){
-		var cell = this.currentCell,
-		nextCell, prevRow;
+	navigatePrev(cell = this.currentCell, e){
+		var nextCell, prevRow;
 
 		if(cell){
 
@@ -6822,9 +6807,8 @@ class Edit extends Module{
 		return false;
 	}
 
-	navigateNext(e){
-		var cell = this.currentCell,
-		nextCell, nextRow;
+	navigateNext(cell = this.currentCell, e){
+		var nextCell, nextRow;
 
 		if(cell){
 
@@ -6853,9 +6837,8 @@ class Edit extends Module{
 		return false;
 	}
 
-	navigateLeft(e){
-		var cell = this.currentCell,
-		index, nextCell;
+	navigateLeft(cell = this.currentCell, e){
+		var index, nextCell;
 
 		if(cell){
 
@@ -6875,9 +6858,8 @@ class Edit extends Module{
 		return false;
 	}
 
-	navigateRight(e){
-		var cell = this.currentCell,
-		index, nextCell;
+	navigateRight(cell = this.currentCell, e){
+		var index, nextCell;
 
 		if(cell){
 
@@ -6897,9 +6879,8 @@ class Edit extends Module{
 		return false;
 	}
 
-	navigateUp(e){
-		var cell = this.currentCell,
-		index, nextRow;
+	navigateUp(cell = this.currentCell, e){
+		var index, nextRow;
 
 		if(cell){
 
@@ -6919,9 +6900,8 @@ class Edit extends Module{
 		return false;
 	}
 
-	navigateDown(e){
-		var cell = this.currentCell,
-		index, nextRow;
+	navigateDown(cell = this.currentCell, e){
+		var index, nextRow;
 
 		if(cell){
 
@@ -7064,8 +7044,6 @@ class Edit extends Module{
 		cellEl;
 
 		this.invalidEdit = false;
-
-		console.log("clear", cancel, cell, cell.validate);
 
 		if(cell){
 			this.currentCell = false;
@@ -10293,6 +10271,7 @@ class Group{
 		this.groups = [];
 		this.groupList = [];
 		this.generator = generator;
+		this.element = false;
 		this.elementContents = false;
 		this.height = 0;
 		this.outerHeight = 0;
@@ -10360,67 +10339,7 @@ class Group{
 	}
 
 	addBindings(){
-		var dblTap,	tapHold, tap, toggleElement;
-
-		if ((this.groupManager.table.options.groupContextMenu || this.groupManager.table.options.groupClickMenu) && this.groupManager.table.modExists("menu")){
-			this.groupManager.table.modules.menu.initializeGroup.call(this.groupManager.table.modules.menu, this);
-		}
-
-		if (this.groupManager.table.options.groupTap){
-			tap = false;
-
-			this.element.addEventListener("touchstart", (e) => {
-				tap = true;
-			}, {passive: true});
-
-			this.element.addEventListener("touchend", (e) => {
-				if(tap){
-					this.groupManager.table.options.groupTap(e, this.getComponent());
-				}
-
-				tap = false;
-			});
-		}
-
-		if (this.groupManager.table.options.groupDblTap){
-			dblTap = null;
-
-			this.element.addEventListener("touchend", (e) => {
-				if(dblTap){
-					clearTimeout(dblTap);
-					dblTap = null;
-
-					this.groupManager.table.options.groupDblTap(e, this.getComponent());
-				}else {
-
-					dblTap = setTimeout(() => {
-						clearTimeout(dblTap);
-						dblTap = null;
-					}, 300);
-				}
-			});
-		}
-
-		if (this.groupManager.table.options.groupTapHold){
-			tapHold = null;
-
-			this.element.addEventListener("touchstart", (e) => {
-				clearTimeout(tapHold);
-
-				tapHold = setTimeout(() => {
-					clearTimeout(tapHold);
-					tapHold = null;
-					tap = false;
-					this.groupManager.table.options.groupTapHold(e, this.getComponent());
-				}, 1000);
-
-			}, {passive: true});
-
-			this.element.addEventListener("touchend", (e) => {
-				clearTimeout(tapHold);
-				tapHold = null;
-			});
-		}
+		var toggleElement;
 
 		if(this.groupManager.table.options.groupToggleElement){
 			toggleElement = this.groupManager.table.options.groupToggleElement == "arrow" ? this.arrowElement : this.element;
@@ -11904,6 +11823,273 @@ class HtmlTableImport extends Module{
 
 HtmlTableImport.moduleName = "htmlTableImport";
 
+function csvImporter(input){
+    var data = [],
+    row = 0, 
+    col = 0,
+    inQuote = false;
+    
+    //Iterate over each character
+    for (let index = 0; index < input.length; index++) {
+        let char = input[index], 
+        nextChar = input[index+1];      
+        
+        //Initialize empty row
+        if(!data[row]){
+            data[row] = [];
+        }
+
+        //Initialize empty column
+        if(!data[row][col]){
+            data[row][col] = "";
+        }
+        
+        //Handle quotation mark inside string
+        if (char == '"' && inQuote && nextChar == '"') { 
+            data[row][col] += char; 
+            index++;
+            continue; 
+        }
+        
+        //Begin / End Quote
+        if (char == '"') { 
+            inQuote = !inQuote;
+            continue;
+        }
+        
+        //Next column (if not in quote)
+        if (char == ',' && !inQuote) { 
+            col++;
+            continue; 
+        }
+        
+        //New row if new line and not in quote (CRLF) 
+        if (char == '\r' && nextChar == '\n' && !inQuote) { 
+            col = 0; 
+            row++; 
+            index++; 
+            continue; 
+        }
+        
+        //New row if new line and not in quote (CR or LF) 
+        if ((char == '\r' || char == '\n') && !inQuote) { 
+            col = 0;
+            row++;
+            continue; 
+        }
+
+        //Normal Character, append to column
+        data[row][col] += char;
+    }
+
+    return data;
+}
+
+function json$1(input){
+    try {
+        return JSON.parse(input);
+    } catch(e) {
+        console.warn("JSON Import Error - File contents is invalid JSON", e);
+        return Promise.reject();
+    }
+}
+
+var defaultImporters = {
+	csv:csvImporter,
+	json:json$1,
+};
+
+class Import extends Module{
+    
+    constructor(table){
+        super(table);
+        
+        this.registerTableOption("importFormat");
+        this.registerTableOption("importReader", "text");
+    }
+    
+    initialize(){
+        this.registerTableFunction("import", this.importFromFile.bind(this));
+
+        if(this.table.options.importFormat){
+            this.subscribe("data-loading", this.loadDataCheck.bind(this), 10);
+            this.subscribe("data-load", this.loadData.bind(this), 10);
+        }
+    }
+
+    loadDataCheck(data){
+        return typeof data === "string";
+    }
+
+    loadData(data, params, config, silent, previousData){
+        return this.importData(this.lookupImporter(), data)
+        .then(this.structureData.bind(this))
+        .catch((err) => {
+            console.error("Import Error:", err || "Unable to import data");
+            return Promise.reject(err);
+        })
+    }
+
+    lookupImporter(importFormat){
+        var importer;
+        
+        if(!importFormat){
+            importFormat = this.table.options.importFormat;
+        }
+        
+        if(typeof importFormat === "string"){
+            importer = Import.importers[importFormat];
+        }else {
+            importer = importFormat;
+        }
+
+        if(!importer){
+            console.error("Import Error - Importer not found:", importFormat);
+        }
+        
+        return importer;
+    }
+    
+    importFromFile(importFormat, extension){
+        var importer = this.lookupImporter(importFormat);
+        
+        if(importer){
+            return this.pickFile(extension)
+            .then(this.importData.bind(this, importer))
+            .then(this.structureData.bind(this))
+            .then(this.setData.bind(this))
+            .catch((err) => {
+                console.error("Import Error:", err || "Unable to import file");
+                return Promise.reject(err);
+            })
+        }
+    }
+    
+    pickFile(extensions){
+        return new Promise((resolve, reject) => {
+            var input = document.createElement("input");
+            input.type = "file";
+            input.accept = extensions;
+            
+            input.addEventListener("change", (e) => {
+                var file = input.files[0],
+                reader = new FileReader();
+                
+                switch(this.table.options.importReader){
+                    case "buffer":
+                        reader.readAsArrayBuffer(file);
+                    break;
+
+                    case "binary":
+                        reader.readAsBinaryString(file);
+                    break;
+
+                    case "url":
+                        reader.readAsDataURL(file);
+                    break;
+
+                    case "text":
+                    default:
+                        reader.readAsText(file);
+                }
+                  
+                reader.onload = (e) => {
+                    resolve(reader.result);
+                };
+                
+                reader.onerror = (e) => {
+                    console.warn("File Load Error - Unable to read file");
+                    reject();
+                };
+            });
+            
+            input.click();
+        });
+    }
+    
+    importData(importer, fileContents){
+        var data = importer.call(this.table, fileContents);
+        
+        if(data instanceof Promise){
+            return data;
+        }else {
+            return data ? Promise.resolve(data) : Promise.reject();
+        }
+    }
+
+    structureData(parsedData){
+        var data = [];
+
+        console.log("structure", parsedData);
+
+        if(Array.isArray(parsedData) && parsedData.length && Array.isArray(parsedData[0])){
+            if(this.table.options.autoColumns){
+                data = this.structureArrayToObject(parsedData);
+            }else {
+                data = this.structureArrayToColumns(parsedData);
+            }
+
+            return data;
+        }else {
+            return parsedData;
+        }
+    }
+
+    structureArrayToObject(parsedData){
+        var columns = parsedData.shift();
+
+        var data = parsedData.map((values) => {
+            var row = {};
+
+            columns.forEach((key, i) => {
+                row[key] = values[i];
+            });
+
+            return row;
+        });
+
+        return data;
+    }
+
+    structureArrayToColumns(parsedData){
+        var data = [],
+        columns = this.table.getColumns();
+
+        //remove first row if it is the column names
+        if(columns[0] && parsedData[0][0]){
+            if(columns[0].getDefinition().title === parsedData[0][0]){
+                parsedData.shift();
+            }
+        }
+        
+        //convert row arrays to objects
+        parsedData.forEach((rowData) => {
+            var row = {};
+
+            rowData.forEach((value, index) => {
+                var column = columns[index];
+
+                if(column){
+                    row[column.getField()] = value;
+                }
+            });
+
+            data.push(row);
+        });
+
+        return data;
+    }
+    
+    setData(data){
+        return this.table.setData(data);
+    }
+}
+
+Import.moduleName = "import";
+
+//load defaults
+Import.importers = defaultImporters;
+
 class Interaction extends Module{
 
 	constructor(table){
@@ -11981,6 +12167,11 @@ class Interaction extends Module{
 				tapHold:null,
 			},
 			column:{
+				tap:null,
+				tapDbl:null,
+				tapHold:null,
+			},
+			group:{
 				tap:null,
 				tapDbl:null,
 				tapHold:null,
@@ -12214,9 +12405,9 @@ var defaultBindings = {
 	scrollPageDown:34,
 	scrollToStart:36,
 	scrollToEnd:35,
-	undo:"ctrl + 90",
-	redo:"ctrl + 89",
-	copyToClipboard:"ctrl + 67",
+	undo:["ctrl + 90", "meta + 90"],
+	redo:["ctrl + 89", "meta + 89"],
+	copyToClipboard:["ctrl + 67", "meta + 89"],
 };
 
 var defaultActions = {
@@ -12350,7 +12541,7 @@ class Keybindings extends Module{
 		this.keyupBinding = false;
 		this.keydownBinding = false;
 
-		this.registerTableOption("keybindings", []); //array for keybindings
+		this.registerTableOption("keybindings", {}); //array for keybindings
 		this.registerTableOption("tabEndNewRow", false); //create new row when tab to end of table
 	}
 
@@ -12362,17 +12553,8 @@ class Keybindings extends Module{
 		this.pressedKeys = [];
 
 		if(bindings !== false){
-
-			for(let key in Keybindings.bindings){
-				mergedBindings[key] = Keybindings.bindings[key];
-			}
-
-			if(Object.keys(bindings).length){
-
-				for(let key in bindings){
-					mergedBindings[key] = bindings[key];
-				}
-			}
+			Object.assign(mergedBindings, Keybindings.bindings);
+			Object.assign(mergedBindings, bindings);
 
 			this.mapBindings(mergedBindings);
 			this.bindEvents();
@@ -12390,7 +12572,11 @@ class Keybindings extends Module{
 					}
 
 					bindings[key].forEach((binding) => {
-						this.mapBinding(key, binding);
+						var bindingList = Array.isArray(binding) ?  binding : [binding];
+						
+						bindingList.forEach((item) => {
+							this.mapBinding(key, item);
+						});						
 					});
 				}
 			}else {
@@ -12425,7 +12611,7 @@ class Keybindings extends Module{
 				break;
 
 				default:
-				symbol = parseInt(symbol);
+				symbol = isNaN(symbol) ? symbol.toUpperCase().charCodeAt(0) : parseInt(symbol);
 				binding.keys.push(symbol);
 
 				if(!this.watchKeys[symbol]){
@@ -12513,164 +12699,193 @@ Keybindings.bindings = defaultBindings;
 Keybindings.actions = defaultActions;
 
 class Menu extends Module{
-
+	
 	constructor(table){
 		super(table);
-
+		
+		this.menuContainer = null;
 		this.menuElements = [];
 		this.blurEvent = this.hideMenu.bind(this);
 		this.escEvent = this.escMenu.bind(this);
 		this.nestedMenuBlock = false;
 		this.positionReversedX = false;
-
+		
+		this.currentComponent = null;
+		
+		this.columnSubscribers = {};
+		
 		this.registerTableOption("rowContextMenu", false);
 		this.registerTableOption("rowClickMenu", false);
 		this.registerTableOption("groupContextMenu", false);
 		this.registerTableOption("groupClickMenu", false);
-
+		this.registerTableOption("menuContainer", false);
+		
 		this.registerColumnOption("headerContextMenu");
+		this.registerColumnOption("headerClickMenu");
 		this.registerColumnOption("headerMenu");
 		this.registerColumnOption("contextMenu");
 		this.registerColumnOption("clickMenu");
 	}
-
+	
 	initialize(){
-		this.subscribe("cell-layout", this.layoutCell.bind(this));
+		this.lookupMenuContainer();
+		
+		this.initializeRowWatchers();
+		this.initializeGroupWatchers();
+		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
-		this.subscribe("row-init", this.initializeRow.bind(this));
 	}
-
-	layoutCell(cell){
-		if(cell.column.definition.contextMenu || cell.column.definition.clickMenu){
-			this.initializeCell(cell);
+	
+	lookupMenuContainer(){
+		
+		this.menuContainer = this.table.options.menuContainer;
+		
+		if(typeof this.menuContainer === "string"){
+			this.menuContainer = document.querySelector(this.menuContainer);
+			
+			if(!this.menuContainer){
+				console.warn("Menu Error - no container element found matching selector:",  this.table.options.menuContainer , "(defaulting to document body)");
+			}
+		}else if (this.menuContainer === true){
+			this.menuContainer = this.table.element;
+		}
+		
+		if(this.menuContainer && !this.checkMenuContainerIsParent(this.menuContainer)){
+			this.menuContainer = false;
+			console.warn("Menu Error - container element does not contain this table:",  this.table.options.menuContainer , "(defaulting to document body)");
+		}
+		
+		if(!this.menuContainer){
+			this.menuContainer = document.body;
 		}
 	}
-
+	
+	checkMenuContainerIsParent(container, element = this.table.element){
+		if(container === element){
+			return true;
+		}else {
+			return element.parentNode ? this.checkMenuContainerIsParent(container, element.parentNode) : false;
+		}
+	}
+	
+	initializeRowWatchers(){
+		if(this.table.options.rowContextMenu){
+			this.subscribe("row-contextmenu", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
+			this.table.on("rowTapHold", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
+		}
+		
+		if(this.table.options.rowClickMenu){
+			this.subscribe("row-click", this.loadMenuEvent.bind(this, this.table.options.rowClickMenu));
+		}
+	}
+	
+	initializeGroupWatchers(){
+		if(this.table.options.groupContextMenu){
+			this.subscribe("group-contextmenu", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
+			this.table.on("groupTapHold", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
+		}
+		
+		if(this.table.options.groupClickMenu){
+			this.subscribe("group-click", this.loadMenuEvent.bind(this, this.table.options.groupClickMenu));
+		}
+	}
+	
 	initializeColumn(column){
 		var def = column.definition;
-
-		if(def.headerContextMenu || def.headerClickMenu || def.headerMenu){
-			this.initializeColumnHeader(column);
+		
+		//handle column events
+		if(def.headerContextMenu && !this.columnSubscribers.headerContextMenu){
+			this.columnSubscribers.headerContextMenu = this.loadMenuTableColumnEvent.bind(this, "headerContextMenu");
+			this.subscribe("column-contextmenu", this.columnSubscribers.headerContextMenu);
+			this.table.on("headerTapHold", this.loadMenuTableColumnEvent.bind(this, "headerContextMenu"));
+		}
+		
+		if(def.headerClickMenu && !this.columnSubscribers.headerClickMenu){
+			this.columnSubscribers.headerClickMenu = this.loadMenuTableColumnEvent.bind(this, "headerClickMenu");
+			this.subscribe("column-click", this.columnSubscribers.headerClickMenu);
+		}
+		
+		if(def.headerMenu){
+			this.initializeColumnHeaderMenu(column);
+		}
+		
+		//handle cell events
+		if(def.contextMenu && !this.columnSubscribers.contextMenu){
+			this.columnSubscribers.contextMenu = this.loadMenuTableCellEvent.bind(this, "contextMenu");
+			this.subscribe("cell-contextmenu", this.columnSubscribers.contextMenu);
+			this.table.on("cellTapHold", this.loadMenuTableCellEvent.bind(this, "contextMenu"));
+		}
+		
+		if(def.clickMenu && !this.columnSubscribers.clickMenu){
+			this.columnSubscribers.clickMenu = this.loadMenuTableCellEvent.bind(this, "clickMenu");
+			this.subscribe("cell-click", this.columnSubscribers.clickMenu);
 		}
 	}
-
-	initializeColumnHeader(column){
+	
+	initializeColumnHeaderMenu(column){
 		var headerMenuEl;
-
-		if(column.definition.headerContextMenu){
-			column.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, column, column.definition.headerContextMenu));
-			this.tapHold(column, column.definition.headerContextMenu);
+		
+		headerMenuEl = document.createElement("span");
+		headerMenuEl.classList.add("tabulator-header-menu-button");
+		headerMenuEl.innerHTML = "&vellip;";
+		
+		headerMenuEl.addEventListener("click", (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			
+			this.loadMenuEvent(column.definition.headerMenu, e, column);
+		});
+		
+		column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
+	}
+	
+	loadMenuTableCellEvent(option, e, cell){
+		if(cell._cell){
+			cell = cell._cell;
 		}
-
-		// if(column.definition.headerClickMenu){
-		// 	column.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, column, column.definition.headerClickMenu));
-		// }
-
-		if(column.definition.headerMenu){
-
-			headerMenuEl = document.createElement("span");
-			headerMenuEl.classList.add("tabulator-header-menu-button");
-			headerMenuEl.innerHTML = "&vellip;";
-
-			headerMenuEl.addEventListener("click", (e) => {
-				e.stopPropagation();
-				e.preventDefault();
-
-				this.LoadMenuEvent(column, column.definition.headerMenu, e);
-			});
-
-			column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
+		
+		if(cell.column.definition[option]){
+			this.loadMenuEvent(cell.column.definition[option], e, cell);
 		}
 	}
-
-	LoadMenuEvent(component, menu, e){
+	
+	loadMenuTableColumnEvent(option, e, column){
+		if(column._column){
+			column = column._column;
+		}
+		
+		if(column.definition[option]){
+			this.loadMenuEvent(column.definition[option], e, column);
+		}
+	}
+	
+	loadMenuEvent(menu, e, component){
+		if(component._group){
+			component = component._group;
+		}else if(component._row){
+			component = component._row;
+		}
+		
 		menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
-
-		// if(component instanceof Cell){
-		// 	e.stopImmediatePropagation();
-		// }
-
+		
 		this.loadMenu(e, component, menu);
 	}
-
-	tapHold(component, menu){
-		var element = component.getElement(),
-		tapHold = null,
-		loaded = false;
-
-		element.addEventListener("touchstart", (e) => {
-			clearTimeout(tapHold);
-			loaded = false;
-
-			tapHold = setTimeout(() => {
-				clearTimeout(tapHold);
-				tapHold = null;
-				loaded = true;
-
-				this.LoadMenuEvent(component, menu, e);
-			}, 1000);
-
-		}, {passive: true});
-
-		element.addEventListener("touchend", (e) => {
-			clearTimeout(tapHold);
-			tapHold = null;
-
-			if(loaded){
-				e.preventDefault();
-			}
-		});
-	}
-
-	initializeCell(cell){
-		if(cell.column.definition.contextMenu){
-			cell.getElement(true).addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
-			this.tapHold(cell, cell.column.definition.contextMenu);
-		}
-
-		if(cell.column.definition.clickMenu){
-			cell.getElement(true).addEventListener("click", this.LoadMenuEvent.bind(this, cell, cell.column.definition.clickMenu));
-		}
-	}
-
-	initializeRow(row){
-		if(this.table.options.rowContextMenu){
-			row.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, row, this.table.options.rowContextMenu));
-			this.tapHold(row, this.table.options.rowContextMenu);
-		}
-
-		if(this.table.options.rowClickMenu){
-			row.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, row, this.table.options.rowClickMenu));
-		}
-	}
-
-	initializeGroup (group){
-		if(this.table.options.groupContextMenu){
-			group.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, group, this.table.options.groupContextMenu));
-			this.tapHold(group, this.table.options.groupContextMenu);
-		}
-
-		if(this.table.options.groupClickMenu){
-			group.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, group, this.table.options.groupClickMenu));
-		}
-	}
-
+	
 	loadMenu(e, component, menu, parentEl){
-
 		var touch = !(e instanceof MouseEvent);
-
+		
 		var menuEl = document.createElement("div");
 		menuEl.classList.add("tabulator-menu");
-
+		
 		if(!touch){
 			e.preventDefault();
 		}
-
+		
 		//abort if no menu set
 		if(!menu || !menu.length){
 			return;
 		}
-
+		
 		if(!parentEl){
 			if(this.nestedMenuBlock){
 				//abort if child menu already open
@@ -12682,35 +12897,35 @@ class Menu extends Module{
 					this.nestedMenuBlock = false;
 				}, 100);
 			}
-
+			
 			this.hideMenu();
 			this.menuElements = [];
 		}
-
+		
 		menu.forEach((item) => {
 			var itemEl = document.createElement("div"),
 			label = item.label,
 			disabled = item.disabled;
-
+			
 			if(item.separator){
 				itemEl.classList.add("tabulator-menu-separator");
 			}else {
 				itemEl.classList.add("tabulator-menu-item");
-
+				
 				if(typeof label == "function"){
 					label = label.call(this.table, component.getComponent());
 				}
-
+				
 				if(label instanceof Node){
 					itemEl.appendChild(label);
 				}else {
 					itemEl.innerHTML = label;
 				}
-
+				
 				if(typeof disabled == "function"){
 					disabled = disabled.call(this.table, component.getComponent());
 				}
-
+				
 				if(disabled){
 					itemEl.classList.add("tabulator-menu-item-disabled");
 					itemEl.addEventListener("click", (e) => {
@@ -12731,57 +12946,67 @@ class Menu extends Module{
 						}
 					}
 				}
-
+				
 				if(item.menu && item.menu.length){
 					itemEl.classList.add("tabulator-menu-item-submenu");
 				}
 			}
-
+			
 			menuEl.appendChild(itemEl);
 		});
-
+		
 		menuEl.addEventListener("click", (e) => {
 			this.hideMenu();
 		});
-
+		
 		this.menuElements.push(menuEl);
 		this.positionMenu(menuEl, parentEl, touch, e);
+		
+		this.currentComponent = component;
+		
+		this.dispatchExternal("menuOpened", component.getComponent());
 	}
-
+	
 	hideOldSubMenus(menuEl){
 		var index = this.menuElements.indexOf(menuEl);
-
+		
 		if(index > -1){
 			for(let i = this.menuElements.length - 1; i > index; i--){
 				var el = this.menuElements[i];
-
+				
 				if(el.parentNode){
 					el.parentNode.removeChild(el);
 				}
-
+				
 				this.menuElements.pop();
 			}
 		}
 	}
-
+	
 	positionMenu(element, parentEl, touch, e){
-		var docHeight = Math.max(document.body.offsetHeight, window.innerHeight),
-		x, y, parentOffset;
-
+		var x, y, parentOffset;
+		
 		if(!parentEl){
 			x = touch ? e.touches[0].pageX : e.pageX;
 			y = touch ? e.touches[0].pageY : e.pageY;
-
+			
+			if(this.menuContainer !== document.body){
+				parentOffset = Helpers.elOffset(this.menuContainer);
+				
+				x -= parentOffset.left;
+				y -= parentOffset.top;
+			}
+			
 			this.positionReversedX = false;
 		}else {
 			parentOffset = Helpers.elOffset(parentEl);
 			x = parentOffset.left + parentEl.offsetWidth;
 			y = parentOffset.top - 1;
 		}
-
+		
 		element.style.top = y + "px";
 		element.style.left = x + "px";
-
+		
 		setTimeout(() => {
 			this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
 			document.body.addEventListener("click", this.blurEvent);
@@ -12789,56 +13014,61 @@ class Menu extends Module{
 			window.addEventListener("resize", this.blurEvent);
 			document.body.addEventListener("keydown", this.escEvent);
 		}, 100);
-
-		document.body.appendChild(element);
-
-		//move menu to start on bottom edge if it is too close to the edge of the screen
-		if((y + element.offsetHeight) >= docHeight){
-			element.style.top = "";
-
-			if(parentEl){
-				element.style.bottom = (docHeight - parentOffset.top - parentEl.offsetHeight - 1) + "px";
-			}else {
-				element.style.bottom = (docHeight - y) + "px";
-			}
-		}
-
+		
+		this.menuContainer.appendChild(element);
+		
 		//move menu to start on right edge if it is too close to the edge of the screen
-		if((x + element.offsetWidth) >= document.body.offsetWidth || this.positionReversedX){
+		if((x + element.offsetWidth) >= this.menuContainer.offsetWidth || this.positionReversedX){
 			element.style.left = "";
-
+			
 			if(parentEl){
-				element.style.right = (document.documentElement.offsetWidth - parentOffset.left) + "px";
+				element.style.right = (this.menuContainer.offsetWidth - parentOffset.left) + "px";
 			}else {
-				element.style.right = (document.documentElement.offsetWidth - x) + "px";
+				element.style.right = (this.menuContainer.offsetWidth - x) + "px";
 			}
-
+			
 			this.positionReversedX = true;
 		}
+		
+		//move menu to start on bottom edge if it is too close to the edge of the screen
+		if((y + element.offsetHeight) >= this.menuContainer.offsetHeight){
+			element.style.top = "";
+			
+			if(parentEl){
+				element.style.bottom = (this.menuContainer.offsetHeight - parentOffset.top - parentEl.offsetHeight - 1) + "px";
+			}else {
+				element.style.bottom = (this.menuContainer.offsetHeight - y) + "px";
+			}
+		}
 	}
-
+	
 	isOpen(){
 		return !!this.menuElements.length;
 	}
-
+	
 	escMenu(e){
 		if(e.keyCode == 27){
 			this.hideMenu();
 		}
 	}
-
-	hideMenu(){
+	
+	hideMenu(){	
 		this.menuElements.forEach((menuEl) => {
 			if(menuEl.parentNode){
 				menuEl.parentNode.removeChild(menuEl);
 			}
 		});
-
+		
 		document.body.removeEventListener("keydown", this.escEvent);
 		document.body.removeEventListener("click", this.blurEvent);
 		document.body.removeEventListener("contextmenu", this.blurEvent);
 		window.removeEventListener("resize", this.blurEvent);
 		this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
+		
+		if(this.currentComponent){
+			this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
+			this.currentComponent = null;
+		}
 	}
 }
 
@@ -13456,6 +13686,8 @@ class MoveRows extends Module{
 		document.body.addEventListener("mousemove", this.moveHover);
 		document.body.addEventListener("mouseup", this.endMove);
 
+		this.dispatchExternal("rowMoving", row.getComponent());
+
 		this.moveHover(e);
 	}
 
@@ -13490,6 +13722,8 @@ class MoveRows extends Module{
 
 			if(this.toRow){
 				this.table.rowManager.moveRow(this.moving, this.toRow, this.toRowAfter);
+			}else {
+				this.dispatchExternal("rowMoveCancelled", this.moving.getComponent());
 			}
 
 			this.moving = false;
@@ -13904,41 +14138,121 @@ Mutator.moduleName = "mutator";
 //load defaults
 Mutator.mutators = defaultMutators;
 
-class Page extends Module{
+function rows(pageSize, currentRow, currentPage, totalRows, totalPages){
+	var el = document.createElement("span"),
+	showingEl = document.createElement("span"),
+	valueEl = document.createElement("span"),
+	ofEl = document.createElement("span"),
+	totalEl = document.createElement("span"),
+	rowsEl = document.createElement("span");
+	
+	this.table.modules.localize.langBind("pagination|counter|showing", (value) => {
+		showingEl.innerHTML = value;
+	});
+	
+	valueEl.innerHTML = " " + currentRow + "-" + Math.min((currentRow + pageSize - 1), totalRows) + " ";
+	
+	this.table.modules.localize.langBind("pagination|counter|of", (value) => {
+		ofEl.innerHTML = value;
+	});
+	
+	totalEl.innerHTML = " " + totalRows + " ";
+	
+	this.table.modules.localize.langBind("pagination|counter|rows", (value) => {
+		rowsEl.innerHTML = value;
+	});
+	
+	el.appendChild(showingEl);
+	el.appendChild(valueEl);
+	el.appendChild(ofEl);
+	el.appendChild(totalEl);
+	el.appendChild(rowsEl);
+	
+	return el;
+}
 
+function pages(pageSize, currentRow, currentPage, totalRows, totalPages){
+
+    var el = document.createElement("span"),
+	showingEl = document.createElement("span"),
+	valueEl = document.createElement("span"),
+	ofEl = document.createElement("span"),
+	totalEl = document.createElement("span"),
+	rowsEl = document.createElement("span");
+	
+	this.table.modules.localize.langBind("pagination|counter|showing", (value) => {
+		showingEl.innerHTML = value;
+	});
+	
+	valueEl.innerHTML = " " + currentPage + " ";
+	
+	this.table.modules.localize.langBind("pagination|counter|of", (value) => {
+		ofEl.innerHTML = value;
+	});
+	
+	totalEl.innerHTML = " " + totalPages + " ";
+	
+	this.table.modules.localize.langBind("pagination|counter|pages", (value) => {
+		rowsEl.innerHTML = value;
+	});
+	
+	el.appendChild(showingEl);
+	el.appendChild(valueEl);
+	el.appendChild(ofEl);
+	el.appendChild(totalEl);
+	el.appendChild(rowsEl);
+	
+	return el;
+}
+
+var defaultPageCounters = {
+	rows:rows,
+	pages:pages,
+};
+
+class Page extends Module{
+	
 	constructor(table){
 		super(table);
-
+		
 		this.mode = "local";
 		this.progressiveLoad = false;
-
+		
+		this.element = null;
+		this.pageCounterElement = null;
+		this.pageCounter = null;
+		
 		this.size = 0;
 		this.page = 1;
 		this.count = 5;
 		this.max = 1;
 
+		this.remoteRowCountEstimate = null;
+		
 		this.displayIndex = 0; //index in display pipeline
-
+		
 		this.initialLoad = true;
 		this.dataChanging = false; //flag to check if data is being changed by this module
-
+		
 		this.pageSizes = [];
-
+		
 		this.registerTableOption("pagination", false); //set pagination type
 		this.registerTableOption("paginationMode", "local"); //local or remote pagination
 		this.registerTableOption("paginationSize", false); //set number of rows to a page
 		this.registerTableOption("paginationInitialPage", 1); //initial page to show on load
+		this.registerTableOption("paginationCounter", false);  // set pagination counter
+		this.registerTableOption("paginationCounterElement", false);  // set pagination counter
 		this.registerTableOption("paginationButtonCount", 5);  // set count of page button
 		this.registerTableOption("paginationSizeSelector", false); //add pagination size selector element
 		this.registerTableOption("paginationElement", false); //element to hold pagination numbers
 		// this.registerTableOption("paginationDataSent", {}); //pagination data sent to the server
 		// this.registerTableOption("paginationDataReceived", {}); //pagination data received from the server
 		this.registerTableOption("paginationAddRow", "page"); //add rows on table or page
-
+		
 		this.registerTableOption("progressiveLoad", false); //progressive loading
 		this.registerTableOption("progressiveLoadDelay", 0); //delay between requests
 		this.registerTableOption("progressiveLoadScrollMargin", 0); //margin before scroll begins
-
+		
 		this.registerTableFunction("setMaxPage", this.setMaxPage.bind(this));
 		this.registerTableFunction("setPage", this.setPage.bind(this));
 		this.registerTableFunction("setPageToRow", this.userSetPageToRow.bind(this));
@@ -13948,11 +14262,11 @@ class Page extends Module{
 		this.registerTableFunction("nextPage", this.nextPage.bind(this));
 		this.registerTableFunction("getPage", this.getPage.bind(this));
 		this.registerTableFunction("getPageMax", this.getPageMax.bind(this));
-
+		
 		//register component functions
 		this.registerComponentFunction("row", "pageTo", this.setPageToRow.bind(this));
 	}
-
+	
 	initialize(){
 		if(this.table.options.pagination){
 			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
@@ -13960,40 +14274,41 @@ class Page extends Module{
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
 			this.subscribe("data-processed", this.initialLoadComplete.bind(this));
 			this.subscribe("table-built", this.calculatePageSizes.bind(this));
-
+			
 			if(this.table.options.paginationMode === "remote"){
 				this.subscribe("data-params", this.remotePageParams.bind(this));
 				this.subscribe("data-loaded", this._parseRemoteData.bind(this));
 			}
-
+			
 			if(this.table.options.progressiveLoad){
 				console.error("Progressive Load Error - Pagination and progressive load cannot be used at the same time");
 			}
-
+			
 			this.registerDisplayHandler(this.restOnRenderBefore.bind(this), 40);
 			this.registerDisplayHandler(this.getRows.bind(this), 50);
-
+			
 			this.createElements();
+			this.initializePageCounter();
 			this.initializePaginator();
 		}else if(this.table.options.progressiveLoad){
 			this.subscribe("data-params", this.remotePageParams.bind(this));
 			this.subscribe("data-loaded", this._parseRemoteData.bind(this));
 			this.subscribe("table-built", this.calculatePageSizes.bind(this));
 			this.subscribe("data-processed", this.initialLoadComplete.bind(this));
-
+			
 			this.initializeProgressive(this.table.options.progressiveLoad);
-
+			
 			if(this.table.options.progressiveLoad === "scroll"){
 				this.subscribe("scroll-vertical", this.scrollVertical.bind(this));
 			}
 		}
 	}
-
+	
 	rowAddingPosition(row, top){
 		var rowManager = this.table.rowManager,
 		dispRows = rowManager.getDisplayRows(),
 		index;
-
+		
 		if(top){
 			if(dispRows.length){
 				index = dispRows[0];
@@ -14009,74 +14324,74 @@ class Page extends Module{
 				top = dispRows.length < this.size ? false : true;
 			}
 		}
-
+		
 		return {index, top}
 	}
-
+	
 	calculatePageSizes(){
 		var testElRow, testElCell;
-
+		
 		if(this.table.options.paginationSize){
 			this.size = this.table.options.paginationSize;
 		}else {
 			testElRow = document.createElement("div");
 			testElRow.classList.add("tabulator-row");
 			testElRow.style.visibility = "hidden";
-
+			
 			testElCell = document.createElement("div");
 			testElCell.classList.add("tabulator-cell");
 			testElCell.innerHTML = "Page Row Test";
-
+			
 			testElRow.appendChild(testElCell);
-
+			
 			this.table.rowManager.getTableElement().appendChild(testElRow);
-
+			
 			this.size = Math.floor(this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
-
+			
 			this.table.rowManager.getTableElement().removeChild(testElRow);
 		}
-
+		
 		this.generatePageSizeSelectList();
 	}
-
+	
 	initialLoadComplete(){
 		this.initialLoad = false;
 	}
-
+	
 	remotePageParams(data, config, silent, params){
 		if(!this.initialLoad){
 			if((this.progressiveLoad && !silent) || (!this.progressiveLoad && !this.dataChanging)){
 				this.reset(true);
 			}
 		}
-
+		
 		//configure request params
 		params.page = this.page;
-
+		
 		//set page size if defined
 		if(this.size){
 			params.size = this.size;
 		}
-
+		
 		return params;
 	}
-
+	
 	///////////////////////////////////
 	///////// Table Functions /////////
 	///////////////////////////////////
-
+	
 	userSetPageToRow(row){
 		if(this.table.options.pagination){
 			row = this.rowManager.findRow(row);
-
+			
 			if(row){
 				return this.setPageToRow(row)
 			}
 		}
-
+		
 		return Promise.reject();
 	}
-
+	
 	userSetPageSize(size){
 		if(this.table.options.pagination){
 			this.setPageSize(size);
@@ -14088,102 +14403,102 @@ class Page extends Module{
 	///////////////////////////////////
 	///////// Internal Logic //////////
 	///////////////////////////////////
-
+	
 	scrollVertical(top, dir){
 		var element, diff, margin;
 		if(!dir && !this.table.dataLoader.loading){
 			element = this.table.rowManager.getElement();
 			diff = element.scrollHeight - element.clientHeight - top;
 			margin = this.table.options.progressiveLoadScrollMargin || (element.clientHeight * 2);
-
+			
 			if(diff < margin){
 				this.nextPage()
 				.catch(() => {}); //consume the exception thrown when on the last page
 			}
 		}
 	}
-
+	
 	restOnRenderBefore(rows, renderInPosition){
 		if(!renderInPosition){
 			if(this.mode === "local"){
 				this.reset();
 			}
 		}
-
+		
 		return rows;
 	}
-
+	
 	rowsUpdated(){
 		this.refreshData(true, "all");
 	}
-
+	
 	createElements(){
 		var button;
-
+		
 		this.element = document.createElement("span");
 		this.element.classList.add("tabulator-paginator");
-
+		
 		this.pagesElement = document.createElement("span");
 		this.pagesElement.classList.add("tabulator-pages");
-
+		
 		button = document.createElement("button");
 		button.classList.add("tabulator-page");
 		button.setAttribute("type", "button");
 		button.setAttribute("role", "button");
 		button.setAttribute("aria-label", "");
 		button.setAttribute("title", "");
-
+		
 		this.firstBut = button.cloneNode(true);
 		this.firstBut.setAttribute("data-page", "first");
-
+		
 		this.prevBut = button.cloneNode(true);
 		this.prevBut.setAttribute("data-page", "prev");
-
+		
 		this.nextBut = button.cloneNode(true);
 		this.nextBut.setAttribute("data-page", "next");
-
+		
 		this.lastBut = button.cloneNode(true);
 		this.lastBut.setAttribute("data-page", "last");
-
+		
 		if(this.table.options.paginationSizeSelector){
 			this.pageSizeSelect = document.createElement("select");
 			this.pageSizeSelect.classList.add("tabulator-page-size");
 		}
 	}
-
+	
 	generatePageSizeSelectList(){
 		var pageSizes = [];
-
+		
 		if(this.pageSizeSelect){
-
+			
 			if(Array.isArray(this.table.options.paginationSizeSelector)){
 				pageSizes = this.table.options.paginationSizeSelector;
 				this.pageSizes = pageSizes;
-
+				
 				if(this.pageSizes.indexOf(this.size) == -1){
 					pageSizes.unshift(this.size);
 				}
 			}else {
-
+				
 				if(this.pageSizes.indexOf(this.size) == -1){
 					pageSizes = [];
-
+					
 					for (let i = 1; i < 5; i++){
 						pageSizes.push(this.size * i);
 					}
-
+					
 					this.pageSizes = pageSizes;
 				}else {
 					pageSizes = this.pageSizes;
 				}
 			}
-
+			
 			while(this.pageSizeSelect.firstChild) this.pageSizeSelect.removeChild(this.pageSizeSelect.firstChild);
-
+			
 			pageSizes.forEach((item) => {
 				var itemEl = document.createElement("option");
 				itemEl.value = item;
-
+				
 				if(item === true){
 					this.langBind("pagination|all", function(value){
 						itemEl.innerHTML = value;
@@ -14191,136 +14506,178 @@ class Page extends Module{
 				}else {
 					itemEl.innerHTML = item;
 				}
-
-
-
+				
+				
+				
 				this.pageSizeSelect.appendChild(itemEl);
 			});
-
+			
 			this.pageSizeSelect.value = this.size;
 		}
 	}
-
-	//setup pageination
+	
+	initializePageCounter(){
+		var counter = this.table.options.paginationCounter,
+		pageCounter = null;
+		
+		if(counter){
+			if(typeof counter === "function"){
+				pageCounter = counter;
+			}else {
+				pageCounter = Page.pageCounters[counter];
+			}
+			
+			if(pageCounter){
+				this.pageCounter = pageCounter;
+				
+				this.pageCounterElement = document.createElement("span");
+				this.pageCounterElement.classList.add("tabulator-page-counter");
+			}else {
+				console.warn("Pagination Error - No such page counter found: ", counter);
+			}
+		}
+	}
+	
+	//setup pagination
 	initializePaginator(hidden){
-		var pageSelectLabel;
-
+		var pageSelectLabel, paginationCounterHolder;
+		
 		if(!hidden){
 			//build pagination element
-
+			
 			//bind localizations
 			this.langBind("pagination|first", (value) => {
 				this.firstBut.innerHTML = value;
 			});
-
+			
 			this.langBind("pagination|first_title", (value) => {
 				this.firstBut.setAttribute("aria-label", value);
 				this.firstBut.setAttribute("title", value);
 			});
-
+			
 			this.langBind("pagination|prev", (value) => {
 				this.prevBut.innerHTML = value;
 			});
-
+			
 			this.langBind("pagination|prev_title", (value) => {
 				this.prevBut.setAttribute("aria-label", value);
 				this.prevBut.setAttribute("title", value);
 			});
-
+			
 			this.langBind("pagination|next", (value) => {
 				this.nextBut.innerHTML = value;
 			});
-
+			
 			this.langBind("pagination|next_title", (value) => {
 				this.nextBut.setAttribute("aria-label", value);
 				this.nextBut.setAttribute("title", value);
 			});
-
+			
 			this.langBind("pagination|last", (value) => {
 				this.lastBut.innerHTML = value;
 			});
-
+			
 			this.langBind("pagination|last_title", (value) => {
 				this.lastBut.setAttribute("aria-label", value);
 				this.lastBut.setAttribute("title", value);
 			});
-
+			
 			//click bindings
 			this.firstBut.addEventListener("click", () => {
 				this.setPage(1);
 			});
-
+			
 			this.prevBut.addEventListener("click", () => {
 				this.previousPage();
 			});
-
+			
 			this.nextBut.addEventListener("click", () => {
 				this.nextPage();
 			});
-
+			
 			this.lastBut.addEventListener("click", () => {
 				this.setPage(this.max);
 			});
-
+			
 			if(this.table.options.paginationElement){
 				this.element = this.table.options.paginationElement;
 			}
-
+			
 			if(this.pageSizeSelect){
 				pageSelectLabel = document.createElement("label");
-
+				
 				this.langBind("pagination|page_size", (value) => {
 					this.pageSizeSelect.setAttribute("aria-label", value);
 					this.pageSizeSelect.setAttribute("title", value);
 					pageSelectLabel.innerHTML = value;
 				});
-
+				
 				this.element.appendChild(pageSelectLabel);
 				this.element.appendChild(this.pageSizeSelect);
-
+				
 				this.pageSizeSelect.addEventListener("change", (e) => {
 					this.setPageSize(this.pageSizeSelect.value == "true" ? true : this.pageSizeSelect.value);
 					this.setPage(1);
 				});
 			}
-
+			
 			//append to DOM
 			this.element.appendChild(this.firstBut);
 			this.element.appendChild(this.prevBut);
 			this.element.appendChild(this.pagesElement);
 			this.element.appendChild(this.nextBut);
 			this.element.appendChild(this.lastBut);
-
+			
 			if(!this.table.options.paginationElement && !hidden){
+				if(this.table.options.paginationCounter){
+
+					if(this.table.options.paginationCounterElement){
+						if(this.table.options.paginationCounterElement instanceof HTMLElement){
+							this.table.options.paginationCounterElement.appendChild(this.pageCounterElement);
+						}else if(typeof this.table.options.paginationCounterElement === "string"){
+							paginationCounterHolder = document.querySelector(this.table.options.paginationCounterElement);
+							
+							if(paginationCounterHolder){
+								paginationCounterHolder.appendChild(this.pageCounterElement);
+							}else {
+								console.warn("Pagination Error - Unable to find element matching paginationCounterElement selector:", this.table.options.paginationCounterElement);
+							}
+						}
+					}else {
+						this.table.footerManager.append(this.pageCounterElement);
+					}
+					
+				}
+				
 				this.table.footerManager.append(this.element, this);
 			}
-
+			
 			this.page = this.table.options.paginationInitialPage;
 			this.count = this.table.options.paginationButtonCount;
 		}
-
+		
 		//set default values
 		this.mode = this.table.options.paginationMode;
 	}
-
+	
 	initializeProgressive(mode){
 		this.initializePaginator(true);
 		this.mode = "progressive_" + mode;
 		this.progressiveLoad = true;
 	}
-
+	
 	trackChanges(){
 		this.dispatch("page-changed");
 	}
-
+	
 	setDisplayIndex(index){
 		this.displayIndex = index;
 	}
-
+	
 	getDisplayIndex(){
 		return this.displayIndex;
 	}
-
+	
 	//calculate maximum page from number of rows
 	setMaxRows(rowCount){
 		if(!rowCount){
@@ -14328,12 +14685,12 @@ class Page extends Module{
 		}else {
 			this.max = this.size === true ?  1 : Math.ceil(rowCount/this.size);
 		}
-
+		
 		if(this.page > this.max){
 			this.page = this.max;
 		}
 	}
-
+	
 	//reset to first page without triggering action
 	reset(force){
 		if(!this.initialLoad){
@@ -14342,91 +14699,128 @@ class Page extends Module{
 			}
 		}
 	}
-
+	
 	//set the maximum page
 	setMaxPage(max){
-
+		
 		max = parseInt(max);
-
+		
 		this.max = max || 1;
-
+		
 		if(this.page > this.max){
 			this.page = this.max;
 			this.trigger();
 		}
 	}
-
+	
 	//set current page number
 	setPage(page){
 		switch(page){
 			case "first":
 			return this.setPage(1);
-
+			
 			case "prev":
 			return this.previousPage();
-
+			
 			case "next":
 			return this.nextPage();
-
+			
 			case "last":
 			return this.setPage(this.max);
 		}
-
-
+		
 		page = parseInt(page);
-
+		
 		if((page > 0 && page <= this.max) || this.mode !== "local"){
 			this.page = page;
-
+			
 			this.trackChanges();
-
+			
 			return this.trigger();
 		}else {
 			console.warn("Pagination Error - Requested page is out of range of 1 - " + this.max + ":", page);
 			return Promise.reject();
 		}
 	}
-
+	
 	setPageToRow(row){
 		var rows = this.table.rowManager.getDisplayRows(this.displayIndex - 1);
 		var index = rows.indexOf(row);
-
+		
 		if(index > -1){
 			var page = this.size === true ? 1 : Math.ceil((index + 1) / this.size);
-
+			
 			return this.setPage(page)
 		}else {
 			console.warn("Pagination Error - Requested row is not visible");
 			return Promise.reject();
 		}
 	}
-
+	
 	setPageSize(size){
 		if(size !== true){
 			size = parseInt(size);
 		}
-
+		
 		if(size > 0){
 			this.size = size;
 		}
-
+		
 		if(this.pageSizeSelect){
 			// this.pageSizeSelect.value = size;
 			this.generatePageSizeSelectList();
 		}
-
+		
 		this.trackChanges();
 	}
+	
+	_setPageCounter(totalRows){
+		var content, currentRow;
+		
+		if(this.pageCounter){
+			currentRow = ((this.page - 1) * this.size) + 1;
 
+			if(this.mode === "remote"){
+				totalRows = this.remoteRowCountEstimate;
+			}
+
+			content = this.pageCounter.call(this, this.size, currentRow, this.page, totalRows, this.max);
+			
+			switch(typeof content){
+				case "object":
+				if(content instanceof Node){
+					
+					//clear previous cell contents
+					while(this.pageCounterElement.firstChild) this.pageCounterElement.removeChild(this.pageCounterElement.firstChild);
+					
+					this.pageCounterElement.appendChild(content);
+				}else {
+					this.pageCounterElement.innerHTML = "";
+					
+					if(content != null){
+						console.warn("Page Counter Error - Page Counter has returned a type of object, the only valid page counter object return is an instance of Node, the page counter returned:", content);
+					}
+				}
+				break;
+				case "undefined":
+				case "null":
+				this.pageCounterElement.innerHTML = "";
+				break;
+				default:
+				this.pageCounterElement.innerHTML = content;
+			}
+		}
+	}
+	
 	//setup the pagination buttons
 	_setPageButtons(){
 		let leftSize = Math.floor((this.count-1) / 2);
 		let rightSize = Math.ceil((this.count-1) / 2);
 		let min = this.max - this.page + leftSize + 1 < this.count ? this.max-this.count+1: Math.max(this.page-leftSize,1);
 		let max = this.page <= rightSize? Math.min(this.count, this.max) :Math.min(this.page+rightSize, this.max);
-
+		
 		while(this.pagesElement.firstChild) this.pagesElement.removeChild(this.pagesElement.firstChild);
-
+		
 		if(this.page == 1){
 			this.firstBut.disabled = true;
 			this.prevBut.disabled = true;
@@ -14434,7 +14828,7 @@ class Page extends Module{
 			this.firstBut.disabled = false;
 			this.prevBut.disabled = false;
 		}
-
+		
 		if(this.page == this.max){
 			this.lastBut.disabled = true;
 			this.nextBut.disabled = true;
@@ -14442,66 +14836,66 @@ class Page extends Module{
 			this.lastBut.disabled = false;
 			this.nextBut.disabled = false;
 		}
-
+		
 		for(let i = min; i <= max; i++){
 			if(i>0 && i <= this.max){
 				this.pagesElement.appendChild(this._generatePageButton(i));
 			}
 		}
-
+		
 		this.footerRedraw();
 	}
-
+	
 	_generatePageButton(page){
 		var button = document.createElement("button");
-
+		
 		button.classList.add("tabulator-page");
 		if(page == this.page){
 			button.classList.add("active");
 		}
-
+		
 		button.setAttribute("type", "button");
 		button.setAttribute("role", "button");
-
+		
 		this.langBind("pagination|page_title", (value) => {
 			button.setAttribute("aria-label", value + " " + page);
 			button.setAttribute("title", value + " " + page);
 		});
-
+		
 		button.setAttribute("data-page", page);
 		button.textContent = page;
-
+		
 		button.addEventListener("click", (e) => {
 			this.setPage(page);
 		});
-
+		
 		return button;
 	}
-
+	
 	//previous page
 	previousPage(){
 		if(this.page > 1){
 			this.page--;
-
+			
 			this.trackChanges();
-
+			
 			return this.trigger()
-
+			
 		}else {
 			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
 			return Promise.reject();
 		}
 	}
-
+	
 	//next page
 	nextPage(){
 		if(this.page < this.max){
 			this.page++;
-
+			
 			this.trackChanges();
-
+			
 			return this.trigger();
-
+			
 		}else {
 			if(!this.progressiveLoad){
 				console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
@@ -14509,34 +14903,34 @@ class Page extends Module{
 			return Promise.reject();
 		}
 	}
-
+	
 	//return current page number
 	getPage(){
 		return this.page;
 	}
-
+	
 	//return max page number
 	getPageMax(){
 		return this.max;
 	}
-
+	
 	getPageSize(size){
 		return this.size;
 	}
-
+	
 	getMode(){
 		return this.mode;
 	}
-
+	
 	//return appropriate rows for current page
 	getRows(data){
 		var output, start, end;
-
+		
 		if(this.mode == "local"){
 			output = [];
-
+			
 			this.setMaxRows(data.length);
-
+			
 			if(this.size === true){
 				start = 0;
 				end = data.length;
@@ -14544,89 +14938,94 @@ class Page extends Module{
 				start = this.size * (this.page - 1);
 				end = start + parseInt(this.size);
 			}
-
-
+			
+			
 			this._setPageButtons();
-
+			
 			for(let i = start; i < end; i++){
 				if(data[i]){
 					output.push(data[i]);
 				}
 			}
 
+			this._setPageCounter(data.length);
+			
 			return output;
 		}else {
 			this._setPageButtons();
-
+			this._setPageCounter(data.length);
+			
 			return data.slice(0);
 		}
 	}
-
+	
 	trigger(){
 		var left;
-
+		
 		switch(this.mode){
 			case "local":
 			left = this.table.rowManager.scrollLeft;
-
+			
 			this.refreshData();
 			this.table.rowManager.scrollHorizontal(left);
-
+			
 			this.dispatchExternal("pageLoaded", this.getPage());
-
+			
 			return Promise.resolve();
-
+			
 			case "remote":
 			this.dataChanging = true;
 			return this.reloadData(null)
 			.finally(() => {
 				this.dataChanging = false;
 			})
-
+			
 			case "progressive_load":
 			case "progressive_scroll":
 			return this.reloadData(null, true);
-
+			
 			default:
 			console.warn("Pagination Error - no such pagination mode:", this.mode);
 			return Promise.reject();
 		}
 	}
-
+	
 	_parseRemoteData(data){
 		var data, margin;
-
+		
 		if(typeof data.last_page === "undefined"){
 			console.warn("Remote Pagination Error - Server response missing '" + (this.options("dataReceiveParams").last_page || "last_page") + "' property");
 		}
-
+		
 		if(data.data){
 			this.max = parseInt(data.last_page) || 1;
 
+			this.remoteRowCountEstimate = typeof data.last_row !== "undefined" ? data.last_row : (data.last_page * this.size - (this.page == data.last_page ? (this.size - data.data.length) : 0));
+			
 			if(this.progressiveLoad){
 				switch(this.mode){
 					case "progressive_load":
-
+					
 					if(this.page == 1){
 						this.table.rowManager.setData(data.data, false, this.page == 1);
 					}else {
 						this.table.rowManager.addRows(data.data);
 					}
-
+					
 					if(this.page < this.max){
 						setTimeout(() => {
 							this.nextPage();
 						}, this.table.options.progressiveLoadDelay);
 					}
 					break;
-
+					
 					case "progressive_scroll":
 					data = this.page === 1 ? data.data : this.table.rowManager.getData().concat(data.data);
-
+					
 					this.table.rowManager.setData(data, this.page !== 1, this.page == 1);
-
+					
 					margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
-
+					
 					if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
 						setTimeout(() => {
 							this.nextPage();
@@ -14634,7 +15033,7 @@ class Page extends Module{
 					}
 					break;
 				}
-
+				
 				return false;
 			}else {
 				// left = this.table.rowManager.scrollLeft;
@@ -14642,23 +15041,23 @@ class Page extends Module{
 				// this.table.rowManager.scrollHorizontal(left);
 				// this.table.columnManager.scrollHorizontal(left);
 			}
-
+			
 		}else {
 			console.warn("Remote Pagination Error - Server response missing '" + (this.options("dataReceiveParams").data || "data") + "' property");
 		}
-
+		
 		return data.data;
 	}
-
+	
 	//handle the footer element being redrawn
 	footerRedraw(){
 		var footer = this.table.footerManager.element;
-
+		
 		if((Math.ceil(footer.clientWidth) - footer.scrollWidth) < 0){
 			this.pagesElement.style.display = 'none';
 		}else {
 			this.pagesElement.style.display = '';
-
+			
 			if((Math.ceil(footer.clientWidth) - footer.scrollWidth) < 0){
 				this.pagesElement.style.display = 'none';
 			}
@@ -14667,6 +15066,9 @@ class Page extends Module{
 }
 
 Page.moduleName = "page";
+
+//load defaults
+Page.pageCounters = defaultPageCounters;
 
 // read peristence information from storage
 var defaultReaders = {
@@ -15898,7 +16300,7 @@ class ResizeRows extends Module{
 
 			self.table.element.classList.remove("tabulator-block-select");
 
-			this.dispatchExternal("rowResized", row.getComponent());
+			self.dispatchExternal("rowResized", row.getComponent());
 		}
 
 		e.stopPropagation(); //prevent resize from interfereing with movable columns
@@ -17909,6 +18311,7 @@ var modules = /*#__PURE__*/Object.freeze({
 	GroupRowsModule: GroupRows,
 	HistoryModule: History,
 	HtmlTableImportModule: HtmlTableImport,
+	ImportModule: Import,
 	InteractionModule: Interaction,
 	KeybindingsModule: Keybindings,
 	MenuModule: Menu,
@@ -20052,7 +20455,7 @@ class RowManager extends CoreFeature{
 		this.fixedHeight = false; //current rendering mode
 
 		this.rows = []; //hold row data objects
-		this.activeRowsPipeline = []; //hold caluclation of active rows
+		this.activeRowsPipeline = []; //hold calculation of active rows
 		this.activeRows = []; //rows currently available to on display in the table
 		this.activeRowsCount = 0; //count of active rows
 
@@ -20064,9 +20467,9 @@ class RowManager extends CoreFeature{
 
 		this.rowNumColumn = false; //hold column component for row number column
 
-		this.redrawBlock = false; //prevent redraws to allow multiple data manipulations becore continuing
+		this.redrawBlock = false; //prevent redraws to allow multiple data manipulations before continuing
 		this.redrawBlockRestoreConfig = false; //store latest redraw function calls for when redraw is needed
-		this.redrawBlockRederInPosition = false; //store latest redraw function calls for when redraw is needed
+		this.redrawBlockRenderInPosition = false; //store latest redraw function calls for when redraw is needed
 
 		this.dataPipeline = []; //hold data pipeline tasks
 		this.displayPipeline = []; //hold data display pipeline tasks
@@ -20849,7 +21252,7 @@ class RowManager extends CoreFeature{
 			if(callback){
 				callback();
 			}else {
-				this.redrawBlockRederInPosition = true;
+				this.redrawBlockRenderInPosition = true;
 			}
 		}else {
 			this.renderer.rerenderRows(callback);
@@ -21028,12 +21431,12 @@ class RowManager extends CoreFeature{
 
 			this.redrawBlockRestoreConfig = false;
 		}else {
-			if(this.redrawBlockRederInPosition){
+			if(this.redrawBlockRenderInPosition){
 				this.reRenderInPosition();
 			}
 		}
 
-		this.redrawBlockRederInPosition = false;
+		this.redrawBlockRenderInPosition = false;
 	}
 
 	//redraw table
@@ -21415,7 +21818,7 @@ class InteractionManager extends CoreFeature {
 				switch(key){
 					case "row":
 					case "group":
-					if(listener.components.includes("row") || listener.components.includes("cell")){
+					if(listener.components.includes("row") || listener.components.includes("cell") || listener.components.includes("group")){
 						let rows = this.table.rowManager.getVisibleRows(true);
 						
 						component = rows.find((row) => {
@@ -21582,7 +21985,7 @@ class DataLoader extends CoreFeature{
 			params = this.mapParams(params, this.table.options.dataSendParams);
 
 			var result = this.chain("data-load", [data, params, config, silent], Promise.resolve([]));
-
+			
 			return result.then((response) => {
 				if(!Array.isArray(response) && typeof response == "object"){
 					response = this.mapParams(response, this.objectInvert(this.table.options.dataReceiveParams));
@@ -22337,6 +22740,12 @@ var defaultLangs = {
 			"next":"Next",
 			"next_title":"Next Page",
 			"all":"All",
+			"counter":{
+				"showing": "Showing",
+				"of": "of",
+				"rows": "rows",
+				"pages": "pages",
+			}
 		},
 		"headerFilters":{
 			"default":"filter column...",
@@ -22994,49 +23403,6 @@ class Tabulator {
 		return this.rowManager.restoreRedraw();
 	}
 
-	//local data from local file
-	setDataFromLocalFile(extensions){
-		return new Promise((resolve, reject) => {
-			var input = document.createElement("input");
-			input.type = "file";
-			input.accept = extensions || ".json,application/json";
-
-			input.addEventListener("change", (e) => {
-				var file = input.files[0],
-				reader = new FileReader(),
-				data;
-
-				reader.readAsText(file);
-
-				reader.onload = (e) => {
-
-					try {
-						data = JSON.parse(reader.result);
-					} catch(e) {
-						console.warn("File Load Error - File contents is invalid JSON", e);
-						reject(e);
-						return;
-					}
-
-					this.setData(data)
-					.then((data) => {
-						resolve(data);
-					})
-					.catch((err) => {
-						resolve(err);
-					});
-				};
-
-				reader.onerror = (e) => {
-					console.warn("File Load Error - Unable to read file");
-					reject();
-				};
-			});
-
-			input.click();
-		});
-	}
-
 	//load data
 	setData(data, params, config){
 		if(this.initialized){
@@ -23585,5 +23951,5 @@ class PseudoRow {
 	clearCellHeight(){}
 }
 
-export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent$1 as RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Validate as ValidateModule };
+export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent$1 as RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Validate as ValidateModule };
 //# sourceMappingURL=tabulator_esm.js.map

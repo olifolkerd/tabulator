@@ -246,7 +246,7 @@ export default class InteractionManager extends CoreFeature {
 				switch(key){
 					case "row":
 					case "group":
-					if(listener.components.includes("row") || listener.components.includes("cell")){
+					if(listener.components.includes("row") || listener.components.includes("cell") || listener.components.includes("group")){
 						let rows = this.table.rowManager.getVisibleRows(true);
 						
 						component = rows.find((row) => {

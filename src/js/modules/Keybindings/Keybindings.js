@@ -13,7 +13,7 @@ class Keybindings extends Module{
 		this.keyupBinding = false;
 		this.keydownBinding = false;
 
-		this.registerTableOption("keybindings", []); //array for keybindings
+		this.registerTableOption("keybindings", {}); //array for keybindings
 		this.registerTableOption("tabEndNewRow", false); //create new row when tab to end of table
 	}
 
@@ -25,17 +25,8 @@ class Keybindings extends Module{
 		this.pressedKeys = [];
 
 		if(bindings !== false){
-
-			for(let key in Keybindings.bindings){
-				mergedBindings[key] = Keybindings.bindings[key];
-			}
-
-			if(Object.keys(bindings).length){
-
-				for(let key in bindings){
-					mergedBindings[key] = bindings[key];
-				}
-			}
+			Object.assign(mergedBindings, Keybindings.bindings)
+			Object.assign(mergedBindings, bindings)
 
 			this.mapBindings(mergedBindings);
 			this.bindEvents();
@@ -53,7 +44,11 @@ class Keybindings extends Module{
 					}
 
 					bindings[key].forEach((binding) => {
-						this.mapBinding(key, binding);
+						var bindingList = Array.isArray(binding) ?  binding : [binding];
+						
+						bindingList.forEach((item) => {
+							this.mapBinding(key, item);
+						});						
 					});
 				}
 			}else{
@@ -88,7 +83,7 @@ class Keybindings extends Module{
 				break;
 
 				default:
-				symbol = parseInt(symbol);
+				symbol = isNaN(symbol) ? symbol.toUpperCase().charCodeAt(0) : parseInt(symbol);
 				binding.keys.push(symbol);
 
 				if(!this.watchKeys[symbol]){

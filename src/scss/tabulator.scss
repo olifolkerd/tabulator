@@ -436,10 +436,16 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 	//footer element
 	.tabulator-footer{
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+
 		padding:5px 10px;
+
 		border-top:1px solid $footerSeperatorColor;
 		background-color: $footerBackgroundColor;
-		text-align: right;
+		
 		color: $footerTextColor;
 		font-weight:bold;
 		white-space:nowrap;
@@ -478,7 +484,19 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 
+		&>*+.tabulator-page-counter{
+			margin-left:10px;
+		}
+
+		.tabulator-page-counter {
+			font-weight: normal;
+		}
+
 		.tabulator-paginator{
+			flex:1;
+
+			text-align: right;
+			
 			color: $footerTextColor;
 			font-family:inherit;
 			font-weight:inherit;

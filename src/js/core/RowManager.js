@@ -20,7 +20,7 @@ export default class RowManager extends CoreFeature{
 		this.fixedHeight = false; //current rendering mode
 
 		this.rows = []; //hold row data objects
-		this.activeRowsPipeline = []; //hold caluclation of active rows
+		this.activeRowsPipeline = []; //hold calculation of active rows
 		this.activeRows = []; //rows currently available to on display in the table
 		this.activeRowsCount = 0; //count of active rows
 
@@ -32,9 +32,9 @@ export default class RowManager extends CoreFeature{
 
 		this.rowNumColumn = false; //hold column component for row number column
 
-		this.redrawBlock = false; //prevent redraws to allow multiple data manipulations becore continuing
+		this.redrawBlock = false; //prevent redraws to allow multiple data manipulations before continuing
 		this.redrawBlockRestoreConfig = false; //store latest redraw function calls for when redraw is needed
-		this.redrawBlockRederInPosition = false; //store latest redraw function calls for when redraw is needed
+		this.redrawBlockRenderInPosition = false; //store latest redraw function calls for when redraw is needed
 
 		this.dataPipeline = []; //hold data pipeline tasks
 		this.displayPipeline = []; //hold data display pipeline tasks
@@ -821,7 +821,7 @@ export default class RowManager extends CoreFeature{
 			if(callback){
 				callback();
 			}else{
-				this.redrawBlockRederInPosition = true;
+				this.redrawBlockRenderInPosition = true;
 			}
 		}else{
 			this.renderer.rerenderRows(callback);
@@ -1001,12 +1001,12 @@ export default class RowManager extends CoreFeature{
 
 			this.redrawBlockRestoreConfig = false;
 		}else{
-			if(this.redrawBlockRederInPosition){
+			if(this.redrawBlockRenderInPosition){
 				this.reRenderInPosition();
 			}
 		}
 
-		this.redrawBlockRederInPosition = false;
+		this.redrawBlockRenderInPosition = false;
 	}
 
 	//redraw table

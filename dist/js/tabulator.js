@@ -1,4 +1,4 @@
-/* Tabulator v5.0.10 (c) Oliver Folkerd 2021 */
+/* Tabulator v5.0.10 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -7480,7 +7480,13 @@
         "prev_title": "Prev Page",
         "next": "Next",
         "next_title": "Next Page",
-        "all": "All"
+        "all": "All",
+        "counter": {
+          "showing": "Showing",
+          "of": "of",
+          "rows": "rows",
+          "pages": "pages"
+        }
       },
       "headerFilters": {
         "default": "filter column...",
@@ -9102,7 +9108,7 @@
       _classCallCheck(this, Ajax);
 
       _this = _super.call(this, table);
-      _this.config = false; //hold config object for ajax request
+      _this.config = {}; //hold config object for ajax request
 
       _this.url = ""; //request URL
 
@@ -9143,21 +9149,30 @@
         this.loaderPromise = this.table.options.ajaxRequestFunc || Ajax.defaultLoaderPromise;
         this.urlGenerator = this.table.options.ajaxURLGenerator || Ajax.defaultURLGenerator;
 
-        if (this.table.options.ajaxParams) {
-          this.setParams(this.table.options.ajaxParams);
-        }
-
-        if (this.table.options.ajaxConfig) {
-          this.setConfig(this.table.options.ajaxConfig);
-        }
-
         if (this.table.options.ajaxURL) {
           this.setUrl(this.table.options.ajaxURL);
         }
 
+        this.setDefaultConfig(this.table.options.ajaxConfig);
         this.registerTableFunction("getAjaxUrl", this.getUrl.bind(this));
         this.subscribe("data-loading", this.requestDataCheck.bind(this));
+        this.subscribe("data-params", this.requestParams.bind(this));
         this.subscribe("data-load", this.requestData.bind(this));
+      }
+    }, {
+      key: "requestParams",
+      value: function requestParams(data, config, silent, params) {
+        var ajaxParams = this.table.options.ajaxParams;
+
+        if (ajaxParams) {
+          if (typeof ajaxParams === "function") {
+            ajaxParams = ajaxParams.call(this.table);
+          }
+
+          params = Object.assign(params, ajaxParams);
+        }
+
+        return params;
       }
     }, {
       key: "requestDataCheck",
@@ -9166,69 +9181,46 @@
       }
     }, {
       key: "requestData",
-      value: function requestData(data, params, config, silent, previousData) {
-        if (this.requestDataCheck(data)) {
-          if (data) {
-            this.setUrl(data);
+      value: function requestData(url, params, config, silent, previousData) {
+        var ajaxConfig;
+
+        if (this.requestDataCheck(url)) {
+          if (url) {
+            this.setUrl(url);
           }
 
-          if (params) {
-            this.setParams(params, true);
-          }
-
-          if (config) {
-            this.setConfig(config);
-          }
-
-          return this.sendRequest();
+          ajaxConfig = this.generateConfig(config);
+          return this.sendRequest(this.url, params, ajaxConfig);
         } else {
           return previousData;
         }
-      } //set ajax params
-
-    }, {
-      key: "setParams",
-      value: function setParams(params, update) {
-        if (update) {
-          this.params = this.params || {};
-
-          for (var key in params) {
-            this.params[key] = params[key];
-          }
-        } else {
-          this.params = params;
-        }
       }
     }, {
-      key: "getParams",
-      value: function getParams() {
-        return this.params || {};
-      } //load config object
-
-    }, {
-      key: "setConfig",
-      value: function setConfig(config) {
-        this._loadDefaultConfig();
+      key: "setDefaultConfig",
+      value: function setDefaultConfig() {
+        var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        this.config = Object.assign({}, Ajax.defaultConfig);
 
         if (typeof config == "string") {
           this.config.method = config;
         } else {
-          for (var key in config) {
-            this.config[key] = config[key];
-          }
+          Object.assign(this.config, config);
         }
-      } //create config object from default
+      } //load config object
 
     }, {
-      key: "_loadDefaultConfig",
-      value: function _loadDefaultConfig(force) {
-        if (!this.config || force) {
-          this.config = {}; //load base config from defaults
+      key: "generateConfig",
+      value: function generateConfig() {
+        var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var ajaxConfig = Object.assign({}, this.config);
 
-          for (var key in Ajax.defaultConfig) {
-            this.config[key] = Ajax.defaultConfig[key];
-          }
+        if (typeof config == "string") {
+          ajaxConfig.method = config;
+        } else {
+          Object.assign(ajaxConfig, config);
         }
+
+        return ajaxConfig;
       } //set request url
 
     }, {
@@ -9245,17 +9237,13 @@
 
     }, {
       key: "sendRequest",
-      value: function sendRequest(silent) {
+      value: function sendRequest(url, params, config) {
         var _this2 = this;
 
-        var url = this.url;
-
-        this._loadDefaultConfig();
-
-        if (this.table.options.ajaxRequesting.call(this.table, this.url, this.params) !== false) {
-          return this.loaderPromise(url, this.config, this.params).then(function (data) {
+        if (this.table.options.ajaxRequesting.call(this.table, url, params) !== false) {
+          return this.loaderPromise(url, config, params).then(function (data) {
             if (_this2.table.options.ajaxResponse) {
-              data = _this2.table.options.ajaxResponse.call(_this2.table, _this2.url, _this2.params, data);
+              data = _this2.table.options.ajaxResponse.call(_this2.table, url, params, data);
             }
 
             return data;
@@ -13672,7 +13660,6 @@
         var cell = this.currentCell,
             cellEl;
         this.invalidEdit = false;
-        console.log("clear", cancel, cell, cell.validate);
 
         if (cell) {
           this.currentCell = false;
@@ -20838,6 +20825,63 @@
 
   Mutator.mutators = defaultMutators;
 
+  function rows (pageSize, currentRow, currentPage, totalRows, totalPages) {
+    var el = document.createElement("span"),
+        showingEl = document.createElement("span"),
+        valueEl = document.createElement("span"),
+        ofEl = document.createElement("span"),
+        totalEl = document.createElement("span"),
+        rowsEl = document.createElement("span");
+    this.table.modules.localize.langBind("pagination|counter|showing", function (value) {
+      showingEl.innerHTML = value;
+    });
+    valueEl.innerHTML = " " + currentRow + "-" + Math.min(currentRow + pageSize - 1, totalRows) + " ";
+    this.table.modules.localize.langBind("pagination|counter|of", function (value) {
+      ofEl.innerHTML = value;
+    });
+    totalEl.innerHTML = " " + totalRows + " ";
+    this.table.modules.localize.langBind("pagination|counter|rows", function (value) {
+      rowsEl.innerHTML = value;
+    });
+    el.appendChild(showingEl);
+    el.appendChild(valueEl);
+    el.appendChild(ofEl);
+    el.appendChild(totalEl);
+    el.appendChild(rowsEl);
+    return el;
+  }
+
+  function pages (pageSize, currentRow, currentPage, totalRows, totalPages) {
+    var el = document.createElement("span"),
+        showingEl = document.createElement("span"),
+        valueEl = document.createElement("span"),
+        ofEl = document.createElement("span"),
+        totalEl = document.createElement("span"),
+        rowsEl = document.createElement("span");
+    this.table.modules.localize.langBind("pagination|counter|showing", function (value) {
+      showingEl.innerHTML = value;
+    });
+    valueEl.innerHTML = " " + currentPage + " ";
+    this.table.modules.localize.langBind("pagination|counter|of", function (value) {
+      ofEl.innerHTML = value;
+    });
+    totalEl.innerHTML = " " + totalPages + " ";
+    this.table.modules.localize.langBind("pagination|counter|pages", function (value) {
+      rowsEl.innerHTML = value;
+    });
+    el.appendChild(showingEl);
+    el.appendChild(valueEl);
+    el.appendChild(ofEl);
+    el.appendChild(totalEl);
+    el.appendChild(rowsEl);
+    return el;
+  }
+
+  var defaultPageCounters = {
+    rows: rows,
+    pages: pages
+  };
+
   var Page = /*#__PURE__*/function (_Module) {
     _inherits(Page, _Module);
 
@@ -20851,10 +20895,14 @@
       _this = _super.call(this, table);
       _this.mode = "local";
       _this.progressiveLoad = false;
+      _this.element = null;
+      _this.pageCounterElement = null;
+      _this.pageCounter = null;
       _this.size = 0;
       _this.page = 1;
       _this.count = 5;
       _this.max = 1;
+      _this.remoteRowCountEstimate = null;
       _this.displayIndex = 0; //index in display pipeline
 
       _this.initialLoad = true;
@@ -20872,6 +20920,9 @@
 
 
       _this.registerTableOption("paginationInitialPage", 1); //initial page to show on load
+
+
+      _this.registerTableOption("paginationCounter", false); // set pagination counter
 
 
       _this.registerTableOption("paginationButtonCount", 5); // set count of page button
@@ -20943,6 +20994,7 @@
           this.registerDisplayHandler(this.restOnRenderBefore.bind(this), 40);
           this.registerDisplayHandler(this.getRows.bind(this), 50);
           this.createElements();
+          this.initializePageCounter();
           this.initializePaginator();
         } else if (this.table.options.progressiveLoad) {
           this.subscribe("data-params", this.remotePageParams.bind(this));
@@ -21166,7 +21218,29 @@
           });
           this.pageSizeSelect.value = this.size;
         }
-      } //setup pageination
+      }
+    }, {
+      key: "initializePageCounter",
+      value: function initializePageCounter() {
+        var counter = this.table.options.paginationCounter,
+            pageCounter = null;
+
+        if (counter) {
+          if (typeof counter === "function") {
+            pageCounter = counter;
+          } else {
+            pageCounter = Page.pageCounters[counter];
+          }
+
+          if (pageCounter) {
+            this.pageCounter = pageCounter;
+            this.pageCounterElement = document.createElement("span");
+            this.pageCounterElement.classList.add("tabulator-page-counter");
+          } else {
+            console.warn("Pagination Error - No such page counter found: ", counter);
+          }
+        }
+      } //setup pagination
 
     }, {
       key: "initializePaginator",
@@ -21254,6 +21328,10 @@
           this.element.appendChild(this.lastBut);
 
           if (!this.table.options.paginationElement && !hidden) {
+            if (this.table.options.paginationCounter) {
+              this.table.footerManager.append(this.pageCounterElement, this);
+            }
+
             this.table.footerManager.append(this.element, this);
           }
 
@@ -21382,6 +21460,49 @@
         }
 
         this.trackChanges();
+      }
+    }, {
+      key: "_setPageCounter",
+      value: function _setPageCounter(totalRows) {
+        var content, currentRow;
+
+        if (this.pageCounter) {
+          currentRow = (this.page - 1) * this.size + 1;
+
+          if (this.mode === "remote") {
+            totalRows = this.remoteRowCountEstimate;
+          }
+
+          content = this.pageCounter.call(this, this.size, currentRow, this.page, totalRows, this.max);
+
+          switch (_typeof(content)) {
+            case "object":
+              if (content instanceof Node) {
+                //clear previous cell contents
+                while (this.pageCounterElement.firstChild) {
+                  this.pageCounterElement.removeChild(this.pageCounterElement.firstChild);
+                }
+
+                this.pageCounterElement.appendChild(content);
+              } else {
+                this.pageCounterElement.innerHTML = "";
+
+                if (content != null) {
+                  console.warn("Page Counter Error - Page Counter has returned a type of object, the only valid page counter object return is an instance of Node, the page counter returned:", content);
+                }
+              }
+
+              break;
+
+            case "undefined":
+            case "null":
+              this.pageCounterElement.innerHTML = "";
+              break;
+
+            default:
+              this.pageCounterElement.innerHTML = content;
+          }
+        }
       } //setup the pagination buttons
 
     }, {
@@ -21522,9 +21643,13 @@
             }
           }
 
+          this._setPageCounter(data.length);
+
           return output;
         } else {
           this._setPageButtons();
+
+          this._setPageCounter(data.length);
 
           return data.slice(0);
         }
@@ -21572,6 +21697,7 @@
 
         if (data.data) {
           this.max = parseInt(data.last_page) || 1;
+          this.remoteRowCountEstimate = typeof data.last_row !== "undefined" ? data.last_row : data.last_page * this.size - (this.page == data.last_page ? this.size - data.data.length : 0);
 
           if (this.progressiveLoad) {
             switch (this.mode) {
@@ -21637,7 +21763,9 @@
     return Page;
   }(Module);
 
-  Page.moduleName = "page";
+  Page.moduleName = "page"; //load defaults
+
+  Page.pageCounters = defaultPageCounters;
 
   // read peristence information from storage
   var defaultReaders = {
