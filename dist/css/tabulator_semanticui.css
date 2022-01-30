@@ -1257,13 +1257,9 @@
   padding-left: 25px;
 }
 
-.tabulator.tabulator-rtl .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow {
+.tabulator.tabulator-rtl .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-sorter {
   left: 8px;
   right: initial;
-}
-
-.tabulator.tabulator-rtl .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-sorter {
-  position: initial;
 }
 
 .tabulator.tabulator-rtl .tabulator-row .tabulator-cell {

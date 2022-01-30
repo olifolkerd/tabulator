@@ -1,4 +1,4 @@
-/* Tabulator v5.0.10 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.1.0 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -225,8 +225,6 @@
     //minimum height of tabulator
     maxHeight: false,
     //maximum height of tabulator
-    columnMaxWidth: false,
-    //minimum global width for a column
     columnHeaderVertAlign: "top",
     //vertical alignment of column headers
     columns: [],
@@ -267,6 +265,7 @@
     dataLoader: true,
     dataLoaderLoading: false,
     dataLoaderError: false,
+    dataLoaderErrorTimeout: 3000,
     dataSendParams: {},
     dataReceiveParams: {}
   };
@@ -473,6 +472,11 @@
         return this._column.getField();
       }
     }, {
+      key: "getTitleDownload",
+      value: function getTitleDownload() {
+        return this._column.getTitleDownload();
+      }
+    }, {
       key: "getCells",
       value: function getCells() {
         var cells = [];
@@ -622,6 +626,7 @@
     "width": undefined,
     "minWidth": 40,
     "maxWidth": undefined,
+    "maxInitialWidth": undefined,
     "tooltip": undefined,
     "cssClass": undefined,
     "variableHeight": undefined,
@@ -935,6 +940,11 @@
         if (changed) {
           this.dispatch("cell-value-updated", this);
           this.cellRendered();
+
+          if (this.column.definition.cellEdited) {
+            this.column.definition.cellEdited.call(this.table, this.getComponent());
+          }
+
           this.dispatchExternal("cellEdited", this.getComponent());
 
           if (this.subscribedExternal("dataChanged")) {
@@ -947,7 +957,7 @@
       value: function setValueProcessData(value, mutate) {
         var changed = false;
 
-        if (this.value != value) {
+        if (this.value !== value) {
           changed = true;
 
           if (mutate) {
@@ -1121,6 +1131,7 @@
       _this.fieldStructure = "";
       _this.getFieldValue = "";
       _this.setFieldValue = "";
+      _this.titleDownload = null;
       _this.titleFormatterRendered = false;
 
       _this.mapDefinitions();
@@ -1137,6 +1148,7 @@
 
       _this.maxWidthStyled = ""; //column maximum prestyled to improve render efficiency
 
+      _this.maxInitialWidth = null;
       _this.minWidth = null; //column minimum width
 
       _this.minWidthStyled = ""; //column minimum prestyled to improve render efficiency
@@ -1429,6 +1441,10 @@
 
         this.setMinWidth(parseInt(def.minWidth));
 
+        if (def.maxInitialWidth) {
+          this.maxInitialWidth = parseInt(def.maxInitialWidth);
+        }
+
         if (def.maxWidth) {
           this.setMaxWidth(parseInt(def.maxWidth));
         }
@@ -1678,6 +1694,11 @@
       key: "getField",
       value: function getField() {
         return this.field;
+      }
+    }, {
+      key: "getTitleDownload",
+      value: function getTitleDownload() {
+        return this.titleDownload;
       } //return the first column in a group
 
     }, {
@@ -1936,7 +1957,7 @@
     }, {
       key: "getHeight",
       value: function getHeight() {
-        return this.element.offsetHeight;
+        return Math.ceil(this.element.getBoundingClientRect().height);
       }
     }, {
       key: "setMinWidth",
@@ -2045,17 +2066,18 @@
         this.widthFixed = false; //set width if present
 
         if (typeof this.definition.width !== "undefined" && !force) {
+          // maxInitialWidth ignored here as width specified
           this.setWidth(this.definition.width);
         }
 
         this.dispatch("column-width-fit-before", this);
-        this.fitToData();
+        this.fitToData(force);
         this.dispatch("column-width-fit-after", this);
       } //set column width to maximum cell width for non group columns
 
     }, {
       key: "fitToData",
-      value: function fitToData() {
+      value: function fitToData(force) {
         if (this.isGroup) {
           return;
         }
@@ -2079,7 +2101,13 @@
           });
 
           if (maxWidth) {
-            this.setWidthActual(maxWidth + 1);
+            var setTo = maxWidth + 1;
+
+            if (this.maxInitialWidth && !force) {
+              setTo = Math.min(setTo, this.maxInitialWidth);
+            }
+
+            this.setWidthActual(setTo);
           }
         }
       }
@@ -2525,11 +2553,11 @@
     _createClass(VirtualDomHorizontal, [{
       key: "initialize",
       value: function initialize() {
-        this.compatabilityCheck();
+        this.compatibilityCheck();
       }
     }, {
-      key: "compatabilityCheck",
-      value: function compatabilityCheck() {
+      key: "compatibilityCheck",
+      value: function compatibilityCheck() {
         var columns = this.options("columns"),
             frozen = false,
             ok = true;
@@ -2611,7 +2639,7 @@
             config.width = width;
 
             if (_this2.options("layout") === "fitData") {
-              config.fitDataCheck = true;
+              config.fitDataCheck = column.modules.vdomHoz ? column.modules.vdomHoz.fitDataCheck : true;
             }
 
             if (colPos + width > _this2.vDomScrollPosLeft && colPos < _this2.vDomScrollPosRight) {
@@ -2822,7 +2850,7 @@
             }
           });
           this.fitDataColActualWidthCheck(column);
-          this.rightCol++;
+          this.rightCol++; // Don't move this below the >= check below
 
           if (this.rightCol >= this.columns.length - 1) {
             this.vDomPadRight = 0;
@@ -2850,15 +2878,16 @@
             }
           });
           this.fitDataColActualWidthCheck(column);
+          this.leftCol--; // don't move this below the <= check below
 
-          if (!this.leftCol) {
+          if (this.leftCol <= 0) {
+            // replicating logic in addColRight
             this.vDomPadLeft = 0;
           } else {
             this.vDomPadLeft -= column.getWidth();
           }
 
           this.tableElement.style.paddingLeft = this.vDomPadLeft + "px";
-          this.leftCol--;
           this.addColLeft();
         }
       }
@@ -2874,7 +2903,12 @@
           rows.forEach(function (row) {
             if (row.type !== "group") {
               var cell = row.getCell(column);
-              row.getElement().removeChild(cell.getElement());
+
+              try {
+                row.getElement().removeChild(cell.getElement());
+              } catch (ex) {
+                console.warn("Could not removeColRight", ex.message);
+              }
             }
           });
           this.vDomPadRight += column.getWidth();
@@ -2901,7 +2935,11 @@
                 el = cell.getElement();
 
                 if (el.parentNode) {
-                  row.getElement().removeChild(el);
+                  try {
+                    row.getElement().removeChild(el);
+                  } catch (ex) {
+                    console.warn("Could not removeColLeft", ex.message);
+                  }
                 }
               }
             }
@@ -3854,12 +3892,12 @@
           }
 
           this.dispatch("row-layout", this);
+          this.initialized = true;
 
           if (this.table.options.rowFormatter) {
             this.table.options.rowFormatter(this.getComponent());
           }
 
-          this.initialized = true;
           this.dispatch("row-layout-after", this);
         } else {
           this.table.columnManager.renderer.rerenderRowCells(this);
@@ -4269,7 +4307,8 @@
     }, {
       key: "rerenderRows",
       value: function rerenderRows(callback) {
-        this.render();
+        this.clearRows();
+        this.renderRows();
 
         if (callback) {
           callback();
@@ -4926,7 +4965,7 @@
 
       _this.rows = []; //hold row data objects
 
-      _this.activeRowsPipeline = []; //hold caluclation of active rows
+      _this.activeRowsPipeline = []; //hold calculation of active rows
 
       _this.activeRows = []; //rows currently available to on display in the table
 
@@ -4940,11 +4979,11 @@
       _this.scrollLeft = 0;
       _this.rowNumColumn = false; //hold column component for row number column
 
-      _this.redrawBlock = false; //prevent redraws to allow multiple data manipulations becore continuing
+      _this.redrawBlock = false; //prevent redraws to allow multiple data manipulations before continuing
 
       _this.redrawBlockRestoreConfig = false; //store latest redraw function calls for when redraw is needed
 
-      _this.redrawBlockRederInPosition = false; //store latest redraw function calls for when redraw is needed
+      _this.redrawBlockRenderInPosition = false; //store latest redraw function calls for when redraw is needed
 
       _this.dataPipeline = []; //hold data pipeline tasks
 
@@ -5625,7 +5664,7 @@
             }
           }
 
-          this.dispatch("data-refeshed");
+          this.dispatch("data-refreshed");
         }
       } //regenerate row numbers for row number formatter if in use
 
@@ -5745,7 +5784,7 @@
           if (callback) {
             callback();
           } else {
-            this.redrawBlockRederInPosition = true;
+            this.redrawBlockRenderInPosition = true;
           }
         } else {
           this.renderer.rerenderRows(callback);
@@ -5929,12 +5968,12 @@
           this.refreshActiveData(this.redrawBlockRestoreConfig.handler, this.redrawBlockRestoreConfig.skipStage, this.redrawBlockRestoreConfig.renderInPosition);
           this.redrawBlockRestoreConfig = false;
         } else {
-          if (this.redrawBlockRederInPosition) {
+          if (this.redrawBlockRenderInPosition) {
             this.reRenderInPosition();
           }
         }
 
-        this.redrawBlockRederInPosition = false;
+        this.redrawBlockRenderInPosition = false;
       } //redraw table
 
     }, {
@@ -6372,7 +6411,7 @@
               switch (key) {
                 case "row":
                 case "group":
-                  if (listener.components.includes("row") || listener.components.includes("cell")) {
+                  if (listener.components.includes("row") || listener.components.includes("cell") || listener.components.includes("group")) {
                     var rows = _this5.table.rowManager.getVisibleRows(true);
 
                     component = rows.find(function (row) {
@@ -6391,7 +6430,11 @@
 
                 case "cell":
                   if (listener.components.includes("cell")) {
-                    component = targets["row"].findCell(target);
+                    if (targets["row"]) {
+                      component = targets["row"].findCell(target);
+                    } else {
+                      console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?");
+                    }
                   }
 
                   break;
@@ -6570,7 +6613,7 @@
 
           params = this.chain("data-params", [data, config, silent], params || {}, params || {});
           params = this.mapParams(params, this.table.options.dataSendParams);
-          var result = this.chain("data-load", [data, params, config, silent], Promise.resolve([]));
+          var result = this.chain("data-load", [data, params, config, silent], false, Promise.resolve([]));
           return result.then(function (response) {
             if (!Array.isArray(response) && _typeof(response) == "object") {
               response = _this2.mapParams(response, _this2.objectInvert(_this2.table.options.dataReceiveParams));
@@ -6600,7 +6643,7 @@
 
             setTimeout(function () {
               _this2.hideLoader();
-            }, 3000);
+            }, _this2.table.options.dataLoaderErrorTimeout);
           })["finally"](function () {
             _this2.loading = false;
           });
@@ -8202,46 +8245,6 @@
       key: "restoreRedraw",
       value: function restoreRedraw() {
         return this.rowManager.restoreRedraw();
-      } //local data from local file
-
-    }, {
-      key: "setDataFromLocalFile",
-      value: function setDataFromLocalFile(extensions) {
-        var _this2 = this;
-
-        return new Promise(function (resolve, reject) {
-          var input = document.createElement("input");
-          input.type = "file";
-          input.accept = extensions || ".json,application/json";
-          input.addEventListener("change", function (e) {
-            var file = input.files[0],
-                reader = new FileReader(),
-                data;
-            reader.readAsText(file);
-
-            reader.onload = function (e) {
-              try {
-                data = JSON.parse(reader.result);
-              } catch (e) {
-                console.warn("File Load Error - File contents is invalid JSON", e);
-                reject(e);
-                return;
-              }
-
-              _this2.setData(data).then(function (data) {
-                resolve(data);
-              })["catch"](function (err) {
-                resolve(err);
-              });
-            };
-
-            reader.onerror = function (e) {
-              console.warn("File Load Error - Unable to read file");
-              reject();
-            };
-          });
-          input.click();
-        });
       } //load data
 
     }, {
@@ -8286,13 +8289,13 @@
     }, {
       key: "updateData",
       value: function updateData(data) {
-        var _this3 = this;
+        var _this2 = this;
 
         var responses = 0;
 
         if (this.initialized) {
           return new Promise(function (resolve, reject) {
-            _this3.dataLoader.blockActiveLoad();
+            _this2.dataLoader.blockActiveLoad();
 
             if (typeof data === "string") {
               data = JSON.parse(data);
@@ -8300,7 +8303,7 @@
 
             if (data) {
               data.forEach(function (item) {
-                var row = _this3.rowManager.findRow(item[_this3.options.index]);
+                var row = _this2.rowManager.findRow(item[_this2.options.index]);
 
                 if (row) {
                   responses++;
@@ -8325,18 +8328,18 @@
     }, {
       key: "addData",
       value: function addData(data, pos, index) {
-        var _this4 = this;
+        var _this3 = this;
 
         if (this.initialized) {
           return new Promise(function (resolve, reject) {
-            _this4.dataLoader.blockActiveLoad();
+            _this3.dataLoader.blockActiveLoad();
 
             if (typeof data === "string") {
               data = JSON.parse(data);
             }
 
             if (data) {
-              _this4.rowManager.addRows(data, pos, index).then(function (rows) {
+              _this3.rowManager.addRows(data, pos, index).then(function (rows) {
                 var output = [];
                 rows.forEach(function (row) {
                   output.push(row.getComponent());
@@ -8356,14 +8359,14 @@
     }, {
       key: "updateOrAddData",
       value: function updateOrAddData(data) {
-        var _this5 = this;
+        var _this4 = this;
 
         var rows = [],
             responses = 0;
 
         if (this.initialized) {
           return new Promise(function (resolve, reject) {
-            _this5.dataLoader.blockActiveLoad();
+            _this4.dataLoader.blockActiveLoad();
 
             if (typeof data === "string") {
               data = JSON.parse(data);
@@ -8371,7 +8374,7 @@
 
             if (data) {
               data.forEach(function (item) {
-                var row = _this5.rowManager.findRow(item[_this5.options.index]);
+                var row = _this4.rowManager.findRow(item[_this4.options.index]);
 
                 responses++;
 
@@ -8385,7 +8388,7 @@
                     }
                   });
                 } else {
-                  _this5.rowManager.addRows(item).then(function (newRows) {
+                  _this4.rowManager.addRows(item).then(function (newRows) {
                     responses--;
                     rows.push(newRows[0].getComponent());
 
@@ -8434,7 +8437,7 @@
     }, {
       key: "deleteRow",
       value: function deleteRow(index) {
-        var _this6 = this;
+        var _this5 = this;
 
         var foundRows = [];
 
@@ -8467,7 +8470,7 @@
         }
 
         foundRows.sort(function (a, b) {
-          return _this6.rowManager.rows.indexOf(a) > _this6.rowManager.rows.indexOf(b) ? 1 : -1;
+          return _this5.rowManager.rows.indexOf(a) > _this5.rowManager.rows.indexOf(b) ? 1 : -1;
         }); //delete rows
 
         foundRows.forEach(function (row) {
@@ -8697,13 +8700,13 @@
     }, {
       key: "scrollToColumn",
       value: function scrollToColumn(field, position, ifVisible) {
-        var _this7 = this;
+        var _this6 = this;
 
         return new Promise(function (resolve, reject) {
-          var column = _this7.columnManager.findColumn(field);
+          var column = _this6.columnManager.findColumn(field);
 
           if (column) {
-            return _this7.columnManager.scrollToColumn(column, position, ifVisible);
+            return _this6.columnManager.scrollToColumn(column, position, ifVisible);
           } else {
             console.warn("Scroll Error - No matching column found:", field);
             return Promise.reject("Scroll Error - No matching column found");
@@ -9184,7 +9187,7 @@
       value: function requestData(url, params, config, silent, previousData) {
         var ajaxConfig;
 
-        if (this.requestDataCheck(url)) {
+        if (!previousData && this.requestDataCheck(url)) {
           if (url) {
             this.setUrl(url);
           }
@@ -9849,7 +9852,7 @@
         this.subscribe("row-added", this.rowsUpdated.bind(this));
         this.subscribe("column-moved", this.recalcActiveRows.bind(this));
         this.subscribe("column-add", this.recalcActiveRows.bind(this));
-        this.subscribe("data-refeshed", this.recalcActiveRows.bind(this));
+        this.subscribe("data-refreshed", this.recalcActiveRows.bind(this));
         this.subscribe("table-redraw", this.tableRedraw.bind(this));
         this.subscribe("rows-visible", this.visibleRows.bind(this));
         this.registerTableFunction("getCalcResults", this.getResults.bind(this));
@@ -10398,6 +10401,8 @@
 
       _this.registerComponentFunction("row", "addTreeChild", _this.addTreeChildRow.bind(_assertThisInitialized(_this)));
 
+      _this.registerComponentFunction("row", "isTreeExpanded", _this.isRowExpanded.bind(_assertThisInitialized(_this)));
+
       return _this;
     }
 
@@ -10779,6 +10784,11 @@
         }
       }
     }, {
+      key: "isRowExpanded",
+      value: function isRowExpanded(row) {
+        return row.modules.dataTree.open;
+      }
+    }, {
       key: "getTreeParent",
       value: function getTreeParent(row) {
         return row.modules.dataTree.parent ? row.modules.dataTree.parent.getComponent() : false;
@@ -11037,7 +11047,7 @@
         case "row":
           row.columns.forEach(function (col) {
             if (col) {
-              item[col.component.getField()] = col.value;
+              item[col.component.getTitleDownload() || col.component.getField()] = col.value;
             }
           });
           fileContents.push(item);
@@ -11280,9 +11290,40 @@
     }
   }
 
+  function jsonLines (list, options, setFileContents) {
+    var fileContents = [];
+    list.forEach(function (row) {
+      var item = {};
+
+      switch (row.type) {
+        case "header":
+          break;
+
+        case "group":
+          console.warn("Download Warning - JSON downloader cannot process row groups");
+          break;
+
+        case "calc":
+          console.warn("Download Warning - JSON downloader cannot process column calculations");
+          break;
+
+        case "row":
+          row.columns.forEach(function (col) {
+            if (col) {
+              item[col.component.getTitleDownload() || col.component.getField()] = col.value;
+            }
+          });
+          fileContents.push(JSON.stringify(item));
+          break;
+      }
+    });
+    setFileContents(fileContents.join("\n"), "application/x-ndjson");
+  }
+
   var defaultDownloaders = {
     csv: csv,
     json: json,
+    jsonLines: jsonLines,
     pdf: pdf,
     xlsx: xlsx,
     html: html
@@ -13296,12 +13337,12 @@
         this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
         this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
         this.subscribe("data-refeshing", this.cancelEdit.bind(this));
-        this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this));
+        this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
         this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
-        this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this));
-        this.subscribe("keybinding-nav-right", this.navigateRight.bind(this));
-        this.subscribe("keybinding-nav-up", this.navigateUp.bind(this));
-        this.subscribe("keybinding-nav-down", this.navigateDown.bind(this));
+        this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
+        this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
+        this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
+        this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
       } ///////////////////////////////////
       ////// Keybinding Functions ///////
       ///////////////////////////////////
@@ -13313,10 +13354,9 @@
             newRow = this.options("tabEndNewRow");
 
         if (cell) {
-          if (!this.navigateNext(e)) {
+          if (!this.navigateNext(cell, e)) {
             if (newRow) {
-              cell.getElement().firstChild.blur();
-
+              // cell.getElement().firstChild.blur();
               if (newRow === true) {
                 newRow = this.table.addRow({});
               } else {
@@ -13329,7 +13369,7 @@
 
               newRow.then(function () {
                 setTimeout(function () {
-                  nav.next();
+                  cell.getComponent().navigateNext();
                 });
               });
             }
@@ -13362,7 +13402,7 @@
         var _this2 = this;
 
         if (!cells) {
-          cells = this.modules.edit.getEditedCells();
+          cells = this.table.modules.edit.getEditedCells();
         }
 
         if (!Array.isArray(cells)) {
@@ -13370,15 +13410,15 @@
         }
 
         cells.forEach(function (cell) {
-          _this2.modules.edit.clearEdited(cell._getSelf());
+          _this2.table.modules.edit.clearEdited(cell._getSelf());
         });
       }
     }, {
       key: "navigatePrev",
-      value: function navigatePrev(e) {
-        var cell = this.currentCell,
-            nextCell,
-            prevRow;
+      value: function navigatePrev() {
+        var cell = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.currentCell;
+        var e = arguments.length > 1 ? arguments[1] : undefined;
+        var nextCell, prevRow;
 
         if (cell) {
           if (e) {
@@ -13407,10 +13447,10 @@
       }
     }, {
       key: "navigateNext",
-      value: function navigateNext(e) {
-        var cell = this.currentCell,
-            nextCell,
-            nextRow;
+      value: function navigateNext() {
+        var cell = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.currentCell;
+        var e = arguments.length > 1 ? arguments[1] : undefined;
+        var nextCell, nextRow;
 
         if (cell) {
           if (e) {
@@ -13439,10 +13479,10 @@
       }
     }, {
       key: "navigateLeft",
-      value: function navigateLeft(e) {
-        var cell = this.currentCell,
-            index,
-            nextCell;
+      value: function navigateLeft() {
+        var cell = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.currentCell;
+        var e = arguments.length > 1 ? arguments[1] : undefined;
+        var index, nextCell;
 
         if (cell) {
           if (e) {
@@ -13462,10 +13502,10 @@
       }
     }, {
       key: "navigateRight",
-      value: function navigateRight(e) {
-        var cell = this.currentCell,
-            index,
-            nextCell;
+      value: function navigateRight() {
+        var cell = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.currentCell;
+        var e = arguments.length > 1 ? arguments[1] : undefined;
+        var index, nextCell;
 
         if (cell) {
           if (e) {
@@ -13485,10 +13525,10 @@
       }
     }, {
       key: "navigateUp",
-      value: function navigateUp(e) {
-        var cell = this.currentCell,
-            index,
-            nextRow;
+      value: function navigateUp() {
+        var cell = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.currentCell;
+        var e = arguments.length > 1 ? arguments[1] : undefined;
+        var index, nextRow;
 
         if (cell) {
           if (e) {
@@ -13508,10 +13548,10 @@
       }
     }, {
       key: "navigateDown",
-      value: function navigateDown(e) {
-        var cell = this.currentCell,
-            index,
-            nextRow;
+      value: function navigateDown() {
+        var cell = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.currentCell;
+        var e = arguments.length > 1 ? arguments[1] : undefined;
+        var index, nextRow;
 
         if (cell) {
           if (e) {
@@ -15128,7 +15168,7 @@
               }
             };
             params = column.definition.headerFilterParams || {};
-            params = typeof params === "function" ? params.call(self.table) : params;
+            params = typeof params === "function" ? params.call(self.table, cellWrapper) : params;
             editorElement = editor.call(this.table.modules.edit, cellWrapper, function () {}, success, cancel, params);
 
             if (!editorElement) {
@@ -15843,7 +15883,7 @@
     var value = cell.getValue();
 
     if (typeof DT != "undefined") {
-      var newDatetime = DT.fromFormat(String(value), inputFormat);
+      var newDatetime = inputFormat === "iso" ? DT.fromISO(String(value)) : DT.fromFormat(String(value), inputFormat);
 
       if (newDatetime.isValid) {
         if (formatterParams.timezone) {
@@ -15876,7 +15916,7 @@
     var value = cell.getValue();
 
     if (typeof DT != "undefined") {
-      var newDatetime = DT.fromFormat(String(value), inputFormat);
+      var newDatetime = inputFormat === "iso" ? DT.fromISO(String(value)) : DT.fromFormat(String(value), inputFormat);
 
       if (newDatetime.isValid) {
         if (humanize) ; else {
@@ -16807,6 +16847,7 @@
 
         this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
         this.subscribe("row-deleting", this.detachRow.bind(this));
+        this.subscribe("rows-visible", this.visibleRows.bind(this));
         this.registerDisplayHandler(this.getRows.bind(this), 10);
       }
     }, {
@@ -16819,6 +16860,14 @@
       key: "isFrozen",
       value: function isFrozen() {
         return !!this.rows.length;
+      }
+    }, {
+      key: "visibleRows",
+      value: function visibleRows(viewable, rows) {
+        this.rows.forEach(function (row) {
+          rows.push(row);
+        });
+        return rows;
       } //filter frozen rows out of display data
 
     }, {
@@ -17000,6 +17049,7 @@
       this.groups = [];
       this.groupList = [];
       this.generator = generator;
+      this.element = false;
       this.elementContents = false;
       this.height = 0;
       this.outerHeight = 0;
@@ -17070,64 +17120,7 @@
       value: function addBindings() {
         var _this2 = this;
 
-        var dblTap, tapHold, tap, toggleElement;
-
-        if ((this.groupManager.table.options.groupContextMenu || this.groupManager.table.options.groupClickMenu) && this.groupManager.table.modExists("menu")) {
-          this.groupManager.table.modules.menu.initializeGroup.call(this.groupManager.table.modules.menu, this);
-        }
-
-        if (this.groupManager.table.options.groupTap) {
-          tap = false;
-          this.element.addEventListener("touchstart", function (e) {
-            tap = true;
-          }, {
-            passive: true
-          });
-          this.element.addEventListener("touchend", function (e) {
-            if (tap) {
-              _this2.groupManager.table.options.groupTap(e, _this2.getComponent());
-            }
-
-            tap = false;
-          });
-        }
-
-        if (this.groupManager.table.options.groupDblTap) {
-          dblTap = null;
-          this.element.addEventListener("touchend", function (e) {
-            if (dblTap) {
-              clearTimeout(dblTap);
-              dblTap = null;
-
-              _this2.groupManager.table.options.groupDblTap(e, _this2.getComponent());
-            } else {
-              dblTap = setTimeout(function () {
-                clearTimeout(dblTap);
-                dblTap = null;
-              }, 300);
-            }
-          });
-        }
-
-        if (this.groupManager.table.options.groupTapHold) {
-          tapHold = null;
-          this.element.addEventListener("touchstart", function (e) {
-            clearTimeout(tapHold);
-            tapHold = setTimeout(function () {
-              clearTimeout(tapHold);
-              tapHold = null;
-              tap = false;
-
-              _this2.groupManager.table.options.groupTapHold(e, _this2.getComponent());
-            }, 1000);
-          }, {
-            passive: true
-          });
-          this.element.addEventListener("touchend", function (e) {
-            clearTimeout(tapHold);
-            tapHold = null;
-          });
-        }
+        var toggleElement;
 
         if (this.groupManager.table.options.groupToggleElement) {
           toggleElement = this.groupManager.table.options.groupToggleElement == "arrow" ? this.arrowElement : this.element;
@@ -17729,13 +17722,12 @@
       key: "initialize",
       value: function initialize() {
         if (this.table.options.groupBy) {
-          this.configureGroupSetup();
-
           if (this.table.options.groupUpdateOnCellEdit) {
             this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
             this.subscribe("row-data-changed", this.reassignRowToGroup.bind(this), 0);
           }
 
+          this.subscribe("table-built", this.configureGroupSetup.bind(this));
           this.subscribe("row-deleting", this.rowDeleting.bind(this));
           this.subscribe("row-deleted", this.rowsUpdated.bind(this));
           this.subscribe("scroll-horizontal", this.scrollHeaders.bind(this));
@@ -18687,6 +18679,280 @@
 
   HtmlTableImport.moduleName = "htmlTableImport";
 
+  function csvImporter(input) {
+    var data = [],
+        row = 0,
+        col = 0,
+        inQuote = false; //Iterate over each character
+
+    for (var index = 0; index < input.length; index++) {
+      var _char = input[index],
+          nextChar = input[index + 1]; //Initialize empty row
+
+      if (!data[row]) {
+        data[row] = [];
+      } //Initialize empty column
+
+
+      if (!data[row][col]) {
+        data[row][col] = "";
+      } //Handle quotation mark inside string
+
+
+      if (_char == '"' && inQuote && nextChar == '"') {
+        data[row][col] += _char;
+        index++;
+        continue;
+      } //Begin / End Quote
+
+
+      if (_char == '"') {
+        inQuote = !inQuote;
+        continue;
+      } //Next column (if not in quote)
+
+
+      if (_char == ',' && !inQuote) {
+        col++;
+        continue;
+      } //New row if new line and not in quote (CRLF) 
+
+
+      if (_char == '\r' && nextChar == '\n' && !inQuote) {
+        col = 0;
+        row++;
+        index++;
+        continue;
+      } //New row if new line and not in quote (CR or LF) 
+
+
+      if ((_char == '\r' || _char == '\n') && !inQuote) {
+        col = 0;
+        row++;
+        continue;
+      } //Normal Character, append to column
+
+
+      data[row][col] += _char;
+    }
+
+    return data;
+  }
+
+  function json$1 (input) {
+    try {
+      return JSON.parse(input);
+    } catch (e) {
+      console.warn("JSON Import Error - File contents is invalid JSON", e);
+      return Promise.reject();
+    }
+  }
+
+  var defaultImporters = {
+    csv: csvImporter,
+    json: json$1
+  };
+
+  var Import = /*#__PURE__*/function (_Module) {
+    _inherits(Import, _Module);
+
+    var _super = _createSuper(Import);
+
+    function Import(table) {
+      var _this;
+
+      _classCallCheck(this, Import);
+
+      _this = _super.call(this, table);
+
+      _this.registerTableOption("importFormat");
+
+      _this.registerTableOption("importReader", "text");
+
+      return _this;
+    }
+
+    _createClass(Import, [{
+      key: "initialize",
+      value: function initialize() {
+        this.registerTableFunction("import", this.importFromFile.bind(this));
+
+        if (this.table.options.importFormat) {
+          this.subscribe("data-loading", this.loadDataCheck.bind(this), 10);
+          this.subscribe("data-load", this.loadData.bind(this), 10);
+        }
+      }
+    }, {
+      key: "loadDataCheck",
+      value: function loadDataCheck(data) {
+        return typeof data === "string";
+      }
+    }, {
+      key: "loadData",
+      value: function loadData(data, params, config, silent, previousData) {
+        return this.importData(this.lookupImporter(), data).then(this.structureData.bind(this))["catch"](function (err) {
+          console.error("Import Error:", err || "Unable to import data");
+          return Promise.reject(err);
+        });
+      }
+    }, {
+      key: "lookupImporter",
+      value: function lookupImporter(importFormat) {
+        var importer;
+
+        if (!importFormat) {
+          importFormat = this.table.options.importFormat;
+        }
+
+        if (typeof importFormat === "string") {
+          importer = Import.importers[importFormat];
+        } else {
+          importer = importFormat;
+        }
+
+        if (!importer) {
+          console.error("Import Error - Importer not found:", importFormat);
+        }
+
+        return importer;
+      }
+    }, {
+      key: "importFromFile",
+      value: function importFromFile(importFormat, extension) {
+        var importer = this.lookupImporter(importFormat);
+
+        if (importer) {
+          return this.pickFile(extension).then(this.importData.bind(this, importer)).then(this.structureData.bind(this)).then(this.setData.bind(this))["catch"](function (err) {
+            console.error("Import Error:", err || "Unable to import file");
+            return Promise.reject(err);
+          });
+        }
+      }
+    }, {
+      key: "pickFile",
+      value: function pickFile(extensions) {
+        var _this2 = this;
+
+        return new Promise(function (resolve, reject) {
+          var input = document.createElement("input");
+          input.type = "file";
+          input.accept = extensions;
+          input.addEventListener("change", function (e) {
+            var file = input.files[0],
+                reader = new FileReader();
+
+            switch (_this2.table.options.importReader) {
+              case "buffer":
+                reader.readAsArrayBuffer(file);
+                break;
+
+              case "binary":
+                reader.readAsBinaryString(file);
+                break;
+
+              case "url":
+                reader.readAsDataURL(file);
+                break;
+
+              case "text":
+              default:
+                reader.readAsText(file);
+            }
+
+            reader.onload = function (e) {
+              resolve(reader.result);
+            };
+
+            reader.onerror = function (e) {
+              console.warn("File Load Error - Unable to read file");
+              reject();
+            };
+          });
+          input.click();
+        });
+      }
+    }, {
+      key: "importData",
+      value: function importData(importer, fileContents) {
+        var data = importer.call(this.table, fileContents);
+
+        if (data instanceof Promise) {
+          return data;
+        } else {
+          return data ? Promise.resolve(data) : Promise.reject();
+        }
+      }
+    }, {
+      key: "structureData",
+      value: function structureData(parsedData) {
+        var data = [];
+        console.log("structure", parsedData);
+
+        if (Array.isArray(parsedData) && parsedData.length && Array.isArray(parsedData[0])) {
+          if (this.table.options.autoColumns) {
+            data = this.structureArrayToObject(parsedData);
+          } else {
+            data = this.structureArrayToColumns(parsedData);
+          }
+
+          return data;
+        } else {
+          return parsedData;
+        }
+      }
+    }, {
+      key: "structureArrayToObject",
+      value: function structureArrayToObject(parsedData) {
+        var columns = parsedData.shift();
+        var data = parsedData.map(function (values) {
+          var row = {};
+          columns.forEach(function (key, i) {
+            row[key] = values[i];
+          });
+          return row;
+        });
+        return data;
+      }
+    }, {
+      key: "structureArrayToColumns",
+      value: function structureArrayToColumns(parsedData) {
+        var data = [],
+            columns = this.table.getColumns(); //remove first row if it is the column names
+
+        if (columns[0] && parsedData[0][0]) {
+          if (columns[0].getDefinition().title === parsedData[0][0]) {
+            parsedData.shift();
+          }
+        } //convert row arrays to objects
+
+
+        parsedData.forEach(function (rowData) {
+          var row = {};
+          rowData.forEach(function (value, index) {
+            var column = columns[index];
+
+            if (column) {
+              row[column.getField()] = value;
+            }
+          });
+          data.push(row);
+        });
+        return data;
+      }
+    }, {
+      key: "setData",
+      value: function setData(data) {
+        return this.table.setData(data);
+      }
+    }]);
+
+    return Import;
+  }(Module);
+
+  Import.moduleName = "import"; //load defaults
+
+  Import.importers = defaultImporters;
+
   var Interaction = /*#__PURE__*/function (_Module) {
     _inherits(Interaction, _Module);
 
@@ -18763,6 +19029,11 @@
           tapHold: null
         },
         column: {
+          tap: null,
+          tapDbl: null,
+          tapHold: null
+        },
+        group: {
           tap: null,
           tapDbl: null,
           tapHold: null
@@ -19024,9 +19295,9 @@
     scrollPageDown: 34,
     scrollToStart: 36,
     scrollToEnd: 35,
-    undo: "ctrl + 90",
-    redo: "ctrl + 89",
-    copyToClipboard: "ctrl + 67"
+    undo: ["ctrl + 90", "meta + 90"],
+    redo: ["ctrl + 89", "meta + 89"],
+    copyToClipboard: ["ctrl + 67", "meta + 89"]
   };
 
   var defaultActions = {
@@ -19153,7 +19424,7 @@
       _this.keyupBinding = false;
       _this.keydownBinding = false;
 
-      _this.registerTableOption("keybindings", []); //array for keybindings
+      _this.registerTableOption("keybindings", {}); //array for keybindings
 
 
       _this.registerTableOption("tabEndNewRow", false); //create new row when tab to end of table
@@ -19171,16 +19442,8 @@
         this.pressedKeys = [];
 
         if (bindings !== false) {
-          for (var key in Keybindings.bindings) {
-            mergedBindings[key] = Keybindings.bindings[key];
-          }
-
-          if (Object.keys(bindings).length) {
-            for (var _key in bindings) {
-              mergedBindings[_key] = bindings[_key];
-            }
-          }
-
+          Object.assign(mergedBindings, Keybindings.bindings);
+          Object.assign(mergedBindings, bindings);
           this.mapBindings(mergedBindings);
           this.bindEvents();
         }
@@ -19200,7 +19463,10 @@
               }
 
               bindings[key].forEach(function (binding) {
-                _this2.mapBinding(key, binding);
+                var bindingList = Array.isArray(binding) ? binding : [binding];
+                bindingList.forEach(function (item) {
+                  _this2.mapBinding(key, item);
+                });
               });
             }
           } else {
@@ -19240,7 +19506,7 @@
               break;
 
             default:
-              symbol = parseInt(symbol);
+              symbol = isNaN(symbol) ? symbol.toUpperCase().charCodeAt(0) : parseInt(symbol);
               binding.keys.push(symbol);
 
               if (!_this3.watchKeys[symbol]) {
@@ -19342,11 +19608,14 @@
       _classCallCheck(this, Menu);
 
       _this = _super.call(this, table);
+      _this.menuContainer = null;
       _this.menuElements = [];
       _this.blurEvent = _this.hideMenu.bind(_assertThisInitialized(_this));
       _this.escEvent = _this.escMenu.bind(_assertThisInitialized(_this));
       _this.nestedMenuBlock = false;
       _this.positionReversedX = false;
+      _this.currentComponent = null;
+      _this.columnSubscribers = {};
 
       _this.registerTableOption("rowContextMenu", false);
 
@@ -19356,7 +19625,11 @@
 
       _this.registerTableOption("groupClickMenu", false);
 
+      _this.registerTableOption("menuContainer", false);
+
       _this.registerColumnOption("headerContextMenu");
+
+      _this.registerColumnOption("headerClickMenu");
 
       _this.registerColumnOption("headerMenu");
 
@@ -19370,133 +19643,157 @@
     _createClass(Menu, [{
       key: "initialize",
       value: function initialize() {
-        this.subscribe("cell-layout", this.layoutCell.bind(this));
+        this.lookupMenuContainer();
+        this.initializeRowWatchers();
+        this.initializeGroupWatchers();
         this.subscribe("column-init", this.initializeColumn.bind(this));
-        this.subscribe("row-init", this.initializeRow.bind(this));
       }
     }, {
-      key: "layoutCell",
-      value: function layoutCell(cell) {
-        if (cell.column.definition.contextMenu || cell.column.definition.clickMenu) {
-          this.initializeCell(cell);
+      key: "lookupMenuContainer",
+      value: function lookupMenuContainer() {
+        this.menuContainer = this.table.options.menuContainer;
+
+        if (typeof this.menuContainer === "string") {
+          this.menuContainer = document.querySelector(this.menuContainer);
+
+          if (!this.menuContainer) {
+            console.warn("Menu Error - no container element found matching selector:", this.table.options.menuContainer, "(defaulting to document body)");
+          }
+        } else if (this.menuContainer === true) {
+          this.menuContainer = this.table.element;
+        }
+
+        if (this.menuContainer && !this.checkMenuContainerIsParent(this.menuContainer)) {
+          this.menuContainer = false;
+          console.warn("Menu Error - container element does not contain this table:", this.table.options.menuContainer, "(defaulting to document body)");
+        }
+
+        if (!this.menuContainer) {
+          this.menuContainer = document.body;
+        }
+      }
+    }, {
+      key: "checkMenuContainerIsParent",
+      value: function checkMenuContainerIsParent(container) {
+        var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.table.element;
+
+        if (container === element) {
+          return true;
+        } else {
+          return element.parentNode ? this.checkMenuContainerIsParent(container, element.parentNode) : false;
+        }
+      }
+    }, {
+      key: "initializeRowWatchers",
+      value: function initializeRowWatchers() {
+        if (this.table.options.rowContextMenu) {
+          this.subscribe("row-contextmenu", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
+          this.table.on("rowTapHold", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
+        }
+
+        if (this.table.options.rowClickMenu) {
+          this.subscribe("row-click", this.loadMenuEvent.bind(this, this.table.options.rowClickMenu));
+        }
+      }
+    }, {
+      key: "initializeGroupWatchers",
+      value: function initializeGroupWatchers() {
+        if (this.table.options.groupContextMenu) {
+          this.subscribe("group-contextmenu", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
+          this.table.on("groupTapHold", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
+        }
+
+        if (this.table.options.groupClickMenu) {
+          this.subscribe("group-click", this.loadMenuEvent.bind(this, this.table.options.groupClickMenu));
         }
       }
     }, {
       key: "initializeColumn",
       value: function initializeColumn(column) {
-        var def = column.definition;
+        var def = column.definition; //handle column events
 
-        if (def.headerContextMenu || def.headerClickMenu || def.headerMenu) {
-          this.initializeColumnHeader(column);
+        if (def.headerContextMenu && !this.columnSubscribers.headerContextMenu) {
+          this.columnSubscribers.headerContextMenu = this.loadMenuTableColumnEvent.bind(this, "headerContextMenu");
+          this.subscribe("column-contextmenu", this.columnSubscribers.headerContextMenu);
+          this.table.on("headerTapHold", this.loadMenuTableColumnEvent.bind(this, "headerContextMenu"));
+        }
+
+        if (def.headerClickMenu && !this.columnSubscribers.headerClickMenu) {
+          this.columnSubscribers.headerClickMenu = this.loadMenuTableColumnEvent.bind(this, "headerClickMenu");
+          this.subscribe("column-click", this.columnSubscribers.headerClickMenu);
+        }
+
+        if (def.headerMenu) {
+          this.initializeColumnHeaderMenu(column);
+        } //handle cell events
+
+
+        if (def.contextMenu && !this.columnSubscribers.contextMenu) {
+          this.columnSubscribers.contextMenu = this.loadMenuTableCellEvent.bind(this, "contextMenu");
+          this.subscribe("cell-contextmenu", this.columnSubscribers.contextMenu);
+          this.table.on("cellTapHold", this.loadMenuTableCellEvent.bind(this, "contextMenu"));
+        }
+
+        if (def.clickMenu && !this.columnSubscribers.clickMenu) {
+          this.columnSubscribers.clickMenu = this.loadMenuTableCellEvent.bind(this, "clickMenu");
+          this.subscribe("cell-click", this.columnSubscribers.clickMenu);
         }
       }
     }, {
-      key: "initializeColumnHeader",
-      value: function initializeColumnHeader(column) {
+      key: "initializeColumnHeaderMenu",
+      value: function initializeColumnHeaderMenu(column) {
         var _this2 = this;
 
         var headerMenuEl;
+        headerMenuEl = document.createElement("span");
+        headerMenuEl.classList.add("tabulator-header-menu-button");
+        headerMenuEl.innerHTML = "&vellip;";
+        headerMenuEl.addEventListener("click", function (e) {
+          e.stopPropagation();
+          e.preventDefault();
 
-        if (column.definition.headerContextMenu) {
-          column.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, column, column.definition.headerContextMenu));
-          this.tapHold(column, column.definition.headerContextMenu);
-        } // if(column.definition.headerClickMenu){
-        // 	column.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, column, column.definition.headerClickMenu));
-        // }
+          _this2.loadMenuEvent(column.definition.headerMenu, e, column);
+        });
+        column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
+      }
+    }, {
+      key: "loadMenuTableCellEvent",
+      value: function loadMenuTableCellEvent(option, e, cell) {
+        if (cell._cell) {
+          cell = cell._cell;
+        }
 
-
-        if (column.definition.headerMenu) {
-          headerMenuEl = document.createElement("span");
-          headerMenuEl.classList.add("tabulator-header-menu-button");
-          headerMenuEl.innerHTML = "&vellip;";
-          headerMenuEl.addEventListener("click", function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-
-            _this2.LoadMenuEvent(column, column.definition.headerMenu, e);
-          });
-          column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
+        if (cell.column.definition[option]) {
+          this.loadMenuEvent(cell.column.definition[option], e, cell);
         }
       }
     }, {
-      key: "LoadMenuEvent",
-      value: function LoadMenuEvent(component, menu, e) {
-        menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu; // if(component instanceof Cell){
-        // 	e.stopImmediatePropagation();
-        // }
+      key: "loadMenuTableColumnEvent",
+      value: function loadMenuTableColumnEvent(option, e, column) {
+        if (column._column) {
+          column = column._column;
+        }
 
+        if (column.definition[option]) {
+          this.loadMenuEvent(column.definition[option], e, column);
+        }
+      }
+    }, {
+      key: "loadMenuEvent",
+      value: function loadMenuEvent(menu, e, component) {
+        if (component._group) {
+          component = component._group;
+        } else if (component._row) {
+          component = component._row;
+        }
+
+        menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
         this.loadMenu(e, component, menu);
-      }
-    }, {
-      key: "tapHold",
-      value: function tapHold(component, menu) {
-        var _this3 = this;
-
-        var element = component.getElement(),
-            tapHold = null,
-            loaded = false;
-        element.addEventListener("touchstart", function (e) {
-          clearTimeout(tapHold);
-          loaded = false;
-          tapHold = setTimeout(function () {
-            clearTimeout(tapHold);
-            tapHold = null;
-            loaded = true;
-
-            _this3.LoadMenuEvent(component, menu, e);
-          }, 1000);
-        }, {
-          passive: true
-        });
-        element.addEventListener("touchend", function (e) {
-          clearTimeout(tapHold);
-          tapHold = null;
-
-          if (loaded) {
-            e.preventDefault();
-          }
-        });
-      }
-    }, {
-      key: "initializeCell",
-      value: function initializeCell(cell) {
-        if (cell.column.definition.contextMenu) {
-          cell.getElement(true).addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
-          this.tapHold(cell, cell.column.definition.contextMenu);
-        }
-
-        if (cell.column.definition.clickMenu) {
-          cell.getElement(true).addEventListener("click", this.LoadMenuEvent.bind(this, cell, cell.column.definition.clickMenu));
-        }
-      }
-    }, {
-      key: "initializeRow",
-      value: function initializeRow(row) {
-        if (this.table.options.rowContextMenu) {
-          row.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, row, this.table.options.rowContextMenu));
-          this.tapHold(row, this.table.options.rowContextMenu);
-        }
-
-        if (this.table.options.rowClickMenu) {
-          row.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, row, this.table.options.rowClickMenu));
-        }
-      }
-    }, {
-      key: "initializeGroup",
-      value: function initializeGroup(group) {
-        if (this.table.options.groupContextMenu) {
-          group.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, group, this.table.options.groupContextMenu));
-          this.tapHold(group, this.table.options.groupContextMenu);
-        }
-
-        if (this.table.options.groupClickMenu) {
-          group.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, group, this.table.options.groupClickMenu));
-        }
       }
     }, {
       key: "loadMenu",
       value: function loadMenu(e, component, menu, parentEl) {
-        var _this4 = this;
+        var _this3 = this;
 
         var touch = !(e instanceof MouseEvent);
         var menuEl = document.createElement("div");
@@ -19519,7 +19816,7 @@
             }
           } else {
             this.nestedMenuBlock = setTimeout(function () {
-              _this4.nestedMenuBlock = false;
+              _this3.nestedMenuBlock = false;
             }, 100);
           }
 
@@ -19538,7 +19835,7 @@
             itemEl.classList.add("tabulator-menu-item");
 
             if (typeof label == "function") {
-              label = label.call(_this4.table, component.getComponent());
+              label = label.call(_this3.table, component.getComponent());
             }
 
             if (label instanceof Node) {
@@ -19548,7 +19845,7 @@
             }
 
             if (typeof disabled == "function") {
-              disabled = disabled.call(_this4.table, component.getComponent());
+              disabled = disabled.call(_this3.table, component.getComponent());
             }
 
             if (disabled) {
@@ -19561,9 +19858,9 @@
                 itemEl.addEventListener("click", function (e) {
                   e.stopPropagation();
 
-                  _this4.hideOldSubMenus(menuEl);
+                  _this3.hideOldSubMenus(menuEl);
 
-                  _this4.loadMenu(e, component, item.menu, itemEl);
+                  _this3.loadMenu(e, component, item.menu, itemEl);
                 });
               } else {
                 if (item.action) {
@@ -19582,10 +19879,12 @@
           menuEl.appendChild(itemEl);
         });
         menuEl.addEventListener("click", function (e) {
-          _this4.hideMenu();
+          _this3.hideMenu();
         });
         this.menuElements.push(menuEl);
         this.positionMenu(menuEl, parentEl, touch, e);
+        this.currentComponent = component;
+        this.dispatchExternal("menuOpened", component.getComponent());
       }
     }, {
       key: "hideOldSubMenus",
@@ -19607,16 +19906,20 @@
     }, {
       key: "positionMenu",
       value: function positionMenu(element, parentEl, touch, e) {
-        var _this5 = this;
+        var _this4 = this;
 
-        var docHeight = Math.max(document.body.offsetHeight, window.innerHeight),
-            x,
-            y,
-            parentOffset;
+        var x, y, parentOffset;
 
         if (!parentEl) {
           x = touch ? e.touches[0].pageX : e.pageX;
           y = touch ? e.touches[0].pageY : e.pageY;
+
+          if (this.menuContainer !== document.body) {
+            parentOffset = Helpers.elOffset(this.menuContainer);
+            x -= parentOffset.left;
+            y -= parentOffset.top;
+          }
+
           this.positionReversedX = false;
         } else {
           parentOffset = Helpers.elOffset(parentEl);
@@ -19627,36 +19930,36 @@
         element.style.top = y + "px";
         element.style.left = x + "px";
         setTimeout(function () {
-          _this5.table.rowManager.element.addEventListener("scroll", _this5.blurEvent);
+          _this4.table.rowManager.element.addEventListener("scroll", _this4.blurEvent);
 
-          document.body.addEventListener("click", _this5.blurEvent);
-          document.body.addEventListener("contextmenu", _this5.blurEvent);
-          window.addEventListener("resize", _this5.blurEvent);
-          document.body.addEventListener("keydown", _this5.escEvent);
+          document.body.addEventListener("click", _this4.blurEvent);
+          document.body.addEventListener("contextmenu", _this4.blurEvent);
+          window.addEventListener("resize", _this4.blurEvent);
+          document.body.addEventListener("keydown", _this4.escEvent);
         }, 100);
-        document.body.appendChild(element); //move menu to start on bottom edge if it is too close to the edge of the screen
+        this.menuContainer.appendChild(element); //move menu to start on right edge if it is too close to the edge of the screen
 
-        if (y + element.offsetHeight >= docHeight) {
-          element.style.top = "";
-
-          if (parentEl) {
-            element.style.bottom = docHeight - parentOffset.top - parentEl.offsetHeight - 1 + "px";
-          } else {
-            element.style.bottom = docHeight - y + "px";
-          }
-        } //move menu to start on right edge if it is too close to the edge of the screen
-
-
-        if (x + element.offsetWidth >= document.body.offsetWidth || this.positionReversedX) {
+        if (x + element.offsetWidth >= this.menuContainer.offsetWidth || this.positionReversedX) {
           element.style.left = "";
 
           if (parentEl) {
-            element.style.right = document.documentElement.offsetWidth - parentOffset.left + "px";
+            element.style.right = this.menuContainer.offsetWidth - parentOffset.left + "px";
           } else {
-            element.style.right = document.documentElement.offsetWidth - x + "px";
+            element.style.right = this.menuContainer.offsetWidth - x + "px";
           }
 
           this.positionReversedX = true;
+        } //move menu to start on bottom edge if it is too close to the edge of the screen
+
+
+        if (y + element.offsetHeight >= this.menuContainer.offsetHeight) {
+          element.style.top = "";
+
+          if (parentEl) {
+            element.style.bottom = this.menuContainer.offsetHeight - parentOffset.top - parentEl.offsetHeight - 1 + "px";
+          } else {
+            element.style.bottom = this.menuContainer.offsetHeight - y + "px";
+          }
         }
       }
     }, {
@@ -19684,6 +19987,11 @@
         document.body.removeEventListener("contextmenu", this.blurEvent);
         window.removeEventListener("resize", this.blurEvent);
         this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
+
+        if (this.currentComponent) {
+          this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
+          this.currentComponent = null;
+        }
       }
     }]);
 
@@ -20359,6 +20667,7 @@
 
         document.body.addEventListener("mousemove", this.moveHover);
         document.body.addEventListener("mouseup", this.endMove);
+        this.dispatchExternal("rowMoving", row.getComponent());
         this.moveHover(e);
       }
     }, {
@@ -20394,6 +20703,8 @@
 
           if (this.toRow) {
             this.table.rowManager.moveRow(this.moving, this.toRow, this.toRowAfter);
+          } else {
+            this.dispatchExternal("rowMoveCancelled", this.moving.getComponent());
           }
 
           this.moving = false;
@@ -20925,6 +21236,9 @@
       _this.registerTableOption("paginationCounter", false); // set pagination counter
 
 
+      _this.registerTableOption("paginationCounterElement", false); // set pagination counter
+
+
       _this.registerTableOption("paginationButtonCount", 5); // set count of page button
 
 
@@ -21247,7 +21561,7 @@
       value: function initializePaginator(hidden) {
         var _this3 = this;
 
-        var pageSelectLabel;
+        var pageSelectLabel, paginationCounterHolder;
 
         if (!hidden) {
           //build pagination element
@@ -21329,7 +21643,22 @@
 
           if (!this.table.options.paginationElement && !hidden) {
             if (this.table.options.paginationCounter) {
-              this.table.footerManager.append(this.pageCounterElement, this);
+
+              if (this.table.options.paginationCounterElement) {
+                if (this.table.options.paginationCounterElement instanceof HTMLElement) {
+                  this.table.options.paginationCounterElement.appendChild(this.pageCounterElement);
+                } else if (typeof this.table.options.paginationCounterElement === "string") {
+                  paginationCounterHolder = document.querySelector(this.table.options.paginationCounterElement);
+
+                  if (paginationCounterHolder) {
+                    paginationCounterHolder.appendChild(this.pageCounterElement);
+                  } else {
+                    console.warn("Pagination Error - Unable to find element matching paginationCounterElement selector:", this.table.options.paginationCounterElement);
+                  }
+                }
+              } else {
+                this.table.footerManager.append(this.pageCounterElement);
+              }
             }
 
             this.table.footerManager.append(this.element, this);
@@ -23041,7 +23370,7 @@
           handle.removeEventListener("touchmove", mouseMove);
           handle.removeEventListener("touchend", mouseUp);
           self.table.element.classList.remove("tabulator-block-select");
-          this.dispatchExternal("rowResized", row.getComponent());
+          self.dispatchExternal("rowResized", row.getComponent());
         }
 
         e.stopPropagation(); //prevent resize from interfereing with movable columns
@@ -24138,8 +24467,8 @@
         emptyAlign = 0;
 
     if (typeof DT != "undefined") {
-      a = DT.fromFormat(String(a), format);
-      b = DT.fromFormat(String(b), format);
+      a = format === "iso" ? DT.fromISO(String(a)) : DT.fromFormat(String(a), format);
+      b = format === "iso" ? DT.fromISO(String(b)) : DT.fromFormat(String(b), format);
 
       if (!a.isValid) {
         emptyAlign = !b.isValid ? 0 : -1;
@@ -24943,9 +25272,11 @@
     }, {
       key: "columnValidate",
       value: function columnValidate(column) {
+        var _this2 = this;
+
         var invalid = [];
         column.cells.forEach(function (cell) {
-          if (!this.cellValidate(cell)) {
+          if (!_this2.cellValidate(cell)) {
             invalid.push(cell.getComponent());
           }
         });
@@ -24957,9 +25288,11 @@
     }, {
       key: "rowValidate",
       value: function rowValidate(row) {
+        var _this3 = this;
+
         var invalid = [];
         row.cells.forEach(function (cell) {
-          if (!this.cellValidate(cell)) {
+          if (!_this3.cellValidate(cell)) {
             invalid.push(cell.getComponent());
           }
         });
@@ -24971,7 +25304,7 @@
     }, {
       key: "userClearCellValidation",
       value: function userClearCellValidation(cells) {
-        var _this2 = this;
+        var _this4 = this;
 
         if (!cells) {
           cells = this.getInvalidCells();
@@ -24982,7 +25315,7 @@
         }
 
         cells.forEach(function (cell) {
-          _this2.clearValidation(cell._getSelf());
+          _this4.clearValidation(cell._getSelf());
         });
       }
     }, {
@@ -24991,6 +25324,7 @@
         var output = []; //clear row data
 
         this.table.rowManager.rows.forEach(function (row) {
+          row = row.getComponent();
           var valid = row.validate();
 
           if (valid !== true) {
@@ -25173,6 +25507,7 @@
     GroupRowsModule: GroupRows,
     HistoryModule: History,
     HtmlTableImportModule: HtmlTableImport,
+    ImportModule: Import,
     InteractionModule: Interaction,
     KeybindingsModule: Keybindings,
     MenuModule: Menu,
