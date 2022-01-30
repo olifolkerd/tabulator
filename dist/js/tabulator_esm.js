@@ -9222,7 +9222,7 @@ function datetime(cell, formatterParams, onRendered){
 	var value = cell.getValue();
 
 	if(typeof DT != "undefined"){
-		var newDatetime = DT.fromFormat(String(value), inputFormat);
+		var newDatetime = inputFormat === "iso" ? DT.fromISO(String(value)) : DT.fromFormat(String(value), inputFormat);
 
 		if(newDatetime.isValid){
 
@@ -9257,7 +9257,8 @@ function datetimediff (cell, formatterParams, onRendered) {
 	var value = cell.getValue();
 
 	if(typeof DT != "undefined"){
-		var newDatetime = DT.fromFormat(String(value), inputFormat);
+		
+		var newDatetime = inputFormat === "iso" ? DT.fromISO(String(value)) : DT.fromFormat(String(value), inputFormat);
 
 		if (newDatetime.isValid){
 			if(humanize);else {
@@ -17370,8 +17371,8 @@ function datetime$1(a, b, aRow, bRow, column, dir, params){
 	emptyAlign = 0;
 
 	if(typeof DT != "undefined"){
-		a = DT.fromFormat(String(a), format);
-		b = DT.fromFormat(String(b), format);
+		a = format === "iso" ? DT.fromISO(String(a)) : DT.fromFormat(String(a), format);
+		b = format === "iso" ? DT.fromISO(String(b)) : DT.fromFormat(String(b), format);
 
 		if(!a.isValid){
 			emptyAlign = !b.isValid ? 0 : -1;
