@@ -52,6 +52,7 @@ export default {
 	dataLoader:true,
 	dataLoaderLoading:false,
 	dataLoaderError:false,
+	dataLoaderErrorTimeout:3000,
 
 	dataSendParams:{},
 

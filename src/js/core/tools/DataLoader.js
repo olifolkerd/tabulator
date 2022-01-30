@@ -102,10 +102,10 @@ export default class DataLoader extends CoreFeature{
 				if(!silent){
 					this.showError();
 				}
-
+				
 				setTimeout(() => {
 					this.hideLoader();
-				}, 3000);
+				}, this.table.options.dataLoaderErrorTimeout);
 			})
 			.finally(() => {
 				this.loading = false;
