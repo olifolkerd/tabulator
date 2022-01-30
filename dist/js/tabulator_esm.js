@@ -1347,6 +1347,10 @@ class Cell extends CoreFeature{
 
 			this.cellRendered();
 
+			if(this.column.definition.cellEdited){
+				this.column.definition.cellEdited.call(this.table, this.getComponent());
+			}
+
 			this.dispatchExternal("cellEdited", this.getComponent());
 
 			if(this.subscribedExternal("dataChanged")){
@@ -1506,6 +1510,10 @@ class ColumnComponent {
 		return this._column.getField();
 	}
 
+	getTitleDownload() {
+		return this._column.getTitleDownload();
+	}
+
 	getCells(){
 		var cells = [];
 
@@ -1635,6 +1643,7 @@ var defaultColumnOptions = {
 	"width": undefined,
 	"minWidth": 40,
 	"maxWidth": undefined,
+	"maxInitialWidth": undefined,
 	"tooltip": undefined,
 	"cssClass": undefined,
 	"variableHeight": undefined,
@@ -1670,6 +1679,7 @@ class Column$1 extends CoreFeature{
 		this.getFieldValue = "";
 		this.setFieldValue = "";
 
+		this.titleDownload = null;
 		this.titleFormatterRendered = false;
 
 		this.mapDefinitions();
@@ -1682,6 +1692,7 @@ class Column$1 extends CoreFeature{
 		this.widthStyled = ""; //column width prestyled to improve render efficiency
 		this.maxWidth = null; //column maximum width
 		this.maxWidthStyled = ""; //column maximum prestyled to improve render efficiency
+		this.maxInitialWidth = null;
 		this.minWidth = null; //column minimum width
 		this.minWidthStyled = ""; //column minimum prestyled to improve render efficiency
 		this.widthFixed = false; //user has specified a width for this column
@@ -1960,6 +1971,10 @@ class Column$1 extends CoreFeature{
 		//set min width if present
 		this.setMinWidth(parseInt(def.minWidth));
 
+		if (def.maxInitialWidth) {
+			this.maxInitialWidth = parseInt(def.maxInitialWidth);
+		}
+		
 		if(def.maxWidth){
 			this.setMaxWidth(parseInt(def.maxWidth));
 		}
@@ -2208,6 +2223,10 @@ class Column$1 extends CoreFeature{
 	//return field name
 	getField(){
 		return this.field;
+	}
+
+	getTitleDownload() {
+		return this.titleDownload;
 	}
 
 	//return the first column in a group
@@ -2566,18 +2585,19 @@ class Column$1 extends CoreFeature{
 
 		//set width if present
 		if(typeof this.definition.width !== "undefined" && !force){
+			// maxInitialWidth ignored here as width specified
 			this.setWidth(this.definition.width);
 		}
 
 		this.dispatch("column-width-fit-before", this);
 
-		this.fitToData();
+		this.fitToData(force);
 
 		this.dispatch("column-width-fit-after", this);
 	}
 
 	//set column width to maximum cell width for non group columns
-	fitToData(){
+	fitToData(force){
 		if(this.isGroup){
 			return;
 		}
@@ -2602,7 +2622,11 @@ class Column$1 extends CoreFeature{
 			});
 
 			if(maxWidth){
-				this.setWidthActual(maxWidth + 1);
+				var setTo = maxWidth + 1;
+				if (this.maxInitialWidth && !force) {
+					setTo = Math.min(setTo, this.maxInitialWidth);
+				}
+				this.setWidthActual(setTo);
 			}
 		}
 	}
@@ -2831,11 +2855,11 @@ class Row extends CoreFeature{
 
 			this.dispatch("row-layout", this);
 
+			this.initialized = true;
+
 			if(this.table.options.rowFormatter){
 				this.table.options.rowFormatter(this.getComponent());
 			}
-
-			this.initialized = true;
 
 			this.dispatch("row-layout-after", this);
 		}else {
@@ -4425,7 +4449,7 @@ function json(list, options, setFileContents){
 			case "row":
 			row.columns.forEach((col) => {
 				if(col){
-					item[col.component.getField()] = col.value;
+					item[col.component.getTitleDownload() || col.component.getField()] = col.value;
 				}
 			});
 
@@ -4656,9 +4680,43 @@ function html(list, options, setFileContents){
 	}
 }
 
+function jsonLines (list, options, setFileContents) {
+	const fileContents = [];
+
+	list.forEach((row) => {
+		const item = {};
+
+		switch (row.type) {
+			case "header":
+				break;
+
+			case "group":
+				console.warn("Download Warning - JSON downloader cannot process row groups");
+				break;
+
+			case "calc":
+				console.warn("Download Warning - JSON downloader cannot process column calculations");
+				break;
+
+			case "row":
+				row.columns.forEach((col) => {
+					if (col) {
+						item[col.component.getTitleDownload() || col.component.getField()] = col.value;
+					}
+				});
+
+				fileContents.push(JSON.stringify(item));
+				break;
+		}
+	});
+
+	setFileContents(fileContents.join("\n"), "application/x-ndjson");
+}
+
 var defaultDownloaders = {
 	csv:csv,
 	json:json,
+	jsonLines:jsonLines,
 	pdf:pdf,
 	xlsx:xlsx,
 	html:html,
@@ -6765,7 +6823,7 @@ class Edit extends Module{
 	///////////////////////////////////
 	clearCellEdited(cells){
 		if(!cells){
-			cells = this.modules.edit.getEditedCells();
+			cells = this.table.modules.edit.getEditedCells();
 		}
 
 		if(!Array.isArray(cells)){
@@ -6773,7 +6831,7 @@ class Edit extends Module{
 		}
 
 		cells.forEach((cell) => {
-			this.modules.edit.clearEdited(cell._getSelf());
+			this.table.modules.edit.clearEdited(cell._getSelf());
 		});
 	}
 
@@ -18341,7 +18399,6 @@ var defaultOptions = {
 	minHeight:false, //minimum height of tabulator
 	maxHeight:false, //maximum height of tabulator
 
-	columnMaxWidth:false, //minimum global width for a column
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
 
 	columns:[],//store for colum header info
@@ -18977,7 +19034,7 @@ class VirtualDomHorizontal extends Renderer{
 			
 			this.fitDataColActualWidthCheck(column);
 			
-			this.rightCol++;
+			this.rightCol++; // Don't move this below the >= check below
 			
 			if(this.rightCol >= (this.columns.length - 1)){
 				this.vDomPadRight = 0;
@@ -19008,7 +19065,9 @@ class VirtualDomHorizontal extends Renderer{
 			
 			this.fitDataColActualWidthCheck(column);
 			
-			if(!this.leftCol){
+			this.leftCol--; // don't move this below the <= check below
+
+			if(this.leftCol <= 0){ // replicating logic in addColRight
 				this.vDomPadLeft = 0;
 			}else {
 				this.vDomPadLeft -= column.getWidth();
@@ -19016,7 +19075,6 @@ class VirtualDomHorizontal extends Renderer{
 			
 			this.tableElement.style.paddingLeft = this.vDomPadLeft + "px";
 			
-			this.leftCol--;
 			
 			this.addColLeft();
 		}
@@ -19034,7 +19092,11 @@ class VirtualDomHorizontal extends Renderer{
 			rows.forEach((row) => {
 				if(row.type !== "group"){
 					var cell = row.getCell(column);
-					row.getElement().removeChild(cell.getElement());
+					try {
+						row.getElement().removeChild(cell.getElement());
+					} catch (ex) {
+						console.warn("Could not removeColRight", ex.message);
+					}
 				}
 			});
 			
@@ -19064,7 +19126,11 @@ class VirtualDomHorizontal extends Renderer{
 						el = cell.getElement();
 
 						if(el.parentNode){
-							row.getElement().removeChild(el);
+							try {
+								row.getElement().removeChild(el);
+							} catch (ex) {
+								console.warn("Could not removeColLeft", ex.message);
+							}
 						}
 					}
 				}
