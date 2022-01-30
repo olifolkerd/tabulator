@@ -10956,13 +10956,13 @@ class GroupRows extends Module{
 	initialize(){
 		if(this.table.options.groupBy){
 
-			this.configureGroupSetup();
-
 			if(this.table.options.groupUpdateOnCellEdit){
 				this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
 				this.subscribe("row-data-changed", this.reassignRowToGroup.bind(this), 0);
 			}
 
+			this.subscribe("table-built", this.configureGroupSetup.bind(this));
+			
 			this.subscribe("row-deleting", this.rowDeleting.bind(this));
 			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 			this.subscribe("scroll-horizontal", this.scrollHeaders.bind(this));
