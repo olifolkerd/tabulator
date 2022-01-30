@@ -19913,7 +19913,8 @@ class BaiscVertical extends Renderer{
 
 
 	rerenderRows(callback){
-		this.render();
+		this.clearRows();
+		this.renderRows();
 
 		if(callback){
 			callback();
