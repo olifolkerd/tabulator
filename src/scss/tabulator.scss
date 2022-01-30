@@ -1143,13 +1143,9 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 
 			.tabulator-col-content{
-				.tabulator-arrow{
+				.tabulator-col-sorter{
 					left:8px;
 					right:initial;
-				}
-				
-				.tabulator-col-sorter{
-					position: initial;
 				}
 			}
 		}
