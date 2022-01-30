@@ -21902,7 +21902,11 @@ class InteractionManager extends CoreFeature {
 					
 					case "cell":
 					if(listener.components.includes("cell")){
-						component = targets["row"].findCell(target);
+						if(targets["row"]){
+							component = targets["row"].findCell(target);
+						}else {
+							console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?");
+						}
 					}
 					break;
 				}
