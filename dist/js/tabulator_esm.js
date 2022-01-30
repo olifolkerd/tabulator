@@ -8533,7 +8533,7 @@ class Filter extends Module{
 
 				params = column.definition.headerFilterParams || {};
 
-				params = typeof params === "function" ? params.call(self.table) : params;
+				params = typeof params === "function" ? params.call(self.table, cellWrapper) : params;
 
 				editorElement = editor.call(this.table.modules.edit, cellWrapper, function(){}, success, cancel, params);
 
