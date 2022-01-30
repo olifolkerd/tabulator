@@ -114,7 +114,7 @@ export default class VirtualDomHorizontal extends Renderer{
 				config.width = width;
 				
 				if (this.options("layout") === "fitData") {
-					config.fitDataCheck = true;
+					config.fitDataCheck = column.modules.vdomHoz ? column.modules.vdomHoz.fitDataCheck : true;
 				}
 				
 				if((colPos + width > this.vDomScrollPosLeft) && (colPos < this.vDomScrollPosRight)){

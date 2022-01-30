@@ -18732,10 +18732,10 @@ class VirtualDomHorizontal extends Renderer{
 	}
 	
 	initialize(){
-		this.compatabilityCheck();
+		this.compatibilityCheck();
 	}
 	
-	compatabilityCheck(){
+	compatibilityCheck(){
 		var columns = this.options("columns"),
 		frozen = false,
 		ok = true;
@@ -18821,7 +18821,7 @@ class VirtualDomHorizontal extends Renderer{
 				config.width = width;
 				
 				if (this.options("layout") === "fitData") {
-					config.fitDataCheck = true;
+					config.fitDataCheck = column.modules.vdomHoz ? column.modules.vdomHoz.fitDataCheck : true;
 				}
 				
 				if((colPos + width > this.vDomScrollPosLeft) && (colPos < this.vDomScrollPosRight)){
