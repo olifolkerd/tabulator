@@ -10154,6 +10154,7 @@ class FrozenRows extends Module{
 		this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
 
 		this.subscribe("row-deleting", this.detachRow.bind(this));
+		this.subscribe("rows-visible", this.visibleRows.bind(this));
 
 		this.registerDisplayHandler(this.getRows.bind(this), 10);
 	}
@@ -10165,6 +10166,14 @@ class FrozenRows extends Module{
 
 	isFrozen(){
 		return !!this.rows.length;
+	}
+
+	visibleRows(viewable, rows){
+		this.rows.forEach((row) => {
+			rows.push(row);
+		});
+
+		return rows;
 	}
 
 	//filter frozen rows out of display data
