@@ -206,7 +206,7 @@ export default class Cell extends CoreFeature{
 	setValueProcessData(value, mutate){
 		var changed = false;
 
-		if(this.value != value){
+		if(this.value !== value){
 
 			changed = true;
 
