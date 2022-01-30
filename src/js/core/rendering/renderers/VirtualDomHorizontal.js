@@ -25,10 +25,10 @@ export default class VirtualDomHorizontal extends Renderer{
 	}
 	
 	initialize(){
-		this.compatabilityCheck();
+		this.compatibilityCheck();
 	}
 	
-	compatabilityCheck(){
+	compatibilityCheck(){
 		var columns = this.options("columns"),
 		frozen = false,
 		ok = true;
