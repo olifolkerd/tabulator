@@ -76,7 +76,7 @@ export default class DataLoader extends CoreFeature{
 
 			params = this.mapParams(params, this.table.options.dataSendParams);
 
-			var result = this.chain("data-load", [data, params, config, silent], Promise.resolve([]));
+			var result = this.chain("data-load", [data, params, config, silent], false, Promise.resolve([]));
 			
 			return result.then((response) => {
 				if(!Array.isArray(response) && typeof response == "object"){
