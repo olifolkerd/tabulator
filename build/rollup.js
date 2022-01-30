@@ -1,5 +1,6 @@
 import Bundler  from "./Bundler.js";
+const pkg = require("../package.json");
 
-var bundler = new Bundler("5.1.0", process.env.TARGET);
+var bundler = new Bundler(pkg.version, process.env.TARGET);
 
 module.exports = bundler.bundle();
