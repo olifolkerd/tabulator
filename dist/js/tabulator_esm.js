@@ -3324,7 +3324,7 @@ class ColumnCalcs extends Module{
 		this.subscribe("row-added", this.rowsUpdated.bind(this));
 		this.subscribe("column-moved", this.recalcActiveRows.bind(this));
 		this.subscribe("column-add", this.recalcActiveRows.bind(this));
-		this.subscribe("data-refeshed", this.recalcActiveRows.bind(this));
+		this.subscribe("data-refreshed", this.recalcActiveRows.bind(this));
 		this.subscribe("table-redraw", this.tableRedraw.bind(this));
 		this.subscribe("rows-visible", this.visibleRows.bind(this));
 
@@ -21206,7 +21206,7 @@ class RowManager extends CoreFeature{
 				}
 			}
 
-			this.dispatch("data-refeshed");
+			this.dispatch("data-refreshed");
 		}
 	}
 

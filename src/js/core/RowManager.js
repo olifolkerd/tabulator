@@ -709,7 +709,7 @@ export default class RowManager extends CoreFeature{
 				}
 			}
 
-			this.dispatch("data-refeshed");
+			this.dispatch("data-refreshed");
 		}
 	}
 
