@@ -18138,7 +18138,7 @@ class Validate extends Module{
 	columnValidate(column){
 		var invalid = [];
 
-		column.cells.forEach(function(cell){
+		column.cells.forEach((cell) => {
 			if(!this.cellValidate(cell)){
 				invalid.push(cell.getComponent());
 			}
@@ -18154,7 +18154,7 @@ class Validate extends Module{
 	rowValidate(row){
 		var invalid = [];
 
-		row.cells.forEach(function(cell){
+		row.cells.forEach((cell) => {
 			if(!this.cellValidate(cell)){
 				invalid.push(cell.getComponent());
 			}
@@ -18186,7 +18186,9 @@ class Validate extends Module{
 		var output = [];
 
 		//clear row data
-		this.table.rowManager.rows.forEach(function(row){
+		this.table.rowManager.rows.forEach((row) => {
+			row = row.getComponent();
+
 			var valid = row.validate();
 
 			if(valid !== true){
@@ -18216,7 +18218,7 @@ class Validate extends Module{
 		if(column.definition.validator){
 
 			if(Array.isArray(column.definition.validator)){
-				column.definition.validator.forEach(function(item){
+				column.definition.validator.forEach((item) => {
 					validator = self._extractValidator(item);
 
 					if(validator){
@@ -18282,7 +18284,7 @@ class Validate extends Module{
 		invalidIndex = this.invalidCells.indexOf(cell);
 
 		if(validators){
-			validators.forEach(function(item){
+			validators.forEach((item) => {
 				if(!item.func.call(self, cell.getComponent(), value, item.params)){
 					valid.push({
 						type:item.type,
