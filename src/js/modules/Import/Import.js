@@ -123,9 +123,7 @@ class Import extends Module{
 
     structureData(parsedData){
         var data = [];
-
-        console.log("structure", parsedData)
-
+        
         if(Array.isArray(parsedData) && parsedData.length && Array.isArray(parsedData[0])){
             if(this.table.options.autoColumns){
                 data = this.structureArrayToObject(parsedData);

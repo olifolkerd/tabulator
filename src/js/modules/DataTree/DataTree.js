@@ -579,7 +579,6 @@ class DataTree extends Module{
 	}
 
 	redrawNeeded(data){
-		console.log("needed?", data)
 		return (this.field ? typeof data[this.field] !== "undefined" : false) || (this.elementField ? typeof data[this.elementField] !== "undefined" : false);
 	}
 }
