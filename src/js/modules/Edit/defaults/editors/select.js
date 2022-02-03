@@ -26,7 +26,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 	function getUniqueColumnValues(field){
 		var output = {},
-		data = self.table.getData(),
+		data = self.table.getData(editorParams.filterValuesList ? "active" : undefined),
 		column;
 
 		if(field){

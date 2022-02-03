@@ -57,7 +57,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 	function getUniqueColumnValues(field){
 		var output = {},
-		data = self.table.getData(),
+		data = self.table.getData(editorParams.filterValuesList ? "active" : undefined),
 		column;
 
 		if(field){
@@ -98,6 +98,10 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 		//lookup base values list
 		if(uniqueColumnValues){
+			if(intialLoad !== true && term === "" && initialValue !== term && editorParams.filterValuesList === true){
+				success(term);
+				genUniqueColumnValues();
+			}
 			values = uniqueColumnValues;
 		}else{
 			values = editorParams.values || [];
