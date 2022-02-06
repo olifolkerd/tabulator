@@ -828,9 +828,11 @@ class Page extends Module{
 					margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 					
 					if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
-						setTimeout(() => {
-							this.nextPage();
-						});
+						if(this.page < this.max){
+							setTimeout(() => {
+								this.nextPage();
+							});
+						}
 					}
 					break;
 				}
