@@ -4358,7 +4358,6 @@ class DataTree extends Module{
 	}
 
 	redrawNeeded(data){
-		console.log("needed?", data);
 		return (this.field ? typeof data[this.field] !== "undefined" : false) || (this.elementField ? typeof data[this.elementField] !== "undefined" : false);
 	}
 }
@@ -12087,9 +12086,7 @@ class Import extends Module{
 
     structureData(parsedData){
         var data = [];
-
-        console.log("structure", parsedData);
-
+        
         if(Array.isArray(parsedData) && parsedData.length && Array.isArray(parsedData[0])){
             if(this.table.options.autoColumns){
                 data = this.structureArrayToObject(parsedData);
