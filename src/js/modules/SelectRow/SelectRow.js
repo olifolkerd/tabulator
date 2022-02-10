@@ -12,6 +12,7 @@ class SelectRow extends Module{
 		this.headerCheckboxElement = null; // hold header select element
 		
 		this.registerTableOption("selectable", "highlight"); //highlight rows on hover
+		this.registerTableOption("selectableMaxRows", true); //max number of selectable rows
 		this.registerTableOption("selectableRangeMode", "drag");  //highlight rows on hover
 		this.registerTableOption("selectableRollingSelection", true); //roll selection once maximum number of selectable rows is reached
 		this.registerTableOption("selectablePersistence", true); // maintain selection when table view is updated
@@ -31,6 +32,7 @@ class SelectRow extends Module{
 	}
 	
 	initialize(){
+		this.deprecatedOptionsCheck();
 		if(this.table.options.selectable !== false){
 			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
@@ -42,6 +44,12 @@ class SelectRow extends Module{
 			}
 		}
 	}
+
+	deprecatedOptionsCheck(){
+		if (typeof this.table.options.selectable !== "undefined" && Number.isInteger(this.table.options.selectable)) {
+			this.deprecationCheckMsg("selectable", "Please use selectableMaxRows to set the max number of selectable rows (selectable can still be used with non-numeric options).");
+		}
+	}	
 	
 	rowRetrieve(type, prevValue){
 		return type === "selected" ? this.selectedRows : prevValue;
@@ -247,8 +255,13 @@ class SelectRow extends Module{
 	//select an individual row
 	_selectRow(rowInfo, silent, force){
 		//handle max row count
-		if(!isNaN(this.table.options.selectable) && this.table.options.selectable !== true && !force){
-			if(this.selectedRows.length >= this.table.options.selectable){
+		var selectableMaxRows = this.table.options.selectable;
+		// For backward compatibility, we check table.options.selectable first.
+		if (!Number.isInteger(selectableMaxRows)) {
+			selectableMaxRows = this.table.options.selectableMaxRows;
+		}
+		if(Number.isInteger(selectableMaxRows) && !force){
+			if(this.selectedRows.length >= selectableMaxRows){
 				if(this.table.options.selectableRollingSelection){
 					this._deselectRow(this.selectedRows[0]);
 				}else{
