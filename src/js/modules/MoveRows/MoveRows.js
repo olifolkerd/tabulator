@@ -399,7 +399,7 @@ class MoveRows extends Module{
 		this.hoverElement.style.top = (yPos - this.startY) + "px";
 
 		var MINSPEED = 2;
-        var MAXSPEED = 5;
+		var MAXSPEED = 5;
 
         function convertRange(oldVal, oldMin, oldMax, newMin, newMax) {
           var oldRange = (oldMax - oldMin);
@@ -414,7 +414,7 @@ class MoveRows extends Module{
           rowHolder.scrollTop += clampedRange;
         }
         if (e.pageY - rowHolderTop < (0.35 * rowHolder.offsetHeight)) {
-          var convertedRange = Math.round(convertRange(e.pageY, 0, rowHolder.offsetHeight / 2, 2, 6));
+          var convertedRange = Math.round(convertRange(e.pageY, 0, rowHolder.offsetHeight / 2, MINSPEED, MAXSPEED));
           var clampedRange = Math.max(MINSPEED, Math.min(convertedRange, MAXSPEED));
           rowHolder.scrollTop -= clampedRange;
         }
