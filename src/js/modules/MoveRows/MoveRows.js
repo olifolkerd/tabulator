@@ -392,10 +392,45 @@ class MoveRows extends Module{
 	moveHoverTable(e){
 		var rowHolder = this.table.rowManager.getElement(),
 		scrollTop = rowHolder.scrollTop,
-		yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolder.getBoundingClientRect().top) + scrollTop,
+		rowHolderTop = rowHolder.getBoundingClientRect().top,
+		yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolderTop) + scrollTop,
 		scrollPos;
 
 		this.hoverElement.style.top = (yPos - this.startY) + "px";
+
+		var MINSPEED = 2;
+        var MAXSPEED = 5;
+        // rowHolder.scrollTop += 300;
+        // console.log(yPos);
+        // console.log(rowHolder.getBoundingClientRect().top);
+        // console.log(e.pageY);
+        // console.log(rowHolder.offsetHeight);
+        // console.log(scrollTop);
+
+        function convertRange(oldVal, oldMin, oldMax, newMin, newMax) {
+          var oldRange = (oldMax - oldMin);
+          var newRange = (newMax - newMin);
+          var newVal = (((oldVal - oldMin) * newRange) / oldRange) + newMin;
+          return newVal;
+        }
+
+        if (e.pageY > rowHolder.offsetHeight - (0.35 * rowHolder.offsetHeight)) {
+          // if (rowHolder.scrollTop < rowHolder.offsetHeight) {
+            var convertedRange = Math.round(convertRange(e.pageY, rowHolder.offsetHeight / 2, rowHolder.offsetHeight, MINSPEED, MAXSPEED));
+            var clampedRange = Math.max(MINSPEED, Math.min(convertedRange, MAXSPEED));
+          // }
+          rowHolder.scrollTop += clampedRange;
+          // rowHolder.scrollTop += 5;
+        }
+        if (e.pageY - rowHolderTop < (0.35 * rowHolder.offsetHeight)) {
+          // if (rowHolder.scrollTop < rowHolder.offsetHeight) {
+            
+          // }
+          var convertedRange = Math.round(convertRange(e.pageY, 0, rowHolder.offsetHeight / 2, 2, 6));
+          var clampedRange = Math.max(MINSPEED, Math.min(convertedRange, MAXSPEED));
+          // rowHolder.scrollTop -= 5;
+          rowHolder.scrollTop -= clampedRange;
+        }
 	}
 
 	moveHoverConnections(e){
