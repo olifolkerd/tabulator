@@ -400,12 +400,6 @@ class MoveRows extends Module{
 
 		var MINSPEED = 2;
         var MAXSPEED = 5;
-        // rowHolder.scrollTop += 300;
-        // console.log(yPos);
-        // console.log(rowHolder.getBoundingClientRect().top);
-        // console.log(e.pageY);
-        // console.log(rowHolder.offsetHeight);
-        // console.log(scrollTop);
 
         function convertRange(oldVal, oldMin, oldMax, newMin, newMax) {
           var oldRange = (oldMax - oldMin);
@@ -415,20 +409,13 @@ class MoveRows extends Module{
         }
 
         if (e.pageY > rowHolder.offsetHeight - (0.35 * rowHolder.offsetHeight)) {
-          // if (rowHolder.scrollTop < rowHolder.offsetHeight) {
             var convertedRange = Math.round(convertRange(e.pageY, rowHolder.offsetHeight / 2, rowHolder.offsetHeight, MINSPEED, MAXSPEED));
             var clampedRange = Math.max(MINSPEED, Math.min(convertedRange, MAXSPEED));
-          // }
           rowHolder.scrollTop += clampedRange;
-          // rowHolder.scrollTop += 5;
         }
         if (e.pageY - rowHolderTop < (0.35 * rowHolder.offsetHeight)) {
-          // if (rowHolder.scrollTop < rowHolder.offsetHeight) {
-            
-          // }
           var convertedRange = Math.round(convertRange(e.pageY, 0, rowHolder.offsetHeight / 2, 2, 6));
           var clampedRange = Math.max(MINSPEED, Math.min(convertedRange, MAXSPEED));
-          // rowHolder.scrollTop -= 5;
           rowHolder.scrollTop -= clampedRange;
         }
 	}
