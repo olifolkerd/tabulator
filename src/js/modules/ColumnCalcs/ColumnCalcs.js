@@ -331,12 +331,12 @@ class ColumnCalcs extends Module{
 
 	rowsToData(rows){
 		var data = [];
-
+		
 		rows.forEach((row) => {
 			data.push(row.getData());
 
 			if(this.table.options.dataTree && this.table.options.dataTreeChildColumnCalcs){
-				if(row.modules.dataTree.open){
+				if(row.modules.dataTree && row.modules.dataTree.open){
 					var children = this.rowsToData(this.table.modules.dataTree.getFilteredTreeChildren(row));
 					data = data.concat(children);
 				}
