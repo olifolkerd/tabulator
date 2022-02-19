@@ -6756,7 +6756,7 @@ class Edit extends Module{
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
-		this.subscribe("data-refeshing", this.cancelEdit.bind(this));
+		this.subscribe("data-refreshing", this.cancelEdit.bind(this));
 
 		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
@@ -16897,7 +16897,7 @@ class SelectRow extends Module{
 			this.subscribe("rows-retrieve", this.rowRetrieve.bind(this));
 
 			if(this.table.options.selectable && !this.table.options.selectablePersistence){
-				this.subscribe("data-refeshing", this.deselectRows.bind(this));
+				this.subscribe("data-refreshing", this.deselectRows.bind(this));
 			}
 		}
 	}

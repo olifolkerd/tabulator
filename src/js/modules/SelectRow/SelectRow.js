@@ -38,7 +38,7 @@ class SelectRow extends Module{
 			this.subscribe("rows-retrieve", this.rowRetrieve.bind(this));
 
 			if(this.table.options.selectable && !this.table.options.selectablePersistence){
-				this.subscribe("data-refeshing", this.deselectRows.bind(this));
+				this.subscribe("data-refreshing", this.deselectRows.bind(this));
 			}
 		}
 	}
