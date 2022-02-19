@@ -61,14 +61,14 @@ class ResponsiveLayout extends Module{
 		this.hiddenColumns = [];
 
 		//determine level of responsivity for each column
-		this.table.columnManager.columnsByIndex.forEach(function(column, i){
+		this.table.columnManager.columnsByIndex.forEach((column, i) => {
 			if(column.modules.responsive){
 				if(column.modules.responsive.order && column.modules.responsive.visible){
 					column.modules.responsive.index = i;
 					columns.push(column);
 
-					if(!column.visible && self.mode === "collapse"){
-						self.hiddenColumns.push(column);
+					if(!column.visible && this.mode === "collapse"){
+						this.hiddenColumns.push(column);
 					}
 				}
 			}
@@ -76,7 +76,7 @@ class ResponsiveLayout extends Module{
 
 		//sort list by responsivity
 		columns = columns.reverse();
-		columns = columns.sort(function(a, b){
+		columns = columns.sort((a, b) => {
 			var diff = b.modules.responsive.order - a.modules.responsive.order;
 			return diff || (b.modules.responsive.index - a.modules.responsive.index);
 		});
