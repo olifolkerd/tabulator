@@ -277,9 +277,6 @@ export default class RowManager extends CoreFeature{
 
 	addRow(data, pos, index, blockRedraw){
 		var row = this.addRowActual(data, pos, index, blockRedraw);
-
-		this.dispatch("row-added", row, data, pos, index);
-
 		return row;
 	}
 
