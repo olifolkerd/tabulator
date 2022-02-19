@@ -6778,7 +6778,7 @@ class Edit extends Module{
 		if(cell){
 			if(!this.navigateNext(cell, e)){
 				if(newRow){
-					// cell.getElement().firstChild.blur();
+					cell.getElement().firstChild.blur();
 
 					if(newRow === true){
 						newRow = this.table.addRow({});
