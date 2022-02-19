@@ -282,13 +282,14 @@
   min-width: 100%;
 }
 
-.tabulator .tabulator-tableholder .tabulator-placeholder span {
+.tabulator .tabulator-tableholder .tabulator-placeholder .tabulator-placeholder-contents {
   display: inline-block;
-  margin: 0 auto;
+  text-align: center;
   padding: 10px;
   color: #ccc;
   font-weight: bold;
   font-size: 20px;
+  white-space: normal;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table {

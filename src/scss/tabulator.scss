@@ -392,15 +392,17 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 			width:100%;
 
-			span{
+			.tabulator-placeholder-contents {
 				display: inline-block;
+				text-align: center;
 
-				margin:0 auto;
 				padding:10px;
 
 				color:#ccc;
 				font-weight: bold;
 				font-size: 20px;
+
+				white-space: normal;
 			}
 		}
 
