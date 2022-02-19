@@ -21163,46 +21163,11 @@ class RowManager extends CoreFeature{
 
 			return;
 		}else {
-			this.dispatch("data-refeshing");
-
-			if(!handler){
-				this.activeRowsPipeline[0] = this.rows.slice(0);
-			}
-
-			//cascade through data refresh stages
-			switch(stage){
-				case "all":
-				//handle case where alldata needs refreshing
-
-				case "dataPipeline":
-
-				for(let i = index; i < this.dataPipeline.length; i++){
-					let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
-
-					this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
-				}
-
-				this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
-
-				this.regenerateRowNumbers();
-
-				case "display":
-				index = 0;
-				this.resetDisplayRows();
-
-				case "displayPipeline":
-				for(let i = index; i < this.displayPipeline.length; i++){
-					let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
-
-					this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
-				}
-				//case to handle scenario when trying to skip past end stage
-			}
-
 			if(Helpers.elVisible(this.element)){
 				if(renderInPosition){
-					this.reRenderInPosition();
+					this.reRenderInPosition(this.refreshPipelines.bind(this, handler, stage, index, renderInPosition));
 				}else {
+					this.refreshPipelines(handler, stage, index, renderInPosition);
 
 					if(!handler){
 						this.table.columnManager.renderer.renderColumns();
@@ -21214,9 +21179,49 @@ class RowManager extends CoreFeature{
 						this.table.columnManager.redraw(true);
 					}
 				}
+			}else {
+				this.refreshPipelines(handler, stage, index, renderInPosition);
 			}
 
 			this.dispatch("data-refreshed");
+		}
+	}
+
+	refreshPipelines(handler, stage, index, renderInPosition){
+		this.dispatch("data-refeshing");
+
+		if(!handler){
+			this.activeRowsPipeline[0] = this.rows.slice(0);
+		}
+
+		//cascade through data refresh stages
+		switch(stage){
+			case "all":
+			//handle case where alldata needs refreshing
+
+			case "dataPipeline":
+
+			for(let i = index; i < this.dataPipeline.length; i++){
+				let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
+
+				this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
+			}
+
+			this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
+
+			this.regenerateRowNumbers();
+
+			case "display":
+			index = 0;
+			this.resetDisplayRows();
+
+			case "displayPipeline":
+			for(let i = index; i < this.displayPipeline.length; i++){
+				let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
+
+				this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
+			}
+			//case to handle scenario when trying to skip past end stage
 		}
 	}
 
