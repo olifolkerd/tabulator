@@ -434,8 +434,6 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 	//footer element
 	.tabulator-footer{
-		padding:5px 10px;
-
 		border-top:1px solid $footerSeperatorColor;
 		background-color: $footerBackgroundColor;
 		
@@ -454,12 +452,17 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			flex-direction: row;
 			align-items: center;
 			justify-content: space-between;
+
+			padding:5px 10px;
+
+			&:empty{
+				display: none;
+			}
 		}
 
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
 			width:calc(100% + 20px);
-			margin:-5px -10px 5px -10px;
 
 			text-align: left;
 
