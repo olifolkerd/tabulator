@@ -801,7 +801,7 @@ export default class RowManager extends CoreFeature{
 			break;
 
 			case "visible":
-			rows = this.getVisibleRows(true);
+			rows = this.getVisibleRows(false, true);
 			break;
 
 			default:
