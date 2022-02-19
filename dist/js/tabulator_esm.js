@@ -20641,7 +20641,7 @@ class RowManager extends CoreFeature{
 				this._positionPlaceholder();
 			}
 			
-			//handle verical scrolling
+			//handle vertical scrolling
 			if(this.scrollTop != top){
 				this.scrollTop = top;
 				
@@ -21463,7 +21463,6 @@ class RowManager extends CoreFeature{
 	}
 	
 	_positionPlaceholder(){
-		console.log("pos");
 		if(this.placeholder && this.placeholder.parentNode){
 			this.placeholder.style.width = this.table.columnManager.getWidth() + "px";
 			this.placeholderContents.style.width = this.table.rowManager.element.clientWidth + "px";
