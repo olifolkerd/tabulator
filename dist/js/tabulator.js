@@ -1,4 +1,4 @@
-/* Tabulator v5.1.0 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.1.1 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -438,7 +438,6 @@
     return CoreFeature;
   }();
 
-  //public column object
   var ColumnComponent = /*#__PURE__*/function () {
     function ColumnComponent(column) {
       _classCallCheck(this, ColumnComponent);
@@ -1091,7 +1090,7 @@
     return Cell;
   }(CoreFeature);
 
-  var Column$1 = /*#__PURE__*/function (_CoreFeature) {
+  var Column = /*#__PURE__*/function (_CoreFeature) {
     _inherits(Column, _CoreFeature);
 
     var _super = _createSuper(Column);
@@ -2164,7 +2163,7 @@
     return Column;
   }(CoreFeature);
 
-  Column$1.defaultOptionList = defaultColumnOptions;
+  Column.defaultOptionList = defaultColumnOptions;
 
   var Helpers = /*#__PURE__*/function () {
     function Helpers() {
@@ -3236,7 +3235,7 @@
     }, {
       key: "_addColumn",
       value: function _addColumn(definition, before, nextToColumn) {
-        var column = new Column$1(definition, this),
+        var column = new Column(definition, this),
             colEl = column.getElement(),
             index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
 
@@ -3311,7 +3310,7 @@
       key: "findColumn",
       value: function findColumn(subject) {
         if (_typeof(subject) == "object") {
-          if (subject instanceof Column$1) {
+          if (subject instanceof Column) {
             //subject is column element
             return subject;
           } else if (subject instanceof ColumnComponent) {
@@ -4957,6 +4956,10 @@
 
       _this.heightFixer = _this.createTableElement(); //table element
 
+      _this.placeholder = null; //placeholder element
+
+      _this.placeholderContents = null; //placeholder element
+
       _this.firstRender = false; //handle first render
 
       _this.renderMode = "virtual"; //current rendering mode
@@ -5010,6 +5013,21 @@
         el.classList.add("tabulator-table");
         el.setAttribute("role", "rowgroup");
         return el;
+      }
+    }, {
+      key: "initializePlaceholder",
+      value: function initializePlaceholder() {
+        //configure placeholder element
+        if (typeof this.table.options.placeholder == "string") {
+          var el = document.createElement("div");
+          el.classList.add("tabulator-placeholder");
+          var contents = document.createElement("div");
+          contents.classList.add("tabulator-placeholder-contents");
+          contents.innerHTML = this.table.options.placeholder;
+          el.appendChild(contents);
+          this.placeholderContents = contents;
+          this.placeholder = el;
+        }
       } //return containing element
 
     }, {
@@ -5038,6 +5056,7 @@
       value: function initialize() {
         var _this2 = this;
 
+        this.initializePlaceholder();
         this.initializeRenderer(); //initialize manager
 
         this.element.appendChild(this.tableElement);
@@ -5055,7 +5074,9 @@
             _this2.dispatch("scroll-horizontal", left, leftDir);
 
             _this2.dispatchExternal("scrollHorizontal", left, leftDir);
-          } //handle verical scrolling
+
+            _this2._positionPlaceholder();
+          } //handle vertical scrolling
 
 
           if (_this2.scrollTop != top) {
@@ -5237,7 +5258,6 @@
       key: "addRow",
       value: function addRow(data, pos, index, blockRedraw) {
         var row = this.addRowActual(data, pos, index, blockRedraw);
-        this.dispatch("row-added", row, data, pos, index);
         return row;
       } //add multiple rows
 
@@ -5616,42 +5636,12 @@
 
           return;
         } else {
-          this.dispatch("data-refeshing");
-
-          if (!handler) {
-            this.activeRowsPipeline[0] = this.rows.slice(0);
-          } //cascade through data refresh stages
-
-
-          switch (stage) {
-            case "all": //handle case where alldata needs refreshing
-
-            case "dataPipeline":
-              for (var i = index; i < this.dataPipeline.length; i++) {
-                var result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
-                this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
-              }
-
-              this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
-              this.regenerateRowNumbers();
-
-            case "display":
-              index = 0;
-              this.resetDisplayRows();
-
-            case "displayPipeline":
-              for (var _i = index; _i < this.displayPipeline.length; _i++) {
-                var _result = this.displayPipeline[_i].handler((_i ? this.getDisplayRows(_i - 1) : this.activeRows).slice(0), renderInPosition);
-
-                this.setDisplayRows(_result || this.getDisplayRows(_i - 1).slice(0), _i);
-              }
-
-          }
-
           if (Helpers.elVisible(this.element)) {
             if (renderInPosition) {
-              this.reRenderInPosition();
+              this.reRenderInPosition(this.refreshPipelines.bind(this, handler, stage, index, renderInPosition));
             } else {
+              this.refreshPipelines(handler, stage, index, renderInPosition);
+
               if (!handler) {
                 this.table.columnManager.renderer.renderColumns();
               }
@@ -5662,9 +5652,46 @@
                 this.table.columnManager.redraw(true);
               }
             }
+          } else {
+            this.refreshPipelines(handler, stage, index, renderInPosition);
           }
 
           this.dispatch("data-refreshed");
+        }
+      }
+    }, {
+      key: "refreshPipelines",
+      value: function refreshPipelines(handler, stage, index, renderInPosition) {
+        this.dispatch("data-refreshing");
+
+        if (!handler) {
+          this.activeRowsPipeline[0] = this.rows.slice(0);
+        } //cascade through data refresh stages
+
+
+        switch (stage) {
+          case "all": //handle case where alldata needs refreshing
+
+          case "dataPipeline":
+            for (var i = index; i < this.dataPipeline.length; i++) {
+              var result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
+              this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
+            }
+
+            this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
+            this.regenerateRowNumbers();
+
+          case "display":
+            index = 0;
+            this.resetDisplayRows();
+
+          case "displayPipeline":
+            for (var _i = index; _i < this.displayPipeline.length; _i++) {
+              var _result = this.displayPipeline[_i].handler((_i ? this.getDisplayRows(_i - 1) : this.activeRows).slice(0), renderInPosition);
+
+              this.setDisplayRows(_result || this.getDisplayRows(_i - 1).slice(0), _i);
+            }
+
         }
       } //regenerate row numbers for row number formatter if in use
 
@@ -5766,7 +5793,7 @@
             break;
 
           case "visible":
-            rows = this.getVisibleRows(true);
+            rows = this.getVisibleRows(false, true);
             break;
 
           default:
@@ -5858,7 +5885,7 @@
     }, {
       key: "renderEmptyScroll",
       value: function renderEmptyScroll() {
-        if (this.table.options.placeholder) {
+        if (this.placeholder) {
           this.tableElement.style.display = "none";
         } else {
           this.tableElement.style.minWidth = this.table.columnManager.getWidth() + "px"; // this.tableElement.style.minHeight = "1px";
@@ -5879,17 +5906,27 @@
     }, {
       key: "_showPlaceholder",
       value: function _showPlaceholder() {
-        if (this.table.options.placeholder) {
-          this.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
-          this.getElement().appendChild(this.table.options.placeholder);
-          this.table.options.placeholder.style.width = this.table.columnManager.getWidth() + "px";
+        if (this.placeholder) {
+          this.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
+          this.getElement().appendChild(this.placeholder);
+
+          this._positionPlaceholder();
         }
       }
     }, {
       key: "_clearPlaceholder",
       value: function _clearPlaceholder() {
-        if (this.table.options.placeholder && this.table.options.placeholder.parentNode) {
-          this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
+        if (this.placeholder && this.placeholder.parentNode) {
+          this.placeholder.parentNode.removeChild(this.placeholder);
+        }
+      }
+    }, {
+      key: "_positionPlaceholder",
+      value: function _positionPlaceholder() {
+        if (this.placeholder && this.placeholder.parentNode) {
+          this.placeholder.style.width = this.table.columnManager.getWidth() + "px";
+          this.placeholderContents.style.width = this.table.rowManager.element.clientWidth + "px";
+          this.placeholderContents.style.marginLeft = this.scrollLeft + "px";
         }
       }
     }, {
@@ -5942,6 +5979,8 @@
             }
           }
         }
+
+        this._positionPlaceholder();
       } //renitialize all rows
 
     }, {
@@ -6029,6 +6068,8 @@
       _this.active = false;
       _this.element = _this.createElement(); //containing element
 
+      _this.containerElement = _this.createContainerElement(); //containing element
+
       _this.external = false;
       _this.links = [];
 
@@ -6047,6 +6088,14 @@
       value: function createElement() {
         var el = document.createElement("div");
         el.classList.add("tabulator-footer");
+        return el;
+      }
+    }, {
+      key: "createContainerElement",
+      value: function createContainerElement() {
+        var el = document.createElement("div");
+        el.classList.add("tabulator-footer-contents");
+        this.element.appendChild(el);
         return el;
       }
     }, {
@@ -6079,7 +6128,7 @@
       key: "append",
       value: function append(element, parent) {
         this.activate(parent);
-        this.element.appendChild(element);
+        this.containerElement.appendChild(element);
         this.table.rowManager.adjustTableSize();
       }
     }, {
@@ -6417,6 +6466,10 @@
                     component = rows.find(function (row) {
                       return row.getElement() === target;
                     });
+
+                    if (targets["row"].parentNode && targets["row"].parentNode.closest(".tabulator-row")) {
+                      targets[key] = false;
+                    }
                   }
 
                   break;
@@ -6430,10 +6483,12 @@
 
                 case "cell":
                   if (listener.components.includes("cell")) {
-                    if (targets["row"]) {
+                    if (targets["row"] instanceof Row) {
                       component = targets["row"].findCell(target);
                     } else {
-                      console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?");
+                      if (targets["row"]) {
+                        console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?");
+                      }
                     }
                   }
 
@@ -9842,7 +9897,7 @@
     }, {
       key: "initialize",
       value: function initialize() {
-        this.genColumn = new Column$1({
+        this.genColumn = new Column({
           field: "value"
         }, this);
         this.subscribe("cell-value-changed", this.cellValueChanged.bind(this));
@@ -10154,7 +10209,7 @@
           data.push(row.getData());
 
           if (_this3.table.options.dataTree && _this3.table.options.dataTreeChildColumnCalcs) {
-            if (row.modules.dataTree.open) {
+            if (row.modules.dataTree && row.modules.dataTree.open) {
               var children = _this3.rowsToData(_this3.table.modules.dataTree.getFilteredTreeChildren(row));
 
               data = data.concat(children);
@@ -10958,7 +11013,6 @@
     }, {
       key: "redrawNeeded",
       value: function redrawNeeded(data) {
-        console.log("needed?", data);
         return (this.field ? typeof data[this.field] !== "undefined" : false) || (this.elementField ? typeof data[this.elementField] !== "undefined" : false);
       }
     }]);
@@ -13336,7 +13390,7 @@
         this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
         this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
         this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
-        this.subscribe("data-refeshing", this.cancelEdit.bind(this));
+        this.subscribe("data-refreshing", this.cancelEdit.bind(this));
         this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
         this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
         this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
@@ -13356,7 +13410,8 @@
         if (cell) {
           if (!this.navigateNext(cell, e)) {
             if (newRow) {
-              // cell.getElement().firstChild.blur();
+              cell.getElement().firstChild.blur();
+
               if (newRow === true) {
                 newRow = this.table.addRow({});
               } else {
@@ -16960,7 +17015,7 @@
           if (typeof target[name] !== "undefined") {
             return target[name];
           } else {
-            return target._group.table.componentFunctionBinder.handle("row", target._group, name);
+            return target._group.groupManager.table.componentFunctionBinder.handle("row", target._group, name);
           }
         }
       });
@@ -18886,7 +18941,6 @@
       key: "structureData",
       value: function structureData(parsedData) {
         var data = [];
-        console.log("structure", parsedData);
 
         if (Array.isArray(parsedData) && parsedData.length && Array.isArray(parsedData[0])) {
           if (this.table.options.autoColumns) {
@@ -19268,7 +19322,7 @@
         if (this.columnSubscribers[action]) {
           if (component instanceof Cell) {
             callback = component.column.definition[action];
-          } else if (component instanceof Column$1) {
+          } else if (component instanceof Column) {
             callback = component.definition[action];
           }
 
@@ -22051,9 +22105,11 @@
                 margin = this.table.options.progressiveLoadScrollMargin || this.table.rowManager.element.clientHeight * 2;
 
                 if (this.table.rowManager.element.scrollHeight <= this.table.rowManager.element.clientHeight + margin) {
-                  setTimeout(function () {
-                    _this6.nextPage();
-                  });
+                  if (this.page < this.max) {
+                    setTimeout(function () {
+                      _this6.nextPage();
+                    });
+                  }
                 }
 
                 break;
@@ -23593,6 +23649,8 @@
     }, {
       key: "initializeResponsivity",
       value: function initializeResponsivity() {
+        var _this2 = this;
+
         var columns = [];
         this.mode = this.table.options.responsiveLayout;
         this.collapseFormatter = this.table.options.responsiveLayoutCollapseFormatter || this.formatCollapsedData;
@@ -23605,8 +23663,8 @@
               column.modules.responsive.index = i;
               columns.push(column);
 
-              if (!column.visible && self.mode === "collapse") {
-                self.hiddenColumns.push(column);
+              if (!column.visible && _this2.mode === "collapse") {
+                _this2.hiddenColumns.push(column);
               }
             }
           }
@@ -23965,7 +24023,7 @@
           this.subscribe("rows-retrieve", this.rowRetrieve.bind(this));
 
           if (this.table.options.selectable && !this.table.options.selectablePersistence) {
-            this.subscribe("data-refeshing", this.deselectRows.bind(this));
+            this.subscribe("data-refreshing", this.deselectRows.bind(this));
           }
         }
       }
