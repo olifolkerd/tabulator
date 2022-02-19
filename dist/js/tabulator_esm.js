@@ -21558,6 +21558,7 @@ class FooterManager extends CoreFeature{
 
 		this.active = false;
 		this.element = this.createElement(); //containing element
+		this.containerElement = this.createContainerElement(); //containing element
 		this.external = false;
 		this.links = [];
 
@@ -21568,10 +21569,21 @@ class FooterManager extends CoreFeature{
 		this.initializeElement();
 	}
 
-	createElement (){
+	createElement(){
 		var el = document.createElement("div");
 
 		el.classList.add("tabulator-footer");
+
+		return el;
+	}
+
+	
+	createContainerElement(){
+		var el = document.createElement("div");
+
+		el.classList.add("tabulator-footer-contents");
+
+		this.element.appendChild(el);
 
 		return el;
 	}
@@ -21603,7 +21615,7 @@ class FooterManager extends CoreFeature{
 	append(element, parent){
 		this.activate(parent);
 
-		this.element.appendChild(element);
+		this.containerElement.appendChild(element);
 		this.table.rowManager.adjustTableSize();
 	}
 

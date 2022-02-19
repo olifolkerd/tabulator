@@ -432,15 +432,8 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		}
 	}
 
-
-
 	//footer element
 	.tabulator-footer{
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-
 		padding:5px 10px;
 
 		border-top:1px solid $footerSeperatorColor;
@@ -455,6 +448,13 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		-khtml-user-select: none;
 		-webkit-user-select: none;
 		-o-user-select: none;
+
+		.tabulator-footer-contents {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+		}
 
 		.tabulator-calcs-holder{
 			box-sizing:border-box;

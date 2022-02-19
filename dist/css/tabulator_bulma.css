@@ -314,10 +314,6 @@
 }
 
 .tabulator .tabulator-footer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
   padding: 5px 10px;
   border-top: 1px solid #999;
   background-color: transparent;
@@ -329,6 +325,13 @@
   -khtml-user-select: none;
   -webkit-user-select: none;
   -o-user-select: none;
+}
+
+.tabulator .tabulator-footer .tabulator-footer-contents {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .tabulator .tabulator-footer .tabulator-calcs-holder {
