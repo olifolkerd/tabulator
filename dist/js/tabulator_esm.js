@@ -1653,7 +1653,7 @@ var defaultColumnOptions = {
 	"editableTitle": undefined,
 };
 
-class Column$1 extends CoreFeature{
+class Column extends CoreFeature{
 
 	constructor(def, parent){
 		super(parent.table);
@@ -1707,7 +1707,7 @@ class Column$1 extends CoreFeature{
 			this.isGroup = true;
 
 			this.definition.columns.forEach((def, i) => {
-				var newCol = new Column$1(def, this);
+				var newCol = new Column(def, this);
 				this.attachColumn(newCol);
 			});
 
@@ -1751,12 +1751,12 @@ class Column$1 extends CoreFeature{
 			}
 		}
 
-		this.definition = this.table.columnManager.optionsList.generate(Column$1.defaultOptionList, this.definition);
+		this.definition = this.table.columnManager.optionsList.generate(Column.defaultOptionList, this.definition);
 	}
 
 	checkDefinition(){
 		Object.keys(this.definition).forEach((key) => {
-			if(Column$1.defaultOptionList.indexOf(key) === -1){
+			if(Column.defaultOptionList.indexOf(key) === -1){
 				console.warn("Invalid column definition option in '" + (this.field || this.definition.title) + "' column:", key);
 			}
 		});
@@ -2680,7 +2680,7 @@ class Column$1 extends CoreFeature{
 	}
 }
 
-Column$1.defaultOptionList = defaultColumnOptions;
+Column.defaultOptionList = defaultColumnOptions;
 
 //public row object
 class RowComponent$1 {
@@ -3315,7 +3315,7 @@ class ColumnCalcs extends Module{
 	}
 
 	initialize(){
-		this.genColumn = new Column$1({field:"value"}, this);
+		this.genColumn = new Column({field:"value"}, this);
 
 		this.subscribe("cell-value-changed", this.cellValueChanged.bind(this));
 		this.subscribe("column-init", this.initializeColumnCheck.bind(this));
@@ -12446,7 +12446,7 @@ class Interaction extends Module{
 
 			if(component instanceof Cell){
 				callback = component.column.definition[action];
-			}else if(component instanceof Column$1){
+			}else if(component instanceof Column){
 				callback = component.definition[action];
 			}
 
@@ -19428,7 +19428,7 @@ class ColumnManager extends CoreFeature {
 	}
 
 	_addColumn(definition, before, nextToColumn){
-		var column = new Column$1(definition, this),
+		var column = new Column(definition, this),
 		colEl = column.getElement(),
 		index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
 
@@ -19504,7 +19504,7 @@ class ColumnManager extends CoreFeature {
 	findColumn(subject){
 		if(typeof subject == "object"){
 
-			if(subject instanceof Column$1){
+			if(subject instanceof Column){
 				//subject is column element
 				return subject;
 			}else if(subject instanceof ColumnComponent){

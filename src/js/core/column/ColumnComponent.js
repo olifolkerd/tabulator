@@ -1,3 +1,5 @@
+import Column from './Column.js';
+
 //public column object
 export default class ColumnComponent {
 	constructor (column){
