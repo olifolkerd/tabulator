@@ -1,5 +1,6 @@
 import CoreFeature from '../CoreFeature.js';
 import Helpers from './Helpers.js';
+import Row from '../row/Row.js';
 
 export default class InteractionManager extends CoreFeature {
 	
@@ -31,7 +32,7 @@ export default class InteractionManager extends CoreFeature {
 			"tabulator-group":"group",
 			"tabulator-col":"column",
 		};
-
+		
 		this.pseudoTrackers = {
 			"row":{
 				subscriber:null,
@@ -50,12 +51,13 @@ export default class InteractionManager extends CoreFeature {
 				target:null,
 			},
 		}
-
+		
 		this.pseudoTracking = false;
 	}
 	
 	initialize(){
 		this.el = this.table.element;
+		
 		this.buildListenerMap();
 		this.bindSubscriptionWatchers();
 	}
@@ -72,55 +74,55 @@ export default class InteractionManager extends CoreFeature {
 		
 		this.listeners = listenerMap;
 	}
-
+	
 	bindPseudoEvents(){
 		Object.keys(this.pseudoTrackers).forEach((key) => {
 			this.pseudoTrackers[key].subscriber = this.pseudoMouseEnter.bind(this, key);
 			this.subscribe(key + "-mouseover", this.pseudoTrackers[key].subscriber);
 		});
-
+		
 		this.pseudoTracking = true;
 	}
-
+	
 	pseudoMouseEnter(key, e, target){
 		if(this.pseudoTrackers[key].target !== target){
 			
 			if(this.pseudoTrackers[key].target){
 				this.dispatch(key + "-mouseleave", e, target);
 			}
-
+			
 			this.pseudoMouseLeave(key, e);
-
+			
 			this.pseudoTrackers[key].target = target;
-
+			
 			this.dispatch(key + "-mouseenter", e, target);
 		}
 	}
-
+	
 	pseudoMouseLeave(key, e){
 		var leaveList = Object.keys(this.pseudoTrackers),
 		linkedKeys = {
 			"row":["cell"],
 			"cell":["row"],
 		};
-
+		
 		leaveList = leaveList.filter((item) => {
 			var links = linkedKeys[key];
 			return item !== key && (!links || (links && !links.includes(item)));
 		});
-
-	
+		
+		
 		leaveList.forEach((key) => {
 			var target = this.pseudoTrackers[key].target;
-
+			
 			if(this.pseudoTrackers[key].target){
 				this.dispatch(key + "-mouseleave", e, target);
-
+				
 				this.pseudoTrackers[key].target = null;
 			}
 		});
 	}
-
+	
 	
 	bindSubscriptionWatchers(){
 		var listeners = Object.keys(this.listeners),
@@ -141,7 +143,7 @@ export default class InteractionManager extends CoreFeature {
 		var listener = this.listeners[key].components,
 		index = listener.indexOf(component),
 		changed = false;
-
+		
 		if(added){
 			if(index === -1){
 				listener.push(component);
@@ -155,7 +157,7 @@ export default class InteractionManager extends CoreFeature {
 				}
 			}
 		}
-
+		
 		if((key === "mouseenter" || key === "mouseleave") && !this.pseudoTracking){
 			this.bindPseudoEvents();
 		}
@@ -189,9 +191,9 @@ export default class InteractionManager extends CoreFeature {
 		
 		var targets = this.findTargets(path);
 		targets = this.bindComponents(type, targets);
-
+		
 		this.triggerEvents(type, e, targets);
-
+		
 		if(this.pseudoTracking && (type == "mouseover" || type == "mouseleave") && !Object.keys(targets).length){
 			this.pseudoMouseLeave("none", e);
 		}
@@ -252,6 +254,10 @@ export default class InteractionManager extends CoreFeature {
 						component = rows.find((row) => {
 							return row.getElement() === target;
 						});
+						
+						if(targets["row"].parentNode && targets["row"].parentNode.closest(".tabulator-row")){
+							targets[key] = false;
+						}
 					}
 					break;
 					
@@ -263,10 +269,12 @@ export default class InteractionManager extends CoreFeature {
 					
 					case "cell":
 					if(listener.components.includes("cell")){
-						if(targets["row"]){
+						if(targets["row"] instanceof Row){
 							component = targets["row"].findCell(target);
-						}else{
-							console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?")
+						}else{	
+							if(targets["row"]){
+								console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?")
+							}
 						}
 					}
 					break;
@@ -300,7 +308,7 @@ export default class InteractionManager extends CoreFeature {
 	clearWatchers(){
 		for(let key in this.listeners){
 			let listener = this.listeners[key];
-		
+			
 			if(listener.handler){
 				this.el.removeEventListener(key, listener.handler)
 				listener.handler = null;
