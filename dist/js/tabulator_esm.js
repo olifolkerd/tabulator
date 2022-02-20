@@ -8738,20 +8738,24 @@ class Filter extends Module{
 
 	//add filter to array
 	addFilter(field, type, value, params){
+		var changed = false;
 
 		if(!Array.isArray(field)){
 			field = [{field:field, type:type, value:value, params:params}];
 		}
 
 		field.forEach((filter) => {
-
 			filter = this.findFilter(filter);
 
 			if(filter){
 				this.filterList.push(filter);
-				this.changed = true;
+				changed = true;
 			}
 		});
+
+		if(changed){
+			this.trackChanges();
+		}
 	}
 
 	findFilter(filter){
@@ -15312,11 +15316,11 @@ class Persistence extends Module{
 				this.subscribe("column-show", this.save.bind(this, "columns"));
 				this.subscribe("column-hide", this.save.bind(this, "columns"));
 				this.subscribe("column-moved", this.save.bind(this, "columns"));
-				this.subscribe("table-built", this.tableBuilt.bind(this), 0);
 			}
 
-			this.subscribe("table-redraw", this.tableRedraw.bind(this));
+			this.subscribe("table-built", this.tableBuilt.bind(this), 0);
 
+			this.subscribe("table-redraw", this.tableRedraw.bind(this));
 
 			this.subscribe("filter-changed", this.eventSave.bind(this, "filter"));
 			this.subscribe("sort-changed", this.eventSave.bind(this, "sort"));
@@ -15344,7 +15348,7 @@ class Persistence extends Module{
 			sorters = this.load("sort");
 
 			if(!sorters === false){
-				this.table.initialSort = sorters;
+				this.table.options.initialSort = sorters;
 			}
 		}
 
@@ -15352,7 +15356,7 @@ class Persistence extends Module{
 			filters = this.load("filter");
 
 			if(!filters === false){
-				this.table.initialFilter = filters;
+				this.table.options.initialFilter = filters;
 			}
 		}
 	}

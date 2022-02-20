@@ -595,12 +595,11 @@ class Filter extends Module{
 		}
 
 		field.forEach((filter) => {
-
 			filter = this.findFilter(filter);
 
 			if(filter){
 				this.filterList.push(filter);
-				this.changed = true;
+				changed = true;
 			}
 		});
 
