@@ -1,4 +1,4 @@
-/* Tabulator v5.1.1 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.1.2 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -7929,18 +7929,30 @@
 
 
         tabulator.prototype.bindModules = function () {
+          var orderedMods = [],
+              unOrderedMods = [];
           this.modules = {};
 
           for (var name in tabulator.moduleBindings) {
             var mod = tabulator.moduleBindings[name];
-            this.modules[name] = new mod(this);
+            var module = new mod(this);
+            this.modules[name] = module;
 
             if (mod.prototype.moduleCore) {
-              this.modulesCore[name] = this.modules[name];
+              this.modulesCore.push(module);
             } else {
-              this.modulesRegular[name] = this.modules[name];
+              if (mod.moduleInitOrder) {
+                orderedMods.push(module);
+              } else {
+                unOrderedMods.push(module);
+              }
             }
           }
+
+          orderedMods.sort(function (a, b) {
+            return a.moduleInitOrder > b.moduleInitOrder ? 1 : -1;
+          });
+          this.modulesRegular = orderedMods.concat(unOrderedMods);
         };
       }
     }, {
@@ -7998,9 +8010,9 @@
 
       this.modules = {}; //hold all modules bound to this table
 
-      this.modulesCore = {}; //hold core modules bound to this table (for initialization purposes)
+      this.modulesCore = []; //hold core modules bound to this table (for initialization purposes)
 
-      this.modulesRegular = {}; //hold regular modules bound to this table (for initialization purposes)
+      this.modulesRegular = []; //hold regular modules bound to this table (for initialization purposes)
 
       this.optionsList = new OptionsList(this, "table constructor");
       this.initialized = false;
@@ -8197,11 +8209,9 @@
         this._detectBrowser(); //initialize core modules
 
 
-        for (var key in this.modulesCore) {
-          var mod = this.modulesCore[key];
+        this.modulesCore.forEach(function (mod) {
           mod.initialize();
-        } //build table elements
-
+        }); //build table elements
 
         element.appendChild(this.columnManager.getElement());
         element.appendChild(this.rowManager.getElement());
@@ -8215,12 +8225,9 @@
         } //initialize regular modules
 
 
-        for (var _key in this.modulesRegular) {
-          var _mod = this.modulesRegular[_key];
-
-          _mod.initialize();
-        }
-
+        this.modulesRegular.forEach(function (mod) {
+          mod.initialize();
+        });
         this.columnManager.setColumns(options.columns);
         this.eventBus.dispatch("table-built");
       }
@@ -14293,7 +14300,8 @@
           var columns = [];
           header.forEach(function (col) {
             if (col) {
-              columns.push(new ExportColumn(col.title, col.column.getComponent(), col.width, col.height, col.depth));
+              var title = typeof col.title === "undefined" ? "" : col.title;
+              columns.push(new ExportColumn(title, col.column.getComponent(), col.width, col.height, col.depth));
             } else {
               columns.push(null);
             }
@@ -15414,6 +15422,8 @@
       value: function addFilter(field, type, value, params) {
         var _this4 = this;
 
+        var changed = false;
+
         if (!Array.isArray(field)) {
           field = [{
             field: field,
@@ -15429,9 +15439,13 @@
           if (filter) {
             _this4.filterList.push(filter);
 
-            _this4.changed = true;
+            changed = true;
           }
         });
+
+        if (changed) {
+          this.trackChanges();
+        }
       }
     }, {
       key: "findFilter",
@@ -16215,7 +16229,7 @@
   }
 
   function rownum (cell, formatterParams, onRendered) {
-    return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1;
+    return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1 || "";
   }
 
   function handle (cell, formatterParams, onRendered) {
@@ -21329,10 +21343,13 @@
       value: function initialize() {
         if (this.table.options.pagination) {
           this.subscribe("row-deleted", this.rowsUpdated.bind(this));
-          this.subscribe("row-adding-position", this.rowAddingPosition.bind(this));
           this.subscribe("row-added", this.rowsUpdated.bind(this));
           this.subscribe("data-processed", this.initialLoadComplete.bind(this));
           this.subscribe("table-built", this.calculatePageSizes.bind(this));
+
+          if (this.table.options.paginationAddRow == "page") {
+            this.subscribe("row-adding-position", this.rowAddingPosition.bind(this));
+          }
 
           if (this.table.options.paginationMode === "remote") {
             this.subscribe("data-params", this.remotePageParams.bind(this));
@@ -22322,9 +22339,9 @@
             this.subscribe("column-show", this.save.bind(this, "columns"));
             this.subscribe("column-hide", this.save.bind(this, "columns"));
             this.subscribe("column-moved", this.save.bind(this, "columns"));
-            this.subscribe("table-built", this.tableBuilt.bind(this), 0);
           }
 
+          this.subscribe("table-built", this.tableBuilt.bind(this), 0);
           this.subscribe("table-redraw", this.tableRedraw.bind(this));
           this.subscribe("filter-changed", this.eventSave.bind(this, "filter"));
           this.subscribe("sort-changed", this.eventSave.bind(this, "sort"));
@@ -22355,7 +22372,7 @@
           sorters = this.load("sort");
 
           if (!sorters === false) {
-            this.table.initialSort = sorters;
+            this.table.options.initialSort = sorters;
           }
         }
 
@@ -22363,7 +22380,7 @@
           filters = this.load("filter");
 
           if (!filters === false) {
-            this.table.initialFilter = filters;
+            this.table.options.initialFilter = filters;
           }
         }
       }
@@ -22646,7 +22663,8 @@
     return Persistence;
   }(Module);
 
-  Persistence.moduleName = "persistence"; //load defaults
+  Persistence.moduleName = "persistence";
+  Persistence.moduleInitOrder = 1; //load defaults
 
   Persistence.readers = defaultReaders;
   Persistence.writers = defaultWriters;
@@ -23913,7 +23931,7 @@
           var titleHighlight = document.createElement("strong");
           titleData.appendChild(titleHighlight);
           this.langBind("columns|" + item.field, function (text) {
-            titleHighlight.innerText = text || item.title;
+            titleHighlight.innerHTML = text || item.title;
           });
 
           if (item.value instanceof Node) {
