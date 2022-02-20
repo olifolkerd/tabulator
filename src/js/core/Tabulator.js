@@ -100,8 +100,8 @@ class Tabulator {
 		this.interactionMonitor = new InteractionMonitor(this);
 
 		this.dataLoader.initialize();
-		this.columnManager.initialize();
-		this.rowManager.initialize();
+		// this.columnManager.initialize();
+		// this.rowManager.initialize();
 		this.footerManager.initialize();
 	}
 
