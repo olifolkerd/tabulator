@@ -6025,12 +6025,6 @@
         if (!force) {
           this.reRenderInPosition();
           this.scrollHorizontal(left);
-
-          if (!this.displayRowsCount) {
-            if (this.table.options.placeholder) {
-              this.getElement().appendChild(this.table.options.placeholder);
-            }
-          }
         } else {
           this.renderTable();
         }
@@ -8059,9 +8053,9 @@
         this.externalEvents = new ExternalEventBus(this, this.options, this.options.debugEventsExternal);
         this.eventBus = new InternalEventBus(this.options.debugEventsInternal);
         this.interactionMonitor = new InteractionManager(this);
-        this.dataLoader.initialize();
-        this.columnManager.initialize();
-        this.rowManager.initialize();
+        this.dataLoader.initialize(); // this.columnManager.initialize();
+        // this.rowManager.initialize();
+
         this.footerManager.initialize();
       } //convert deprecated functionality to new functions
 
@@ -8206,16 +8200,6 @@
         for (var key in this.modulesCore) {
           var mod = this.modulesCore[key];
           mod.initialize();
-        } //configure placeholder element
-
-
-        if (typeof options.placeholder == "string") {
-          var el = document.createElement("div");
-          el.classList.add("tabulator-placeholder");
-          var span = document.createElement("span");
-          span.innerHTML = options.placeholder;
-          el.appendChild(span);
-          options.placeholder = el;
         } //build table elements
 
 
