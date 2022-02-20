@@ -9528,7 +9528,7 @@ function buttonCross(cell, formatterParams, onRendered){
 }
 
 function rownum(cell, formatterParams, onRendered){
-	return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1;
+	return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1 || "";
 }
 
 function handle(cell, formatterParams, onRendered){
