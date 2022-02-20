@@ -41,8 +41,8 @@ class Tabulator {
 		this.dataLoader = false; //bind component functions
 
 		this.modules = {}; //hold all modules bound to this table
-		this.modulesCore = {}; //hold core modules bound to this table (for initialization purposes)
-		this.modulesRegular = {}; //hold regular modules bound to this table (for initialization purposes)
+		this.modulesCore = []; //hold core modules bound to this table (for initialization purposes)
+		this.modulesRegular = []; //hold regular modules bound to this table (for initialization purposes)
 
 		this.optionsList = new OptionsList(this, "table constructor");
 
@@ -240,11 +240,9 @@ class Tabulator {
 		this._detectBrowser();
 
 		//initialize core modules
-		for (let key in this.modulesCore){
-			let mod = this.modulesCore[key];
-
+		this.modulesCore.forEach((mod) => {
 			mod.initialize();
-		}
+		})
 
 		//build table elements
 		element.appendChild(this.columnManager.getElement());
@@ -260,11 +258,9 @@ class Tabulator {
 		}
 
 		//initialize regular modules
-		for (let key in this.modulesRegular){
-			let mod = this.modulesRegular[key];
-
+		this.modulesRegular.forEach((mod) => {
 			mod.initialize();
-		}
+		});
 
 		this.columnManager.setColumns(options.columns);
 

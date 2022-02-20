@@ -56,19 +56,31 @@ export default class ModuleBinder {
 
 		//ensure that module are bound to instantiated function
 		tabulator.prototype.bindModules = function(){
+			var orderedMods = [],
+			unOrderedMods = [];
+
 			this.modules = {};
 
 			for(var name in tabulator.moduleBindings){
 				let mod = tabulator.moduleBindings[name];
+				let module = new mod(this);
 
-				this.modules[name] = new mod(this);
+				this.modules[name] = module;
 
 				if(mod.prototype.moduleCore){
-					this.modulesCore[name] = this.modules[name];
+					this.modulesCore.push(module);
 				}else{
-					this.modulesRegular[name] = this.modules[name];
+					if(mod.moduleInitOrder){
+						orderedMods.push(module);
+					}else{
+						unOrderedMods.push(module);
+					}
 				}
 			}
+
+			orderedMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
+
+			this.modulesRegular = orderedMods.concat(unOrderedMods);
 		}
 	}
 
