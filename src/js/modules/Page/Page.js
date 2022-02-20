@@ -62,10 +62,13 @@ class Page extends Module{
 	initialize(){
 		if(this.table.options.pagination){
 			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
-			this.subscribe("row-adding-position", this.rowAddingPosition.bind(this));
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
 			this.subscribe("data-processed", this.initialLoadComplete.bind(this));
 			this.subscribe("table-built", this.calculatePageSizes.bind(this));
+
+			if(this.table.options.paginationAddRow == "page"){
+				this.subscribe("row-adding-position", this.rowAddingPosition.bind(this));
+			}
 			
 			if(this.table.options.paginationMode === "remote"){
 				this.subscribe("data-params", this.remotePageParams.bind(this));
