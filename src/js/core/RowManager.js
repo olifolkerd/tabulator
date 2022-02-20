@@ -1054,12 +1054,6 @@ export default class RowManager extends CoreFeature{
 		if(!force){
 			this.reRenderInPosition();
 			this.scrollHorizontal(left);
-			
-			if(!this.displayRowsCount){
-				if(this.table.options.placeholder){
-					this.getElement().appendChild(this.table.options.placeholder);
-				}
-			}
 		}else{
 			this.renderTable();
 		}

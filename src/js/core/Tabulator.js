@@ -246,19 +246,6 @@ class Tabulator {
 			mod.initialize();
 		}
 
-		//configure placeholder element
-		if(typeof options.placeholder == "string"){
-			var el = document.createElement("div");
-			el.classList.add("tabulator-placeholder");
-
-			var span = document.createElement("span");
-			span.innerHTML = options.placeholder;
-
-			el.appendChild(span);
-
-			options.placeholder = el;
-		}
-
 		//build table elements
 		element.appendChild(this.columnManager.getElement());
 		element.appendChild(this.rowManager.getElement());
