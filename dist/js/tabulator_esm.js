@@ -7645,7 +7645,8 @@ class Export extends Module{
 
 			header.forEach((col) => {
 				if(col){
-					columns.push(new ExportColumn(col.title, col.column.getComponent(), col.width, col.height, col.depth));
+					let title = typeof col.title === "undefined" ? "" : col.title;
+					columns.push(new ExportColumn(title, col.column.getComponent(), col.width, col.height, col.depth));
 				}else {
 					columns.push(null);
 				}
