@@ -16847,7 +16847,7 @@ class ResponsiveLayout extends Module{
 			var titleHighlight = document.createElement("strong");
 			titleData.appendChild(titleHighlight);
 			this.langBind("columns|" + item.field, function(text){
-				titleHighlight.innerText = text || item.title;
+				titleHighlight.innerHTML = text || item.title;
 			});
 
 			if(item.value instanceof Node){
