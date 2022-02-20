@@ -15633,6 +15633,8 @@ class Persistence extends Module{
 
 Persistence.moduleName = "persistence";
 
+Persistence.moduleInitOrder = 1;
+
 //load defaults
 Persistence.readers = defaultReaders;
 Persistence.writers = defaultWriters;
@@ -23188,19 +23190,31 @@ class ModuleBinder {
 
 		//ensure that module are bound to instantiated function
 		tabulator.prototype.bindModules = function(){
+			var orderedMods = [],
+			unOrderedMods = [];
+
 			this.modules = {};
 
 			for(var name in tabulator.moduleBindings){
 				let mod = tabulator.moduleBindings[name];
+				let module = new mod(this);
 
-				this.modules[name] = new mod(this);
+				this.modules[name] = module;
 
 				if(mod.prototype.moduleCore){
-					this.modulesCore[name] = this.modules[name];
+					this.modulesCore.push(module);
 				}else {
-					this.modulesRegular[name] = this.modules[name];
+					if(mod.moduleInitOrder){
+						orderedMods.push(module);
+					}else {
+						unOrderedMods.push(module);
+					}
 				}
 			}
+
+			orderedMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
+
+			this.modulesRegular = orderedMods.concat(unOrderedMods);
 		};
 	}
 
@@ -23240,8 +23254,8 @@ class Tabulator {
 		this.dataLoader = false; //bind component functions
 
 		this.modules = {}; //hold all modules bound to this table
-		this.modulesCore = {}; //hold core modules bound to this table (for initialization purposes)
-		this.modulesRegular = {}; //hold regular modules bound to this table (for initialization purposes)
+		this.modulesCore = []; //hold core modules bound to this table (for initialization purposes)
+		this.modulesRegular = []; //hold regular modules bound to this table (for initialization purposes)
 
 		this.optionsList = new OptionsList(this, "table constructor");
 
@@ -23438,11 +23452,9 @@ class Tabulator {
 		this._detectBrowser();
 
 		//initialize core modules
-		for (let key in this.modulesCore){
-			let mod = this.modulesCore[key];
-
+		this.modulesCore.forEach((mod) => {
 			mod.initialize();
-		}
+		});
 
 		//build table elements
 		element.appendChild(this.columnManager.getElement());
@@ -23458,11 +23470,9 @@ class Tabulator {
 		}
 
 		//initialize regular modules
-		for (let key in this.modulesRegular){
-			let mod = this.modulesRegular[key];
-
+		this.modulesRegular.forEach((mod) => {
 			mod.initialize();
-		}
+		});
 
 		this.columnManager.setColumns(options.columns);
 

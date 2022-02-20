@@ -451,6 +451,8 @@ class Persistence extends Module{
 
 Persistence.moduleName = "persistence";
 
+Persistence.moduleInitOrder = 1;
+
 //load defaults
 Persistence.readers = defaultReaders;
 Persistence.writers = defaultWriters;
