@@ -264,6 +264,10 @@ class FrozenColumns extends Module{
 
 		rowEl.style.paddingLeft = this.leftMargin;
 
+		if(this.table.options.layout === "fitDataFill" && this.rightColumns.length){
+			this.table.rowManager.getTableElement().style.minWidth = "calc(100% - " + this.rightMargin + ")";
+		}
+
 		this.leftColumns.forEach((column) => {
 			var cell = row.getCell(column);
 
