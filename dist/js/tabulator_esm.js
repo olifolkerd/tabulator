@@ -3324,7 +3324,7 @@ class ColumnCalcs extends Module{
 		this.subscribe("row-added", this.rowsUpdated.bind(this));
 		this.subscribe("column-moved", this.recalcActiveRows.bind(this));
 		this.subscribe("column-add", this.recalcActiveRows.bind(this));
-		this.subscribe("data-refreshed", this.recalcActiveRows.bind(this));
+		this.subscribe("data-refreshed", this.recalcActiveRowsRefresh.bind(this));
 		this.subscribe("table-redraw", this.tableRedraw.bind(this));
 		this.subscribe("rows-visible", this.visibleRows.bind(this));
 
@@ -3372,6 +3372,14 @@ class ColumnCalcs extends Module{
 		}
 	}
 
+	recalcActiveRowsRefresh(){
+		if(this.table.options.groupBy && this.table.options.dataTreeStartExpanded && this.table.options.dataTree){
+			this.recalcAll();
+		}else {
+			this.recalcActiveRows();
+		}
+	}
+
 	recalcActiveRows(){
 		this.recalc(this.table.rowManager.activeRows);
 	}
@@ -3379,7 +3387,6 @@ class ColumnCalcs extends Module{
 	cellValueChanged(cell){
 		if(cell.column.definition.topCalc || cell.column.definition.bottomCalc){
 			if(this.table.options.groupBy){
-
 				if(this.table.options.columnCalcs == "table" || this.table.options.columnCalcs == "both"){
 					this.recalcActiveRows();
 				}
@@ -3387,7 +3394,6 @@ class ColumnCalcs extends Module{
 				if(this.table.options.columnCalcs != "table"){
 					this.recalcRowGroup(cell.row);
 				}
-
 			}else {
 				this.recalcActiveRows();
 			}
@@ -3558,7 +3564,6 @@ class ColumnCalcs extends Module{
 			}
 
 			if(this.table.options.groupBy && this.table.options.columnCalcs !== "table"){
-
 
 				var groups = this.table.modules.groupRows.getChildGroups();
 
