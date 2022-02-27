@@ -13,6 +13,7 @@ class FrozenColumns extends Module{
 		this.initializationMode = "left";
 		this.active = false;
 		this.scrollEndTimer = false;
+		this.blocked = true;
 
 		this.registerColumnOption("frozen");
 	}
@@ -40,6 +41,16 @@ class FrozenColumns extends Module{
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 		this.subscribe("columns-loading", this.reset.bind(this));
 		this.subscribe("table-redraw", this.layout.bind(this));
+		this.subscribe("layout-refreshing", this.blockLayout.bind(this));
+		this.subscribe("layout-refreshed", this.unblockLayout.bind(this));
+	}
+
+	blockLayout(){
+		this.blocked = true;
+	}
+
+	unblockLayout(){
+		this.blocked = false;
 	}
 
 	layoutCell(cell){
@@ -225,12 +236,11 @@ class FrozenColumns extends Module{
 		return column.parent.isGroup ? this.getColGroupParentElement(column.parent) : column.getElement();
 	}
 
-	//layout columns appropropriatly
+	//layout columns appropriately
 	layout(){
 		var rightMargin = 0;
 
-		if(this.active){
-
+		if(this.active && !this.blocked){
 			//calculate row padding
 			this.calcMargins();
 
