@@ -5,7 +5,10 @@
   "style": "dist/css/tabulator.css",
   "main": "dist/js/tabulator.js",
   "module": "dist/js/tabulator_esm.js",
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
   "scripts": {
     "build": "rollup -c build/rollup.js",
     "dev": "rollup -c build/rollup.js -w --environment TARGET:dev",
