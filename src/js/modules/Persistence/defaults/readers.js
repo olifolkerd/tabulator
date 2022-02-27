@@ -13,12 +13,12 @@ export default {
 
 		//if cookie exists, decode and load column data into tabulator
 		if(cookiePos > -1){
-			cookie = cookie.substr(cookiePos);
+			cookie = cookie.slice(cookiePos);
 
 			end = cookie.indexOf(";");
 
 			if(end > -1){
-				cookie = cookie.substr(0, end);
+				cookie = cookie.slice(0, end);
 			}
 
 			data = cookie.replace(key + "=", "");
