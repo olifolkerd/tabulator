@@ -50,7 +50,7 @@ class Tabulator {
 
 		if(this.initializeElement(element)){
 
-			this.initialzeCoreSystems(options);
+			this.initializeCoreSystems(options);
 
 			//delay table creation to allow event bindings immediately after the constructor
 			setTimeout(() => {
@@ -80,7 +80,7 @@ class Tabulator {
 		}
 	}
 
-	initialzeCoreSystems(options){
+	initializeCoreSystems(options){
 		this.columnManager = new ColumnManager(this);
 		this.rowManager = new RowManager(this);
 		this.footerManager = new FooterManager(this);
