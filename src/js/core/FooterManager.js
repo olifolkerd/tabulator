@@ -41,7 +41,7 @@ export default class FooterManager extends CoreFeature{
 			switch(typeof this.table.options.footerElement){
 				case "string":
 				if(this.table.options.footerElement[0] === "<"){
-					this.element.innerHTML = this.table.options.footerElement;
+					this.containerElement.innerHTML = this.table.options.footerElement;
 				}else{
 					this.external = true;
 					this.element = document.querySelector(this.table.options.footerElement);
