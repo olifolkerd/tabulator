@@ -10,7 +10,6 @@ class ResizeColumns extends Module{
 		this.startWidth = false;
 		this.handle = null;
 		this.prevHandle = null;
-		this.widthChanged = null;
 		
 		this.registerColumnOption("resizable", true);
 	}
@@ -70,11 +69,19 @@ class ResizeColumns extends Module{
 			
 			//reszie column on  double click
 			handle.addEventListener("dblclick", function(e){
-				var col = column.getLastColumn();
+				var col = column.getLastColumn(),
+				oldWidth;
 				
 				if(col && self._checkResizability(col)){
+					oldWidth = col.getWidth();
+
 					e.stopPropagation();
 					col.reinitializeWidth(true);
+
+					if(oldWidth !== col.getWidth()){
+						self.dispatch("column-resized", col);
+						self.table.externalEvents.dispatch("columnResized", col.getComponent());
+					}
 				}
 			});
 			
@@ -132,8 +139,7 @@ class ResizeColumns extends Module{
 		var self = this;
 		
 		self.table.element.classList.add("tabulator-block-select");
-		this.widthChanged = false;
-		
+
 		function mouseMove(e){
 			// self.table.columnManager.tempScrollBlock();
 			
@@ -142,8 +148,6 @@ class ResizeColumns extends Module{
 			}else{
 				column.setWidth(self.startWidth + ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
 			}
-			
-			this.widthChanged = true;
 			
 			self.table.columnManager.renderer.rerenderColumns(true);
 			
@@ -170,8 +174,8 @@ class ResizeColumns extends Module{
 			handle.removeEventListener("touchend", mouseUp);
 			
 			self.table.element.classList.remove("tabulator-block-select");
-			
-			if(this.widthChanged){
+
+			if(self.startWidth !== column.getWidth()){
 				self.dispatch("column-resized", column);
 				self.table.externalEvents.dispatch("columnResized", column.getComponent());
 			}
