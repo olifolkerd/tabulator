@@ -10,8 +10,6 @@ export default class FooterManager extends CoreFeature{
 		this.containerElement = this.createContainerElement(); //containing element
 		this.external = false;
 		this.links = [];
-
-		this.initializeElement();
 	}
 
 	initialize(){
