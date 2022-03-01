@@ -617,9 +617,14 @@ class Filter extends Module{
 
 		var filterFunc = false;
 
-		if(typeof filter.field == "function"){
-			filterFunc = function(data){
-				return filter.field(data, filter.type || {})// pass params to custom filter function
+	 if (typeof filter.field == "function") {
+			filterFunc = function filterFunc(data) {
+				try {
+					return Filter.filters[filter.type](filter.value, column.getFieldValue(data).replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "").trim(), data, filter.params || {});
+				} catch (error) {
+					console.warn("Filter Error - Column not found, ignoring: ", filter.type);
+					return false;
+				}
 			};
 		}else{
 
