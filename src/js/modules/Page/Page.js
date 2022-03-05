@@ -857,8 +857,8 @@ class Page extends Module{
 	
 	//handle the footer element being redrawn
 	footerRedraw(){
-		var footer = this.table.footerManager.element;
-		
+		var footer = this.table.footerManager.containerElement;
+
 		if((Math.ceil(footer.clientWidth) - footer.scrollWidth) < 0){
 			this.pagesElement.style.display = 'none';
 		}else{

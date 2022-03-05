@@ -15164,8 +15164,8 @@ class Page extends Module{
 	
 	//handle the footer element being redrawn
 	footerRedraw(){
-		var footer = this.table.footerManager.element;
-		
+		var footer = this.table.footerManager.containerElement;
+
 		if((Math.ceil(footer.clientWidth) - footer.scrollWidth) < 0){
 			this.pagesElement.style.display = 'none';
 		}else {
@@ -21685,7 +21685,7 @@ class FooterManager extends CoreFeature{
 					this.containerElement.innerHTML = this.table.options.footerElement;
 				}else {
 					this.external = true;
-					this.element = document.querySelector(this.table.options.footerElement);
+					this.containerElement = document.querySelector(this.table.options.footerElement);
 				}
 				break;
 
