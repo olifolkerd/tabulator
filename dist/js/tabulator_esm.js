@@ -23442,7 +23442,7 @@ class Tabulator {
 	_clearObjectPointers(){
 		this.options.columns = this.options.columns.slice(0);
 
-		if(this.options.data && !this.options.reactiveData){
+		if(Array.isArray(this.options.data) && !this.options.reactiveData){
 			this.options.data = this.options.data.slice(0);
 		}
 	}
