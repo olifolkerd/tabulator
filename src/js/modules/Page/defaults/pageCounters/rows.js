@@ -5,28 +5,36 @@ export default function(pageSize, currentRow, currentPage, totalRows, totalPages
 	ofEl = document.createElement("span"),
 	totalEl = document.createElement("span"),
 	rowsEl = document.createElement("span");
-	
+
 	this.table.modules.localize.langBind("pagination|counter|showing", (value) => {
 		showingEl.innerHTML = value;
 	});
-	
-	valueEl.innerHTML = " " + currentRow + "-" + Math.min((currentRow + pageSize - 1), totalRows) + " ";
-	
+
 	this.table.modules.localize.langBind("pagination|counter|of", (value) => {
 		ofEl.innerHTML = value;
 	});
-	
-	totalEl.innerHTML = " " + totalRows + " ";
-	
+
 	this.table.modules.localize.langBind("pagination|counter|rows", (value) => {
 		rowsEl.innerHTML = value;
 	});
-	
-	el.appendChild(showingEl);
-	el.appendChild(valueEl);
-	el.appendChild(ofEl);
-	el.appendChild(totalEl);
-	el.appendChild(rowsEl);
+
+	if(totalRows){
+		valueEl.innerHTML = " " + currentRow + "-" + Math.min((currentRow + pageSize - 1), totalRows) + " ";
+		
+		totalEl.innerHTML = " " + totalRows + " ";
+		
+		el.appendChild(showingEl);
+		el.appendChild(valueEl);
+		el.appendChild(ofEl);
+		el.appendChild(totalEl);
+		el.appendChild(rowsEl);
+	}else{
+		valueEl.innerHTML = " 0 ";
+
+		el.appendChild(showingEl);
+		el.appendChild(valueEl);
+		el.appendChild(rowsEl);
+	}
 	
 	return el;
 };
