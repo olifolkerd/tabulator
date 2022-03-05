@@ -5,8 +5,9 @@ export default function(cell, formatterParams, onRendered){
 	var blocked = false;
 
 	checkbox.type = 'checkbox';
-	
 
+	checkbox.setAttribute("aria-label", "Select Row");
+	
 	if(this.table.modExists("selectRow", true)){
 
 		checkbox.addEventListener("click", (e) => {
