@@ -22011,7 +22011,7 @@ class InteractionManager extends CoreFeature {
 							return row.getElement() === target;
 						});
 						
-						if(targets["row"].parentNode && targets["row"].parentNode.closest(".tabulator-row")){
+						if(targets["row"] && targets["row"].parentNode && targets["row"].parentNode.closest(".tabulator-row")){
 							targets[key] = false;
 						}
 					}
