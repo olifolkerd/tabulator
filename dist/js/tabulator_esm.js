@@ -17232,7 +17232,9 @@ class SelectRow extends Module{
 				self._deselectRow(self.selectedRows[0], true);
 			}
 			
-			self._rowSelectionChanged(silent);
+			if(rowCount){
+				self._rowSelectionChanged(silent);
+			}
 			
 		}else {
 			if(Array.isArray(rows)){
