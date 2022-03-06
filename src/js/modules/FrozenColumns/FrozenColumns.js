@@ -104,12 +104,7 @@ class FrozenColumns extends Module{
 		
 		if(this.active){
 			clearTimeout(this.scrollEndTimer);
-			
-			//layout all rows after scroll is complete
-			this.scrollEndTimer = setTimeout(() => {
-				this.layout();
-			}, 100);
-			
+
 			rows = this.table.rowManager.getVisibleRows();
 			
 			this.calcMargins(true);
@@ -123,8 +118,6 @@ class FrozenColumns extends Module{
 					this.layoutRow(row);
 				}
 			});
-			
-			this.table.rowManager.tableElement.style.marginRight = this.rightMargin;
 		}
 	}
 	
@@ -132,13 +125,11 @@ class FrozenColumns extends Module{
 	calcMargins(scroll){
 		
 		if(!scroll){
-			this.leftMargin = this._calcSpace(this.leftColumns, this.leftColumns.length) + "px";
-			this.table.columnManager.headersElement.style.marginLeft = this.leftMargin;
-			
-			this.rightMargin = this._calcSpace(this.rightColumns, this.rightColumns.length) + "px";
-			this.table.columnManager.element.style.paddingRight = this.rightMargin;
+			this.leftMargin = this._calcSpace(this.leftColumns, this.leftColumns.length) + "px";			
+			this.rightMargin = this._calcSpace(this.rightColumns, this.rightColumns.length) + "px";	
+			this.table.rowManager.tableElement.style.marginRight = this.rightMargin;
 		}
-		
+	
 		//calculate right frozen columns
 		this.rightPadding = this.table.rowManager.element.clientWidth + this.table.columnManager.scrollLeft;
 	}
@@ -183,6 +174,9 @@ class FrozenColumns extends Module{
 		var leftMargin = 0;
 		var rightMargin = 0;
 		
+		this.table.columnManager.headersElement.style.marginLeft = this.leftMargin;
+		this.table.columnManager.element.style.paddingRight = this.rightMargin;
+
 		this.leftColumns.forEach((column, i) => {	
 			column.modules.frozen.margin = (leftMargin + this.table.columnManager.scrollLeft) + "px";
 
@@ -252,8 +246,6 @@ class FrozenColumns extends Module{
 	
 	//layout columns appropriately
 	layout(){
-		var rightMargin = 0;
-		
 		if(this.active && !this.blocked){
 			//calculate row padding
 			this.calcMargins();
@@ -268,8 +260,6 @@ class FrozenColumns extends Module{
 			
 			//calculate left columns
 			this.layoutColumnPosition(true);
-			
-			this.table.rowManager.tableElement.style.marginRight = this.rightMargin;
 		}
 	}
 	
