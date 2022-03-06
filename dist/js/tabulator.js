@@ -1,4 +1,4 @@
-/* Tabulator v5.1.3 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.1.4 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -2739,7 +2739,7 @@
             if (change && this.table.rowManager.getDisplayRows().length) {
               this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.window;
               var row = this.chain("rows-sample", [1], [], function () {
-                return _this3.table.rowManager.getDisplayRows()[0];
+                return _this3.table.rowManager.getDisplayRows();
               })[0];
 
               if (row) {
@@ -3884,6 +3884,7 @@
 
           this.dispatch("row-layout-before", this);
           this.generateCells();
+          this.initialized = true;
           this.table.columnManager.renderer.renderRowCells(this);
 
           if (force) {
@@ -3891,7 +3892,6 @@
           }
 
           this.dispatch("row-layout", this);
-          this.initialized = true;
 
           if (this.table.options.rowFormatter) {
             this.table.options.rowFormatter(this.getComponent());
@@ -6099,7 +6099,7 @@
                 this.containerElement.innerHTML = this.table.options.footerElement;
               } else {
                 this.external = true;
-                this.element = document.querySelector(this.table.options.footerElement);
+                this.containerElement = document.querySelector(this.table.options.footerElement);
               }
 
               break;
@@ -6458,7 +6458,7 @@
                       return row.getElement() === target;
                     });
 
-                    if (targets["row"].parentNode && targets["row"].parentNode.closest(".tabulator-row")) {
+                    if (targets["row"] && targets["row"].parentNode && targets["row"].parentNode.closest(".tabulator-row")) {
                       targets[key] = false;
                     }
                   }
@@ -8140,7 +8140,7 @@
       value: function _clearObjectPointers() {
         this.options.columns = this.options.columns.slice(0);
 
-        if (this.options.data && !this.options.reactiveData) {
+        if (Array.isArray(this.options.data) && !this.options.reactiveData) {
           this.options.data = this.options.data.slice(0);
         }
       } //build tabulator element
@@ -14560,7 +14560,9 @@
           if (col) {
             var cellEl = document.createElement("td"),
                 column = col.component._column,
+                index = _this8.table.columnManager.findColumnIndex(column),
                 value = col.value;
+
             var cellWrapper = {
               modules: {},
               getValue: function getValue() {
@@ -14615,8 +14617,8 @@
               cellEl.innerHTML = value;
             }
 
-            if (styles.firstCell) {
-              _this8.mapElementStyles(styles.firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+            if (styles.styleCells[index] || styles.firstCell) {
+              _this8.mapElementStyles(styles.styleCells[index] || styles.firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
 
               if (column.definition.align) {
                 cellEl.style.textAlign = column.definition.align;
@@ -15253,8 +15255,9 @@
             });
             editorElement.addEventListener("focus", function (e) {
               var left = _this3.table.columnManager.element.scrollLeft;
+              var headerPos = _this3.table.rowManager.element.scrollLeft + parseInt(_this3.table.columnManager.element.style.marginLeft);
 
-              if (left !== _this3.table.rowManager.element.scrollLeft) {
+              if (left !== headerPos) {
                 _this3.table.rowManager.scrollHorizontal(left);
 
                 _this3.table.columnManager.scrollHorizontal(left);
@@ -16281,6 +16284,7 @@
     var checkbox = document.createElement("input");
     var blocked = false;
     checkbox.type = 'checkbox';
+    checkbox.setAttribute("aria-label", "Select Row");
 
     if (this.table.modExists("selectRow", true)) {
       checkbox.addEventListener("click", function (e) {
@@ -16702,13 +16706,9 @@
         var rows;
 
         if (this.active) {
-          clearTimeout(this.scrollEndTimer); //layout all rows after scroll is complete
-
-          this.scrollEndTimer = setTimeout(function () {
-            _this2.layout();
-          }, 100);
+          clearTimeout(this.scrollEndTimer);
           rows = this.table.rowManager.getVisibleRows();
-          this.calcMargins();
+          this.calcMargins(true);
           this.layoutColumnPosition();
           this.layoutCalcRows();
           rows.forEach(function (row) {
@@ -16716,17 +16716,18 @@
               _this2.layoutRow(row);
             }
           });
-          this.table.rowManager.tableElement.style.marginRight = this.rightMargin;
         }
       } //calculate margins for rows
 
     }, {
       key: "calcMargins",
-      value: function calcMargins() {
-        this.leftMargin = this._calcSpace(this.leftColumns, this.leftColumns.length) + "px";
-        this.table.columnManager.headersElement.style.marginLeft = this.leftMargin;
-        this.rightMargin = this._calcSpace(this.rightColumns, this.rightColumns.length) + "px";
-        this.table.columnManager.element.style.paddingRight = this.rightMargin; //calculate right frozen columns
+      value: function calcMargins(scroll) {
+        if (!scroll) {
+          this.leftMargin = this._calcSpace(this.leftColumns, this.leftColumns.length) + "px";
+          this.rightMargin = this._calcSpace(this.rightColumns, this.rightColumns.length) + "px";
+          this.table.rowManager.tableElement.style.marginRight = this.rightMargin;
+        } //calculate right frozen columns
+
 
         this.rightPadding = this.table.rowManager.element.clientWidth + this.table.columnManager.scrollLeft;
       } //layout calculation rows
@@ -16774,8 +16775,16 @@
         var _this4 = this;
 
         var leftParents = [];
+        var leftMargin = 0;
+        var rightMargin = 0;
+        this.table.columnManager.headersElement.style.marginLeft = this.leftMargin;
+        this.table.columnManager.element.style.paddingRight = this.rightMargin;
         this.leftColumns.forEach(function (column, i) {
-          column.modules.frozen.margin = _this4._calcSpace(_this4.leftColumns, i) + _this4.table.columnManager.scrollLeft + "px";
+          column.modules.frozen.margin = leftMargin + _this4.table.columnManager.scrollLeft + "px";
+
+          if (column.visible) {
+            leftMargin += column.getWidth();
+          }
 
           if (i == _this4.leftColumns.length - 1) {
             column.modules.frozen.edge = true;
@@ -16806,7 +16815,11 @@
           }
         });
         this.rightColumns.forEach(function (column, i) {
-          column.modules.frozen.margin = _this4.rightPadding - _this4._calcSpace(_this4.rightColumns, i + 1) + "px";
+          if (column.visible) {
+            rightMargin += column.getWidth();
+          }
+
+          column.modules.frozen.margin = _this4.rightPadding - rightMargin + "px";
 
           if (i == _this4.rightColumns.length - 1) {
             column.modules.frozen.edge = true;
@@ -16849,7 +16862,6 @@
           this.layoutCalcRows(); //calculate left columns
 
           this.layoutColumnPosition(true);
-          this.table.rowManager.tableElement.style.marginRight = this.rightMargin;
         }
       }
     }, {
@@ -21243,19 +21255,28 @@
     this.table.modules.localize.langBind("pagination|counter|showing", function (value) {
       showingEl.innerHTML = value;
     });
-    valueEl.innerHTML = " " + currentRow + "-" + Math.min(currentRow + pageSize - 1, totalRows) + " ";
     this.table.modules.localize.langBind("pagination|counter|of", function (value) {
       ofEl.innerHTML = value;
     });
-    totalEl.innerHTML = " " + totalRows + " ";
     this.table.modules.localize.langBind("pagination|counter|rows", function (value) {
       rowsEl.innerHTML = value;
     });
-    el.appendChild(showingEl);
-    el.appendChild(valueEl);
-    el.appendChild(ofEl);
-    el.appendChild(totalEl);
-    el.appendChild(rowsEl);
+
+    if (totalRows) {
+      valueEl.innerHTML = " " + currentRow + "-" + Math.min(currentRow + pageSize - 1, totalRows) + " ";
+      totalEl.innerHTML = " " + totalRows + " ";
+      el.appendChild(showingEl);
+      el.appendChild(valueEl);
+      el.appendChild(ofEl);
+      el.appendChild(totalEl);
+      el.appendChild(rowsEl);
+    } else {
+      valueEl.innerHTML = " 0 ";
+      el.appendChild(showingEl);
+      el.appendChild(valueEl);
+      el.appendChild(rowsEl);
+    }
+
     return el;
   }
 
@@ -22177,7 +22198,7 @@
     }, {
       key: "footerRedraw",
       value: function footerRedraw() {
-        var footer = this.table.footerManager.element;
+        var footer = this.table.footerManager.containerElement;
 
         if (Math.ceil(footer.clientWidth) - footer.scrollWidth < 0) {
           this.pagesElement.style.display = 'none';
@@ -24353,7 +24374,9 @@
             self._deselectRow(self.selectedRows[0], true);
           }
 
-          self._rowSelectionChanged(silent);
+          if (rowCount) {
+            self._rowSelectionChanged(silent);
+          }
         } else {
           if (Array.isArray(rows)) {
             rows.forEach(function (row) {
