@@ -215,7 +215,7 @@ export default class VirtualDomHorizontal extends Renderer{
 					this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.window;
 					
 					var row = this.chain("rows-sample", [1], [], () => {
-						return this.table.rowManager.getDisplayRows()[0];
+						return this.table.rowManager.getDisplayRows();
 					})[0];
 					
 					if(row){
