@@ -76,6 +76,8 @@ export default class Row extends CoreFeature{
 
 			this.generateCells();
 
+			this.initialized = true;
+
 			this.table.columnManager.renderer.renderRowCells(this);
 
 			if(force){
@@ -83,8 +85,6 @@ export default class Row extends CoreFeature{
 			}
 
 			this.dispatch("row-layout", this);
-
-			this.initialized = true;
 
 			if(this.table.options.rowFormatter){
 				this.table.options.rowFormatter(this.getComponent());
