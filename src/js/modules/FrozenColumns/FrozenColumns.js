@@ -112,7 +112,7 @@ class FrozenColumns extends Module{
 
 			rows = this.table.rowManager.getVisibleRows();
 
-			this.calcMargins();
+			this.calcMargins(true);
 
 			this.layoutColumnPosition();
 
@@ -129,12 +129,15 @@ class FrozenColumns extends Module{
 	}
 
 	//calculate margins for rows
-	calcMargins(){
-		this.leftMargin = this._calcSpace(this.leftColumns, this.leftColumns.length) + "px";
-		this.table.columnManager.headersElement.style.marginLeft = this.leftMargin;
+	calcMargins(scroll){
 
-		this.rightMargin = this._calcSpace(this.rightColumns, this.rightColumns.length) + "px";
-		this.table.columnManager.element.style.paddingRight = this.rightMargin;
+		if(!scroll){
+			this.leftMargin = this._calcSpace(this.leftColumns, this.leftColumns.length) + "px";
+			this.table.columnManager.headersElement.style.marginLeft = this.leftMargin;
+
+			this.rightMargin = this._calcSpace(this.rightColumns, this.rightColumns.length) + "px";
+			this.table.columnManager.element.style.paddingRight = this.rightMargin;
+		}
 
 		//calculate right frozen columns
 		this.rightPadding = this.table.rowManager.element.clientWidth + this.table.columnManager.scrollLeft;
