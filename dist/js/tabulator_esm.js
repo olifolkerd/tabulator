@@ -14901,17 +14901,18 @@ class Page extends Module{
 		this.trackChanges();
 	}
 	
-	_setPageCounter(totalRows){
-		var content, currentRow;
+	_setPageCounter(totalRows, size, currentRow){
+		var content;
 		
 		if(this.pageCounter){
-			currentRow = ((this.page - 1) * this.size) + 1;
 
 			if(this.mode === "remote"){
+				size = this.size;
+				currentRow = ((this.page - 1) * this.size) + 1;
 				totalRows = this.remoteRowCountEstimate;
 			}
 
-			content = this.pageCounter.call(this, this.size, currentRow, this.page, totalRows, this.max);
+			content = this.pageCounter.call(this, size, currentRow, this.page, totalRows, this.max);
 			
 			switch(typeof content){
 				case "object":
@@ -15051,7 +15052,12 @@ class Page extends Module{
 	
 	//return appropriate rows for current page
 	getRows(data){
-		var output, start, end;
+		var actualRowPageSize = 0,
+		output, start, end, actualStartRow;
+
+		var actualRows = data.filter((row) => {
+			return row.type === "row";
+		});
 		
 		if(this.mode == "local"){
 			output = [];
@@ -15066,21 +15072,30 @@ class Page extends Module{
 				end = start + parseInt(this.size);
 			}
 			
-			
 			this._setPageButtons();
 			
 			for(let i = start; i < end; i++){
-				if(data[i]){
-					output.push(data[i]);
+				let row = data[i];
+
+				if(row){
+					output.push(row);
+
+					if(row.type === "row"){
+						if(!actualStartRow){
+							actualStartRow = row;
+						}	
+
+						actualRowPageSize++;
+					}
 				}
 			}
-
-			this._setPageCounter(data.length);
+			
+			this._setPageCounter(actualRows.length, actualRowPageSize, actualStartRow ? (actualRows.indexOf(actualStartRow) + 1) : 0);
 			
 			return output;
 		}else {
 			this._setPageButtons();
-			this._setPageCounter(data.length);
+			this._setPageCounter(actualRows.length);
 			
 			return data.slice(0);
 		}
@@ -18900,8 +18915,6 @@ class VirtualDomHorizontal extends Renderer{
 		});
 
 		this.windowBuffer = buffer * 2;
-
-		console.log("BUFFER", this.windowBuffer);
 	}
 	
 	rerenderColumns(update, blockRedraw){		
