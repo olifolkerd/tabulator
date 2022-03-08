@@ -103,8 +103,6 @@ export default class VirtualDomHorizontal extends Renderer{
 		});
 
 		this.windowBuffer = buffer * 2;
-
-		console.log("BUFFER", this.windowBuffer)
 	}
 	
 	rerenderColumns(update, blockRedraw){		
