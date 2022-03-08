@@ -17,7 +17,8 @@ export default class VirtualDomHorizontal extends Renderer{
 		
 		this.fitDataColAvg = 0;
 		
-		this.window = 200; //pixel margin to make column visible before it is shown on screen
+		this.windowBuffer = 200; //pixel margin to make column visible before it is shown on screen
+
 		
 		this.initialized = false;
 		this.isFitData = false;
@@ -84,8 +85,26 @@ export default class VirtualDomHorizontal extends Renderer{
 		if(this.scrollLeft != left){
 			this.scrollLeft = left;
 			
-			this.scroll(left - (this.vDomScrollPosLeft + this.window));
+			this.scroll(left - (this.vDomScrollPosLeft + this.windowBuffer));
 		}
+	}
+
+	calcWindowBuffer(){
+		var buffer = this.elementVertical.clientWidth;
+
+		this.table.columnManager.columnsByIndex.forEach((column) => {
+			if(column.visible){
+				var width = column.getWidth();
+
+				if(width > buffer){
+					buffer = width;
+				}
+			}
+		});
+
+		this.windowBuffer = buffer * 2;
+
+		console.log("BUFFER", this.windowBuffer)
 	}
 	
 	rerenderColumns(update, blockRedraw){		
@@ -93,29 +112,29 @@ export default class VirtualDomHorizontal extends Renderer{
 			cols:this.columns,
 			leftCol:this.leftCol,
 			rightCol:this.rightCol,
-		};
+		},
+		colPos = 0;
+		
 		
 		if(update && !this.initialized){
 			return;
 		}
 		
 		this.clear();
+
+		this.calcWindowBuffer();
 		
 		this.scrollLeft = this.elementVertical.scrollLeft;
 		
-		this.vDomScrollPosLeft = this.scrollLeft - this.window;
-		this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.window;
-		
-		var colPos = 0;
-		
+		this.vDomScrollPosLeft = this.scrollLeft - this.windowBuffer;
+		this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
+	
 		this.table.columnManager.columnsByIndex.forEach((column) => {
 			var config = {};
 			
 			if(column.visible){
 				var width = column.getWidth();
 
-				console.log("w", width)
-				
 				config.leftPos = colPos;
 				config.rightPos = colPos + width;
 				
@@ -220,7 +239,7 @@ export default class VirtualDomHorizontal extends Renderer{
 			if(change){
 				if(change && this.table.rowManager.getDisplayRows().length){
 					
-					this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.window;
+					this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
 					
 					var row = this.chain("rows-sample", [1], [], () => {
 						return this.table.rowManager.getDisplayRows();
