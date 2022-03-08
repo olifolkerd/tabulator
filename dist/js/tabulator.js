@@ -1,4 +1,4 @@
-/* Tabulator v5.1.4 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.1.5 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -2542,9 +2542,10 @@
       _this.vDomPadLeft = 0;
       _this.vDomPadRight = 0;
       _this.fitDataColAvg = 0;
-      _this.window = 200; //pixel margin to make column visible before it is shown on screen
+      _this.windowBuffer = 200; //pixel margin to make column visible before it is shown on screen
 
       _this.initialized = false;
+      _this.isFitData = false;
       _this.columns = [];
       return _this;
     }
@@ -2553,6 +2554,7 @@
       key: "initialize",
       value: function initialize() {
         this.compatibilityCheck();
+        this.layoutCheck();
       }
     }, {
       key: "compatibilityCheck",
@@ -2591,6 +2593,11 @@
 
 
         return ok;
+      }
+    }, {
+      key: "layoutCheck",
+      value: function layoutCheck() {
+        this.isFitData = this.options("layout").startsWith('fitData');
       } //////////////////////////////////////
       ///////// Public Functions ///////////
       //////////////////////////////////////
@@ -2605,8 +2612,23 @@
       value: function scrollColumns(left, dir) {
         if (this.scrollLeft != left) {
           this.scrollLeft = left;
-          this.scroll(left - (this.vDomScrollPosLeft + this.window));
+          this.scroll(left - (this.vDomScrollPosLeft + this.windowBuffer));
         }
+      }
+    }, {
+      key: "calcWindowBuffer",
+      value: function calcWindowBuffer() {
+        var buffer = this.elementVertical.clientWidth;
+        this.table.columnManager.columnsByIndex.forEach(function (column) {
+          if (column.visible) {
+            var width = column.getWidth();
+
+            if (width > buffer) {
+              buffer = width;
+            }
+          }
+        });
+        this.windowBuffer = buffer * 2;
       }
     }, {
       key: "rerenderColumns",
@@ -2617,17 +2639,18 @@
           cols: this.columns,
           leftCol: this.leftCol,
           rightCol: this.rightCol
-        };
+        },
+            colPos = 0;
 
         if (update && !this.initialized) {
           return;
         }
 
         this.clear();
+        this.calcWindowBuffer();
         this.scrollLeft = this.elementVertical.scrollLeft;
-        this.vDomScrollPosLeft = this.scrollLeft - this.window;
-        this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.window;
-        var colPos = 0;
+        this.vDomScrollPosLeft = this.scrollLeft - this.windowBuffer;
+        this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
         this.table.columnManager.columnsByIndex.forEach(function (column) {
           var config = {};
 
@@ -2637,7 +2660,7 @@
             config.rightPos = colPos + width;
             config.width = width;
 
-            if (_this2.options("layout") === "fitData") {
+            if (_this2.isFitData) {
               config.fitDataCheck = column.modules.vdomHoz ? column.modules.vdomHoz.fitDataCheck : true;
             }
 
@@ -2728,7 +2751,7 @@
             row,
             rowEl;
 
-        if (this.options("layout") === "fitData") {
+        if (this.isFitData) {
           this.table.columnManager.columnsByIndex.forEach(function (column) {
             if (!column.definition.width && column.visible) {
               change = true;
@@ -2737,7 +2760,7 @@
 
           if (change) {
             if (change && this.table.rowManager.getDisplayRows().length) {
-              this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.window;
+              this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
               var row = this.chain("rows-sample", [1], [], function () {
                 return _this3.table.rowManager.getDisplayRows();
               })[0];
@@ -21913,17 +21936,17 @@
       }
     }, {
       key: "_setPageCounter",
-      value: function _setPageCounter(totalRows) {
-        var content, currentRow;
+      value: function _setPageCounter(totalRows, size, currentRow) {
+        var content;
 
         if (this.pageCounter) {
-          currentRow = (this.page - 1) * this.size + 1;
-
           if (this.mode === "remote") {
+            size = this.size;
+            currentRow = (this.page - 1) * this.size + 1;
             totalRows = this.remoteRowCountEstimate;
           }
 
-          content = this.pageCounter.call(this, this.size, currentRow, this.page, totalRows, this.max);
+          content = this.pageCounter.call(this, size, currentRow, this.page, totalRows, this.max);
 
           switch (_typeof(content)) {
             case "object":
@@ -22071,7 +22094,14 @@
     }, {
       key: "getRows",
       value: function getRows(data) {
-        var output, start, end;
+        var actualRowPageSize = 0,
+            output,
+            start,
+            end,
+            actualStartRow;
+        var actualRows = data.filter(function (row) {
+          return row.type === "row";
+        });
 
         if (this.mode == "local") {
           output = [];
@@ -22088,18 +22118,28 @@
           this._setPageButtons();
 
           for (var i = start; i < end; i++) {
-            if (data[i]) {
-              output.push(data[i]);
+            var row = data[i];
+
+            if (row) {
+              output.push(row);
+
+              if (row.type === "row") {
+                if (!actualStartRow) {
+                  actualStartRow = row;
+                }
+
+                actualRowPageSize++;
+              }
             }
           }
 
-          this._setPageCounter(data.length);
+          this._setPageCounter(actualRows.length, actualRowPageSize, actualStartRow ? actualRows.indexOf(actualStartRow) + 1 : 0);
 
           return output;
         } else {
           this._setPageButtons();
 
-          this._setPageCounter(data.length);
+          this._setPageCounter(actualRows.length);
 
           return data.slice(0);
         }
