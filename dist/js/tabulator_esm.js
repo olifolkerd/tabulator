@@ -18817,12 +18817,14 @@ class VirtualDomHorizontal extends Renderer{
 		this.window = 200; //pixel margin to make column visible before it is shown on screen
 		
 		this.initialized = false;
+		this.isFitData = false;
 		
 		this.columns = [];
 	}
 	
 	initialize(){
 		this.compatibilityCheck();
+		this.layoutCheck();
 	}
 	
 	compatibilityCheck(){
@@ -18861,6 +18863,10 @@ class VirtualDomHorizontal extends Renderer{
 		// }
 		
 		return ok;
+	}
+
+	layoutCheck(){
+		this.isFitData = this.options("layout").startsWith('fitData');
 	}
 	
 	//////////////////////////////////////
@@ -18904,13 +18910,15 @@ class VirtualDomHorizontal extends Renderer{
 			
 			if(column.visible){
 				var width = column.getWidth();
+
+				console.log("w", width);
 				
 				config.leftPos = colPos;
 				config.rightPos = colPos + width;
 				
 				config.width = width;
 				
-				if (this.options("layout") === "fitData") {
+				if (this.isFitData) {
 					config.fitDataCheck = column.modules.vdomHoz ? column.modules.vdomHoz.fitDataCheck : true;
 				}
 				
@@ -18999,7 +19007,7 @@ class VirtualDomHorizontal extends Renderer{
 		colEnd = 0,
 		row, rowEl;
 		
-		if(this.options("layout") === "fitData"){
+		if(this.isFitData){
 			this.table.columnManager.columnsByIndex.forEach((column) => {
 				if(!column.definition.width && column.visible){
 					change = true;
