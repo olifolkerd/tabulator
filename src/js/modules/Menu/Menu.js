@@ -335,13 +335,11 @@ class Menu extends Module{
 		}
 		
 		//move menu to start on bottom edge if it is too close to the edge of the screen
-		if((y + element.offsetHeight) >= this.menuContainer.offsetHeight){
-			element.style.top = "";
-			
+		if((y + element.offsetHeight) > this.menuContainer.offsetHeight) {
 			if(parentEl){
-				element.style.bottom = (this.menuContainer.offsetHeight - parentOffset.top - parentEl.offsetHeight - 1) + "px";
+				element.style.top = (parseInt(element.style.top) - element.offsetHeight + parentEl.offsetHeight + 1) + "px";
 			}else{
-				element.style.bottom = (this.menuContainer.offsetHeight - y) + "px";
+				element.style.top = (parseInt(element.style.top) - element.offsetHeight) + "px";
 			}
 		}
 	}
