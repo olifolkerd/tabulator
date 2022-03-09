@@ -18829,7 +18829,8 @@ class VirtualDomHorizontal extends Renderer{
 		
 		this.windowBuffer = 200; //pixel margin to make column visible before it is shown on screen
 		
-		
+		this.visibleRows = null;
+
 		this.initialized = false;
 		this.isFitData = false;
 		
@@ -18839,6 +18840,7 @@ class VirtualDomHorizontal extends Renderer{
 	initialize(){
 		this.compatibilityCheck();
 		this.layoutCheck();
+		this.vertScrollListen();
 	}
 	
 	compatibilityCheck(){
@@ -18882,6 +18884,12 @@ class VirtualDomHorizontal extends Renderer{
 	layoutCheck(){
 		this.isFitData = this.options("layout").startsWith('fitData');
 	}
+
+	vertScrollListen(){
+		this.subscribe("scroll-vertical", () => {
+			this.visibleRows = null;
+		});
+	}
 	
 	//////////////////////////////////////
 	///////// Public Functions ///////////
@@ -18890,6 +18898,7 @@ class VirtualDomHorizontal extends Renderer{
 	renderColumns(row, force){
 		this.dataChange();
 	}
+
 	
 	scrollColumns(left, dir){
 		if(this.scrollLeft != left){
@@ -19111,31 +19120,35 @@ class VirtualDomHorizontal extends Renderer{
 	}
 	
 	reinitializeRows(){
-		var rows = this.table.rowManager.getVisibleRows();
+		var rows = this.getVisibleRows();
 		rows.forEach((row) => {
 			this.reinitializeRow(row, true);
 		});
 	}
 	
+	getVisibleRows(){
+		if (!this.visibleRows){
+			this.visibleRows = this.table.rowManager.getVisibleRows();
+		}
+
+		return this.visibleRows;	
+	}
+	
 	scroll(diff){
-		var rows;
-		
 		this.vDomScrollPosLeft += diff;
 		this.vDomScrollPosRight += diff;
 
 		if(Math.abs(diff) > (this.windowBuffer / 2)){
 			this.rerenderColumns();
 		}else {
-			rows = this.table.rowManager.getVisibleRows();
-			
 			if(diff > 0){
 				//scroll right
-				this.addColRight(rows);
-				this.removeColLeft(rows);
+				this.addColRight();
+				this.removeColLeft();
 			}else {
 				//scroll left
-				this.addColLeft(rows);
-				this.removeColRight(rows);
+				this.addColLeft();
+				this.removeColRight();
 			}
 		}
 	}
@@ -19149,7 +19162,7 @@ class VirtualDomHorizontal extends Renderer{
 		}
 	}
 	
-	addColRight(rows){
+	addColRight(){
 		var changes = false;
 		
 		while(true){
@@ -19160,7 +19173,7 @@ class VirtualDomHorizontal extends Renderer{
 				if(column.modules.vdomHoz.leftPos <= this.vDomScrollPosRight){
 					changes = true;
 					
-					rows.forEach((row) => {
+					this.getVisibleRows().forEach((row) => {
 						if(row.type !== "group"){
 							var cell = row.getCell(column);
 							row.getElement().appendChild(cell.getElement());
@@ -19190,7 +19203,7 @@ class VirtualDomHorizontal extends Renderer{
 		}
 	}
 	
-	addColLeft(rows){
+	addColLeft(){
 		var changes = false;
 		
 		while(true){
@@ -19200,7 +19213,7 @@ class VirtualDomHorizontal extends Renderer{
 				if(column.modules.vdomHoz.rightPos >= this.vDomScrollPosLeft){
 					changes = true;
 					
-					rows.forEach((row) => {
+					this.getVisibleRows().forEach((row) => {
 						if(row.type !== "group"){
 							var cell = row.getCell(column);
 							row.getElement().prepend(cell.getElement());
@@ -19236,7 +19249,7 @@ class VirtualDomHorizontal extends Renderer{
 		}
 	}
 	
-	removeColRight(rows){
+	removeColRight(){
 		var changes = false;
 		
 		while(true){
@@ -19246,7 +19259,7 @@ class VirtualDomHorizontal extends Renderer{
 				if(column.modules.vdomHoz.leftPos > this.vDomScrollPosRight){
 					changes = true;
 					
-					rows.forEach((row) => {
+					this.getVisibleRows().forEach((row) => {
 						if(row.type !== "group"){
 							var cell = row.getCell(column);
 							
@@ -19273,7 +19286,7 @@ class VirtualDomHorizontal extends Renderer{
 		}
 	}
 	
-	removeColLeft(rows){
+	removeColLeft(){
 		var changes = false;
 		
 		while(true){
@@ -19283,7 +19296,7 @@ class VirtualDomHorizontal extends Renderer{
 				if(column.modules.vdomHoz.rightPos < this.vDomScrollPosLeft){
 					changes = true;
 					
-					rows.forEach((row) => {					
+					this.getVisibleRows().forEach((row) => {					
 						if(row.type !== "group"){
 							var cell = row.getCell(column);
 							
