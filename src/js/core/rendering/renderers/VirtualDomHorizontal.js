@@ -311,7 +311,7 @@ export default class VirtualDomHorizontal extends Renderer{
 		this.vDomScrollPosLeft += diff;
 		this.vDomScrollPosRight += diff;
 		
-		if(diff > (this.elementVertical.clientWidth * .8)){
+		if(Math.abs(diff) > (this.windowBuffer)){
 			this.rerenderColumns();
 		}else{
 			if(diff > 0){
