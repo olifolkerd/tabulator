@@ -19214,9 +19214,7 @@ class VirtualDomHorizontal extends Renderer{
 							cell.cellRendered();
 						}
 					});
-					
-					this.fitDataColActualWidthCheck(column);
-					
+
 					this.leftCol--; // don't move this below the <= check below
 					
 					if(this.leftCol <= 0){ // replicating logic in addColRight
@@ -19224,6 +19222,8 @@ class VirtualDomHorizontal extends Renderer{
 					}else {
 						this.vDomPadLeft -= column.getWidth();
 					}
+
+					this.fitDataColActualWidthCheck(column);
 					
 				}else {
 					break;
