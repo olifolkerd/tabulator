@@ -19318,20 +19318,21 @@ class VirtualDomHorizontal extends Renderer{
 		
 		if(column.modules.vdomHoz.fitDataCheck){
 			column.reinitializeWidth();
-			
-			
+
 			newWidth = column.getWidth();
 			widthDiff = newWidth - column.modules.vdomHoz.width;
 			
 			if(widthDiff){
 				column.modules.vdomHoz.rightPos += widthDiff;
 				column.modules.vdomHoz.width = newWidth;
-				this.colPositionAdjust(this.rightCol + 2, this.columns.length, widthDiff);
+				this.colPositionAdjust(this.columns.indexOf(column) + 1, this.columns.length, widthDiff);
 			}
 			
 			column.modules.vdomHoz.fitDataCheck = false;
 		}
-	};
+
+		return widthDiff;
+	}
 	
 	initializeRow(row){
 		if(row.type !== "group"){
