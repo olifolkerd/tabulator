@@ -1,4 +1,4 @@
-/* Tabulator v5.1.5 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.1.6 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -2544,6 +2544,7 @@
       _this.fitDataColAvg = 0;
       _this.windowBuffer = 200; //pixel margin to make column visible before it is shown on screen
 
+      _this.visibleRows = null;
       _this.initialized = false;
       _this.isFitData = false;
       _this.columns = [];
@@ -2555,6 +2556,7 @@
       value: function initialize() {
         this.compatibilityCheck();
         this.layoutCheck();
+        this.vertScrollListen();
       }
     }, {
       key: "compatibilityCheck",
@@ -2598,6 +2600,15 @@
       key: "layoutCheck",
       value: function layoutCheck() {
         this.isFitData = this.options("layout").startsWith('fitData');
+      }
+    }, {
+      key: "vertScrollListen",
+      value: function vertScrollListen() {
+        var _this2 = this;
+
+        this.subscribe("scroll-vertical", function () {
+          _this2.visibleRows = null;
+        });
       } //////////////////////////////////////
       ///////// Public Functions ///////////
       //////////////////////////////////////
@@ -2633,7 +2644,7 @@
     }, {
       key: "rerenderColumns",
       value: function rerenderColumns(update, blockRedraw) {
-        var _this2 = this;
+        var _this3 = this;
 
         var old = {
           cols: this.columns,
@@ -2660,26 +2671,26 @@
             config.rightPos = colPos + width;
             config.width = width;
 
-            if (_this2.isFitData) {
+            if (_this3.isFitData) {
               config.fitDataCheck = column.modules.vdomHoz ? column.modules.vdomHoz.fitDataCheck : true;
             }
 
-            if (colPos + width > _this2.vDomScrollPosLeft && colPos < _this2.vDomScrollPosRight) {
+            if (colPos + width > _this3.vDomScrollPosLeft && colPos < _this3.vDomScrollPosRight) {
               //column is visible
-              if (_this2.leftCol == -1) {
-                _this2.leftCol = _this2.columns.length;
-                _this2.vDomPadLeft = colPos;
+              if (_this3.leftCol == -1) {
+                _this3.leftCol = _this3.columns.length;
+                _this3.vDomPadLeft = colPos;
               }
 
-              _this2.rightCol = _this2.columns.length;
+              _this3.rightCol = _this3.columns.length;
             } else {
               // column is hidden
-              if (_this2.leftCol !== -1) {
-                _this2.vDomPadRight += width;
+              if (_this3.leftCol !== -1) {
+                _this3.vDomPadRight += width;
               }
             }
 
-            _this2.columns.push(column);
+            _this3.columns.push(column);
 
             column.modules.vdomHoz = config;
             colPos += width;
@@ -2743,7 +2754,7 @@
     }, {
       key: "dataChange",
       value: function dataChange() {
-        var _this3 = this;
+        var _this4 = this;
 
         var change = false,
             collsWidth = 0,
@@ -2762,7 +2773,7 @@
             if (change && this.table.rowManager.getDisplayRows().length) {
               this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
               var row = this.chain("rows-sample", [1], [], function () {
-                return _this3.table.rowManager.getDisplayRows();
+                return _this4.table.rowManager.getDisplayRows();
               })[0];
 
               if (row) {
@@ -2774,19 +2785,15 @@
                   var cell = row.cells[colEnd];
                   rowEl.appendChild(cell.getElement());
                   cell.column.reinitializeWidth();
-                  collsWidth += cell.column.getWidth();
-
-                  if (collsWidth > this.vDomScrollPosRight) {
-                    break;
-                  }
+                  collsWidth += cell.column.getWidth(); // if(collsWidth > this.vDomScrollPosRight){
+                  // 	break;
+                  // }
                 }
 
-                rowEl.parentNode.removeChild(rowEl);
-                this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
-
-                for (colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++) {
-                  this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
-                }
+                rowEl.parentNode.removeChild(rowEl); // this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
+                // for(colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++){
+                // 	this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
+                // }
 
                 this.rerenderColumns(false, true);
               }
@@ -2802,7 +2809,7 @@
     }, {
       key: "reinitChanged",
       value: function reinitChanged(old) {
-        var _this4 = this;
+        var _this5 = this;
 
         var match = true;
 
@@ -2811,7 +2818,7 @@
         }
 
         old.cols.forEach(function (col, i) {
-          if (col !== _this4.columns[i]) {
+          if (col !== _this5.columns[i]) {
             match = false;
           }
         });
@@ -2820,12 +2827,21 @@
     }, {
       key: "reinitializeRows",
       value: function reinitializeRows() {
-        var _this5 = this;
+        var _this6 = this;
 
-        var rows = this.table.rowManager.getVisibleRows();
+        var rows = this.getVisibleRows();
         rows.forEach(function (row) {
-          _this5.reinitializeRow(row, true);
+          _this6.reinitializeRow(row, true);
         });
+      }
+    }, {
+      key: "getVisibleRows",
+      value: function getVisibleRows() {
+        if (!this.visibleRows) {
+          this.visibleRows = this.table.rowManager.getVisibleRows();
+        }
+
+        return this.visibleRows;
       }
     }, {
       key: "scroll",
@@ -2833,7 +2849,7 @@
         this.vDomScrollPosLeft += diff;
         this.vDomScrollPosRight += diff;
 
-        if (diff > this.elementVertical.clientWidth * .8) {
+        if (Math.abs(diff) > this.windowBuffer / 2) {
           this.rerenderColumns();
         } else {
           if (diff > 0) {
@@ -2859,117 +2875,197 @@
     }, {
       key: "addColRight",
       value: function addColRight() {
-        var column = this.columns[this.rightCol + 1],
-            rows;
+        var _this7 = this;
 
-        if (column && column.modules.vdomHoz.leftPos <= this.vDomScrollPosRight) {
-          rows = this.table.rowManager.getVisibleRows();
-          rows.forEach(function (row) {
-            if (row.type !== "group") {
-              var cell = row.getCell(column);
-              row.getElement().appendChild(cell.getElement());
-              cell.cellRendered();
+        var changes = false;
+
+        var _loop = function _loop() {
+          var column = _this7.columns[_this7.rightCol + 1];
+
+          if (column) {
+            if (column.modules.vdomHoz.leftPos <= _this7.vDomScrollPosRight) {
+              changes = true;
+
+              _this7.getVisibleRows().forEach(function (row) {
+                if (row.type !== "group") {
+                  var cell = row.getCell(column);
+                  row.getElement().appendChild(cell.getElement());
+                  cell.cellRendered();
+                }
+              });
+
+              _this7.fitDataColActualWidthCheck(column);
+
+              _this7.rightCol++; // Don't move this below the >= check below
+
+              if (_this7.rightCol >= _this7.columns.length - 1) {
+                _this7.vDomPadRight = 0;
+              } else {
+                _this7.vDomPadRight -= column.getWidth();
+              }
+            } else {
+              return "break";
             }
-          });
-          this.fitDataColActualWidthCheck(column);
-          this.rightCol++; // Don't move this below the >= check below
-
-          if (this.rightCol >= this.columns.length - 1) {
-            this.vDomPadRight = 0;
           } else {
-            this.vDomPadRight -= column.getWidth();
+            return "break";
           }
+        };
 
+        while (true) {
+          var _ret = _loop();
+
+          if (_ret === "break") break;
+        }
+
+        if (changes) {
           this.tableElement.style.paddingRight = this.vDomPadRight + "px";
-          this.addColRight();
         }
       }
     }, {
       key: "addColLeft",
       value: function addColLeft() {
-        var column = this.columns[this.leftCol - 1],
-            rows;
+        var _this8 = this;
 
-        if (column && column.modules.vdomHoz.rightPos >= this.vDomScrollPosLeft) {
-          var rows = this.table.rowManager.getVisibleRows();
-          rows.forEach(function (row) {
-            if (row.type !== "group") {
-              var cell = row.getCell(column);
-              row.getElement().prepend(cell.getElement());
-              cell.cellRendered();
+        var changes = false;
+
+        var _loop2 = function _loop2() {
+          var column = _this8.columns[_this8.leftCol - 1];
+
+          if (column) {
+            if (column.modules.vdomHoz.rightPos >= _this8.vDomScrollPosLeft) {
+              changes = true;
+
+              _this8.getVisibleRows().forEach(function (row) {
+                if (row.type !== "group") {
+                  var cell = row.getCell(column);
+                  row.getElement().prepend(cell.getElement());
+                  cell.cellRendered();
+                }
+              });
+
+              _this8.leftCol--; // don't move this below the <= check below
+
+              if (_this8.leftCol <= 0) {
+                // replicating logic in addColRight
+                _this8.vDomPadLeft = 0;
+              } else {
+                _this8.vDomPadLeft -= column.getWidth();
+              }
+
+              var diff = _this8.fitDataColActualWidthCheck(column);
+
+              if (diff) {
+                _this8.scrollLeft = _this8.elementVertical.scrollLeft = _this8.elementVertical.scrollLeft + diff;
+                _this8.vDomPadRight -= diff;
+              }
+            } else {
+              return "break";
             }
-          });
-          this.fitDataColActualWidthCheck(column);
-          this.leftCol--; // don't move this below the <= check below
-
-          if (this.leftCol <= 0) {
-            // replicating logic in addColRight
-            this.vDomPadLeft = 0;
           } else {
-            this.vDomPadLeft -= column.getWidth();
+            return "break";
           }
+        };
 
+        while (true) {
+          var _ret2 = _loop2();
+
+          if (_ret2 === "break") break;
+        }
+
+        if (changes) {
           this.tableElement.style.paddingLeft = this.vDomPadLeft + "px";
-          this.addColLeft();
         }
       }
     }, {
       key: "removeColRight",
-      value: function removeColRight(column) {
-        var column = this.columns[this.rightCol],
-            rows;
+      value: function removeColRight() {
+        var _this9 = this;
 
-        if (column && column.modules.vdomHoz.leftPos > this.vDomScrollPosRight) {
-          rows = this.table.rowManager.getVisibleRows();
-          column.modules.vdomHoz.visible = false;
-          rows.forEach(function (row) {
-            if (row.type !== "group") {
-              var cell = row.getCell(column);
+        var changes = false;
 
-              try {
-                row.getElement().removeChild(cell.getElement());
-              } catch (ex) {
-                console.warn("Could not removeColRight", ex.message);
-              }
+        var _loop3 = function _loop3() {
+          var column = _this9.columns[_this9.rightCol];
+
+          if (column) {
+            if (column.modules.vdomHoz.leftPos > _this9.vDomScrollPosRight) {
+              changes = true;
+
+              _this9.getVisibleRows().forEach(function (row) {
+                if (row.type !== "group") {
+                  var cell = row.getCell(column);
+
+                  try {
+                    row.getElement().removeChild(cell.getElement());
+                  } catch (ex) {
+                    console.warn("Could not removeColRight", ex.message);
+                  }
+                }
+              });
+
+              _this9.vDomPadRight += column.getWidth();
+              _this9.rightCol--;
+            } else {
+              return "break";
             }
-          });
-          this.vDomPadRight += column.getWidth();
+          } else {
+            return "break";
+          }
+        };
+
+        while (true) {
+          var _ret3 = _loop3();
+
+          if (_ret3 === "break") break;
+        }
+
+        if (changes) {
           this.tableElement.style.paddingRight = this.vDomPadRight + "px";
-          this.rightCol--;
-          this.removeColRight();
         }
       }
     }, {
       key: "removeColLeft",
       value: function removeColLeft() {
-        var column = this.columns[this.leftCol],
-            rows;
+        var _this10 = this;
 
-        if (column && column.modules.vdomHoz.rightPos < this.vDomScrollPosLeft) {
-          rows = this.table.rowManager.getVisibleRows();
-          rows.forEach(function (row) {
-            var cell, el;
+        var changes = false;
 
-            if (row.type !== "group") {
-              cell = row.getCell(column);
+        var _loop4 = function _loop4() {
+          var column = _this10.columns[_this10.leftCol];
 
-              if (cell) {
-                el = cell.getElement();
+          if (column) {
+            if (column.modules.vdomHoz.rightPos < _this10.vDomScrollPosLeft) {
+              changes = true;
 
-                if (el.parentNode) {
+              _this10.getVisibleRows().forEach(function (row) {
+                if (row.type !== "group") {
+                  var cell = row.getCell(column);
+
                   try {
-                    row.getElement().removeChild(el);
+                    row.getElement().removeChild(cell.getElement());
                   } catch (ex) {
                     console.warn("Could not removeColLeft", ex.message);
                   }
                 }
-              }
+              });
+
+              _this10.vDomPadLeft += column.getWidth();
+              _this10.leftCol++;
+            } else {
+              return "break";
             }
-          });
-          this.vDomPadLeft += column.getWidth();
+          } else {
+            return "break";
+          }
+        };
+
+        while (true) {
+          var _ret4 = _loop4();
+
+          if (_ret4 === "break") break;
+        }
+
+        if (changes) {
           this.tableElement.style.paddingLeft = this.vDomPadLeft + "px";
-          this.leftCol++;
-          this.removeColLeft();
         }
       }
     }, {
@@ -2985,11 +3081,13 @@
           if (widthDiff) {
             column.modules.vdomHoz.rightPos += widthDiff;
             column.modules.vdomHoz.width = newWidth;
-            this.colPositionAdjust(this.rightCol + 2, this.columns.length, widthDiff);
+            this.colPositionAdjust(this.columns.indexOf(column) + 1, this.columns.length, widthDiff);
           }
 
           column.modules.vdomHoz.fitDataCheck = false;
         }
+
+        return widthDiff;
       }
     }, {
       key: "initializeRow",
@@ -20084,13 +20182,11 @@
         } //move menu to start on bottom edge if it is too close to the edge of the screen
 
 
-        if (y + element.offsetHeight >= this.menuContainer.offsetHeight) {
-          element.style.top = "";
-
+        if (y + element.offsetHeight > this.menuContainer.offsetHeight) {
           if (parentEl) {
-            element.style.bottom = this.menuContainer.offsetHeight - parentOffset.top - parentEl.offsetHeight - 1 + "px";
+            element.style.top = parseInt(element.style.top) - element.offsetHeight + parentEl.offsetHeight + 1 + "px";
           } else {
-            element.style.bottom = this.menuContainer.offsetHeight - y + "px";
+            element.style.top = parseInt(element.style.top) - element.offsetHeight + "px";
           }
         }
       }
