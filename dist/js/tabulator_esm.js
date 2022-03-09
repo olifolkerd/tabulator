@@ -19069,18 +19069,18 @@ class VirtualDomHorizontal extends Renderer{
 							
 							collsWidth += cell.column.getWidth();
 							
-							if(collsWidth > this.vDomScrollPosRight){
-								break;
-							}
+							// if(collsWidth > this.vDomScrollPosRight){
+							// 	break;
+							// }
 						}
 						
 						rowEl.parentNode.removeChild(rowEl);
 						
-						this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
+						// this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
 						
-						for(colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++){
-							this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
-						}
+						// for(colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++){
+						// 	this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
+						// }
 						
 						this.rerenderColumns(false, true);
 					}
@@ -19122,11 +19122,8 @@ class VirtualDomHorizontal extends Renderer{
 		
 		this.vDomScrollPosLeft += diff;
 		this.vDomScrollPosRight += diff;
-		
-		console.log("redraw", Math.abs(diff) > this.windowBuffer, Math.abs(diff), this.windowBuffer);
-		
+
 		if(Math.abs(diff) > (this.windowBuffer / 2)){
-			console.log("-----------------");
 			this.rerenderColumns();
 		}else {
 			rows = this.table.rowManager.getVisibleRows();
@@ -19162,8 +19159,6 @@ class VirtualDomHorizontal extends Renderer{
 			if(column){
 				if(column.modules.vdomHoz.leftPos <= this.vDomScrollPosRight){
 					changes = true;
-
-					console.log("right");
 					
 					rows.forEach((row) => {
 						if(row.type !== "group"){
@@ -19204,8 +19199,6 @@ class VirtualDomHorizontal extends Renderer{
 			if(column){
 				if(column.modules.vdomHoz.rightPos >= this.vDomScrollPosLeft){
 					changes = true;
-
-					console.log("left");
 					
 					rows.forEach((row) => {
 						if(row.type !== "group"){
@@ -19214,7 +19207,7 @@ class VirtualDomHorizontal extends Renderer{
 							cell.cellRendered();
 						}
 					});
-
+					
 					this.leftCol--; // don't move this below the <= check below
 					
 					if(this.leftCol <= 0){ // replicating logic in addColRight
@@ -19222,8 +19215,13 @@ class VirtualDomHorizontal extends Renderer{
 					}else {
 						this.vDomPadLeft -= column.getWidth();
 					}
-
-					this.fitDataColActualWidthCheck(column);
+					
+					let diff = this.fitDataColActualWidthCheck(column);
+					
+					if(diff){
+						this.scrollLeft = this.elementVertical.scrollLeft = this.elementVertical.scrollLeft + diff;
+						this.vDomPadRight -= diff;
+					}
 					
 				}else {
 					break;
@@ -19288,7 +19286,7 @@ class VirtualDomHorizontal extends Renderer{
 					rows.forEach((row) => {					
 						if(row.type !== "group"){
 							var cell = row.getCell(column);
-
+							
 							try {
 								row.getElement().removeChild(cell.getElement());
 							} catch (ex) {
@@ -19318,7 +19316,7 @@ class VirtualDomHorizontal extends Renderer{
 		
 		if(column.modules.vdomHoz.fitDataCheck){
 			column.reinitializeWidth();
-
+			
 			newWidth = column.getWidth();
 			widthDiff = newWidth - column.modules.vdomHoz.width;
 			
@@ -19330,7 +19328,7 @@ class VirtualDomHorizontal extends Renderer{
 			
 			column.modules.vdomHoz.fitDataCheck = false;
 		}
-
+		
 		return widthDiff;
 	}
 	
