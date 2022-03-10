@@ -1,4 +1,4 @@
-/* Tabulator v5.1.6 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.1.7 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -2604,11 +2604,13 @@
     }, {
       key: "vertScrollListen",
       value: function vertScrollListen() {
-        var _this2 = this;
-
-        this.subscribe("scroll-vertical", function () {
-          _this2.visibleRows = null;
-        });
+        this.subscribe("scroll-vertical", this.clearVisRowCache.bind(this));
+        this.subscribe("data-refreshed", this.clearVisRowCache.bind(this));
+      }
+    }, {
+      key: "clearVisRowCache",
+      value: function clearVisRowCache() {
+        this.visibleRows = null;
       } //////////////////////////////////////
       ///////// Public Functions ///////////
       //////////////////////////////////////
@@ -2644,7 +2646,7 @@
     }, {
       key: "rerenderColumns",
       value: function rerenderColumns(update, blockRedraw) {
-        var _this3 = this;
+        var _this2 = this;
 
         var old = {
           cols: this.columns,
@@ -2671,26 +2673,26 @@
             config.rightPos = colPos + width;
             config.width = width;
 
-            if (_this3.isFitData) {
+            if (_this2.isFitData) {
               config.fitDataCheck = column.modules.vdomHoz ? column.modules.vdomHoz.fitDataCheck : true;
             }
 
-            if (colPos + width > _this3.vDomScrollPosLeft && colPos < _this3.vDomScrollPosRight) {
+            if (colPos + width > _this2.vDomScrollPosLeft && colPos < _this2.vDomScrollPosRight) {
               //column is visible
-              if (_this3.leftCol == -1) {
-                _this3.leftCol = _this3.columns.length;
-                _this3.vDomPadLeft = colPos;
+              if (_this2.leftCol == -1) {
+                _this2.leftCol = _this2.columns.length;
+                _this2.vDomPadLeft = colPos;
               }
 
-              _this3.rightCol = _this3.columns.length;
+              _this2.rightCol = _this2.columns.length;
             } else {
               // column is hidden
-              if (_this3.leftCol !== -1) {
-                _this3.vDomPadRight += width;
+              if (_this2.leftCol !== -1) {
+                _this2.vDomPadRight += width;
               }
             }
 
-            _this3.columns.push(column);
+            _this2.columns.push(column);
 
             column.modules.vdomHoz = config;
             colPos += width;
@@ -2754,7 +2756,7 @@
     }, {
       key: "dataChange",
       value: function dataChange() {
-        var _this4 = this;
+        var _this3 = this;
 
         var change = false,
             collsWidth = 0,
@@ -2773,7 +2775,7 @@
             if (change && this.table.rowManager.getDisplayRows().length) {
               this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
               var row = this.chain("rows-sample", [1], [], function () {
-                return _this4.table.rowManager.getDisplayRows();
+                return _this3.table.rowManager.getDisplayRows();
               })[0];
 
               if (row) {
@@ -2809,7 +2811,7 @@
     }, {
       key: "reinitChanged",
       value: function reinitChanged(old) {
-        var _this5 = this;
+        var _this4 = this;
 
         var match = true;
 
@@ -2818,7 +2820,7 @@
         }
 
         old.cols.forEach(function (col, i) {
-          if (col !== _this5.columns[i]) {
+          if (col !== _this4.columns[i]) {
             match = false;
           }
         });
@@ -2827,11 +2829,11 @@
     }, {
       key: "reinitializeRows",
       value: function reinitializeRows() {
-        var _this6 = this;
+        var _this5 = this;
 
         var rows = this.getVisibleRows();
         rows.forEach(function (row) {
-          _this6.reinitializeRow(row, true);
+          _this5.reinitializeRow(row, true);
         });
       }
     }, {
@@ -2875,18 +2877,18 @@
     }, {
       key: "addColRight",
       value: function addColRight() {
-        var _this7 = this;
+        var _this6 = this;
 
         var changes = false;
 
         var _loop = function _loop() {
-          var column = _this7.columns[_this7.rightCol + 1];
+          var column = _this6.columns[_this6.rightCol + 1];
 
           if (column) {
-            if (column.modules.vdomHoz.leftPos <= _this7.vDomScrollPosRight) {
+            if (column.modules.vdomHoz.leftPos <= _this6.vDomScrollPosRight) {
               changes = true;
 
-              _this7.getVisibleRows().forEach(function (row) {
+              _this6.getVisibleRows().forEach(function (row) {
                 if (row.type !== "group") {
                   var cell = row.getCell(column);
                   row.getElement().appendChild(cell.getElement());
@@ -2894,14 +2896,14 @@
                 }
               });
 
-              _this7.fitDataColActualWidthCheck(column);
+              _this6.fitDataColActualWidthCheck(column);
 
-              _this7.rightCol++; // Don't move this below the >= check below
+              _this6.rightCol++; // Don't move this below the >= check below
 
-              if (_this7.rightCol >= _this7.columns.length - 1) {
-                _this7.vDomPadRight = 0;
+              if (_this6.rightCol >= _this6.columns.length - 1) {
+                _this6.vDomPadRight = 0;
               } else {
-                _this7.vDomPadRight -= column.getWidth();
+                _this6.vDomPadRight -= column.getWidth();
               }
             } else {
               return "break";
@@ -2924,18 +2926,18 @@
     }, {
       key: "addColLeft",
       value: function addColLeft() {
-        var _this8 = this;
+        var _this7 = this;
 
         var changes = false;
 
         var _loop2 = function _loop2() {
-          var column = _this8.columns[_this8.leftCol - 1];
+          var column = _this7.columns[_this7.leftCol - 1];
 
           if (column) {
-            if (column.modules.vdomHoz.rightPos >= _this8.vDomScrollPosLeft) {
+            if (column.modules.vdomHoz.rightPos >= _this7.vDomScrollPosLeft) {
               changes = true;
 
-              _this8.getVisibleRows().forEach(function (row) {
+              _this7.getVisibleRows().forEach(function (row) {
                 if (row.type !== "group") {
                   var cell = row.getCell(column);
                   row.getElement().prepend(cell.getElement());
@@ -2943,20 +2945,20 @@
                 }
               });
 
-              _this8.leftCol--; // don't move this below the <= check below
+              _this7.leftCol--; // don't move this below the <= check below
 
-              if (_this8.leftCol <= 0) {
+              if (_this7.leftCol <= 0) {
                 // replicating logic in addColRight
-                _this8.vDomPadLeft = 0;
+                _this7.vDomPadLeft = 0;
               } else {
-                _this8.vDomPadLeft -= column.getWidth();
+                _this7.vDomPadLeft -= column.getWidth();
               }
 
-              var diff = _this8.fitDataColActualWidthCheck(column);
+              var diff = _this7.fitDataColActualWidthCheck(column);
 
               if (diff) {
-                _this8.scrollLeft = _this8.elementVertical.scrollLeft = _this8.elementVertical.scrollLeft + diff;
-                _this8.vDomPadRight -= diff;
+                _this7.scrollLeft = _this7.elementVertical.scrollLeft = _this7.elementVertical.scrollLeft + diff;
+                _this7.vDomPadRight -= diff;
               }
             } else {
               return "break";
@@ -2979,18 +2981,18 @@
     }, {
       key: "removeColRight",
       value: function removeColRight() {
-        var _this9 = this;
+        var _this8 = this;
 
         var changes = false;
 
         var _loop3 = function _loop3() {
-          var column = _this9.columns[_this9.rightCol];
+          var column = _this8.columns[_this8.rightCol];
 
           if (column) {
-            if (column.modules.vdomHoz.leftPos > _this9.vDomScrollPosRight) {
+            if (column.modules.vdomHoz.leftPos > _this8.vDomScrollPosRight) {
               changes = true;
 
-              _this9.getVisibleRows().forEach(function (row) {
+              _this8.getVisibleRows().forEach(function (row) {
                 if (row.type !== "group") {
                   var cell = row.getCell(column);
 
@@ -3002,8 +3004,8 @@
                 }
               });
 
-              _this9.vDomPadRight += column.getWidth();
-              _this9.rightCol--;
+              _this8.vDomPadRight += column.getWidth();
+              _this8.rightCol--;
             } else {
               return "break";
             }
@@ -3025,18 +3027,18 @@
     }, {
       key: "removeColLeft",
       value: function removeColLeft() {
-        var _this10 = this;
+        var _this9 = this;
 
         var changes = false;
 
         var _loop4 = function _loop4() {
-          var column = _this10.columns[_this10.leftCol];
+          var column = _this9.columns[_this9.leftCol];
 
           if (column) {
-            if (column.modules.vdomHoz.rightPos < _this10.vDomScrollPosLeft) {
+            if (column.modules.vdomHoz.rightPos < _this9.vDomScrollPosLeft) {
               changes = true;
 
-              _this10.getVisibleRows().forEach(function (row) {
+              _this9.getVisibleRows().forEach(function (row) {
                 if (row.type !== "group") {
                   var cell = row.getCell(column);
 
@@ -3048,8 +3050,8 @@
                 }
               });
 
-              _this10.vDomPadLeft += column.getWidth();
-              _this10.leftCol++;
+              _this9.vDomPadLeft += column.getWidth();
+              _this9.leftCol++;
             } else {
               return "break";
             }
