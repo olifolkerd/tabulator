@@ -76,9 +76,12 @@ export default class VirtualDomHorizontal extends Renderer{
 	}
 
 	vertScrollListen(){
-		this.subscribe("scroll-vertical", () => {
-			this.visibleRows = null;
-		})
+		this.subscribe("scroll-vertical", this.clearVisRowCache.bind(this));
+		this.subscribe("data-refreshed", this.clearVisRowCache.bind(this));
+	}
+
+	clearVisRowCache(){
+		this.visibleRows = null;
 	}
 	
 	//////////////////////////////////////
