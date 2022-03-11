@@ -639,6 +639,7 @@ class Edit extends Module{
 				}
 
 				this.dispatchExternal("cellEditing", component);
+				this.dispatch("cell-editing", cell)
 
 				params = typeof cell.column.modules.edit.params === "function" ? cell.column.modules.edit.params(component) : cell.column.modules.edit.params;
 
