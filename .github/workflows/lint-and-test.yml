@@ -1,5 +1,4 @@
 name: Lint and build
-description: Checks that Tabulator passes lint rules and builds
 on:
   # Trigger the workflow on push or pull request,
   # but only for the main branch

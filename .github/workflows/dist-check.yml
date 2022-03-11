@@ -1,5 +1,4 @@
 name: Dist file check
-description: Makes sure no dist files have been changed
 on:
   pull_request:
 
