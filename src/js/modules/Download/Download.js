@@ -91,10 +91,10 @@ class Download extends Module{
 		return list;
 	}
 
-	triggerDownload(data, mime, type, filename, newTab){
+	triggerDownload(data, mime, type, originalFilename, newTab){
 		var element = document.createElement('a'),
 			blob = new Blob([data],{type:mime}),
-			filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
+			filename = originalFilename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
 		blob = this.table.options.downloadReady(data, blob);
 

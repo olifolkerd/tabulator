@@ -23,8 +23,6 @@ class ResponsiveLayout extends Module{
 
 	//generate responsive columns list
 	initialize(){
-		var self = this,
-			columns = [];
 
 		if(this.table.options.responsiveLayout){
 			this.subscribe("column-layout", this.initializeColumn.bind(this));
@@ -288,6 +286,7 @@ class ResponsiveLayout extends Module{
 						},
 					};
 
+					// eslint-disable-next-line no-inner-declarations
 					function onRendered(callback){
 						callback();
 					}

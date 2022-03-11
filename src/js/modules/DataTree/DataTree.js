@@ -1,6 +1,7 @@
 import Module from '../../core/Module.js';
 
 import Row from '../../core/row/Row.js';
+import RowComponent from '../../core/row/RowComponent.js'
 
 class DataTree extends Module{
 
@@ -242,9 +243,9 @@ class DataTree extends Module{
 		}
 	}
 
-	generateControlElement(row, el){
+	generateControlElement(row, originalEl){
 		var config = row.modules.dataTree,
-			el = el || row.getCells()[0].getElement(),
+			el = originalEl || row.getCells()[0].getElement(),
 			oldControl = config.controlEl;
 
 		if(config.children !== false){

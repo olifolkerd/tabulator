@@ -128,7 +128,7 @@ class Format extends Module{
 
 	formatExportValue(cell, type){
 		var formatter = cell.column.modules.format[type],
-			params;
+			params, component = cell.getComponent()
 
 		if(formatter){
 			params = typeof formatter.params === "function" ? formatter.params(component) : formatter.params;
@@ -162,7 +162,7 @@ class Format extends Module{
 				'=': '&#x3D;'
 			};
 
-			return String(value).replace(/[&<>"'`=\/]/g, function (s) {
+			return String(value).replace(/[&<>"'`=/]/g, function (s) {
 				return entityMap[s];
 			});
 		}else{
@@ -176,7 +176,6 @@ class Format extends Module{
 
 	//get formatter for cell
 	getFormatter(formatter){
-		var formatter;
 
 		switch(typeof formatter){
 		case "string":
@@ -189,7 +188,6 @@ class Format extends Module{
 			break;
 
 		case "function":
-			formatter = formatter;
 			break;
 
 		default:

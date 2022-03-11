@@ -304,8 +304,7 @@ export default class RowManager extends CoreFeature{
 	
 	//add multiple rows
 	addRows(data, pos, index){
-		var length = 0,
-			rows = [];
+		var rows = [];
 		
 		return new Promise((resolve, reject) => {
 			pos = this.findAddRowPos(pos);
@@ -313,8 +312,6 @@ export default class RowManager extends CoreFeature{
 			if(!Array.isArray(data)){
 				data = [data];
 			}
-			
-			length = data.length - 1;
 			
 			if((typeof index == "undefined" && pos) || (typeof index !== "undefined" && !pos)){
 				data.reverse();
@@ -616,8 +613,7 @@ export default class RowManager extends CoreFeature{
 		var table = this.table,
 			stage = "",
 			index = 0,
-			cascadeOrder = ["all", "dataPipeline", "display", "displayPipeline", "end"],
-			displayIndex;
+			cascadeOrder = ["all", "dataPipeline", "display", "displayPipeline", "end"];
 		
 		
 		if(typeof handler === "function"){
@@ -708,7 +704,7 @@ export default class RowManager extends CoreFeature{
 		switch(stage){
 		case "all":
 			//handle case where alldata needs refreshing
-			
+		// eslint-disable-next-line no-fallthrough
 		case "dataPipeline":
 			
 			for(let i = index; i < this.dataPipeline.length; i++){
@@ -720,18 +716,18 @@ export default class RowManager extends CoreFeature{
 			this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
 			
 			this.regenerateRowNumbers();
-			
+		// eslint-disable-next-line no-fallthrough
 		case "display":
 			index = 0;
 			this.resetDisplayRows();
-			
+		// eslint-disable-next-line no-fallthrough
 		case "displayPipeline":
 			for(let i = index; i < this.displayPipeline.length; i++){
 				let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
 				
 				this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
 			}
-			
+		// eslint-disable-next-line no-fallthrough
 		case "end":
 			//case to handle scenario when trying to skip past end stage
 		}
@@ -876,7 +872,7 @@ export default class RowManager extends CoreFeature{
 				this.fixedHeight = false;
 			}
 		}else{
-			console.error("Unable to find matching renderer:", table.options.renderVertical);
+			console.error("Unable to find matching renderer:", this.table.options.renderVertical);
 		}
 	}
 	
@@ -927,7 +923,6 @@ export default class RowManager extends CoreFeature{
 	}
 	
 	_clearTable(){
-		var element = this.tableElement;
 		
 		this._clearPlaceholder();
 		
@@ -981,8 +976,7 @@ export default class RowManager extends CoreFeature{
 	
 	//adjust the height of the table holder to fit in the Tabulator element
 	adjustTableSize(){
-		var initialHeight = this.element.clientHeight,
-			modExists;
+		var initialHeight = this.element.clientHeight;
 		
 		if(this.renderer.verticalFillMode === "fill"){
 			let otherHeight =  Math.floor(this.table.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
@@ -1044,8 +1038,7 @@ export default class RowManager extends CoreFeature{
 	
 	//redraw table
 	redraw (force){
-		var pos = 0,
-			left = this.scrollLeft;
+		var left = this.scrollLeft;
 		
 		this.adjustTableSize();
 		

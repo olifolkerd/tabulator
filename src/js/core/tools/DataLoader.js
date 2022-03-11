@@ -126,6 +126,7 @@ export default class DataLoader extends CoreFeature{
 		var output = {};
 
 		for(let key in params){
+			// eslint-disable-next-line no-prototype-builtins
 			output[map.hasOwnProperty(key) ? map[key] : key] = params[key];
 		}
 

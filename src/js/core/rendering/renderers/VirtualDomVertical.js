@@ -332,6 +332,7 @@ export default class VirtualDomVertical extends Renderer{
 			index = this.vDomTop -1,
 			i = 0;
 
+		// eslint-disable-next-line no-constant-condition
 		while(true){
 			if(this.vDomTop){
 				let row = rows[index],
@@ -407,9 +408,10 @@ export default class VirtualDomVertical extends Renderer{
 			paddingAdjust = 0,
 			i = 0;
 
+		// eslint-disable-next-line no-constant-condition
 		while(true){
 			let row = rows[this.vDomTop],
-				rowHeight, diff;
+				rowHeight;
 
 			if(row && i < this.vDomMaxRenderChain){
 				rowHeight = row.getHeight() || this.vDomRowHeight;
@@ -452,6 +454,7 @@ export default class VirtualDomVertical extends Renderer{
 			index = this.vDomBottom + 1,
 			i = 0;
 
+		// eslint-disable-next-line no-constant-condition
 		while(true){
 			let row = rows[index],
 				rowHeight, initialized;
@@ -516,9 +519,10 @@ export default class VirtualDomVertical extends Renderer{
 			paddingAdjust = 0,
 			i = 0;
 
+		// eslint-disable-next-line no-constant-condition
 		while(true){
 			let row = rows[this.vDomBottom],
-				rowHeight, diff;
+				rowHeight;
 
 			if(row && i < this.vDomMaxRenderChain){
 				rowHeight = row.getHeight() || this.vDomRowHeight;

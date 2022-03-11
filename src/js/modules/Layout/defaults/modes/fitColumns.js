@@ -140,14 +140,14 @@ export default function(columns){
 	flexColWidth = Math.floor(flexWidth / flexGrowUnits)
 
 	//generate column widths
-	var gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth, false);
+	gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth, false);
 
 	//increase width of last column to account for rounding errors
 	if(flexColumns.length && gapFill > 0){
 		flexColumns[flexColumns.length-1].width += + gapFill;
 	}
 
-	//caculate space for columns to be shrunk into
+	//calculate space for columns to be shrunk into
 	flexColumns.forEach(function(col){
 		flexWidth -= col.width;
 	});

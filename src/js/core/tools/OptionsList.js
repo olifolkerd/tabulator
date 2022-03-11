@@ -10,19 +10,20 @@ export default class OptionsList {
 	}
 
 	generate(defaultOptions, userOptions = {}){
-		var output = Object.assign({}, this.registeredDefaults);
+		var output = Object.assign({}, this.registeredDefaults), key;
 
 		Object.assign(output, defaultOptions);
 
 		if(userOptions.debugInvalidOptions !== false || this.table.options.debugInvalidOptions){
-			for (var key in userOptions){
+			for (key in userOptions){
+				// eslint-disable-next-line no-prototype-builtins
 				if(!output.hasOwnProperty(key)){
 					console.warn("Invalid " + this.msgType + " option:", key)
 				}
 			}
 		}
 
-		for (var key in output){
+		for (key in output){
 			if(key in userOptions){
 				output[key] = userOptions[key];
 			}else{

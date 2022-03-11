@@ -1,6 +1,4 @@
 import Module from '../../core/Module.js';
-
-import GroupComponent from './GroupComponent.js';
 import Group from './Group.js';
 
 class GroupRows extends Module{
@@ -514,7 +512,7 @@ class GroupRows extends Module{
 				samePath = true;
 
 			// figure out if new group path is the same as old group path
-			var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every((element, index) => {
+			samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every((element, index) => {
 				return element === newGroupPath[index];
 			});
 
@@ -538,8 +536,7 @@ class GroupRows extends Module{
 	}
 
 	updateGroupRows(force){
-		var output = [],
-			oldRowCount;
+		var output = [];
 
 		this.groupList.forEach((group) => {
 			output = output.concat(group.getHeadersAndRows());

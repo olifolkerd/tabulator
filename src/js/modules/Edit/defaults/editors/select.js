@@ -54,12 +54,12 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		var dataList = [];
 		var displayList = [];
 
-		function processComplexListItem(item){
+		function processComplexListItem(rawItem){
 			var item = {
-				label:item.label,
-				value:item.value,
-				itemParams:item.itemParams,
-				elementAttributes: item.elementAttributes,
+				label:rawItem.label,
+				value:rawItem.value,
+				itemParams:rawItem.itemParams,
+				elementAttributes: rawItem.elementAttributes,
 				element:false,
 			};
 

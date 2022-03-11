@@ -347,13 +347,12 @@ class Edit extends Module{
 
 	//initialize column editor
 	initializeColumn(column){
-		var self = this,
-			config = {
-				editor:false,
-				blocked:false,
-				check:column.definition.editable,
-				params:column.definition.editorParams || {}
-			};
+		var config = {
+			editor:false,
+			blocked:false,
+			check:column.definition.editable,
+			params:column.definition.editorParams || {}
+		};
 
 		//set column editor
 		switch(typeof column.definition.editor){
@@ -491,8 +490,7 @@ class Edit extends Module{
 		if(this.table.rowManager.getRenderMode() == "virtual"){
 			var topEdge = this.table.rowManager.element.scrollTop,
 				bottomEdge = this.table.rowManager.element.clientHeight + this.table.rowManager.element.scrollTop,
-				rowEl = cell.row.getElement(),
-				offset = rowEl.offsetTop;
+				rowEl = cell.row.getElement();
 
 			if(rowEl.offsetTop < topEdge){
 				this.table.rowManager.element.scrollTop -= (topEdge - rowEl.offsetTop);
@@ -504,8 +502,7 @@ class Edit extends Module{
 
 			var leftEdge = this.table.rowManager.element.scrollLeft,
 				rightEdge = this.table.rowManager.element.clientWidth + this.table.rowManager.element.scrollLeft,
-				cellEl = cell.getElement(),
-				offset = cellEl.offsetLeft;
+				cellEl = cell.getElement();
 
 			if(this.table.modExists("frozenColumns")){
 				leftEdge += parseInt(this.table.modules.frozenColumns.leftMargin);

@@ -57,7 +57,7 @@ export default class ColumnManager extends CoreFeature {
 			this.renderer = new renderClass(this.table, this.element, this.tableElement);
 			this.renderer.initialize();
 		}else{
-			console.error("Unable to find matching renderer:", table.options.renderHorizontal);
+			console.error("Unable to find matching renderer:", this.table.options.renderHorizontal);
 		}
 	}
 
@@ -350,7 +350,7 @@ export default class ColumnManager extends CoreFeature {
 		return this.columnsByIndex[index];
 	}
 
-	getFirstVisibleColumn(index){
+	getFirstVisibleColumn(){
 		var index = this.columnsByIndex.findIndex((col) => {
 			return col.visible;
 		});

@@ -293,8 +293,7 @@ class Column extends CoreFeature{
 
 	//build header element for header
 	_buildColumnHeader(){
-		var def = this.definition,
-			table = this.table;
+		var def = this.definition;
 
 		this.dispatch("column-layout", this);
 
@@ -343,8 +342,6 @@ class Column extends CoreFeature{
 	}
 
 	_buildColumnHeaderContent(){
-		var def = this.definition,
-			table = this.table;
 
 		var contentElement = document.createElement("div");
 		contentElement.classList.add("tabulator-col-content");
@@ -363,8 +360,7 @@ class Column extends CoreFeature{
 
 	//build title element of column
 	_buildColumnHeaderTitle(){
-		var def = this.definition,
-			title;
+		var def = this.definition;
 
 		var titleHolderElement = document.createElement("div");
 		titleHolderElement.classList.add("tabulator-col-title");
@@ -860,7 +856,6 @@ class Column extends CoreFeature{
 
 	delete(){
 		return new Promise((resolve, reject) => {
-			var index;
 
 			if(this.isGroup){
 				this.columns.forEach(function(column){

@@ -242,10 +242,9 @@ class ColumnCalcs extends Module{
 	}
 
 	recalc(rows){
-		var data, row;
+		var row;
 
 		if(this.topInitialized || this.botInitialized){
-			data = this.rowsToData(rows);
 
 			if(this.topInitialized){
 				if(this.topRow){

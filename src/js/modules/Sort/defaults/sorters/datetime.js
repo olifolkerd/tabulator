@@ -1,5 +1,6 @@
 //sort datetime
 export default function(a, b, aRow, bRow, column, dir, params){
+	// eslint-disable-next-line no-undef
 	var DT = window.DateTime || luxon.DateTime;
 	var format = params.format || "dd/MM/yyyy HH:mm:ss",
 		alignEmptyValues = params.alignEmptyValues,

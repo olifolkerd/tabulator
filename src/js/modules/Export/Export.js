@@ -246,15 +246,12 @@ class Export extends Module{
 			switch(row.type){
 			case "group":
 				return this.config.rowGroups !== false;
-				break;
 
 			case "calc":
 				return this.config.columnCalcs !== false;
-				break;
 
 			case "row":
 				return !(this.table.options.dataTree && this.config.dataTree === false && row.modules.dataTree.parent);
-				break;
 			}
 
 			return true;
@@ -295,7 +292,8 @@ class Export extends Module{
 			bodyEl = document.createElement("tbody"),
 			styles = this.lookupTableStyles(),
 			rowFormatter = this.table.options["rowFormatter" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))],
-			setup = {};
+			setup = {}, rowEl
+			;
 
 		setup.rowFormatter = rowFormatter !== null ? rowFormatter : this.table.options.rowFormatter;
 
@@ -334,7 +332,7 @@ class Export extends Module{
 				break;
 
 			case "row":
-				let rowEl = this.genereateRowElement(row, setup, styles);
+				rowEl = this.genereateRowElement(row, setup, styles);
 				this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
 				bodyEl.appendChild(rowEl);
 				break;
@@ -428,7 +426,7 @@ class Export extends Module{
 			group.value = setup.groupHeader[row.indent](group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
 		}else{
 			if(setup.groupHeader === false){
-				group.value = group.value;
+				// do nothing
 			}else{
 				group.value = row.component._group.generator(group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
 			}
@@ -519,7 +517,7 @@ class Export extends Module{
 						break;
 
 					default:
-						value = value;
+						// do nothing
 					}
 				}
 
@@ -538,7 +536,7 @@ class Export extends Module{
 				}
 
 				if(this.table.options.dataTree && this.config.dataTree !== false){
-					if((setup.treeElementField && setup.treeElementField == column.field) || (!setup.treeElementField && i == 0)){
+					if((setup.treeElementField && setup.treeElementField == column.field) || (!setup.treeElementField)){
 						if(row.component._row.modules.dataTree.controlEl){
 							cellEl.insertBefore(row.component._row.modules.dataTree.controlEl.cloneNode(true), cellEl.firstChild);
 						}

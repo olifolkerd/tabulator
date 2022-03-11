@@ -133,8 +133,8 @@ class Localize extends Module{
 	}
 
 	//get text for current locale
-	getText(path, value){
-		var path = value ? path + "|" + value : path,
+	getText(p, value){
+		var path = value ? p + "|" + value : p,
 			pathArray = path.split("|"),
 			text = this._getLangElement(pathArray, this.locale);
 

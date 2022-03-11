@@ -83,7 +83,6 @@ class FrozenColumns extends Module{
 	}
 	
 	frozenCheck(column){
-		var frozen = false;
 		
 		if(column.parent.isGroup && column.definition.frozen){
 			console.warn("Frozen Column Error - Parent column group must be frozen, not individual columns or sub column groups");
@@ -94,8 +93,6 @@ class FrozenColumns extends Module{
 		}else{
 			return column.definition.frozen;
 		}
-		
-		return frozen;
 	}
 	
 	//quick layout to smooth horizontal scrolling

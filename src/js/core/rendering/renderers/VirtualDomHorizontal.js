@@ -1,5 +1,4 @@
 import Renderer from '../Renderer.js';
-import Helpers from '../../tools/Helpers.js';
 
 export default class VirtualDomHorizontal extends Renderer{
 	constructor(table){
@@ -235,9 +234,7 @@ export default class VirtualDomHorizontal extends Renderer{
 	
 	dataChange(){
 		var change = false,
-			collsWidth = 0,
-			colEnd = 0,
-			group, row, rowEl;
+			row, rowEl;
 		
 		if(this.isFitData){
 			this.table.columnManager.columnsByIndex.forEach((column) => {
@@ -251,7 +248,7 @@ export default class VirtualDomHorizontal extends Renderer{
 					
 					this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
 					
-					var row = this.chain("rows-sample", [1], [], () => {
+					row = this.chain("rows-sample", [1], [], () => {
 						return this.table.rowManager.getDisplayRows();
 					})[0];
 					
@@ -268,21 +265,10 @@ export default class VirtualDomHorizontal extends Renderer{
 							rowEl.appendChild(cell.getElement());
 							
 							cell.column.reinitializeWidth();
-							
-							collsWidth += cell.column.getWidth();
-							
-							// if(collsWidth > this.vDomScrollPosRight){
-							// 	break;
-							// }
+
 						}
 						
 						rowEl.parentNode.removeChild(rowEl);
-						
-						// this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
-						
-						// for(colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++){
-						// 	this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
-						// }
 						
 						this.rerenderColumns(false, true);
 					}
@@ -358,6 +344,7 @@ export default class VirtualDomHorizontal extends Renderer{
 	addColRight(){
 		var changes = false;
 		
+		// eslint-disable-next-line no-constant-condition
 		while(true){
 			
 			let column = this.columns[this.rightCol + 1];
@@ -399,6 +386,7 @@ export default class VirtualDomHorizontal extends Renderer{
 	addColLeft(){
 		var changes = false;
 		
+		// eslint-disable-next-line no-constant-condition
 		while(true){
 			let column = this.columns[this.leftCol - 1];
 			
@@ -445,6 +433,7 @@ export default class VirtualDomHorizontal extends Renderer{
 	removeColRight(){
 		var changes = false;
 		
+		// eslint-disable-next-line no-constant-condition
 		while(true){
 			let column = this.columns[this.rightCol];
 			
@@ -482,6 +471,7 @@ export default class VirtualDomHorizontal extends Renderer{
 	removeColLeft(){
 		var changes = false;
 		
+		// eslint-disable-next-line no-constant-condition
 		while(true){
 			let column = this.columns[this.leftCol];
 			

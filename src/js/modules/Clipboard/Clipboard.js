@@ -47,7 +47,7 @@ class Clipboard extends Module{
 						}
 					}else{
 
-						var list = this.table.modules.export.generateExportList(this.table.options.clipboardCopyConfig, this.table.options.clipboardCopyStyled, this.rowRange, "clipboard");
+						list = this.table.modules.export.generateExportList(this.table.options.clipboardCopyConfig, this.table.options.clipboardCopyStyled, this.rowRange, "clipboard");
 
 						html = this.table.modules.export.genereateHTMLTable(list);
 						plain = html ? this.generatePlainContent(list) : "";
@@ -139,7 +139,7 @@ class Clipboard extends Module{
 	}
 
 	copy (range, internal) {
-		var range, sel, textRange;
+		var sel, textRange;
 		this.blocked = false;
 		this.customSelection = false;
 

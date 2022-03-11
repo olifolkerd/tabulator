@@ -94,8 +94,7 @@ class Menu extends Module{
 	}
 	
 	initializeColumn(column){
-		var options = ["headerContextMenu", "headerClickMenu"],
-			def = column.definition;
+		var def = column.definition;
 		
 		//handle column events
 		if(def.headerContextMenu && !this.columnSubscribers.headerContextMenu){
