@@ -1,21 +1,21 @@
 export default function(list, options, setFileContents){
 	var header = [],
-	body = [],
-	autoTableParams = {},
-	rowGroupStyles = options.rowGroupStyles || {
-		fontStyle: "bold",
-		fontSize: 12,
-		cellPadding: 6,
-		fillColor: 220,
-	},
-	rowCalcStyles = options.rowCalcStyles || {
-		fontStyle: "bold",
-		fontSize: 10,
-		cellPadding: 4,
-		fillColor: 232,
-	},
-	jsPDFParams = options.jsPDF || {},
-	title = options && options.title ? options.title : "";
+		body = [],
+		autoTableParams = {},
+		rowGroupStyles = options.rowGroupStyles || {
+			fontStyle: "bold",
+			fontSize: 12,
+			cellPadding: 6,
+			fillColor: 220,
+		},
+		rowCalcStyles = options.rowCalcStyles || {
+			fontStyle: "bold",
+			fontSize: 10,
+			cellPadding: 4,
+			fillColor: 232,
+		},
+		jsPDFParams = options.jsPDF || {},
+		title = options && options.title ? options.title : "";
 
 	if(!jsPDFParams.orientation){
 		jsPDFParams.orientation = options.orientation || "landscape";
@@ -30,19 +30,19 @@ export default function(list, options, setFileContents){
 		var item = {};
 
 		switch(row.type){
-			case "header":
+		case "header":
 			header.push(parseRow(row));
 			break;
 
-			case "group":
+		case "group":
 			body.push(parseRow(row, rowGroupStyles));
 			break;
 
-			case "calc":
+		case "calc":
 			body.push(parseRow(row, rowCalcStyles));
 			break;
 
-			case "row":
+		case "row":
 			body.push(parseRow(row));
 			break;
 		}
@@ -56,12 +56,12 @@ export default function(list, options, setFileContents){
 
 			if(col){
 				switch(typeof col.value){
-					case "object":
+				case "object":
 					col.value = JSON.stringify(col.value);
 					break;
 
-					case "undefined":
-					case "null":
+				case "undefined":
+				case "null":
 					col.value = "";
 					break;
 				}
@@ -111,4 +111,4 @@ export default function(list, options, setFileContents){
 	}
 
 	setFileContents(doc.output("arraybuffer"), "application/pdf");
-};
+}

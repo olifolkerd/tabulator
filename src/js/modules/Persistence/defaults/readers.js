@@ -7,9 +7,9 @@ export default {
 	},
 	cookie:function(id, type){
 		var cookie = document.cookie,
-		key = id + "-" + type,
-		cookiePos = cookie.indexOf(key + "="),
-		end, data;
+			key = id + "-" + type,
+			cookiePos = cookie.indexOf(key + "="),
+			end, data;
 
 		//if cookie exists, decode and load column data into tabulator
 		if(cookiePos > -1){

@@ -128,7 +128,7 @@ export default class Row extends CoreFeature{
 	calcHeight(force){
 
 		var maxHeight = 0,
-		minHeight = this.table.options.resizableRows ? this.element.clientHeight : 0;
+			minHeight = this.table.options.resizableRows ? this.element.clientHeight : 0;
 
 		this.cells.forEach(function(cell){
 			var height = cell.getHeight();
@@ -218,8 +218,8 @@ export default class Row extends CoreFeature{
 	//update the rows data
 	updateData(updatedData){
 		var visible = this.element && Helpers.elVisible(this.element),
-		tempData = {},
-		newRowData;
+			tempData = {},
+			newRowData;
 
 		return new Promise((resolve, reject) => {
 

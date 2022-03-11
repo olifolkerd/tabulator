@@ -35,8 +35,8 @@ export default class VirtualDomHorizontal extends Renderer{
 	
 	compatibilityCheck(){
 		var columns = this.options("columns"),
-		frozen = false,
-		ok = true;
+			frozen = false,
+			ok = true;
 		
 		if(this.options("layout") == "fitDataTable"){
 			console.warn("Horizontal Virtual DOM is not compatible with fitDataTable layout mode");
@@ -119,11 +119,11 @@ export default class VirtualDomHorizontal extends Renderer{
 	
 	rerenderColumns(update, blockRedraw){		
 		var old = {
-			cols:this.columns,
-			leftCol:this.leftCol,
-			rightCol:this.rightCol,
-		},
-		colPos = 0;
+				cols:this.columns,
+				leftCol:this.leftCol,
+				rightCol:this.rightCol,
+			},
+			colPos = 0;
 		
 		
 		if(update && !this.initialized){
@@ -235,9 +235,9 @@ export default class VirtualDomHorizontal extends Renderer{
 	
 	dataChange(){
 		var change = false,
-		collsWidth = 0,
-		colEnd = 0,
-		group, row, rowEl;
+			collsWidth = 0,
+			colEnd = 0,
+			group, row, rowEl;
 		
 		if(this.isFitData){
 			this.table.columnManager.columnsByIndex.forEach((column) => {

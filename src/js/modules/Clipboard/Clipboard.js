@@ -115,15 +115,15 @@ class Clipboard extends Module{
 						value = "";
 					}else{
 						switch(typeof col.value){
-							case "object":
+						case "object":
 							value = JSON.stringify(col.value);
 							break;
 
-							case "undefined":
+						case "undefined":
 							value = "";
 							break;
 
-							default:
+						default:
 							value = col.value;
 						}
 					}
@@ -176,7 +176,7 @@ class Clipboard extends Module{
 	setPasteAction(action){
 
 		switch(typeof action){
-			case "string":
+		case "string":
 			this.pasteAction = Clipboard.pasteActions[action];
 
 			if(!this.pasteAction){
@@ -184,7 +184,7 @@ class Clipboard extends Module{
 			}
 			break;
 
-			case "function":
+		case "function":
 			this.pasteAction = action;
 			break;
 		}
@@ -192,7 +192,7 @@ class Clipboard extends Module{
 
 	setPasteParser(parser){
 		switch(typeof parser){
-			case "string":
+		case "string":
 			this.pasteParser = Clipboard.pasteParsers[parser];
 
 			if(!this.pasteParser){
@@ -200,7 +200,7 @@ class Clipboard extends Module{
 			}
 			break;
 
-			case "function":
+		case "function":
 			this.pasteParser = parser;
 			break;
 		}

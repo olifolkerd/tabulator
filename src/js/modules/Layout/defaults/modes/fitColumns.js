@@ -31,13 +31,13 @@ export default function(columns){
 	function scaleColumns(columns, freeSpace, colWidth, shrinkCols){
 
 		var oversizeCols = [],
-		oversizeSpace = 0,
-		remainingSpace = 0,
-		nextColWidth = 0,
-		remainingFlexGrowUnits = flexGrowUnits,
-		gap = 0,
-		changeUnits = 0,
-		undersizeCols = [];
+			oversizeSpace = 0,
+			remainingSpace = 0,
+			nextColWidth = 0,
+			remainingFlexGrowUnits = flexGrowUnits,
+			gap = 0,
+			changeUnits = 0,
+			undersizeCols = [];
 
 		function calcGrow(col){
 			return (colWidth * (col.column.definition.widthGrow || 1));
@@ -171,4 +171,4 @@ export default function(columns){
 	fixedShrinkColumns.forEach(function(col){
 		col.column.setWidth(col.width);
 	});
-};
+}

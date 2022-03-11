@@ -24,7 +24,7 @@ class ResponsiveLayout extends Module{
 	//generate responsive columns list
 	initialize(){
 		var self = this,
-		columns = [];
+			columns = [];
 
 		if(this.table.options.responsiveLayout){
 			this.subscribe("column-layout", this.initializeColumn.bind(this));
@@ -186,7 +186,7 @@ class ResponsiveLayout extends Module{
 	//redraw columns to fit space
 	update(){
 		var self = this,
-		working = true;
+			working = true;
 
 		while(working){
 
@@ -234,7 +234,7 @@ class ResponsiveLayout extends Module{
 
 	generateCollapsedContent(){
 		var self = this,
-		rows = this.table.rowManager.getDisplayRows();
+			rows = this.table.rowManager.getDisplayRows();
 
 		rows.forEach(function(row){
 			self.generateCollapsedRowContent(row);
@@ -258,9 +258,9 @@ class ResponsiveLayout extends Module{
 
 	generateCollapsedRowData(row){
 		var self = this,
-		data = row.getData(),
-		output = [],
-		mockCellComponent;
+			data = row.getData(),
+			output = [],
+			mockCellComponent;
 
 		this.hiddenColumns.forEach(function(column){
 			var value = column.getFieldValue(data);

@@ -195,7 +195,7 @@ class Interaction extends Module{
 
 	unsubscribeTouchEvents(key){
 		var notouch = true,
-		type = this.eventMap[key];
+			type = this.eventMap[key];
 
 		if(this.subscribers[key] && !this.subscribedExternal(key)){
 			delete this.subscribers[key];
@@ -246,7 +246,7 @@ class Interaction extends Module{
 		}
 
 		switch(action){
-			case "start":
+		case "start":
 			watchers.tap = true;
 
 			clearTimeout(watchers.tapHold);
@@ -263,7 +263,7 @@ class Interaction extends Module{
 			}, 1000);
 			break;
 
-			case "end":
+		case "end":
 			if(watchers.tap){
 
 				watchers.tap = null;
@@ -290,7 +290,7 @@ class Interaction extends Module{
 
 	dispatchEvent(action, e, component){
 		var componentObj = component.getComponent(),
-		callback;
+			callback;
 
 		if(this.columnSubscribers[action]){
 

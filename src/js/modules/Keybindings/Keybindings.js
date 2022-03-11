@@ -19,7 +19,7 @@ class Keybindings extends Module{
 
 	initialize(){
 		var bindings = this.table.options.keybindings,
-		mergedBindings = {};
+			mergedBindings = {};
 
 		this.watchKeys = {};
 		this.pressedKeys = [];
@@ -70,19 +70,19 @@ class Keybindings extends Module{
 
 		symbols.forEach((symbol) => {
 			switch(symbol){
-				case "ctrl":
+			case "ctrl":
 				binding.ctrl = true;
 				break;
 
-				case "shift":
+			case "shift":
 				binding.shift = true;
 				break;
 
-				case "meta":
+			case "meta":
 				binding.meta = true;
 				break;
 
-				default:
+			default:
 				symbol = isNaN(symbol) ? symbol.toUpperCase().charCodeAt(0) : parseInt(symbol);
 				binding.keys.push(symbol);
 

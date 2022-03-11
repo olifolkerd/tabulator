@@ -33,7 +33,7 @@ export default {
 		body:function(url, config, params){
 
 			var output = generateParamsList(params),
-			form = new FormData();
+				form = new FormData();
 
 			output.forEach(function(item){
 				form.append(item.key, item.value);

@@ -22,12 +22,12 @@ class HtmlTableImport extends Module{
 
 	parseTable(){
 		var element = this.table.originalElement,
-		options = this.table.options,
-		columns = options.columns,
-		headers = element.getElementsByTagName("th"),
-		rows = element.getElementsByTagName("tbody")[0],
-		data = [],
-		newTable;
+			options = this.table.options,
+			columns = options.columns,
+			headers = element.getElementsByTagName("th"),
+			rows = element.getElementsByTagName("tbody")[0],
+			data = [],
+			newTable;
 
 		this.hasIndex = false;
 
@@ -47,8 +47,8 @@ class HtmlTableImport extends Module{
 		//iterate through table rows and build data set
 		for(var index = 0; index < rows.length; index++){
 			var row = rows[index],
-			cells = row.getElementsByTagName("td"),
-			item = {};
+				cells = row.getElementsByTagName("td"),
+				item = {};
 
 			//create index if the dont exist in table
 			if(!this.hasIndex){
@@ -121,9 +121,9 @@ class HtmlTableImport extends Module{
 	_extractHeaders(headers, rows){
 		for(var index = 0; index < headers.length; index++){
 			var header = headers[index],
-			exists = false,
-			col = this._findCol(header.textContent),
-			width, attributes;
+				exists = false,
+				col = this._findCol(header.textContent),
+				width, attributes;
 
 			if(col){
 				exists = true;
@@ -161,7 +161,7 @@ class HtmlTableImport extends Module{
 	_generateBlankHeaders(headers, rows){
 		for(var index = 0; index < headers.length; index++){
 			var header = headers[index],
-			col = {title:"", field:"col" + index};
+				col = {title:"", field:"col" + index};
 
 			this.fieldIndex[index] = col.field;
 

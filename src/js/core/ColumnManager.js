@@ -97,7 +97,7 @@ export default class ColumnManager extends CoreFeature {
 	//scroll horizontally to match table body
 	scrollHorizontal(left){
 		var hozAdjust = 0,
-		scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
+			scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
 
 		// this.tempScrollBlock();
 		this.element.scrollLeft = left;
@@ -118,8 +118,8 @@ export default class ColumnManager extends CoreFeature {
 	///////////// Column Setup Functions /////////////
 	generateColumnsFromRowData(data){
 		var cols = [],
-		definitions = this.table.options.autoColumnsDefinitions,
-		row, sorter;
+			definitions = this.table.options.autoColumnsDefinitions,
+			row, sorter;
 
 		if(data && data.length){
 
@@ -134,15 +134,15 @@ export default class ColumnManager extends CoreFeature {
 				let value = row[key];
 
 				switch(typeof value){
-					case "undefined":
+				case "undefined":
 					sorter = "string";
 					break;
 
-					case "boolean":
+				case "boolean":
 					sorter = "boolean";
 					break;
 
-					case "object":
+				case "object":
 					if(Array.isArray(value)){
 						sorter = "array";
 					}else{
@@ -150,7 +150,7 @@ export default class ColumnManager extends CoreFeature {
 					}
 					break;
 
-					default:
+				default:
 					if(!isNaN(value) && value !== ""){
 						sorter = "number";
 					}else{
@@ -171,11 +171,11 @@ export default class ColumnManager extends CoreFeature {
 			if(definitions){
 
 				switch(typeof definitions){
-					case "function":
+				case "function":
 					this.table.options.columns = definitions.call(this.table, cols);
 					break;
 
-					case "object":
+				case "object":
 					if(Array.isArray(definitions)){
 						cols.forEach((col) => {
 							var match = definitions.find((def) => {
@@ -230,8 +230,8 @@ export default class ColumnManager extends CoreFeature {
 
 	_addColumn(definition, before, nextToColumn){
 		var column = new Column(definition, this),
-		colEl = column.getElement(),
-		index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
+			colEl = column.getElement(),
+			index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
 
 		if(nextToColumn && index > -1){
 			var topColumn = nextToColumn.getTopColumn()
@@ -406,7 +406,7 @@ export default class ColumnManager extends CoreFeature {
 
 	getComponents(structured){
 		var output = [],
-		columns = structured ? this.columns : this.columnsByIndex;
+			columns = structured ? this.columns : this.columnsByIndex;
 
 		columns.forEach((column) => {
 			output.push(column.getComponent());
@@ -461,7 +461,7 @@ export default class ColumnManager extends CoreFeature {
 
 	_moveColumnInArray(columns, from, to, after, updateRows){
 		var	fromIndex = columns.indexOf(from),
-		toIndex, rows = [];
+			toIndex, rows = [];
 
 		if (fromIndex > -1) {
 
@@ -500,9 +500,9 @@ export default class ColumnManager extends CoreFeature {
 
 	scrollToColumn(column, position, ifVisible){
 		var left = 0,
-		offset = 0,
-		adjust = 0,
-		colEl = column.getElement();
+			offset = 0,
+			adjust = 0,
+			colEl = column.getElement();
 
 		return new Promise((resolve, reject) => {
 
@@ -518,12 +518,12 @@ export default class ColumnManager extends CoreFeature {
 
 				//align to correct position
 				switch(position){
-					case "middle":
-					case "center":
+				case "middle":
+				case "center":
 					adjust = -this.element.clientWidth / 2;
 					break;
 
-					case "right":
+				case "right":
 					adjust = colEl.clientWidth - this.headersElement.clientWidth;
 					break;
 				}
@@ -569,7 +569,7 @@ export default class ColumnManager extends CoreFeature {
 	//////////////// Column Management /////////////////
 	getFlexBaseWidth(){
 		var totalWidth = this.table.element.clientWidth, //table element width
-		fixedWidth = 0;
+			fixedWidth = 0;
 
 		//adjust for vertical scrollbar if present
 		if(this.table.rowManager.element.scrollHeight > this.table.rowManager.element.clientHeight){
@@ -628,7 +628,7 @@ export default class ColumnManager extends CoreFeature {
 	//remove column from system
 	deregisterColumn(column){
 		var field = column.getField(),
-		index;
+			index;
 
 		//remove from field list
 		if(field){

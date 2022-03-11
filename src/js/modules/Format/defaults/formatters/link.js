@@ -1,10 +1,10 @@
 export default function(cell, formatterParams, onRendered){
 	var value = cell.getValue(),
-	urlPrefix = formatterParams.urlPrefix || "",
-	download = formatterParams.download,
-	label = value,
-	el = document.createElement("a"),
-	data;
+		urlPrefix = formatterParams.urlPrefix || "",
+		download = formatterParams.download,
+		label = value,
+		el = document.createElement("a"),
+		data;
 
 	if(formatterParams.labelField){
 		data = cell.getData();
@@ -13,11 +13,11 @@ export default function(cell, formatterParams, onRendered){
 
 	if(formatterParams.label){
 		switch(typeof formatterParams.label){
-			case "string":
+		case "string":
 			label = formatterParams.label;
 			break;
 
-			case "function":
+		case "function":
 			label = formatterParams.label(cell);
 			break;
 		}
@@ -31,11 +31,11 @@ export default function(cell, formatterParams, onRendered){
 
 		if(formatterParams.url){
 			switch(typeof formatterParams.url){
-				case "string":
+			case "string":
 				value = formatterParams.url;
 				break;
 
-				case "function":
+			case "function":
 				value = formatterParams.url(cell);
 				break;
 			}
@@ -64,4 +64,4 @@ export default function(cell, formatterParams, onRendered){
 	}else{
 		return "&nbsp;";
 	}
-};
+}

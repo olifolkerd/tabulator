@@ -57,7 +57,7 @@ export default class ModuleBinder {
 		//ensure that module are bound to instantiated function
 		tabulator.prototype.bindModules = function(){
 			var orderedMods = [],
-			unOrderedMods = [];
+				unOrderedMods = [];
 
 			this.modules = {};
 

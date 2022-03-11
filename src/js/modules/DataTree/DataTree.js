@@ -44,7 +44,7 @@ class DataTree extends Module{
 	initialize(){
 		if(this.table.options.dataTree){
 			var dummyEl = null,
-			options = this.table.options;
+				options = this.table.options;
 
 			this.field = options.dataTreeChildField;
 			this.indent = options.dataTreeChildIndent;
@@ -97,17 +97,17 @@ class DataTree extends Module{
 
 
 			switch(typeof options.dataTreeStartExpanded){
-				case "boolean":
+			case "boolean":
 				this.startOpen = function(row, index){
 					return options.dataTreeStartExpanded;
 				};
 				break;
 
-				case "function":
+			case "function":
 				this.startOpen = options.dataTreeStartExpanded;
 				break;
 
-				default:
+			default:
 				this.startOpen = function(row, index){
 					return options.dataTreeStartExpanded[index];
 				};
@@ -200,8 +200,8 @@ class DataTree extends Module{
 
 	layoutRow(row){
 		var cell = this.elementField ? row.getCell(this.elementField) : row.getCells()[0],
-		el = cell.getElement(),
-		config = row.modules.dataTree;
+			el = cell.getElement(),
+			config = row.modules.dataTree;
 
 		if(config.branchEl){
 			if(config.branchEl.parentNode){
@@ -244,8 +244,8 @@ class DataTree extends Module{
 
 	generateControlElement(row, el){
 		var config = row.modules.dataTree,
-		el = el || row.getCells()[0].getElement(),
-		oldControl = config.controlEl;
+			el = el || row.getCells()[0].getElement(),
+			oldControl = config.controlEl;
 
 		if(config.children !== false){
 
@@ -313,8 +313,8 @@ class DataTree extends Module{
 
 	getChildren(row, allChildren){
 		var config = row.modules.dataTree,
-		children = [],
-		output = [];
+			children = [],
+			output = [];
 
 		if(config.children !== false && (config.open || allChildren)){
 			if(!Array.isArray(config.children)){
@@ -421,7 +421,7 @@ class DataTree extends Module{
 
 	getFilteredTreeChildren(row){
 		var config = row.modules.dataTree,
-		output = [], children;
+			output = [], children;
 
 		if(config.children){
 
@@ -447,7 +447,7 @@ class DataTree extends Module{
 
 	rowDelete(row){
 		var parent = row.modules.dataTree.parent,
-		childIndex;
+			childIndex;
 
 		if(parent){
 			childIndex = this.findChildIndex(row, parent);
@@ -552,7 +552,7 @@ class DataTree extends Module{
 
 	getTreeChildren(row, component, recurse){
 		var config = row.modules.dataTree,
-		output = [];
+			output = [];
 
 		if(config.children){
 

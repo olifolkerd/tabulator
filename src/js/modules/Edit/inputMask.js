@@ -1,9 +1,9 @@
 export default function maskInput(el, options){
 	var mask = options.mask,
-	maskLetter = typeof options.maskLetterChar !== "undefined" ? options.maskLetterChar : "A",
-	maskNumber = typeof options.maskNumberChar !== "undefined" ? options.maskNumberChar : "9",
-	maskWildcard = typeof options.maskWildcardChar !== "undefined" ? options.maskWildcardChar : "*",
-	success = false;
+		maskLetter = typeof options.maskLetterChar !== "undefined" ? options.maskLetterChar : "A",
+		maskNumber = typeof options.maskNumberChar !== "undefined" ? options.maskNumberChar : "9",
+		maskWildcard = typeof options.maskWildcardChar !== "undefined" ? options.maskWildcardChar : "*",
+		success = false;
 
 	function fillSymbols(index){
 		var symbol = mask[index];
@@ -15,7 +15,7 @@ export default function maskInput(el, options){
 
 	el.addEventListener("keydown", (e) => {
 		var index = el.value.length,
-		char = e.key;
+			char = e.key;
 
 		if(e.keyCode > 46){
 			if(index >= mask.length){
@@ -25,7 +25,7 @@ export default function maskInput(el, options){
 				return false;
 			}else{
 				switch(mask[index]){
-					case maskLetter:
+				case maskLetter:
 					if(char.toUpperCase() == char.toLowerCase()){
 						e.preventDefault();
 						e.stopPropagation();
@@ -34,7 +34,7 @@ export default function maskInput(el, options){
 					}
 					break;
 
-					case maskNumber:
+				case maskNumber:
 					if(isNaN(char)){
 						e.preventDefault();
 						e.stopPropagation();
@@ -43,10 +43,10 @@ export default function maskInput(el, options){
 					}
 					break;
 
-					case maskWildcard:
+				case maskWildcard:
 					break;
 
-					default:
+				default:
 					if(char !== mask[index]){
 						e.preventDefault();
 						e.stopPropagation();

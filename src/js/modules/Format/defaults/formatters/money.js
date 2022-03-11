@@ -1,7 +1,7 @@
 export default function(cell, formatterParams, onRendered){
 	var floatVal = parseFloat(cell.getValue()),
-	sign = "",
-	number, integer, decimal, rgx;
+		sign = "",
+		number, integer, decimal, rgx;
 
 	var decimalSym = formatterParams.decimal || ".";
 	var thousandSym = formatterParams.thousand || ",";
@@ -32,4 +32,4 @@ export default function(cell, formatterParams, onRendered){
 	}
 
 	return after ? sign + integer + decimal + symbol : sign + symbol + integer + decimal;
-};
+}

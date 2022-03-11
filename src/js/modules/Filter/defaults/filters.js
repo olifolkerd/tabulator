@@ -56,8 +56,8 @@ export default {
 	//contains the keywords
 	"keywords":function(filterVal, rowVal, rowData, filterParams){
 		var keywords = filterVal.toLowerCase().split(typeof filterParams.separator === "undefined" ? " " : filterParams.separator),
-		value = String(rowVal === null || typeof rowVal === "undefined" ? "" : rowVal).toLowerCase(),
-		matches = [];
+			value = String(rowVal === null || typeof rowVal === "undefined" ? "" : rowVal).toLowerCase(),
+			matches = [];
 
 		keywords.forEach((keyword) =>{
 			if(value.includes(keyword)){

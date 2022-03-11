@@ -132,8 +132,8 @@ export default class Renderer extends CoreFeature{
 
 	scrollToRowPosition(row, position, ifVisible){
 		var rowIndex = this.rows().indexOf(row),
-		rowEl = row.getElement(),
-		offset = 0;
+			rowEl = row.getElement(),
+			offset = 0;
 
 		return new Promise((resolve, reject) => {
 			if(rowIndex > -1){
@@ -167,8 +167,8 @@ export default class Renderer extends CoreFeature{
 
 				//align to correct position
 				switch(position){
-					case "middle":
-					case "center":
+				case "middle":
+				case "center":
 
 					if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
 						this.elementVertical.scrollTop = this.elementVertical.scrollTop + (rowEl.offsetTop - this.elementVertical.scrollTop) - ((this.elementVertical.scrollHeight - rowEl.offsetTop) / 2);
@@ -178,7 +178,7 @@ export default class Renderer extends CoreFeature{
 
 					break;
 
-					case "bottom":
+				case "bottom":
 
 					if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
 						this.elementVertical.scrollTop = this.elementVertical.scrollTop - (this.elementVertical.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;

@@ -5,18 +5,18 @@ export default function(list, options, setFileContents){
 		var item = {};
 
 		switch(row.type){
-			case "header":
+		case "header":
 			break;
 
-			case "group":
+		case "group":
 			console.warn("Download Warning - JSON downloader cannot process row groups");
 			break;
 
-			case "calc":
+		case "calc":
 			console.warn("Download Warning - JSON downloader cannot process column calculations");
 			break;
 
-			case "row":
+		case "row":
 			row.columns.forEach((col) => {
 				if(col){
 					item[col.component.getTitleDownload() || col.component.getField()] = col.value;
@@ -31,4 +31,4 @@ export default function(list, options, setFileContents){
 	fileContents = JSON.stringify(fileContents, null, '\t');
 
 	setFileContents(fileContents, "application/json");
-};
+}

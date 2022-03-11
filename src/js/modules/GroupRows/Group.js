@@ -113,7 +113,7 @@ class Group{
 		
 		if(this.hasSubGroups){
 			var groupID = this.groupManager.groupIDLookups[level].func(row.getData()),
-			groupKey = level + "_" + groupID;
+				groupKey = level + "_" + groupID;
 			
 			if(this.groupManager.allowedValues && this.groupManager.allowedValues[level]){
 				if(this.groups[groupKey]){
@@ -227,7 +227,7 @@ class Group{
 	
 	removeGroup(group){
 		var groupKey = group.level + "_" + group.key,
-		index;
+			index;
 		
 		if(this.groups[groupKey]){
 			delete this.groups[groupKey];

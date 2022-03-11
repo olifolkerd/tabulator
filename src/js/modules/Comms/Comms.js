@@ -13,7 +13,7 @@ class Comms extends Module{
 
 	getConnections(selectors){
 		var connections = [],
-		connection;
+			connection;
 
 		connection = TableRegistry.lookupTable(selectors);
 

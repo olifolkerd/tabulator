@@ -42,8 +42,8 @@ class MoveColumns extends Module{
 	
 	initializeColumn(column){
 		var self = this,
-		config = {},
-		colEl;
+			config = {},
+			colEl;
 		
 		if(!column.modules.frozen){
 			colEl = column.getElement();
@@ -89,9 +89,9 @@ class MoveColumns extends Module{
 	
 	bindTouchEvents(column){
 		var colEl = column.getElement(),
-		startXMove = false, //shifting center position of the cell
-		dir = false,
-		currentCol, nextCol, prevCol, nextColWidth, prevColWidth, nextColWidthLast, prevColWidthLast;
+			startXMove = false, //shifting center position of the cell
+			dir = false,
+			currentCol, nextCol, prevCol, nextColWidth, prevColWidth, nextColWidthLast, prevColWidthLast;
 		
 		colEl.addEventListener("touchstart", (e) => {
 			this.checkTimeout = setTimeout(() => {
@@ -167,8 +167,8 @@ class MoveColumns extends Module{
 	
 	startMove(e, column){
 		var element = column.getElement(),
-		headerElement = this.table.columnManager.getElement(),
-		headersElement = this.table.columnManager.getHeadersElement();
+			headerElement = this.table.columnManager.getElement(),
+			headersElement = this.table.columnManager.getHeadersElement();
 		
 		this.moving = column;
 		this.startX = (this.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(element).left;
@@ -269,9 +269,9 @@ class MoveColumns extends Module{
 	
 	moveHover(e){
 		var columnHolder = this.table.columnManager.getElement(),
-		scrollLeft = columnHolder.scrollLeft,
-		xPos = ((this.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(columnHolder).left) + scrollLeft,
-		scrollPos;
+			scrollLeft = columnHolder.scrollLeft,
+			xPos = ((this.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(columnHolder).left) + scrollLeft,
+			scrollPos;
 		
 		this.hoverElement.style.left = (xPos - this.startX) + "px";
 		

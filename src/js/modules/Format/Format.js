@@ -46,11 +46,11 @@ class Format extends Module{
 
 	lookupFormatter(column, type){
 		var config = {params:column.definition["formatter" + type + "Params"] || {}},
-		formatter = column.definition["formatter" + type];
+			formatter = column.definition["formatter" + type];
 
 		//set column formatter
 		switch(typeof formatter){
-			case "string":
+		case "string":
 			if(Format.formatters[formatter]){
 				config.formatter = Format.formatters[formatter];
 			}else{
@@ -59,11 +59,11 @@ class Format extends Module{
 			}
 			break;
 
-			case "function":
+		case "function":
 			config.formatter = formatter;
 			break;
 
-			default:
+		default:
 			config.formatter = Format.formatters.plaintext;
 			break;
 		}
@@ -112,7 +112,7 @@ class Format extends Module{
 	//return a formatted value for a cell
 	formatValue(cell){
 		var component = cell.getComponent(),
-		params = typeof cell.column.modules.format.params === "function" ? cell.column.modules.format.params(component) : cell.column.modules.format.params;
+			params = typeof cell.column.modules.format.params === "function" ? cell.column.modules.format.params(component) : cell.column.modules.format.params;
 
 		function onRendered(callback){
 			if(!cell.modules.format){
@@ -128,7 +128,7 @@ class Format extends Module{
 
 	formatExportValue(cell, type){
 		var formatter = cell.column.modules.format[type],
-		params;
+			params;
 
 		if(formatter){
 			params = typeof formatter.params === "function" ? formatter.params(component) : formatter.params;
@@ -179,7 +179,7 @@ class Format extends Module{
 		var formatter;
 
 		switch(typeof formatter){
-			case "string":
+		case "string":
 			if(Format.formatters[formatter]){
 				formatter = Format.formatters[formatter]
 			}else{
@@ -188,11 +188,11 @@ class Format extends Module{
 			}
 			break;
 
-			case "function":
+		case "function":
 			formatter = formatter;
 			break;
 
-			default:
+		default:
 			formatter = Format.formatters.plaintext;
 			break;
 		}

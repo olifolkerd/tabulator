@@ -5,8 +5,8 @@ export default {
 	},
 	scrollPageUp:function(e){
 		var rowManager = this.table.rowManager,
-		newPos = rowManager.scrollTop - rowManager.element.clientHeight,
-		scrollMax = rowManager.element.scrollHeight;
+			newPos = rowManager.scrollTop - rowManager.element.clientHeight,
+			scrollMax = rowManager.element.scrollHeight;
 
 		e.preventDefault();
 
@@ -22,8 +22,8 @@ export default {
 	},
 	scrollPageDown:function(e){
 		var rowManager = this.table.rowManager,
-		newPos = rowManager.scrollTop + rowManager.element.clientHeight,
-		scrollMax = rowManager.element.scrollHeight;
+			newPos = rowManager.scrollTop + rowManager.element.clientHeight,
+			scrollMax = rowManager.element.scrollHeight;
 
 		e.preventDefault();
 

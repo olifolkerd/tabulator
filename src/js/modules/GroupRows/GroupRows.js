@@ -75,8 +75,8 @@ class GroupRows extends Module{
 	configureGroupSetup(){
 		if(this.table.options.groupBy){
 			var groupBy = this.table.options.groupBy,
-			startOpen = this.table.options.groupStartOpen,
-			groupHeader = this.table.options.groupHeader;
+				startOpen = this.table.options.groupStartOpen,
+				groupHeader = this.table.options.groupHeader;
 
 			this.allowedValues = this.table.options.groupValues;
 
@@ -277,7 +277,7 @@ class GroupRows extends Module{
 	// get grouped table data in the same format as getData()
 	userGetGroupedData(){
 		return this.table.options.groupBy ?
-		this.getGroupedData() : this.getData()
+			this.getGroupedData() : this.getData()
 	}
 
 
@@ -474,7 +474,7 @@ class GroupRows extends Module{
 
 	createGroup(groupID, level, oldGroups){
 		var groupKey = level + "_" + groupID,
-		group;
+			group;
 
 		oldGroups = oldGroups || [];
 
@@ -486,7 +486,7 @@ class GroupRows extends Module{
 
 	assignRowToExistingGroup(row, oldGroups){
 		var groupID = this.groupIDLookups[0].func(row.getData()),
-		groupKey = "0_" + groupID;
+			groupKey = "0_" + groupID;
 
 		if(this.groups[groupKey]){
 			this.groups[groupKey].addRow(row);
@@ -495,7 +495,7 @@ class GroupRows extends Module{
 
 	assignRowToGroup(row, oldGroups){
 		var groupID = this.groupIDLookups[0].func(row.getData()),
-		newGroupNeeded = !this.groups["0_" + groupID];
+			newGroupNeeded = !this.groups["0_" + groupID];
 
 		if(newGroupNeeded){
 			this.createGroup(groupID, 0, oldGroups);
@@ -509,9 +509,9 @@ class GroupRows extends Module{
 	reassignRowToGroup(row){
 		if(row.type === "row"){
 			var oldRowGroup = row.modules.group,
-			oldGroupPath = oldRowGroup.getPath(),
-			newGroupPath = this.getExpectedPath(row),
-			samePath = true;
+				oldGroupPath = oldRowGroup.getPath(),
+				newGroupPath = this.getExpectedPath(row),
+				samePath = true;
 
 			// figure out if new group path is the same as old group path
 			var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every((element, index) => {
@@ -539,7 +539,7 @@ class GroupRows extends Module{
 
 	updateGroupRows(force){
 		var output = [],
-		oldRowCount;
+			oldRowCount;
 
 		this.groupList.forEach((group) => {
 			output = output.concat(group.getHeadersAndRows());
@@ -566,7 +566,7 @@ class GroupRows extends Module{
 
 	removeGroup(group){
 		var groupKey = group.level + "_" + group.key,
-		index;
+			index;
 
 		if(this.groups[groupKey]){
 			delete this.groups[groupKey];

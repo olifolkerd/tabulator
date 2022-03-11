@@ -2,19 +2,19 @@ import CoreFeature from '../../../../core/CoreFeature.js';
 
 export default function(list, options, setFileContents){
 	var self = this,
-	sheetName = options.sheetName || "Sheet1",
-	workbook = XLSX.utils.book_new(),
-	tableFeatures = new CoreFeature(this),
-	output;
+		sheetName = options.sheetName || "Sheet1",
+		workbook = XLSX.utils.book_new(),
+		tableFeatures = new CoreFeature(this),
+		output;
 
 	workbook.SheetNames = [];
 	workbook.Sheets = {};
 
 	function generateSheet(){
 		var rows = [],
-		merges = [],
-		worksheet = {},
-		range = {s: {c:0, r:0}, e: {c:(list[0] ? list[0].columns.reduce((a, b) => a + (b && b.width ? b.width : 1), 0) : 0), r:list.length }};
+			merges = [],
+			worksheet = {},
+			range = {s: {c:0, r:0}, e: {c:(list[0] ? list[0].columns.reduce((a, b) => a + (b && b.width ? b.width : 1), 0) : 0), r:list.length }};
 
 		//parse row list
 		list.forEach((row, i) => {
@@ -89,10 +89,10 @@ export default function(list, options, setFileContents){
 		var buf = new ArrayBuffer(s.length);
 		var view = new Uint8Array(buf);
 		for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-			return buf;
+		return buf;
 	}
 
 	output = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary'});
 
 	setFileContents(s2ab(output), "application/octet-stream");
-};
+}

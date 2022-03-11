@@ -3,8 +3,8 @@ import maskInput from '../../inputMask.js';
 //input element with type of number
 export default function(cell, onRendered, success, cancel, editorParams){
 	var cellValue = cell.getValue(),
-	vertNav = editorParams.verticalNavigation || "editor",
-	input = document.createElement("input");
+		vertNav = editorParams.verticalNavigation || "editor",
+		input = document.createElement("input");
 
 	input.setAttribute("type", "number");
 
@@ -72,25 +72,25 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
 		switch(e.keyCode){
-			case 13:
+		case 13:
 			// case 9:
 			onChange();
 			break;
 
-			case 27:
+		case 27:
 			cancel();
 			break;
 
-			case 38: //up arrow
-			case 40: //down arrow
+		case 38: //up arrow
+		case 40: //down arrow
 			if(vertNav == "editor"){
 				e.stopImmediatePropagation();
 				e.stopPropagation();
 			}
 			break;
 
-			case 35:
-			case 36:
+		case 35:
+		case 36:
 			e.stopPropagation();
 			break;
 		}
@@ -101,4 +101,4 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	}
 
 	return input;
-};
+}

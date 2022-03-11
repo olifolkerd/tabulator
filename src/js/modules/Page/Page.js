@@ -101,8 +101,8 @@ class Page extends Module{
 	
 	rowAddingPosition(row, top){
 		var rowManager = this.table.rowManager,
-		dispRows = rowManager.getDisplayRows(),
-		index;
+			dispRows = rowManager.getDisplayRows(),
+			index;
 		
 		if(top){
 			if(dispRows.length){
@@ -208,7 +208,7 @@ class Page extends Module{
 			
 			if(diff < margin){
 				this.nextPage()
-				.catch(() => {}); //consume the exception thrown when on the last page
+					.catch(() => {}); //consume the exception thrown when on the last page
 			}
 		}
 	}
@@ -313,7 +313,7 @@ class Page extends Module{
 	
 	initializePageCounter(){
 		var counter = this.table.options.paginationCounter,
-		pageCounter = null;
+			pageCounter = null;
 		
 		if(counter){
 			if(typeof counter === "function"){
@@ -513,19 +513,19 @@ class Page extends Module{
 	//set current page number
 	setPage(page){
 		switch(page){
-			case "first":
+		case "first":
 			return this.setPage(1);
 			break;
 			
-			case "prev":
+		case "prev":
 			return this.previousPage();
 			break;
 			
-			case "next":
+		case "next":
 			return this.nextPage();
 			break;
 			
-			case "last":
+		case "last":
 			return this.setPage(this.max);
 			break;
 		}
@@ -589,7 +589,7 @@ class Page extends Module{
 			content = this.pageCounter.call(this, size, currentRow, this.page, totalRows, this.max);
 			
 			switch(typeof content){
-				case "object":
+			case "object":
 				if(content instanceof Node){
 					
 					//clear previous cell contents
@@ -604,11 +604,11 @@ class Page extends Module{
 					}
 				}
 				break;
-				case "undefined":
-				case "null":
+			case "undefined":
+			case "null":
 				this.pageCounterElement.innerHTML = "";
 				break;
-				default:
+			default:
 				this.pageCounterElement.innerHTML = content;
 			}
 		}
@@ -727,7 +727,7 @@ class Page extends Module{
 	//return appropriate rows for current page
 	getRows(data){
 		var actualRowPageSize = 0,
-		output, start, end, actualStartRow;
+			output, start, end, actualStartRow;
 
 		var actualRows = data.filter((row) => {
 			return row.type === "row";
@@ -779,7 +779,7 @@ class Page extends Module{
 		var left;
 		
 		switch(this.mode){
-			case "local":
+		case "local":
 			left = this.table.rowManager.scrollLeft;
 			
 			this.refreshData();
@@ -790,20 +790,20 @@ class Page extends Module{
 			return Promise.resolve();
 			break;
 			
-			case "remote":
+		case "remote":
 			this.dataChanging = true;
 			return this.reloadData(null)
-			.finally(() => {
-				this.dataChanging = false;
-			})
+				.finally(() => {
+					this.dataChanging = false;
+				})
 			break;
 			
-			case "progressive_load":
-			case "progressive_scroll":
+		case "progressive_load":
+		case "progressive_scroll":
 			return this.reloadData(null, true);
 			break;
 			
-			default:
+		default:
 			console.warn("Pagination Error - no such pagination mode:", this.mode);
 			return Promise.reject();
 		}
@@ -823,7 +823,7 @@ class Page extends Module{
 			
 			if(this.progressiveLoad){
 				switch(this.mode){
-					case "progressive_load":
+				case "progressive_load":
 					
 					if(this.page == 1){
 						this.table.rowManager.setData(data.data, false, this.page == 1)
@@ -838,7 +838,7 @@ class Page extends Module{
 					}
 					break;
 					
-					case "progressive_scroll":
+				case "progressive_scroll":
 					data = this.page === 1 ? data.data : this.table.rowManager.getData().concat(data.data);
 					
 					this.table.rowManager.setData(data, this.page !== 1, this.page == 1);

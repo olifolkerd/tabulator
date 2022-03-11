@@ -1,7 +1,7 @@
 //input element with type of number
 export default function(cell, onRendered, success, cancel, editorParams){
 	var cellValue = cell.getValue(),
-	input = document.createElement("input");
+		input = document.createElement("input");
 
 	input.setAttribute("type", "range");
 
@@ -64,16 +64,16 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
 		switch(e.keyCode){
-			case 13:
+		case 13:
 			// case 9:
 			onChange();
 			break;
 
-			case 27:
+		case 27:
 			cancel();
 			break;
 		}
 	});
 
 	return input;
-};
+}

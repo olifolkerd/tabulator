@@ -1,9 +1,9 @@
 //resize columns to fit data the contain and stretch last column to fill table
 export default function(columns){
 	var colsWidth = 0,
-	tableWidth = this.table.rowManager.element.clientWidth,
-	gap = 0,
-	lastCol = false;
+		tableWidth = this.table.rowManager.element.clientWidth,
+		gap = 0,
+		lastCol = false;
 
 	columns.forEach((column, i) => {
 		if(!column.widthFixed){
@@ -37,4 +37,4 @@ export default function(columns){
 			this.table.modules.responsiveLayout.update();
 		}
 	}
-};
+}

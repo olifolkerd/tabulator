@@ -1,11 +1,11 @@
 export default function(cell, formatterParams, onRendered){
 	var value = this.sanitizeHTML(cell.getValue()) || 0,
-	el = document.createElement("span"),
-	max = formatterParams && formatterParams.max ? formatterParams.max : 100,
-	min = formatterParams && formatterParams.min ? formatterParams.min : 0,
-	colors = formatterParams && typeof formatterParams.color !== "undefined" ? formatterParams.color : ["red", "orange", "green"],
-	color = "#666666",
-	percent, percentValue;
+		el = document.createElement("span"),
+		max = formatterParams && formatterParams.max ? formatterParams.max : 100,
+		min = formatterParams && formatterParams.min ? formatterParams.min : 0,
+		colors = formatterParams && typeof formatterParams.color !== "undefined" ? formatterParams.color : ["red", "orange", "green"],
+		color = "#666666",
+		percent, percentValue;
 
 	if(isNaN(value) || typeof cell.getValue() === "undefined"){
 		return;
@@ -23,13 +23,13 @@ export default function(cell, formatterParams, onRendered){
 
 	//set color
 	switch(typeof colors){
-		case "string":
+	case "string":
 		color = colors;
 		break;
-		case "function":
+	case "function":
 		color = colors(value);
 		break;
-		case "object":
+	case "object":
 		if(Array.isArray(colors)){
 			var unit = 100 / colors.length;
 			var index = Math.floor(percentValue / unit);
@@ -44,4 +44,4 @@ export default function(cell, formatterParams, onRendered){
 	el.style.backgroundColor = color;
 
 	return el;
-};
+}

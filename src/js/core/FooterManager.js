@@ -39,7 +39,7 @@ export default class FooterManager extends CoreFeature{
 		if(this.table.options.footerElement){
 
 			switch(typeof this.table.options.footerElement){
-				case "string":
+			case "string":
 				if(this.table.options.footerElement[0] === "<"){
 					this.containerElement.innerHTML = this.table.options.footerElement;
 				}else{
@@ -48,7 +48,7 @@ export default class FooterManager extends CoreFeature{
 				}
 				break;
 
-				default:
+			default:
 				this.element = this.table.options.footerElement;
 				break;
 			}

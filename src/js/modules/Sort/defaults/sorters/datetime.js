@@ -2,8 +2,8 @@
 export default function(a, b, aRow, bRow, column, dir, params){
 	var DT = window.DateTime || luxon.DateTime;
 	var format = params.format || "dd/MM/yyyy HH:mm:ss",
-	alignEmptyValues = params.alignEmptyValues,
-	emptyAlign = 0;
+		alignEmptyValues = params.alignEmptyValues,
+		emptyAlign = 0;
 
 	if(typeof DT != "undefined"){
 		a = format === "iso" ? DT.fromISO(String(a)) : DT.fromFormat(String(a), format);
@@ -28,4 +28,4 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	}else{
 		console.error("Sort Error - 'datetime' sorter is dependant on luxon.js");
 	}
-};
+}

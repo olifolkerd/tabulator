@@ -15,7 +15,7 @@ export default class Helpers{
 
 	static deepClone(obj, clone, list = []){
 		var objectProto = {}.__proto__,
-		arrayProto = [].__proto__;
+			arrayProto = [].__proto__;
 
 		if (!clone){
 			clone = Object.assign(Array.isArray(obj) ? [] : {}, obj);
@@ -23,7 +23,7 @@ export default class Helpers{
 
 		for(var i in obj) {
 			let subject = obj[i],
-			match, copy;
+				match, copy;
 
 			if(subject != null && typeof subject === "object" && (subject.__proto__ === objectProto || subject.__proto__ === arrayProto)){
 				match = list.findIndex((item) => {

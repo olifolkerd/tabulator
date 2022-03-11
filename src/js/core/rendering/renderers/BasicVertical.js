@@ -31,7 +31,7 @@ export default class BaiscVertical extends Renderer{
 
 	renderRows(){
 		var element = this.tableElement,
-		onlyGroupHeaders = true;
+			onlyGroupHeaders = true;
 
 		this.rows().forEach((row, index) => {
 			this.styleRow(row, index);

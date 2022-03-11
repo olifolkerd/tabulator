@@ -1,7 +1,7 @@
 export default function(cell, formatterParams, onRendered){
 	var open = false,
-	el = document.createElement("div"),
-	config = cell.getRow()._row.modules.responsiveLayout;
+		el = document.createElement("div"),
+		config = cell.getRow()._row.modules.responsiveLayout;
 
 	el.classList.add("tabulator-responsive-collapse-toggle");
 	el.innerHTML = "<span class='tabulator-responsive-collapse-toggle-open'>+</span><span class='tabulator-responsive-collapse-toggle-close'>-</span>";
@@ -33,4 +33,4 @@ export default function(cell, formatterParams, onRendered){
 	toggleList(config.open);
 
 	return el;
-};
+}

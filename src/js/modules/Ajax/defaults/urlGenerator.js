@@ -20,7 +20,7 @@ function generateParamsList(data, prefix){
 
 function serializeParams(params){
 	var output = generateParamsList(params),
-	encoded = [];
+		encoded = [];
 
 	output.forEach(function(item){
 		encoded.push(encodeURIComponent(item.key) + "=" + encodeURIComponent(item.value));
@@ -41,4 +41,4 @@ export default function(url, config, params){
 	}
 
 	return url;
-};
+}

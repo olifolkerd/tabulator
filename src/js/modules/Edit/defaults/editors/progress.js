@@ -1,13 +1,13 @@
 //draggable progress bar
 export default function(cell, onRendered, success, cancel, editorParams){
 	var element = cell.getElement(),
-	max = typeof editorParams.max === "undefined" ? ((element.getElementsByTagName("div")[0] && element.getElementsByTagName("div")[0].getAttribute("max")) || 100) : editorParams.max,
-	min = typeof editorParams.min === "undefined" ? ((element.getElementsByTagName("div")[0] && element.getElementsByTagName("div")[0].getAttribute("min")) || 0) : editorParams.min,
-	percent = (max - min) / 100,
-	value = cell.getValue() || 0,
-	handle = document.createElement("div"),
-	bar = document.createElement("div"),
-	mouseDrag, mouseDragWidth;
+		max = typeof editorParams.max === "undefined" ? ((element.getElementsByTagName("div")[0] && element.getElementsByTagName("div")[0].getAttribute("max")) || 100) : editorParams.max,
+		min = typeof editorParams.min === "undefined" ? ((element.getElementsByTagName("div")[0] && element.getElementsByTagName("div")[0].getAttribute("min")) || 0) : editorParams.min,
+		percent = (max - min) / 100,
+		value = cell.getValue() || 0,
+		handle = document.createElement("div"),
+		bar = document.createElement("div"),
+		mouseDrag, mouseDragWidth;
 
 	//set new value
 	function updateValue(){
@@ -97,22 +97,22 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	//allow key based navigation
 	element.addEventListener("keydown", function(e){
 		switch(e.keyCode){
-			case 39: //right arrow
+		case 39: //right arrow
 			e.preventDefault();
 			bar.style.width = (bar.clientWidth + element.clientWidth/100) + "px";
 			break;
 
-			case 37: //left arrow
+		case 37: //left arrow
 			e.preventDefault();
 			bar.style.width = (bar.clientWidth - element.clientWidth/100) + "px";
 			break;
 
-			case 9: //tab
-			case 13: //enter
+		case 9: //tab
+		case 13: //enter
 			updateValue();
 			break;
 
-			case 27: //escape
+		case 27: //escape
 			cancel();
 			break;
 
@@ -124,4 +124,4 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	});
 
 	return bar;
-};
+}

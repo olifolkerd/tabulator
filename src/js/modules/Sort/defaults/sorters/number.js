@@ -37,4 +37,4 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	}
 
 	return emptyAlign;
-};
+}

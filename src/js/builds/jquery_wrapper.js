@@ -10,7 +10,7 @@
  *
  */
 
- (function (factory) {
+(function (factory) {
  	"use strict";
  	if (typeof define === 'function' && define.amd) {
  		define(['jquery', 'tabulator', 'jquery-ui'], factory);
@@ -25,7 +25,7 @@
  	else {
  		factory(jQuery, Tabulator);
  	}
- }(function ($, Tabulator) {
+}(function ($, Tabulator) {
 
  	$.widget("ui.tabulator", {
  		_create:function(){
@@ -52,4 +52,4 @@
  			this.table.destroy();
  		},
  	});
- }));
+}));

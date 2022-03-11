@@ -120,13 +120,13 @@ class Ajax extends Module{
 	sendRequest(url, params, config){
 		if(this.table.options.ajaxRequesting.call(this.table, url, params) !== false){
 			return this.loaderPromise(url, config, params)
-			.then((data)=>{
-				if(this.table.options.ajaxResponse){
-					data = this.table.options.ajaxResponse.call(this.table, url, params, data);
-				}
+				.then((data)=>{
+					if(this.table.options.ajaxResponse){
+						data = this.table.options.ajaxResponse.call(this.table, url, params, data);
+					}
 				
-				return data;
-			});
+					return data;
+				});
 		}else{
 			return Promise.reject();
 		}

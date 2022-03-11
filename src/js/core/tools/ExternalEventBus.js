@@ -74,8 +74,8 @@ export default class ExternalEventBus {
 
 	_dispatch(){
 		var args = Array.from(arguments),
-		key = args.shift(),
-		result;
+			key = args.shift(),
+			result;
 
 		if(this.events[key]){
 			this.events[key].forEach((callback, i) => {
@@ -92,7 +92,7 @@ export default class ExternalEventBus {
 
 	_debugDispatch(){
 		var args = Array.from(arguments),
-		key = args[0];
+			key = args[0];
 
 		args[0] = "ExternalEvent:" + args[0];
 

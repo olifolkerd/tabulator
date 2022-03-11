@@ -1,11 +1,11 @@
 export default {
 	table:function(clipboard){
 		var data = [],
-		success = false,
-		headerFindSuccess = true,
-		columns = this.table.columnManager.columns,
-		columnMap = [],
-		rows = [];
+			success = false,
+			headerFindSuccess = true,
+			columns = this.table.columnManager.columns,
+			columnMap = [],
+			rows = [];
 
 		//get data from clipboard into array of columns and rows.
 		clipboard = clipboard.split("\n");

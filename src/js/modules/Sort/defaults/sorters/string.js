@@ -12,12 +12,12 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	}else{
 		//compare valid values
 		switch(typeof params.locale){
-			case "boolean":
+		case "boolean":
 			if(params.locale){
 				locale = this.langLocale();
 			}
 			break;
-			case "string":
+		case "string":
 			locale = params.locale;
 			break;
 		}
@@ -31,4 +31,4 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	}
 
 	return emptyAlign;
-};
+}

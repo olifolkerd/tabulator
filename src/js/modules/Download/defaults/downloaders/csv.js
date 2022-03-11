@@ -1,21 +1,21 @@
 export default function(list, options, setFileContents){
 	var delimiter = options && options.delimiter ? options.delimiter : ",",
-	fileContents = [],
-	headers = [];
+		fileContents = [],
+		headers = [];
 
 	list.forEach((row) => {
 		var item = [];
 
 		switch(row.type){
-			case "group":
+		case "group":
 			console.warn("Download Warning - CSV downloader cannot process row groups");
 			break;
 
-			case "calc":
+		case "calc":
 			console.warn("Download Warning - CSV downloader cannot process column calculations");
 			break;
 
-			case "header":
+		case "header":
 			row.columns.forEach((col, i) => {
 				if(col && col.depth === 1){
 					headers[i] = typeof col.value == "undefined"  || col.value === null ? "" : ('"' + String(col.value).split('"').join('""') + '"');
@@ -23,18 +23,18 @@ export default function(list, options, setFileContents){
 			});
 			break;
 
-			case "row":
+		case "row":
 			row.columns.forEach((col) => {
 
 				if(col){
 
 					switch(typeof col.value){
-						case "object":
+					case "object":
 						col.value = JSON.stringify(col.value);
 						break;
 
-						case "undefined":
-						case "null":
+					case "undefined":
+					case "null":
 						col.value = "";
 						break;
 					}
@@ -59,4 +59,4 @@ export default function(list, options, setFileContents){
 	}
 
 	setFileContents(fileContents, "text/csv");
-};
+}

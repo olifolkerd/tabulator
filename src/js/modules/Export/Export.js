@@ -61,21 +61,21 @@ class Export extends Module{
 			});
 		}else{
 			switch(range){
-				case true:
-				case "visible":
+			case true:
+			case "visible":
 				rows = this.table.rowManager.getVisibleRows(false, true);
 				break;
 
-				case "all":
+			case "all":
 				rows = this.table.rowManager.rows;
 				break;
 
-				case "selected":
+			case "selected":
 				rows = this.table.modules.selectRow.selectedRows;
 				break;
 
-				case "active":
-				default:
+			case "active":
+			default:
 				if(this.table.options.pagination){
 					rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
 				}else{
@@ -105,8 +105,8 @@ class Export extends Module{
 
 	processColumnGroup(column){
 		var subGroups = column.columns,
-		maxDepth = 0,
-		title = column.definition["title" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))] || column.definition.title;
+			maxDepth = 0,
+			title = column.definition["title" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))] || column.definition.title;
 
 		var groupData = {
 			title:title,
@@ -153,8 +153,8 @@ class Export extends Module{
 
 	headersToExportRows(columns){
 		var headers = [],
-		headerDepth = 0,
-		exportRows = [];
+			headerDepth = 0,
+			exportRows = [];
 
 		function parseColumnGroup(column, level){
 
@@ -244,15 +244,15 @@ class Export extends Module{
 
 		rows = rows.filter((row) => {
 			switch(row.type){
-				case "group":
+			case "group":
 				return this.config.rowGroups !== false;
 				break;
 
-				case "calc":
+			case "calc":
 				return this.config.columnCalcs !== false;
 				break;
 
-				case "row":
+			case "row":
 				return !(this.table.options.dataTree && this.config.dataTree === false && row.modules.dataTree.parent);
 				break;
 			}
@@ -266,13 +266,13 @@ class Export extends Module{
 			var indent = 0;
 
 			switch(row.type){
-				case "group":
+			case "group":
 				indent = row.level;
 				exportCols.push(new ExportColumn(row.key, row.getComponent(), columns.length, 1));
 				break;
 
-				case "calc" :
-				case "row" :
+			case "calc" :
+			case "row" :
 				columns.forEach((col) => {
 					exportCols.push(new ExportColumn(col._column.getFieldValue(rowData), col, 1, 1));
 				});
@@ -291,11 +291,11 @@ class Export extends Module{
 
 	genereateTableElement(list){
 		var table = document.createElement("table"),
-		headerEl = document.createElement("thead"),
-		bodyEl = document.createElement("tbody"),
-		styles = this.lookupTableStyles(),
-		rowFormatter = this.table.options["rowFormatter" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))],
-		setup = {};
+			headerEl = document.createElement("thead"),
+			bodyEl = document.createElement("tbody"),
+			styles = this.lookupTableStyles(),
+			rowFormatter = this.table.options["rowFormatter" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))],
+			setup = {};
 
 		setup.rowFormatter = rowFormatter !== null ? rowFormatter : this.table.options.rowFormatter;
 
@@ -321,19 +321,19 @@ class Export extends Module{
 
 		list.forEach((row, i) => {
 			switch(row.type){
-				case "header":
+			case "header":
 				headerEl.appendChild(this.genereateHeaderElement(row, setup, styles));
 				break;
 
-				case "group":
+			case "group":
 				bodyEl.appendChild(this.genereateGroupElement(row, setup, styles));
 				break;
 
-				case "calc":
+			case "calc":
 				bodyEl.appendChild(this.genereateCalcElement(row, setup, styles));
 				break;
 
-				case "row":
+			case "row":
 				let rowEl = this.genereateRowElement(row, setup, styles);
 				this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
 				bodyEl.appendChild(rowEl);
@@ -419,8 +419,8 @@ class Export extends Module{
 	genereateGroupElement(row, setup, styles){
 
 		var rowEl = document.createElement("tr"),
-		cellEl = document.createElement("td"),
-		group = row.columns[0];
+			cellEl = document.createElement("td"),
+			group = row.columns[0];
 
 		rowEl.classList.add("tabulator-print-table-row");
 
@@ -469,9 +469,9 @@ class Export extends Module{
 		row.columns.forEach((col) => {
 			if(col){
 				var cellEl = document.createElement("td"),
-				column = col.component._column,
-				index = this.table.columnManager.findColumnIndex(column),
-				value = col.value;
+					column = col.component._column,
+					index = this.table.columnManager.findColumnIndex(column),
+					value = col.value;
 
 				var cellWrapper = {
 					modules:{},
@@ -509,16 +509,16 @@ class Export extends Module{
 					value = this.table.modules.format.formatExportValue(cellWrapper, this.colVisProp);
 				}else{
 					switch(typeof value){
-						case "object":
+					case "object":
 						value = JSON.stringify(value);
 						break;
 
-						case "undefined":
-						case "null":
+					case "undefined":
+					case "null":
 						value = "";
 						break;
 
-						default:
+					default:
 						value = value;
 					}
 				}

@@ -124,8 +124,8 @@ class Validate extends Module{
 	//validate
 	initializeColumn(column){
 		var self = this,
-		config = [],
-		validator;
+			config = [],
+			validator;
 
 		if(column.definition.validator){
 
@@ -154,7 +154,7 @@ class Validate extends Module{
 		var type, params, pos;
 
 		switch(typeof value){
-			case "string":
+		case "string":
 			pos = value.indexOf(':');
 
 			if(pos > -1){
@@ -167,11 +167,11 @@ class Validate extends Module{
 			return this._buildValidator(type, params);
 			break;
 
-			case "function":
+		case "function":
 			return this._buildValidator(value);
 			break;
 
-			case "object":
+		case "object":
 			return this._buildValidator(value.type, value.parameters);
 			break;
 		}
@@ -195,8 +195,8 @@ class Validate extends Module{
 
 	validate(validators, cell, value){
 		var self = this,
-		valid = [],
-		invalidIndex = this.invalidCells.indexOf(cell);
+			valid = [],
+			invalidIndex = this.invalidCells.indexOf(cell);
 
 		if(validators){
 			validators.forEach((item) => {

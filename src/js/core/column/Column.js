@@ -216,7 +216,7 @@ class Column extends CoreFeature{
 
 	_bindEvents(){
 		var def = this.definition,
-		dblTap,	tapHold, tap;
+			dblTap,	tapHold, tap;
 
 		//setup header click event bindings
 		if(typeof(def.headerClick) == "function"){
@@ -294,7 +294,7 @@ class Column extends CoreFeature{
 	//build header element for header
 	_buildColumnHeader(){
 		var def = this.definition,
-		table = this.table;
+			table = this.table;
 
 		this.dispatch("column-layout", this);
 
@@ -344,7 +344,7 @@ class Column extends CoreFeature{
 
 	_buildColumnHeaderContent(){
 		var def = this.definition,
-		table = this.table;
+			table = this.table;
 
 		var contentElement = document.createElement("div");
 		contentElement.classList.add("tabulator-col-content");
@@ -364,7 +364,7 @@ class Column extends CoreFeature{
 	//build title element of column
 	_buildColumnHeaderTitle(){
 		var def = this.definition,
-		title;
+			title;
 
 		var titleHolderElement = document.createElement("div");
 		titleHolderElement.classList.add("tabulator-col-title");
@@ -412,7 +412,7 @@ class Column extends CoreFeature{
 		});
 
 		switch(typeof contents){
-			case "object":
+		case "object":
 			if(contents instanceof Node){
 				el.appendChild(contents);
 			}else{
@@ -420,11 +420,11 @@ class Column extends CoreFeature{
 				console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
 			}
 			break;
-			case "undefined":
-			case "null":
+		case "undefined":
+		case "null":
 			el.innerHTML = "";
 			break;
-			default:
+		default:
 			el.innerHTML = contents;
 		}
 	}
@@ -456,9 +456,9 @@ class Column extends CoreFeature{
 	//nested field lookup
 	_getNestedData(data){
 		var dataObj = data,
-		structure = this.fieldStructure,
-		length = structure.length,
-		output;
+			structure = this.fieldStructure,
+			length = structure.length,
+			output;
 
 		for(let i = 0; i < length; i++){
 
@@ -484,8 +484,8 @@ class Column extends CoreFeature{
 	//nested field set
 	_setNestedData(data, value){
 		var dataObj = data,
-		structure = this.fieldStructure,
-		length = structure.length;
+			structure = this.fieldStructure,
+			length = structure.length;
 
 		for(let i = 0; i < length; i++){
 
@@ -993,18 +993,18 @@ class Column extends CoreFeature{
 				definition = Object.assign(definition, updates);
 
 				return this.table.columnManager.addColumn(definition, false, this)
-				.then((column) => {
+					.then((column) => {
 
-					if(definition.field == this.field){
-						this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
-					}
+						if(definition.field == this.field){
+							this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+						}
 
-					return this.delete()
-					.then(() => {
-						return column.getComponent();
+						return this.delete()
+							.then(() => {
+								return column.getComponent();
+							});
+
 					});
-
-				});
 			}else{
 				console.error("Column Update Error - The updateDefinition function is only available on ungrouped columns");
 				return Promise.reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");

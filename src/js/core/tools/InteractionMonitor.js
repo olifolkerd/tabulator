@@ -101,10 +101,10 @@ export default class InteractionManager extends CoreFeature {
 	
 	pseudoMouseLeave(key, e){
 		var leaveList = Object.keys(this.pseudoTrackers),
-		linkedKeys = {
-			"row":["cell"],
-			"cell":["row"],
-		};
+			linkedKeys = {
+				"row":["cell"],
+				"cell":["row"],
+			};
 		
 		leaveList = leaveList.filter((item) => {
 			var links = linkedKeys[key];
@@ -126,7 +126,7 @@ export default class InteractionManager extends CoreFeature {
 	
 	bindSubscriptionWatchers(){
 		var listeners = Object.keys(this.listeners),
-		components = Object.values(this.componentMap);
+			components = Object.values(this.componentMap);
 		
 		for(let comp of components){
 			for(let listener of listeners){
@@ -141,8 +141,8 @@ export default class InteractionManager extends CoreFeature {
 	
 	subscriptionChanged(component, key, added){
 		var listener = this.listeners[key].components,
-		index = listener.indexOf(component),
-		changed = false;
+			index = listener.indexOf(component),
+			changed = false;
 		
 		if(added){
 			if(index === -1){
@@ -234,8 +234,8 @@ export default class InteractionManager extends CoreFeature {
 	bindComponents(type, targets){
 		//ensure row component is looked up before cell
 		var keys = Object.keys(targets).reverse(),
-		listener = this.listeners[type],
-		targetMatches = {};
+			listener = this.listeners[type],
+			targetMatches = {};
 		
 		for(let key of keys){
 			let component;
@@ -246,8 +246,8 @@ export default class InteractionManager extends CoreFeature {
 				component = previousTarget.component;
 			}else{
 				switch(key){
-					case "row":
-					case "group":
+				case "row":
+				case "group":
 					if(listener.components.includes("row") || listener.components.includes("cell") || listener.components.includes("group")){
 						let rows = this.table.rowManager.getVisibleRows(true);
 						
@@ -261,13 +261,13 @@ export default class InteractionManager extends CoreFeature {
 					}
 					break;
 					
-					case "column":
+				case "column":
 					if(listener.components.includes("column")){
 						component = this.table.columnManager.findColumn(target);
 					}
 					break
 					
-					case "cell":
+				case "cell":
 					if(listener.components.includes("cell")){
 						if(targets["row"] instanceof Row){
 							component = targets["row"].findCell(target);

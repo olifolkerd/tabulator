@@ -65,8 +65,8 @@ class MoveRows extends Module{
 
 	initializeGroupHeader(group){
 		var self = this,
-		config = {},
-		rowEl;
+			config = {},
+			rowEl;
 
 		//inter table drag drop
 		config.mouseup = function(e){
@@ -97,8 +97,8 @@ class MoveRows extends Module{
 
 	initializeRow(row){
 		var self = this,
-		config = {},
-		rowEl;
+			config = {},
+			rowEl;
 
 		//inter table drag drop
 		config.mouseup = function(e){
@@ -158,7 +158,7 @@ class MoveRows extends Module{
 	initializeCell(cell){
 		if(cell.column.definition.rowHandle && this.table.options.movableRows !== false){
 			var self = this,
-			cellEl = cell.getElement(true);
+				cellEl = cell.getElement(true);
 
 			cellEl.addEventListener("mousedown", function(e){
 				if(e.which === 1){
@@ -182,8 +182,8 @@ class MoveRows extends Module{
 
 	bindTouchEvents(row, element){
 		var startYMove = false, //shifting center position of the cell
-		dir = false,
-		currentRow, nextRow, prevRow, nextRowHeight, prevRowHeight, nextRowHeightLast, prevRowHeightLast;
+			dir = false,
+			currentRow, nextRow, prevRow, nextRowHeight, prevRowHeight, nextRowHeightLast, prevRowHeightLast;
 
 		element.addEventListener("touchstart", (e) => {
 			this.checkTimeout = setTimeout(() => {
@@ -329,8 +329,8 @@ class MoveRows extends Module{
 
 	setStartPosition(e, row){
 		var pageX = this.touchMove ? e.touches[0].pageX : e.pageX,
-		pageY = this.touchMove ? e.touches[0].pageY : e.pageY,
-		element, position;
+			pageY = this.touchMove ? e.touches[0].pageY : e.pageY,
+			element, position;
 
 		element = row.getElement();
 		if(this.connection){
@@ -391,9 +391,9 @@ class MoveRows extends Module{
 
 	moveHoverTable(e){
 		var rowHolder = this.table.rowManager.getElement(),
-		scrollTop = rowHolder.scrollTop,
-		yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolder.getBoundingClientRect().top) + scrollTop,
-		scrollPos;
+			scrollTop = rowHolder.scrollTop,
+			yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolder.getBoundingClientRect().top) + scrollTop,
+			scrollPos;
 
 		this.hoverElement.style.top = (yPos - this.startY) + "px";
 	}
@@ -524,11 +524,11 @@ class MoveRows extends Module{
 		if(success){
 
 			switch(typeof this.table.options.movableRowsSender){
-				case "string":
+			case "string":
 				sender = this.senders[this.table.options.movableRowsSender];
 				break;
 
-				case "function":
+			case "function":
 				sender = this.table.options.movableRowsSender;
 				break;
 			}
@@ -551,16 +551,16 @@ class MoveRows extends Module{
 
 	tableRowDrop(e, row){
 		var receiver = false,
-		success = false;
+			success = false;
 
 		e.stopImmediatePropagation();
 
 		switch(typeof this.table.options.movableRowsReceiver){
-			case "string":
+		case "string":
 			receiver = this.receivers[this.table.options.movableRowsReceiver];
 			break;
 
-			case "function":
+		case "function":
 			receiver = this.table.options.movableRowsReceiver;
 			break;
 		}
@@ -585,15 +585,15 @@ class MoveRows extends Module{
 
 	commsReceived(table, action, data){
 		switch(action){
-			case "connect":
+		case "connect":
 			return this.connect(table, data.row);
 			break;
 
-			case "disconnect":
+		case "disconnect":
 			return this.disconnect(table);
 			break;
 
-			case "dropcomplete":
+		case "dropcomplete":
 			return this.dropComplete(table, data.row, data.success);
 			break;
 		}

@@ -4,7 +4,7 @@ import maskInput from '../../inputMask.js';
 export default function(cell, onRendered, success, cancel, editorParams){
 	//create and style input
 	var cellValue = cell.getValue(),
-	input = document.createElement("input");
+		input = document.createElement("input");
 
 	input.setAttribute("type", editorParams.search ? "search" : "text");
 
@@ -47,17 +47,17 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
 		switch(e.keyCode){
-			// case 9:
-			case 13:
+		// case 9:
+		case 13:
 			onChange(e);
 			break;
 
-			case 27:
+		case 27:
 			cancel();
 			break;
 
-			case 35:
-			case 36:
+		case 35:
+		case 36:
 			e.stopPropagation();
 			break;
 		}
@@ -68,4 +68,4 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	}
 
 	return input;
-};
+}

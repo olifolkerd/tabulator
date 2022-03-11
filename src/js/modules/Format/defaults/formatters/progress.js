@@ -2,11 +2,11 @@ import CellComponent from '../../../../core/cell/CellComponent.js';
 
 export default function(cell, formatterParams, onRendered){ //progress bar
 	var value = this.sanitizeHTML(cell.getValue()) || 0,
-	element = cell.getElement(),
-	max = formatterParams && formatterParams.max ? formatterParams.max : 100,
-	min = formatterParams && formatterParams.min ? formatterParams.min : 0,
-	legendAlign = formatterParams && formatterParams.legendAlign ? formatterParams.legendAlign : "center",
-	percent, percentValue, color, legend, legendColor, top, left, right, bottom;
+		element = cell.getElement(),
+		max = formatterParams && formatterParams.max ? formatterParams.max : 100,
+		min = formatterParams && formatterParams.min ? formatterParams.min : 0,
+		legendAlign = formatterParams && formatterParams.legendAlign ? formatterParams.legendAlign : "center",
+		percent, percentValue, color, legend, legendColor, top, left, right, bottom;
 
 	//make sure value is in range
 	percentValue = parseFloat(value) <= max ? parseFloat(value) : max;
@@ -18,13 +18,13 @@ export default function(cell, formatterParams, onRendered){ //progress bar
 
 	//set bar color
 	switch(typeof formatterParams.color){
-		case "string":
+	case "string":
 		color = formatterParams.color;
 		break;
-		case "function":
+	case "function":
 		color = formatterParams.color(value);
 		break;
-		case "object":
+	case "object":
 		if(Array.isArray(formatterParams.color)){
 			var unit = 100 / formatterParams.color.length;
 			var index = Math.floor(percentValue / unit);
@@ -34,34 +34,34 @@ export default function(cell, formatterParams, onRendered){ //progress bar
 			color = formatterParams.color[index];
 			break;
 		}
-		default:
+	default:
 		color = "#2DC214";
 	}
 
 	//generate legend
 	switch(typeof formatterParams.legend){
-		case "string":
+	case "string":
 		legend = formatterParams.legend;
 		break;
-		case "function":
+	case "function":
 		legend = formatterParams.legend(value);
 		break;
-		case "boolean":
+	case "boolean":
 		legend = value;
 		break;
-		default:
+	default:
 		legend = false;
 	}
 
 	//set legend color
 	switch(typeof formatterParams.legendColor){
-		case "string":
+	case "string":
 		legendColor = formatterParams.legendColor;
 		break;
-		case "function":
+	case "function":
 		legendColor = formatterParams.legendColor(value);
 		break;
-		case "object":
+	case "object":
 		if(Array.isArray(formatterParams.legendColor)){
 			var unit = 100 / formatterParams.legendColor.length;
 			var index = Math.floor(percentValue / unit);
@@ -71,7 +71,7 @@ export default function(cell, formatterParams, onRendered){ //progress bar
 			legendColor = formatterParams.legendColor[index];
 		}
 		break;
-		default:
+	default:
 		legendColor = "#000";
 	}
 
@@ -131,4 +131,4 @@ export default function(cell, formatterParams, onRendered){ //progress bar
 	});
 
 	return "";
-};
+}

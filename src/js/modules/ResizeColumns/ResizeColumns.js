@@ -33,8 +33,8 @@ class ResizeColumns extends Module{
 	
 	initializeColumn(type, column, element){
 		var self = this,
-		variableHeight = false,
-		mode = column.definition.resizable;
+			variableHeight = false,
+			mode = column.definition.resizable;
 		
 		//set column resize mode
 		if(type === "header"){
@@ -70,7 +70,7 @@ class ResizeColumns extends Module{
 			//reszie column on  double click
 			handle.addEventListener("dblclick", function(e){
 				var col = column.getLastColumn(),
-				oldWidth;
+					oldWidth;
 				
 				if(col && self._checkResizability(col)){
 					oldWidth = col.getWidth();

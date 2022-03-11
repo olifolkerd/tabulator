@@ -1,6 +1,6 @@
 export default function(cell, formatterParams, onRendered){
 	var el = document.createElement("img"),
-	src = cell.getValue();
+		src = cell.getValue();
 
 	if(formatterParams.urlPrefix){
 		src = formatterParams.urlPrefix + cell.getValue();
@@ -13,21 +13,21 @@ export default function(cell, formatterParams, onRendered){
 	el.setAttribute("src", src);
 
 	switch(typeof formatterParams.height){
-		case "number":
+	case "number":
 		el.style.height = formatterParams.height + "px";
 		break;
 
-		case "string":
+	case "string":
 		el.style.height = formatterParams.height;
 		break;
 	}
 
 	switch(typeof formatterParams.width){
-		case "number":
+	case "number":
 		el.style.width = formatterParams.width + "px";
 		break;
 
-		case "string":
+	case "string":
 		el.style.width = formatterParams.width;
 		break;
 	}
@@ -37,4 +37,4 @@ export default function(cell, formatterParams, onRendered){
 	});
 
 	return el;
-};
+}

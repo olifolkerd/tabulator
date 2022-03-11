@@ -41,8 +41,8 @@ class Persistence extends Module{
 		if(this.table.options.persistence){
 			//determine persistent layout storage type
 			var mode = this.table.options.persistenceMode,
-			id = this.table.options.persistenceID,
-			retreivedData;
+				id = this.table.options.persistenceID,
+				retreivedData;
 
 			this.mode = mode !== true ?  mode : (this.localStorageTest() ? "local" : "cookie");
 
@@ -157,7 +157,7 @@ class Persistence extends Module{
 
 	tableBuilt(){
 		var options = this.table.options,
-		sorters, filters;
+			sorters, filters;
 
 		if(this.config.sort){
 			sorters = this.load("sort");
@@ -263,7 +263,7 @@ class Persistence extends Module{
 
 		newCols.forEach((column, to) => {
 			var from = this._findColumn(oldCols, column),
-			keys;
+				keys;
 
 			if(from){
 				if(this.config.columns === true || this.config.columns == undefined){
@@ -308,15 +308,15 @@ class Persistence extends Module{
 
 		return columns.find(function(col){
 			switch(type){
-				case "group":
+			case "group":
 				return col.title === subject.title && col.columns.length === subject.columns.length;
 				break;
 
-				case "field":
+			case "field":
 				return col.field === subject.field;
 				break;
 
-				case "object":
+			case "object":
 				return col === subject;
 				break;
 			}
@@ -328,23 +328,23 @@ class Persistence extends Module{
 		var data = {};
 
 		switch(type){
-			case "columns":
+		case "columns":
 			data = this.parseColumns(this.table.columnManager.getColumns())
 			break;
 
-			case "filter":
+		case "filter":
 			data = this.table.modules.filter.getFilters();
 			break;
 
-			case "sort":
+		case "sort":
 			data = this.validateSorters(this.table.modules.sort.getSort());
 			break;
 
-			case "group":
+		case "group":
 			data = this.getGroupConfig();
 			break;
 
-			case "page":
+		case "page":
 			data = this.getPageConfig();
 			break;
 		}
@@ -405,12 +405,12 @@ class Persistence extends Module{
 	//parse columns for data to store
 	parseColumns(columns){
 		var definitions = [],
-		excludedKeys = ["headerContextMenu", "headerMenu", "contextMenu", "clickMenu"];
+			excludedKeys = ["headerContextMenu", "headerMenu", "contextMenu", "clickMenu"];
 
 		columns.forEach((column) => {
 			var defStore = {},
-			colDef = column.getDefinition(),
-			keys;
+				colDef = column.getDefinition(),
+				keys;
 
 			if(column.isGroup){
 				defStore.title = colDef.title;
@@ -427,14 +427,14 @@ class Persistence extends Module{
 
 				keys.forEach((key)=>{
 					switch(key){
-						case "width":
+					case "width":
 						defStore.width = column.getWidth();
 						break;
-						case "visible":
+					case "visible":
 						defStore.visible = column.visible;
 						break;
 
-						default:
+					default:
 						if(typeof colDef[key] !== "function" && excludedKeys.indexOf(key) === -1){
 							defStore[key] = colDef[key];
 						}

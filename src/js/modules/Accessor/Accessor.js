@@ -32,11 +32,11 @@ class Accessor extends Module{
 	//initialize column accessor
 	initializeColumn(column){
 		var match = false,
-		config = {};
+			config = {};
 
 		this.allowedTypes.forEach((type) => {
 			var key = "accessor" + (type.charAt(0).toUpperCase() + type.slice(1)),
-			accessor;
+				accessor;
 
 			if(column.definition[key]){
 				accessor = this.lookupAccessor(column.definition[key]);
@@ -62,7 +62,7 @@ class Accessor extends Module{
 
 		//set column accessor
 		switch(typeof value){
-			case "string":
+		case "string":
 			if(Accessor.accessors[value]){
 				accessor = Accessor.accessors[value]
 			}else{
@@ -70,7 +70,7 @@ class Accessor extends Module{
 			}
 			break;
 
-			case "function":
+		case "function":
 			accessor = value;
 			break;
 		}
@@ -81,7 +81,7 @@ class Accessor extends Module{
 	//apply accessor to row
 	transformRow(row, type){
 		var key = "accessor" + (type.charAt(0).toUpperCase() + type.slice(1)),
-		rowComponent = row.getComponent();
+			rowComponent = row.getComponent();
 
 		//clone data object with deep copy to isolate internal data from returned result
 		var data = Helpers.deepClone(row.data || {});

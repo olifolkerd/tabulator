@@ -16,7 +16,7 @@ class TableRegistry {
 
 	static lookupTable(query, silent){
 		var results = [],
-		matches, match;
+			matches, match;
 
 		if(typeof query === "string"){
 			matches = document.querySelectorAll(query);

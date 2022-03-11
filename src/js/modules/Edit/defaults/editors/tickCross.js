@@ -1,10 +1,10 @@
 //checkbox
 export default function(cell, onRendered, success, cancel, editorParams){
 	var value = cell.getValue(),
-	input = document.createElement("input"),
-	tristate = editorParams.tristate,
-	indetermValue = typeof editorParams.indeterminateValue === "undefined" ? null : editorParams.indeterminateValue,
-	indetermState = false;
+		input = document.createElement("input"),
+		tristate = editorParams.tristate,
+		indetermValue = typeof editorParams.indeterminateValue === "undefined" ? null : editorParams.indeterminateValue,
+		indetermState = false;
 
 	input.setAttribute("type", "checkbox");
 	input.style.marginTop = "5px";
@@ -84,4 +84,4 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	});
 
 	return input;
-};
+}

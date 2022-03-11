@@ -3,21 +3,21 @@ import Helpers from '../../../../core/tools/Helpers.js';
 //dropdown select editor
 export default function(cell, onRendered, success, cancel, editorParams){
 	var self = this,
-	cellEl = cell.getElement(),
-	initialValue = cell.getValue(),
-	vertNav = editorParams.verticalNavigation || "editor",
-	initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? (Array.isArray(initialValue) ? initialValue : [initialValue]) : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : []),
-	input = document.createElement("input"),
-	listEl = document.createElement("div"),
-	multiselect = editorParams.multiselect,
-	dataItems = [],
-	currentItem = {},
-	displayItems = [],
-	currentItems = [],
-	blurable = true,
-	blockListShow = false,
-	searchWord = "",
-	searchWordTimeout = null;
+		cellEl = cell.getElement(),
+		initialValue = cell.getValue(),
+		vertNav = editorParams.verticalNavigation || "editor",
+		initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? (Array.isArray(initialValue) ? initialValue : [initialValue]) : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : []),
+		input = document.createElement("input"),
+		listEl = document.createElement("div"),
+		multiselect = editorParams.multiselect,
+		dataItems = [],
+		currentItem = {},
+		displayItems = [],
+		currentItems = [],
+		blurable = true,
+		blockListShow = false,
+		searchWord = "",
+		searchWordTimeout = null;
 
 	if(Array.isArray(editorParams) || (!Array.isArray(editorParams) && typeof editorParams === "object" && !editorParams.values)){
 		console.warn("DEPRECATION WARNING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
@@ -26,8 +26,8 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 	function getUniqueColumnValues(field){
 		var output = {},
-		data = self.table.getData(),
-		column;
+			data = self.table.getData(),
+			column;
 
 		if(field){
 			column = self.table.columnManager.getColumnByField(field);
@@ -488,7 +488,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		var index;
 
 		switch(e.keyCode){
-			case 38: //up arrow
+		case 38: //up arrow
 			index = dataItems.indexOf(currentItem);
 
 			if(vertNav == "editor" || (vertNav == "hybrid" && index)){
@@ -502,7 +502,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			}
 			break;
 
-			case 40: //down arrow
+		case 40: //down arrow
 			index = dataItems.indexOf(currentItem);
 
 			if(vertNav == "editor" || (vertNav == "hybrid" && index < dataItems.length - 1)){
@@ -520,14 +520,14 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			}
 			break;
 
-			case 37: //left arrow
-			case 39: //right arrow
+		case 37: //left arrow
+		case 39: //right arrow
 			e.stopImmediatePropagation();
 			e.stopPropagation();
 			e.preventDefault();
 			break;
 
-			case 13: //enter
+		case 13: //enter
 			// chooseItem();
 
 			if(multiselect){
@@ -538,14 +538,14 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 			break;
 
-			case 27: //escape
+		case 27: //escape
 			cancelItem();
 			break;
 
-			case 9: //tab
+		case 9: //tab
 			break;
 
-			default:
+		default:
 			if(self.currentCell === false){
 				e.preventDefault();
 			}
@@ -586,4 +586,4 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	}, 10);
 
 	return input;
-};
+}

@@ -69,7 +69,7 @@ class Edit extends Module{
 
 	keybindingNavigateNext(e){
 		var cell = this.currentCell,
-		newRow = this.options("tabEndNewRow");
+			newRow = this.options("tabEndNewRow");
 
 		if(cell){
 			if(!this.navigateNext(cell, e)){
@@ -305,7 +305,7 @@ class Edit extends Module{
 		if(index > 0){
 			for(var i = index-1; i >= 0; i--){
 				let cell = row.cells[i],
-				allowEdit = true;
+					allowEdit = true;
 
 				if(cell.column.modules.edit && Helpers.elVisible(cell.getElement())){
 					if(typeof cell.column.modules.edit.check == "function"){
@@ -348,16 +348,16 @@ class Edit extends Module{
 	//initialize column editor
 	initializeColumn(column){
 		var self = this,
-		config = {
-			editor:false,
-			blocked:false,
-			check:column.definition.editable,
-			params:column.definition.editorParams || {}
-		};
+			config = {
+				editor:false,
+				blocked:false,
+				check:column.definition.editable,
+				params:column.definition.editorParams || {}
+			};
 
 		//set column editor
 		switch(typeof column.definition.editor){
-			case "string":
+		case "string":
 			if(this.editors[column.definition.editor]){
 				config.editor = this.editors[column.definition.editor];
 			}else{
@@ -365,11 +365,11 @@ class Edit extends Module{
 			}
 			break;
 
-			case "function":
+		case "function":
 			config.editor = column.definition.editor;
 			break;
 
-			case "boolean":
+		case "boolean":
 			if(column.definition.editor === true){
 				if(typeof column.definition.formatter !== "function"){
 					if(this.editors[column.definition.formatter]){
@@ -395,7 +395,7 @@ class Edit extends Module{
 
 	clearEditor(cancel){
 		var cell = this.currentCell,
-		cellEl;
+			cellEl;
 
 		this.invalidEdit = false;
 
@@ -446,7 +446,7 @@ class Edit extends Module{
 	bindEditor(cell){
 		if(cell.column.modules.edit){
 			var self = this,
-			element = cell.getElement(true);
+				element = cell.getElement(true);
 
 			element.setAttribute("tabindex", 0);
 
@@ -490,9 +490,9 @@ class Edit extends Module{
 	focusScrollAdjust(cell){
 		if(this.table.rowManager.getRenderMode() == "virtual"){
 			var topEdge = this.table.rowManager.element.scrollTop,
-			bottomEdge = this.table.rowManager.element.clientHeight + this.table.rowManager.element.scrollTop,
-			rowEl = cell.row.getElement(),
-			offset = rowEl.offsetTop;
+				bottomEdge = this.table.rowManager.element.clientHeight + this.table.rowManager.element.scrollTop,
+				rowEl = cell.row.getElement(),
+				offset = rowEl.offsetTop;
 
 			if(rowEl.offsetTop < topEdge){
 				this.table.rowManager.element.scrollTop -= (topEdge - rowEl.offsetTop);
@@ -503,9 +503,9 @@ class Edit extends Module{
 			}
 
 			var leftEdge = this.table.rowManager.element.scrollLeft,
-			rightEdge = this.table.rowManager.element.clientWidth + this.table.rowManager.element.scrollLeft,
-			cellEl = cell.getElement(),
-			offset = cellEl.offsetLeft;
+				rightEdge = this.table.rowManager.element.clientWidth + this.table.rowManager.element.scrollLeft,
+				cellEl = cell.getElement(),
+				offset = cellEl.offsetLeft;
 
 			if(this.table.modExists("frozenColumns")){
 				leftEdge += parseInt(this.table.modules.frozenColumns.leftMargin);
@@ -530,10 +530,10 @@ class Edit extends Module{
 
 	edit(cell, e, forceEdit){
 		var self = this,
-		allowEdit = true,
-		rendered = function(){},
-		element = cell.getElement(),
-		cellEditor, component, params;
+			allowEdit = true,
+			rendered = function(){},
+			element = cell.getElement(),
+			cellEditor, component, params;
 
 		//prevent editing if another cell is refusing to leave focus (eg. validation fail)
 		if(this.currentCell){
@@ -607,11 +607,11 @@ class Edit extends Module{
 			}
 
 			switch(typeof cell.column.modules.edit.check){
-				case "function":
+			case "function":
 				allowEdit = cell.column.modules.edit.check(cell.getComponent());
 				break;
 
-				case "boolean":
+			case "boolean":
 				allowEdit = cell.column.modules.edit.check;
 				break;
 			}

@@ -34,11 +34,11 @@ class Mutator extends Module{
 	//initialize column mutator
 	initializeColumn(column){
 		var match = false,
-		config = {};
+			config = {};
 
 		this.allowedTypes.forEach((type) => {
 			var key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
-			mutator;
+				mutator;
 
 			if(column.definition[key]){
 				mutator = this.lookupMutator(column.definition[key]);
@@ -64,7 +64,7 @@ class Mutator extends Module{
 
 		//set column mutator
 		switch(typeof value){
-			case "string":
+		case "string":
 			if(Mutator.mutators[value]){
 				mutator = Mutator.mutators[value];
 			}else{
@@ -72,7 +72,7 @@ class Mutator extends Module{
 			}
 			break;
 
-			case "function":
+		case "function":
 			mutator = value;
 			break;
 		}
@@ -83,7 +83,7 @@ class Mutator extends Module{
 	//apply mutator to row
 	transformRow(data, type, updatedData){
 		var key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
-		value;
+			value;
 
 		if(this.enabled){
 
@@ -113,7 +113,7 @@ class Mutator extends Module{
 	transformCell(cell, value){
 		if(cell.column.modules.mutate){
 			var mutator = cell.column.modules.mutate.mutatorEdit || cell.column.modules.mutate.mutator || false,
-			tempData = {};
+				tempData = {};
 
 			if(mutator){
 				tempData = Object.assign(tempData, cell.row.getData());

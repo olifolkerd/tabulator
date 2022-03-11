@@ -27,7 +27,7 @@ class ReactiveData extends Module{
 
 	watchData(data){
 		var self = this,
-		pushFunc, version;
+			pushFunc, version;
 
 		this.currentVersion ++;
 
@@ -129,10 +129,10 @@ class ReactiveData extends Module{
 			configurable: true,
 			value: function(){
 				var args = Array.from(arguments),
-				start = args[0] < 0 ? data.length + args[0] : args[0],
-				end = args[1],
-				newRows = args[2] ? args.slice(2) : false,
-				startRow;
+					start = args[0] < 0 ? data.length + args[0] : args[0],
+					end = args[1],
+					newRows = args[2] ? args.slice(2) : false,
+					startRow;
 
 				if(!self.blocked && version === self.currentVersion){
 
@@ -207,7 +207,7 @@ class ReactiveData extends Module{
 
 	watchTreeChildren (row){
 		var childField = row.getData()[this.table.options.dataTreeChildField],
-		origFuncs = {};
+			origFuncs = {};
 
 		function rebuildTree(){
 			this.table.modules.dataTree.initializeRow(row);
@@ -291,8 +291,8 @@ class ReactiveData extends Module{
 
 	watchKey(row, data, key){
 		var props = Object.getOwnPropertyDescriptor(data, key),
-		value = data[key],
-		version = this.currentVersion;
+			value = data[key],
+			version = this.currentVersion;
 
 		Object.defineProperty(data, key, {
 			set: (newValue) => {

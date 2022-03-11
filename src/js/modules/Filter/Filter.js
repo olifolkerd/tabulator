@@ -194,15 +194,15 @@ class Filter extends Module{
 	//initialize column header filter
 	initializeColumn(column, value){
 		var self = this,
-		field = column.getField(),
-		params;
+			field = column.getField(),
+			params;
 
 		//handle successfull value change
 		function success(value){
 			var filterType = (column.modules.filter.tagType == "input" && column.modules.filter.attrType == "text") || column.modules.filter.tagType == "textarea" ? "partial" : "match",
-			type = "",
-			filterChangeCheck = "",
-			filterFunc;
+				type = "",
+				filterChangeCheck = "",
+				filterFunc;
 
 			if(typeof column.modules.filter.prevSuccess === "undefined" || column.modules.filter.prevSuccess !== value){
 
@@ -212,7 +212,7 @@ class Filter extends Module{
 					column.modules.filter.value = value;
 
 					switch(typeof column.definition.headerFilterFunc){
-						case "string":
+					case "string":
 						if(Filter.filters[column.definition.headerFilterFunc]){
 							type = column.definition.headerFilterFunc;
 							filterFunc = function(data){
@@ -228,7 +228,7 @@ class Filter extends Module{
 						}
 						break;
 
-						case "function":
+					case "function":
 						filterFunc = function(data){
 							var params = column.definition.headerFilterFuncParams || {};
 							var fieldVal = column.getFieldValue(data);
@@ -244,7 +244,7 @@ class Filter extends Module{
 
 					if(!filterFunc){
 						switch(filterType){
-							case "partial":
+						case "partial":
 							filterFunc = function(data){
 								var colVal = column.getFieldValue(data);
 
@@ -257,7 +257,7 @@ class Filter extends Module{
 							type = "like";
 							break;
 
-							default:
+						default:
 							filterFunc = function(data){
 								return column.getFieldValue(data) == value;
 							};
@@ -296,9 +296,9 @@ class Filter extends Module{
 
 	generateHeaderFilterElement(column, initialValue, reinitialize){
 		var self = this,
-		success = column.modules.filter.success,
-		field = column.getField(),
-		filterElement, editor, editorElement, cellWrapper, typingTimer, searchTrigger, params;
+			success = column.modules.filter.success,
+			field = column.getField(),
+			filterElement, editor, editorElement, cellWrapper, typingTimer, searchTrigger, params;
 
 		//handle aborted edit
 		function cancel(){}
@@ -319,7 +319,7 @@ class Filter extends Module{
 
 			//set column editor
 			switch(typeof column.definition.headerFilter){
-				case "string":
+			case "string":
 				if(self.table.modules.edit.editors[column.definition.headerFilter]){
 					editor = self.table.modules.edit.editors[column.definition.headerFilter];
 
@@ -333,11 +333,11 @@ class Filter extends Module{
 				}
 				break;
 
-				case "function":
+			case "function":
 				editor = column.definition.headerFilter;
 				break;
 
-				case "boolean":
+			case "boolean":
 				if(column.modules.edit && column.modules.edit.editor){
 					editor = column.modules.edit.editor;
 				}else{
@@ -450,26 +450,26 @@ class Filter extends Module{
 							((column.definition.editor === 'autocomplete' ||
 								column.definition.editor === 'tickCross') &&
 							column.definition.headerFilter === true)
-							)
-						) {
+						)
+					) {
 						editorElement.addEventListener("keyup", searchTrigger);
-					editorElement.addEventListener("search", searchTrigger);
+						editorElement.addEventListener("search", searchTrigger);
 
 
-					//update number filtered columns on change
-					if(column.modules.filter.attrType == "number"){
-						editorElement.addEventListener("change", function(e){
-							success(editorElement.value);
-						});
-					}
+						//update number filtered columns on change
+						if(column.modules.filter.attrType == "number"){
+							editorElement.addEventListener("change", function(e){
+								success(editorElement.value);
+							});
+						}
 
-					//change text inputs to search inputs to allow for clearing of field
-					if(column.modules.filter.attrType == "text" && this.table.browser !== "ie"){
-						editorElement.setAttribute("type", "search");
+						//change text inputs to search inputs to allow for clearing of field
+						if(column.modules.filter.attrType == "text" && this.table.browser !== "ie"){
+							editorElement.setAttribute("type", "search");
 						// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
-					}
+						}
 
-				}
+					}
 
 					//prevent input and select elements from propegating click to column sorters etc
 					if(column.modules.filter.tagType == "input" || column.modules.filter.tagType == "select" || column.modules.filter.tagType == "textarea"){
@@ -783,7 +783,7 @@ class Filter extends Module{
 	//search data and return matching rows
 	search (searchType, field, type, value){
 		var activeRows = [],
-		filterList = [];
+			filterList = [];
 
 		if(!Array.isArray(field)){
 			field = [{field:field, type:type, value:value}];
@@ -818,7 +818,7 @@ class Filter extends Module{
 	//filter row array
 	filter(rowList, filters){
 		var activeRows = [],
-		activeRowComponents = [];
+			activeRowComponents = [];
 
 		if(this.subscribedExternal("dataFiltering")){
 			this.dispatchExternal("dataFiltering", this.getFilters());
@@ -851,7 +851,7 @@ class Filter extends Module{
 	//filter individual row
 	filterRow(row, filters){
 		var match = true,
-		data = row.getData();
+			data = row.getData();
 
 		this.filterList.forEach((filter) => {
 			if(!this.filterRecurse(filter, data)){

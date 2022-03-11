@@ -64,7 +64,7 @@ class SelectRow extends Module{
 	
 	initializeRow(row){
 		var self = this,
-		element = row.getElement();
+			element = row.getElement();
 		
 		// trigger end of row selection
 		var endSelect = function(){
@@ -207,7 +207,7 @@ class SelectRow extends Module{
 		var rowMatch;
 		
 		switch(typeof rows){
-			case "undefined":
+		case "undefined":
 			this.table.rowManager.rows.forEach((row) => {
 				this._selectRow(row, true, true);
 			});
@@ -215,7 +215,7 @@ class SelectRow extends Module{
 			this._rowSelectionChanged();
 			break;
 			
-			case "string":
+		case "string":
 			
 			rowMatch = this.table.rowManager.findRow(rows);
 			
@@ -230,7 +230,7 @@ class SelectRow extends Module{
 			this._rowSelectionChanged();
 			break;
 			
-			default:
+		default:
 			if(Array.isArray(rows)){
 				rows.forEach((row) => {
 					this._selectRow(row, true, true);
@@ -297,7 +297,7 @@ class SelectRow extends Module{
 	//deselect a number of rows
 	deselectRows(rows, silent){
 		var self = this,
-		rowCount;
+			rowCount;
 		
 		if(typeof rows == "undefined"){
 			
@@ -327,8 +327,8 @@ class SelectRow extends Module{
 	//deselect an individual row
 	_deselectRow(rowInfo, silent){
 		var self = this,
-		row = self.table.rowManager.findRow(rowInfo),
-		index;
+			row = self.table.rowManager.findRow(rowInfo),
+			index;
 		
 		if(row){
 			index = self.selectedRows.findIndex(function(selectedRow){

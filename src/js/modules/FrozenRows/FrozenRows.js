@@ -48,8 +48,8 @@ class FrozenRows extends Module{
 	//filter frozen rows out of display data
 	getRows(rows){
 		var self = this,
-		frozen = [],
-		output = rows.slice(0);
+			frozen = [],
+			output = rows.slice(0);
 
 		this.rows.forEach(function(row){
 			var index = output.indexOf(row);

@@ -83,11 +83,11 @@ class Sort extends Module{
 	//initialize column header for sorting
 	initializeColumn(column){
 		var sorter = false,
-		colEl,
-		arrowEl;
+			colEl,
+			arrowEl;
 
 		switch(typeof column.definition.sorter){
-			case "string":
+		case "string":
 			if(Sort.sorters[column.definition.sorter]){
 				sorter = Sort.sorters[column.definition.sorter];
 			}else{
@@ -95,7 +95,7 @@ class Sort extends Module{
 			}
 			break;
 
-			case "function":
+		case "function":
 			sorter = column.definition.sorter;
 			break;
 		}
@@ -131,8 +131,8 @@ class Sort extends Module{
 			//sort on click
 			colEl.addEventListener("click", (e) => {
 				var dir = "",
-				sorters=[],
-				match = false;
+					sorters=[],
+					match = false;
 
 				if(column.modules.sort){
 					if(column.modules.sort.tristate){
@@ -147,15 +147,15 @@ class Sort extends Module{
 						}
 					}else{
 						switch(column.modules.sort.dir){
-							case "asc":
+						case "asc":
 							dir = "desc";
 							break;
 
-							case "desc":
+						case "desc":
 							dir = "asc";
 							break;
 
-							default:
+						default:
 							dir = column.modules.sort.startingDir;
 						}
 					}
@@ -224,7 +224,7 @@ class Sort extends Module{
 	//return current sorters
 	getSort(){
 		var self = this,
-		sorters = [];
+			sorters = [];
 
 		self.sortList.forEach(function(item){
 			if(item.column){
@@ -238,7 +238,7 @@ class Sort extends Module{
 	//change sort list and trigger sort
 	setSort(sortList, dir){
 		var self = this,
-		newSortList = [];
+			newSortList = [];
 
 		if(!Array.isArray(sortList)){
 			sortList = [{column: sortList, dir:dir}];
@@ -272,8 +272,8 @@ class Sort extends Module{
 	//find appropriate sorter for column
 	findSorter(column){
 		var row = this.table.rowManager.activeRows[0],
-		sorter = "string",
-		field, value;
+			sorter = "string",
+			field, value;
 
 		if(row){
 			row = row.getData();
@@ -284,15 +284,15 @@ class Sort extends Module{
 				value = column.getFieldValue(row);
 
 				switch(typeof value){
-					case "undefined":
+				case "undefined":
 					sorter = "string";
 					break;
 
-					case "boolean":
+				case "boolean":
 					sorter = "boolean";
 					break;
 
-					default:
+				default:
 					if(!isNaN(value) && value !== ""){
 						sorter = "number";
 					}else{
@@ -311,10 +311,10 @@ class Sort extends Module{
 	//work through sort list sorting data
 	sort(data){
 		var self = this,
-		sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
-		sortListActual = [],
-		rowComponents = [],
-		lastSort;
+			sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
+			sortListActual = [],
+			rowComponents = [],
+			lastSort;
 
 		if(this.subscribedExternal("dataSorting")){
 			this.dispatchExternal("dataSorting", self.getSort());

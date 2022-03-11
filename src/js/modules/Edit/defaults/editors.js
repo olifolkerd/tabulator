@@ -11,8 +11,8 @@ import tickCross from './editors/tickCross.js';
 export default {
 	input:input,
 	textarea:textarea,
-    number:number,
-    range:range,
+	number:number,
+	range:range,
 	select:select,
 	autocomplete:autocomplete,
 	star:star,

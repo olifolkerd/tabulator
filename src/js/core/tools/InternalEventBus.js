@@ -112,7 +112,7 @@ export default class InternalEventBus {
 
 	_dispatch(){
 		var args = Array.from(arguments),
-		key = args.shift();
+			key = args.shift();
 
 		if(this.events[key]){
 			this.events[key].forEach((subscriber) => {
@@ -123,7 +123,7 @@ export default class InternalEventBus {
 
 	_debugDispatch(){
 		var args = Array.from(arguments),
-		key = args[0];
+			key = args[0];
 
 		args[0] = "InternalEvent:" + key;
 
@@ -136,7 +136,7 @@ export default class InternalEventBus {
 
 	_debugChain(){
 		var args = Array.from(arguments),
-		key = args[0];
+			key = args[0];
 
 		args[0] = "InternalEvent:" + key;
 
@@ -149,7 +149,7 @@ export default class InternalEventBus {
 
 	_debugConfirm(){
 		var args = Array.from(arguments),
-		key = args[0];
+			key = args[0];
 
 		args[0] = "InternalEvent:" + key;
 

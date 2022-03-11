@@ -145,7 +145,7 @@ class ColumnCalcs extends Module{
 		if(def.topCalc){
 
 			switch(typeof def.topCalc){
-				case "string":
+			case "string":
 				if(ColumnCalcs.calculations[def.topCalc]){
 					config.topCalc = ColumnCalcs.calculations[def.topCalc]
 				}else{
@@ -153,7 +153,7 @@ class ColumnCalcs extends Module{
 				}
 				break;
 
-				case "function":
+			case "function":
 				config.topCalc = def.topCalc;
 				break
 
@@ -172,7 +172,7 @@ class ColumnCalcs extends Module{
 
 		if(def.bottomCalc){
 			switch(typeof def.bottomCalc){
-				case "string":
+			case "string":
 				if(ColumnCalcs.calculations[def.bottomCalc]){
 					config.botCalc = ColumnCalcs.calculations[def.bottomCalc]
 				}else{
@@ -180,7 +180,7 @@ class ColumnCalcs extends Module{
 				}
 				break;
 
-				case "function":
+			case "function":
 				config.botCalc = def.bottomCalc;
 				break
 
@@ -199,7 +199,7 @@ class ColumnCalcs extends Module{
 	}
 
 	//dummy functions to handle being mock column manager
-	registerColumnField(){};
+	registerColumnField(){}
 
 	removeCalcs(){
 		var changed = false;
@@ -354,7 +354,7 @@ class ColumnCalcs extends Module{
 	//generate stats row
 	generateRow(pos, data){
 		var rowData = this.generateRowData(pos, data),
-		row;
+			row;
 
 		if(this.table.modExists("mutator")){
 			this.table.modules.mutator.disable();
@@ -384,38 +384,38 @@ class ColumnCalcs extends Module{
 
 			this.table.columnManager.columnsByIndex.forEach((column) => {
 
-					//set field name of mock column
-					this.genColumn.setField(column.getField());
-					this.genColumn.hozAlign = column.hozAlign;
+				//set field name of mock column
+				this.genColumn.setField(column.getField());
+				this.genColumn.hozAlign = column.hozAlign;
 
-					if(column.definition[pos + "CalcFormatter"] && this.table.modExists("format")){
-						this.genColumn.modules.format = {
-							formatter: this.table.modules.format.getFormatter(column.definition[pos + "CalcFormatter"]),
-							params: column.definition[pos + "CalcFormatterParams"] || {},
-						};
-					}else{
-						this.genColumn.modules.format = {
-							formatter: this.table.modules.format.getFormatter("plaintext"),
-							params:{}
-						};
-					}
+				if(column.definition[pos + "CalcFormatter"] && this.table.modExists("format")){
+					this.genColumn.modules.format = {
+						formatter: this.table.modules.format.getFormatter(column.definition[pos + "CalcFormatter"]),
+						params: column.definition[pos + "CalcFormatterParams"] || {},
+					};
+				}else{
+					this.genColumn.modules.format = {
+						formatter: this.table.modules.format.getFormatter("plaintext"),
+						params:{}
+					};
+				}
 
-					//ensure css class defintion is replicated to calculation cell
-					this.genColumn.definition.cssClass = column.definition.cssClass;
+				//ensure css class defintion is replicated to calculation cell
+				this.genColumn.definition.cssClass = column.definition.cssClass;
 
-					//generate cell and assign to correct column
-					var cell = new Cell(this.genColumn, row);
-					cell.getElement();
-					cell.column = column;
-					cell.setWidth();
+				//generate cell and assign to correct column
+				var cell = new Cell(this.genColumn, row);
+				cell.getElement();
+				cell.column = column;
+				cell.setWidth();
 
-					column.cells.push(cell);
-					cells.push(cell);
+				column.cells.push(cell);
+				cells.push(cell);
 
-					if(!column.visible){
-						cell.hide();
-					}
-				});
+				if(!column.visible){
+					cell.hide();
+				}
+			});
 
 			row.cells = cells;
 		};
@@ -426,9 +426,9 @@ class ColumnCalcs extends Module{
 	//generate stats row
 	generateRowData(pos, data){
 		var rowData = {},
-		calcs = pos == "top" ? this.topCalcs : this.botCalcs,
-		type = pos == "top" ? "topCalc" : "botCalc",
-		params, paramKey;
+			calcs = pos == "top" ? this.topCalcs : this.botCalcs,
+			type = pos == "top" ? "topCalc" : "botCalc",
+			params, paramKey;
 
 		calcs.forEach(function(column){
 			var values = [];
@@ -469,7 +469,7 @@ class ColumnCalcs extends Module{
 	//return the calculated
 	getResults(){
 		var results = {},
-		groups;
+			groups;
 
 		if(this.table.options.groupBy && this.table.modExists("groupRows")){
 			groups = this.table.modules.groupRows.getGroups(true);
@@ -490,9 +490,9 @@ class ColumnCalcs extends Module{
 	//get results from a group
 	getGroupResults(group){
 		var groupObj = group._getSelf(),
-		subGroups = group.getSubGroups(),
-		subGroupResults = {},
-		results = {};
+			subGroups = group.getSubGroups(),
+			subGroupResults = {},
+			results = {};
 
 		subGroups.forEach((subgroup) => {
 			subGroupResults[subgroup.getKey()] = this.getGroupResults(subgroup);

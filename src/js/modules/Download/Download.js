@@ -93,8 +93,8 @@ class Download extends Module{
 
 	triggerDownload(data, mime, type, filename, newTab){
 		var element = document.createElement('a'),
-		blob = new Blob([data],{type:mime}),
-		filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
+			blob = new Blob([data],{type:mime}),
+			filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
 		blob = this.table.options.downloadReady(data, blob);
 
@@ -127,7 +127,7 @@ class Download extends Module{
 
 	commsReceived(table, action, data){
 		switch(action){
-			case "intercept":
+		case "intercept":
 			this.download(data.type, "", data.options, data.active, data.intercept);
 			break;
 		}

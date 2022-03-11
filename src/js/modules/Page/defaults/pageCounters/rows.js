@@ -1,10 +1,10 @@
 export default function(pageSize, currentRow, currentPage, totalRows, totalPages){
 	var el = document.createElement("span"),
-	showingEl = document.createElement("span"),
-	valueEl = document.createElement("span"),
-	ofEl = document.createElement("span"),
-	totalEl = document.createElement("span"),
-	rowsEl = document.createElement("span");
+		showingEl = document.createElement("span"),
+		valueEl = document.createElement("span"),
+		ofEl = document.createElement("span"),
+		totalEl = document.createElement("span"),
+		rowsEl = document.createElement("span");
 
 	this.table.modules.localize.langBind("pagination|counter|showing", (value) => {
 		showingEl.innerHTML = value;
@@ -37,4 +37,4 @@ export default function(pageSize, currentRow, currentPage, totalRows, totalPages
 	}
 	
 	return el;
-};
+}

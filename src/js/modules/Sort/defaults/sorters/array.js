@@ -9,25 +9,25 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	function calc(value){
 
 		switch(type){
-			case "length":
+		case "length":
 			return value.length;
 			break;
 
-			case "sum":
+		case "sum":
 			return value.reduce(function(c, d){
 				return c + d;
 			});
 			break;
 
-			case "max":
+		case "max":
 			return Math.max.apply(null, value) ;
 			break;
 
-			case "min":
+		case "min":
 			return Math.min.apply(null, value) ;
 			break;
 
-			case "avg":
+		case "avg":
 			return value.reduce(function(c, d){
 				return c + d;
 			}) / value.length;
@@ -55,4 +55,4 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	}
 
 	return emptyAlign;
-};
+}

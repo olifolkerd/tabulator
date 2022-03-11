@@ -113,9 +113,9 @@ export default class RowManager extends CoreFeature{
 		//scroll header along with table body
 		this.element.addEventListener("scroll", () => {
 			var left = this.element.scrollLeft,
-			leftDir = this.scrollLeft > left,
-			top = this.element.scrollTop,
-			topDir = this.scrollTop > top;
+				leftDir = this.scrollLeft > left,
+				top = this.element.scrollTop,
+				topDir = this.scrollTop > top;
 			
 			//handle horizontal scrolling
 			if(this.scrollLeft != left){
@@ -260,7 +260,7 @@ export default class RowManager extends CoreFeature{
 	
 	deleteRow(row, blockRedraw){
 		var allIndex = this.rows.indexOf(row),
-		activeIndex = this.activeRows.indexOf(row);
+			activeIndex = this.activeRows.indexOf(row);
 		
 		if(activeIndex > -1){
 			this.activeRows.splice(activeIndex, 1);
@@ -305,7 +305,7 @@ export default class RowManager extends CoreFeature{
 	//add multiple rows
 	addRows(data, pos, index){
 		var length = 0,
-		rows = [];
+			rows = [];
 		
 		return new Promise((resolve, reject) => {
 			pos = this.findAddRowPos(pos);
@@ -356,9 +356,9 @@ export default class RowManager extends CoreFeature{
 	
 	addRowActual(data, pos, index, blockRedraw){
 		var row = data instanceof Row ? data : new Row(data || {}, this),
-		top = this.findAddRowPos(pos),
-		allIndex = -1,
-		activeIndex, chainResult;
+			top = this.findAddRowPos(pos),
+			allIndex = -1,
+			activeIndex, chainResult;
 		
 		if(!index){
 			chainResult = this.chain("row-adding-position", [row, top], null, {index, top});
@@ -507,7 +507,7 @@ export default class RowManager extends CoreFeature{
 	
 	nextDisplayRow(row, rowOnly){
 		var index = this.getDisplayRowIndex(row),
-		nextRow = false;
+			nextRow = false;
 		
 		
 		if(index !== false && index < this.displayRowsCount -1){
@@ -523,7 +523,7 @@ export default class RowManager extends CoreFeature{
 	
 	prevDisplayRow(row, rowOnly){
 		var index = this.getDisplayRowIndex(row),
-		prevRow = false;
+			prevRow = false;
 		
 		if(index){
 			prevRow = this.getDisplayRows()[index-1];
@@ -554,7 +554,7 @@ export default class RowManager extends CoreFeature{
 	
 	getData(active, transform){
 		var output = [],
-		rows = this.getRows(active);
+			rows = this.getRows(active);
 		
 		rows.forEach(function(row){
 			if(row.type == "row"){
@@ -567,7 +567,7 @@ export default class RowManager extends CoreFeature{
 	
 	getComponents(active){
 		var	output = [],
-		rows = this.getRows(active);
+			rows = this.getRows(active);
 		
 		rows.forEach(function(row){
 			output.push(row.getComponent());
@@ -614,10 +614,10 @@ export default class RowManager extends CoreFeature{
 	//set active data set
 	refreshActiveData(handler, skipStage, renderInPosition){
 		var table = this.table,
-		stage = "",
-		index = 0,
-		cascadeOrder = ["all", "dataPipeline", "display", "displayPipeline", "end"],
-		displayIndex;
+			stage = "",
+			index = 0,
+			cascadeOrder = ["all", "dataPipeline", "display", "displayPipeline", "end"],
+			displayIndex;
 		
 		
 		if(typeof handler === "function"){
@@ -706,10 +706,10 @@ export default class RowManager extends CoreFeature{
 		
 		//cascade through data refresh stages
 		switch(stage){
-			case "all":
+		case "all":
 			//handle case where alldata needs refreshing
 			
-			case "dataPipeline":
+		case "dataPipeline":
 			
 			for(let i = index; i < this.dataPipeline.length; i++){
 				let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
@@ -721,18 +721,18 @@ export default class RowManager extends CoreFeature{
 			
 			this.regenerateRowNumbers();
 			
-			case "display":
+		case "display":
 			index = 0;
 			this.resetDisplayRows();
 			
-			case "displayPipeline":
+		case "displayPipeline":
 			for(let i = index; i < this.displayPipeline.length; i++){
 				let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
 				
 				this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
 			}
 			
-			case "end":
+		case "end":
 			//case to handle scenario when trying to skip past end stage
 		}
 	}
@@ -819,19 +819,19 @@ export default class RowManager extends CoreFeature{
 		var rows;
 		
 		switch(type){
-			case "active":
+		case "active":
 			rows = this.activeRows;
 			break;
 			
-			case "display":
+		case "display":
 			rows = this.table.rowManager.getDisplayRows();
 			break;
 			
-			case "visible":
+		case "visible":
 			rows = this.getVisibleRows(false, true);
 			break;
 			
-			default:
+		default:
 			rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
 		}
 		
@@ -982,7 +982,7 @@ export default class RowManager extends CoreFeature{
 	//adjust the height of the table holder to fit in the Tabulator element
 	adjustTableSize(){
 		var initialHeight = this.element.clientHeight,
-		modExists;
+			modExists;
 		
 		if(this.renderer.verticalFillMode === "fill"){
 			let otherHeight =  Math.floor(this.table.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
@@ -1045,7 +1045,7 @@ export default class RowManager extends CoreFeature{
 	//redraw table
 	redraw (force){
 		var pos = 0,
-		left = this.scrollLeft;
+			left = this.scrollLeft;
 		
 		this.adjustTableSize();
 		

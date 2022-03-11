@@ -4,18 +4,18 @@ import maskInput from '../../inputMask.js';
 //autocomplete
 export default function(cell, onRendered, success, cancel, editorParams){
 	var self = this,
-	cellEl = cell.getElement(),
-	initialValue = cell.getValue(),
-	vertNav = editorParams.verticalNavigation || "editor",
-	initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : ""),
-	input = document.createElement("input"),
-	listEl = document.createElement("div"),
-	allItems = [],
-	displayItems = [],
-	values = [],
-	currentItem = false,
-	blurable = true,
-	uniqueColumnValues = false;
+		cellEl = cell.getElement(),
+		initialValue = cell.getValue(),
+		vertNav = editorParams.verticalNavigation || "editor",
+		initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : ""),
+		input = document.createElement("input"),
+		listEl = document.createElement("div"),
+		allItems = [],
+		displayItems = [],
+		values = [],
+		currentItem = false,
+		blurable = true,
+		uniqueColumnValues = false;
 
 	//style input
 	input.setAttribute("type", "search");
@@ -57,8 +57,8 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 	function getUniqueColumnValues(field){
 		var output = {},
-		data = self.table.getData(),
-		column;
+			data = self.table.getData(),
+			column;
 
 		if(field){
 			column = self.table.columnManager.getColumnByField(field);
@@ -94,7 +94,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 	function filterList(term, intialLoad){
 		var matches = [],
-		values, items, searchEl;
+			values, items, searchEl;
 
 		//lookup base values list
 		if(uniqueColumnValues){
@@ -335,7 +335,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		var index;
 
 		switch(e.keyCode){
-			case 38: //up arrow
+		case 38: //up arrow
 			index = displayItems.indexOf(currentItem);
 
 			if(vertNav == "editor" || (vertNav == "hybrid" && index)){
@@ -351,7 +351,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			}
 			break;
 
-			case 40: //down arrow
+		case 40: //down arrow
 
 			index = displayItems.indexOf(currentItem);
 
@@ -372,23 +372,23 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			break;
 
 
-			case 37: //left arrow
-			case 39: //right arrow
+		case 37: //left arrow
+		case 39: //right arrow
 			e.stopImmediatePropagation();
 			e.stopPropagation();
 			// e.preventDefault();
 			break;
 
-			case 13: //enter
+		case 13: //enter
 			chooseItem();
 			break;
 
-			case 27: //escape
+		case 27: //escape
 			cancelItem();
 			break;
 
-			case 36: //home
-			case 35: //end
+		case 36: //home
+		case 35: //end
 			//prevent table navigation while using input element
 			e.stopImmediatePropagation();
 			break;
@@ -398,15 +398,15 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	input.addEventListener("keyup", function(e){
 
 		switch(e.keyCode){
-			case 38: //up arrow
-			case 37: //left arrow
-			case 39: //up arrow
-			case 40: //right arrow
-			case 13: //enter
-			case 27: //escape
+		case 38: //up arrow
+		case 37: //left arrow
+		case 39: //up arrow
+		case 40: //right arrow
+		case 13: //enter
+		case 27: //escape
 			break;
 
-			default:
+		default:
 			filterList(input.value);
 		}
 
@@ -449,4 +449,4 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	filterList(initialDisplayValue, true);
 
 	return input;
-};
+}

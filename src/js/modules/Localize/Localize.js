@@ -135,8 +135,8 @@ class Localize extends Module{
 	//get text for current locale
 	getText(path, value){
 		var path = value ? path + "|" + value : path,
-		pathArray = path.split("|"),
-		text = this._getLangElement(pathArray, this.locale);
+			pathArray = path.split("|"),
+			text = this._getLangElement(pathArray, this.locale);
 
 		// if(text === false){
 		// 	console.warn("Localization Error - Matching localized text not found for given path: ", path);

@@ -1,13 +1,13 @@
 //star rating
 export default function(cell, onRendered, success, cancel, editorParams){
 	var self = this,
-	element = cell.getElement(),
-	value = cell.getValue(),
-	maxStars = element.getElementsByTagName("svg").length || 5,
-	size = element.getElementsByTagName("svg")[0] ? element.getElementsByTagName("svg")[0].getAttribute("width") : 14,
-	stars = [],
-	starsHolder = document.createElement("div"),
-	star = document.createElementNS('http://www.w3.org/2000/svg', "svg");
+		element = cell.getElement(),
+		value = cell.getValue(),
+		maxStars = element.getElementsByTagName("svg").length || 5,
+		size = element.getElementsByTagName("svg")[0] ? element.getElementsByTagName("svg")[0].getAttribute("width") : 14,
+		stars = [],
+		starsHolder = document.createElement("div"),
+		star = document.createElementNS('http://www.w3.org/2000/svg', "svg");
 
 
 	//change star type
@@ -124,23 +124,23 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	//allow key based navigation
 	element.addEventListener("keydown", function(e){
 		switch(e.keyCode){
-			case 39: //right arrow
+		case 39: //right arrow
 			changeValue(value + 1);
 			break;
 
-			case 37: //left arrow
+		case 37: //left arrow
 			changeValue(value - 1);
 			break;
 
-			case 13: //enter
+		case 13: //enter
 			success(value);
 			break;
 
-			case 27: //escape
+		case 27: //escape
 			cancel();
 			break;
 		}
 	});
 
 	return starsHolder;
-};
+}

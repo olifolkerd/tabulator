@@ -22,7 +22,7 @@ class ResizeRows extends Module{
 
 	initializeRow(row){
 		var self = this,
-		rowEl = row.getElement();
+			rowEl = row.getElement();
 
 		var handle = document.createElement('div');
 		handle.className = "tabulator-row-resize-handle";

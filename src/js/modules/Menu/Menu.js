@@ -95,7 +95,7 @@ class Menu extends Module{
 	
 	initializeColumn(column){
 		var options = ["headerContextMenu", "headerClickMenu"],
-		def = column.definition;
+			def = column.definition;
 		
 		//handle column events
 		if(def.headerContextMenu && !this.columnSubscribers.headerContextMenu){
@@ -208,8 +208,8 @@ class Menu extends Module{
 		
 		menu.forEach((item) => {
 			var itemEl = document.createElement("div"),
-			label = item.label,
-			disabled = item.disabled;
+				label = item.label,
+				disabled = item.disabled;
 			
 			if(item.separator){
 				itemEl.classList.add("tabulator-menu-separator");
