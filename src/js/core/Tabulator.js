@@ -55,7 +55,7 @@ class Tabulator {
 			//delay table creation to allow event bindings immediately after the constructor
 			setTimeout(() => {
 				this._create();
-			})
+			});
 		}
 
 		TableRegistry.register(this); //register table for inter-device communication
@@ -88,7 +88,7 @@ class Tabulator {
 
 		this.bindModules();
 
-		this.options = this.optionsList.generate(Tabulator.defaultOptions, options)
+		this.options = this.optionsList.generate(Tabulator.defaultOptions, options);
 
 		this._clearObjectPointers();
 
@@ -242,7 +242,7 @@ class Tabulator {
 		//initialize core modules
 		this.modulesCore.forEach((mod) => {
 			mod.initialize();
-		})
+		});
 
 		//build table elements
 		element.appendChild(this.columnManager.getElement());
@@ -330,7 +330,7 @@ class Tabulator {
 		if(this.initialized){
 			return this.dataLoader.load(data, params, config, false);
 		}else{
-			console.warn("setData failed - table not yet initialized. To set initial data please use the 'data' property in the table constructor.")
+			console.warn("setData failed - table not yet initialized. To set initial data please use the 'data' property in the table constructor.");
 		}
 	}
 
@@ -519,7 +519,7 @@ class Tabulator {
 				foundRows.push(row);
 			}else{
 				console.error("Delete Error - No matching row found:", item);
-				return Promise.reject("Delete Error - No matching row found")
+				return Promise.reject("Delete Error - No matching row found");
 			}
 		}
 
@@ -530,7 +530,7 @@ class Tabulator {
 
 		//delete rows
 		foundRows.forEach((row) =>{
-			row.delete()
+			row.delete();
 		});
 
 		this.rowManager.reRenderInPosition();
@@ -566,12 +566,12 @@ class Tabulator {
 			return row.updateData(data)
 				.then(()=>{
 					return row.getComponent();
-				})
+				});
 		}else{
 			return this.rowManager.addRows(data)
 				.then((rows)=>{
 					return rows[0].getComponent();
-				})
+				});
 		}
 	}
 
@@ -587,7 +587,7 @@ class Tabulator {
 			return row.updateData(data)
 				.then(()=>{
 					return Promise.resolve(row.getComponent());
-				})
+				});
 		}else{
 			console.warn("Update Error - No matching row found:", index);
 			return Promise.reject("Update Error - No matching row found");
@@ -599,7 +599,7 @@ class Tabulator {
 		var row = this.rowManager.findRow(index);
 
 		if(row){
-			return this.rowManager.scrollToRow(row, position, ifVisible)
+			return this.rowManager.scrollToRow(row, position, ifVisible);
 		}else{
 			console.warn("Scroll Error - No matching row found:", index);
 			return Promise.reject("Scroll Error - No matching row found");
@@ -637,7 +637,7 @@ class Tabulator {
 		if(this.initialized){
 			this.columnManager.setColumns(definition);
 		}else{
-			console.warn("setColumns failed - table not yet initialized. To set initial data please use the 'columns' property in the table constructor.")
+			console.warn("setColumns failed - table not yet initialized. To set initial data please use the 'columns' property in the table constructor.");
 		}
 	}
 
@@ -721,7 +721,7 @@ class Tabulator {
 		var column = this.columnManager.findColumn(field);
 
 		if(column){
-			return column.updateDefinition(definition)
+			return column.updateDefinition(definition);
 		}else{
 			console.warn("Column Update Error - No matching column found:", field);
 			return Promise.reject();
@@ -734,7 +734,7 @@ class Tabulator {
 
 		if(fromColumn){
 			if(toColumn){
-				this.columnManager.moveColumn(fromColumn, toColumn, after)
+				this.columnManager.moveColumn(fromColumn, toColumn, after);
 			}else{
 				console.warn("Move Error - No matching column found:", toColumn);
 			}
@@ -749,7 +749,7 @@ class Tabulator {
 			var column = this.columnManager.findColumn(field);
 
 			if(column){
-				return this.columnManager.scrollToColumn(column, position, ifVisible)
+				return this.columnManager.scrollToColumn(column, position, ifVisible);
 			}else{
 				console.warn("Scroll Error - No matching column found:", field);
 				return Promise.reject("Scroll Error - No matching column found");
@@ -786,7 +786,7 @@ class Tabulator {
 	}
 
 	dispatchEvent(){
-		this.externalEvents.dispatch(...arguments)
+		this.externalEvents.dispatch(...arguments);
 	}
 
 	////////////// Extension Management //////////////

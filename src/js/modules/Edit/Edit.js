@@ -77,10 +77,10 @@ class Edit extends Module{
 					cell.getElement().firstChild.blur();
 
 					if(newRow === true){
-						newRow = this.table.addRow({})
+						newRow = this.table.addRow({});
 					}else{
 						if(typeof newRow == "function"){
-							newRow = this.table.addRow(newRow(cell.row.getComponent()))
+							newRow = this.table.addRow(newRow(cell.row.getComponent()));
 						}else{
 							newRow = this.table.addRow(Object.assign({}, newRow));
 						}
@@ -89,7 +89,7 @@ class Edit extends Module{
 					newRow.then(() => {
 						setTimeout(() => {
 							cell.getComponent().navigateNext();
-						})
+						});
 					});
 				}
 			}

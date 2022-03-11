@@ -49,7 +49,7 @@ export default class InteractionManager extends CoreFeature {
 				subscriber:null,
 				target:null,
 			},
-		}
+		};
 		
 		this.pseudoTracking = false;
 	}
@@ -68,8 +68,8 @@ export default class InteractionManager extends CoreFeature {
 			listenerMap[listener] = {
 				handler:null,
 				components:[],
-			}
-		})
+			};
+		});
 		
 		this.listeners = listenerMap;
 	}
@@ -135,7 +135,7 @@ export default class InteractionManager extends CoreFeature {
 			}
 		}
 		
-		this.subscribe("table-destroy", this.clearWatchers.bind(this))
+		this.subscribe("table-destroy", this.clearWatchers.bind(this));
 	}
 	
 	subscriptionChanged(component, key, added){
@@ -173,12 +173,12 @@ export default class InteractionManager extends CoreFeature {
 			if(listener.components.length){
 				if(!listener.handler){
 					listener.handler = this.track.bind(this, key);
-					this.el.addEventListener(key, listener.handler)
+					this.el.addEventListener(key, listener.handler);
 					// this.el.addEventListener(key, listener.handler, {passive: true})
 				}
 			}else{
 				if(listener.handler){
-					this.el.removeEventListener(key, listener.handler)
+					this.el.removeEventListener(key, listener.handler);
 					listener.handler = null;
 				}
 			}
@@ -208,7 +208,7 @@ export default class InteractionManager extends CoreFeature {
 			
 			let abort = classList.filter((item) => {
 				return this.abortClasses.includes(item);
-			})
+			});
 			
 			if(abort.length){
 				break;
@@ -216,7 +216,7 @@ export default class InteractionManager extends CoreFeature {
 			
 			let elTargets = classList.filter((item) => {
 				return componentMap.includes(item);
-			})
+			});
 			
 			for (let target of elTargets) {
 				targets[this.componentMap[target]] = el;
@@ -264,7 +264,7 @@ export default class InteractionManager extends CoreFeature {
 					if(listener.components.includes("column")){
 						component = this.table.columnManager.findColumn(target);
 					}
-					break
+					break;
 					
 				case "cell":
 					if(listener.components.includes("cell")){
@@ -272,7 +272,7 @@ export default class InteractionManager extends CoreFeature {
 							component = targets["row"].findCell(target);
 						}else{	
 							if(targets["row"]){
-								console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?")
+								console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?");
 							}
 						}
 					}
@@ -285,7 +285,7 @@ export default class InteractionManager extends CoreFeature {
 				targetMatches[key] = {
 					target:target,
 					component:component,
-				}
+				};
 			}
 		}
 		
@@ -309,7 +309,7 @@ export default class InteractionManager extends CoreFeature {
 			let listener = this.listeners[key];
 			
 			if(listener.handler){
-				this.el.removeEventListener(key, listener.handler)
+				this.el.removeEventListener(key, listener.handler);
 				listener.handler = null;
 			}
 		}

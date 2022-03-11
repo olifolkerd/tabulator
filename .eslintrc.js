@@ -14,6 +14,7 @@ module.exports = {
 		"sourceType": "module"
 	},
 	"rules": {
+		"semi": "error",
 		"indent": ["error", "tab"],
 		"no-unused-vars": ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": false }],
 		"no-fallthrough": "off",

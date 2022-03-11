@@ -135,7 +135,7 @@ class ColumnCalcs extends Module{
 
 	//initialize column calcs
 	initializeColumn(column){
-		var def = column.definition
+		var def = column.definition;
 
 		var config = {
 			topCalcParams:def.topCalcParams || {},
@@ -147,7 +147,7 @@ class ColumnCalcs extends Module{
 			switch(typeof def.topCalc){
 			case "string":
 				if(ColumnCalcs.calculations[def.topCalc]){
-					config.topCalc = ColumnCalcs.calculations[def.topCalc]
+					config.topCalc = ColumnCalcs.calculations[def.topCalc];
 				}else{
 					console.warn("Column Calc Error - No such calculation found, ignoring: ", def.topCalc);
 				}
@@ -155,7 +155,7 @@ class ColumnCalcs extends Module{
 
 			case "function":
 				config.topCalc = def.topCalc;
-				break
+				break;
 
 			}
 
@@ -174,7 +174,7 @@ class ColumnCalcs extends Module{
 			switch(typeof def.bottomCalc){
 			case "string":
 				if(ColumnCalcs.calculations[def.bottomCalc]){
-					config.botCalc = ColumnCalcs.calculations[def.bottomCalc]
+					config.botCalc = ColumnCalcs.calculations[def.bottomCalc];
 				}else{
 					console.warn("Column Calc Error - No such calculation found, ignoring: ", def.bottomCalc);
 				}
@@ -182,7 +182,7 @@ class ColumnCalcs extends Module{
 
 			case "function":
 				config.botCalc = def.bottomCalc;
-				break
+				break;
 
 			}
 
@@ -251,7 +251,7 @@ class ColumnCalcs extends Module{
 					this.topRow.deleteCells();
 				}
 
-				row = this.generateRow("top", this.rowsToData(rows))
+				row = this.generateRow("top", this.rowsToData(rows));
 				this.topRow = row;
 				while(this.topElement.firstChild) this.topElement.removeChild(this.topElement.firstChild);
 				this.topElement.appendChild(row.getElement());
@@ -263,7 +263,7 @@ class ColumnCalcs extends Module{
 					this.botRow.deleteCells();
 				}
 
-				row = this.generateRow("bottom", this.rowsToData(rows))
+				row = this.generateRow("bottom", this.rowsToData(rows));
 				this.botRow = row;
 				while(this.botElement.firstChild) this.botElement.removeChild(this.botElement.firstChild);
 				this.botElement.appendChild(row.getElement());
@@ -480,7 +480,7 @@ class ColumnCalcs extends Module{
 			results = {
 				top: this.topRow ? this.topRow.getData() : {},
 				bottom: this.botRow ? this.botRow.getData() : {},
-			}
+			};
 		}
 
 		return results;
@@ -501,7 +501,7 @@ class ColumnCalcs extends Module{
 			top: groupObj.calcs.top ? groupObj.calcs.top.getData() : {},
 			bottom: groupObj.calcs.bottom ? groupObj.calcs.bottom.getData() : {},
 			groups: subGroupResults,
-		}
+		};
 
 		return results;
 	}

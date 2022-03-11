@@ -190,7 +190,7 @@ class Persistence extends Module{
 	}
 
 	setColumnLayout(layout){
-		this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout))
+		this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout));
 		return true;
 	}
 
@@ -325,7 +325,7 @@ class Persistence extends Module{
 
 		switch(type){
 		case "columns":
-			data = this.parseColumns(this.table.columnManager.getColumns())
+			data = this.parseColumns(this.table.columnManager.getColumns());
 			break;
 
 		case "filter":

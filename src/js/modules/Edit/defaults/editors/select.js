@@ -443,7 +443,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 		searchWordTimeout = setTimeout(() => {
 			searchWord = "";
-		}, 800)
+		}, 800);
 	}
 
 	//style input

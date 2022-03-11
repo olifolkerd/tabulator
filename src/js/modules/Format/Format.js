@@ -128,7 +128,7 @@ class Format extends Module{
 
 	formatExportValue(cell, type){
 		var formatter = cell.column.modules.format[type],
-			params, component = cell.getComponent()
+			params, component = cell.getComponent();
 
 		if(formatter){
 			params = typeof formatter.params === "function" ? formatter.params(component) : formatter.params;
@@ -180,7 +180,7 @@ class Format extends Module{
 		switch(typeof formatter){
 		case "string":
 			if(Format.formatters[formatter]){
-				formatter = Format.formatters[formatter]
+				formatter = Format.formatters[formatter];
 			}else{
 				console.warn("Formatter Error - No such formatter found: ", formatter);
 				formatter = Format.formatters.plaintext;

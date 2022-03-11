@@ -54,7 +54,7 @@ class FrozenColumns extends Module{
 	}
 	
 	layoutCell(cell){
-		this.layoutElement(cell.element, cell.column)
+		this.layoutElement(cell.element, cell.column);
 	}
 	
 	//initialize specific column
@@ -143,7 +143,7 @@ class FrozenColumns extends Module{
 			}
 			
 			if(this.table.modExists("groupRows")){
-				this.layoutGroupCalcs(this.table.modules.groupRows.getGroups())
+				this.layoutGroupCalcs(this.table.modules.groupRows.getGroups());
 			}
 		}
 	}

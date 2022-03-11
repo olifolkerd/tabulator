@@ -95,7 +95,7 @@ class Ajax extends Module{
 	
 	//load config object
 	generateConfig(config = {}){
-		var ajaxConfig = Object.assign({}, this.config)
+		var ajaxConfig = Object.assign({}, this.config);
 		
 		if(typeof config == "string"){
 			ajaxConfig.method = config;

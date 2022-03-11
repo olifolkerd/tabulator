@@ -25,8 +25,8 @@ class Keybindings extends Module{
 		this.pressedKeys = [];
 
 		if(bindings !== false){
-			Object.assign(mergedBindings, Keybindings.bindings)
-			Object.assign(mergedBindings, bindings)
+			Object.assign(mergedBindings, Keybindings.bindings);
+			Object.assign(mergedBindings, bindings);
 
 			this.mapBindings(mergedBindings);
 			this.bindEvents();

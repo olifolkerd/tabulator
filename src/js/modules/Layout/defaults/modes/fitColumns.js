@@ -44,7 +44,7 @@ export default function(columns){
 		}
 
 		function calcShrink(col){
-			return  (calcWidth(col.width) - (colWidth * (col.column.definition.widthShrink || 0)))
+			return  (calcWidth(col.width) - (colWidth * (col.column.definition.widthShrink || 0)));
 		}
 
 		columns.forEach(function(col, i){
@@ -137,7 +137,7 @@ export default function(columns){
 	flexWidth = totalWidth - fixedWidth;
 
 	//calculate correct column size
-	flexColWidth = Math.floor(flexWidth / flexGrowUnits)
+	flexColWidth = Math.floor(flexWidth / flexGrowUnits);
 
 	//generate column widths
 	gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth, false);

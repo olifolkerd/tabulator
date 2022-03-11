@@ -100,6 +100,6 @@ export default class ExternalEventBus {
 			console.log(...args);
 		}
 
-		return this._dispatch(...arguments)
+		return this._dispatch(...arguments);
 	}
 }

@@ -41,9 +41,9 @@ export default class ModuleBinder {
 			}
 
 			modules.forEach((mod) => {
-				tabulator.registerModuleBinding(mod)
+				tabulator.registerModuleBinding(mod);
 			});
-		}
+		};
 
 		tabulator.registerModuleBinding = function(mod){
 			tabulator.moduleBindings[mod.moduleName] = mod;
@@ -52,7 +52,7 @@ export default class ModuleBinder {
 		tabulator.findTable = function(query){
 			var results = TableRegistry.lookupTable(query, true);
 			return Array.isArray(results) && !results.length ? false : results;
-		}
+		};
 
 		//ensure that module are bound to instantiated function
 		tabulator.prototype.bindModules = function(){
@@ -81,7 +81,7 @@ export default class ModuleBinder {
 			orderedMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
 
 			this.modulesRegular = orderedMods.concat(unOrderedMods);
-		}
+		};
 	}
 
 	bindModules(tabulator, modules, core){

@@ -33,7 +33,7 @@ class Module extends CoreFeature{
 		if(typeof this.table[name] === "undefined"){
 			this.table[name] = func;
 		}else{
-			console.warn("Unable to bind table function, name already in use", name)
+			console.warn("Unable to bind table function, name already in use", name);
 		}
 	}
 
@@ -46,12 +46,12 @@ class Module extends CoreFeature{
 	///////////////////////////////////
 
 	registerDataHandler(handler, priority){
-		this.table.rowManager.registerDataPipelineHandler(handler, priority)
+		this.table.rowManager.registerDataPipelineHandler(handler, priority);
 		this._handler = handler;
 	}
 
 	registerDisplayHandler(handler, priority){
-		this.table.rowManager.registerDisplayPipelineHandler(handler, priority)
+		this.table.rowManager.registerDisplayPipelineHandler(handler, priority);
 		this._handler = handler;
 	}
 

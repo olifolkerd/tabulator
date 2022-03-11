@@ -49,7 +49,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 			setTimeout(function(){
 				cell.getRow().normalizeHeight();
-			},300)
+			},300);
 		}else{
 			cancel();
 		}

@@ -1,7 +1,7 @@
 import Module from '../../core/Module.js';
 
 import Row from '../../core/row/Row.js';
-import RowComponent from '../../core/row/RowComponent.js'
+import RowComponent from '../../core/row/RowComponent.js';
 
 class DataTree extends Module{
 
@@ -527,7 +527,7 @@ class DataTree extends Module{
 			}
 
 		}else if(typeof subject == "undefined" || subject === null){
-			match = false
+			match = false;
 		}else{
 			//subject should be treated as the index of the row
 			match = parent.data[this.field].find((row) => {

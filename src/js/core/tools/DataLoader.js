@@ -109,7 +109,7 @@ export default class DataLoader extends CoreFeature{
 			})
 				.finally(() => {
 					this.loading = false;
-				})
+				});
 		}else{
 			this.dispatchExternal("dataLoaded", data);
 

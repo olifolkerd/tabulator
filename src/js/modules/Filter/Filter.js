@@ -621,7 +621,7 @@ class Filter extends Module{
 
 		if(typeof filter.field == "function"){
 			filterFunc = function(data){
-				return filter.field(data, filter.type || {})// pass params to custom filter function
+				return filter.field(data, filter.type || {});// pass params to custom filter function
 			};
 		}else{
 
@@ -695,7 +695,7 @@ class Filter extends Module{
 			if(Array.isArray(filter)){
 				output.push(this.filtersToArray(filter, ajax));
 			}else{
-				item = {field:filter.field, type:filter.type, value:filter.value}
+				item = {field:filter.field, type:filter.type, value:filter.value};
 
 				if(ajax){
 					if(typeof item.type == "function"){

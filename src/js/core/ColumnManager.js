@@ -234,7 +234,7 @@ export default class ColumnManager extends CoreFeature {
 			index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
 
 		if(nextToColumn && index > -1){
-			var topColumn = nextToColumn.getTopColumn()
+			var topColumn = nextToColumn.getTopColumn();
 			var parentIndex = this.columns.indexOf(topColumn);
 			var nextEl = topColumn.getElement();
 

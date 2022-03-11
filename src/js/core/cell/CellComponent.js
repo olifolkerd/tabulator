@@ -9,10 +9,10 @@ export default class CellComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else{
-					return target._cell.table.componentFunctionBinder.handle("cell", target._cell, name)
+					return target._cell.table.componentFunctionBinder.handle("cell", target._cell, name);
 				}
 			}
-		})
+		});
 	}
 
 	getValue(){

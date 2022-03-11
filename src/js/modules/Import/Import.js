@@ -28,9 +28,9 @@ class Import extends Module{
 		return this.importData(this.lookupImporter(), data)
 			.then(this.structureData.bind(this))
 			.catch((err) => {
-				console.error("Import Error:", err || "Unable to import data")
+				console.error("Import Error:", err || "Unable to import data");
 				return Promise.reject(err);
-			})
+			});
 	}
 
 	lookupImporter(importFormat){
@@ -62,9 +62,9 @@ class Import extends Module{
 				.then(this.structureData.bind(this))
 				.then(this.setData.bind(this))
 				.catch((err) => {
-					console.error("Import Error:", err || "Unable to import file")
+					console.error("Import Error:", err || "Unable to import file");
 					return Promise.reject(err);
-				})
+				});
 		}
 	}
     
@@ -97,7 +97,7 @@ class Import extends Module{
 				}
                   
 				reader.onload = (e) => {
-					resolve(reader.result)
+					resolve(reader.result);
 				};
                 
 				reader.onerror = (e) => {
@@ -144,10 +144,10 @@ class Import extends Module{
 
 			columns.forEach((key, i) => {
 				row[key] = values[i];
-			})
+			});
 
 			return row;
-		})
+		});
 
 		return data;
 	}
@@ -173,7 +173,7 @@ class Import extends Module{
 				if(column){
 					row[column.getField()] = value;
 				}
-			})
+			});
 
 			data.push(row);
 		});

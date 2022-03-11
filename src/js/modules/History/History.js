@@ -46,7 +46,7 @@ class History extends Module{
 
 		if(this.table.options.groupBy){
 
-			rows = row.getComponent().getGroup().rows
+			rows = row.getComponent().getGroup().rows;
 			index = rows.indexOf(row);
 
 			if(index){

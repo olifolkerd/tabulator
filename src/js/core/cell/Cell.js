@@ -78,9 +78,9 @@ export default class Cell extends CoreFeature{
 
 		//add class to cell if needed
 		if(this.column.definition.cssClass){
-			var classNames = this.column.definition.cssClass.split(" ")
+			var classNames = this.column.definition.cssClass.split(" ");
 			classNames.forEach((className) => {
-				element.classList.add(className)
+				element.classList.add(className);
 			});
 		}
 

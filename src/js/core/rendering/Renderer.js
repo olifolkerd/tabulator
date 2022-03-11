@@ -159,7 +159,7 @@ export default class Renderer extends CoreFeature{
 				}
 
 				if(position === "nearest"){
-					position = this.scrollToRowNearestTop(row) ? "top" : "bottom"
+					position = this.scrollToRowNearestTop(row) ? "top" : "bottom";
 				}
 
 				//scroll to row

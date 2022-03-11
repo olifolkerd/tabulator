@@ -60,7 +60,7 @@ class Interaction extends Module{
 			groupTap:"group",
 			groupDblTap:"group",
 			groupTapHold:"group",
-		}
+		};
 
 		this.subscribers = {};
 
@@ -89,7 +89,7 @@ class Interaction extends Module{
 				tapDbl:null,
 				tapHold:null,
 			}
-		}
+		};
 
 		this.registerColumnOption("headerClick");
 		this.registerColumnOption("headerDblClick");
@@ -120,8 +120,8 @@ class Interaction extends Module{
 	initialize(){
 		this.initializeExternalEvents();
 
-		this.subscribe("column-init", this.initializeColumn.bind(this))
-		this.subscribe("cell-dblclick", this.cellContentsSelectionFixer.bind(this))
+		this.subscribe("column-init", this.initializeColumn.bind(this));
+		this.subscribe("cell-dblclick", this.cellContentsSelectionFixer.bind(this));
 	}
 
 	cellContentsSelectionFixer(e, cell){
@@ -152,7 +152,7 @@ class Interaction extends Module{
 
 	initializeExternalEvents(){
 		for(let key in this.eventMap){
-			this.subscriptionChangeExternal(key, this.subscriptionChanged.bind(this, key))
+			this.subscriptionChangeExternal(key, this.subscriptionChanged.bind(this, key));
 		}
 	}
 

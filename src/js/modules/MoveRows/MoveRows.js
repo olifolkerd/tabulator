@@ -198,7 +198,7 @@ class MoveRows extends Module{
 				this.startMove(e, row);
 			}, this.checkPeriod);
 		}, {passive: true});
-		this.moving, this.toRow, this.toRowAfter
+		this.moving, this.toRow, this.toRowAfter;
 		element.addEventListener("touchmove", (e) => {
 
 			var diff, moveToRow;
@@ -219,7 +219,7 @@ class MoveRows extends Module{
 						moveToRow = nextRow;
 
 						if(moveToRow !== row){
-							startYMove = e.touches[0].pageY
+							startYMove = e.touches[0].pageY;
 							moveToRow.getElement().parentNode.insertBefore(this.placeholderElement, moveToRow.getElement().nextSibling);
 							this.moveRow(moveToRow, true);
 						}
@@ -510,7 +510,7 @@ class MoveRows extends Module{
 
 			this.dispatchExternal("movableRowsReceivingStop", table);
 		}else{
-			console.warn("Move Row Error - trying to disconnect from non connected table")
+			console.warn("Move Row Error - trying to disconnect from non connected table");
 		}
 	}
 
@@ -530,7 +530,7 @@ class MoveRows extends Module{
 			}
 
 			if(sender){
-				sender.call(this, this.moving.getComponent(), row ? row.getComponent() : undefined, table)
+				sender.call(this, this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 			}else{
 				if(this.table.options.movableRowsSender){
 					console.warn("Mover Row Error - no matching sender found:", this.table.options.movableRowsSender);
@@ -562,9 +562,9 @@ class MoveRows extends Module{
 		}
 
 		if(receiver){
-			success = receiver.call(this, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable)
+			success = receiver.call(this, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}else{
-			console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceiver)
+			console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceiver);
 		}
 
 		if(success){

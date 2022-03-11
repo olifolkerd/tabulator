@@ -173,7 +173,7 @@ class SelectRow extends Module{
 				
 				if(this.table.options.selectable !== true){
 					if(toggledRows.length > this.table.options.selectable){
-						toggledRows = toggledRows.slice(0, this.table.options.selectable)
+						toggledRows = toggledRows.slice(0, this.table.options.selectable);
 					}
 				}
 				

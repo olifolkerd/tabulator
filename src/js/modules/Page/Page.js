@@ -91,7 +91,7 @@ class Page extends Module{
 			this.subscribe("table-built", this.calculatePageSizes.bind(this));
 			this.subscribe("data-processed", this.initialLoadComplete.bind(this));
 			
-			this.initializeProgressive(this.table.options.progressiveLoad)
+			this.initializeProgressive(this.table.options.progressiveLoad);
 			
 			if(this.table.options.progressiveLoad === "scroll"){
 				this.subscribe("scroll-vertical", this.scrollVertical.bind(this));
@@ -120,7 +120,7 @@ class Page extends Module{
 			}
 		}
 		
-		return {index, top}
+		return {index, top};
 	}
 	
 	calculatePageSizes(){
@@ -180,7 +180,7 @@ class Page extends Module{
 			row = this.rowManager.findRow(row);
 			
 			if(row){
-				return this.setPageToRow(row)
+				return this.setPageToRow(row);
 			}
 		}
 		
@@ -379,19 +379,19 @@ class Page extends Module{
 			
 			//click bindings
 			this.firstBut.addEventListener("click", () => {
-				this.setPage(1)
+				this.setPage(1);
 			});
 			
 			this.prevBut.addEventListener("click", () => {
-				this.previousPage()
+				this.previousPage();
 			});
 			
 			this.nextBut.addEventListener("click", () => {
-				this.nextPage()
+				this.nextPage();
 			});
 			
 			this.lastBut.addEventListener("click", () => {
-				this.setPage(this.max)
+				this.setPage(this.max);
 			});
 			
 			if(this.table.options.paginationElement){
@@ -412,7 +412,7 @@ class Page extends Module{
 				
 				this.pageSizeSelect.addEventListener("change", (e) => {
 					this.setPageSize(this.pageSizeSelect.value == "true" ? true : this.pageSizeSelect.value);
-					this.setPage(1)
+					this.setPage(1);
 				});
 			}
 			
@@ -426,7 +426,7 @@ class Page extends Module{
 			if(!this.table.options.paginationElement && !hidden){
 				if(this.table.options.paginationCounter){
 
-					paginationCounterHolder 
+					paginationCounterHolder; 
 
 					if(this.table.options.paginationCounterElement){
 						if(this.table.options.paginationCounterElement instanceof HTMLElement){
@@ -547,7 +547,7 @@ class Page extends Module{
 		if(index > -1){
 			var page = this.size === true ? 1 : Math.ceil((index + 1) / this.size);
 			
-			return this.setPage(page)
+			return this.setPage(page);
 		}else{
 			console.warn("Pagination Error - Requested row is not visible");
 			return Promise.reject();
@@ -664,7 +664,7 @@ class Page extends Module{
 		button.textContent = page;
 		
 		button.addEventListener("click", (e) => {
-			this.setPage(page)
+			this.setPage(page);
 		});
 		
 		return button;
@@ -677,7 +677,7 @@ class Page extends Module{
 			
 			this.trackChanges();
 			
-			return this.trigger()
+			return this.trigger();
 			
 		}else{
 			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
@@ -790,7 +790,7 @@ class Page extends Module{
 			return this.reloadData(null)
 				.finally(() => {
 					this.dataChanging = false;
-				})
+				});
 			
 		case "progressive_load":
 		case "progressive_scroll":
@@ -819,7 +819,7 @@ class Page extends Module{
 				case "progressive_load":
 					
 					if(this.page == 1){
-						this.table.rowManager.setData(data.data, false, this.page == 1)
+						this.table.rowManager.setData(data.data, false, this.page == 1);
 					}else{
 						this.table.rowManager.addRows(data.data);
 					}

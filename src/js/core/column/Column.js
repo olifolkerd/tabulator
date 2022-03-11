@@ -102,13 +102,13 @@ class Column extends CoreFeature{
 			}
 		}
 
-		this.definition = this.table.columnManager.optionsList.generate(Column.defaultOptionList, this.definition)
+		this.definition = this.table.columnManager.optionsList.generate(Column.defaultOptionList, this.definition);
 	}
 
 	checkDefinition(){
 		Object.keys(this.definition).forEach((key) => {
 			if(Column.defaultOptionList.indexOf(key) === -1){
-				console.warn("Invalid column definition option in '" + (this.field || this.definition.title) + "' column:", key)
+				console.warn("Invalid column definition option in '" + (this.field || this.definition.title) + "' column:", key);
 			}
 		});
 	}
