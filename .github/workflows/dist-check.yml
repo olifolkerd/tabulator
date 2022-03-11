@@ -1,0 +1,28 @@
+name: Dist file check
+description: Makes sure no dist files have been changed
+on:
+	pull_request:
+
+jobs:
+	distcheck:
+		name: Dist check
+		runs-on: ubuntu-latest
+		steps:
+			- name: Check out Git repository
+				uses: actions/checkout@v2
+				with:
+					fetch-depth: 0
+
+
+			- name: Get specific changed files in dist
+				id: changed-files-specific
+				uses: tj-actions/changed-files@v17.3
+				with:
+					files: |
+						dist
+
+			- name: Fail if dist files changed
+				if: steps.changed-files-specific.outputs.any_changed == 'true'
+				run: |
+					echo "Oops! Looks like you modified some files in dist/. Please remove them from your PR"
+					exit 1
