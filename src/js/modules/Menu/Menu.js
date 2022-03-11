@@ -313,6 +313,7 @@ class Menu extends Module{
 		
 		setTimeout(() => {
 			this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
+			this.table.on('cellEditing', this.blurEvent)
 			document.body.addEventListener("click", this.blurEvent);
 			document.body.addEventListener("contextmenu", this.blurEvent);
 			window.addEventListener("resize", this.blurEvent);
@@ -366,6 +367,7 @@ class Menu extends Module{
 		document.body.removeEventListener("contextmenu", this.blurEvent);
 		window.removeEventListener("resize", this.blurEvent);
 		this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
+		this.table.off('cellEdited', this.blurEvent)
 		
 		if(this.currentComponent){
 			this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
