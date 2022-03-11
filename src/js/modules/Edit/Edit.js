@@ -638,8 +638,8 @@ class Edit extends Module{
 					cell.column.definition.cellEditing.call(this.table, component);
 				}
 
-				this.dispatchExternal("cellEditing", component);
 				this.dispatch("cell-editing", cell);
+				this.dispatchExternal("cellEditing", component);
 
 				params = typeof cell.column.modules.edit.params === "function" ? cell.column.modules.edit.params(component) : cell.column.modules.edit.params;
 
