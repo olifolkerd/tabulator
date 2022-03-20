@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 <!--
-Please read the Feature Requesting Guide before completing this issue: http://tabulator.info/community#feature
+Please read the Feature Requesting Guide before completing this issue: http://tabulator.info/community/feature
 -->
 
 *Is your feature request related to a problem? Please describe.**
