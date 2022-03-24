@@ -9,14 +9,12 @@ export default function(cell, formatterParams, onRendered){
 		var newDatetime = inputFormat === "iso" ? DT.fromISO(String(value)) : DT.fromFormat(String(value), inputFormat);
 
 		if(newDatetime.isValid){
-
 			if(formatterParams.timezone){
-				newDatetime = newDatetime.shiftTimezone(formatterParams.timezone);
+				newDatetime = newDatetime.setZone(formatterParams.timezone);
 			}
 
 			return newDatetime.toFormat(outputFormat);
 		}else{
-
 			if(invalid === true || !value){
 				return value;
 			}else if(typeof invalid === "function"){
