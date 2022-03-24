@@ -10,7 +10,7 @@ assignees: ''
 <!--
 YOUR BUG REPORT MUST CONTAIN A LINK TO A JSFiddle OR Codepen THAT DEMONSTRATES THE ISSUE OR IT WILL BE CLOSED WITHOUT DISCUSSION
 
-Please read the Bug Reporting Guide before completing this issue: http://tabulator.info/community#bug
+Please read the Bug Reporting Guide before completing this issue: http://tabulator.info/community/bug
 
 Please make sure you fill in all the sections of this template to give us the best chance of helping you
 -->
@@ -23,8 +23,9 @@ A clear and concise description of what the bug is.
 
 **Working Example**
 YOU MUST include a link to a JS Fiddle or Codepen that demonstrates the problem, it is very hard to diagnose an issue from a simple description.
-
 <!--
+Please read the Minimal Reproducable Example guide if you are unsure what the example should look like http://tabulator.info/community/mre
+
 ISSUES CREATED WITHOUT THIS EXAMPLE WILL BE CLOSED WITHOUT DISCUSSION
 -->
 
