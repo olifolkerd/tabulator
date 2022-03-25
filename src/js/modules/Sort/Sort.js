@@ -206,7 +206,7 @@ class Sort extends Module{
 		if(this.table.options.sortMode === "remote"){
 			this.reloadData();
 		}else{
-			this.refreshData(true);
+			this.refreshData();
 		}
 
 		//TODO - Persist left position of row manager
