@@ -480,6 +480,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		if(!input.value){
 			unsetItems();
 			chooseItems();
+			showList();
 		}
 	});
 
