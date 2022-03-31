@@ -6,7 +6,7 @@ export default function(cell, formatterParams, onRendered){
 	var value = cell.getValue();
 
 	if(typeof DT != "undefined"){
-		var newDatetime = inputFormat === "iso" ? DT.fromISO(String(value)) : DT.fromFormat(String(value), inputFormat);
+		var newDatetime = DT.isDateTime(value) ? value : ( inputFormat === "iso" ? DT.fromISO(String(value)) : DT.fromFormat(String(value), inputFormat) );
 
 		if(newDatetime.isValid){
 			if(formatterParams.timezone){
