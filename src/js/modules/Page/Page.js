@@ -145,6 +145,8 @@ class Page extends Module{
 			
 			this.table.rowManager.getTableElement().removeChild(testElRow);
 		}
+
+		this.dispatchExternal("pageSizeChanged", this.size);
 		
 		this.generatePageSizeSelectList();
 	}
@@ -562,9 +564,10 @@ class Page extends Module{
 		if(size !== true){
 			size = parseInt(size);
 		}
-		
+
 		if(size > 0){
 			this.size = size;
+			this.dispatchExternal("pageSizeChanged", size);
 		}
 		
 		if(this.pageSizeSelect){
