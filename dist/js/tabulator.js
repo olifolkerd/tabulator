@@ -1,4 +1,4 @@
-/* Tabulator v5.1.7 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.1.8 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -6675,7 +6675,7 @@
         }
 
         if (this.bindings[type][funcName]) {
-          console.warn("Unable to bind component handler, a matching function name is already bound", type, funcName, hanlder);
+          console.warn("Unable to bind component handler, a matching function name is already bound", type, funcName, handler);
         } else {
           this.bindings[type][funcName] = handler;
         }
@@ -6683,7 +6683,7 @@
     }, {
       key: "handle",
       value: function handle(type, component, name) {
-        if (this.bindings[type] && this.bindings[type][name]) {
+        if (this.bindings[type] && this.bindings[type][name] && typeof this.bindings[type][name].bind === 'function') {
           return this.bindings[type][name].bind(null, component);
         } else {
           if (name !== "then" && typeof name === "string" && !name.startsWith("_")) {
@@ -14115,6 +14115,7 @@
               cell.column.definition.cellEditing.call(this.table, component);
             }
 
+            this.dispatch("cell-editing", cell);
             this.dispatchExternal("cellEditing", component);
             params = typeof cell.column.modules.edit.params === "function" ? cell.column.modules.edit.params(component) : cell.column.modules.edit.params;
             cellEditor = cell.column.modules.edit.editor.call(self, component, onRendered, success, cancel, params); //if editor returned, add to DOM, if false, abort edit
@@ -16073,7 +16074,7 @@
 
       if (newDatetime.isValid) {
         if (formatterParams.timezone) {
-          newDatetime = newDatetime.shiftTimezone(formatterParams.timezone);
+          newDatetime = newDatetime.setZone(formatterParams.timezone);
         }
 
         return newDatetime.toFormat(outputFormat);
@@ -20164,6 +20165,8 @@
         setTimeout(function () {
           _this4.table.rowManager.element.addEventListener("scroll", _this4.blurEvent);
 
+          _this4.subscribe("cell-editing", _this4.blurEvent);
+
           document.body.addEventListener("click", _this4.blurEvent);
           document.body.addEventListener("contextmenu", _this4.blurEvent);
           window.addEventListener("resize", _this4.blurEvent);
@@ -20217,6 +20220,7 @@
         document.body.removeEventListener("contextmenu", this.blurEvent);
         window.removeEventListener("resize", this.blurEvent);
         this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
+        this.unsubscribe("cell-editing", this.blurEvent);
 
         if (this.currentComponent) {
           this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
