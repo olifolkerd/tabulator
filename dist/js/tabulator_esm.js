@@ -9104,9 +9104,19 @@ function link(cell, formatterParams, onRendered){
 	el = document.createElement("a"),
 	data;
 
+	function labelTraverse(path, data){
+		var item = path.shift(),
+		value = data[item];
+		
+		if(path.length && typeof value === "object"){
+			return labelTraverse(path, value);
+		}
+
+		return value;
+	}
 	if(formatterParams.labelField){
 		data = cell.getData();
-		label = data[formatterParams.labelField];
+		label = labelTraverse(formatterParams.labelField.split(this.table.options.nestedFieldSeparator), data);
 	}
 
 	if(formatterParams.label){
