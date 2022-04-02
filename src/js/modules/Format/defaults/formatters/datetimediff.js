@@ -14,7 +14,7 @@ export default function (cell, formatterParams, onRendered) {
 
 		if (newDatetime.isValid){
 			if(humanize){
-				// return moment.duration(newDatetime.diff(date)).humanize(suffix);
+				return newDatetime.diff(date, unit).toHuman()  + (suffix ? " " + suffix : "");
 			}else{
 				return parseInt(newDatetime.diff(date, unit)[unit]) + (suffix ? " " + suffix : "");
 			}
