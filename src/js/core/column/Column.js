@@ -510,6 +510,8 @@ class Column extends CoreFeature{
 		if(this.groupElement){
 			this.columns.push(column);
 			this.groupElement.appendChild(column.getElement());
+
+			column.columnRendered();
 		}else{
 			console.warn("Column Warning - Column being attached to another column instead of column group");
 		}
@@ -523,6 +525,8 @@ class Column extends CoreFeature{
 		// var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
 
 		this.element.style.height = parentHeight + "px";
+
+		this.dispatch("column-height", this, this.element.style.height);
 
 		if(this.isGroup){
 			this.groupElement.style.minHeight = (parentHeight - this.contentElement.offsetHeight) + "px";
@@ -552,6 +556,8 @@ class Column extends CoreFeature{
 		this.columns.forEach(function(column){
 			column.clearVerticalAlign();
 		});
+
+		this.dispatch("column-height", this, "");
 	}
 
 	bindModuleColumns (){
