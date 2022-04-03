@@ -9,7 +9,6 @@ export default class FooterManager extends CoreFeature{
 		this.element = this.createElement(); //containing element
 		this.containerElement = this.createContainerElement(); //containing element
 		this.external = false;
-		this.links = [];
 	}
 
 	initialize(){
@@ -59,15 +58,15 @@ export default class FooterManager extends CoreFeature{
 		return this.element;
 	}
 
-	append(element, parent){
-		this.activate(parent);
+	append(element){
+		this.activate();
 
 		this.containerElement.appendChild(element);
 		this.table.rowManager.adjustTableSize();
 	}
 
-	prepend(element, parent){
-		this.activate(parent);
+	prepend(element){
+		this.activate();
 
 		this.element.insertBefore(element, this.element.firstChild);
 		this.table.rowManager.adjustTableSize();
@@ -87,17 +86,13 @@ export default class FooterManager extends CoreFeature{
 		}
 	}
 
-	activate(parent){
+	activate(){
 		if(!this.active){
 			this.active = true;
 			if(!this.external){
 				this.table.element.appendChild(this.getElement());
 				this.table.element.style.display = '';
 			}
-		}
-
-		if(parent){
-			this.links.push(parent);
 		}
 	}
 
