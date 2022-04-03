@@ -183,8 +183,8 @@ export default class Cell extends CoreFeature{
 	}
 
 	//////////////////// Actions ////////////////////
-	setValue(value, mutate){
-		var changed = this.setValueProcessData(value, mutate);
+	setValue(value, mutate, force){
+		var changed = this.setValueProcessData(value, mutate, force);
 
 		if(changed){
 			this.dispatch("cell-value-updated", this);
@@ -203,10 +203,10 @@ export default class Cell extends CoreFeature{
 		}
 	}
 
-	setValueProcessData(value, mutate){
+	setValueProcessData(value, mutate, force){
 		var changed = false;
 
-		if(this.value !== value){
+		if(this.value !== value || force){
 
 			changed = true;
 
