@@ -193,6 +193,19 @@ class Module extends CoreFeature{
 			this.table.rowManager.refreshActiveData(handler, false, renderInPosition);
 		}
 	}
+
+	///////////////////////////////////
+	//////// Footer Management ////////
+	///////////////////////////////////
+
+	footerAppend(element){
+		this.table.footerManager.append(element);
+	}
+
+	footerPrepend(element){
+		this.table.footerManager.prepend(element);
+	}
+	
 }
 
 class Helpers{
@@ -3519,7 +3532,7 @@ class ColumnCalcs extends Module{
 
 	initializeBottomRow(){
 		if(!this.botInitialized){
-			this.table.footerManager.prepend(this.botElement);
+			this.footerPrepend(this.botElement);
 			this.botInitialized = true;
 		}
 	}
@@ -14445,6 +14458,7 @@ class Page extends Module{
 			this.subscribe("row-added", this.rowsUpdated.bind(this));
 			this.subscribe("data-processed", this.initialLoadComplete.bind(this));
 			this.subscribe("table-built", this.calculatePageSizes.bind(this));
+			this.subscribe("footer-redraw", this.footerRedraw.bind(this));
 
 			if(this.table.options.paginationAddRow == "page"){
 				this.subscribe("row-adding-position", this.rowAddingPosition.bind(this));
@@ -14821,12 +14835,12 @@ class Page extends Module{
 							}
 						}
 					}else {
-						this.table.footerManager.append(this.pageCounterElement);
+						this.footerAppend(this.pageCounterElement);
 					}
 					
 				}
 				
-				this.table.footerManager.append(this.element, this);
+				this.footerAppend(this.element);
 			}
 			
 			this.page = this.table.options.paginationInitialPage;
@@ -21937,9 +21951,7 @@ class FooterManager extends CoreFeature{
 	}
 
 	redraw(){
-		this.links.forEach(function(link){
-			link.footerRedraw();
-		});
+		this.dispatch("footer-redraw");
 	}
 }
 

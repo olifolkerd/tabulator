@@ -230,7 +230,7 @@ class ColumnCalcs extends Module{
 
 	initializeBottomRow(){
 		if(!this.botInitialized){
-			this.table.footerManager.prepend(this.botElement);
+			this.footerPrepend(this.botElement);
 			this.botInitialized = true;
 		}
 	}

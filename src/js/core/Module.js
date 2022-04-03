@@ -68,6 +68,19 @@ class Module extends CoreFeature{
 			this.table.rowManager.refreshActiveData(handler, false, renderInPosition);
 		}
 	}
+
+	///////////////////////////////////
+	//////// Footer Management ////////
+	///////////////////////////////////
+
+	footerAppend(element){
+		this.table.footerManager.append(element)
+	}
+
+	footerPrepend(element){
+		this.table.footerManager.prepend(element)
+	}
+	
 }
 
 export default Module;

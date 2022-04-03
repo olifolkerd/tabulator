@@ -102,8 +102,6 @@ export default class FooterManager extends CoreFeature{
 	}
 
 	redraw(){
-		this.links.forEach(function(link){
-			link.footerRedraw();
-		});
+		this.dispatch("footer-redraw")
 	}
 }
