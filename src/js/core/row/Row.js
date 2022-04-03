@@ -15,7 +15,7 @@ export default class Row extends CoreFeature{
 		this.height = 0; //hold element height
 		this.heightStyled = ""; //hold element height prestyled to improve render efficiency
 		this.manualHeight = false; //user has manually set row height
-		this.outerHeight = 0; //holde lements outer height
+		this.outerHeight = 0; //hold elements outer height
 		this.initialized = false; //element has been rendered
 		this.heightInitialized = false; //element has resized cells to fit
 
