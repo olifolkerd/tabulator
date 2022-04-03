@@ -212,7 +212,7 @@ class ColumnCalcs extends Module{
 
 		if(this.botInitialized){
 			this.botInitialized = false;
-			this.table.footerManager.remove(this.botElement);
+			this.footerRemove(this.botElement);
 			changed = true;
 		}
 

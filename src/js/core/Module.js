@@ -74,12 +74,16 @@ class Module extends CoreFeature{
 	///////////////////////////////////
 
 	footerAppend(element){
-		this.table.footerManager.append(element)
+		return this.table.footerManager.append(element)
 	}
 
 	footerPrepend(element){
-		this.table.footerManager.prepend(element)
+		return this.table.footerManager.prepend(element)
 	}
+
+	footerRemove(element){
+		return this.table.footerManager.remove(element)
+	} 
 	
 }
 
