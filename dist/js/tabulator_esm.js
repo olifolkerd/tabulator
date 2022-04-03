@@ -1439,11 +1439,15 @@ class Cell extends CoreFeature{
 	clearHeight(){
 		this.element.style.height = "";
 		this.height = null;
+
+		this.dispatch("cell-height", this, "");
 	}
 
 	setHeight(){
 		this.height = this.row.height;
-		this.element.style.height =  this.row.heightStyled;
+		this.element.style.height = this.row.heightStyled;
+
+		this.dispatch("cell-height", this, this.row.heightStyled);
 	}
 
 	getHeight(){
@@ -2162,6 +2166,8 @@ class Column extends CoreFeature{
 		if(this.groupElement){
 			this.columns.push(column);
 			this.groupElement.appendChild(column.getElement());
+
+			column.columnRendered();
 		}else {
 			console.warn("Column Warning - Column being attached to another column instead of column group");
 		}
@@ -2175,6 +2181,8 @@ class Column extends CoreFeature{
 		// var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
 
 		this.element.style.height = parentHeight + "px";
+
+		this.dispatch("column-height", this, this.element.style.height);
 
 		if(this.isGroup){
 			this.groupElement.style.minHeight = (parentHeight - this.contentElement.offsetHeight) + "px";
@@ -2204,6 +2212,8 @@ class Column extends CoreFeature{
 		this.columns.forEach(function(column){
 			column.clearVerticalAlign();
 		});
+
+		this.dispatch("column-height", this, "");
 	}
 
 	bindModuleColumns (){
@@ -2552,6 +2562,8 @@ class Column extends CoreFeature{
 		if(this.titleFormatterRendered){
 			this.titleFormatterRendered();
 		}
+
+		this.dispatch("column-rendered", this);
 	}
 
 	//////////////// Cell Management /////////////////
@@ -2790,7 +2802,7 @@ class Row extends CoreFeature{
 		this.height = 0; //hold element height
 		this.heightStyled = ""; //hold element height prestyled to improve render efficiency
 		this.manualHeight = false; //user has manually set row height
-		this.outerHeight = 0; //holde lements outer height
+		this.outerHeight = 0; //hold elements outer height
 		this.initialized = false; //element has been rendered
 		this.heightInitialized = false; //element has resized cells to fit
 
@@ -16224,119 +16236,135 @@ class ResizeColumns extends Module{
 	}
 	
 	initialize(){
-		// if(this.table.options.resizableColumns){
-		this.subscribe("cell-layout", this.layoutCellHandles.bind(this));
-		this.subscribe("column-init", this.layoutColumnHeader.bind(this));
-		// }
+		this.subscribe("cell-rendered", this.layoutCellHandles.bind(this));
+		this.subscribe("cell-delete", this.deInitializeComponent.bind(this));
+		this.subscribe("cell-height", this.resizeHandle.bind(this));
+	
+
+		this.subscribe("column-moved", this.columnLayoutUpdated.bind(this));
+		this.subscribe("column-rendered", this.layoutColumnHeader.bind(this));
+		this.subscribe("column-rendered", this.layoutColumnHeader.bind(this));
+		this.subscribe("column-hide", this.deInitializeColumn.bind(this));
+		this.subscribe("column-show", this.columnLayoutUpdated.bind(this));
+
+		this.subscribe("column-delete", this.deInitializeComponent.bind(this));
+		this.subscribe("column-height", this.resizeHandle.bind(this));
 	}
+	
 	
 	layoutCellHandles(cell){
 		if(cell.row.type === "row"){
-			this.initializeColumn("cell", cell.column, cell.element);
+			this.deInitializeComponent(cell);
+			this.initializeColumn("cell", cell, cell.column, cell.element);
 		}
 	}
 	
 	layoutColumnHeader(column){
-		this.initializeColumn("header", column, column.element);
+		this.deInitializeComponent(column);
+		this.initializeColumn("header", column, column, column.element);
 	}
 	
-	initializeColumn(type, column, element){
+	columnLayoutUpdated(column){
+		var prev = column.prevColumn();
+		
+		this.reinitializeColumn(column);
+		
+		if(prev){
+			this.reinitializeColumn(prev);
+		}
+	}
+	
+	reinitializeColumn(column){
+		column.cells.forEach((cell) => {
+			if(cell.modules.resize && cell.modules.resize.handleEl){
+				cell.element.after(cell.modules.resize.handleEl);
+			}
+		});
+		
+		if(column.modules.resize && column.modules.resize.handleEl){
+			column.element.after(column.modules.resize.handleEl);
+		}
+	}
+	
+	initializeColumn(type, component, column, element){
 		var self = this,
 		variableHeight = false,
-		mode = column.definition.resizable;
+		mode = column.definition.resizable,
+		config = {},
+		nearestColumn = column.getLastColumn();
 		
 		//set column resize mode
 		if(type === "header"){
 			variableHeight = column.definition.formatter == "textarea" || column.definition.variableHeight;
-			column.modules.resize = {variableHeight:variableHeight};
+			config = {variableHeight:variableHeight};
 		}
 		
-		if(mode === true || mode == type){
+		if((mode === true || mode == type) && this._checkResizability(nearestColumn)){
 			
 			var handle = document.createElement('div');
 			handle.className = "tabulator-col-resize-handle";
 			
-			
-			var prevHandle = document.createElement('div');
-			prevHandle.className = "tabulator-col-resize-handle prev";
+			// var prevHandle = document.createElement('div');
+			// prevHandle.className = "tabulator-col-resize-handle prev";
 			
 			handle.addEventListener("click", function(e){
 				e.stopPropagation();
 			});
 			
 			var handleDown = function(e){
-				var nearestColumn = column.getLastColumn();
-				
-				if(nearestColumn && self._checkResizability(nearestColumn)){
-					self.startColumn = column;
-					self._mouseDown(e, nearestColumn, handle);
-				}
+				self.startColumn = column;
+				self._mouseDown(e, nearestColumn, handle);
 			};
 			
 			handle.addEventListener("mousedown", handleDown);
 			handle.addEventListener("touchstart", handleDown, {passive: true});
 			
-			//reszie column on  double click
-			handle.addEventListener("dblclick", function(e){
-				var col = column.getLastColumn(),
-				oldWidth;
+			//resize column on  double click
+			handle.addEventListener("dblclick", (e) => {
+				var oldWidth = nearestColumn.getWidth();
 				
-				if(col && self._checkResizability(col)){
-					oldWidth = col.getWidth();
-
-					e.stopPropagation();
-					col.reinitializeWidth(true);
-
-					if(oldWidth !== col.getWidth()){
-						self.dispatch("column-resized", col);
-						self.table.externalEvents.dispatch("columnResized", col.getComponent());
-					}
-				}
-			});
-			
-			
-			prevHandle.addEventListener("click", function(e){
 				e.stopPropagation();
-			});
-			
-			var prevHandleDown = function(e){
-				var nearestColumn, colIndex, prevColumn;
+				nearestColumn.reinitializeWidth(true);
 				
-				nearestColumn = column.getFirstColumn();
-				
-				if(nearestColumn){
-					colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
-					prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
-					
-					if(prevColumn && self._checkResizability(prevColumn)){
-						self.startColumn = column;
-						self._mouseDown(e, prevColumn, prevHandle);
-					}
-				}
-			};
-			
-			prevHandle.addEventListener("mousedown", prevHandleDown);
-			prevHandle.addEventListener("touchstart", prevHandleDown, {passive: true});
-			
-			//resize column on double click
-			prevHandle.addEventListener("dblclick", function(e){
-				var nearestColumn, colIndex, prevColumn;
-				
-				nearestColumn = column.getFirstColumn();
-				
-				if(nearestColumn){
-					colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
-					prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
-					
-					if(prevColumn && self._checkResizability(prevColumn)){
-						e.stopPropagation();
-						prevColumn.reinitializeWidth(true);
-					}
+				if(oldWidth !== nearestColumn.getWidth()){
+					self.dispatch("column-resized", nearestColumn);
+					self.table.externalEvents.dispatch("columnResized", nearestColumn.getComponent());
 				}
 			});
 			
-			element.appendChild(handle);
-			element.appendChild(prevHandle);
+			config.handleEl = handle;
+			
+			if(element.parentNode){
+				element.after(handle);
+			}
+		}
+		
+		component.modules.resize = config;
+	}
+	
+	deInitializeColumn(column){
+		this.deInitializeComponent(column);
+		
+		column.cells.forEach((cell) => {
+			this.deInitializeComponent(cell);
+		});
+	}
+	
+	deInitializeComponent(component){
+		var handleEl;
+		
+		if(component.modules.resize){
+			handleEl = component.modules.resize.handleEl;
+			
+			if(handleEl && handleEl.parentElement){
+				handleEl.parentElement.removeChild(handleEl);
+			}
+		}
+	}
+
+	resizeHandle(component, height){
+		if(component.modules.resize && component.modules.resize.handleEl){
+			component.modules.resize.handleEl.style.height = height;
 		}
 	}
 	
@@ -16348,7 +16376,7 @@ class ResizeColumns extends Module{
 		var self = this;
 		
 		self.table.element.classList.add("tabulator-block-select");
-
+		
 		function mouseMove(e){
 			// self.table.columnManager.tempScrollBlock();
 			
@@ -16383,7 +16411,7 @@ class ResizeColumns extends Module{
 			handle.removeEventListener("touchend", mouseUp);
 			
 			self.table.element.classList.remove("tabulator-block-select");
-
+			
 			if(self.startWidth !== column.getWidth()){
 				self.dispatch("column-resized", column);
 				self.table.externalEvents.dispatch("columnResized", column.getComponent());

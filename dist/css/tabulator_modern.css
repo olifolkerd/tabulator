@@ -127,10 +127,6 @@
   margin-right: -1px;
 }
 
-.tabulator .tabulator-header .tabulator-col:first-child .tabulator-col-resize-handle.prev {
-  display: none;
-}
-
 .tabulator .tabulator-header .tabulator-col .tabulator-header-filter {
   position: relative;
   box-sizing: border-box;
@@ -415,16 +411,13 @@
 }
 
 .tabulator .tabulator-col-resize-handle {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 5px;
-}
-
-.tabulator .tabulator-col-resize-handle.prev {
-  left: 0;
-  right: auto;
+  position: relative;
+  display: inline-block;
+  width: 6px;
+  margin-left: -3px;
+  margin-right: -3px;
+  z-index: 10;
+  vertical-align: middle;
 }
 
 .tabulator .tabulator-col-resize-handle:hover {
@@ -590,10 +583,6 @@
   border: 1px;
   background: transparent;
   color: #dd0000;
-}
-
-.tabulator-row .tabulator-cell:first-child .tabulator-col-resize-handle.prev {
-  display: none;
 }
 
 .tabulator-row .tabulator-cell.tabulator-row-handle {
