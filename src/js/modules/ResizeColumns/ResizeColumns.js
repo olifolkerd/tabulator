@@ -11,23 +11,32 @@ class ResizeColumns extends Module{
 		this.handle = null;
 		this.prevHandle = null;
 		
+		this.initialized = false;
+		
 		this.registerColumnOption("resizable", true);
 	}
 	
 	initialize(){
-		this.subscribe("cell-rendered", this.layoutCellHandles.bind(this));
-		this.subscribe("cell-delete", this.deInitializeComponent.bind(this));
-		this.subscribe("cell-height", this.resizeHandle.bind(this));
+		this.subscribe("column-rendered", this.layoutColumnHeader.bind(this));
+	}
 	
-
-		this.subscribe("column-moved", this.columnLayoutUpdated.bind(this));
-		this.subscribe("column-rendered", this.layoutColumnHeader.bind(this));
-		this.subscribe("column-rendered", this.layoutColumnHeader.bind(this));
-		this.subscribe("column-hide", this.deInitializeColumn.bind(this));
-		this.subscribe("column-show", this.columnLayoutUpdated.bind(this));
-
-		this.subscribe("column-delete", this.deInitializeComponent.bind(this));
-		this.subscribe("column-height", this.resizeHandle.bind(this));
+	initializeEventWatchers(){
+		if(!this.initialized){
+			
+			this.subscribe("cell-rendered", this.layoutCellHandles.bind(this));
+			this.subscribe("cell-delete", this.deInitializeComponent.bind(this));
+			
+			this.subscribe("cell-height", this.resizeHandle.bind(this));
+			this.subscribe("column-moved", this.columnLayoutUpdated.bind(this));
+			
+			this.subscribe("column-hide", this.deInitializeColumn.bind(this));
+			this.subscribe("column-show", this.columnLayoutUpdated.bind(this));
+			
+			this.subscribe("column-delete", this.deInitializeComponent.bind(this));
+			this.subscribe("column-height", this.resizeHandle.bind(this));
+			
+			this.initialized = true;
+		}
 	}
 	
 	
@@ -39,8 +48,11 @@ class ResizeColumns extends Module{
 	}
 	
 	layoutColumnHeader(column){
-		this.deInitializeComponent(column);
-		this.initializeColumn("header", column, column, column.element);
+		if(column.definition.resizable){
+			this.initializeEventWatchers();
+			this.deInitializeComponent(column);
+			this.initializeColumn("header", column, column, column.element);
+		}
 	}
 	
 	columnLayoutUpdated(column){
@@ -140,7 +152,7 @@ class ResizeColumns extends Module{
 			}
 		}
 	}
-
+	
 	resizeHandle(component, height){
 		if(component.modules.resize && component.modules.resize.handleEl){
 			component.modules.resize.handleEl.style.height = height;
