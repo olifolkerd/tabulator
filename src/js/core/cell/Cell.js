@@ -279,11 +279,15 @@ export default class Cell extends CoreFeature{
 	clearHeight(){
 		this.element.style.height = "";
 		this.height = null;
+
+		this.dispatch("cell-height", this, "");
 	}
 
 	setHeight(){
 		this.height = this.row.height;
-		this.element.style.height =  this.row.heightStyled;
+		this.element.style.height = this.row.heightStyled;
+
+		this.dispatch("cell-height", this, this.row.heightStyled);
 	}
 
 	getHeight(){
