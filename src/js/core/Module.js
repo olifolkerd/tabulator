@@ -26,12 +26,16 @@ class Module extends CoreFeature{
 	}
 
 	///////////////////////////////////
-	/// Public Function Registation ///
+	/// Public Function Registration ///
 	///////////////////////////////////
 
 	registerTableFunction(name, func){
 		if(typeof this.table[name] === "undefined"){
-			this.table[name] = func;
+			this.table[name] = (...args) => {
+				this.table.initGuard(name);
+
+				return func(...args);
+			}
 		}else{
 			console.warn("Unable to bind table function, name already in use", name)
 		}
