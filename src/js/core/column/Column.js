@@ -901,6 +901,8 @@ class Column extends CoreFeature{
 		if(this.titleFormatterRendered){
 			this.titleFormatterRendered();
 		}
+
+		this.dispatch("column-rendered", this);
 	}
 
 	//////////////// Cell Management /////////////////
