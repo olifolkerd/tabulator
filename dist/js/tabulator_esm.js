@@ -16424,7 +16424,7 @@ class ResizeColumns extends Module{
 				self.nextColumn = self.initialNextColumn;
 			}
 			
-			if(self.table.options.resizableColumnFit && self.nextColumn){
+			if(self.table.options.resizableColumnFit && self.nextColumn && column.width !== column.minWidth){
 				let colWidth = self.nextColumn.getWidth();
 
 				if(moveDiff > 0){
