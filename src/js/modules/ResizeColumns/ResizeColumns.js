@@ -8,12 +8,14 @@ class ResizeColumns extends Module{
 		this.startColumn = false;
 		this.startX = false;
 		this.startWidth = false;
+		this.latestX = false;
 		this.handle = null;
-		this.prevHandle = null;
+		this.initialNextColumn = null;
+		this.nextColumn = null;
 		
 		this.initialized = false;
-		
 		this.registerColumnOption("resizable", true);
+		this.registerTableOption("resizableColumnFit", false);
 	}
 	
 	initialize(){
@@ -95,15 +97,13 @@ class ResizeColumns extends Module{
 			var handle = document.createElement('div');
 			handle.className = "tabulator-col-resize-handle";
 			
-			// var prevHandle = document.createElement('div');
-			// prevHandle.className = "tabulator-col-resize-handle prev";
-			
 			handle.addEventListener("click", function(e){
 				e.stopPropagation();
 			});
 			
 			var handleDown = function(e){
 				self.startColumn = column;
+				self.initialNextColumn = self.nextColumn = nearestColumn.nextColumn();
 				self._mouseDown(e, nearestColumn, handle);
 			};
 			
@@ -169,12 +169,33 @@ class ResizeColumns extends Module{
 		self.table.element.classList.add("tabulator-block-select");
 		
 		function mouseMove(e){
-			// self.table.columnManager.tempScrollBlock();
+			var x = typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX;
+			var startDiff = x - self.startX;
+			var moveDiff = x - self.latestX;
+			self.latestX = x;
 			
 			if(self.table.rtl){
-				column.setWidth(self.startWidth - ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
+				column.setWidth(self.startWidth - startDiff);
 			}else{
-				column.setWidth(self.startWidth + ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
+				column.setWidth(self.startWidth + startDiff);
+			}
+
+			if(moveDiff < 0){
+				self.nextColumn = self.initialNextColumn;
+			}
+			
+			if(self.table.options.resizableColumnFit && self.nextColumn){
+				let colWidth = self.nextColumn.getWidth();
+
+				if(moveDiff > 0){
+					if(colWidth <= self.nextColumn.minWidth){
+						self.nextColumn = self.nextColumn.nextColumn();
+					}
+				}
+				
+				if(self.nextColumn){
+					self.nextColumn.setWidth(self.nextColumn.getWidth() - moveDiff);
+				}
 			}
 			
 			self.table.columnManager.renderer.rerenderColumns(true);
@@ -217,6 +238,7 @@ class ResizeColumns extends Module{
 		}
 		
 		self.startX = typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX;
+		self.latestX = self.startX;
 		self.startWidth = column.getWidth();
 		
 		document.body.addEventListener("mousemove", mouseMove);
