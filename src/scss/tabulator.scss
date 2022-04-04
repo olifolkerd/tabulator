@@ -1163,18 +1163,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 	}
-	
-	//column resize handles
-	.tabulator-col-resize-handle{
-		position:absolute;
-		left:0;
-		right:auto;
-		
-		&.prev{
-			right:0;
-			left:auto;
-		}
-	}
+
 }
 
 

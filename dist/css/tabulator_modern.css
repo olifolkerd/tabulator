@@ -931,17 +931,6 @@
   margin-left: 5px;
 }
 
-.tabulator.tabulator-rtl .tabulator-col-resize-handle {
-  position: absolute;
-  left: 0;
-  right: auto;
-}
-
-.tabulator.tabulator-rtl .tabulator-col-resize-handle.prev {
-  right: 0;
-  left: auto;
-}
-
 .tabulator-print-fullscreen {
   position: absolute;
   top: 0;

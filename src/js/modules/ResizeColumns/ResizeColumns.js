@@ -126,7 +126,7 @@ class ResizeColumns extends Module{
 			config.handleEl = handle;
 			
 			if(element.parentNode){
-				element.after(handle);
+				element.after(handle);			
 			}
 		}
 		
@@ -175,10 +175,11 @@ class ResizeColumns extends Module{
 			self.latestX = x;
 			
 			if(self.table.rtl){
-				column.setWidth(self.startWidth - startDiff);
-			}else{
-				column.setWidth(self.startWidth + startDiff);
+				startDiff = -startDiff;
+				moveDiff = -moveDiff;
 			}
+
+			column.setWidth(self.startWidth + startDiff);
 
 			if(moveDiff < 0){
 				self.nextColumn = self.initialNextColumn;
