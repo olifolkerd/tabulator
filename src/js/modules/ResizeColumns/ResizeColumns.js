@@ -169,9 +169,10 @@ class ResizeColumns extends Module{
 		self.table.element.classList.add("tabulator-block-select");
 		
 		function mouseMove(e){
-			var x = typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX;
-			var startDiff = x - self.startX;
-			var moveDiff = x - self.latestX;
+			var x = typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX,
+			startDiff = x - self.startX,
+			moveDiff = x - self.latestX;
+
 			self.latestX = x;
 			
 			if(self.table.rtl){
@@ -185,7 +186,7 @@ class ResizeColumns extends Module{
 				self.nextColumn = self.initialNextColumn;
 			}
 			
-			if(self.table.options.resizableColumnFit && self.nextColumn && column.width !== column.minWidth){
+			if(self.table.options.resizableColumnFit && self.nextColumn && column.width !== column.minWidth && column.width !== column.maxWidth){
 				let colWidth = self.nextColumn.getWidth();
 
 				if(moveDiff > 0){
