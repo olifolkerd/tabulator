@@ -451,7 +451,7 @@ class Persistence extends Module{
 
 Persistence.moduleName = "persistence";
 
-Persistence.moduleInitOrder = 1;
+Persistence.moduleInitOrder = -10;
 
 //load defaults
 Persistence.readers = defaultReaders;
