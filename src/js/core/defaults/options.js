@@ -48,6 +48,8 @@ export default {
 	rowFormatterClipboard:null,
 	rowFormatterHtmlOutput:null,
 
+	rowHeight:null,
+
 	placeholder:false,
 
 	dataLoader:true,
