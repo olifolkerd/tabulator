@@ -16410,7 +16410,8 @@ class ResizeColumns extends Module{
 		function mouseMove(e){
 			var x = typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX,
 			startDiff = x - self.startX,
-			moveDiff = x - self.latestX;
+			moveDiff = x - self.latestX,
+			blockedBefore, blockedAfter;
 
 			self.latestX = x;
 			
@@ -16419,13 +16420,17 @@ class ResizeColumns extends Module{
 				moveDiff = -moveDiff;
 			}
 
+			blockedBefore = column.width == column.minWidth || column.width == column.maxWidth;
+
 			column.setWidth(self.startWidth + startDiff);
+
+			blockedAfter = column.width == column.minWidth || column.width == column.maxWidth;
 
 			if(moveDiff < 0){
 				self.nextColumn = self.initialNextColumn;
 			}
 			
-			if(self.table.options.resizableColumnFit && self.nextColumn && column.width !== column.minWidth && column.width !== column.maxWidth){
+			if(self.table.options.resizableColumnFit && self.nextColumn && !(blockedBefore && blockedAfter)){
 				let colWidth = self.nextColumn.getWidth();
 
 				if(moveDiff > 0){
