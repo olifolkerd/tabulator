@@ -1,6 +1,4 @@
 import Module from '../../core/Module.js';
-import Helpers from '../../core/tools/Helpers.js';
-import Popup from '../../core/tools/Popup.js';
 
 class Menu extends Module{
 	
@@ -205,7 +203,7 @@ class Menu extends Module{
 				this.rootPopup.hide();	
 			}
 			
-			this.rootPopup = popup = new Popup(this.table, menuEl, this.menuContainer);
+			this.rootPopup = popup = this.popup(menuEl, this.menuContainer);
 			
 		}else{
 			popup = parentPopup.child(menuEl);

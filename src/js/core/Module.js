@@ -1,4 +1,5 @@
 import CoreFeature from './CoreFeature.js';
+import Popup from './tools/Popup.js';
 
 class Module extends CoreFeature{
 
@@ -84,7 +85,14 @@ class Module extends CoreFeature{
 	footerRemove(element){
 		return this.table.footerManager.remove(element)
 	} 
+
+	///////////////////////////////////
+	//////// Popups Management ////////
+	///////////////////////////////////
 	
+	popup(menuEl, menuContainer){
+		return new Popup(this.table, menuEl, menuContainer);
+	}
 }
 
 export default Module;
