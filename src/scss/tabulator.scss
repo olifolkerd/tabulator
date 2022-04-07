@@ -978,22 +978,24 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	
 }
 
-.tabulator-menu{
+.tabulator-popup{
 	position: absolute;
 	display:inline-block;
 	box-sizing:border-box;
-	
+
 	background:$rowBackgroundColor;
 	border:1px solid $rowBorderColor;
 	box-shadow: 0 0 5px 0 rgba(0, 0, 0, .2);
-	
+
 	font-size:$textSize;
-	
+
 	overflow-y:auto;
 	-webkit-overflow-scrolling: touch;
-	
+
 	z-index: 10000;
-	
+}
+
+.tabulator-menu{
 	.tabulator-menu-item{
 		position:relative;
 		box-sizing:border-box;

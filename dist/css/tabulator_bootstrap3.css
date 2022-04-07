@@ -779,7 +779,7 @@
   color: #d00;
 }
 
-.tabulator-menu {
+.tabulator-popup {
   position: absolute;
   display: inline-block;
   box-sizing: border-box;

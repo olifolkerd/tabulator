@@ -13249,7 +13249,6 @@ class Menu extends Module{
 					if(item.menu && item.menu.length){
 						itemEl.addEventListener("click", (e) => {
 							e.stopPropagation();
-							// this.hideOldSubMenus(menuEl);
 							this.loadMenu(e, component, item.menu, itemEl, popup);
 						});
 					}else {
