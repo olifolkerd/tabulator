@@ -17,7 +17,7 @@ class Menu extends Module{
 		this.registerTableOption("rowClickMenu", false);
 		this.registerTableOption("groupContextMenu", false);
 		this.registerTableOption("groupClickMenu", false);
-		this.registerTableOption("menuContainer", false);
+		this.registerTableOption("menuContainer", undefined);
 		
 		this.registerColumnOption("headerContextMenu");
 		this.registerColumnOption("headerClickMenu");
@@ -27,45 +27,20 @@ class Menu extends Module{
 	}
 	
 	initialize(){
-		this.lookupMenuContainer();
-		
+		this.deprecationCheck();
 		this.initializeRowWatchers();
 		this.initializeGroupWatchers();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
-	
-	lookupMenuContainer(){
-		
-		this.menuContainer = this.table.options.menuContainer;
-		
-		if(typeof this.menuContainer === "string"){
-			this.menuContainer = document.querySelector(this.menuContainer);
-			
-			if(!this.menuContainer){
-				console.warn("Menu Error - no container element found matching selector:",  this.table.options.menuContainer , "(defaulting to document body)");
-			}
-		}else if (this.menuContainer === true){
-			this.menuContainer = this.table.element;
+
+	deprecationCheck(){
+		if(typeof this.table.options.menuContainer !== "undefined"){
+			console.warn("Use of the menuContainer option is now deprecated. Please use the popupContainer option instead");
+
+			this.table.options.popupContainer = this.table.options.menuContainer;
 		}
-		
-		if(this.menuContainer && !this.checkMenuContainerIsParent(this.menuContainer)){
-			this.menuContainer = false;
-			console.warn("Menu Error - container element does not contain this table:",  this.table.options.menuContainer , "(defaulting to document body)");
-		}
-		
-		if(!this.menuContainer){
-			this.menuContainer = document.body;
-		}
-	}
-	
-	checkMenuContainerIsParent(container, element = this.table.element){
-		if(container === element){
-			return true;
-		}else{
-			return element.parentNode ? this.checkMenuContainerIsParent(container, element.parentNode) : false;
-		}
-	}
+	}	
 	
 	initializeRowWatchers(){
 		if(this.table.options.rowContextMenu){
@@ -203,7 +178,7 @@ class Menu extends Module{
 				this.rootPopup.hide();	
 			}
 			
-			this.rootPopup = popup = this.popup(menuEl, this.menuContainer);
+			this.rootPopup = popup = this.popup(menuEl);
 			
 		}else{
 			popup = parentPopup.child(menuEl);

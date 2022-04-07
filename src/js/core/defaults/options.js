@@ -11,6 +11,8 @@ export default {
 
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
 
+	popupContainer:false,
+
 	columns:[],//store for colum header info
 	columnDefaults:{}, //store column default props
 

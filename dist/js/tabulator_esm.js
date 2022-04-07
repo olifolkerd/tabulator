@@ -174,11 +174,11 @@ class Helpers{
 }
 
 class Popup extends CoreFeature{
-    constructor(table, element, containerEl, parent){
+    constructor(table, element, parent){
         super(table);
 
         this.element = element;
-        this.containerEl = containerEl;
+        this.container = this._lookupContainer();
 
         this.parent = parent;
 
@@ -192,6 +192,40 @@ class Popup extends CoreFeature{
         this.blurEvent = this.hide.bind(this);
 		this.escEvent = this._escapeCheck.bind(this);
     }
+
+    _lookupContainer(){
+		var container = this.table.options.popupContainer;
+		
+		if(typeof container === "string"){
+			container = document.querySelector(container);
+			
+			if(!container){
+				console.warn("Menu Error - no container element found matching selector:",  this.table.options.popupContainer , "(defaulting to document body)");
+			}
+		}else if (container === true){
+			container = this.table.element;
+		}
+		
+		if(container && !this._checkContainerIsParent(container)){
+			container = false;
+			console.warn("Menu Error - container element does not contain this table:",  this.table.options.popupContainer , "(defaulting to document body)");
+		}
+		
+		if(!container){
+			container = document.body;
+		}
+
+        return container;
+	}
+
+    	
+	_checkContainerIsParent(container, element = this.table.element){
+		if(container === element){
+			return true;
+		}else {
+			return element.parentNode ? this._checkContainerIsParent(container, element.parentNode) : false;
+		}
+	}
 
     show(origin, originY){
         var x, y, parentEl, parentOffset, touch;
@@ -210,8 +244,8 @@ class Popup extends CoreFeature{
             x = touch ? origin.touches[0].pageX : origin.pageX;
 			y = touch ? origin.touches[0].pageY : origin.pageY;
 			
-			if(this.containerEl !== document.body){
-				parentOffset = Helpers.elOffset(this.containerEl);
+			if(this.container !== document.body){
+				parentOffset = Helpers.elOffset(this.container);
 				
 				x -= parentOffset.left;
 				y -= parentOffset.top;
@@ -223,7 +257,7 @@ class Popup extends CoreFeature{
         this.element.style.top = y + "px";
 		this.element.style.left = x + "px";
 
-        this.containerEl.appendChild(this.element);
+        this.container.appendChild(this.element);
 
         this._fitToScreen(x, y, parentEl, parentOffset);
 		
@@ -232,20 +266,20 @@ class Popup extends CoreFeature{
 
     _fitToScreen(x, y, parentEl, parentOffset){
         //move menu to start on right edge if it is too close to the edge of the screen
-		if((x + this.element.offsetWidth) >= this.containerEl.offsetWidth || this.reversedX){
+		if((x + this.element.offsetWidth) >= this.container.offsetWidth || this.reversedX){
 			this.element.style.left = "";
 			
 			if(parentEl){
-				this.element.style.right = (this.containerEl.offsetWidth - parentOffset.left) + "px";
+				this.element.style.right = (this.container.offsetWidth - parentOffset.left) + "px";
 			}else {
-				this.element.style.right = (this.containerEl.offsetWidth - x) + "px";
+				this.element.style.right = (this.container.offsetWidth - x) + "px";
 			}
 			
 			this.reversedX = true;
 		}
 		
 		//move menu to start on bottom edge if it is too close to the edge of the screen
-		if((y + this.element.offsetHeight) > this.containerEl.offsetHeight) {
+		if((y + this.element.offsetHeight) > this.container.offsetHeight) {
 			if(this.parent){
 				this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight + parentEl.offsetHeight + 1) + "px";
 			}else {
@@ -311,7 +345,7 @@ class Popup extends CoreFeature{
             this.childPopup.hide();
         }
 
-        this.childPopup = new Popup(this.table, element, this.containerEl, this);
+        this.childPopup = new Popup(this.table, element, this);
 
         return this.childPopup;
     }
@@ -13032,7 +13066,7 @@ class Menu extends Module{
 		this.registerTableOption("rowClickMenu", false);
 		this.registerTableOption("groupContextMenu", false);
 		this.registerTableOption("groupClickMenu", false);
-		this.registerTableOption("menuContainer", false);
+		this.registerTableOption("menuContainer", undefined);
 		
 		this.registerColumnOption("headerContextMenu");
 		this.registerColumnOption("headerClickMenu");
@@ -13042,45 +13076,20 @@ class Menu extends Module{
 	}
 	
 	initialize(){
-		this.lookupMenuContainer();
-		
+		this.deprecationCheck();
 		this.initializeRowWatchers();
 		this.initializeGroupWatchers();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
-	
-	lookupMenuContainer(){
-		
-		this.menuContainer = this.table.options.menuContainer;
-		
-		if(typeof this.menuContainer === "string"){
-			this.menuContainer = document.querySelector(this.menuContainer);
-			
-			if(!this.menuContainer){
-				console.warn("Menu Error - no container element found matching selector:",  this.table.options.menuContainer , "(defaulting to document body)");
-			}
-		}else if (this.menuContainer === true){
-			this.menuContainer = this.table.element;
+
+	deprecationCheck(){
+		if(typeof this.table.options.menuContainer !== "undefined"){
+			console.warn("Use of the menuContainer option is now deprecated. Please use the popupContainer option instead");
+
+			this.table.options.popupContainer = this.table.options.menuContainer;
 		}
-		
-		if(this.menuContainer && !this.checkMenuContainerIsParent(this.menuContainer)){
-			this.menuContainer = false;
-			console.warn("Menu Error - container element does not contain this table:",  this.table.options.menuContainer , "(defaulting to document body)");
-		}
-		
-		if(!this.menuContainer){
-			this.menuContainer = document.body;
-		}
-	}
-	
-	checkMenuContainerIsParent(container, element = this.table.element){
-		if(container === element){
-			return true;
-		}else {
-			return element.parentNode ? this.checkMenuContainerIsParent(container, element.parentNode) : false;
-		}
-	}
+	}	
 	
 	initializeRowWatchers(){
 		if(this.table.options.rowContextMenu){
@@ -13217,7 +13226,7 @@ class Menu extends Module{
 				this.rootPopup.hide();	
 			}
 			
-			this.rootPopup = popup = this.popup(menuEl, this.menuContainer);
+			this.rootPopup = popup = this.popup(menuEl);
 			
 		}else {
 			popup = parentPopup.child(menuEl);
@@ -18698,6 +18707,8 @@ var defaultOptions = {
 	maxHeight:false, //maximum height of tabulator
 
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
+
+	popupContainer:false,
 
 	columns:[],//store for colum header info
 	columnDefaults:{}, //store column default props
