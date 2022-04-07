@@ -1,5 +1,6 @@
 import Module from '../../core/Module.js';
 import Helpers from '../../core/tools/Helpers.js';
+import Popup from '../../core/tools/Popup.js';
 
 class Menu extends Module{
 	
@@ -8,12 +9,11 @@ class Menu extends Module{
 		
 		this.menuContainer = null;
 		this.menuElements = [];
-		this.blurEvent = this.hideMenu.bind(this);
-		this.escEvent = this.escMenu.bind(this);
 		this.nestedMenuBlock = false;
 		this.positionReversedX = false;
 		
 		this.currentComponent = null;
+		this.popup = null;
 		
 		this.columnSubscribers = {};
 		
@@ -202,7 +202,10 @@ class Menu extends Module{
 				}, 100)
 			}
 			
-			this.hideMenu();
+			if(this.popup){
+				this.popup.hide();	
+			}
+			
 			this.menuElements = [];
 		}
 		
@@ -260,11 +263,21 @@ class Menu extends Module{
 		});
 		
 		menuEl.addEventListener("click", (e) => {
-			this.hideMenu();
+			this.popup.hide();
 		});
 		
 		this.menuElements.push(menuEl);
-		this.positionMenu(menuEl, parentEl, touch, e);
+
+		this.popup = new Popup(this.table, menuEl, this.menuContainer);
+		this.popup.show(parentEl || e)
+		.hideOnBlur(() => {
+			this.popup = null;
+
+			if(this.currentComponent){
+				this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
+				this.currentComponent = null;
+			}
+		})
 		
 		this.currentComponent = component
 		
@@ -287,92 +300,9 @@ class Menu extends Module{
 		}
 	}
 	
-	positionMenu(element, parentEl, touch, e){
-		var x, y, parentOffset;
-		
-		if(!parentEl){
-			x = touch ? e.touches[0].pageX : e.pageX;
-			y = touch ? e.touches[0].pageY : e.pageY;
-			
-			if(this.menuContainer !== document.body){
-				parentOffset = Helpers.elOffset(this.menuContainer);
-				
-				x -= parentOffset.left;
-				y -= parentOffset.top;
-			}
-			
-			this.positionReversedX = false;
-		}else{
-			parentOffset = Helpers.elOffset(parentEl);
-			x = parentOffset.left + parentEl.offsetWidth;
-			y = parentOffset.top - 1;
-		}
-		
-		element.style.top = y + "px";
-		element.style.left = x + "px";
-		
-		setTimeout(() => {
-			this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
-			this.subscribe("cell-editing", this.blurEvent);
-			document.body.addEventListener("click", this.blurEvent);
-			document.body.addEventListener("contextmenu", this.blurEvent);
-			window.addEventListener("resize", this.blurEvent);
-			document.body.addEventListener("keydown", this.escEvent);
-		}, 100);
-		
-		this.menuContainer.appendChild(element);
-		
-		//move menu to start on right edge if it is too close to the edge of the screen
-		if((x + element.offsetWidth) >= this.menuContainer.offsetWidth || this.positionReversedX){
-			element.style.left = "";
-			
-			if(parentEl){
-				element.style.right = (this.menuContainer.offsetWidth - parentOffset.left) + "px";
-			}else{
-				element.style.right = (this.menuContainer.offsetWidth - x) + "px";
-			}
-			
-			this.positionReversedX = true;
-		}
-		
-		//move menu to start on bottom edge if it is too close to the edge of the screen
-		if((y + element.offsetHeight) > this.menuContainer.offsetHeight) {
-			if(parentEl){
-				element.style.top = (parseInt(element.style.top) - element.offsetHeight + parentEl.offsetHeight + 1) + "px";
-			}else{
-				element.style.top = (parseInt(element.style.top) - element.offsetHeight) + "px";
-			}
-		}
-	}
 	
 	isOpen(){
 		return !!this.menuElements.length;
-	}
-	
-	escMenu(e){
-		if(e.keyCode == 27){
-			this.hideMenu();
-		}
-	}
-	
-	hideMenu(){	
-		this.menuElements.forEach((menuEl) => {
-			if(menuEl.parentNode){
-				menuEl.parentNode.removeChild(menuEl);
-			}
-		});
-		
-		document.body.removeEventListener("keydown", this.escEvent);
-		document.body.removeEventListener("click", this.blurEvent);
-		document.body.removeEventListener("contextmenu", this.blurEvent);
-		window.removeEventListener("resize", this.blurEvent);
-		this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
-		this.unsubscribe("cell-editing", this.blurEvent);
-		
-		if(this.currentComponent){
-			this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
-			this.currentComponent = null;
-		}
 	}
 }
 
