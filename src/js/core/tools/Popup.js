@@ -11,7 +11,7 @@ export default class Popup extends CoreFeature{
         this.parent = parent;
 
         this.reversedX = false;
-        this.child = null;
+        this.childPopup = null;
         this.blurable = false;
         this.blurCallback = null;
 
@@ -23,8 +23,6 @@ export default class Popup extends CoreFeature{
 
     show(origin, originY){
         var x, y, parentEl, parentOffset, touch;
-
-        console.log("origin", origin)
 
         if(origin instanceof HTMLElement){
             parentEl = origin;
@@ -117,12 +115,12 @@ export default class Popup extends CoreFeature{
             this.unsubscribe("cell-editing", this.blurEvent);
         }
 
-        if(this.child){
-            child.hide();
+        if(this.childPopup){
+            this.childPopup.hide();
         }
 
         if(this.parent){
-            this.parent.child = null;
+            this.parent.childPopup = null;
         }
 
         if(this.element.parentNode){
@@ -137,10 +135,12 @@ export default class Popup extends CoreFeature{
     }
 
     child(element){
-        var child = new Popup(element, this.containerEl, this);
+        if(this.childPopup){
+            this.childPopup.hide();
+        }
 
-        this.children.push(child);
+        this.childPopup = new Popup(this.table, element, this.containerEl, this);
 
-        return child;
+        return this.childPopup;
     }
 }

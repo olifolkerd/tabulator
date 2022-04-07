@@ -12874,7 +12874,7 @@ class Popup extends CoreFeature{
         this.parent = parent;
 
         this.reversedX = false;
-        this.child = null;
+        this.childPopup = null;
         this.blurable = false;
         this.blurCallback = null;
 
@@ -12886,8 +12886,6 @@ class Popup extends CoreFeature{
 
     show(origin, originY){
         var x, y, parentEl, parentOffset, touch;
-
-        console.log("origin", origin);
 
         if(origin instanceof HTMLElement){
             parentEl = origin;
@@ -12980,12 +12978,12 @@ class Popup extends CoreFeature{
             this.unsubscribe("cell-editing", this.blurEvent);
         }
 
-        if(this.child){
-            child.hide();
+        if(this.childPopup){
+            this.childPopup.hide();
         }
 
         if(this.parent){
-            this.parent.child = null;
+            this.parent.childPopup = null;
         }
 
         if(this.element.parentNode){
@@ -13000,11 +12998,13 @@ class Popup extends CoreFeature{
     }
 
     child(element){
-        var child = new Popup(element, this.containerEl, this);
+        if(this.childPopup){
+            this.childPopup.hide();
+        }
 
-        this.children.push(child);
+        this.childPopup = new Popup(this.table, element, this.containerEl, this);
 
-        return child;
+        return this.childPopup;
     }
 }
 
@@ -13014,12 +13014,10 @@ class Menu extends Module{
 		super(table);
 		
 		this.menuContainer = null;
-		this.menuElements = [];
 		this.nestedMenuBlock = false;
-		this.positionReversedX = false;
 		
 		this.currentComponent = null;
-		this.popup = null;
+		this.rootPopup = null;
 		
 		this.columnSubscribers = {};
 		
@@ -13180,10 +13178,11 @@ class Menu extends Module{
 		this.loadMenu(e, component, menu);
 	}
 	
-	loadMenu(e, component, menu, parentEl){
-		var touch = !(e instanceof MouseEvent);
+	loadMenu(e, component, menu, parentEl, parentPopup){
+		var touch = !(e instanceof MouseEvent),		
+		menuEl = document.createElement("div"),
+		popup;
 		
-		var menuEl = document.createElement("div");
 		menuEl.classList.add("tabulator-menu");
 		
 		if(!touch){
@@ -13198,7 +13197,7 @@ class Menu extends Module{
 		if(!parentEl){
 			if(this.nestedMenuBlock){
 				//abort if child menu already open
-				if(this.isOpen()){
+				if(this.rootPopup){
 					return;
 				}
 			}else {
@@ -13207,11 +13206,14 @@ class Menu extends Module{
 				}, 100);
 			}
 			
-			if(this.popup){
-				this.popup.hide();	
+			if(this.rootPopup){
+				this.rootPopup.hide();	
 			}
 			
-			this.menuElements = [];
+			this.rootPopup = popup = new Popup(this.table, menuEl, this.menuContainer);
+			
+		}else {
+			popup = parentPopup.child(menuEl);
 		}
 		
 		menu.forEach((item) => {
@@ -13247,8 +13249,8 @@ class Menu extends Module{
 					if(item.menu && item.menu.length){
 						itemEl.addEventListener("click", (e) => {
 							e.stopPropagation();
-							this.hideOldSubMenus(menuEl);
-							this.loadMenu(e, component, item.menu, itemEl);
+							// this.hideOldSubMenus(menuEl);
+							this.loadMenu(e, component, item.menu, itemEl, popup);
 						});
 					}else {
 						if(item.action){
@@ -13268,46 +13270,27 @@ class Menu extends Module{
 		});
 		
 		menuEl.addEventListener("click", (e) => {
-			this.popup.hide();
+			this.rootPopup.hide();
 		});
 		
-		this.menuElements.push(menuEl);
-
-		this.popup = new Popup(this.table, menuEl, this.menuContainer);
-		this.popup.show(parentEl || e)
-		.hideOnBlur(() => {
-			this.popup = null;
-
-			if(this.currentComponent){
-				this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
-				this.currentComponent = null;
-			}
-		});
+		
+		popup.show(parentEl || e);
+		
+		if(popup === this.rootPopup){
+			this.rootPopup.hideOnBlur(() => {
+				this.rootPopup = null;
+				
+				if(this.currentComponent){
+					this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
+					this.currentComponent = null;
+				}
+			});
+		}
+		
 		
 		this.currentComponent = component;
 		
 		this.dispatchExternal("menuOpened", component.getComponent());
-	}
-	
-	hideOldSubMenus(menuEl){
-		var index = this.menuElements.indexOf(menuEl);
-		
-		if(index > -1){
-			for(let i = this.menuElements.length - 1; i > index; i--){
-				var el = this.menuElements[i];
-				
-				if(el.parentNode){
-					el.parentNode.removeChild(el);
-				}
-				
-				this.menuElements.pop();
-			}
-		}
-	}
-	
-	
-	isOpen(){
-		return !!this.menuElements.length;
 	}
 }
 
