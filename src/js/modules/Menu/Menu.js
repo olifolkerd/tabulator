@@ -240,7 +240,6 @@ class Menu extends Module{
 			this.rootPopup.hide();
 		});
 		
-		
 		popup.show(parentEl || e);
 		
 		if(popup === this.rootPopup){
@@ -252,12 +251,11 @@ class Menu extends Module{
 					this.currentComponent = null;
 				}
 			});
+
+			this.currentComponent = component;
+
+			this.dispatchExternal("menuOpened", component.getComponent())
 		}
-		
-		
-		this.currentComponent = component;
-		
-		this.dispatchExternal("menuOpened", component.getComponent())
 	}
 }
 
