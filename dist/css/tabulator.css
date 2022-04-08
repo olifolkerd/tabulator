@@ -792,6 +792,10 @@
   z-index: 10000;
 }
 
+.tabulator-popup-contents {
+  padding: 5px;
+}
+
 .tabulator-menu .tabulator-menu-item {
   position: relative;
   box-sizing: border-box;

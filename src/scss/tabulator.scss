@@ -995,6 +995,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	z-index: 10000;
 }
 
+.tabulator-popup-contents{
+	padding:5px;
+}
+
 .tabulator-menu{
 	.tabulator-menu-item{
 		position:relative;

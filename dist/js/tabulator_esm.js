@@ -13074,23 +13074,19 @@ class Menu extends Module{
 		
 		this.columnSubscribers = {};
 		
+		this.registerTableOption("menuContainer", undefined); //deprecated
+
 		this.registerTableOption("rowContextMenu", false);
 		this.registerTableOption("rowClickMenu", false);
 		this.registerTableOption("groupContextMenu", false);
 		this.registerTableOption("groupClickMenu", false);
-		this.registerTableOption("menuContainer", undefined);
 		
 		this.registerColumnOption("headerContextMenu");
 		this.registerColumnOption("headerClickMenu");
 		this.registerColumnOption("headerMenu");
 		this.registerColumnOption("contextMenu");
 		this.registerColumnOption("clickMenu");
-
-		this.registerColumnOption("headerContextPopup");
-		this.registerColumnOption("headerClickPopup");
-		this.registerColumnOption("headerPopup");
-		this.registerColumnOption("contextPopup");
-		this.registerColumnOption("clickPopup");
+		
 	}
 	
 	initialize(){
@@ -13111,23 +13107,23 @@ class Menu extends Module{
 	
 	initializeRowWatchers(){
 		if(this.table.options.rowContextMenu){
-			this.subscribe("row-contextmenu", this.loadEvent.bind(this, this.table.options.rowContextMenu, "loadMenu"));
-			this.table.on("rowTapHold", this.loadEvent.bind(this, this.table.options.rowContextMenu, "loadMenu"));
+			this.subscribe("row-contextmenu", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
+			this.table.on("rowTapHold", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
 		}
 		
 		if(this.table.options.rowClickMenu){
-			this.subscribe("row-click", this.loadEvent.bind(this, this.table.options.rowClickMenu, "loadMenu"));
+			this.subscribe("row-click", this.loadMenuEvent.bind(this, this.table.options.rowClickMenu));
 		}
 	}
 	
 	initializeGroupWatchers(){
 		if(this.table.options.groupContextMenu){
-			this.subscribe("group-contextmenu", this.loadEvent.bind(this, this.table.options.groupContextMenu, "loadMenu"));
-			this.table.on("groupTapHold", this.loadEvent.bind(this, this.table.options.groupContextMenu, "loadMenu"));
+			this.subscribe("group-contextmenu", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
+			this.table.on("groupTapHold", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
 		}
 		
 		if(this.table.options.groupClickMenu){
-			this.subscribe("group-click", this.loadEvent.bind(this, this.table.options.groupClickMenu, "loadMenu"));
+			this.subscribe("group-click", this.loadMenuEvent.bind(this, this.table.options.groupClickMenu));
 		}
 	}
 	
@@ -13136,13 +13132,13 @@ class Menu extends Module{
 		
 		//handle column events
 		if(def.headerContextMenu && !this.columnSubscribers.headerContextMenu){
-			this.columnSubscribers.headerContextMenu = this.loadMenuTableColumnEvent.bind(this, "headerContextMenu", "loadMenu");
+			this.columnSubscribers.headerContextMenu = this.loadMenuTableColumnEvent.bind(this, "headerContextMenu");
 			this.subscribe("column-contextmenu", this.columnSubscribers.headerContextMenu);
 			this.table.on("headerTapHold", this.loadMenuTableColumnEvent.bind(this, "headerContextMenu"));
 		}
 		
 		if(def.headerClickMenu && !this.columnSubscribers.headerClickMenu){
-			this.columnSubscribers.headerClickMenu = this.loadMenuTableColumnEvent.bind(this, "headerClickMenu", "loadMenu");
+			this.columnSubscribers.headerClickMenu = this.loadMenuTableColumnEvent.bind(this, "headerClickMenu");
 			this.subscribe("column-click", this.columnSubscribers.headerClickMenu);
 		}
 		
@@ -13152,13 +13148,13 @@ class Menu extends Module{
 		
 		//handle cell events
 		if(def.contextMenu && !this.columnSubscribers.contextMenu){
-			this.columnSubscribers.contextMenu = this.loadMenuTableCellEvent.bind(this, "contextMenu", "loadMenu");
+			this.columnSubscribers.contextMenu = this.loadMenuTableCellEvent.bind(this, "contextMenu");
 			this.subscribe("cell-contextmenu", this.columnSubscribers.contextMenu);
 			this.table.on("cellTapHold", this.loadMenuTableCellEvent.bind(this, "contextMenu"));
 		}
 		
 		if(def.clickMenu && !this.columnSubscribers.clickMenu){
-			this.columnSubscribers.clickMenu = this.loadMenuTableCellEvent.bind(this, "clickMenu", "loadMenu");
+			this.columnSubscribers.clickMenu = this.loadMenuTableCellEvent.bind(this, "clickMenu");
 			this.subscribe("cell-click", this.columnSubscribers.clickMenu);
 		}
 	}
@@ -13174,46 +13170,42 @@ class Menu extends Module{
 			e.stopPropagation();
 			e.preventDefault();
 			
-			this.loadEvent(column.definition.headerMenu, "loadMenu", e, column);
+			this.loadMenuEvent(column.definition.headerMenu, e, column);
 		});
 		
 		column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
 	}
 	
-	loadMenuTableCellEvent(option, type, e, cell){
+	loadMenuTableCellEvent(option, e, cell){
 		if(cell._cell){
 			cell = cell._cell;
 		}
 		
 		if(cell.column.definition[option]){
-			this.loadEvent(cell.column.definition[option], type, e, cell);
+			this.loadMenuEvent(cell.column.definition[option], e, cell);
 		}
 	}
 	
-	loadMenuTableColumnEvent(option, type, e, column){
+	loadMenuTableColumnEvent(option, e, column){
 		if(column._column){
 			column = column._column;
 		}
 		
 		if(column.definition[option]){
-			this.loadEvent(column.definition[option], type, e, column);
+			this.loadMenuEvent(column.definition[option], e, column);
 		}
 	}
 	
-	loadEvent(value, type, e, component){
+	loadMenuEvent(menu, e, component){
 		if(component._group){
 			component = component._group;
 		}else if(component._row){
 			component = component._row;
 		}
 		
-		value = typeof value == "function" ? value.call(this.table, component.getComponent(), e) : value;
+		menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
 		
-		this[type](e, component, value);
-	}
-
-	loadPopup(e, component, menu){
-		console.log("popup");
+		this.loadMenu(e, component, menu);
 	}
 	
 	loadMenu(e, component, menu, parentEl, parentPopup){
@@ -15873,6 +15865,163 @@ Persistence.moduleInitOrder = -10;
 //load defaults
 Persistence.readers = defaultReaders;
 Persistence.writers = defaultWriters;
+
+class Popup$1 extends Module{
+	
+	constructor(table){
+		super(table);
+		
+		this.columnSubscribers = {};
+		
+		this.registerTableOption("rowContextPopup", false);
+		this.registerTableOption("rowClickPopup", false);
+		this.registerTableOption("groupContextPopup", false);
+		this.registerTableOption("groupClickPopup", false);
+		
+		this.registerColumnOption("headerContextPopup");
+		this.registerColumnOption("headerClickPopup");
+		this.registerColumnOption("headerPopup");
+		this.registerColumnOption("contextPopup");
+		this.registerColumnOption("clickPopup");
+		
+	}
+	
+	initialize(){
+		this.initializeRowWatchers();
+		this.initializeGroupWatchers();
+		
+		this.subscribe("column-init", this.initializeColumn.bind(this));
+	}
+	
+	initializeRowWatchers(){
+		if(this.table.options.rowContextPopup){
+			this.subscribe("row-contextpopup", this.loadPopupEvent.bind(this, this.table.options.rowContextPopup));
+			this.table.on("rowTapHold", this.loadPopupEvent.bind(this, this.table.options.rowContextPopup));
+		}
+		
+		if(this.table.options.rowClickPopup){
+			this.subscribe("row-click", this.loadPopupEvent.bind(this, this.table.options.rowClickPopup));
+		}
+	}
+	
+	initializeGroupWatchers(){
+		if(this.table.options.groupContextPopup){
+			this.subscribe("group-contextpopup", this.loadPopupEvent.bind(this, this.table.options.groupContextPopup));
+			this.table.on("groupTapHold", this.loadPopupEvent.bind(this, this.table.options.groupContextPopup));
+		}
+		
+		if(this.table.options.groupClickPopup){
+			this.subscribe("group-click", this.loadPopupEvent.bind(this, this.table.options.groupClickPopup));
+		}
+	}
+	
+	initializeColumn(column){
+		var def = column.definition;
+		
+		//handle column events
+		if(def.headerContextPopup && !this.columnSubscribers.headerContextPopup){
+			this.columnSubscribers.headerContextPopup = this.loadPopupTableColumnEvent.bind(this, "headerContextPopup");
+			this.subscribe("column-contextpopup", this.columnSubscribers.headerContextPopup);
+			this.table.on("headerTapHold", this.loadPopupTableColumnEvent.bind(this, "headerContextPopup"));
+		}
+		
+		if(def.headerClickPopup && !this.columnSubscribers.headerClickPopup){
+			this.columnSubscribers.headerClickPopup = this.loadPopupTableColumnEvent.bind(this, "headerClickPopup");
+			this.subscribe("column-click", this.columnSubscribers.headerClickPopup);
+		}
+		
+		if(def.headerPopup){
+			this.initializeColumnHeaderPopup(column);
+		}
+		
+		//handle cell events
+		if(def.contextPopup && !this.columnSubscribers.contextPopup){
+			this.columnSubscribers.contextPopup = this.loadPopupTableCellEvent.bind(this, "contextPopup");
+			this.subscribe("cell-contextpopup", this.columnSubscribers.contextPopup);
+			this.table.on("cellTapHold", this.loadPopupTableCellEvent.bind(this, "contextPopup"));
+		}
+		
+		if(def.clickPopup && !this.columnSubscribers.clickPopup){
+			this.columnSubscribers.clickPopup = this.loadPopupTableCellEvent.bind(this, "clickPopup");
+			this.subscribe("cell-click", this.columnSubscribers.clickPopup);
+		}
+	}
+	
+	initializeColumnHeaderPopup(column){
+		var headerPopupEl;
+		
+		headerPopupEl = document.createElement("span");
+		headerPopupEl.classList.add("tabulator-header-popup-button");
+		headerPopupEl.innerHTML = "&vellip;";
+		
+		headerPopupEl.addEventListener("click", (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			
+			this.loadPopupEvent(column.definition.headerPopup, e, column);
+		});
+		
+		column.titleElement.insertBefore(headerPopupEl, column.titleElement.firstChild);
+	}
+	
+	loadPopupTableCellEvent(option, e, cell){
+		if(cell._cell){
+			cell = cell._cell;
+		}
+		
+		if(cell.column.definition[option]){
+			this.loadPopupEvent(cell.column.definition[option], e, cell);
+		}
+	}
+	
+	loadPopupTableColumnEvent(option, e, column){
+		if(column._column){
+			column = column._column;
+		}
+		
+		if(column.definition[option]){
+			this.loadPopupEvent(column.definition[option], e, column);
+		}
+	}
+	
+	loadPopupEvent(contents, e, component){
+		if(component._group){
+			component = component._group;
+		}else if(component._row){
+			component = component._row;
+		}
+		
+		contents = typeof contents == "function" ? contents.call(this.table, component.getComponent(), e) : contents;
+		
+		this.loadPopup(e, component, contents);
+	}
+	
+	loadPopup(e, component, contents){
+		var touch = !(e instanceof MouseEvent),
+		contentsEl, popup;
+		
+		if(contents instanceof HTMLElement){
+			contentsEl = contents;
+		}else {
+			contentsEl = document.createElement("div");
+			contentsEl.innerHTML = contents;
+		}
+		
+		contentsEl.classList.add("tabulator-popup-contents");
+
+		if(!touch){
+			e.preventDefault();
+		}
+		
+		popup = this.popup(contentsEl);
+		
+		popup.show(e).hideOnBlur(() => {
+			this.dispatchExternal("menuClosed", component.getComponent());
+		});
+	}
+}
+
+Popup$1.moduleName = "popup";
 
 class Print extends Module{
 
@@ -18704,6 +18853,7 @@ var modules = /*#__PURE__*/Object.freeze({
 	MutatorModule: Mutator,
 	PageModule: Page,
 	PersistenceModule: Persistence,
+	PopupModule: Popup$1,
 	PrintModule: Print,
 	ReactiveDataModule: ReactiveData,
 	ResizeColumnsModule: ResizeColumns,
@@ -24509,5 +24659,5 @@ class PseudoRow {
 	clearCellHeight(){}
 }
 
-export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent$1 as RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Validate as ValidateModule };
+export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup$1 as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent$1 as RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Validate as ValidateModule };
 //# sourceMappingURL=tabulator_esm.js.map

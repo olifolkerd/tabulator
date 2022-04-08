@@ -22,6 +22,7 @@ export {default as MoveRowsModule} from '../../modules/MoveRows/MoveRows.js';
 export {default as MutatorModule} from '../../modules/Mutator/Mutator.js';
 export {default as PageModule} from '../../modules/Page/Page.js';
 export {default as PersistenceModule} from '../../modules/Persistence/Persistence.js';
+export {default as PopupModule} from '../../modules/Popup/Popup.js';
 export {default as PrintModule} from '../../modules/Print/Print.js';
 export {default as ReactiveDataModule} from '../../modules/ReactiveData/ReactiveData.js';
 export {default as ResizeColumnsModule} from '../../modules/ResizeColumns/ResizeColumns.js';

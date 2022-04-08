@@ -13,23 +13,19 @@ class Menu extends Module{
 		
 		this.columnSubscribers = {};
 		
+		this.registerTableOption("menuContainer", undefined); //deprecated
+
 		this.registerTableOption("rowContextMenu", false);
 		this.registerTableOption("rowClickMenu", false);
 		this.registerTableOption("groupContextMenu", false);
 		this.registerTableOption("groupClickMenu", false);
-		this.registerTableOption("menuContainer", undefined);
 		
 		this.registerColumnOption("headerContextMenu");
 		this.registerColumnOption("headerClickMenu");
 		this.registerColumnOption("headerMenu");
 		this.registerColumnOption("contextMenu");
 		this.registerColumnOption("clickMenu");
-
-		this.registerColumnOption("headerContextPopup");
-		this.registerColumnOption("headerClickPopup");
-		this.registerColumnOption("headerPopup");
-		this.registerColumnOption("contextPopup");
-		this.registerColumnOption("clickPopup");
+		
 	}
 	
 	initialize(){
@@ -50,23 +46,23 @@ class Menu extends Module{
 	
 	initializeRowWatchers(){
 		if(this.table.options.rowContextMenu){
-			this.subscribe("row-contextmenu", this.loadEvent.bind(this, this.table.options.rowContextMenu, "loadMenu"));
-			this.table.on("rowTapHold", this.loadEvent.bind(this, this.table.options.rowContextMenu, "loadMenu"));
+			this.subscribe("row-contextmenu", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
+			this.table.on("rowTapHold", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
 		}
 		
 		if(this.table.options.rowClickMenu){
-			this.subscribe("row-click", this.loadEvent.bind(this, this.table.options.rowClickMenu, "loadMenu"));
+			this.subscribe("row-click", this.loadMenuEvent.bind(this, this.table.options.rowClickMenu));
 		}
 	}
 	
 	initializeGroupWatchers(){
 		if(this.table.options.groupContextMenu){
-			this.subscribe("group-contextmenu", this.loadEvent.bind(this, this.table.options.groupContextMenu, "loadMenu"));
-			this.table.on("groupTapHold", this.loadEvent.bind(this, this.table.options.groupContextMenu, "loadMenu"));
+			this.subscribe("group-contextmenu", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
+			this.table.on("groupTapHold", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
 		}
 		
 		if(this.table.options.groupClickMenu){
-			this.subscribe("group-click", this.loadEvent.bind(this, this.table.options.groupClickMenu, "loadMenu"));
+			this.subscribe("group-click", this.loadMenuEvent.bind(this, this.table.options.groupClickMenu));
 		}
 	}
 	
@@ -76,13 +72,13 @@ class Menu extends Module{
 		
 		//handle column events
 		if(def.headerContextMenu && !this.columnSubscribers.headerContextMenu){
-			this.columnSubscribers.headerContextMenu = this.loadMenuTableColumnEvent.bind(this, "headerContextMenu", "loadMenu");
+			this.columnSubscribers.headerContextMenu = this.loadMenuTableColumnEvent.bind(this, "headerContextMenu");
 			this.subscribe("column-contextmenu", this.columnSubscribers.headerContextMenu);
 			this.table.on("headerTapHold", this.loadMenuTableColumnEvent.bind(this, "headerContextMenu"))
 		}
 		
 		if(def.headerClickMenu && !this.columnSubscribers.headerClickMenu){
-			this.columnSubscribers.headerClickMenu = this.loadMenuTableColumnEvent.bind(this, "headerClickMenu", "loadMenu");
+			this.columnSubscribers.headerClickMenu = this.loadMenuTableColumnEvent.bind(this, "headerClickMenu");
 			this.subscribe("column-click", this.columnSubscribers.headerClickMenu);
 		}
 		
@@ -92,13 +88,13 @@ class Menu extends Module{
 		
 		//handle cell events
 		if(def.contextMenu && !this.columnSubscribers.contextMenu){
-			this.columnSubscribers.contextMenu = this.loadMenuTableCellEvent.bind(this, "contextMenu", "loadMenu");
+			this.columnSubscribers.contextMenu = this.loadMenuTableCellEvent.bind(this, "contextMenu");
 			this.subscribe("cell-contextmenu", this.columnSubscribers.contextMenu);
 			this.table.on("cellTapHold", this.loadMenuTableCellEvent.bind(this, "contextMenu"))
 		}
 		
 		if(def.clickMenu && !this.columnSubscribers.clickMenu){
-			this.columnSubscribers.clickMenu = this.loadMenuTableCellEvent.bind(this, "clickMenu", "loadMenu");
+			this.columnSubscribers.clickMenu = this.loadMenuTableCellEvent.bind(this, "clickMenu");
 			this.subscribe("cell-click", this.columnSubscribers.clickMenu);
 		}
 	}
@@ -114,46 +110,42 @@ class Menu extends Module{
 			e.stopPropagation();
 			e.preventDefault();
 			
-			this.loadEvent(column.definition.headerMenu, "loadMenu", e, column);
+			this.loadMenuEvent(column.definition.headerMenu, e, column);
 		});
 		
 		column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
 	}
 	
-	loadMenuTableCellEvent(option, type, e, cell){
+	loadMenuTableCellEvent(option, e, cell){
 		if(cell._cell){
 			cell = cell._cell;
 		}
 		
 		if(cell.column.definition[option]){
-			this.loadEvent(cell.column.definition[option], type, e, cell);
+			this.loadMenuEvent(cell.column.definition[option], e, cell);
 		}
 	}
 	
-	loadMenuTableColumnEvent(option, type, e, column){
+	loadMenuTableColumnEvent(option, e, column){
 		if(column._column){
 			column = column._column;
 		}
 		
 		if(column.definition[option]){
-			this.loadEvent(column.definition[option], type, e, column);
+			this.loadMenuEvent(column.definition[option], e, column);
 		}
 	}
 	
-	loadEvent(value, type, e, component){
+	loadMenuEvent(menu, e, component){
 		if(component._group){
 			component = component._group;
 		}else if(component._row){
 			component = component._row;
 		}
 		
-		value = typeof value == "function" ? value.call(this.table, component.getComponent(), e) : value;
+		menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
 		
-		this[type](e, component, value);
-	}
-
-	loadPopup(e, component, menu){
-		console.log("popup");
+		this.loadMenu(e, component, menu);
 	}
 	
 	loadMenu(e, component, menu, parentEl, parentPopup){
