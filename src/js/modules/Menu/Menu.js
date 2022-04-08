@@ -24,6 +24,12 @@ class Menu extends Module{
 		this.registerColumnOption("headerMenu");
 		this.registerColumnOption("contextMenu");
 		this.registerColumnOption("clickMenu");
+
+		this.registerColumnOption("headerContextPopup");
+		this.registerColumnOption("headerClickPopup");
+		this.registerColumnOption("headerPopup");
+		this.registerColumnOption("contextPopup");
+		this.registerColumnOption("clickPopup");
 	}
 	
 	initialize(){
@@ -44,23 +50,23 @@ class Menu extends Module{
 	
 	initializeRowWatchers(){
 		if(this.table.options.rowContextMenu){
-			this.subscribe("row-contextmenu", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
-			this.table.on("rowTapHold", this.loadMenuEvent.bind(this, this.table.options.rowContextMenu));
+			this.subscribe("row-contextmenu", this.loadEvent.bind(this, this.table.options.rowContextMenu, "loadMenu"));
+			this.table.on("rowTapHold", this.loadEvent.bind(this, this.table.options.rowContextMenu, "loadMenu"));
 		}
 		
 		if(this.table.options.rowClickMenu){
-			this.subscribe("row-click", this.loadMenuEvent.bind(this, this.table.options.rowClickMenu));
+			this.subscribe("row-click", this.loadEvent.bind(this, this.table.options.rowClickMenu, "loadMenu"));
 		}
 	}
 	
 	initializeGroupWatchers(){
 		if(this.table.options.groupContextMenu){
-			this.subscribe("group-contextmenu", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
-			this.table.on("groupTapHold", this.loadMenuEvent.bind(this, this.table.options.groupContextMenu));
+			this.subscribe("group-contextmenu", this.loadEvent.bind(this, this.table.options.groupContextMenu, "loadMenu"));
+			this.table.on("groupTapHold", this.loadEvent.bind(this, this.table.options.groupContextMenu, "loadMenu"));
 		}
 		
 		if(this.table.options.groupClickMenu){
-			this.subscribe("group-click", this.loadMenuEvent.bind(this, this.table.options.groupClickMenu));
+			this.subscribe("group-click", this.loadEvent.bind(this, this.table.options.groupClickMenu, "loadMenu"));
 		}
 	}
 	
@@ -70,13 +76,13 @@ class Menu extends Module{
 		
 		//handle column events
 		if(def.headerContextMenu && !this.columnSubscribers.headerContextMenu){
-			this.columnSubscribers.headerContextMenu = this.loadMenuTableColumnEvent.bind(this, "headerContextMenu");
+			this.columnSubscribers.headerContextMenu = this.loadMenuTableColumnEvent.bind(this, "headerContextMenu", "loadMenu");
 			this.subscribe("column-contextmenu", this.columnSubscribers.headerContextMenu);
 			this.table.on("headerTapHold", this.loadMenuTableColumnEvent.bind(this, "headerContextMenu"))
 		}
 		
 		if(def.headerClickMenu && !this.columnSubscribers.headerClickMenu){
-			this.columnSubscribers.headerClickMenu = this.loadMenuTableColumnEvent.bind(this, "headerClickMenu");
+			this.columnSubscribers.headerClickMenu = this.loadMenuTableColumnEvent.bind(this, "headerClickMenu", "loadMenu");
 			this.subscribe("column-click", this.columnSubscribers.headerClickMenu);
 		}
 		
@@ -86,13 +92,13 @@ class Menu extends Module{
 		
 		//handle cell events
 		if(def.contextMenu && !this.columnSubscribers.contextMenu){
-			this.columnSubscribers.contextMenu = this.loadMenuTableCellEvent.bind(this, "contextMenu");
+			this.columnSubscribers.contextMenu = this.loadMenuTableCellEvent.bind(this, "contextMenu", "loadMenu");
 			this.subscribe("cell-contextmenu", this.columnSubscribers.contextMenu);
 			this.table.on("cellTapHold", this.loadMenuTableCellEvent.bind(this, "contextMenu"))
 		}
 		
 		if(def.clickMenu && !this.columnSubscribers.clickMenu){
-			this.columnSubscribers.clickMenu = this.loadMenuTableCellEvent.bind(this, "clickMenu");
+			this.columnSubscribers.clickMenu = this.loadMenuTableCellEvent.bind(this, "clickMenu", "loadMenu");
 			this.subscribe("cell-click", this.columnSubscribers.clickMenu);
 		}
 	}
@@ -108,42 +114,46 @@ class Menu extends Module{
 			e.stopPropagation();
 			e.preventDefault();
 			
-			this.loadMenuEvent(column.definition.headerMenu, e, column);
+			this.loadEvent(column.definition.headerMenu, "loadMenu", e, column);
 		});
 		
 		column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
 	}
 	
-	loadMenuTableCellEvent(option, e, cell){
+	loadMenuTableCellEvent(option, type, e, cell){
 		if(cell._cell){
 			cell = cell._cell;
 		}
 		
 		if(cell.column.definition[option]){
-			this.loadMenuEvent(cell.column.definition[option], e, cell);
+			this.loadEvent(cell.column.definition[option], type, e, cell);
 		}
 	}
 	
-	loadMenuTableColumnEvent(option, e, column){
+	loadMenuTableColumnEvent(option, type, e, column){
 		if(column._column){
 			column = column._column;
 		}
 		
 		if(column.definition[option]){
-			this.loadMenuEvent(column.definition[option], e, column);
+			this.loadEvent(column.definition[option], type, e, column);
 		}
 	}
 	
-	loadMenuEvent(menu, e, component){
+	loadEvent(value, type, e, component){
 		if(component._group){
 			component = component._group;
 		}else if(component._row){
 			component = component._row;
 		}
 		
-		menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
+		value = typeof value == "function" ? value.call(this.table, component.getComponent(), e) : value;
 		
-		this.loadMenu(e, component, menu);
+		this[type](e, component, value);
+	}
+
+	loadPopup(e, component, menu){
+		console.log("popup");
 	}
 	
 	loadMenu(e, component, menu, parentEl, parentPopup){
