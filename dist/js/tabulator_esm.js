@@ -12023,7 +12023,11 @@ class HtmlTableImport extends Module{
 
 	tableElementCheck(){
 		if(this.table.originalElement && this.table.originalElement.tagName === "TABLE"){
-			this.parseTable();
+			if(this.table.originalElement.childNodes.length){
+				this.parseTable();
+			}else {
+				console.warn("Unable to parse data from empty table tag, Tabulator should be initialized on a div tag unless importing data from a table element.");
+			}
 		}
 	}
 
