@@ -13163,7 +13163,7 @@ class Menu extends Module{
 		var headerMenuEl;
 		
 		headerMenuEl = document.createElement("span");
-		headerMenuEl.classList.add("tabulator-header-menu-button");
+		headerMenuEl.classList.add("tabulator-header-popup-button");
 		headerMenuEl.innerHTML = "&vellip;";
 		
 		headerMenuEl.addEventListener("click", (e) => {
@@ -16016,7 +16016,7 @@ class Popup$1 extends Module{
 		popup = this.popup(contentsEl);
 		
 		popup.show(e).hideOnBlur(() => {
-			this.dispatchExternal("menuClosed", component.getComponent());
+			this.dispatchExternal("popupClosed", component.getComponent());
 		});
 	}
 }

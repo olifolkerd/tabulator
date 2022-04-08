@@ -103,7 +103,7 @@ class Menu extends Module{
 		var headerMenuEl;
 		
 		headerMenuEl = document.createElement("span");
-		headerMenuEl.classList.add("tabulator-header-menu-button");
+		headerMenuEl.classList.add("tabulator-header-popup-button");
 		headerMenuEl.innerHTML = "&vellip;";
 		
 		headerMenuEl.addEventListener("click", (e) => {

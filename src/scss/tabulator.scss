@@ -120,7 +120,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				padding:4px;
 				
 				//header menu button
-				.tabulator-header-menu-button{
+				.tabulator-header-popup-button{
 					padding: 0 8px;
 					
 					&:hover{
@@ -156,7 +156,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 						background: #fff;
 					}
 					
-					.tabulator-header-menu-button + .tabulator-title-editor{
+					.tabulator-header-popup-button + .tabulator-title-editor{
 						width:calc(100% - 22px);
 					}
 				}

@@ -68,11 +68,11 @@
   padding: 4px;
 }
 
-.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-menu-button {
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-popup-button {
   padding: 0 8px;
 }
 
-.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-menu-button:hover {
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-popup-button:hover {
   cursor: pointer;
   opacity: .6;
 }
@@ -98,7 +98,7 @@
   background: #fff;
 }
 
-.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title .tabulator-header-menu-button + .tabulator-title-editor {
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title .tabulator-header-popup-button + .tabulator-title-editor {
   width: calc(100% - 22px);
 }
 
