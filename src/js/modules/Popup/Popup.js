@@ -151,7 +151,7 @@ class Popup extends Module{
 		popup = this.popup(contentsEl);
 		
 		popup.show(e).hideOnBlur(() => {
-			this.dispatchExternal("menuClosed", component.getComponent());
+			this.dispatchExternal("popupClosed", component.getComponent());
 		});
 	}
 }
