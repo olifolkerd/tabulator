@@ -13084,6 +13084,7 @@ class Menu extends Module{
 		this.registerColumnOption("headerContextMenu");
 		this.registerColumnOption("headerClickMenu");
 		this.registerColumnOption("headerMenu");
+		this.registerColumnOption("headerMenuIcon");
 		this.registerColumnOption("contextMenu");
 		this.registerColumnOption("clickMenu");
 		
@@ -13160,11 +13161,25 @@ class Menu extends Module{
 	}
 	
 	initializeColumnHeaderMenu(column){
-		var headerMenuEl;
+		var icon = column.definition.headerMenuIcon,
+		headerMenuEl;
 		
 		headerMenuEl = document.createElement("span");
 		headerMenuEl.classList.add("tabulator-header-popup-button");
-		headerMenuEl.innerHTML = "&vellip;";
+
+		if(icon){
+			if(typeof icon === "function"){
+				icon = icon(column.getComponent());
+			}
+
+			if(icon instanceof HTMLElement){
+				headerMenuEl.appendChild(icon);
+			}else {
+				headerMenuEl.innerHTML = icon;
+			}
+		}else {
+			headerMenuEl.innerHTML = "&vellip;";
+		}
 		
 		headerMenuEl.addEventListener("click", (e) => {
 			e.stopPropagation();
@@ -15881,6 +15896,7 @@ class Popup$1 extends Module{
 		this.registerColumnOption("headerContextPopup");
 		this.registerColumnOption("headerClickPopup");
 		this.registerColumnOption("headerPopup");
+		this.registerColumnOption("headerPopupIcon");
 		this.registerColumnOption("contextPopup");
 		this.registerColumnOption("clickPopup");
 		
@@ -15948,11 +15964,25 @@ class Popup$1 extends Module{
 	}
 	
 	initializeColumnHeaderPopup(column){
-		var headerPopupEl;
+		var icon = column.definition.headerPopupIcon,
+		headerPopupEl;
 		
 		headerPopupEl = document.createElement("span");
 		headerPopupEl.classList.add("tabulator-header-popup-button");
-		headerPopupEl.innerHTML = "&vellip;";
+
+		if(icon){
+			if(typeof icon === "function"){
+				icon = icon(column.getComponent());
+			}
+
+			if(icon instanceof HTMLElement){
+				headerPopupEl.appendChild(icon);
+			}else {
+				headerPopupEl.innerHTML = icon;
+			}
+		}else {
+			headerPopupEl.innerHTML = "&vellip;";
+		}
 		
 		headerPopupEl.addEventListener("click", (e) => {
 			e.stopPropagation();

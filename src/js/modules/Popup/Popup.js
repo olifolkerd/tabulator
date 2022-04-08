@@ -15,6 +15,7 @@ class Popup extends Module{
 		this.registerColumnOption("headerContextPopup");
 		this.registerColumnOption("headerClickPopup");
 		this.registerColumnOption("headerPopup");
+		this.registerColumnOption("headerPopupIcon");
 		this.registerColumnOption("contextPopup");
 		this.registerColumnOption("clickPopup");
 		
@@ -83,11 +84,25 @@ class Popup extends Module{
 	}
 	
 	initializeColumnHeaderPopup(column){
-		var headerPopupEl;
+		var icon = column.definition.headerPopupIcon,
+		headerPopupEl;
 		
 		headerPopupEl = document.createElement("span");
 		headerPopupEl.classList.add("tabulator-header-popup-button");
-		headerPopupEl.innerHTML = "&vellip;";
+
+		if(icon){
+			if(typeof icon === "function"){
+				icon = icon(column.getComponent());
+			}
+
+			if(icon instanceof HTMLElement){
+				headerPopupEl.appendChild(icon);
+			}else{
+				headerPopupEl.innerHTML = icon;
+			}
+		}else{
+			headerPopupEl.innerHTML = "&vellip;";
+		}
 		
 		headerPopupEl.addEventListener("click", (e) => {
 			e.stopPropagation();

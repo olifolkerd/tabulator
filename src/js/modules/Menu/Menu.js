@@ -23,6 +23,7 @@ class Menu extends Module{
 		this.registerColumnOption("headerContextMenu");
 		this.registerColumnOption("headerClickMenu");
 		this.registerColumnOption("headerMenu");
+		this.registerColumnOption("headerMenuIcon");
 		this.registerColumnOption("contextMenu");
 		this.registerColumnOption("clickMenu");
 		
@@ -100,11 +101,25 @@ class Menu extends Module{
 	}
 	
 	initializeColumnHeaderMenu(column){
-		var headerMenuEl;
+		var icon = column.definition.headerMenuIcon,
+		headerMenuEl;
 		
 		headerMenuEl = document.createElement("span");
 		headerMenuEl.classList.add("tabulator-header-popup-button");
-		headerMenuEl.innerHTML = "&vellip;";
+
+		if(icon){
+			if(typeof icon === "function"){
+				icon = icon(column.getComponent());
+			}
+
+			if(icon instanceof HTMLElement){
+				headerMenuEl.appendChild(icon);
+			}else{
+				headerMenuEl.innerHTML = icon;
+			}
+		}else{
+			headerMenuEl.innerHTML = "&vellip;";
+		}
 		
 		headerMenuEl.addEventListener("click", (e) => {
 			e.stopPropagation();
