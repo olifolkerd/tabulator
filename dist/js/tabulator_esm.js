@@ -16021,7 +16021,7 @@ class Popup$1 extends Module{
 			component = component._row;
 		}
 		
-		contents = typeof contents == "function" ? contents.call(this.table, component.getComponent(), e) : contents;
+		contents = typeof contents == "function" ? contents.call(this.table, component.getComponent(), e,) : contents;
 		
 		this.loadPopup(e, component, contents);
 	}
@@ -16048,6 +16048,8 @@ class Popup$1 extends Module{
 		popup.show(e).hideOnBlur(() => {
 			this.dispatchExternal("popupClosed", component.getComponent());
 		});
+
+		this.dispatchExternal("popupOpened", component.getComponent());
 	}
 }
 
