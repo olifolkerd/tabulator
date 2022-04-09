@@ -978,7 +978,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	
 }
 
-.tabulator-popup{
+.tabulator-popup-container{
 	position: absolute;
 	display:inline-block;
 	box-sizing:border-box;
@@ -995,7 +995,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	z-index: 10000;
 }
 
-.tabulator-popup-contents{
+.tabulator-popup{
 	padding:5px;
 }
 

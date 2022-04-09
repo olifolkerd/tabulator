@@ -1125,7 +1125,7 @@
   color: #d00;
 }
 
-.tabulator-popup {
+.tabulator-popup-container {
   position: absolute;
   display: inline-block;
   box-sizing: border-box;
@@ -1138,7 +1138,7 @@
   z-index: 10000;
 }
 
-.tabulator-popup-contents {
+.tabulator-popup {
   padding: 5px;
 }
 

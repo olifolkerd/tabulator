@@ -188,7 +188,7 @@ class Popup extends CoreFeature{
         this.blurCallback = null;
         this.renderedCallback = null;
         
-        this.element.classList.add("tabulator-popup");
+        this.element.classList.add("tabulator-popup-container");
         
         this.blurEvent = this.hide.bind(this);
         this.escEvent = this._escapeCheck.bind(this);
@@ -15982,7 +15982,7 @@ class Popup$1 extends Module{
 			contentsEl.innerHTML = contents;
 		}
 		
-		contentsEl.classList.add("tabulator-popup-contents");
+		contentsEl.classList.add("tabulator-popup-container");
 
 		contentsEl.addEventListener("click", (e) =>{
 			e.stopPropagation();
