@@ -821,7 +821,7 @@ class Filter extends Module{
 		activeRowComponents = [];
 
 		if(this.subscribedExternal("dataFiltering")){
-			this.dispatchExternal("dataFiltering", this.getFilters());
+			this.dispatchExternal("dataFiltering", this.getFilters(true));
 		}
 
 		if(this.table.options.filterMode !== "remote" && (this.filterList.length || Object.keys(this.headerFilters).length)){
@@ -842,7 +842,7 @@ class Filter extends Module{
 				activeRowComponents.push(row.getComponent());
 			});
 
-			this.dispatchExternal("dataFiltered", this.getFilters(), activeRowComponents);
+			this.dispatchExternal("dataFiltered", this.getFilters(true), activeRowComponents);
 		}
 
 		return activeRows;
