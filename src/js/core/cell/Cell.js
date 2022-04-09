@@ -85,13 +85,6 @@ export default class Cell extends CoreFeature{
 			});
 		}
 
-		//update tooltip on mouse enter
-		if (this.table.options.tooltipGenerationMode === "hover"){
-			element.addEventListener("mouseenter", (e) => {
-				this._generateTooltip();
-			});
-		}
-
 		this.dispatch("cell-init", this);
 
 		//hide cell if not visible
@@ -135,31 +128,6 @@ export default class Cell extends CoreFeature{
 
 	cellRendered(){
 		this.dispatch("cell-rendered", this);
-	}
-
-	//generate tooltip text
-	_generateTooltip(){
-		var tooltip = this.column.tooltip;
-
-		if(tooltip){
-			if(tooltip === true){
-				tooltip = this.value;
-			}else if(typeof(tooltip) == "function"){
-				tooltip = tooltip(this.getComponent());
-
-				if(tooltip === false){
-					tooltip = "";
-				}
-			}
-
-			if(typeof tooltip === "undefined"){
-				tooltip = "";
-			}
-
-			this.element.setAttribute("title", tooltip);
-		}else{
-			this.element.setAttribute("title", "");
-		}
 	}
 
 	//////////////////// Getters ////////////////////
@@ -242,7 +210,6 @@ export default class Cell extends CoreFeature{
 
 	layoutElement(){
 		this._generateContents();
-		this._generateTooltip();
 
 		this.dispatch("cell-layout", this);
 	}

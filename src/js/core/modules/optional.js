@@ -31,4 +31,5 @@ export {default as ResizeTableModule} from '../../modules/ResizeTable/ResizeTabl
 export {default as ResponsiveLayoutModule} from '../../modules/ResponsiveLayout/ResponsiveLayout.js';
 export {default as SelectRowModule} from '../../modules/SelectRow/SelectRow.js';
 export {default as SortModule} from '../../modules/Sort/Sort.js';
+export {default as TooltipModule} from '../../modules/Tooltip/Tooltip.js';
 export {default as ValidateModule} from '../../modules/Validate/Validate.js';

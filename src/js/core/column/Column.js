@@ -20,7 +20,6 @@ class Column extends CoreFeature{
 		this.titleElement = false;
 		this.groupElement = this.createGroupElement(); //column group holder element
 		this.isGroup = false;
-		this.tooltip = false; //hold column tooltip
 		this.hozAlign = ""; //horizontal text alignment
 		this.vertAlign = ""; //vert text alignment
 
@@ -145,39 +144,6 @@ class Column extends CoreFeature{
 		//all previously deprecated functionality removed in the 5.0 release
 	}
 
-	setTooltip(){
-		var def = this.definition;
-
-		//set header tooltips
-		var tooltip = def.headerTooltip;
-
-		if(tooltip){
-			if(tooltip === true){
-				if(def.field){
-					this.langBind("columns|" + def.field, (value) => {
-						this.element.setAttribute("title", value || def.title);
-					});
-				}else{
-					this.element.setAttribute("title", def.title);
-				}
-
-			}else{
-				if(typeof(tooltip) == "function"){
-					tooltip = tooltip(this.getComponent());
-
-					if(tooltip === false){
-						tooltip = "";
-					}
-				}
-
-				this.element.setAttribute("title", tooltip);
-			}
-
-		}else{
-			this.element.setAttribute("title", "");
-		}
-	}
-
 	//build header element
 	_initialize(){
 		var def = this.definition;
@@ -204,14 +170,7 @@ class Column extends CoreFeature{
 			this._buildColumnHeader();
 		}
 
-		this.setTooltip();
-
 		this.dispatch("column-init", this);
-
-		//update header tooltip on mouse enter
-		this.element.addEventListener("mouseenter", (e) => {
-			this.setTooltip();
-		});
 	}
 
 	_bindEvents(){
@@ -331,9 +290,6 @@ class Column extends CoreFeature{
 		}
 
 		this.reinitializeWidth();
-
-		//set tooltip if present
-		this.tooltip = this.definition.tooltip;
 
 		//set orizontal text alignment
 		this.hozAlign = this.definition.hozAlign;
