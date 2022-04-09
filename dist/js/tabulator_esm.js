@@ -226,25 +226,41 @@ class Popup extends CoreFeature{
             return element.parentNode ? this._checkContainerIsParent(container, element.parentNode) : false;
         }
     }
-
+    
     renderCallback(callback){
         this.renderedCallback = callback;
     }
     
-    show(origin, originY){
-        var x, y, parentEl, parentOffset, containerOffset, touch;
+    containerEventCoords(e){
+        var touch = !(e instanceof MouseEvent);
+        
+        var x = touch ? e.touches[0].pageX : e.pageX;
+        var y = touch ? e.touches[0].pageY : e.pageY;
+        
+        if(this.container !== document.body){
+            parentOffset = Helpers.elOffset(this.container);
+            
+            x -= parentOffset.left;
+            y -= parentOffset.top;
+        }
 
+        return {x, y};
+    }
+    
+    show(origin, originY){
+        var x, y, parentEl, parentOffset, containerOffset, coords;
+        
         if(origin instanceof HTMLElement){
             parentEl = origin;
             parentOffset = Helpers.elOffset(parentEl);
             
             if(this.container !== document.body){
                 containerOffset = Helpers.elOffset(this.container);
-
+                
                 parentOffset.left -= containerOffset.left;
                 parentOffset.top -= containerOffset.top;
             }
-                   
+            
             x = parentOffset.left + parentEl.offsetWidth;
             y = parentOffset.top - 1;
         }else if(typeof origin === "number"){
@@ -252,30 +268,23 @@ class Popup extends CoreFeature{
             x = origin;
             y = originY;
         }else {
-            touch = !(origin instanceof MouseEvent);
-            
-            x = touch ? origin.touches[0].pageX : origin.pageX;
-            y = touch ? origin.touches[0].pageY : origin.pageY;
-            
-            if(this.container !== document.body){
-                parentOffset = Helpers.elOffset(this.container);
-                
-                x -= parentOffset.left;
-                y -= parentOffset.top;
-            }
+            coords = this.containerEventCoords(origin);
+
+            x = coords.x;
+            y = coords.y;
             
             this.reversedX = false;
         }
         
         this.element.style.top = y + "px";
         this.element.style.left = x + "px";
-  
+        
         this.container.appendChild(this.element);
-
+        
         if(typeof this.renderedCallback === "function"){
             this.renderedCallback();
         }
-    
+        
         this._fitToScreen(x, y, parentEl, parentOffset);
         
         return this;
@@ -1464,13 +1473,6 @@ class Cell extends CoreFeature{
 			});
 		}
 
-		//update tooltip on mouse enter
-		if (this.table.options.tooltipGenerationMode === "hover"){
-			element.addEventListener("mouseenter", (e) => {
-				this._generateTooltip();
-			});
-		}
-
 		this.dispatch("cell-init", this);
 
 		//hide cell if not visible
@@ -1514,31 +1516,6 @@ class Cell extends CoreFeature{
 
 	cellRendered(){
 		this.dispatch("cell-rendered", this);
-	}
-
-	//generate tooltip text
-	_generateTooltip(){
-		var tooltip = this.column.tooltip;
-
-		if(tooltip){
-			if(tooltip === true){
-				tooltip = this.value;
-			}else if(typeof(tooltip) == "function"){
-				tooltip = tooltip(this.getComponent());
-
-				if(tooltip === false){
-					tooltip = "";
-				}
-			}
-
-			if(typeof tooltip === "undefined"){
-				tooltip = "";
-			}
-
-			this.element.setAttribute("title", tooltip);
-		}else {
-			this.element.setAttribute("title", "");
-		}
 	}
 
 	//////////////////// Getters ////////////////////
@@ -1621,7 +1598,6 @@ class Cell extends CoreFeature{
 
 	layoutElement(){
 		this._generateContents();
-		this._generateTooltip();
 
 		this.dispatch("cell-layout", this);
 	}
@@ -1871,10 +1847,8 @@ var defaultColumnOptions = {
 	"minWidth": 40,
 	"maxWidth": undefined,
 	"maxInitialWidth": undefined,
-	"tooltip": undefined,
 	"cssClass": undefined,
 	"variableHeight": undefined,
-	"headerTooltip": undefined,
 	"headerVertical": undefined,
 	"headerHozAlign": undefined,
 	"editableTitle": undefined,
@@ -1896,7 +1870,6 @@ class Column extends CoreFeature{
 		this.titleElement = false;
 		this.groupElement = this.createGroupElement(); //column group holder element
 		this.isGroup = false;
-		this.tooltip = false; //hold column tooltip
 		this.hozAlign = ""; //horizontal text alignment
 		this.vertAlign = ""; //vert text alignment
 
@@ -2021,39 +1994,6 @@ class Column extends CoreFeature{
 		//all previously deprecated functionality removed in the 5.0 release
 	}
 
-	setTooltip(){
-		var def = this.definition;
-
-		//set header tooltips
-		var tooltip = def.headerTooltip;
-
-		if(tooltip){
-			if(tooltip === true){
-				if(def.field){
-					this.langBind("columns|" + def.field, (value) => {
-						this.element.setAttribute("title", value || def.title);
-					});
-				}else {
-					this.element.setAttribute("title", def.title);
-				}
-
-			}else {
-				if(typeof(tooltip) == "function"){
-					tooltip = tooltip(this.getComponent());
-
-					if(tooltip === false){
-						tooltip = "";
-					}
-				}
-
-				this.element.setAttribute("title", tooltip);
-			}
-
-		}else {
-			this.element.setAttribute("title", "");
-		}
-	}
-
 	//build header element
 	_initialize(){
 		var def = this.definition;
@@ -2080,14 +2020,7 @@ class Column extends CoreFeature{
 			this._buildColumnHeader();
 		}
 
-		this.setTooltip();
-
 		this.dispatch("column-init", this);
-
-		//update header tooltip on mouse enter
-		this.element.addEventListener("mouseenter", (e) => {
-			this.setTooltip();
-		});
 	}
 
 	_bindEvents(){
@@ -2207,9 +2140,6 @@ class Column extends CoreFeature{
 		}
 
 		this.reinitializeWidth();
-
-		//set tooltip if present
-		this.tooltip = this.definition.tooltip;
 
 		//set orizontal text alignment
 		this.hozAlign = this.definition.hozAlign;
@@ -18485,6 +18415,134 @@ Sort.moduleName = "sort";
 //load defaults
 Sort.sorters = defaultSorters;
 
+class Tooltip extends Module{
+	
+	constructor(table){
+		super(table);
+		
+		this.tooltipSubscriber = null,
+		this.headerSubscriber = null,
+		
+		this.timeout = null;
+		this.popupInstance = null;
+		
+		this.registerTableOption("tooltipGenerationMode", undefined);  //deprecated
+		this.registerTableOption("tooltipDelay", 300); 
+		
+		this.registerColumnOption("tooltip");
+		this.registerColumnOption("headerTooltip");
+	}
+	
+	initialize(){
+		this.deprecationCheck();
+		
+		this.subscribe("column-init", this.initializeColumn.bind(this));
+	}
+	
+	deprecationCheck(){
+		if(typeof this.table.options.tooltipGenerationMode !== "undefined"){
+			console.warn("Use of the tooltipGenerationMode option is now deprecated. This option is no longer needed as tooltips are always generated on hover now");
+		}
+	}	
+	
+	initializeColumn(column){
+		if(column.definition.headerTooltip && !this.headerSubscriber){
+			this.headerSubscriber = true;
+			
+			this.subscribe("column-mousemove", this.mousemoveCheck.bind(this, "headerTooltip"));
+			this.subscribe("column-mouseout", this.mouseoutCheck.bind(this, "headerTooltip"));
+		}
+		
+		if(column.definition.tooltip && !this.tooltipSubscriber){
+			this.tooltipSubscriber = true;
+			
+			this.subscribe("cell-mousemove", this.mousemoveCheck.bind(this, "tooltip"));
+			this.subscribe("cell-mouseout", this.mouseoutCheck.bind(this, "tooltip"));
+		}
+	}
+	
+	mousemoveCheck(action, e, component){
+		var tooltip = action === "tooltip" ? component.column.definition.tooltip : component.definition.tooltip.tooltipHeader;
+		
+		if(tooltip){
+			this.clearPopup();
+			this.timeout = setTimeout(this.loadTooltip.bind(this, e, component, tooltip), this.table.options.tooltipDelay);
+		}
+	}
+
+	mouseoutCheck(action, e, component){
+		if(!this.popupInstance){
+			this.clearPopup();
+		}
+	}
+	
+	clearPopup(action, e, component){
+		clearTimeout(this.timeout);
+		this.timeout = null;
+		
+		if(this.popupInstance){
+			this.popupInstance.hide();
+		}
+	}
+	
+	loadTooltip(e, component, tooltip){
+		var contentsEl, renderedCallback, coords;
+		
+		function onRendered(callback){
+			renderedCallback = callback;
+		}
+		
+		if(typeof tooltip === "function"){
+			tooltip = tooltip(e, component.getComponent(), onRendered);
+		}
+		
+		if(tooltip instanceof HTMLElement){
+			contentsEl = tooltip;
+		}else {
+			contentsEl = document.createElement("div");
+			
+			if(tooltip === true){
+				if(component instanceof Cell){
+					tooltip = component.value;
+				}else {
+					if(column.definition.field){
+						this.langBind("columns|" + component.definition.field, (value) => {
+							contentsEl.innerHTML = tooltip = value || component.definition.title;
+						});
+					}else {
+						tooltip = component.definition.title;
+					}
+				}
+			}
+			
+			contentsEl.innerHTML = tooltip;
+		}
+		
+		if(tooltip || tooltip === 0 || tooltip === "0" || tooltip === false){
+			contentsEl.classList.add("tabulator-tooltip");
+
+			contentsEl.addEventListener("mousemove", e => e.preventDefault());
+			
+			this.popupInstance = this.popup(contentsEl);
+			
+			if(typeof renderedCallback === "function"){
+				this.popupInstance.renderCallback(renderedCallback);
+			}
+
+			coords = this.popupInstance.containerEventCoords(e);
+			
+			this.popupInstance.show(coords.x + 15, coords.y + 15).hideOnBlur(() => {
+				this.dispatchExternal("TooltipClosed", component.getComponent());
+				this.popupInstance = null;
+			});
+			
+			this.dispatchExternal("TooltipOpened", component.getComponent());
+		}
+	}
+}
+
+Tooltip.moduleName = "tooltip";
+
 var defaultValidators = {
 	//is integer
 	integer: function(cell, value, parameters){
@@ -18919,6 +18977,7 @@ var modules = /*#__PURE__*/Object.freeze({
 	ResponsiveLayoutModule: ResponsiveLayout,
 	SelectRowModule: SelectRow,
 	SortModule: Sort,
+	TooltipModule: Tooltip,
 	ValidateModule: Validate
 });
 
@@ -18946,8 +19005,6 @@ var defaultOptions = {
 	autoColumnsDefinitions:false,
 
 	nestedFieldSeparator:".", //separator for nested data
-
-	tooltipGenerationMode:"load", //when to generate tooltips
 
 	footerElement:false, //hold footer element
 
@@ -24716,5 +24773,5 @@ class PseudoRow {
 	clearCellHeight(){}
 }
 
-export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup$1 as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent$1 as RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Validate as ValidateModule };
+export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup$1 as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent$1 as RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Tooltip as TooltipModule, Validate as ValidateModule };
 //# sourceMappingURL=tabulator_esm.js.map

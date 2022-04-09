@@ -1142,6 +1142,15 @@
   padding: 5px;
 }
 
+.tabulator-tooltip {
+  max-width: Min(500px, 100%);
+  padding: 3px 5px;
+  border-radius: 2px;
+  box-shadow: none;
+  font-size: 12px;
+  pointer-events: none;
+}
+
 .tabulator-menu .tabulator-menu-item {
   position: relative;
   box-sizing: border-box;

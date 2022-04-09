@@ -23,8 +23,6 @@ export default {
 
 	nestedFieldSeparator:".", //separator for nested data
 
-	tooltipGenerationMode:"load", //when to generate tooltips
-
 	footerElement:false, //hold footer element
 
 	index:"id", //filed for row index

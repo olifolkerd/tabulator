@@ -1,14 +1,19 @@
 import Module from '../../core/Module.js';
+import Cell from '../../core/cell/Cell.js';
 
 class Tooltip extends Module{
 	
 	constructor(table){
 		super(table);
 		
-		this.columnSubscribers = {};
+		this.tooltipSubscriber = null,
+		this.headerSubscriber = null,
 		
-		this.registerTableOption("tooltipGenerationMode", null);  //deprecated
+		this.timeout = null;
+		this.popupInstance = null;
 		
+		this.registerTableOption("tooltipGenerationMode", undefined);  //deprecated
+		this.registerTableOption("tooltipDelay", 300); 
 		
 		this.registerColumnOption("tooltip");
 		this.registerColumnOption("headerTooltip");
@@ -18,103 +23,107 @@ class Tooltip extends Module{
 		this.deprecationCheck();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
-		this.subscribe("cell-init", this.initializeCell.bind(this));
 	}
 	
 	deprecationCheck(){
-		if(typeof this.table.options.tooltipGenerationMode){
+		if(typeof this.table.options.tooltipGenerationMode !== "undefined"){
 			console.warn("Use of the tooltipGenerationMode option is now deprecated. This option is no longer needed as tooltips are always generated on hover now");
 		}
 	}	
 	
 	initializeColumn(column){
-		var tooltip = column.definition.headerTooltip;
-		
-		if(tooltip){
-			if(tooltip === true){
-				if(column.definition.field){
-					this.langBind("columns|" + column.definition.field, (value) => {
-						column.element.setAttribute("title", value || column.definition.title);
-					});
-				}else{
-					column.element.setAttribute("title", column.definition.title);
-				}
-				
-			}else{
-				if(typeof(tooltip) == "function"){
-					tooltip = tooltip(column.getComponent());
-					
-					if(tooltip === false){
-						tooltip = "";
-					}
-				}
-				
-				column.element.setAttribute("title", tooltip);
-			}
+		if(column.definition.headerTooltip && !this.headerSubscriber){
+			this.headerSubscriber = true;
 			
-		}else{
-			column.element.setAttribute("title", "");
+			this.subscribe("column-mousemove", this.mousemoveCheck.bind(this, "headerTooltip"));
+			this.subscribe("column-mouseout", this.mouseoutCheck.bind(this, "headerTooltip"));
+		}
+		
+		if(column.definition.tooltip && !this.tooltipSubscriber){
+			this.tooltipSubscriber = true;
+			
+			this.subscribe("cell-mousemove", this.mousemoveCheck.bind(this, "tooltip"));
+			this.subscribe("cell-mouseout", this.mouseoutCheck.bind(this, "tooltip"));
 		}
 	}
 	
-	initializeCell(cell){
-		var tooltip = cell.column.definition.tooltip;
+	mousemoveCheck(action, e, component){
+		var tooltip = action === "tooltip" ? component.column.definition.tooltip : component.definition.tooltip.tooltipHeader;
 		
 		if(tooltip){
-			if(tooltip === true){
-				tooltip = cell.value;
-			}else if(typeof(tooltip) == "function"){
-				tooltip = tooltip(cell.getComponent());
-				
-				if(tooltip === false){
-					tooltip = "";
-				}
-			}
-			
-			if(typeof tooltip === "undefined"){
-				tooltip = "";
-			}
-			
-			cell.element.setAttribute("title", tooltip);
-		}else{
-			cell.element.setAttribute("title", "");
+			this.clearPopup();
+			this.timeout = setTimeout(this.loadTooltip.bind(this, e, component, tooltip), this.table.options.tooltipDelay);
+		}
+	}
+
+	mouseoutCheck(action, e, component){
+		if(!this.popupInstance){
+			this.clearPopup();
 		}
 	}
 	
-	loadTooltip(e, component, contents, renderedCallback){
-		var touch = !(e instanceof MouseEvent),
-		contentsEl, Tooltip;
+	clearPopup(action, e, component){
+		clearTimeout(this.timeout);
+		this.timeout = null;
 		
-		if(contents instanceof HTMLElement){
-			contentsEl = contents;
+		if(this.popupInstance){
+			this.popupInstance.hide();
+		}
+	}
+	
+	loadTooltip(e, component, tooltip){
+		var contentsEl, renderedCallback, coords;
+		
+		function onRendered(callback){
+			renderedCallback = callback;
+		}
+		
+		if(typeof tooltip === "function"){
+			tooltip = tooltip(e, component.getComponent(), onRendered);
+		}
+		
+		if(tooltip instanceof HTMLElement){
+			contentsEl = tooltip;
 		}else{
 			contentsEl = document.createElement("div");
-			contentsEl.innerHTML = contents;
+			
+			if(tooltip === true){
+				if(component instanceof Cell){
+					tooltip = component.value;
+				}else{
+					if(column.definition.field){
+						this.langBind("columns|" + component.definition.field, (value) => {
+							contentsEl.innerHTML = tooltip = value || component.definition.title;
+						});
+					}else{
+						tooltip = component.definition.title;
+					}
+				}
+			}
+			
+			contentsEl.innerHTML = tooltip;
 		}
 		
-		contentsEl.classList.add("tabulator-Tooltip-contents");
-		
-		contentsEl.addEventListener("click", (e) =>{
-			e.stopPropagation();
-		});
-		
-		if(!touch){
-			e.preventDefault();
+		if(tooltip || tooltip === 0 || tooltip === "0" || tooltip === false){
+			contentsEl.classList.add("tabulator-tooltip");
+
+			contentsEl.addEventListener("mousemove", e => e.preventDefault())
+			
+			this.popupInstance = this.popup(contentsEl);
+			
+			if(typeof renderedCallback === "function"){
+				this.popupInstance.renderCallback(renderedCallback);
+			}
+
+			coords = this.popupInstance.containerEventCoords(e);
+			
+			this.popupInstance.show(coords.x + 15, coords.y + 15).hideOnBlur(() => {
+				this.dispatchExternal("TooltipClosed", component.getComponent());
+				this.popupInstance = null;
+			});
+			
+			this.dispatchExternal("TooltipOpened", component.getComponent());
 		}
-		
-		Tooltip = this.Tooltip(contentsEl);
-		
-		if(typeof renderedCallback === "function"){
-			Tooltip.renderCallback(renderedCallback);
-		}
-		
-		Tooltip.show(e).hideOnBlur(() => {
-			this.dispatchExternal("TooltipClosed", component.getComponent());
-		});
-		
-		
-		
-		this.dispatchExternal("TooltipOpened", component.getComponent())
 	}
 }
 
