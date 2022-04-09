@@ -5149,6 +5149,10 @@ function input(cell, onRendered, success, cancel, editorParams){
 	onRendered(function(){
 		input.focus({preventScroll: true});
 		input.style.height = "100%";
+
+		if(editorParams.selectContents){
+			input.select();
+		}
 	});
 
 	function onChange(e){
@@ -5229,6 +5233,10 @@ function textarea(cell, onRendered, success, cancel, editorParams){
         input.scrollHeight;
         input.style.height = input.scrollHeight + "px";
         cell.getRow().normalizeHeight();
+
+        if(editorParams.selectContents){
+			input.select();
+		}
     });
 
     function onChange(e){
@@ -5352,6 +5360,10 @@ function number(cell, onRendered, success, cancel, editorParams){
 
 		//submit new value on blur
 		input.addEventListener("blur", blurFunc);
+
+		if(editorParams.selectContents){
+			input.select();
+		}
 	});
 
 	function onChange(){
