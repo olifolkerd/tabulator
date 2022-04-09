@@ -165,6 +165,10 @@ class Popup extends Module{
 		
 		contentsEl.classList.add("tabulator-popup-contents");
 
+		contentsEl.addEventListener("click", (e) =>{
+			e.stopPropagation();
+		});
+
 		if(!touch){
 			e.preventDefault();
 		}
