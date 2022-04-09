@@ -186,6 +186,7 @@ class Popup extends CoreFeature{
         this.childPopup = null;
         this.blurable = false;
         this.blurCallback = null;
+        this.renderedCallback = null;
         
         this.element.classList.add("tabulator-popup");
         
@@ -224,6 +225,10 @@ class Popup extends CoreFeature{
         }else {
             return element.parentNode ? this._checkContainerIsParent(container, element.parentNode) : false;
         }
+    }
+
+    renderCallback(callback){
+        this.renderedCallback = callback;
     }
     
     show(origin, originY){
@@ -266,6 +271,10 @@ class Popup extends CoreFeature{
         this.element.style.left = x + "px";
   
         this.container.appendChild(this.element);
+
+        if(typeof this.renderedCallback === "function"){
+            this.renderedCallback();
+        }
     
         this._fitToScreen(x, y, parentEl, parentOffset);
         
@@ -16015,18 +16024,24 @@ class Popup$1 extends Module{
 	}
 	
 	loadPopupEvent(contents, e, component){
+		var renderedCallback;
+
+		function onRendered(callback){
+			renderedCallback = callback;
+		}
+		
 		if(component._group){
 			component = component._group;
 		}else if(component._row){
 			component = component._row;
 		}
 		
-		contents = typeof contents == "function" ? contents.call(this.table, component.getComponent(), e,) : contents;
+		contents = typeof contents == "function" ? contents.call(this.table, component.getComponent(), e, onRendered) : contents;
 		
-		this.loadPopup(e, component, contents);
+		this.loadPopup(e, component, contents, renderedCallback);
 	}
 	
-	loadPopup(e, component, contents){
+	loadPopup(e, component, contents, renderedCallback){
 		var touch = !(e instanceof MouseEvent),
 		contentsEl, popup;
 		
@@ -16044,10 +16059,16 @@ class Popup$1 extends Module{
 		}
 		
 		popup = this.popup(contentsEl);
+
+		if(typeof renderedCallback === "function"){
+			popup.renderCallback(renderedCallback);
+		}
 		
 		popup.show(e).hideOnBlur(() => {
 			this.dispatchExternal("popupClosed", component.getComponent());
 		});
+
+
 
 		this.dispatchExternal("popupOpened", component.getComponent());
 	}

@@ -135,18 +135,24 @@ class Popup extends Module{
 	}
 	
 	loadPopupEvent(contents, e, component){
+		var renderedCallback;
+
+		function onRendered(callback){
+			renderedCallback = callback;
+		}
+		
 		if(component._group){
 			component = component._group;
 		}else if(component._row){
 			component = component._row;
 		}
 		
-		contents = typeof contents == "function" ? contents.call(this.table, component.getComponent(), e,) : contents;
+		contents = typeof contents == "function" ? contents.call(this.table, component.getComponent(), e, onRendered) : contents;
 		
-		this.loadPopup(e, component, contents);
+		this.loadPopup(e, component, contents, renderedCallback);
 	}
 	
-	loadPopup(e, component, contents){
+	loadPopup(e, component, contents, renderedCallback){
 		var touch = !(e instanceof MouseEvent),
 		contentsEl, popup;
 		
@@ -164,10 +170,16 @@ class Popup extends Module{
 		}
 		
 		popup = this.popup(contentsEl);
+
+		if(typeof renderedCallback === "function"){
+			popup.renderCallback(renderedCallback);
+		}
 		
 		popup.show(e).hideOnBlur(() => {
 			this.dispatchExternal("popupClosed", component.getComponent());
 		});
+
+
 
 		this.dispatchExternal("popupOpened", component.getComponent())
 	}

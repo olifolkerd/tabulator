@@ -14,6 +14,7 @@ export default class Popup extends CoreFeature{
         this.childPopup = null;
         this.blurable = false;
         this.blurCallback = null;
+        this.renderedCallback = null;
         
         this.element.classList.add("tabulator-popup");
         
@@ -52,6 +53,10 @@ export default class Popup extends CoreFeature{
         }else{
             return element.parentNode ? this._checkContainerIsParent(container, element.parentNode) : false;
         }
+    }
+
+    renderCallback(callback){
+        this.renderedCallback = callback;
     }
     
     show(origin, originY){
@@ -94,6 +99,10 @@ export default class Popup extends CoreFeature{
         this.element.style.left = x + "px";
   
         this.container.appendChild(this.element);
+
+        if(typeof this.renderedCallback === "function"){
+            this.renderedCallback();
+        }
     
         this._fitToScreen(x, y, parentEl, parentOffset);
         
