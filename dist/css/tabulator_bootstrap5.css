@@ -424,7 +424,7 @@
   cursor: ew-resize;
 }
 
-.tabulator .tabulator-loader {
+.tabulator .tabulator-alert {
   position: absolute;
   display: flex;
   align-items: center;
@@ -437,7 +437,7 @@
   text-align: center;
 }
 
-.tabulator .tabulator-loader .tabulator-loader-msg {
+.tabulator .tabulator-alert .tabulator-alert-msg {
   display: inline-block;
   margin: 0 auto;
   padding: 10px 20px;
@@ -447,12 +447,12 @@
   font-size: 16px;
 }
 
-.tabulator .tabulator-loader .tabulator-loader-msg.tabulator-loading {
+.tabulator .tabulator-alert .tabulator-alert-msg.tabulator-alert-state-msg {
   border: 4px solid #333;
   color: #000;
 }
 
-.tabulator .tabulator-loader .tabulator-loader-msg.tabulator-error {
+.tabulator .tabulator-alert .tabulator-alert-msg.tabulator-alert-state-error {
   border: 4px solid #D00;
   color: #590000;
 }

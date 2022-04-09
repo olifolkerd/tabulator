@@ -469,6 +469,19 @@ class Module extends CoreFeature{
 	popup(menuEl, menuContainer){
 		return new Popup(this.table, menuEl, menuContainer);
 	}
+
+	///////////////////////////////////
+	//////// Alert Management ////////
+	///////////////////////////////////
+
+	alert(content, type){
+		return this.table.alertManager.alert(content, type);
+	}
+
+	clearAlert(){
+		return this.table.alertManager.clear();
+	}
+	
 }
 
 var defautlAccessors = {};
@@ -22697,55 +22710,11 @@ class DataLoader extends CoreFeature{
 	constructor(table){
 		super(table);
 
-		this.loaderElement = this.createLoaderElement(); //loader message div
-		this.msgElement = this.createMsgElement(); //message element
-		this.loadingElement = null;
-		this.errorElement = null;
-
-		this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
+		this.requestOrder = 0; //prevent requests coming out of sequence if overridden by another load request
 		this.loading = false;
 	}
 
-	initialize(){
-		var template;
-
-		this.loaderElement.appendChild(this.msgElement);
-
-		if(this.table.options.dataLoaderLoading){
-			if(typeof this.table.options.dataLoaderLoading == "string"){
-				template = document.createElement('template');
-				template.innerHTML = this.table.options.dataLoaderLoading.trim();
-				this.loadingElement = template.firstElementChild;
-			}else {
-				this.loadingElement = this.table.options.dataLoaderLoading;
-			}
-		}
-
-		if(this.table.options.dataLoaderError){
-			if(typeof this.table.options.dataLoaderError == "string"){
-				template = document.createElement('template');
-				template.innerHTML = this.table.options.dataLoaderError.trim();
-				this.errorElement = template.firstElementChild;
-			}else {
-				this.errorElement = this.table.options.dataLoaderError;
-			}
-		}
-	}
-
-	createLoaderElement(){
-		var el = document.createElement("div");
-		el.classList.add("tabulator-loader");
-		return el;
-	}
-
-	createMsgElement(){
-		var el = document.createElement("div");
-
-		el.classList.add("tabulator-loader-msg");
-		el.setAttribute("role", "alert");
-
-		return el;
-	}
+	initialize(){}
 
 	load(data, params, config, replace, silent){
 		var requestNo = ++this.requestOrder;
@@ -22761,7 +22730,7 @@ class DataLoader extends CoreFeature{
 			this.loading = true;
 
 			if(!silent){
-				this.showLoader();
+				this.alertLoader();
 			}
 
 			//get params for request
@@ -22779,7 +22748,7 @@ class DataLoader extends CoreFeature{
 				var rowData = this.chain("data-loaded", response, null, response);
 
 				if(requestNo == this.requestOrder){
-					this.hideLoader();
+					this.clearAlert();
 
 					if(rowData !== false){
 						this.dispatchExternal("dataLoaded", rowData);
@@ -22793,11 +22762,11 @@ class DataLoader extends CoreFeature{
 				this.dispatchExternal("dataLoadError", error);
 
 				if(!silent){
-					this.showError();
+					this.alertError();
 				}
 				
 				setTimeout(() => {
-					this.hideLoader();
+					this.clearAlert();
 				}, this.table.options.dataLoaderErrorTimeout);
 			})
 			.finally(() => {
@@ -22839,48 +22808,20 @@ class DataLoader extends CoreFeature{
 		this.requestOrder++;
 	}
 
-	showLoader(){
+	alertLoader(){
 		var shouldLoad = typeof this.table.options.dataLoader === "function" ? this.table.options.dataLoader() : this.table.options.dataLoader;
 
 		if(shouldLoad){
-			this.hideLoader();
-
-			while(this.msgElement.firstChild) this.msgElement.removeChild(this.msgElement.firstChild);
-
-			this.msgElement.classList.remove("tabulator-error");
-			this.msgElement.classList.add("tabulator-loading");
-
-			if(this.loadingElement){
-				this.msgElement.appendChild(this.loadingElement);
-			}else {
-				this.msgElement.innerHTML = this.langText("data|loading");
-			}
-
-			this.table.element.appendChild(this.loaderElement);
+			this.table.alertManager.alert(this.table.options.dataLoaderLoading || this.langText("data|loading"));
 		}
 	}
 
-	showError(){
-		this.hideLoader();
-
-		while(this.msgElement.firstChild) this.msgElement.removeChild(this.msgElement.firstChild);
-		this.msgElement.classList.remove("tabulator-loading");
-		this.msgElement.classList.add("tabulator-error");
-
-		if(this.errorElement){
-			this.msgElement.appendChild(this.errorElement);
-		}else {
-			this.msgElement.innerHTML = this.langText("data|error");
-		}
-
-		this.table.element.appendChild(this.loaderElement);
+	alertError(){
+		this.table.alertManager.alert(this.table.options.dataLoaderError || this.langText("data|error"), "error");
 	}
 
-
-	hideLoader(){
-		if(this.loaderElement.parentNode){
-			this.loaderElement.parentNode.removeChild(this.loaderElement);
-		}
+	clearAlert(){
+		this.table.alertManager.clear();
 	}
 }
 
@@ -23886,6 +23827,67 @@ class ModuleBinder {
 	}
 }
 
+class Alert extends CoreFeature{
+    constructor(table){
+        super(table);
+        
+        this.element = this._createAlertElement();
+        this.msgElement = this._createMsgElement();
+        this.type = null;
+        
+        this.element.appendChild(this.msgElement);
+    }
+    
+    _createAlertElement(){
+        var el = document.createElement("div");
+        el.classList.add("tabulator-alert");
+        return el;
+    }
+    
+    _createMsgElement(){
+        var el = document.createElement("div");
+        el.classList.add("tabulator-alert-msg");
+        el.setAttribute("role", "alert");
+        return el;
+    }
+    
+    _typeClass(){
+        return "tabulator-alert-state-" + this.type;
+    }
+    
+    alert(content, type = "msg"){
+        if(content){
+            this.clear();
+            
+            this.type = type;
+            
+            while(this.msgElement.firstChild) this.msgElement.removeChild(this.msgElement.firstChild);
+            
+            this.msgElement.classList.add(this._typeClass());
+            
+            if(typeof content === "function"){
+                content = content();
+            }
+            
+            if(content instanceof HTMLElement){
+                this.msgElement.appendChild(content);
+            }else {
+                this.msgElement.innerHTML = content;
+            }
+            
+            this.table.element.appendChild(this.element);
+        }
+    }
+    
+    clear(){
+        if(this.element.parentNode){
+            this.element.parentNode.removeChild(this.element);
+        }
+        
+        this.msgElement.classList.remove(this._typeClass());
+    }
+}
+
 class Tabulator {
 	
 	constructor(element, options){
@@ -23895,6 +23897,7 @@ class Tabulator {
 		this.columnManager = null; // hold Column Manager
 		this.rowManager = null; //hold Row Manager
 		this.footerManager = null; //holder Footer Manager
+		this.alertManager = null; //hold Alert Manager
 		this.vdomHoz  = null; //holder horizontal virtual dom
 		this.externalEvents = null; //handle external event messaging
 		this.eventBus = null; //handle internal event messaging
@@ -23953,6 +23956,7 @@ class Tabulator {
 		this.rowManager = new RowManager(this);
 		this.footerManager = new FooterManager(this);
 		this.dataLoader = new DataLoader(this);
+		this.alertManager = new Alert(this);
 		
 		this.bindModules();
 		
@@ -24690,6 +24694,20 @@ class Tabulator {
 		key = args.shift();
 		
 		this.externalEvents.dispatch(...arguments);
+	}
+
+	//////////////////// Alerts ///////////////////
+
+	alert(contents, type){
+		this.initGuard();
+
+		this.alertManager.alert(contents, type);
+	}
+
+	clearAlert(){
+		this.initGuard();
+
+		this.alertManager.clear();
 	}
 	
 	////////////// Extension Management //////////////

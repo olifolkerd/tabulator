@@ -93,6 +93,19 @@ class Module extends CoreFeature{
 	popup(menuEl, menuContainer){
 		return new Popup(this.table, menuEl, menuContainer);
 	}
+
+	///////////////////////////////////
+	//////// Alert Management ////////
+	///////////////////////////////////
+
+	alert(content, type){
+		return this.table.alertManager.alert(content, type);
+	}
+
+	clearAlert(){
+		return this.table.alertManager.clear();
+	}
+	
 }
 
 export default Module;

@@ -18,6 +18,8 @@ import ModuleBinder from './tools/ModuleBinder.js';
 
 import OptionsList from './tools/OptionsList.js';
 
+import Alert from './tools/Alert.js';
+
 class Tabulator {
 	
 	constructor(element, options){
@@ -27,6 +29,7 @@ class Tabulator {
 		this.columnManager = null; // hold Column Manager
 		this.rowManager = null; //hold Row Manager
 		this.footerManager = null; //holder Footer Manager
+		this.alertManager = null; //hold Alert Manager
 		this.vdomHoz  = null; //holder horizontal virtual dom
 		this.externalEvents = null; //handle external event messaging
 		this.eventBus = null; //handle internal event messaging
@@ -85,6 +88,7 @@ class Tabulator {
 		this.rowManager = new RowManager(this);
 		this.footerManager = new FooterManager(this);
 		this.dataLoader = new DataLoader(this);
+		this.alertManager = new Alert(this);
 		
 		this.bindModules();
 		
@@ -824,6 +828,20 @@ class Tabulator {
 		key = args.shift();
 		
 		this.externalEvents.dispatch(...arguments)
+	}
+
+	//////////////////// Alerts ///////////////////
+
+	alert(contents, type){
+		this.initGuard();
+
+		this.alertManager.alert(contents, type);
+	}
+
+	clearAlert(){
+		this.initGuard();
+
+		this.alertManager.clear();
 	}
 	
 	////////////// Extension Management //////////////

@@ -565,7 +565,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	
 	
 	//holding div that contains loader and covers tabulator element to prevent interaction
-	.tabulator-loader{
+	.tabulator-alert{
 		position:absolute;
 		display: flex;
 		align-items:center;
@@ -580,7 +580,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		text-align:center;
 		
 		//loading message element
-		.tabulator-loader-msg{
+		.tabulator-alert-msg {
 			display:inline-block;
 			
 			margin:0 auto;
@@ -593,13 +593,13 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			font-size:16px;
 			
 			//loading message
-			&.tabulator-loading{
+			&.tabulator-alert-state-msg {
 				border:4px solid #333;
 				color:#000;
 			}
 			
 			//error message
-			&.tabulator-error{
+			&.tabulator-alert-state-error {
 				border:4px solid #D00;
 				color:#590000;
 			}
