@@ -18462,7 +18462,7 @@ class Tooltip extends Module{
 	}
 	
 	mousemoveCheck(action, e, component){
-		var tooltip = action === "tooltip" ? component.column.definition.tooltip : component.definition.tooltip.tooltipHeader;
+		var tooltip = action === "tooltip" ? component.column.definition.tooltip : component.definition.headerTooltip;
 		
 		if(tooltip){
 			this.clearPopup();
@@ -18487,7 +18487,7 @@ class Tooltip extends Module{
 	
 	loadTooltip(e, component, tooltip){
 		var contentsEl, renderedCallback, coords;
-		
+
 		function onRendered(callback){
 			renderedCallback = callback;
 		}
@@ -18505,7 +18505,7 @@ class Tooltip extends Module{
 				if(component instanceof Cell){
 					tooltip = component.value;
 				}else {
-					if(column.definition.field){
+					if(component.definition.field){
 						this.langBind("columns|" + component.definition.field, (value) => {
 							contentsEl.innerHTML = tooltip = value || component.definition.title;
 						});
