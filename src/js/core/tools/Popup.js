@@ -54,25 +54,41 @@ export default class Popup extends CoreFeature{
             return element.parentNode ? this._checkContainerIsParent(container, element.parentNode) : false;
         }
     }
-
+    
     renderCallback(callback){
         this.renderedCallback = callback;
     }
     
-    show(origin, originY){
-        var x, y, parentEl, parentOffset, containerOffset, touch;
+    containerEventCoords(e){
+        var touch = !(e instanceof MouseEvent);
+        
+        var x = touch ? e.touches[0].pageX : e.pageX;
+        var y = touch ? e.touches[0].pageY : e.pageY;
+        
+        if(this.container !== document.body){
+            parentOffset = Helpers.elOffset(this.container);
+            
+            x -= parentOffset.left;
+            y -= parentOffset.top;
+        }
 
+        return {x, y};
+    }
+    
+    show(origin, originY){
+        var x, y, parentEl, parentOffset, containerOffset, coords;
+        
         if(origin instanceof HTMLElement){
             parentEl = origin;
             parentOffset = Helpers.elOffset(parentEl);
             
             if(this.container !== document.body){
                 containerOffset = Helpers.elOffset(this.container);
-
+                
                 parentOffset.left -= containerOffset.left;
                 parentOffset.top -= containerOffset.top;
             }
-                   
+            
             x = parentOffset.left + parentEl.offsetWidth;
             y = parentOffset.top - 1;
         }else if(typeof origin === "number"){
@@ -80,30 +96,23 @@ export default class Popup extends CoreFeature{
             x = origin;
             y = originY;
         }else{
-            touch = !(origin instanceof MouseEvent);
-            
-            x = touch ? origin.touches[0].pageX : origin.pageX;
-            y = touch ? origin.touches[0].pageY : origin.pageY;
-            
-            if(this.container !== document.body){
-                parentOffset = Helpers.elOffset(this.container);
-                
-                x -= parentOffset.left;
-                y -= parentOffset.top;
-            }
+            coords = this.containerEventCoords(origin);
+
+            x = coords.x;
+            y = coords.y;
             
             this.reversedX = false;
         }
         
         this.element.style.top = y + "px";
         this.element.style.left = x + "px";
-  
+        
         this.container.appendChild(this.element);
-
+        
         if(typeof this.renderedCallback === "function"){
             this.renderedCallback();
         }
-    
+        
         this._fitToScreen(x, y, parentEl, parentOffset);
         
         return this;
