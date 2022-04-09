@@ -13157,7 +13157,7 @@ class Menu extends Module{
 			component = component._row;
 		}
 		
-		menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
+		menu = typeof menu == "function" ? menu.call(this.table, e, component.getComponent()) : menu;
 		
 		this.loadMenu(e, component, menu);
 	}
@@ -15966,7 +15966,7 @@ class Popup$1 extends Module{
 			component = component._row;
 		}
 		
-		contents = typeof contents == "function" ? contents.call(this.table, component.getComponent(), e, onRendered) : contents;
+		contents = typeof contents == "function" ? contents.call(this.table, e, component.getComponent(),  onRendered) : contents;
 		
 		this.loadPopup(e, component, contents, renderedCallback);
 	}

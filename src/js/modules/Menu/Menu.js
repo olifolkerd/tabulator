@@ -158,7 +158,7 @@ class Menu extends Module{
 			component = component._row;
 		}
 		
-		menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
+		menu = typeof menu == "function" ? menu.call(this.table, e, component.getComponent()) : menu;
 		
 		this.loadMenu(e, component, menu);
 	}
