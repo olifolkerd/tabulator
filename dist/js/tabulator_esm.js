@@ -15982,7 +15982,7 @@ class Popup$1 extends Module{
 			contentsEl.innerHTML = contents;
 		}
 		
-		contentsEl.classList.add("tabulator-popup-container");
+		contentsEl.classList.add("tabulator-popup");
 
 		contentsEl.addEventListener("click", (e) =>{
 			e.stopPropagation();
