@@ -20,7 +20,7 @@ export default class Popup extends CoreFeature{
         
         this.element.classList.add("tabulator-popup-container");
         
-        this.blurEvent = this.hide.bind(this);
+        this.blurEvent = this.hide.bind(this, false);
         this.escEvent = this._escapeCheck.bind(this);
     }
     
@@ -196,7 +196,7 @@ export default class Popup extends CoreFeature{
         }
     }
     
-    hide(silent){
+    hide(silent = false){
         if(this.visible){
             if(this.blurable){
                 document.body.removeEventListener("keydown", this.escEvent);
@@ -218,7 +218,7 @@ export default class Popup extends CoreFeature{
             if(this.element.parentNode){
                 this.element.parentNode.removeChild(this.element);
             }
-            
+
             if(this.blurCallback && !silent){
                 this.blurCallback();
             }
