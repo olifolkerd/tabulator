@@ -15,6 +15,9 @@ export default class Edit{
         
         this.initialValues = this.params.multiselect ? cell.getValue() : [cell.getValue()];
         
+        this.filterTimeout = null;
+        this.filterTerm = "";
+        
         this.values = []; 
         this.popup = null;  
         
@@ -143,8 +146,16 @@ export default class Edit{
             this._keyEsc();
             break;
             
+            case 36: //home
+            case 35: //end
+            this._keyHomeEnd(e);
+            break;
+            
             case 9: //tab
             break;
+            
+            default:
+            this._keyLetter(e);
         }
     }
     
@@ -210,8 +221,43 @@ export default class Edit{
         this._cancel();
     }
     
+    _keyHomeEnd(e){
+        if(this.params.autocomplete){
+            //prevent table navigation while using input element
+            e.stopImmediatePropagation();
+        }
+    }
+    
     _keyLetter(e){
+        if(this.params.autocomplete){
+            
+        }else{
+            if(this.edit.currentCell === false){
+                e.preventDefault();
+            }
+            
+            if(e.keyCode >= 38 && e.keyCode <= 90){
+                this._scrollToValue(e.keyCode);
+            }
+        }
+    }
+    _scrollToValue(char){
+        clearTimeout(this.filterTimeout);
         
+        var character = String.fromCharCode(char).toLowerCase();
+        this.filterTerm += character.toLowerCase();
+        
+        var match = this.displayItems.find((item) => {
+            return typeof item.label !== "undefined" && item.label.toLowerCase().startsWith(this.filterTerm);
+        });
+        
+        if(match){
+            this._focusItem(match);
+        }
+        
+        this.filterTimeout = setTimeout(() => {
+            this.filterTerm = "";
+        }, 800)
     }
     
     _focusItem(item){
@@ -226,6 +272,7 @@ export default class Edit{
             item.element.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
         }
     }
+    
     
     //////////////////////////////////////
     /////// Data List Generation /////////
