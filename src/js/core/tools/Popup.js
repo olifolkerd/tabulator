@@ -196,7 +196,7 @@ export default class Popup extends CoreFeature{
         }
     }
     
-    hide(){
+    hide(silent){
         if(this.visible){
             if(this.blurable){
                 document.body.removeEventListener("keydown", this.escEvent);
@@ -219,7 +219,7 @@ export default class Popup extends CoreFeature{
                 this.element.parentNode.removeChild(this.element);
             }
             
-            if(this.blurCallback){
+            if(this.blurCallback && !silent){
                 this.blurCallback();
             }
             
