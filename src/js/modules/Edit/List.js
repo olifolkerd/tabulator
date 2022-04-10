@@ -12,6 +12,8 @@ export default class Edit{
         this.input = this._createInputElement();
         this.listEl = this._createListElement();
         
+        this.initialValues = this.params.multiselect ? cell.getValue() : [cell.getValue()];
+        
         this.values = []; 
         this.popup = null;  
         
@@ -27,14 +29,14 @@ export default class Edit{
     
     _onRendered(){
         var cellEl = this.cell.getElement();
-
+        
         function clickStop(e){
             e.stopPropagation();
         }
-
+        
         this.input.style.height = "100%";
         this.input.focus({preventScroll: true});
-
+        
         
         cellEl.addEventListener("click", clickStop);
         
@@ -96,23 +98,23 @@ export default class Edit{
         .then(this._buildList.bind(this, this.data))
         .then(this._showList.bind(this))
     }
-
+    
     _inputClick(e){
         e.stopPropagation();
     }
-
+    
     _inputBlur(e){
         if(this.blurable && this.popup){
             this.popup.hide();
         }
     }
-
+    
     _preventBlur(){
         this.blurable = false;
-
-		setTimeout(function(){
-			this.blurable = true;
-		}, 10);
+        
+        setTimeout(function(){
+            this.blurable = true;
+        }, 10);
     }
     
     //////////////////////////////////////
@@ -210,13 +212,18 @@ export default class Edit{
                 itemParams:option.itemParams,
                 elementAttributes: option.elementAttributes,
                 element:false,
+                selected:false,
             };
             
             data.push(item);
+
+            if(this.initialValues.indexOf(option.value) > -1){
+                this._chooseItem(item, true);
+            }
         }
     }
     
-    _parseListGroup(option){
+    _parseListGroup(option, data){
         var item = {
             label:option.label,
             group:true,
@@ -226,7 +233,7 @@ export default class Edit{
             options:[],
         };
         
-        this.displayList.push(item);
+        data.push(item);
         
         option.options.forEach((child) => {
             this._parseListItem(child, item.options);
@@ -286,8 +293,10 @@ export default class Edit{
             el.addEventListener("click", this._itemClick.bind(this, item));
             el.addEventListener("mousedown", this._preventBlur.bind(this));
             
-            item.el = el;
+            item.element = el;
         }
+
+        this._styleItem(item);
         
         this.listEl.appendChild(el);
         
@@ -305,7 +314,16 @@ export default class Edit{
         
         if(!this.popup.isVisible()){
             this.popup.show(this.cell.getElement(), "bottom").hideOnBlur(this._resolveValue.bind(this));
+        }
+    }
 
+    _styleItem(item){
+        if(item && item.element){
+            if(item.selected){
+                item.element.classList.add("active");
+            }else{
+                item.element.classList.remove("active");
+            }
         }
     }
     
@@ -316,42 +334,49 @@ export default class Edit{
     _itemClick(item, e){
         //select element
         e.stopPropagation();
-
-        this._chooseValue(item);
+        
+        this._chooseItem(item);
     }
-
+    
     //////////////////////////////////////
     ////// Current Item Management ///////
     //////////////////////////////////////
-
-    _chooseValue(item){
+    
+    _chooseItem(item, silent){
         var index;
-
+        
         if(this.params.multiselect){
             index = this.currentItems.indexOf("item");
-
+            
             if(index > -1){
                 this.currentItems.splice(index, 1);
+                item.selected = false;
             }else{
                 this.currentItems.push(item);
+                item.selected = true;
             }
 
+            this._styleItem(item);
+            
         }else{
             this.currentItems = [item];
-
-            this._resolveValue();
+            item.selected = true;
+            
+            if(!silent){
+                this._resolveValue();
+            }
         }
     }
-
+    
     _resolveValue(){
         var value;
-
+        
         this.popup.hide(true);
-
+        
         if(this.params.multiselect){
             this.actions.success(this.currentItems.map(item => item.value));
         }else{
-            this.actions.success(this.currentItems[0] ? this.currentItems[0].value : null);
+            this.actions.success(this.currentItems[0] ? this.currentItems[0].value : this.initialValues[0]);
         }
     }
     
