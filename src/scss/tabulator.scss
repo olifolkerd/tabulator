@@ -1071,6 +1071,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		padding:4px;
 		
 		color:$rowTextColor;
+		outline:none;
 		
 		&.active{
 			color:$rowBackgroundColor;

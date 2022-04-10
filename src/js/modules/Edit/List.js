@@ -3,11 +3,12 @@ export default class Edit{
         this.edit = editor;
         this.table = editor.table;
         this.cell = cell;
-        this.params = editorParams;
+        this.params = this._initializeParams(editorParams);
         
         this.data = [];
+        this.displayItems = [];
         this.currentItems = [];
-        this.activeItems = [];
+        this.focusedItem = null;
         
         this.input = this._createInputElement();
         this.listEl = this._createListElement();
@@ -52,6 +53,7 @@ export default class Edit{
         listEl.style.minWidth = this.cell.getElement().offsetWidth + "px";
         
         listEl.addEventListener("mousedown", this._preventBlur.bind(this));
+        listEl.addEventListener("keydown", this._inputKeyDown.bind(this))
         
         return listEl;
     }
@@ -82,6 +84,13 @@ export default class Edit{
         return input;
     }
     
+    _initializeParams(params){
+        params = Object.assign({}, params);
+        
+        params.verticalNavigation = params.verticalNavigation || "editor";
+        
+        return params;
+    }
     //////////////////////////////////////
     ////////// Event Handling ////////////
     //////////////////////////////////////
@@ -90,6 +99,7 @@ export default class Edit{
         input.addEventListener("focus", this._inputFocus.bind(this))
         input.addEventListener("click", this._inputClick.bind(this))
         input.addEventListener("blur", this._inputBlur.bind(this))
+        input.addEventListener("keydown", this._inputKeyDown.bind(this))
     }
     
     
@@ -105,8 +115,36 @@ export default class Edit{
     
     _inputBlur(e){
         if(this.blurable && this.popup){
-            console.log("blur")
             this.popup.hide();
+        }
+    }
+    
+    _inputKeyDown(e){
+        switch(e.keyCode){
+            
+            case 38: //up arrow
+            this._keyUp(e);
+            break
+            
+            case 40: //down arrow
+            this._keyDown(e);
+            break;
+            
+            case 37: //left arrow
+            case 39: //right arrow
+            this._keySide(e);
+            break;
+            
+            case 13: //enter
+            this._keyEnter();
+            break;
+            
+            case 27: //escape
+            this._keyEsc();
+            break;
+            
+            case 9: //tab
+            break;
         }
     }
     
@@ -119,7 +157,78 @@ export default class Edit{
     }
     
     //////////////////////////////////////
-    /////// Data List Generation ////////
+    //////// Keyboard Navigation /////////
+    //////////////////////////////////////
+    
+    _keyUp(e){
+        var index = this.displayItems.indexOf(this.focusedItem);
+        
+        if(this.params.verticalNavigation == "editor" || (this.params.verticalNavigation == "hybrid" && index)){
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+            e.preventDefault();
+            
+            if(index > 0){
+                this._focusItem(this.displayItems[index - 1]);
+            }
+        }
+    }
+    
+    _keyDown(e){
+        var index = this.displayItems.indexOf(this.focusedItem);
+        
+        if(this.params.verticalNavigation == "editor" || (this.params.verticalNavigation == "hybrid" && index < this.displayItems.length - 1)){
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+            e.preventDefault();
+            
+            if(index < this.displayItems.length - 1){
+                if(index == -1){
+                    this._focusItem(this.displayItems[0]);
+                }else{
+                    this._focusItem(this.displayItems[index + 1]);
+                }
+            }
+        }
+    }
+    
+    _keySide(e){
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        e.preventDefault();
+    }
+    
+    _keyEnter(e){
+        if(this.focusedItem){
+            this._chooseItem(this.focusedItem);
+        }else{
+            this.cancel();
+        }
+    }
+    
+    _keyEsc(e){
+        this._cancel();
+    }
+    
+    _keyLetter(e){
+        
+    }
+    
+    _focusItem(item){
+        if(this.focusedItem && this.focusedItem.element){
+            this.focusedItem.element.classList.remove("focused");
+        }
+        
+        this.focusedItem = item;
+        
+        if(item && item.element){
+            item.element.classList.add("focused");
+            item.element.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
+        }
+    }
+    
+    //////////////////////////////////////
+    /////// Data List Generation /////////
     //////////////////////////////////////
     
     _generateOptions(){
@@ -217,7 +326,7 @@ export default class Edit{
             };
             
             data.push(item);
-
+            
             if(this.initialValues && this.initialValues.indexOf(option.value) > -1){
                 this._chooseItem(item, true);
             }
@@ -248,6 +357,8 @@ export default class Edit{
     
     _clearList(){
         while(this.listEl.firstChild) this.listEl.removeChild(this.listEl.firstChild);
+        
+        this.displayItems = [];
     }
     
     _buildList(data){
@@ -296,7 +407,7 @@ export default class Edit{
             
             item.element = el;
         }
-
+        
         this._styleItem(item);
         
         this.listEl.appendChild(el);
@@ -305,6 +416,8 @@ export default class Edit{
             item.options.forEach((option) => {
                 this._buildItem(option);
             });
+        }else{
+            this.displayItems.push(item);
         }
     }
     
@@ -317,7 +430,7 @@ export default class Edit{
             this.popup.show(this.cell.getElement(), "bottom").hideOnBlur(this._resolveValue.bind(this));
         }
     }
-
+    
     _styleItem(item){
         if(item && item.element){
             if(item.selected){
@@ -343,6 +456,11 @@ export default class Edit{
     ////// Current Item Management ///////
     //////////////////////////////////////
     
+    _cancel(){
+        this.popup.hide(true);
+        this.actions.cancel();
+    }
+    
     _chooseItem(item, silent){
         var index;
         
@@ -356,17 +474,23 @@ export default class Edit{
                 this.currentItems.push(item);
                 item.selected = true;
             }
-
+            
+            this.input.value = this.currentItems.map(item => item.value).join(",");
+            
             this._styleItem(item);
             
         }else{
             this.currentItems = [item];
             item.selected = true;
             
+            this.input.value = item.value;
+            
             if(!silent){
                 this._resolveValue();
             }
         }
+        
+        this._focusItem(item);
     }
     
     _resolveValue(){

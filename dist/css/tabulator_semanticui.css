@@ -1200,6 +1200,7 @@
 .tabulator-edit-select-list .tabulator-edit-select-list-item {
   padding: 4px;
   color: #333;
+  outline: none;
 }
 
 .tabulator-edit-select-list .tabulator-edit-select-list-item.active {
