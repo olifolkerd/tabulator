@@ -572,6 +572,7 @@
 .tabulator-row .tabulator-cell.tabulator-editing select {
   border: 1px;
   background: transparent;
+  outline: none;
 }
 
 .tabulator-row .tabulator-cell.tabulator-validation-fail {
