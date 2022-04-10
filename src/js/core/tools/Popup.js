@@ -16,6 +16,8 @@ export default class Popup extends CoreFeature{
         this.blurCallback = null;
         this.renderedCallback = null;
         
+        this.visible = false;
+        
         this.element.classList.add("tabulator-popup-container");
         
         this.blurEvent = this.hide.bind(this);
@@ -88,16 +90,16 @@ export default class Popup extends CoreFeature{
         
         switch(position){
             case "right":
-                x = offset.left + element.offsetWidth;
-                y = offset.top - 1;
+            x = offset.left + element.offsetWidth;
+            y = offset.top - 1;
             break;
             
             case "bottom":
-                x = offset.left;
-                y = offset.top + element.offsetHeight;
+            x = offset.left;
+            y = offset.top + element.offsetHeight;
             break;
         }
-
+        
         return {x, y, offset};
     }
     
@@ -107,7 +109,7 @@ export default class Popup extends CoreFeature{
         if(origin instanceof HTMLElement){
             parentEl = origin;
             coords = this.elementPositionCoords(origin, position);
-
+            
             parentOffset = coords.offset;
             x = coords.x;
             y = coords.y;
@@ -136,6 +138,8 @@ export default class Popup extends CoreFeature{
         
         this._fitToScreen(x, y, parentEl, parentOffset);
         
+        this.visible = true;
+        
         return this;
     }
     
@@ -163,19 +167,25 @@ export default class Popup extends CoreFeature{
         }
     }
     
+    isVisible(){
+        return this.visible;
+    }
+    
     hideOnBlur(callback){
         this.blurable = true;
         
-        setTimeout(() => {
-            this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
-            this.subscribe("cell-editing", this.blurEvent);
-            document.body.addEventListener("click", this.blurEvent);
-            document.body.addEventListener("contextmenu", this.blurEvent);
-            window.addEventListener("resize", this.blurEvent);
-            document.body.addEventListener("keydown", this.escEvent);
-        }, 100);
-        
-        this.blurCallback = callback;
+        if(this.visible){
+            setTimeout(() => {
+                this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
+                this.subscribe("cell-editing", this.blurEvent);
+                document.body.addEventListener("click", this.blurEvent);
+                document.body.addEventListener("contextmenu", this.blurEvent);
+                window.addEventListener("resize", this.blurEvent);
+                document.body.addEventListener("keydown", this.escEvent);
+            }, 100);
+            
+            this.blurCallback = callback;
+        }
         
         return this;
     }
@@ -187,29 +197,33 @@ export default class Popup extends CoreFeature{
     }
     
     hide(){
-        if(this.blurable){
-            document.body.removeEventListener("keydown", this.escEvent);
-            document.body.removeEventListener("click", this.blurEvent);
-            document.body.removeEventListener("contextmenu", this.blurEvent);
-            window.removeEventListener("resize", this.blurEvent);
-            this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
-            this.unsubscribe("cell-editing", this.blurEvent);
-        }
-        
-        if(this.childPopup){
-            this.childPopup.hide();
-        }
-        
-        if(this.parent){
-            this.parent.childPopup = null;
-        }
-        
-        if(this.element.parentNode){
-            this.element.parentNode.removeChild(this.element);
-        }
-        
-        if(this.blurCallback){
-            this.blurCallback();
+        if(this.visible){
+            if(this.blurable){
+                document.body.removeEventListener("keydown", this.escEvent);
+                document.body.removeEventListener("click", this.blurEvent);
+                document.body.removeEventListener("contextmenu", this.blurEvent);
+                window.removeEventListener("resize", this.blurEvent);
+                this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
+                this.unsubscribe("cell-editing", this.blurEvent);
+            }
+            
+            if(this.childPopup){
+                this.childPopup.hide();
+            }
+            
+            if(this.parent){
+                this.parent.childPopup = null;
+            }
+            
+            if(this.element.parentNode){
+                this.element.parentNode.removeChild(this.element);
+            }
+            
+            if(this.blurCallback){
+                this.blurCallback();
+            }
+            
+            this.visible = false;
         }
         
         return this;
