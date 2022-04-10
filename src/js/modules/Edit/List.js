@@ -24,8 +24,21 @@ export default class Edit{
     }
     
     _onRendered(){
+        var cellEl = this.cell.getElement();
+
+        function clickStop(e){
+            e.stopPropagation();
+        }
+
         this.input.style.height = "100%";
         this.input.focus({preventScroll: true});
+
+        
+        cellEl.addEventListener("click", clickStop);
+        
+        setTimeout(() => {
+            cellEl.removeEventListener("click", clickStop);
+        }, 1000)
     }
     
     _createListElement(){
