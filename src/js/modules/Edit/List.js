@@ -65,11 +65,18 @@ export default class Edit{
         var attribs = this.params.elementAttributes;
         var input = document.createElement("input");
         
+        // input.setAttribute("type", "search");
         input.setAttribute("type", this.params.clearable ? "search" : "text");
         
         input.style.padding = "4px";
         input.style.width = "100%";
         input.style.boxSizing = "border-box";
+
+        if(!this.params.autocomplete){
+            input.style.cursor = "default";
+            input.style.caretColor = "transparent";
+	        // input.readOnly = (this.edit.currentCell != false);
+        }
         
         if(attribs && typeof attribs == "object"){
             for (let key in attribs){
@@ -103,6 +110,7 @@ export default class Edit{
         input.addEventListener("click", this._inputClick.bind(this))
         input.addEventListener("blur", this._inputBlur.bind(this))
         input.addEventListener("keydown", this._inputKeyDown.bind(this))
+        input.addEventListener("search", this._inputSearch.bind(this))
         
         if(this.params.autocomplete){
             input.addEventListener("keyup", this._inputKeyUp.bind(this))
@@ -130,6 +138,10 @@ export default class Edit{
         if(this.blurable && this.popup){
             this.popup.hide();
         }
+    }
+
+    _inputSearch(){
+        this._clearChoices();
     }
     
     _inputKeyDown(e){
@@ -166,6 +178,7 @@ export default class Edit{
             
             default:
             this._keySelectLetter(e);
+            e.preventDefault();
         }
     }
     
@@ -311,6 +324,7 @@ export default class Edit{
     
     rebuildOptionsList(){
         this._generateOptions()
+        .then(this._sortOptions.bind(this))
         .then(this._buildList.bind(this))
         .then(this._showList.bind(this))
     }
@@ -445,6 +459,13 @@ export default class Edit{
         option.options.forEach((child) => {
             this._parseListItem(child, item.options);
         });
+    }
+
+    _sortOptions(options){
+
+       //TODO Sort Values 
+
+        return options;
     }
     
     _filterOptions(){
@@ -607,6 +628,17 @@ export default class Edit{
         this.popup.hide(true);
         this.actions.cancel();
     }
+
+    _clearChoices(){
+        this.currentItems.forEach((item) => {
+            item.selected = false;
+            this._styleItem(item);
+        });
+
+        this.currentItems = [];
+
+        this._focusItem = null;
+    }
     
     _chooseItem(item, silent){
         var index;
@@ -642,11 +674,11 @@ export default class Edit{
     
     _resolveValue(){
         this.popup.hide(true);
-        
+
         if(this.params.multiselect){
             this.actions.success(this.currentItems.map(item => item.value));
         }else{
-            this.actions.success(this.currentItems[0] ? this.currentItems[0].value : this.initialValues[0]);
+            this.actions.success(this.currentItems[0] ? this.currentItems[0].value : "");
         }
     }
     
