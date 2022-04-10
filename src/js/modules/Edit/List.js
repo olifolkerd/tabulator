@@ -16,7 +16,7 @@ export default class Edit{
         this.initialValues = this.params.multiselect ? cell.getValue() : [cell.getValue()];
         
         this.filterTimeout = null;
-        this.filterTerm = "";
+        this.filtered = false;
         
         this.values = []; 
         this.popup = null;  
@@ -103,13 +103,23 @@ export default class Edit{
         input.addEventListener("click", this._inputClick.bind(this))
         input.addEventListener("blur", this._inputBlur.bind(this))
         input.addEventListener("keydown", this._inputKeyDown.bind(this))
+        
+        if(this.params.autocomplete){
+            input.addEventListener("keyup", this._inputKeyUp.bind(this))
+        }
     }
     
     
     _inputFocus(e){
-        this._generateOptions()
-        .then(this._buildList.bind(this, this.data))
-        .then(this._showList.bind(this))
+        this.rebuildOptionsList();
+    }
+    
+    _filter(){
+        if(this.params.ajaxURL){
+            this.rebuildOptionsList();
+        }else{
+            this._filterList();
+        }
     }
     
     _inputClick(e){
@@ -155,9 +165,26 @@ export default class Edit{
             break;
             
             default:
-            this._keyLetter(e);
+            this._keySelectLetter(e);
         }
     }
+    
+    _inputKeyUp(e){
+        switch(e.keyCode){
+            case 38: //up arrow
+            case 37: //left arrow
+            case 39: //up arrow
+            case 40: //right arrow
+            case 13: //enter
+            case 27: //escape
+            break;
+            
+            default:
+            this._keyAutoCompLetter(e);
+        }
+    }
+    
+    
     
     _preventBlur(){
         this.blurable = false;
@@ -228,10 +255,8 @@ export default class Edit{
         }
     }
     
-    _keyLetter(e){
-        if(this.params.autocomplete){
-            
-        }else{
+    _keySelectLetter(e){
+        if(!this.params.autocomplete){
             if(this.edit.currentCell === false){
                 e.preventDefault();
             }
@@ -241,6 +266,12 @@ export default class Edit{
             }
         }
     }
+    
+    _keyAutoCompLetter(e){
+        this._filter();
+    }
+    
+    
     _scrollToValue(char){
         clearTimeout(this.filterTimeout);
         
@@ -278,8 +309,23 @@ export default class Edit{
     /////// Data List Generation /////////
     //////////////////////////////////////
     
+    rebuildOptionsList(){
+        this._generateOptions()
+        .then(this._buildList.bind(this))
+        .then(this._showList.bind(this))
+    }
+    
+    _filterList(){
+        this._buildList(this._filterOptions());
+        this._showList();
+    }
+    
     _generateOptions(){
         var paramValues = this.params.values;
+
+        this.filtered = false;
+        
+        //TODO - Handle AJAX;
         
         if(typeof paramValues === "function"){
             paramValues = paramValues(cell);
@@ -299,7 +345,7 @@ export default class Edit{
             paramValues = this._uniqueColumnValues(paramValues);//lookup specific column
         }
         
-        this._parseList(paramValues);
+        return this._parseList(paramValues);
     }
     
     _uniqueColumnValues(field){
@@ -352,9 +398,11 @@ export default class Edit{
             }
             
             this._parseListItem(value, data);
-            
-            this.data = data;
         });
+        
+        this.data = data;
+        
+        return data;    
     }
     
     _parseListItem(option, data){
@@ -370,6 +418,7 @@ export default class Edit{
                 elementAttributes: option.elementAttributes,
                 element:false,
                 selected:false,
+                visible:true,
             };
             
             data.push(item);
@@ -387,6 +436,7 @@ export default class Edit{
             itemParams:option.itemParams,
             elementAttributes:option.elementAttributes,
             element:false,
+            visible:true,
             options:[],
         };
         
@@ -397,6 +447,53 @@ export default class Edit{
         });
     }
     
+    _filterOptions(){
+        var filterFunc = this.params.filterFunc || this._defaultFilterFunc;
+        var term = this.input.value;
+        var results = [];
+
+        if(term){
+            this.filtered = true;
+
+            this.data.forEach((item) => {
+                this._filterItem(filterFunc, term, item);
+            });
+        }else{
+            this.filtered = false;
+        }
+        
+        return this.data;
+    }
+    
+    _filterItem(func, term, item){
+        var matches = false;
+        
+        if(!item.group){
+            item.visible = func(term, item);
+        }else{
+            item.options.forEach((option) => {
+                if(this._filterItem(func, term, option)){
+                    matches = true;
+                }
+            });
+            
+            item.visible = matches;
+        }
+        
+        return item.visible;
+    }
+    
+    _defaultFilterFunc(term, item){
+        var term = String(term).toLowerCase();
+        
+        if(item.value !== null || typeof item.value !== "undefined"){
+            if(String(item.value).toLowerCase().indexOf(term) > -1 || String(item.label).toLowerCase(term).indexOf() > -1){
+                return true;
+            }
+        }
+        
+        return false;
+    }
     
     //////////////////////////////////////
     /////////// Display List /////////////
@@ -420,51 +517,54 @@ export default class Edit{
         var el = item.element,
         contents;
         
-        if(!el){
-            el = document.createElement("div");
-            el.tabIndex = 0;
+        if(!this.filtered || item.visible){
             
-            contents = this.params.listItemFormatter ? this.params.listItemFormatter(item, el) : item.label;
-            
-            if(contents instanceof HTMLElement){
-                el.appendChild(contents)
-            }else{
-                el.innerHTML = contents;
-            }
-            
-            if(item.group){
-                el.classList.add("tabulator-edit-select-list-group");
-            }else{
-                el.classList.add("tabulator-edit-select-list-item");
-            }
-            
-            if(item.elementAttributes && typeof item.elementAttributes == "object"){
-                for (let key in item.elementAttributes){
-                    if(key.charAt(0) == "+"){
-                        key = key.slice(1);
-                        el.setAttribute(key, input.getAttribute(key) + item.elementAttributes["+" + key]);
-                    }else{
-                        el.setAttribute(key, item.elementAttributes[key]);
+            if(!el){
+                el = document.createElement("div");
+                el.tabIndex = 0;
+                
+                contents = this.params.listItemFormatter ? this.params.listItemFormatter(item, el) : item.label;
+                
+                if(contents instanceof HTMLElement){
+                    el.appendChild(contents)
+                }else{
+                    el.innerHTML = contents;
+                }
+                
+                if(item.group){
+                    el.classList.add("tabulator-edit-select-list-group");
+                }else{
+                    el.classList.add("tabulator-edit-select-list-item");
+                }
+                
+                if(item.elementAttributes && typeof item.elementAttributes == "object"){
+                    for (let key in item.elementAttributes){
+                        if(key.charAt(0) == "+"){
+                            key = key.slice(1);
+                            el.setAttribute(key, this.input.getAttribute(key) + item.elementAttributes["+" + key]);
+                        }else{
+                            el.setAttribute(key, item.elementAttributes[key]);
+                        }
                     }
                 }
+                
+                el.addEventListener("click", this._itemClick.bind(this, item));
+                el.addEventListener("mousedown", this._preventBlur.bind(this));
+                
+                item.element = el;
             }
             
-            el.addEventListener("click", this._itemClick.bind(this, item));
-            el.addEventListener("mousedown", this._preventBlur.bind(this));
+            this._styleItem(item);
             
-            item.element = el;
-        }
-        
-        this._styleItem(item);
-        
-        this.listEl.appendChild(el);
-        
-        if(item.group){
-            item.options.forEach((option) => {
-                this._buildItem(option);
-            });
-        }else{
-            this.displayItems.push(item);
+            this.listEl.appendChild(el);
+            
+            if(item.group){
+                item.options.forEach((option) => {
+                    this._buildItem(option);
+                });
+            }else{
+                this.displayItems.push(item);
+            }
         }
     }
     
