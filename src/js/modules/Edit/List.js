@@ -105,6 +105,7 @@ export default class Edit{
     
     _inputBlur(e){
         if(this.blurable && this.popup){
+            console.log("blur")
             this.popup.hide();
         }
     }
@@ -217,7 +218,7 @@ export default class Edit{
             
             data.push(item);
 
-            if(this.initialValues.indexOf(option.value) > -1){
+            if(this.initialValues && this.initialValues.indexOf(option.value) > -1){
                 this._chooseItem(item, true);
             }
         }
@@ -346,7 +347,7 @@ export default class Edit{
         var index;
         
         if(this.params.multiselect){
-            index = this.currentItems.indexOf("item");
+            index = this.currentItems.indexOf(item);
             
             if(index > -1){
                 this.currentItems.splice(index, 1);
@@ -369,8 +370,6 @@ export default class Edit{
     }
     
     _resolveValue(){
-        var value;
-        
         this.popup.hide(true);
         
         if(this.params.multiselect){
