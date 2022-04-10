@@ -5122,7 +5122,7 @@ function maskInput(el, options){
 }
 
 //input element
-function input(cell, onRendered, success, cancel, editorParams){
+function input$1(cell, onRendered, success, cancel, editorParams){
 	//create and style input
 	var cellValue = cell.getValue(),
 	input = document.createElement("input");
@@ -5496,1041 +5496,299 @@ function range(cell, onRendered, success, cancel, editorParams){
 	return input;
 }
 
-//dropdown select editor
-function select(cell, onRendered, success, cancel, editorParams){
-	var self = this,
-	cellEl = cell.getElement(),
-	initialValue = cell.getValue(),
-	vertNav = editorParams.verticalNavigation || "editor",
-	initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? (Array.isArray(initialValue) ? initialValue : [initialValue]) : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : []),
-	input = document.createElement("input"),
-	listEl = document.createElement("div"),
-	multiselect = editorParams.multiselect,
-	dataItems = [],
-	currentItem = {},
-	displayItems = [],
-	currentItems = [],
-	blurable = true,
-	blockListShow = false,
-	searchWord = "",
-	searchWordTimeout = null;
-
-	if(Array.isArray(editorParams) || (!Array.isArray(editorParams) && typeof editorParams === "object" && !editorParams.values)){
-		console.warn("DEPRECATION WARNING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
-		editorParams = {values:editorParams};
-	}
-
-	function getUniqueColumnValues(field){
-		var output = {},
-		data = self.table.getData(),
-		column;
-
-		if(field){
-			column = self.table.columnManager.getColumnByField(field);
-		}else {
-			column = cell.getColumn()._getSelf();
-		}
-
-		if(column){
-			data.forEach(function(row){
-				var val = column.getFieldValue(row);
-
-				if(val !== null && typeof val !== "undefined" && val !== ""){
-					output[val] = true;
-				}
-			});
-		}else {
-			console.warn("unable to find matching column to create select lookup list:", field);
-		}
-
-		return Object.keys(output);
-	}
-
-	function parseItems(inputValues, curentValues){
-		var dataList = [];
-		var displayList = [];
-
-		function processComplexListItem(item){
-			var item = {
-				label:item.label,
-				value:item.value,
-				itemParams:item.itemParams,
-				elementAttributes: item.elementAttributes,
-				element:false,
-			};
-
-			// if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
-			// 	setCurrentItem(item);
-			// }
-
-			if(curentValues.indexOf(item.value) > -1){
-				setItem(item);
-			}
-
-			dataList.push(item);
-			displayList.push(item);
-
-			return item;
-		}
-
-		if(typeof inputValues == "function"){
-			inputValues = inputValues(cell);
-		}
-
-		if(Array.isArray(inputValues)){
-			inputValues.forEach(function(value){
-				var item;
-
-				if(typeof value === "object"){
-
-					if(value.options){
-						item = {
-							label:value.label,
-							group:true,
-							itemParams:value.itemParams,
-							elementAttributes:value.elementAttributes,
-							element:false,
-						};
-
-						displayList.push(item);
-
-						value.options.forEach(function(item){
-							processComplexListItem(item);
-						});
-					}else {
-						processComplexListItem(value);
-					}
-
-				}else {
-
-					item = {
-						label:value,
-						value:value,
-						element:false,
-					};
-
-					// if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
-					// 	setCurrentItem(item);
-					// }
-
-					if(curentValues.indexOf(item.value) > -1){
-						setItem(item);
-					}
-
-					dataList.push(item);
-					displayList.push(item);
-				}
-			});
-		}else {
-			for(var key in inputValues){
-				var item = {
-					label:inputValues[key],
-					value:key,
-					element:false,
-				};
-
-				// if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
-				// 	setCurrentItem(item);
-				// }
-
-				if(curentValues.indexOf(item.value) > -1){
-					setItem(item);
-				}
-
-				dataList.push(item);
-				displayList.push(item);
-			}
-		}
-
-		if(editorParams.sortValuesList){
-			dataList.sort((a, b) => {
-				return a.label < b.label ? -1 : (a.label > b.label ? 1 : 0);
-			});
-
-			displayList.sort((a, b) => {
-				return a.label < b.label ? -1 : (a.label > b.label ? 1 : 0);
-			});
-
-			if(editorParams.sortValuesList !== "asc"){
-				dataList.reverse();
-				displayList.reverse();
-			}
-		}
-
-		dataItems = dataList;
-		displayItems = displayList;
-
-		fillList();
-	}
-
-	function fillList(){
-		while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
-
-		displayItems.forEach(function(item){
-
-			var el = item.element;
-
-			if(!el){
-				el = document.createElement("div");
-				item.label = editorParams.listItemFormatter ? editorParams.listItemFormatter(item.value, item.label, cell, el, item.itemParams) : item.label;
-				if(item.group){
-					el.classList.add("tabulator-edit-select-list-group");
-					el.tabIndex = 0;
-					el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
-				}else {
-					el.classList.add("tabulator-edit-select-list-item");
-					el.tabIndex = 0;
-					el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
-
-					el.addEventListener("click", function(){
-						blockListShow = true;
-
-						setTimeout(() => {
-							blockListShow = false;
-						}, 10);
-
-						// setCurrentItem(item);
-						// chooseItem();
-						if(multiselect){
-							toggleItem(item);
-							input.focus();
-						}else {
-							chooseItem(item);
-						}
-
-					});
-
-					// if(item === currentItem){
-					// 	el.classList.add("active");
-					// }
-
-					if(currentItems.indexOf(item) > -1){
-						el.classList.add("active");
-					}
-				}
-
-				if(item.elementAttributes && typeof item.elementAttributes == "object"){
-					for (let key in item.elementAttributes){
-						if(key.charAt(0) == "+"){
-							key = key.slice(1);
-							el.setAttribute(key, input.getAttribute(key) + item.elementAttributes["+" + key]);
-						}else {
-							el.setAttribute(key, item.elementAttributes[key]);
-						}
-					}
-				}
-				el.addEventListener("mousedown", function(){
-					blurable = false;
-
-					setTimeout(function(){
-						blurable = true;
-					}, 10);
-				});
-
-				item.element = el;
-
-
-			}
-
-			listEl.appendChild(el);
-		});
-	}
-
-
-	function setCurrentItem(item, active){
-
-		if(!multiselect && currentItem && currentItem.element){
-			currentItem.element.classList.remove("active");
-		}
-
-		if(currentItem && currentItem.element){
-			currentItem.element.classList.remove("focused");
-		}
-
-		currentItem = item;
-
-		if(item.element){
-			item.element.classList.add("focused");
-			if(active){
-				item.element.classList.add("active");
-			}
-		}
-
-		if(item && item.element && item.element.scrollIntoView){
-			item.element.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
-		}
-	}
-
-
-	// function chooseItem(){
-	// 	hideList();
-
-	// 	if(initialValue !== currentItem.value){
-	// 		initialValue = currentItem.value;
-	// 		success(currentItem.value);
-	// 	}else{
-	// 		cancel();
-	// 	}
-	// }
-
-	function setItem(item) {
-		var index = currentItems.indexOf(item);
-
-		if(index == -1){
-			currentItems.push(item);
-			setCurrentItem(item, true);
-		}
-
-		fillInput();
-	}
-
-	function unsetItem(index) {
-		var item = currentItems[index];
-
-		if(index > -1){
-			currentItems.splice(index, 1);
-			if(item.element){
-				item.element.classList.remove("active");
-			}
-		}
-	}
-
-	function toggleItem(item) {
-		if(!item){
-			item = currentItem;
-		}
-
-		var index = currentItems.indexOf(item);
-
-		if(index > -1){
-			unsetItem(index);
-		}else {
-			if(multiselect !== true && currentItems.length >= multiselect){
-				unsetItem(0);
-			}
-
-			setItem(item);
-		}
-
-		fillInput();
-
-	}
-
-	function chooseItem(item){
-		hideList();
-
-		if(!item){
-			item = currentItem;
-		}
-
-		if(item){
-			input.value = item.label;
-			success(item.value);
-		}
-
-		initialDisplayValue = [item.value];
-	}
-
-
-	function chooseItems(silent){
-		if(!silent){
-			hideList();
-		}
-
-		var output = [];
-
-		currentItems.forEach((item) => {
-			output.push(item.value);
-		});
-
-		initialDisplayValue = output;
-
-		success(output);
-	}
-
-	function fillInput(){
-		var output = [];
-
-		currentItems.forEach((item) => {
-			output.push(item.label);
-		});
-
-		input.value = output.join(", ");
-
-		if(self.currentCell === false){
-			chooseItems(true);
-		}
-	}
-
-
-	function unsetItems() {
-
-		var len = currentItems.length;
-
-		for(let i = 0; i < len; i++){
-			unsetItem(0);
-		}
-	}
-
-	function cancelItem(){
-		hideList();
-		cancel();
-	}
-
-	function showList(){
-		currentItems = [];
-
-		if(!listEl.parentNode){
-			if(editorParams.values === true){
-				parseItems(getUniqueColumnValues(), initialDisplayValue);
-			}else if(typeof editorParams.values === "string"){
-				parseItems(getUniqueColumnValues(editorParams.values), initialDisplayValue);
-			}else {
-				parseItems(editorParams.values || [], initialDisplayValue);
-			}
-
-
-			var offset = Helpers.elOffset(cellEl);
-
-			listEl.style.minWidth = cellEl.offsetWidth + "px";
-
-			listEl.style.top = (offset.top + cellEl.offsetHeight) + "px";
-			listEl.style.left = offset.left + "px";
-
-
-			listEl.addEventListener("mousedown", function(e){
-				blurable = false;
-
-				setTimeout(function(){
-					blurable = true;
-				}, 10);
-			});
-
-			document.body.appendChild(listEl);
-		}
-	}
-
-	function hideList(){
-		if(listEl.parentNode){
-			listEl.parentNode.removeChild(listEl);
-		}
-
-		removeScrollListener();
-	}
-
-	function removeScrollListener() {
-		self.table.rowManager.element.removeEventListener("scroll", cancelItem);
-	}
-
-	function scrollTovalue(char){
-
-		clearTimeout(searchWordTimeout);
-
-		var character = String.fromCharCode(event.keyCode).toLowerCase();
-		searchWord += character.toLowerCase();
-
-		var match = dataItems.find((item) => {
-			return typeof item.label !== "undefined" && item.label.toLowerCase().startsWith(searchWord);
-		});
-
-		if(match){
-			setCurrentItem(match, !multiselect);
-		}
-
-		searchWordTimeout = setTimeout(() => {
-			searchWord = "";
-		}, 800);
-	}
-
-	//style input
-	input.setAttribute("type", "text");
-
-	input.style.padding = "4px";
-	input.style.width = "100%";
-	input.style.boxSizing = "border-box";
-	input.style.cursor = "default";
-	input.readOnly = (this.currentCell != false);
-
-	if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
-		for (let key in editorParams.elementAttributes){
-			if(key.charAt(0) == "+"){
-				key = key.slice(1);
-				input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
-			}else {
-				input.setAttribute(key, editorParams.elementAttributes[key]);
-			}
-		}
-	}
-
-	input.value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
-
-	// if(editorParams.values === true){
-	// 	parseItems(getUniqueColumnValues(), initialValue);
-	// }else if(typeof editorParams.values === "string"){
-	// 	parseItems(getUniqueColumnValues(editorParams.values), initialValue);
-	// }else{
-	// 	parseItems(editorParams.values || [], initialValue);
-	// }
-
-	input.addEventListener("search", function(e){
-		if(!input.value){
-			unsetItems();
-			chooseItems();
-			showList();
-		}
-	});
-
-	//allow key based navigation
-	input.addEventListener("keydown", function(e){
-		var index;
-
-		switch(e.keyCode){
-			case 38: //up arrow
-			index = dataItems.indexOf(currentItem);
-
-			if(vertNav == "editor" || (vertNav == "hybrid" && index)){
-				e.stopImmediatePropagation();
-				e.stopPropagation();
-				e.preventDefault();
-
-				if(index > 0){
-					setCurrentItem(dataItems[index - 1], !multiselect);
-				}
-			}
-			break;
-
-			case 40: //down arrow
-			index = dataItems.indexOf(currentItem);
-
-			if(vertNav == "editor" || (vertNav == "hybrid" && index < dataItems.length - 1)){
-				e.stopImmediatePropagation();
-				e.stopPropagation();
-				e.preventDefault();
-
-				if(index < dataItems.length - 1){
-					if(index == -1){
-						setCurrentItem(dataItems[0], !multiselect);
-					}else {
-						setCurrentItem(dataItems[index + 1], !multiselect);
-					}
-				}
-			}
-			break;
-
-			case 37: //left arrow
-			case 39: //right arrow
-			e.stopImmediatePropagation();
-			e.stopPropagation();
-			e.preventDefault();
-			break;
-
-			case 13: //enter
-			// chooseItem();
-
-			if(multiselect){
-				toggleItem();
-			}else {
-				chooseItem();
-			}
-
-			break;
-
-			case 27: //escape
-			cancelItem();
-			break;
-
-			case 9: //tab
-			break;
-
-			default:
-			if(self.currentCell === false){
-				e.preventDefault();
-			}
-
-			if(e.keyCode >= 38 && e.keyCode <= 90){
-				scrollTovalue(e.keyCode);
-			}
-		}
-	});
-
-	input.addEventListener("blur", function(e){
-		if(blurable){
-			if(multiselect){
-				chooseItems();
-			}else {
-				cancelItem();
-			}
-		}
-	});
-
-	input.addEventListener("focus", function(e){
-		if(!blockListShow){
-			showList();
-		}
-	});
-
-	//style list element
-	listEl = document.createElement("div");
-	listEl.classList.add("tabulator-edit-select-list");
-
-	onRendered(function(){
-		input.style.height = "100%";
-		input.focus({preventScroll: true});
-	});
-
-	setTimeout(() => {
-		this.table.rowManager.element.addEventListener("scroll", cancelItem);
-	}, 10);
-
-	return input;
+class Edit{
+    constructor(editor, cell, onRendered, success, cancel, editorParams){
+        this.edit = editor;
+        this.table = editor.table;
+        this.cell = cell;
+        this.params = editorParams;
+        
+        this.data = [];
+        
+        this.input = this._createInputElement();
+        this.listEl = this._createListElement();
+        
+        this.values = []; 
+        this.popup = null;      
+        
+        this.actions = {
+            success:success,
+            cancel:cancel
+        };
+        
+        onRendered(this._onRendered.bind(this));
+    }
+    
+    _onRendered(){
+        this.input.style.height = "100%";
+        this.input.focus({preventScroll: true});
+    }
+    
+    _createListElement(){
+        var listEl = document.createElement("div");
+        listEl.classList.add("tabulator-edit-select-list");
+        
+        return listEl;
+    }
+    
+    _createInputElement(){
+        var attribs = this.params.elementAttributes;
+        var input = document.createElement("input");
+        
+        input.setAttribute("type", this.params.clearable ? "search" : "text");
+        
+        input.style.padding = "4px";
+        input.style.width = "100%";
+        input.style.boxSizing = "border-box";
+        
+        if(attribs && typeof attribs == "object"){
+            for (let key in attribs){
+                if(key.charAt(0) == "+"){
+                    key = key.slice(1);
+                    input.setAttribute(key, input.getAttribute(key) + attribs["+" + key]);
+                }else {
+                    input.setAttribute(key, attribs[key]);
+                }
+            }
+        }
+        
+        this._bindInputEvents(input);
+        
+        return input;
+    }
+    
+    //////////////////////////////////////
+    ////////// Event Handling ////////////
+    //////////////////////////////////////
+    
+    _bindInputEvents(input){
+        input.addEventListener("focus", this._inputFocus.bind(this));
+    }
+    
+    
+    _inputFocus(){
+        this._generateOptions()
+        .then(this._buildList.bind(this, this.data))
+        .then(this._showList.bind(this));
+    }
+    
+    //////////////////////////////////////
+    /////// Data List Generation ////////
+    //////////////////////////////////////
+    
+    _generateOptions(){
+        var paramValues = this.params.values;
+        
+        if(typeof paramValues === "function"){
+            paramValues = paramValues(cell);
+        }
+        
+        if(paramValues instanceof Promise){
+            return paramValues.then(this._lookupValues.bind(this))
+        }else {
+            return Promise.resolve(this._lookupValues(paramValues));
+        }
+    }
+    
+    _lookupValues(paramValues){
+        if(paramValues === true){
+            paramValues = this._uniqueColumnValues();//lookup this column
+        }else if(typeof paramValues === "string"){
+            paramValues = this._uniqueColumnValues(paramValues);//lookup specific column
+        }
+        
+        this._parseList(paramValues);
+    }
+    
+    _uniqueColumnValues(field){
+        var output = {},
+        data = this.table.getData(this.params.valueLookupRange),
+        column;
+        
+        if(field){
+            column = this.table.columnManager.getColumnByField(field);
+        }else {
+            column = this.cell.getColumn()._getSelf();
+        }
+        
+        if(column){
+            data.forEach((row) => {
+                var val = column.getFieldValue(row);
+                
+                if(val !== null && typeof val !== "undefined" && val !== ""){
+                    output[val] = true;
+                }
+            });
+        }else {
+            console.warn("unable to find matching column to create select lookup list:", field);
+            output = [];
+        }
+        
+        return Object.keys(output);
+    }
+    
+    
+    _parseList(inputValues){
+        var data = [];
+        
+        if(!Array.isArray(inputValues)){
+            inputValues = Object.entries(inputValues).map(([key, value]) => {
+                return {
+                    label:value,
+                    value:key,
+                };
+            });
+        }
+        
+        inputValues.forEach((value) => {
+            if(typeof value !== "object"){
+                value = {
+                    label:value,
+                    value:value,
+                    element:false,
+                };
+            }
+            
+            this._parseListItem(value, data);
+            
+            this.data = data;
+        });
+    }
+    
+    _parseListItem(option, data){
+        var item = {};
+        
+        if(option.options){
+            this._parseListGroup(option);
+        }else {
+            item = {
+                label:option.label,
+                value:option.option,
+                itemParams:option.itemParams,
+                elementAttributes: option.elementAttributes,
+                element:false,
+            };
+            
+            data.push(item);
+        }
+    }
+    
+    _parseListGroup(option){
+        var item = {
+            label:option.label,
+            group:true,
+            itemParams:option.itemParams,
+            elementAttributes:option.elementAttributes,
+            element:false,
+            options:[],
+        };
+        
+        this.displayList.push(item);
+        
+        option.options.forEach((child) => {
+            this._parseListItem(child, item.options);
+        });
+    }
+    
+    
+    //////////////////////////////////////
+    /////////// Display List /////////////
+    //////////////////////////////////////
+    
+    _clearList(){
+        while(this.listEl.firstChild) this.listEl.removeChild(this.listEl.firstChild);
+    }
+
+    _buildList(data){
+        this._clearList();
+
+        data.forEach((option) => {
+            this._buildItem(option);
+        });
+    }
+    
+    _buildItem(item){
+        var el = item.element,
+        contents;
+        
+        if(!el){
+            el = document.createElement("div");
+            el.tabIndex = 0;
+            
+            contents = this.params.listItemFormatter ? this.params.listItemFormatter(item, el) : item.label;
+            
+            if(contents instanceof HTMLElement){
+                el.appendChild(contents);
+            }else {
+                el.innerHTML = contents;
+            }
+            
+            if(item.group){
+                el.classList.add("tabulator-edit-select-list-group");
+            }else {
+                el.classList.add("tabulator-edit-select-list-item");
+            }
+            
+            if(item.elementAttributes && typeof item.elementAttributes == "object"){
+                for (let key in item.elementAttributes){
+                    if(key.charAt(0) == "+"){
+                        key = key.slice(1);
+                        el.setAttribute(key, input.getAttribute(key) + item.elementAttributes["+" + key]);
+                    }else {
+                        el.setAttribute(key, item.elementAttributes[key]);
+                    }
+                }
+            }
+            
+            el.addEventListener("click", this._itemClick.bind(this, item));
+
+            item.el = el;
+        }
+
+        this.listEl.appendChild(el);
+
+        if(item.group){
+            item.options.forEach((option) => {
+                this._buildItem(option);
+            });
+        }
+    }
+
+    _showList(){
+        if(!this.popup){
+            this.popup = this.edit.popup(this.listEl);
+        }
+
+        this.popup.show(this.cell.getElement());
+    }
+    
+    //////////////////////////////////////
+    ///////// User Interaction ///////////
+    //////////////////////////////////////
+    
+    _itemClick(item, e){
+        //select element
+    }
+    
+    _itemMousedown(item, e){
+        //block blur
+    }
+    
 }
 
-//autocomplete
+function select(cell, onRendered, success, cancel, editorParams){
+    var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
+
+    list.input.style.cursor = "default";
+	list.input.readOnly = (this.currentCell != false);
+
+    return list.input;
+}
+
 function autocomplete(cell, onRendered, success, cancel, editorParams){
-	var self = this,
-	cellEl = cell.getElement(),
-	initialValue = cell.getValue(),
-	vertNav = editorParams.verticalNavigation || "editor",
-	initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : ""),
-	input = document.createElement("input"),
-	listEl = document.createElement("div"),
-	displayItems = [],
-	currentItem = false,
-	blurable = true,
-	uniqueColumnValues = false;
-
-	//style input
-	input.setAttribute("type", "search");
-
-	input.style.padding = "4px";
-	input.style.width = "100%";
-	input.style.boxSizing = "border-box";
-
-	if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
-		for (let key in editorParams.elementAttributes){
-			if(key.charAt(0) == "+"){
-				key = key.slice(1);
-				input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
-			}else {
-				input.setAttribute(key, editorParams.elementAttributes[key]);
-			}
-		}
-	}
-
-	//style list element
-	listEl.classList.add("tabulator-edit-select-list");
-
-	listEl.addEventListener("mousedown", function(e){
-		blurable = false;
-
-		setTimeout(function(){
-			blurable = true;
-		}, 10);
-	});
-
-
-	function genUniqueColumnValues(){
-		if(editorParams.values === true){
-			uniqueColumnValues = getUniqueColumnValues();
-		}else if(typeof editorParams.values === "string"){
-			uniqueColumnValues = getUniqueColumnValues(editorParams.values);
-		}
-	}
-
-	function getUniqueColumnValues(field){
-		var output = {},
-		data = self.table.getData(),
-		column;
-
-		if(field){
-			column = self.table.columnManager.getColumnByField(field);
-		}else {
-			column = cell.getColumn()._getSelf();
-		}
-
-		if(column){
-			data.forEach(function(row){
-				var val = column.getFieldValue(row);
-
-				if(val !== null && typeof val !== "undefined" && val !== ""){
-					output[val] = true;
-				}
-			});
-
-			if(editorParams.sortValuesList){
-				if(editorParams.sortValuesList == "asc"){
-					output = Object.keys(output).sort();
-				}else {
-					output = Object.keys(output).sort().reverse();
-				}
-			}else {
-				output = Object.keys(output);
-			}
-		}else {
-			console.warn("unable to find matching column to create autocomplete lookup list:", field);
-		}
-
-
-		return output;
-	}
-
-	function filterList(term, intialLoad){
-		var matches = [],
-		values, items;
-
-		//lookup base values list
-		if(uniqueColumnValues){
-			values = uniqueColumnValues;
-		}else {
-			values = editorParams.values || [];
-		}
-
-		if(editorParams.searchFunc){
-			matches = editorParams.searchFunc(term, values);
-
-			if(matches instanceof Promise){
-
-				addNotice(typeof editorParams.searchingPlaceholder !== "undefined" ? editorParams.searchingPlaceholder : "Searching...");
-
-				matches.then((result) => {
-					fillListIfNotEmpty(parseItems(result), intialLoad);
-				}).catch((err) => {
-					console.err("error in autocomplete search promise:", err);
-				});
-
-			}else {
-				fillListIfNotEmpty(parseItems(matches), intialLoad);
-			}
-		}else {
-			items = parseItems(values);
-
-			if(term === ""){
-				if(editorParams.showListOnEmpty){
-					matches = items;
-				}
-			}else {
-				items.forEach(function(item){
-					if(item.value !== null || typeof item.value !== "undefined"){
-						if(String(item.value).toLowerCase().indexOf(String(term).toLowerCase()) > -1 || String(item.title).toLowerCase().indexOf(String(term).toLowerCase()) > -1){
-							matches.push(item);
-						}
-					}
-				});
-			}
-
-			fillListIfNotEmpty(matches, intialLoad);
-		}
-	}
-
-	function addNotice(notice){
-		var searchEl = document.createElement("div");
-
-		clearList();
-
-		if(notice !== false){
-			searchEl.classList.add("tabulator-edit-select-list-notice");
-			searchEl.tabIndex = 0;
-
-			if(notice instanceof Node){
-				searchEl.appendChild(notice);
-			}else {
-				searchEl.innerHTML = notice;
-			}
-
-			listEl.appendChild(searchEl);
-		}
-	}
-
-	function parseItems(inputValues){
-		var itemList = [];
-
-		if(Array.isArray(inputValues)){
-			inputValues.forEach(function(value){
-
-				var item = {};
-
-				if(typeof value === "object"){
-					item.title = editorParams.listItemFormatter ? editorParams.listItemFormatter(value.value, value.label) : value.label;
-					item.value = value.value;
-				}else {
-					item.title = editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value;
-					item.value = value;
-				}
-
-				itemList.push(item);
-			});
-		}else {
-			for(var key in inputValues){
-				var item = {
-					title:editorParams.listItemFormatter ? editorParams.listItemFormatter(key, inputValues[key]) : inputValues[key],
-					value:key,
-				};
-
-				itemList.push(item);
-			}
-		}
-
-		return itemList;
-	}
-
-	function clearList(){
-		while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
-	}
-
-	function fillListIfNotEmpty(items, intialLoad){
-		if(items.length){
-			fillList(items, intialLoad);
-		}else {
-			if(editorParams.emptyPlaceholder){
-				addNotice(editorParams.emptyPlaceholder);
-			}
-		}
-	}
-
-	function fillList(items, intialLoad){
-		var current = false;
-
-		clearList();
-
-		displayItems = items;
-
-		displayItems.forEach(function(item){
-			var el = item.element;
-
-			if(!el){
-				el = document.createElement("div");
-				el.classList.add("tabulator-edit-select-list-item");
-				el.tabIndex = 0;
-				el.innerHTML = item.title;
-
-				el.addEventListener("click", function(e){
-					setCurrentItem(item);
-					chooseItem();
-				});
-
-				el.addEventListener("mousedown", function(e){
-					blurable = false;
-
-					setTimeout(function(){
-						blurable = true;
-					}, 10);
-				});
-
-				item.element = el;
-
-				if(intialLoad && item.value == initialValue){
-					input.value = item.title;
-					item.element.classList.add("active");
-					current = true;
-				}
-
-				if(item === currentItem){
-					item.element.classList.add("active");
-					current = true;
-				}
-			}
-
-			listEl.appendChild(el);
-		});
-
-		if(!current){
-			setCurrentItem(false);
-		}
-	}
-
-	function chooseItem(){
-		hideList();
-
-		if(currentItem){
-			if(initialValue !== currentItem.value){
-				initialValue = currentItem.value;
-				input.value = currentItem.title;
-				success(currentItem.value);
-			}else {
-				cancel();
-			}
-		}else {
-			if(editorParams.freetext){
-				initialValue = input.value;
-				success(input.value);
-			}else {
-				if(editorParams.allowEmpty && input.value === ""){
-					initialValue = input.value;
-					success(input.value);
-				}else {
-					cancel();
-				}
-			}
-		}
-	}
-
-	function showList(){
-		if(!listEl.parentNode){
-			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
-
-			var offset = Helpers.elOffset(cellEl);
-
-			listEl.style.minWidth = cellEl.offsetWidth + "px";
-
-			listEl.style.top = (offset.top + cellEl.offsetHeight) + "px";
-			listEl.style.left = offset.left + "px";
-			document.body.appendChild(listEl);
-		}
-	}
-
-	function setCurrentItem(item, showInputValue){
-		if(currentItem && currentItem.element){
-			currentItem.element.classList.remove("active");
-		}
-
-		currentItem = item;
-
-		if(item && item.element){
-			item.element.classList.add("active");
-		}
-
-		if(item && item.element && item.element.scrollIntoView){
-			item.element.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
-		}
-	}
-
-	function hideList(){
-		if(listEl.parentNode){
-			listEl.parentNode.removeChild(listEl);
-		}
-
-		removeScrollListener();
-	}
-
-
-	function cancelItem(){
-		hideList();
-		cancel();
-	}
-
-	function removeScrollListener() {
-		self.table.rowManager.element.removeEventListener("scroll", cancelItem);
-	}
-
-	//allow key based navigation
-	input.addEventListener("keydown", function(e){
-		var index;
-
-		switch(e.keyCode){
-			case 38: //up arrow
-			index = displayItems.indexOf(currentItem);
-
-			if(vertNav == "editor" || (vertNav == "hybrid" && index)){
-				e.stopImmediatePropagation();
-				e.stopPropagation();
-				e.preventDefault();
-
-				if(index > 0){
-					setCurrentItem(displayItems[index - 1]);
-				}else {
-					setCurrentItem(false);
-				}
-			}
-			break;
-
-			case 40: //down arrow
-
-			index = displayItems.indexOf(currentItem);
-
-			if(vertNav == "editor" || (vertNav == "hybrid" && index < displayItems.length - 1)){
-
-				e.stopImmediatePropagation();
-				e.stopPropagation();
-				e.preventDefault();
-
-				if(index < displayItems.length - 1){
-					if(index == -1){
-						setCurrentItem(displayItems[0]);
-					}else {
-						setCurrentItem(displayItems[index + 1]);
-					}
-				}
-			}
-			break;
-
-
-			case 37: //left arrow
-			case 39: //right arrow
-			e.stopImmediatePropagation();
-			e.stopPropagation();
-			// e.preventDefault();
-			break;
-
-			case 13: //enter
-			chooseItem();
-			break;
-
-			case 27: //escape
-			cancelItem();
-			break;
-
-			case 36: //home
-			case 35: //end
-			//prevent table navigation while using input element
-			e.stopImmediatePropagation();
-			break;
-		}
-	});
-
-	input.addEventListener("keyup", function(e){
-
-		switch(e.keyCode){
-			case 38: //up arrow
-			case 37: //left arrow
-			case 39: //up arrow
-			case 40: //right arrow
-			case 13: //enter
-			case 27: //escape
-			break;
-
-			default:
-			filterList(input.value);
-		}
-
-	});
-
-	input.addEventListener("search", function(e){
-		filterList(input.value);
-	});
-
-	input.addEventListener("blur", function(e){
-		if(blurable){
-			chooseItem();
-		}
-	});
-
-	input.addEventListener("focus", function(e){
-		var value = initialDisplayValue;
-		genUniqueColumnValues();
-		showList();
-		input.value = value;
-		filterList(value, true);
-	});
-
-
-	onRendered(function(){
-		input.style.height = "100%";
-		input.focus({preventScroll: true});
-	});
-
-	if(editorParams.mask){
-		maskInput(input, editorParams);
-	}
-
-	setTimeout(() => {
-		this.table.rowManager.element.addEventListener("scroll", cancelItem);
-	}, 10);
-
-	genUniqueColumnValues();
-	input.value = initialDisplayValue;
-	filterList(initialDisplayValue, true);
-
-	return input;
+    var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
+    
+    return list.input;
 }
 
 //star rating
@@ -6897,7 +6155,7 @@ function tickCross(cell, onRendered, success, cancel, editorParams){
 }
 
 var defaultEditors = {
-	input:input,
+	input:input$1,
 	textarea:textarea,
     number:number,
     range:range,
@@ -6908,7 +6166,7 @@ var defaultEditors = {
 	tickCross:tickCross,
 };
 
-class Edit extends Module{
+class Edit$1 extends Module{
 
 	constructor(table){
 		super(table);
@@ -6919,7 +6177,7 @@ class Edit extends Module{
 		this.invalidEdit = false;
 		this.editedCells = [];
 
-		this.editors = Edit.editors;
+		this.editors = Edit$1.editors;
 
 		this.registerColumnOption("editable");
 		this.registerColumnOption("editor");
@@ -7618,10 +6876,10 @@ class Edit extends Module{
 	}
 }
 
-Edit.moduleName = "edit";
+Edit$1.moduleName = "edit";
 
 //load defaults
-Edit.editors = defaultEditors;
+Edit$1.editors = defaultEditors;
 
 class ExportRow{
 	constructor(type, columns, component, indent){
@@ -18975,7 +18233,7 @@ var modules = /*#__PURE__*/Object.freeze({
 	ColumnCalcsModule: ColumnCalcs,
 	DataTreeModule: DataTree,
 	DownloadModule: Download,
-	EditModule: Edit,
+	EditModule: Edit$1,
 	ExportModule: Export,
 	FilterModule: Filter,
 	FormatModule: Format,
@@ -24803,5 +24061,5 @@ class PseudoRow {
 	clearCellHeight(){}
 }
 
-export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup$1 as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent$1 as RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Tooltip as TooltipModule, Validate as ValidateModule };
+export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit$1 as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup$1 as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent$1 as RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Tooltip as TooltipModule, Validate as ValidateModule };
 //# sourceMappingURL=tabulator_esm.js.map

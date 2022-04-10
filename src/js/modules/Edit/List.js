@@ -1,16 +1,17 @@
 export default class Edit{
-    constructor(table, cell, onRendered, success, cancel, editorParams){
-        this.table = table;
+    constructor(editor, cell, onRendered, success, cancel, editorParams){
+        this.edit = editor;
+        this.table = editor.table;
         this.cell = cell;
         this.params = editorParams;
         
-        this.dataList = [];
-        this.displayList = [];
+        this.data = [];
         
         this.input = this._createInputElement();
         this.listEl = this._createListElement();
         
-        this.values = [];        
+        this.values = []; 
+        this.popup = null;      
         
         this.actions = {
             success:success,
@@ -21,15 +22,15 @@ export default class Edit{
     }
     
     _onRendered(){
-        input.style.height = "100%";
-        input.focus({preventScroll: true});
+        this.input.style.height = "100%";
+        this.input.focus({preventScroll: true});
     }
     
     _createListElement(){
-        var liElst = document.createElement("div");
-        list.classList.add("tabulator-edit-select-list");
+        var listEl = document.createElement("div");
+        listEl.classList.add("tabulator-edit-select-list");
         
-        return list;
+        return listEl;
     }
     
     _createInputElement(){
@@ -68,14 +69,16 @@ export default class Edit{
     
     
     _inputFocus(){
-        
+        this._generateOptions()
+        .then(this._buildList.bind(this, this.data))
+        .then(this._showList.bind(this))
     }
     
     //////////////////////////////////////
-    /////// Value List Generation ////////
+    /////// Data List Generation ////////
     //////////////////////////////////////
     
-    _generateValueList(){
+    _generateOptions(){
         var paramValues = this.params.values;
         
         if(typeof paramValues === "function"){
@@ -83,9 +86,9 @@ export default class Edit{
         }
         
         if(paramValues instanceof Promise){
-            paramValues.then(this._lookupValues.bind(this))
+            return paramValues.then(this._lookupValues.bind(this))
         }else{
-            this._lookupValues(paramValues);
+            return Promise.resolve(this._lookupValues(paramValues));
         }
     }
     
@@ -105,13 +108,13 @@ export default class Edit{
         column;
         
         if(field){
-            column = self.table.columnManager.getColumnByField(field);
+            column = this.table.columnManager.getColumnByField(field);
         }else{
-            column = cell.getColumn()._getSelf();
+            column = this.cell.getColumn()._getSelf();
         }
         
         if(column){
-            data.forEach(function(row){
+            data.forEach((row) => {
                 var val = column.getFieldValue(row);
                 
                 if(val !== null && typeof val !== "undefined" && val !== ""){
@@ -128,8 +131,7 @@ export default class Edit{
     
     
     _parseList(inputValues){
-        this.dataList = [];
-        this.displayList = [];
+        var data = [];
         
         if(!Array.isArray(inputValues)){
             inputValues = Object.entries(inputValues).map(([key, value]) => {
@@ -140,7 +142,7 @@ export default class Edit{
             });
         }
         
-        inputValues.forEach(function(value){
+        inputValues.forEach((value) => {
             if(typeof value !== "object"){
                 value = {
                     label:value,
@@ -149,43 +151,129 @@ export default class Edit{
                 };
             }
             
-            this._parseListItem(value);
+            this._parseListItem(value, data);
+            
+            this.data = data;
         });
     }
     
-    _parseListItem(value){
+    _parseListItem(option, data){
         var item = {};
         
-        if(value.options){
-            this._parseListGroup(value);
+        if(option.options){
+            this._parseListGroup(option);
         }else{
             item = {
-				label:value.label,
-				value:this.params.listItemFormatter ? this.params.listItemFormatter(value.value, value.label) : value.label,
-				itemParams:value.itemParams,
-				elementAttributes: value.elementAttributes,
-				element:false,
-			};
-
-            this.dataList.push(item);
-			this.displayList.push(item);
+                label:option.label,
+                value:option.option,
+                itemParams:option.itemParams,
+                elementAttributes: option.elementAttributes,
+                element:false,
+            };
+            
+            data.push(item);
         }
     }
     
-    _parseListGroup(value){
+    _parseListGroup(option){
         var item = {
-            label:value.label,
+            label:option.label,
             group:true,
-            itemParams:value.itemParams,
-            elementAttributes:value.elementAttributes,
+            itemParams:option.itemParams,
+            elementAttributes:option.elementAttributes,
             element:false,
+            options:[],
         };
         
         this.displayList.push(item);
         
-        value.options.forEach(function(item){
-            this._parseListItem(item);
+        option.options.forEach((child) => {
+            this._parseListItem(child, item.options);
         });
+    }
+    
+    
+    //////////////////////////////////////
+    /////////// Display List /////////////
+    //////////////////////////////////////
+    
+    _clearList(){
+        while(this.listEl.firstChild) this.listEl.removeChild(this.listEl.firstChild);
+    }
+
+    _buildList(data){
+        this._clearList();
+
+        data.forEach((option) => {
+            this._buildItem(option);
+        });
+    }
+    
+    _buildItem(item){
+        var el = item.element,
+        contents;
+        
+        if(!el){
+            el = document.createElement("div");
+            el.tabIndex = 0;
+            
+            contents = this.params.listItemFormatter ? this.params.listItemFormatter(item, el) : item.label;
+            
+            if(contents instanceof HTMLElement){
+                el.appendChild(contents)
+            }else{
+                el.innerHTML = contents;
+            }
+            
+            if(item.group){
+                el.classList.add("tabulator-edit-select-list-group");
+            }else{
+                el.classList.add("tabulator-edit-select-list-item");
+            }
+            
+            if(item.elementAttributes && typeof item.elementAttributes == "object"){
+                for (let key in item.elementAttributes){
+                    if(key.charAt(0) == "+"){
+                        key = key.slice(1);
+                        el.setAttribute(key, input.getAttribute(key) + item.elementAttributes["+" + key]);
+                    }else{
+                        el.setAttribute(key, item.elementAttributes[key]);
+                    }
+                }
+            }
+            
+            el.addEventListener("click", this._itemClick.bind(this, item));
+
+            item.el = el;
+        }
+
+        this.listEl.appendChild(el);
+
+        if(item.group){
+            item.options.forEach((option) => {
+                this._buildItem(option);
+            });
+        }
+    }
+
+    _showList(){
+        if(!this.popup){
+            this.popup = this.edit.popup(this.listEl);
+        }
+
+        this.popup.show(this.cell.getElement());
+    }
+    
+    //////////////////////////////////////
+    ///////// User Interaction ///////////
+    //////////////////////////////////////
+    
+    _itemClick(item, e){
+        //select element
+    }
+    
+    _itemMousedown(item, e){
+        //block blur
     }
     
 }

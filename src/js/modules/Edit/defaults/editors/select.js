@@ -19,36 +19,36 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	searchWord = "",
 	searchWordTimeout = null;
 
-	if(Array.isArray(editorParams) || (!Array.isArray(editorParams) && typeof editorParams === "object" && !editorParams.values)){
-		console.warn("DEPRECATION WARNING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
-		editorParams = {values:editorParams};
-	}
+	// if(Array.isArray(editorParams) || (!Array.isArray(editorParams) && typeof editorParams === "object" && !editorParams.values)){
+	// 	console.warn("DEPRECATION WARNING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
+	// 	editorParams = {values:editorParams};
+	// }
 
-	function getUniqueColumnValues(field){
-		var output = {},
-		data = self.table.getData(),
-		column;
+	// function getUniqueColumnValues(field){
+	// 	var output = {},
+	// 	data = self.table.getData(),
+	// 	column;
 
-		if(field){
-			column = self.table.columnManager.getColumnByField(field);
-		}else{
-			column = cell.getColumn()._getSelf();
-		}
+	// 	if(field){
+	// 		column = self.table.columnManager.getColumnByField(field);
+	// 	}else{
+	// 		column = cell.getColumn()._getSelf();
+	// 	}
 
-		if(column){
-			data.forEach(function(row){
-				var val = column.getFieldValue(row);
+	// 	if(column){
+	// 		data.forEach(function(row){
+	// 			var val = column.getFieldValue(row);
 
-				if(val !== null && typeof val !== "undefined" && val !== ""){
-					output[val] = true;
-				}
-			});
-		}else{
-			console.warn("unable to find matching column to create select lookup list:", field);
-		}
+	// 			if(val !== null && typeof val !== "undefined" && val !== ""){
+	// 				output[val] = true;
+	// 			}
+	// 		});
+	// 	}else{
+	// 		console.warn("unable to find matching column to create select lookup list:", field);
+	// 	}
 
-		return Object.keys(output);
-	}
+	// 	return Object.keys(output);
+	// }
 
 	function parseItems(inputValues, curentValues){
 		var dataList = [];
@@ -447,24 +447,24 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	}
 
 	//style input
-	input.setAttribute("type", "text");
+	// input.setAttribute("type", "text");
 
-	input.style.padding = "4px";
-	input.style.width = "100%";
-	input.style.boxSizing = "border-box";
-	input.style.cursor = "default";
-	input.readOnly = (this.currentCell != false);
+	// input.style.padding = "4px";
+	// input.style.width = "100%";
+	// input.style.boxSizing = "border-box";
+	// input.style.cursor = "default";
+	// input.readOnly = (this.currentCell != false);
 
-	if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
-		for (let key in editorParams.elementAttributes){
-			if(key.charAt(0) == "+"){
-				key = key.slice(1);
-				input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
-			}else{
-				input.setAttribute(key, editorParams.elementAttributes[key]);
-			}
-		}
-	}
+	// if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+	// 	for (let key in editorParams.elementAttributes){
+	// 		if(key.charAt(0) == "+"){
+	// 			key = key.slice(1);
+	// 			input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+	// 		}else{
+	// 			input.setAttribute(key, editorParams.elementAttributes[key]);
+	// 		}
+	// 	}
+	// }
 
 	input.value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
 
@@ -577,10 +577,10 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	listEl = document.createElement("div");
 	listEl.classList.add("tabulator-edit-select-list");
 
-	onRendered(function(){
-		input.style.height = "100%";
-		input.focus({preventScroll: true});
-	});
+	// onRendered(function(){
+	// 	input.style.height = "100%";
+	// 	input.focus({preventScroll: true});
+	// });
 
 	setTimeout(() => {
 		this.table.rowManager.element.addEventListener("scroll", cancelItem);

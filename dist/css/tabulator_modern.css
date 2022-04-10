@@ -845,16 +845,10 @@
 }
 
 .tabulator-edit-select-list {
-  position: absolute;
-  display: inline-block;
-  box-sizing: border-box;
   max-height: 200px;
-  background: #f3f3f3;
-  border: 1px solid #fff;
   font-size: 16px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  z-index: 10000;
 }
 
 .tabulator-edit-select-list .tabulator-edit-select-list-item {

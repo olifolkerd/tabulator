@@ -18,25 +18,25 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	uniqueColumnValues = false;
 
 	//style input
-	input.setAttribute("type", "search");
+	// input.setAttribute("type", "search");
 
-	input.style.padding = "4px";
-	input.style.width = "100%";
-	input.style.boxSizing = "border-box";
+	// input.style.padding = "4px";
+	// input.style.width = "100%";
+	// input.style.boxSizing = "border-box";
 
-	if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
-		for (let key in editorParams.elementAttributes){
-			if(key.charAt(0) == "+"){
-				key = key.slice(1);
-				input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
-			}else{
-				input.setAttribute(key, editorParams.elementAttributes[key]);
-			}
-		}
-	}
+	// if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+	// 	for (let key in editorParams.elementAttributes){
+	// 		if(key.charAt(0) == "+"){
+	// 			key = key.slice(1);
+	// 			input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+	// 		}else{
+	// 			input.setAttribute(key, editorParams.elementAttributes[key]);
+	// 		}
+	// 	}
+	// }
 
 	//style list element
-	listEl.classList.add("tabulator-edit-select-list");
+	// listEl.classList.add("tabulator-edit-select-list");
 
 	listEl.addEventListener("mousedown", function(e){
 		blurable = false;
@@ -55,25 +55,25 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 
-	function getUniqueColumnValues(field){
-		var output = {},
-		data = self.table.getData(),
-		column;
+	// function getUniqueColumnValues(field){
+	// 	var output = {},
+	// 	data = self.table.getData(),
+	// 	column;
 
-		if(field){
-			column = self.table.columnManager.getColumnByField(field);
-		}else{
-			column = cell.getColumn()._getSelf();
-		}
+	// 	if(field){
+	// 		column = self.table.columnManager.getColumnByField(field);
+	// 	}else{
+	// 		column = cell.getColumn()._getSelf();
+	// 	}
 
-		if(column){
-			data.forEach(function(row){
-				var val = column.getFieldValue(row);
+	// 	if(column){
+	// 		data.forEach(function(row){
+	// 			var val = column.getFieldValue(row);
 
-				if(val !== null && typeof val !== "undefined" && val !== ""){
-					output[val] = true;
-				}
-			});
+	// 			if(val !== null && typeof val !== "undefined" && val !== ""){
+	// 				output[val] = true;
+	// 			}
+	// 		});
 
 			if(editorParams.sortValuesList){
 				if(editorParams.sortValuesList == "asc"){
@@ -84,13 +84,13 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			}else{
 				output = Object.keys(output);
 			}
-		}else{
-			console.warn("unable to find matching column to create autocomplete lookup list:", field);
-		}
+	// 	}else{
+	// 		console.warn("unable to find matching column to create autocomplete lookup list:", field);
+	// 	}
 
 
-		return output;
-	}
+	// 	return output;
+	// }
 
 	function filterList(term, intialLoad){
 		var matches = [],
@@ -159,37 +159,37 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 
-	function parseItems(inputValues){
-		var itemList = [];
+	// function parseItems(inputValues){
+	// 	var itemList = [];
 
-		if(Array.isArray(inputValues)){
-			inputValues.forEach(function(value){
+	// 	if(Array.isArray(inputValues)){
+	// 		inputValues.forEach(function(value){
 
-				var item = {};
+	// 			var item = {};
 
-				if(typeof value === "object"){
-					item.title = editorParams.listItemFormatter ? editorParams.listItemFormatter(value.value, value.label) : value.label;
-					item.value = value.value;
-				}else{
-					item.title = editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value;
-					item.value = value;
-				}
+	// 			if(typeof value === "object"){
+	// 				item.title = editorParams.listItemFormatter ? editorParams.listItemFormatter(value.value, value.label) : value.label;
+	// 				item.value = value.value;
+	// 			}else{
+	// 				item.title = editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value;
+	// 				item.value = value;
+	// 			}
 
-				itemList.push(item);
-			});
-		}else{
-			for(var key in inputValues){
-				var item = {
-					title:editorParams.listItemFormatter ? editorParams.listItemFormatter(key, inputValues[key]) : inputValues[key],
-					value:key,
-				};
+	// 			itemList.push(item);
+	// 		});
+	// 	}else{
+	// 		for(var key in inputValues){
+	// 			var item = {
+	// 				title:editorParams.listItemFormatter ? editorParams.listItemFormatter(key, inputValues[key]) : inputValues[key],
+	// 				value:key,
+	// 			};
 
-				itemList.push(item);
-			}
-		}
+	// 			itemList.push(item);
+	// 		}
+	// 	}
 
-		return itemList;
-	}
+	// 	return itemList;
+	// }
 
 	function clearList(){
 		while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
@@ -431,10 +431,10 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	});
 
 
-	onRendered(function(){
-		input.style.height = "100%";
-		input.focus({preventScroll: true});
-	});
+	// onRendered(function(){
+	// 	input.style.height = "100%";
+	// 	input.focus({preventScroll: true});
+	// });
 
 	if(editorParams.mask){
 		maskInput(input, editorParams);
