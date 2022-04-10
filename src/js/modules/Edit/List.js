@@ -29,6 +29,8 @@ export default class Edit{
     _createListElement(){
         var listEl = document.createElement("div");
         listEl.classList.add("tabulator-edit-select-list");
+
+        listEl.style.minWidth = this.cell.getElement().offsetWidth + "px";
         
         return listEl;
     }
@@ -261,7 +263,7 @@ export default class Edit{
             this.popup = this.edit.popup(this.listEl);
         }
 
-        this.popup.show(this.cell.getElement());
+        this.popup.show(this.cell.getElement(), "bottom");
     }
     
     //////////////////////////////////////
