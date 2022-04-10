@@ -11,7 +11,9 @@ export default class Edit{
         this.listEl = this._createListElement();
         
         this.values = []; 
-        this.popup = null;      
+        this.popup = null;  
+        
+        this.blurable = true;
         
         this.actions = {
             success:success,
@@ -29,8 +31,10 @@ export default class Edit{
     _createListElement(){
         var listEl = document.createElement("div");
         listEl.classList.add("tabulator-edit-select-list");
-
+        
         listEl.style.minWidth = this.cell.getElement().offsetWidth + "px";
+        
+        listEl.addEventListener("mousedown", this._preventBlur.bind(this));
         
         return listEl;
     }
@@ -67,13 +71,33 @@ export default class Edit{
     
     _bindInputEvents(input){
         input.addEventListener("focus", this._inputFocus.bind(this))
+        input.addEventListener("click", this._inputClick.bind(this))
+        input.addEventListener("blur", this._inputBlur.bind(this))
     }
     
     
-    _inputFocus(){
+    _inputFocus(e){
         this._generateOptions()
         .then(this._buildList.bind(this, this.data))
         .then(this._showList.bind(this))
+    }
+
+    _inputClick(e){
+        e.stopPropagation();
+    }
+
+    _inputBlur(e){
+        if(this.blurable && this.popup){
+            this.popup.hide();
+        }
+    }
+
+    _preventBlur(){
+        this.blurable = false;
+
+		setTimeout(function(){
+			this.blurable = true;
+		}, 10);
     }
     
     //////////////////////////////////////
@@ -202,10 +226,10 @@ export default class Edit{
     _clearList(){
         while(this.listEl.firstChild) this.listEl.removeChild(this.listEl.firstChild);
     }
-
+    
     _buildList(data){
         this._clearList();
-
+        
         data.forEach((option) => {
             this._buildItem(option);
         });
@@ -245,25 +269,29 @@ export default class Edit{
             }
             
             el.addEventListener("click", this._itemClick.bind(this, item));
-
+            el.addEventListener("mousedown", this._preventBlur.bind(this));
+            
             item.el = el;
         }
-
+        
         this.listEl.appendChild(el);
-
+        
         if(item.group){
             item.options.forEach((option) => {
                 this._buildItem(option);
             });
         }
     }
-
+    
     _showList(){
         if(!this.popup){
             this.popup = this.edit.popup(this.listEl);
         }
+        
+        if(!this.popup.isVisible()){
+            this.popup.show(this.cell.getElement(), "bottom").hideOnBlur(this._chooseItem.bind(this));
 
-        this.popup.show(this.cell.getElement(), "bottom");
+        }
     }
     
     //////////////////////////////////////
@@ -272,10 +300,15 @@ export default class Edit{
     
     _itemClick(item, e){
         //select element
+        e.stopPropagation();
     }
-    
-    _itemMousedown(item, e){
-        //block blur
+
+    //////////////////////////////////////
+    ////// Current Item Management ///////
+    //////////////////////////////////////
+
+    _chooseItem(){
+        console.log("choose")
     }
     
 }
