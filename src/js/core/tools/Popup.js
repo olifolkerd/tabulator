@@ -71,33 +71,54 @@ export default class Popup extends CoreFeature{
             x -= parentOffset.left;
             y -= parentOffset.top;
         }
-
+        
         return {x, y};
     }
     
-    show(origin, originY){
+    elementPositionCoords(element, position = "right"){
+        var offset = Helpers.elOffset(element),
+        containerOffset, x, y;
+        
+        if(this.container !== document.body){
+            containerOffset = Helpers.elOffset(this.container);
+            
+            offset.left -= containerOffset.left;
+            offset.top -= containerOffset.top;
+        }
+        
+        switch(position){
+            case "right":
+                x = offset.left + element.offsetWidth;
+                y = offset.top - 1;
+            break;
+            
+            case "bottom":
+                x = offset.left;
+                y = offset.top + element.offsetHeight;
+            break;
+        }
+
+        return {x, y, offset};
+    }
+    
+    show(origin, position){
         var x, y, parentEl, parentOffset, containerOffset, coords;
         
         if(origin instanceof HTMLElement){
             parentEl = origin;
-            parentOffset = Helpers.elOffset(parentEl);
+            coords = this.elementPositionCoords(origin, position);
+
+            parentOffset = coords.offset;
+            x = coords.x;
+            y = coords.y;
             
-            if(this.container !== document.body){
-                containerOffset = Helpers.elOffset(this.container);
-                
-                parentOffset.left -= containerOffset.left;
-                parentOffset.top -= containerOffset.top;
-            }
-            
-            x = parentOffset.left + parentEl.offsetWidth;
-            y = parentOffset.top - 1;
         }else if(typeof origin === "number"){
             parentOffset = {top:0, left:0};
             x = origin;
-            y = originY;
+            y = position;
         }else{
             coords = this.containerEventCoords(origin);
-
+            
             x = coords.x;
             y = coords.y;
             
