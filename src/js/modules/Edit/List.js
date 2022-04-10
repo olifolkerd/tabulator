@@ -6,6 +6,8 @@ export default class Edit{
         this.params = editorParams;
         
         this.data = [];
+        this.currentItems = [];
+        this.activeItems = [];
         
         this.input = this._createInputElement();
         this.listEl = this._createListElement();
@@ -204,7 +206,7 @@ export default class Edit{
         }else{
             item = {
                 label:option.label,
-                value:option.option,
+                value:option.value,
                 itemParams:option.itemParams,
                 elementAttributes: option.elementAttributes,
                 element:false,
@@ -302,7 +304,7 @@ export default class Edit{
         }
         
         if(!this.popup.isVisible()){
-            this.popup.show(this.cell.getElement(), "bottom").hideOnBlur(this._chooseItem.bind(this));
+            this.popup.show(this.cell.getElement(), "bottom").hideOnBlur(this._resolveValue.bind(this));
 
         }
     }
@@ -314,14 +316,43 @@ export default class Edit{
     _itemClick(item, e){
         //select element
         e.stopPropagation();
+
+        this._chooseValue(item);
     }
 
     //////////////////////////////////////
     ////// Current Item Management ///////
     //////////////////////////////////////
 
-    _chooseItem(){
-        console.log("choose")
+    _chooseValue(item){
+        var index;
+
+        if(this.params.multiselect){
+            index = this.currentItems.indexOf("item");
+
+            if(index > -1){
+                this.currentItems.splice(index, 1);
+            }else{
+                this.currentItems.push(item);
+            }
+
+        }else{
+            this.currentItems = [item];
+
+            this._resolveValue();
+        }
+    }
+
+    _resolveValue(){
+        var value;
+
+        this.popup.hide(true);
+
+        if(this.params.multiselect){
+            this.actions.success(this.currentItems.map(item => item.value));
+        }else{
+            this.actions.success(this.currentItems[0] ? this.currentItems[0].value : null);
+        }
     }
     
 }
