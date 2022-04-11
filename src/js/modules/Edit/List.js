@@ -65,7 +65,6 @@ export default class Edit{
         var attribs = this.params.elementAttributes;
         var input = document.createElement("input");
         
-        // input.setAttribute("type", "search");
         input.setAttribute("type", this.params.clearable ? "search" : "text");
         
         input.style.padding = "4px";
@@ -178,7 +177,6 @@ export default class Edit{
             
             default:
             this._keySelectLetter(e);
-            e.preventDefault();
         }
     }
     
@@ -270,9 +268,9 @@ export default class Edit{
     
     _keySelectLetter(e){
         if(!this.params.autocomplete){
-            if(this.edit.currentCell === false){
+            // if(this.edit.currentCell === false){
                 e.preventDefault();
-            }
+            // }
             
             if(e.keyCode >= 38 && e.keyCode <= 90){
                 this._scrollToValue(e.keyCode);
