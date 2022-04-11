@@ -29,8 +29,24 @@ export default class Edit{
             success:success,
             cancel:cancel
         }
+
+        this._deprecationCheck();
         
         onRendered(this._onRendered.bind(this));
+    }
+
+    _deprecationCheck(){
+        if(this.params.listItemFormatter){
+            console.warn("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
+        }
+
+        if(this.params.sortValuesList){
+            console.warn("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
+        }
+
+        if(this.params.sortValuesList){
+            console.warn("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
+        }
     }
     
     _onRendered(){
@@ -616,7 +632,7 @@ export default class Edit{
                 el = document.createElement("div");
                 el.tabIndex = 0;
                 
-                contents = this.params.listItemFormatter ? this.params.listItemFormatter(item, el) : item.label;
+                contents = this.params.itemFormatter ? this.params.itemFormatter(item, el) : item.label;
                 
                 if(contents instanceof HTMLElement){
                     el.appendChild(contents)
