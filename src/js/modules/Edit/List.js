@@ -56,6 +56,16 @@ export default class Edit{
         listEl.classList.add("tabulator-edit-list");
         
         listEl.style.minWidth = this.cell.getElement().offsetWidth + "px";
+
+        if(this.params.maxWidth){
+            if(this.params.maxWidth === true){
+                listEl.style.maxWidth = this.cell.getElement().offsetWidth + "px";
+            }else if(typeof this.params.maxWidth === "number"){
+                listEl.style.maxWidth = this.params.maxWidth + "px";
+            }else{
+                listEl.style.maxWidth = this.params.maxWidth;
+            }
+        }
         
         listEl.addEventListener("mousedown", this._preventBlur.bind(this));
         listEl.addEventListener("keydown", this._inputKeyDown.bind(this))
