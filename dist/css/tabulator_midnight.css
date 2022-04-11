@@ -845,50 +845,70 @@
   border-top: 1px solid #888;
 }
 
-.tabulator-edit-select-list {
+.tabulator-edit-list {
   max-height: 200px;
   font-size: 14px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-item {
+.tabulator-edit-list .tabulator-edit-list-item {
   padding: 4px;
   color: #fff;
   outline: none;
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-item.active {
+.tabulator-edit-list .tabulator-edit-list-item.active {
   color: #666;
   background: #999;
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-item.active.focused {
+.tabulator-edit-list .tabulator-edit-list-item.active.focused {
   outline: 1px solid rgba(102, 102, 102, 0.5);
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-item.focused {
+.tabulator-edit-list .tabulator-edit-list-item.focused {
   outline: 1px solid #999;
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-item:hover {
+.tabulator-edit-list .tabulator-edit-list-item:hover {
   cursor: pointer;
   color: #666;
   background: #999;
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-notice {
+.tabulator-edit-list .tabulator-edit-list-notice {
   padding: 4px;
   color: #fff;
   text-align: center;
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-group {
+.tabulator-edit-list .tabulator-edit-list-group {
   border-bottom: 1px solid #888;
   padding: 4px;
   padding-top: 6px;
   color: #fff;
   font-weight: bold;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.tabulator-edit-list-group-level-2,
+.tabulator-edit-list .tabulator-edit-list-group.tabulator-edit-list-group-level-2 {
+  padding-left: 12px;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.tabulator-edit-list-group-level-3,
+.tabulator-edit-list .tabulator-edit-list-group.tabulator-edit-list-group-level-3 {
+  padding-left: 20px;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.tabulator-edit-list-group-level-4,
+.tabulator-edit-list .tabulator-edit-list-group.tabulator-edit-list-group-level-4 {
+  padding-left: 28px;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.tabulator-edit-list-group-level-5,
+.tabulator-edit-list .tabulator-edit-list-group.tabulator-edit-list-group-level-5 {
+  padding-left: 36px;
 }
 
 .tabulator.tabulator-ltr {

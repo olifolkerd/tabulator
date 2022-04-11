@@ -53,7 +53,7 @@ export default class Edit{
     
     _createListElement(){
         var listEl = document.createElement("div");
-        listEl.classList.add("tabulator-edit-select-list");
+        listEl.classList.add("tabulator-edit-list");
         
         listEl.style.minWidth = this.cell.getElement().offsetWidth + "px";
         
@@ -413,7 +413,7 @@ export default class Edit{
                 };
             }
             
-            this._parseListItem(value, data);
+            this._parseListItem(value, data, 0);
         });
         
         this.data = data;
@@ -421,11 +421,11 @@ export default class Edit{
         return data;    
     }
     
-    _parseListItem(option, data){
+    _parseListItem(option, data, level){
         var item = {};
         
         if(option.options){
-            this._parseListGroup(option);
+            item = this._parseListGroup(option, level + 1);
         }else{
             item = {
                 label:option.label,
@@ -435,17 +435,18 @@ export default class Edit{
                 element:false,
                 selected:false,
                 visible:true,
+                level:level,
             };
-            
-            data.push(item);
             
             if(this.initialValues && this.initialValues.indexOf(option.value) > -1){
                 this._chooseItem(item, true);
             }
         }
+
+        data.push(item);
     }
     
-    _parseListGroup(option, data){
+    _parseListGroup(option, level){
         var item = {
             label:option.label,
             group:true,
@@ -453,14 +454,15 @@ export default class Edit{
             elementAttributes:option.elementAttributes,
             element:false,
             visible:true,
+            level:level,
             options:[],
         };
-        
-        data.push(item);
-        
+
         option.options.forEach((child) => {
-            this._parseListItem(child, item.options);
+            this._parseListItem(child, item.options, level);
         });
+
+        return item;
     }
     
     _sortOptions(options){
@@ -613,10 +615,12 @@ export default class Edit{
                 }
                 
                 if(item.group){
-                    el.classList.add("tabulator-edit-select-list-group");
+                    el.classList.add("tabulator-edit-list-group");
                 }else{
-                    el.classList.add("tabulator-edit-select-list-item");
+                    el.classList.add("tabulator-edit-list-item");
                 }
+
+                el.classList.add("tabulator-edit-list-group-level-" + item.level);
                 
                 if(item.elementAttributes && typeof item.elementAttributes == "object"){
                     for (let key in item.elementAttributes){
