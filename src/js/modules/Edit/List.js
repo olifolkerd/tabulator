@@ -1,3 +1,5 @@
+import maskInput from './inputMask.js';
+
 export default class Edit{
     constructor(editor, cell, onRendered, success, cancel, editorParams){
         this.edit = editor;
@@ -88,6 +90,10 @@ export default class Edit{
             }
         }
         
+        if(this.params.mask){
+            maskInput(input, this.params);
+        }
+
         this._bindInputEvents(input);
         
         return input;
