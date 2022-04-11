@@ -1,4 +1,5 @@
 import maskInput from './inputMask.js';
+import urlBuilder from '../Ajax/defaults/urlGenerator.js';
 
 export default class Edit{
     constructor(editor, cell, onRendered, success, cancel, editorParams){
@@ -29,21 +30,21 @@ export default class Edit{
             success:success,
             cancel:cancel
         }
-
+        
         this._deprecationCheck();
         
         onRendered(this._onRendered.bind(this));
     }
-
+    
     _deprecationCheck(){
         if(this.params.listItemFormatter){
             console.warn("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
         }
-
+        
         if(this.params.sortValuesList){
             console.warn("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
         }
-
+        
         if(this.params.sortValuesList){
             console.warn("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
         }
@@ -72,7 +73,7 @@ export default class Edit{
         listEl.classList.add("tabulator-edit-list");
         
         listEl.style.minWidth = this.cell.getElement().offsetWidth + "px";
-
+        
         if(this.params.maxWidth){
             if(this.params.maxWidth === true){
                 listEl.style.maxWidth = this.cell.getElement().offsetWidth + "px";
@@ -119,7 +120,7 @@ export default class Edit{
         if(this.params.mask){
             maskInput(input, this.params);
         }
-
+        
         this._bindInputEvents(input);
         
         return input;
@@ -154,7 +155,7 @@ export default class Edit{
     }
     
     _filter(){
-        if(this.params.ajaxURL){
+        if(this.params.filterRemote){
             this.rebuildOptionsList();
         }else{
             this._filterList();
@@ -355,6 +356,9 @@ export default class Edit{
         .then(this._sortOptions.bind(this))
         .then(this._buildList.bind(this))
         .then(this._showList.bind(this))
+        .catch((e) => {
+            console.error("List generation error", e)
+        })
     }
     
     _filterList(){
@@ -367,10 +371,10 @@ export default class Edit{
         
         this.filtered = false;
         
-        //TODO - Handle AJAX;
-        
         if(typeof paramValues === "function"){
-            paramValues = paramValues(cell);
+            paramValues = paramValues(cell, this.input.value);
+        }else if (typeof paramValues === "string"){
+            paramValues = this._ajaxRequest(paramValues, this.input.value);
         }
         
         if(paramValues instanceof Promise){
@@ -378,6 +382,29 @@ export default class Edit{
         }else{
             return Promise.resolve(this._lookupValues(paramValues));
         }
+    }
+    
+    _ajaxRequest(url, term){
+        var params = this.params.filterRemote ? {term:term} : {};
+        url = urlBuilder(url, {}, params);
+
+        return fetch(url)
+        .then((response)=>{
+            if(response.ok) {
+                return response.json()
+                .catch((error)=>{
+                    console.warn("List Ajax Load Error - Invalid JSON returned", error);
+                    return Promise.reject(error);
+                });
+            }else{
+                console.error("List Ajax Load Error - Connection Error: " + response.status, response.statusText);
+                return Promise.reject(response);
+            }
+        })
+        .catch((error)=>{
+            console.error("List Ajax Load Error - Connection Error: ", error);
+            return Promise.reject(error);
+        });
     }
     
     _lookupValues(paramValues){
@@ -468,7 +495,7 @@ export default class Edit{
                 this._chooseItem(item, true);
             }
         }
-
+        
         data.push(item);
     }
     
@@ -483,11 +510,11 @@ export default class Edit{
             level:level,
             options:[],
         };
-
+        
         option.options.forEach((child) => {
             this._parseListItem(child, item.options, level);
         });
-
+        
         return item;
     }
     
@@ -518,7 +545,7 @@ export default class Edit{
     _defaultSortFunction(as, bs){
         var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
         var emptyAlign = 0;
-
+        
         if(this.params.sort === "desc"){
             [as, bs] = [bs, as];
         }
@@ -645,7 +672,7 @@ export default class Edit{
                 }else{
                     el.classList.add("tabulator-edit-list-item");
                 }
-
+                
                 el.classList.add("tabulator-edit-list-group-level-" + item.level);
                 
                 if(item.elementAttributes && typeof item.elementAttributes == "object"){

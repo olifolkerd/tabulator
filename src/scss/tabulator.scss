@@ -554,7 +554,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		
 		margin-left: -3px;
 		margin-right: -3px;
-
+		
 		z-index: 10;
 		vertical-align: middle;
 		
@@ -983,16 +983,16 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	position: absolute;
 	display:inline-block;
 	box-sizing:border-box;
-
+	
 	background:$rowBackgroundColor;
 	border:1px solid $rowBorderColor;
 	box-shadow: 0 0 5px 0 rgba(0, 0, 0, .2);
-
+	
 	font-size:$textSize;
-
+	
 	overflow-y:auto;
 	-webkit-overflow-scrolling: touch;
-
+	
 	z-index: 10000;
 }
 
@@ -1002,14 +1002,14 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 .tabulator-tooltip{
 	max-width: Min(500px, 100%);
-
+	
 	padding:3px 5px;
-
+	
 	border-radius: 2px;
 	box-shadow:none;
-
+	
 	font-size:12px;
-
+	
 	pointer-events: none;
 }
 
@@ -1060,7 +1060,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	}
 }
 
-.tabulator-edit-select-list{
+.tabulator-edit-list{
 	max-height:200px;
 	
 	font-size:$textSize;
@@ -1068,7 +1068,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	overflow-y:auto;
 	-webkit-overflow-scrolling: touch;
 	
-	.tabulator-edit-select-list-item{
+	.tabulator-edit-list-item{
 		padding:4px;
 		
 		color:$rowTextColor;
@@ -1095,14 +1095,14 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		}
 	}
 	
-	.tabulator-edit-select-list-notice{
+	.tabulator-edit-list-notice{
 		padding:4px;
 		
 		color:$rowTextColor;
 		text-align: center;
 	}
 	
-	.tabulator-edit-select-list-group{
+	.tabulator-edit-list-group{
 		border-bottom:1px solid $rowBorderColor;
 		
 		padding:4px;
@@ -1110,6 +1110,25 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		
 		color:$rowTextColor;
 		font-weight:bold;
+		
+	}
+	
+	.tabulator-edit-list-item, .tabulator-edit-list-group{
+		&.tabulator-edit-list-group-level-2{
+			padding-left:12px;
+		}
+		
+		&.tabulator-edit-list-group-level-3{
+			padding-left:20px;
+		}
+		
+		&.tabulator-edit-list-group-level-4{
+			padding-left:28px;
+		}
+		
+		&.tabulator-edit-list-group-level-5{
+			padding-left:36px;
+		}
 	}
 }
 
@@ -1175,7 +1194,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 	}
-
+	
 }
 
 
