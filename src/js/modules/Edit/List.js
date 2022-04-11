@@ -70,11 +70,11 @@ export default class Edit{
         input.style.padding = "4px";
         input.style.width = "100%";
         input.style.boxSizing = "border-box";
-
+        
         if(!this.params.autocomplete){
             input.style.cursor = "default";
             input.style.caretColor = "transparent";
-	        // input.readOnly = (this.edit.currentCell != false);
+            // input.readOnly = (this.edit.currentCell != false);
         }
         
         if(attribs && typeof attribs == "object"){
@@ -138,7 +138,7 @@ export default class Edit{
             this.popup.hide();
         }
     }
-
+    
     _inputSearch(){
         this._clearChoices();
     }
@@ -194,8 +194,6 @@ export default class Edit{
             this._keyAutoCompLetter(e);
         }
     }
-    
-    
     
     _preventBlur(){
         this.blurable = false;
@@ -269,7 +267,7 @@ export default class Edit{
     _keySelectLetter(e){
         if(!this.params.autocomplete){
             // if(this.edit.currentCell === false){
-                e.preventDefault();
+            e.preventDefault();
             // }
             
             if(e.keyCode >= 38 && e.keyCode <= 90){
@@ -334,7 +332,7 @@ export default class Edit{
     
     _generateOptions(){
         var paramValues = this.params.values;
-
+        
         this.filtered = false;
         
         //TODO - Handle AJAX;
@@ -458,22 +456,80 @@ export default class Edit{
             this._parseListItem(child, item.options);
         });
     }
-
+    
     _sortOptions(options){
-
-       //TODO Sort Values 
-
+        var sorter;
+        
+        if(this.params.sort){
+            sorter = typeof this.params.sort === "function" ? this.params.sort : this._defaultSortFunction.bind(this);
+            
+            this._sortGroup(sorter, options);
+        }
+        
         return options;
+    }
+    
+    _sortGroup(sorter, options){
+        options.sort((a,b) => {
+            return sorter(a.label, b.label, a, b);
+        });
+        
+        options.forEach((option) => {
+            if(option.group){
+                this._sortGroup(sorter, option.options);
+            }
+        })
+    }
+    
+    _defaultSortFunction(as, bs){
+        var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
+        var emptyAlign = 0;
+
+        if(this.params.sort === "desc"){
+            [as, bs] = [bs, as];
+        }
+        
+        //handle empty values
+        if(!as && as!== 0){
+            emptyAlign =  !bs && bs!== 0 ? 0 : -1;
+        }else if(!bs && bs!== 0){
+            emptyAlign =  1;
+        }else{
+            if(isFinite(as) && isFinite(bs)) return as - bs;
+            a = String(as).toLowerCase();
+            b = String(bs).toLowerCase();
+            if(a === b) return 0;
+            if(!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
+            a = a.match(rx);
+            b = b.match(rx);
+            L = a.length > b.length ? b.length : a.length;
+            while(i < L){
+                a1= a[i];
+                b1= b[i++];
+                if(a1 !== b1){
+                    if(isFinite(a1) && isFinite(b1)){
+                        if(a1.charAt(0) === "0") a1 = "." + a1;
+                        if(b1.charAt(0) === "0") b1 = "." + b1;
+                        return a1 - b1;
+                    }
+                    else return a1 > b1 ? 1 : -1;
+                }
+            }
+            
+            return a.length > b.length;
+        }
+        
+        return emptyAlign;
     }
     
     _filterOptions(){
         var filterFunc = this.params.filterFunc || this._defaultFilterFunc;
         var term = this.input.value;
         var results = [];
-
+        
         if(term){
             this.filtered = true;
-
+            
             this.data.forEach((item) => {
                 this._filterItem(filterFunc, term, item);
             });
@@ -626,15 +682,15 @@ export default class Edit{
         this.popup.hide(true);
         this.actions.cancel();
     }
-
+    
     _clearChoices(){
         this.currentItems.forEach((item) => {
             item.selected = false;
             this._styleItem(item);
         });
-
+        
         this.currentItems = [];
-
+        
         this._focusItem = null;
     }
     
@@ -672,7 +728,7 @@ export default class Edit{
     
     _resolveValue(){
         this.popup.hide(true);
-
+        
         if(this.params.multiselect){
             this.actions.success(this.currentItems.map(item => item.value));
         }else{
