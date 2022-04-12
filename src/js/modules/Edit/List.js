@@ -137,6 +137,33 @@ export default class Edit{
         params.verticalNavigation = params.verticalNavigation || "editor";
         params.placeholderLoading = typeof params.placeholderLoading === "undefined" ? "Searching ..." : typeof params.placeholderLoading;
         params.placeholderEmpty = typeof params.placeholderEmpty === "undefined" ? "No Results Found" : typeof params.placeholderEmpty;
+
+        if(params.autocomplete){
+            if(params.multiselect){
+                params.multiselect = false;
+                console.warn("list editor config error - multiselect option is not available when autocomplete is enabled")
+            }
+        }else{
+            if(params.freetext){
+                params.freetext = false;
+                console.warn("list editor config error - freetext option is only available when autocomplete is enabled");
+            }
+
+            if(params.filterFunc){
+                params.filterFunc = false;
+                console.warn("list editor config error - filterFunc option is only available when autocomplete is enabled");
+            }
+
+            if(params.filterRemote){
+                params.filterRemote = false;
+                console.warn("list editor config error - filterRemote option is only available when autocomplete is enabled");
+            }
+
+            if(params.mask){
+                params.mask = false;
+                console.warn("list editor config error - mask option is only available when autocomplete is enabled");
+            }
+        }
         
         return params;
     }
@@ -830,8 +857,6 @@ export default class Edit{
     
     _resolveValue(blur){
         this.popup.hide(true);
-
-        console.log("blur", blur)
         
         if(this.params.multiselect){
             this.actions.success(this.currentItems.map(item => item.value));
