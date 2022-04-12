@@ -164,6 +164,11 @@ export default class Edit{
                 console.warn("list editor config error - mask option is only available when autocomplete is enabled");
             }
         }
+
+        if(params.filterRemote && !(typeof params.values === "function" || typeof params.values === "string")){
+            params.filterRemote = false;
+            console.warn("list editor config error - filterRemote option should only be used when values list is populated from a remote source");
+        }
         
         return params;
     }
