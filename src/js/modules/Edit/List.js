@@ -678,6 +678,10 @@ export default class Edit{
         data.forEach((option) => {
             this._buildItem(option);
         });
+
+        if(!this.displayItems.length){
+            this._addPlaceholder(this.params.placeholderEmpty);
+        }  
     }
     
     _buildItem(item){
