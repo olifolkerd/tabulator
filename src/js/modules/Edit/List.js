@@ -20,6 +20,7 @@ export default class Edit{
         
         this.filterTimeout = null;
         this.filtered = false;
+        this.typing = false;
         
         this.values = []; 
         this.popup = null;  
@@ -317,6 +318,7 @@ export default class Edit{
     
     _keyAutoCompLetter(e){
         this._filter();
+        this.typing = true;
     }
     
     
@@ -747,7 +749,7 @@ export default class Edit{
         }
         
         if(!this.popup.isVisible()){
-            this.popup.show(this.cell.getElement(), "bottom").hideOnBlur(this._resolveValue.bind(this));
+            this.popup.show(this.cell.getElement(), "bottom").hideOnBlur(this._resolveValue.bind(this, true));
         }
     }
     
@@ -794,6 +796,8 @@ export default class Edit{
     
     _chooseItem(item, silent){
         var index;
+
+        this.typing = false;
         
         if(this.params.multiselect){
             index = this.currentItems.indexOf(item);
@@ -824,13 +828,20 @@ export default class Edit{
         this._focusItem(item);
     }
     
-    _resolveValue(){
+    _resolveValue(blur){
         this.popup.hide(true);
+
+        console.log("blur", blur)
         
         if(this.params.multiselect){
             this.actions.success(this.currentItems.map(item => item.value));
         }else{
-            this.actions.success(this.currentItems[0] ? this.currentItems[0].value : "");
+            if(blur && this.params.autocomplete && this.params.freetext && this.typing){
+                this.actions.success(this.input.value);
+            }else{
+                this.actions.success(this.currentItems[0] ? this.currentItems[0].value : "");
+            }
+            
         }
     }
     
