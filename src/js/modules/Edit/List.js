@@ -16,7 +16,8 @@ export default class Edit{
         this.input = this._createInputElement();
         this.listEl = this._createListElement();
         
-        this.initialValues = this.params.multiselect ? cell.getValue() : [cell.getValue()];
+       
+        this.initialValues = this._initializeValue(cell.getValue());
         
         this.filterTimeout = null;
         this.filtered = false;
@@ -49,10 +50,18 @@ export default class Edit{
         if(this.params.searchFunc){
             console.warn("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
         }
-
+        
         if(this.params.searchingPlaceholder){
             console.warn("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
         }
+    }
+    
+    _initializeValue(initialValue){
+        if(typeof initialValue === "undefined" && typeof this.params.defaultValue !== "undefined"){
+            initialValue = this.params.defaultValue;
+        }
+        
+        return this.params.multiselect ? initialValue : [initialValue];
     }
     
     _onRendered(){
@@ -137,7 +146,7 @@ export default class Edit{
         params.verticalNavigation = params.verticalNavigation || "editor";
         params.placeholderLoading = typeof params.placeholderLoading === "undefined" ? "Searching ..." : typeof params.placeholderLoading;
         params.placeholderEmpty = typeof params.placeholderEmpty === "undefined" ? "No Results Found" : typeof params.placeholderEmpty;
-
+        
         if(params.autocomplete){
             if(params.multiselect){
                 params.multiselect = false;
@@ -148,28 +157,28 @@ export default class Edit{
                 params.freetext = false;
                 console.warn("list editor config error - freetext option is only available when autocomplete is enabled");
             }
-
+            
             if(params.filterFunc){
                 params.filterFunc = false;
                 console.warn("list editor config error - filterFunc option is only available when autocomplete is enabled");
             }
-
+            
             if(params.filterRemote){
                 params.filterRemote = false;
                 console.warn("list editor config error - filterRemote option is only available when autocomplete is enabled");
             }
-
+            
             if(params.mask){
                 params.mask = false;
                 console.warn("list editor config error - mask option is only available when autocomplete is enabled");
             }
-
-             if(params.allowEmpty){
+            
+            if(params.allowEmpty){
                 params.allowEmpty = false;
                 console.warn("list editor config error - allowEmpty option is only available when autocomplete is enabled");
             }
         }
-
+        
         if(params.filterRemote && !(typeof params.values === "function" || typeof params.values === "string")){
             params.filterRemote = false;
             console.warn("list editor config error - filterRemote option should only be used when values list is populated from a remote source");
@@ -415,7 +424,7 @@ export default class Edit{
         var paramValues = this.params.values;
         
         this.filtered = false;
-
+        
         this._addPlaceholder(this.params.placeholderLoading);
         
         if(typeof paramValues === "function"){
@@ -430,26 +439,26 @@ export default class Edit{
             return Promise.resolve(this._lookupValues(paramValues));
         }
     }
-
+    
     _addPlaceholder(contents){
         var placeholder = document.createElement("div");
-
+        
         if(typeof contents === "function"){
             contents = contents(cell.getComponent(), this.listEl);
         }
-
+        
         if(contents){
             this._clearList();
-
+            
             if(contents instanceof HTMLElement){
                 placeholder = contents;
             }else{
                 placeholder.classList.add("tabulator-edit-list-placeholder")
                 placeholder.innerHTML = contents;
             }
-
+            
             this.listEl.appendChild(placeholder);
-
+            
             this._showList();
         }
     }
@@ -457,7 +466,7 @@ export default class Edit{
     _ajaxRequest(url, term){
         var params = this.params.filterRemote ? {term:term} : {};
         url = urlBuilder(url, {}, params);
-
+        
         return fetch(url)
         .then((response)=>{
             if(response.ok) {
@@ -717,7 +726,7 @@ export default class Edit{
         data.forEach((option) => {
             this._buildItem(option);
         });
-
+        
         if(!this.displayItems.length){
             this._addPlaceholder(this.params.placeholderEmpty);
         }  
@@ -822,7 +831,7 @@ export default class Edit{
     
     _clearChoices(){
         this.typing = true;
-
+        
         this.currentItems.forEach((item) => {
             item.selected = false;
             this._styleItem(item);
@@ -835,7 +844,7 @@ export default class Edit{
     
     _chooseItem(item, silent){
         var index;
-
+        
         this.typing = false;
         
         if(this.params.multiselect){
