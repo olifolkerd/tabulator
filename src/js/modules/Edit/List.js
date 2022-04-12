@@ -45,8 +45,12 @@ export default class Edit{
             console.warn("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
         }
         
-        if(this.params.sortValuesList){
+        if(this.params.searchFunc){
             console.warn("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
+        }
+
+        if(this.params.searchingPlaceholder){
+            console.warn("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
         }
     }
     
@@ -130,6 +134,8 @@ export default class Edit{
         params = Object.assign({}, params);
         
         params.verticalNavigation = params.verticalNavigation || "editor";
+        params.placeholderLoading = typeof params.placeholderLoading === "undefined" ? "Searching ..." : typeof params.placeholderLoading;
+        params.placeholderEmpty = typeof params.placeholderEmpty === "undefined" ? "No Results Found" : typeof params.placeholderEmpty;
         
         return params;
     }
@@ -370,6 +376,8 @@ export default class Edit{
         var paramValues = this.params.values;
         
         this.filtered = false;
+
+        this._addPlaceholder(this.params.placeholderLoading);
         
         if(typeof paramValues === "function"){
             paramValues = paramValues(cell, this.input.value);
@@ -381,6 +389,29 @@ export default class Edit{
             return paramValues.then(this._lookupValues.bind(this))
         }else{
             return Promise.resolve(this._lookupValues(paramValues));
+        }
+    }
+
+    _addPlaceholder(contents){
+        var placeholder = document.createElement("div");
+
+        if(typeof contents === "function"){
+            contents = contents(cell.getComponent(), this.listEl);
+        }
+
+        if(contents){
+            this._clearList();
+
+            if(contents instanceof HTMLElement){
+                placeholder = contents;
+            }else{
+                placeholder.classList.add("tabulator-edit-list-placeholder")
+                placeholder.innerHTML = contents;
+            }
+
+            this.listEl.appendChild(placeholder);
+
+            this._showList();
         }
     }
     
