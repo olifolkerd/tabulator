@@ -163,6 +163,11 @@ export default class Edit{
                 params.mask = false;
                 console.warn("list editor config error - mask option is only available when autocomplete is enabled");
             }
+
+             if(params.allowEmpty){
+                params.allowEmpty = false;
+                console.warn("list editor config error - allowEmpty option is only available when autocomplete is enabled");
+            }
         }
 
         if(params.filterRemote && !(typeof params.values === "function" || typeof params.values === "string")){
@@ -816,6 +821,8 @@ export default class Edit{
     }
     
     _clearChoices(){
+        this.typing = true;
+
         this.currentItems.forEach((item) => {
             item.selected = false;
             this._styleItem(item);
@@ -866,8 +873,13 @@ export default class Edit{
         if(this.params.multiselect){
             this.actions.success(this.currentItems.map(item => item.value));
         }else{
-            if(blur && this.params.autocomplete && this.params.freetext && this.typing){
-                this.actions.success(this.input.value);
+            if(blur && this.params.autocomplete && this.typing){
+                if(this.params.freetext || (this.params.allowEmpty && this.input.value === "")){
+                    this.actions.success(this.input.value);
+                }else{
+                    this.actions.cancel();
+                }
+                
             }else{
                 this.actions.success(this.currentItems[0] ? this.currentItems[0].value : "");
             }
