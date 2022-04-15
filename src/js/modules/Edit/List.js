@@ -17,7 +17,7 @@ export default class Edit{
         this.listEl = this._createListElement();
         
         this.initialValues = null; 
-
+        
         this.isFilter = !cell._getSelf;
         
         this.filterTimeout = null;
@@ -60,15 +60,16 @@ export default class Edit{
     
     _initializeValue(){
         var initialValue = this.cell.getValue();
-
+        
         if(typeof initialValue === "undefined" && typeof this.params.defaultValue !== "undefined"){
             initialValue = this.params.defaultValue;
         }
         
         this.initialValues = this.params.multiselect ? initialValue : [initialValue];
-
+        
         if(this.isFilter){
             this.input.value = this.initialValues.join(",");
+            this.headerFilterInitialListGen();            
         }
     }
     
@@ -99,10 +100,10 @@ export default class Edit{
         
         return listEl;
     }
-
+    
     _setListWidth(){
         var element = this.isFilter ? this.input : this.cell.getElement();
-
+        
         this.listEl.style.minWidth = element.offsetWidth + "px";
         
         if(this.params.maxWidth){
@@ -417,6 +418,9 @@ export default class Edit{
     //////////////////////////////////////
     /////// Data List Generation /////////
     //////////////////////////////////////
+    headerFilterInitialListGen(){
+        this._generateOptions(true);
+    }
     
     rebuildOptionsList(){
         this._generateOptions()
@@ -433,12 +437,14 @@ export default class Edit{
         this._showList();
     }
     
-    _generateOptions(){
+    _generateOptions(silent){
         var paramValues = this.params.values;
         
         this.filtered = false;
         
-        this._addPlaceholder(this.params.placeholderLoading);
+        if(!silent){
+            this._addPlaceholder(this.params.placeholderLoading);
+        }
         
         if(typeof paramValues === "function"){
             paramValues = paramValues(cell, this.input.value);
@@ -805,7 +811,7 @@ export default class Edit{
     
     _showList(){
         this._setListWidth();
-
+        
         if(!this.popup){
             this.popup = this.edit.popup(this.listEl);
         }
@@ -883,7 +889,7 @@ export default class Edit{
             item.selected = true;
             
             this.input.value = item.label;
-
+            
             this._styleItem(item);
             
             if(!silent){
@@ -896,7 +902,7 @@ export default class Edit{
     
     _resolveValue(blur){
         var output;
-
+        
         this.popup.hide(true);
         
         if(this.params.multiselect){
@@ -914,9 +920,9 @@ export default class Edit{
                 output = this.currentItems[0] ? this.currentItems[0].value : "";
             }
         }
-
+        
         this.actions.success(output);
-
+        
         if(this.isFilter){
             this.initialValues = output;
         }
