@@ -316,6 +316,7 @@ class Popup extends CoreFeature{
     }
     
     _fitToScreen(x, y, parentEl, parentOffset){
+
         //move menu to start on right edge if it is too close to the edge of the screen
         if((x + this.element.offsetWidth) >= this.container.offsetWidth || this.reversedX){
             this.element.style.left = "";
@@ -328,10 +329,12 @@ class Popup extends CoreFeature{
             
             this.reversedX = true;
         }
-        
+
+        console.log("p", (y + this.element.offsetHeight),this.container.offsetHeight, this.container.scrollHeight, this.parent , parentEl, this.container);
+
         //move menu to start on bottom edge if it is too close to the edge of the screen
-        if((y + this.element.offsetHeight) > this.container.offsetHeight) {
-            if(this.parent){
+        if((y + this.element.offsetHeight) > Math.max(this.container.offsetHeight, this.container.scrollTop ? this.container.scrollHeight : 0)) {
+            if(parentEl){
                 this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight + parentEl.offsetHeight + 1) + "px";
             }else {
                 this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight) + "px";
@@ -5988,10 +5991,6 @@ class Edit{
         
         this.filtered = false;
         
-        if(!silent){
-            this._addPlaceholder(this.params.placeholderLoading);
-        }
-        
         if(this.params.values){
             values = this.params.values;
         }else if (this.params.valuesURL){
@@ -6005,6 +6004,10 @@ class Edit{
         }
         
         if(values instanceof Promise){
+            if(!silent){
+                this._addPlaceholder(this.params.placeholderLoading);
+            }
+            
             return values.then()
             .then((responseValues) => {
                 if(this.listIteration === itteration){
