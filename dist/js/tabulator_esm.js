@@ -240,7 +240,7 @@ class Popup extends CoreFeature{
         var y = touch ? e.touches[0].pageY : e.pageY;
         
         if(this.container !== document.body){
-            parentOffset = Helpers.elOffset(this.container);
+            let parentOffset = Helpers.elOffset(this.container);
             
             x -= parentOffset.left;
             y -= parentOffset.top;
