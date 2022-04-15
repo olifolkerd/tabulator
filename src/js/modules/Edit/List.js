@@ -16,8 +16,9 @@ export default class Edit{
         this.input = this._createInputElement();
         this.listEl = this._createListElement();
         
-       
-        this.initialValues = this._initializeValue(cell.getValue());
+        this.initialValues = null; 
+
+        this.isFilter = !cell._getSelf;
         
         this.filterTimeout = null;
         this.filtered = false;
@@ -34,6 +35,7 @@ export default class Edit{
         }
         
         this._deprecationCheck();
+        this._initializeValue();
         
         onRendered(this._onRendered.bind(this));
     }
@@ -56,12 +58,18 @@ export default class Edit{
         }
     }
     
-    _initializeValue(initialValue){
+    _initializeValue(){
+        var initialValue = this.cell.getValue();
+
         if(typeof initialValue === "undefined" && typeof this.params.defaultValue !== "undefined"){
             initialValue = this.params.defaultValue;
         }
         
-        return this.params.multiselect ? initialValue : [initialValue];
+        this.initialValues = this.params.multiselect ? initialValue : [initialValue];
+
+        if(this.isFilter){
+            this.input.value = this.initialValues.join(",");
+        }
     }
     
     _onRendered(){
@@ -86,22 +94,27 @@ export default class Edit{
         var listEl = document.createElement("div");
         listEl.classList.add("tabulator-edit-list");
         
-        listEl.style.minWidth = this.cell.getElement().offsetWidth + "px";
-        
-        if(this.params.maxWidth){
-            if(this.params.maxWidth === true){
-                listEl.style.maxWidth = this.cell.getElement().offsetWidth + "px";
-            }else if(typeof this.params.maxWidth === "number"){
-                listEl.style.maxWidth = this.params.maxWidth + "px";
-            }else{
-                listEl.style.maxWidth = this.params.maxWidth;
-            }
-        }
-        
         listEl.addEventListener("mousedown", this._preventBlur.bind(this));
         listEl.addEventListener("keydown", this._inputKeyDown.bind(this))
         
         return listEl;
+    }
+
+    _setListWidth(){
+        var element = this.isFilter ? this.input : this.cell.getElement();
+
+        this.listEl.style.minWidth = element.offsetWidth + "px";
+        
+        if(this.params.maxWidth){
+            if(this.params.maxWidth === true){
+                this.listEl.style.maxWidth = element.offsetWidth + "px";
+            }else if(typeof this.params.maxWidth === "number"){
+                this.listEl.style.maxWidth = this.params.maxWidth + "px";
+            }else{
+                this.listEl.style.maxWidth = this.params.maxWidth;
+            }
+        }
+        
     }
     
     _createInputElement(){
@@ -701,8 +714,6 @@ export default class Edit{
     
     _defaultFilterFunc(term, label, value, item){
         var term = String(term).toLowerCase();
-
-        console.log("filter", term, label, value, item)
         
         if(label !== null || typeof label !== "undefined"){
             if(String(label).toLowerCase().indexOf(term) > -1 || String(value).toLowerCase(term).indexOf() > -1){
@@ -793,6 +804,8 @@ export default class Edit{
     }
     
     _showList(){
+        this._setListWidth();
+
         if(!this.popup){
             this.popup = this.edit.popup(this.listEl);
         }
@@ -861,7 +874,7 @@ export default class Edit{
                 item.selected = true;
             }
             
-            this.input.value = this.currentItems.map(item => item.value).join(",");
+            this.input.value = this.currentItems.map(item => item.label).join(",");
             
             this._styleItem(item);
             
@@ -869,7 +882,9 @@ export default class Edit{
             this.currentItems = [item];
             item.selected = true;
             
-            this.input.value = item.value;
+            this.input.value = item.label;
+
+            this._styleItem(item);
             
             if(!silent){
                 this._resolveValue();
@@ -880,22 +895,30 @@ export default class Edit{
     }
     
     _resolveValue(blur){
+        var output;
+
         this.popup.hide(true);
         
         if(this.params.multiselect){
-            this.actions.success(this.currentItems.map(item => item.value));
+            output = this.currentItems.map(item => item.value);
         }else{
             if(blur && this.params.autocomplete && this.typing){
                 if(this.params.freetext || (this.params.allowEmpty && this.input.value === "")){
-                    this.actions.success(this.input.value);
+                    output = this.input.value;
                 }else{
                     this.actions.cancel();
+                    return;
                 }
                 
             }else{
-                this.actions.success(this.currentItems[0] ? this.currentItems[0].value : "");
+                output = this.currentItems[0] ? this.currentItems[0].value : "";
             }
-            
+        }
+
+        this.actions.success(output);
+
+        if(this.isFilter){
+            this.initialValues = output;
         }
     }
     
