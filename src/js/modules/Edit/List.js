@@ -27,6 +27,8 @@ export default class Edit{
         this.values = []; 
         this.popup = null;  
         
+        this.listIteration = 0;
+        
         this.blurable = true;
         
         this.actions = {
@@ -160,7 +162,7 @@ export default class Edit{
         params.verticalNavigation = params.verticalNavigation || "editor";
         params.placeholderLoading = typeof params.placeholderLoading === "undefined" ? "Searching ..." : typeof params.placeholderLoading;
         params.placeholderEmpty = typeof params.placeholderEmpty === "undefined" ? "No Results Found" : typeof params.placeholderEmpty;
-
+        
         params.emptyValue = Object.keys(params).includes("emptyValue") ? params.emptyValue : "";
         
         if(params.autocomplete){
@@ -193,18 +195,17 @@ export default class Edit{
                 params.allowEmpty = false;
                 console.warn("list editor config error - allowEmpty option is only available when autocomplete is enabled");
             }
-
+            
             if(params.listOnEmpty){
                 params.listOnEmpty = false;
                 console.warn("list editor config error - listOnEmpty option is only available when autocomplete is enabled");
             }
         }
         
-        if(params.filterRemote && !(typeof params.values === "function" || typeof params.values === "string")){
+        if(params.filterRemote && !(typeof params.valuesLookup === "function" || typeof params.valuesURL)){
             params.filterRemote = false;
             console.warn("list editor config error - filterRemote option should only be used when values list is populated from a remote source");
         }
-        
         return params;
     }
     //////////////////////////////////////
@@ -435,7 +436,9 @@ export default class Edit{
         .then(this._buildList.bind(this))
         .then(this._showList.bind(this))
         .catch((e) => {
-            console.error("List generation error", e)
+            if(!Number.isInteger(e)){
+                console.error("List generation error", e);
+            }
         })
     }
     
@@ -445,7 +448,8 @@ export default class Edit{
     }
     
     _generateOptions(silent){
-        var paramValues = this.params.values;
+        var values = [];
+        var itteration = ++ this.listIteration;
         
         this.filtered = false;
         
@@ -453,16 +457,29 @@ export default class Edit{
             this._addPlaceholder(this.params.placeholderLoading);
         }
         
-        if(typeof paramValues === "function"){
-            paramValues = paramValues(cell, this.input.value);
-        }else if (typeof paramValues === "string"){
-            paramValues = this._ajaxRequest(paramValues, this.input.value);
+        if(this.params.values){
+            values = this.params.values;
+        }else if (this.params.valuesURL){
+            values = this._ajaxRequest(this.params.valuesURL, this.input.value);
+        }else{
+            if(typeof this.params.valuesLookup === "function"){
+                values = this.params.valuesLookup(cell, this.input.value);
+            }else if(this.params.valuesLookup){
+                values = this._uniqueColumnValues(this.params.valuesLookupField);
+            }
         }
         
-        if(paramValues instanceof Promise){
-            return paramValues.then(this._lookupValues.bind(this))
+        if(values instanceof Promise){
+            return values.then()
+            .then((responseValues) => {
+                if(this.listIteration === itteration){
+                    return this._parseList(responseValues);
+                }else{
+                    return Promise.reject(itteration);
+                }
+            });
         }else{
-            return Promise.resolve(this._lookupValues(paramValues));
+            return Promise.resolve(this._parseList(values))
         }
     }
     
@@ -512,19 +529,9 @@ export default class Edit{
         });
     }
     
-    _lookupValues(paramValues){
-        if(paramValues === true){
-            paramValues = this._uniqueColumnValues();//lookup this column
-        }else if(typeof paramValues === "string"){
-            paramValues = this._uniqueColumnValues(paramValues);//lookup specific column
-        }
-        
-        return this._parseList(paramValues);
-    }
-    
     _uniqueColumnValues(field){
         var output = {},
-        data = this.table.getData(this.params.valueLookupRange),
+        data = this.table.getData(this.params.valuesLookup),
         column;
         
         if(field){
@@ -934,17 +941,17 @@ export default class Edit{
                     output = this.currentItems[0].value;
                 }else{
                     initialValue = this.initialValues[0];
-
+                    
                     if(initialValue === null || typeof initialValue === "undefined" || initialValue === ""){
                         output = initialValue;
                     }else{
                         output = this.params.emptyValue;
                     }
                 }
-               
+                
             }
         }
-
+        
         if(output === ""){
             output = this.params.emptyValue;
         }
