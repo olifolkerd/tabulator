@@ -6346,7 +6346,12 @@ class Edit{
                     }
                 }
                 
-                el.addEventListener("click", this._itemClick.bind(this, item));
+                if(item.group){
+                    el.addEventListener("click", this._groupClick.bind(this, item));
+                }else {
+                    el.addEventListener("click", this._itemClick.bind(this, item));
+                }
+                
                 el.addEventListener("mousedown", this._preventBlur.bind(this));
                 
                 item.element = el;
@@ -6368,7 +6373,7 @@ class Edit{
     
     _showList(){
         var startVis = this.popup && this.popup.isVisible();
-
+        
         if(this.input.parentNode){
             if(this.params.autocomplete && this.input.value === "" && !this.params.listOnEmpty){
                 if(this.popup){
@@ -6384,7 +6389,7 @@ class Edit{
             }
             
             this.popup.show(this.cell.getElement(), "bottom");
-
+            
             if(!startVis){
                 this.popup.hideOnBlur(this._resolveValue.bind(this, true));
             }
@@ -6406,11 +6411,15 @@ class Edit{
     //////////////////////////////////////
     
     _itemClick(item, e){
-        //select element
         e.stopPropagation();
         
         this._chooseItem(item);
     }
+    
+    _groupClick(item, e){
+        e.stopPropagation();
+    }
+    
     
     //////////////////////////////////////
     ////// Current Item Management ///////
