@@ -160,8 +160,9 @@ export default class Edit{
         params = Object.assign({}, params);
         
         params.verticalNavigation = params.verticalNavigation || "editor";
-        params.placeholderLoading = typeof params.placeholderLoading === "undefined" ? "Searching ..." : typeof params.placeholderLoading;
-        params.placeholderEmpty = typeof params.placeholderEmpty === "undefined" ? "No Results Found" : typeof params.placeholderEmpty;
+        params.placeholderLoading = typeof params.placeholderLoading === "undefined" ? "Searching ..." : params.placeholderLoading;
+        params.placeholderEmpty = typeof params.placeholderEmpty === "undefined" ? "No Results Found" : params.placeholderEmpty;
+        params.filterDelay = typeof params.filterDelay === "undefined" ? 300 : params.filterDelay;
         
         params.emptyValue = Object.keys(params).includes("emptyValue") ? params.emptyValue : "";
         
@@ -231,7 +232,11 @@ export default class Edit{
     
     _filter(){
         if(this.params.filterRemote){
-            this.rebuildOptionsList();
+            clearTimeout(this.filterTimeout);
+
+            this.filterTimeout = setTimeout(() => {
+                this.rebuildOptionsList();
+            }, this.params.filterDelay);
         }else{
             this._filterList();
         }
