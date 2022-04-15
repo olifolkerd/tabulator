@@ -6369,6 +6369,8 @@ class Edit{
     }
     
     _showList(){
+        var startVis = this.popup && this.popup.isVisible();
+
         if(this.input.parentNode){
             if(this.params.autocomplete && this.input.value === "" && !this.params.listOnEmpty){
                 if(this.popup){
@@ -6383,8 +6385,10 @@ class Edit{
                 this.popup = this.edit.popup(this.listEl);
             }
             
-            if(!this.popup.isVisible()){
-                this.popup.show(this.cell.getElement(), "bottom").hideOnBlur(this._resolveValue.bind(this, true));
+            this.popup.show(this.cell.getElement(), "bottom");
+
+            if(!startVis){
+                this.popup.hideOnBlur(this._resolveValue.bind(this, true));
             }
         }
     }
