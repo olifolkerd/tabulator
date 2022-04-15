@@ -308,14 +308,14 @@ class Popup extends CoreFeature{
             this.renderedCallback();
         }
         
-        this._fitToScreen(x, y, parentEl, parentOffset);
+        this._fitToScreen(x, y, parentEl, parentOffset, position);
         
         this.visible = true;
         
         return this;
     }
     
-    _fitToScreen(x, y, parentEl, parentOffset){
+    _fitToScreen(x, y, parentEl, parentOffset, position){
 
         //move menu to start on right edge if it is too close to the edge of the screen
         if((x + this.element.offsetWidth) >= this.container.offsetWidth || this.reversedX){
@@ -330,12 +330,20 @@ class Popup extends CoreFeature{
             this.reversedX = true;
         }
 
-        console.log("p", (y + this.element.offsetHeight),this.container.offsetHeight, this.container.scrollHeight, this.parent , parentEl, this.container);
+        console.log("p", position);
 
         //move menu to start on bottom edge if it is too close to the edge of the screen
         if((y + this.element.offsetHeight) > Math.max(this.container.offsetHeight, this.container.scrollTop ? this.container.scrollHeight : 0)) {
             if(parentEl){
-                this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight + parentEl.offsetHeight + 1) + "px";
+                switch(position){
+                    case "bottom":
+                    this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight - parentEl.offsetHeight - 1) + "px";
+                    break;
+
+                    default:
+                    this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight + parentEl.offsetHeight + 1) + "px";
+                }
+                
             }else {
                 this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight) + "px";
             }
