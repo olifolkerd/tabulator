@@ -233,7 +233,7 @@ export default class Edit{
     _filter(){
         if(this.params.filterRemote){
             clearTimeout(this.filterTimeout);
-
+            
             this.filterTimeout = setTimeout(() => {
                 this.rebuildOptionsList();
             }, this.params.filterDelay);
@@ -829,21 +829,23 @@ export default class Edit{
     }
     
     _showList(){
-        if(this.params.autocomplete && this.input.value === "" && !this.params.listOnEmpty){
-            if(this.popup){
-                this.popup.hide(true);
-                return;
+        if(this.input.parentNode){
+            if(this.params.autocomplete && this.input.value === "" && !this.params.listOnEmpty){
+                if(this.popup){
+                    this.popup.hide(true);
+                    return;
+                }
             }
-        }
-        
-        this._setListWidth();
-        
-        if(!this.popup){
-            this.popup = this.edit.popup(this.listEl);
-        }
-        
-        if(!this.popup.isVisible()){
-            this.popup.show(this.cell.getElement(), "bottom").hideOnBlur(this._resolveValue.bind(this, true));
+            
+            this._setListWidth();
+            
+            if(!this.popup){
+                this.popup = this.edit.popup(this.listEl);
+            }
+            
+            if(!this.popup.isVisible()){
+                this.popup.show(this.cell.getElement(), "bottom").hideOnBlur(this._resolveValue.bind(this, true));
+            }
         }
     }
     
