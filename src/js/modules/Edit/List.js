@@ -541,7 +541,6 @@ export default class Edit{
                 value = {
                     label:value,
                     value:value,
-                    element:false,
                 };
             }
             
@@ -568,6 +567,7 @@ export default class Edit{
                 selected:false,
                 visible:true,
                 level:level,
+                original:option,
             };
             
             if(this.initialValues && this.initialValues.indexOf(option.value) > -1){
@@ -588,6 +588,7 @@ export default class Edit{
             visible:true,
             level:level,
             options:[],
+            original:option,
         };
         
         option.options.forEach((child) => {
@@ -611,7 +612,7 @@ export default class Edit{
     
     _sortGroup(sorter, options){
         options.sort((a,b) => {
-            return sorter(a.label, b.label, a, b);
+            return sorter(a.label, b.label, a.value, b.value, a.original, b.original);
         });
         
         options.forEach((option) => {
@@ -684,7 +685,7 @@ export default class Edit{
         var matches = false;
         
         if(!item.group){
-            item.visible = func(term, item);
+            item.visible = func(term, item.label, item.value, item.original);
         }else{
             item.options.forEach((option) => {
                 if(this._filterItem(func, term, option)){
@@ -698,11 +699,13 @@ export default class Edit{
         return item.visible;
     }
     
-    _defaultFilterFunc(term, item){
+    _defaultFilterFunc(term, label, value, item){
         var term = String(term).toLowerCase();
+
+        console.log("filter", term, label, value, item)
         
-        if(item.value !== null || typeof item.value !== "undefined"){
-            if(String(item.value).toLowerCase().indexOf(term) > -1 || String(item.label).toLowerCase(term).indexOf() > -1){
+        if(label !== null || typeof label !== "undefined"){
+            if(String(label).toLowerCase().indexOf(term) > -1 || String(value).toLowerCase(term).indexOf() > -1){
                 return true;
             }
         }
@@ -742,7 +745,7 @@ export default class Edit{
                 el = document.createElement("div");
                 el.tabIndex = 0;
                 
-                contents = this.params.itemFormatter ? this.params.itemFormatter(item, el) : item.label;
+                contents = this.params.itemFormatter ? this.params.itemFormatter(item.label, item.value, item.original, el) : item.label;
                 
                 if(contents instanceof HTMLElement){
                     el.appendChild(contents)
