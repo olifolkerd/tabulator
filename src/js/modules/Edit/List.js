@@ -191,6 +191,11 @@ export default class Edit{
                 params.allowEmpty = false;
                 console.warn("list editor config error - allowEmpty option is only available when autocomplete is enabled");
             }
+
+            if(params.listOnEmpty){
+                params.listOnEmpty = false;
+                console.warn("list editor config error - listOnEmpty option is only available when autocomplete is enabled");
+            }
         }
         
         if(params.filterRemote && !(typeof params.values === "function" || typeof params.values === "string")){
@@ -810,6 +815,13 @@ export default class Edit{
     }
     
     _showList(){
+        if(this.params.autocomplete && this.input.value === "" && !this.params.listOnEmpty){
+            if(this.popup){
+                this.popup.hide(true);
+                return;
+            }
+        }
+        
         this._setListWidth();
         
         if(!this.popup){
