@@ -157,6 +157,9 @@ export default class Edit{
     }
     
     _initializeParams(params){
+        var valueKeys = ["values", "valuesURL", "valuesLookup"],
+        valueCheck;
+
         params = Object.assign({}, params);
         
         params.verticalNavigation = params.verticalNavigation || "editor";
@@ -165,6 +168,14 @@ export default class Edit{
         params.filterDelay = typeof params.filterDelay === "undefined" ? 300 : params.filterDelay;
         
         params.emptyValue = Object.keys(params).includes("emptyValue") ? params.emptyValue : "";
+
+        valueCheck = Object.keys(params).filter(key => valueKeys.includes(key)).length;
+
+        if(!valueCheck){
+            console.warn("list editor config error - either the values, valuesURL, or valuesLookup option must be set")
+        }else if(valueCheck > 1){
+            console.warn("list editor config error - only one of the values, valuesURL, or valuesLookup options can be set on the same editor")
+        }
         
         if(params.autocomplete){
             if(params.multiselect){
