@@ -357,7 +357,7 @@ export default class Edit{
         if(this.focusedItem){
             this._chooseItem(this.focusedItem);
         }else{
-            this.cancel();
+            this._cancel();
         }
     }
     
@@ -882,7 +882,7 @@ export default class Edit{
         
         this.currentItems = [];
         
-        this._focusItem = null;
+        this.focusedItem = null;
     }
     
     _chooseItem(item, silent){
