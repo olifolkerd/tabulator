@@ -15870,7 +15870,8 @@ class Popup$1 extends Module{
 	
 	initializeRowWatchers(){
 		if(this.table.options.rowContextPopup){
-			this.subscribe("row-contextpopup", this.loadPopupEvent.bind(this, this.table.options.rowContextPopup));
+			console.log();
+			this.subscribe("row-contextmenu", this.loadPopupEvent.bind(this, this.table.options.rowContextPopup));
 			this.table.on("rowTapHold", this.loadPopupEvent.bind(this, this.table.options.rowContextPopup));
 		}
 		
@@ -15881,7 +15882,7 @@ class Popup$1 extends Module{
 	
 	initializeGroupWatchers(){
 		if(this.table.options.groupContextPopup){
-			this.subscribe("group-contextpopup", this.loadPopupEvent.bind(this, this.table.options.groupContextPopup));
+			this.subscribe("group-contextmenu", this.loadPopupEvent.bind(this, this.table.options.groupContextPopup));
 			this.table.on("groupTapHold", this.loadPopupEvent.bind(this, this.table.options.groupContextPopup));
 		}
 		
@@ -15896,7 +15897,7 @@ class Popup$1 extends Module{
 		//handle column events
 		if(def.headerContextPopup && !this.columnSubscribers.headerContextPopup){
 			this.columnSubscribers.headerContextPopup = this.loadPopupTableColumnEvent.bind(this, "headerContextPopup");
-			this.subscribe("column-contextpopup", this.columnSubscribers.headerContextPopup);
+			this.subscribe("column-contextmenu", this.columnSubscribers.headerContextPopup);
 			this.table.on("headerTapHold", this.loadPopupTableColumnEvent.bind(this, "headerContextPopup"));
 		}
 		
@@ -15912,7 +15913,7 @@ class Popup$1 extends Module{
 		//handle cell events
 		if(def.contextPopup && !this.columnSubscribers.contextPopup){
 			this.columnSubscribers.contextPopup = this.loadPopupTableCellEvent.bind(this, "contextPopup");
-			this.subscribe("cell-contextpopup", this.columnSubscribers.contextPopup);
+			this.subscribe("cell-contextmenu", this.columnSubscribers.contextPopup);
 			this.table.on("cellTapHold", this.loadPopupTableCellEvent.bind(this, "contextPopup"));
 		}
 		
@@ -15979,6 +15980,8 @@ class Popup$1 extends Module{
 		function onRendered(callback){
 			renderedCallback = callback;
 		}
+
+		console.log("load", contents, component);
 		
 		if(component._group){
 			component = component._group;
