@@ -458,10 +458,6 @@ export default class Edit{
         
         this.filtered = false;
         
-        if(!silent){
-            this._addPlaceholder(this.params.placeholderLoading);
-        }
-        
         if(this.params.values){
             values = this.params.values;
         }else if (this.params.valuesURL){
@@ -475,6 +471,10 @@ export default class Edit{
         }
         
         if(values instanceof Promise){
+            if(!silent){
+                this._addPlaceholder(this.params.placeholderLoading);
+            }
+            
             return values.then()
             .then((responseValues) => {
                 if(this.listIteration === itteration){
