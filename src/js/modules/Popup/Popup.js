@@ -30,7 +30,6 @@ class Popup extends Module{
 	
 	initializeRowWatchers(){
 		if(this.table.options.rowContextPopup){
-			console.log()
 			this.subscribe("row-contextmenu", this.loadPopupEvent.bind(this, this.table.options.rowContextPopup));
 			this.table.on("rowTapHold", this.loadPopupEvent.bind(this, this.table.options.rowContextPopup));
 		}
@@ -141,8 +140,6 @@ class Popup extends Module{
 		function onRendered(callback){
 			renderedCallback = callback;
 		}
-
-		console.log("load", contents, component)
 		
 		if(component._group){
 			component = component._group;
