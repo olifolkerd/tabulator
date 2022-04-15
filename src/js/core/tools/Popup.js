@@ -158,8 +158,6 @@ export default class Popup extends CoreFeature{
             this.reversedX = true;
         }
 
-        console.log("p", position)
-
         //move menu to start on bottom edge if it is too close to the edge of the screen
         if((y + this.element.offsetHeight) > Math.max(this.container.offsetHeight, this.container.scrollTop ? this.container.scrollHeight : 0)) {
             if(parentEl){
@@ -230,11 +228,11 @@ export default class Popup extends CoreFeature{
                 this.element.parentNode.removeChild(this.element);
             }
 
+             this.visible = false;
+
             if(this.blurCallback && !silent){
                 this.blurCallback();
             }
-            
-            this.visible = false;
         }
         
         return this;
