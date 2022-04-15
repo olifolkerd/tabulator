@@ -160,6 +160,8 @@ export default class Edit{
         params.verticalNavigation = params.verticalNavigation || "editor";
         params.placeholderLoading = typeof params.placeholderLoading === "undefined" ? "Searching ..." : typeof params.placeholderLoading;
         params.placeholderEmpty = typeof params.placeholderEmpty === "undefined" ? "No Results Found" : typeof params.placeholderEmpty;
+
+        params.emptyValue = Object.keys(params).includes("emptyValue") ? params.emptyValue : "";
         
         if(params.autocomplete){
             if(params.multiselect){
@@ -913,7 +915,7 @@ export default class Edit{
     }
     
     _resolveValue(blur){
-        var output;
+        var output, initialValue;
         
         this.popup.hide(true);
         
@@ -927,10 +929,24 @@ export default class Edit{
                     this.actions.cancel();
                     return;
                 }
-                
             }else{
-                output = this.currentItems[0] ? this.currentItems[0].value : "";
+                if(this.currentItems[0]){
+                    output = this.currentItems[0].value;
+                }else{
+                    initialValue = this.initialValues[0];
+
+                    if(initialValue === null || typeof initialValue === "undefined" || initialValue === ""){
+                        output = initialValue;
+                    }else{
+                        output = this.params.emptyValue;
+                    }
+                }
+               
             }
+        }
+
+        if(output === ""){
+            output = this.params.emptyValue;
         }
         
         this.actions.success(output);
