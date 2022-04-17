@@ -404,13 +404,7 @@ class Edit extends Module{
 
 			cellEl = cell.getElement();
 
-			if(cancel){
-				if(cell.column.modules.validate && this.table.modExists("validate")){
-					this.table.modules.validate.cellValidate(cell);
-				}
-			}else{
-				cellEl.classList.remove("tabulator-validation-fail");
-			}
+			this.dispatch("edit-editor-clear", cell, cancel);
 
 			cellEl.classList.remove("tabulator-editing");
 
@@ -543,14 +537,10 @@ class Edit extends Module{
 			return;
 		}
 
-		//handle successfull value change
+		//handle successful value change
 		function success(value){
 			if(self.currentCell === cell){
-				var valid = true;
-
-				if(cell.column.modules.validate && self.table.modExists("validate") && self.table.options.validationMode != "manual"){
-					valid = self.table.modules.validate.validate(cell.column.modules.validate, cell, value);
-				}
+				var valid = self.chain("edit-success", [cell, value], true, true);
 
 				if(valid === true || self.table.options.validationMode === "highlight"){
 					self.clearEditor();
@@ -568,19 +558,11 @@ class Edit extends Module{
 
 					cell.setValue(value, true);
 
-					if(valid !== true){
-						element.classList.add("tabulator-validation-fail");
-						self.table.externalEvents.dispatch("validationFailed", cell.getComponent(), value, valid);
-						return false;
-					}
-
-					return true;
+					return valid === true;
 				}else{
 					self.invalidEdit = true;
-					element.classList.add("tabulator-validation-fail");
 					self.focusCellNoEvent(cell, true);
 					rendered();
-					self.table.externalEvents.dispatch("validationFailed", cell.getComponent(), value, valid);
 					return false;
 				}
 			}else{
@@ -705,9 +687,7 @@ class Edit extends Module{
 		if(cell.modules.edit && cell.modules.edit.edited){
 			cell.modules.edit.edited = false;
 
-			if(cell.modules.validate){
-				cell.modules.validate.invalid = false;
-			}
+			this.dispatch("edit-edited-clear", cell);
 		}
 
 		editIndex = this.editedCells.indexOf(cell);
