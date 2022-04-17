@@ -18778,7 +18778,7 @@ class Validate extends Module{
 	///////////////////////////////////
 
 	cellIsValid(cell){
-		return cell.modules.validate ? !cell.modules.validate.invalid : true;
+		return cell.modules.validate ? (cell.modules.validate.invalid || true) : true;
 	}
 
 	cellValidate(cell){
@@ -18934,13 +18934,13 @@ class Validate extends Module{
 
 	validate(validators, cell, value){
 		var self = this,
-		valid = [],
+		failedValidators = [],
 		invalidIndex = this.invalidCells.indexOf(cell);
 
 		if(validators){
 			validators.forEach((item) => {
 				if(!item.func.call(self, cell.getComponent(), value, item.params)){
-					valid.push({
+					failedValidators.push({
 						type:item.type,
 						parameters:item.params
 					});
@@ -18948,13 +18948,11 @@ class Validate extends Module{
 			});
 		}
 
-		valid = valid.length ? valid : true;
-
 		if(!cell.modules.validate){
 			cell.modules.validate = {};
 		}
 
-		if(valid === true){
+		if(!failedValidators.length){
 			cell.modules.validate.invalid = false;
 			cell.getElement().classList.remove("tabulator-validation-fail");
 
@@ -18962,7 +18960,7 @@ class Validate extends Module{
 				this.invalidCells.splice(invalidIndex, 1);
 			}
 		}else {
-			cell.modules.validate.invalid = true;
+			cell.modules.validate.invalid = failedValidators;
 
 			if(this.table.options.validationMode !== "manual"){
 				cell.getElement().classList.add("tabulator-validation-fail");
@@ -18973,7 +18971,7 @@ class Validate extends Module{
 			}
 		}
 
-		return valid;
+		return failedValidators.length ? failedValidators : true;
 	}
 
 	getInvalidCells(){
