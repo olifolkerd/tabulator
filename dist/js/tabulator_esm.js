@@ -6841,7 +6841,9 @@ function tickCross(cell, onRendered, success, cancel, editorParams){
 	input = document.createElement("input"),
 	tristate = editorParams.tristate,
 	indetermValue = typeof editorParams.indeterminateValue === "undefined" ? null : editorParams.indeterminateValue,
-	indetermState = false;
+	indetermState = false,
+	trueValueSet = Object.keys(editorParams).includes("trueValue"),
+	falseValueSet = Object.keys(editorParams).includes("falseValue");
 
 	input.setAttribute("type", "checkbox");
 	input.style.marginTop = "5px";
@@ -6871,13 +6873,23 @@ function tickCross(cell, onRendered, success, cancel, editorParams){
 		});
 	}
 
-	input.checked = value === true || value === "true" || value === "True" || value === 1;
+	input.checked = trueValueSet ? value === editorParams.trueValue : (value === true || value === "true" || value === "True" || value === 1);
 
 	onRendered(function(){
 		input.focus();
 	});
 
 	function setValue(blur){
+		var checkedValue = input.checked;
+
+		if(trueValueSet && checkedValue){
+			checkedValue = editorParams.trueValue;
+		}else if(falseValueSet && !checkedValue){
+			checkedValue = editorParams.falseValue;
+		}else {
+			checkedValue = checkedValue;
+		}
+
 		if(tristate){
 			if(!blur){
 				if(input.checked && !indetermState){
@@ -6887,17 +6899,17 @@ function tickCross(cell, onRendered, success, cancel, editorParams){
 					return indetermValue;
 				}else {
 					indetermState = false;
-					return input.checked;
+					return checkedValue;
 				}
 			}else {
 				if(indetermState){
 					return indetermValue;
 				}else {
-					return input.checked;
+					return checkedValue;
 				}
 			}
 		}else {
-			return input.checked;
+			return checkedValue;
 		}
 	}
 
