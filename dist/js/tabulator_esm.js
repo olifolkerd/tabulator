@@ -22515,7 +22515,7 @@ class InteractionManager extends CoreFeature {
 		if(this.pseudoTrackers[key].target !== target){
 			
 			if(this.pseudoTrackers[key].target){
-				this.dispatch(key + "-mouseleave", e, target);
+				this.dispatch(key + "-mouseleave", e, this.pseudoTrackers[key].target);
 			}
 			
 			this.pseudoMouseLeave(key, e);
