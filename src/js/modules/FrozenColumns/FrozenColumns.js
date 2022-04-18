@@ -246,15 +246,24 @@ class FrozenColumns extends Module{
 	
 	//layout columns appropriately
 	layout(){
+		var visibleRows = [],
+		otherRows = [];
+
 		if(this.active && !this.blocked){
 			//calculate row padding
 			this.calcMargins();
 
-			this.table.rowManager.getDisplayRows().forEach((row) =>{
+			//calculate left columns
+			this.layoutColumnPosition();
+
+			visibleRows = this.table.rowManager.getVisibleRows();
+			otherRows = this.table.rowManager.getDisplayRows().filter(row => !visibleRows.includes(row));
+
+			otherRows.forEach((row) =>{
 				row.deinitialize();
 			});
 
-			this.table.rowManager.getVisibleRows().forEach((row) =>{
+			visibleRows.forEach((row) =>{
 				if(row.type === "row"){
 					this.layoutRow(row);
 				}
@@ -262,8 +271,7 @@ class FrozenColumns extends Module{
 			
 			this.layoutCalcRows();
 			
-			//calculate left columns
-			this.layoutColumnPosition(true);
+
 		}
 	}
 	
