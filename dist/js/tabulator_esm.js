@@ -10136,7 +10136,12 @@ class FrozenColumns extends Module{
 		this.subscribe("row-layout-after", this.layoutRow.bind(this));
 		this.subscribe("table-layout", this.layout.bind(this));
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 		this.subscribe("columns-loading", this.reset.bind(this));
+
+		this.subscribe("column-add", this.reinitializeColumns.bind(this));
+		this.subscribe("column-delete", this.reinitializeColumns.bind(this));
+
 		this.subscribe("table-redraw", this.layout.bind(this));
 		this.subscribe("layout-refreshing", this.blockLayout.bind(this));
 		this.subscribe("layout-refreshed", this.unblockLayout.bind(this));
@@ -10152,6 +10157,14 @@ class FrozenColumns extends Module{
 	
 	layoutCell(cell){
 		this.layoutElement(cell.element, cell.column);
+	}
+
+	reinitializeColumns(){
+		this.reset();
+
+		this.table.columnManager.columnsByIndex.forEach((column) => {
+			this.initializeColumn(column);
+		});
 	}
 	
 	//initialize specific column
@@ -10180,7 +10193,6 @@ class FrozenColumns extends Module{
 	}
 	
 	frozenCheck(column){
-		
 		if(column.parent.isGroup && column.definition.frozen){
 			console.warn("Frozen Column Error - Parent column group must be frozen, not individual columns or sub column groups");
 		}
