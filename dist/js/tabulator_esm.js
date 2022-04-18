@@ -3096,6 +3096,10 @@ class Row extends CoreFeature{
 			this.normalizeHeight(true);
 		}
 	}
+
+	deinitialize(){
+		this.initialized = false;
+	}
 	
 	deinitializeHeight(){
 		this.heightInitialized = false;
@@ -10339,8 +10343,12 @@ class FrozenColumns extends Module{
 		if(this.active && !this.blocked){
 			//calculate row padding
 			this.calcMargins();
-			
+
 			this.table.rowManager.getDisplayRows().forEach((row) =>{
+				row.deinitialize();
+			});
+
+			this.table.rowManager.getVisibleRows().forEach((row) =>{
 				if(row.type === "row"){
 					this.layoutRow(row);
 				}
@@ -10354,6 +10362,7 @@ class FrozenColumns extends Module{
 	}
 	
 	layoutRow(row){
+		// console.trace("row")
 		var rowEl = row.getElement();
 		
 		rowEl.style.paddingLeft = this.leftMargin;
