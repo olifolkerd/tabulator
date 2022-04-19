@@ -316,6 +316,7 @@ class Popup extends CoreFeature{
     }
     
     _fitToScreen(x, y, parentEl, parentOffset, position){
+        var scrollTop = this.container === document.body ? document.documentElement.scrollTop : this.container.scrollTop;
 
         //move menu to start on right edge if it is too close to the edge of the screen
         if((x + this.element.offsetWidth) >= this.container.offsetWidth || this.reversedX){
@@ -331,7 +332,7 @@ class Popup extends CoreFeature{
         }
 
         //move menu to start on bottom edge if it is too close to the edge of the screen
-        if((y + this.element.offsetHeight) > Math.max(this.container.offsetHeight, this.container.scrollTop ? this.container.scrollHeight : 0)) {
+        if((y + this.element.offsetHeight) > Math.max(this.container.offsetHeight, scrollTop ? this.container.scrollHeight : 0)) {
             if(parentEl){
                 switch(position){
                     case "bottom":
