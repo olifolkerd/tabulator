@@ -6,8 +6,21 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	emptyAlign = 0;
 
 	if(typeof DT != "undefined"){
-		a = format === "iso" ? DT.fromISO(String(a)) : DT.fromFormat(String(a), format);
-		b = format === "iso" ? DT.fromISO(String(b)) : DT.fromFormat(String(b), format);
+		if(DT.isDateTime(a)){
+			 a = a;
+		}else if(inputFormat === "iso"){
+			 a = DT.fromISO(String(a));
+		}else{
+			 a = DT.fromFormat(String(a), inputFormat);
+		}
+
+		if(DT.isDateTime(b)){
+			 b = b;
+		}else if(inputFormat === "iso"){
+			 a = DT.fromISO(String(b));
+		}else{
+			 b = DT.fromFormat(String(b), inputFormat);
+		}
 
 		if(!a.isValid){
 			emptyAlign = !b.isValid ? 0 : -1;
