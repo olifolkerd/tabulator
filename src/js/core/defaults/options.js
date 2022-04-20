@@ -3,12 +3,15 @@ export default {
 	debugEventsExternal:false, //flag to console log events
 	debugEventsInternal:false, //flag to console log events
 	debugInvalidOptions:true, //allow toggling of invalid option warnings
+	debugInitialization:true, //allow toggling of invalid option warnings
 
 	height:false, //height of tabulator
 	minHeight:false, //minimum height of tabulator
 	maxHeight:false, //maximum height of tabulator
 
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
+
+	popupContainer:false,
 
 	columns:[],//store for colum header info
 	columnDefaults:{}, //store column default props
@@ -19,8 +22,6 @@ export default {
 	autoColumnsDefinitions:false,
 
 	nestedFieldSeparator:".", //separator for nested data
-
-	tooltipGenerationMode:"load", //when to generate tooltips
 
 	footerElement:false, //hold footer element
 
@@ -46,6 +47,8 @@ export default {
 	rowFormatterPrint:null,
 	rowFormatterClipboard:null,
 	rowFormatterHtmlOutput:null,
+
+	rowHeight:null,
 
 	placeholder:false,
 

@@ -51,6 +51,10 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 		//submit new value on blur
 		input.addEventListener("blur", blurFunc);
+
+		if(editorParams.selectContents){
+			input.select();
+		}
 	});
 
 	function onChange(){

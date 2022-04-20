@@ -18,10 +18,12 @@ class Mutator extends Module{
 		this.registerColumnOption("mutatorEditParams");
 		this.registerColumnOption("mutatorClipboard");
 		this.registerColumnOption("mutatorClipboardParams");
+		this.registerColumnOption("mutateLink");
 	}
 
 	initialize(){
 		this.subscribe("cell-value-changing", this.transformCell.bind(this));
+		this.subscribe("cell-value-changed", this.mutateLink.bind(this));
 		this.subscribe("column-layout", this.initializeColumn.bind(this));
 		this.subscribe("row-data-init-before", this.rowDataChanged.bind(this));
 		this.subscribe("row-data-changing", this.rowDataChanged.bind(this));
@@ -123,6 +125,24 @@ class Mutator extends Module{
 		}
 
 		return value;
+	}
+
+	mutateLink(cell){
+		var links = cell.column.definition.mutateLink;
+
+		if(links){
+			if(!Array.isArray(links)){
+				links = [links];
+			}
+
+			links.forEach((link) => {
+				var linkCell = cell.row.getCell(link);
+
+				if(linkCell){
+					linkCell.setValue(linkCell.getValue(), true, true);
+				}
+			});
+		}
 	}
 
 	enable(){

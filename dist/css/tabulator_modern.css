@@ -68,11 +68,11 @@
   padding: 4px;
 }
 
-.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-menu-button {
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-popup-button {
   padding: 0 8px;
 }
 
-.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-menu-button:hover {
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-popup-button:hover {
   cursor: pointer;
   opacity: .6;
 }
@@ -98,7 +98,7 @@
   background: #fff;
 }
 
-.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title .tabulator-header-menu-button + .tabulator-title-editor {
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title .tabulator-header-popup-button + .tabulator-title-editor {
   width: calc(100% - 22px);
 }
 
@@ -125,10 +125,6 @@
   border-top: 1px solid #fff;
   overflow: hidden;
   margin-right: -1px;
-}
-
-.tabulator .tabulator-header .tabulator-col:first-child .tabulator-col-resize-handle.prev {
-  display: none;
 }
 
 .tabulator .tabulator-header .tabulator-col .tabulator-header-filter {
@@ -415,23 +411,20 @@
 }
 
 .tabulator .tabulator-col-resize-handle {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 5px;
-}
-
-.tabulator .tabulator-col-resize-handle.prev {
-  left: 0;
-  right: auto;
+  position: relative;
+  display: inline-block;
+  width: 6px;
+  margin-left: -3px;
+  margin-right: -3px;
+  z-index: 10;
+  vertical-align: middle;
 }
 
 .tabulator .tabulator-col-resize-handle:hover {
   cursor: ew-resize;
 }
 
-.tabulator .tabulator-loader {
+.tabulator .tabulator-alert {
   position: absolute;
   display: flex;
   align-items: center;
@@ -444,7 +437,7 @@
   text-align: center;
 }
 
-.tabulator .tabulator-loader .tabulator-loader-msg {
+.tabulator .tabulator-alert .tabulator-alert-msg {
   display: inline-block;
   margin: 0 auto;
   padding: 10px 20px;
@@ -454,12 +447,12 @@
   font-size: 16px;
 }
 
-.tabulator .tabulator-loader .tabulator-loader-msg.tabulator-loading {
+.tabulator .tabulator-alert .tabulator-alert-msg.tabulator-alert-state-msg {
   border: 4px solid #333;
   color: #000;
 }
 
-.tabulator .tabulator-loader .tabulator-loader-msg.tabulator-error {
+.tabulator .tabulator-alert .tabulator-alert-msg.tabulator-alert-state-error {
   border: 4px solid #D00;
   color: #590000;
 }
@@ -579,6 +572,7 @@
 .tabulator-row .tabulator-cell.tabulator-editing select {
   border: 1px;
   background: transparent;
+  outline: none;
 }
 
 .tabulator-row .tabulator-cell.tabulator-validation-fail {
@@ -590,10 +584,6 @@
   border: 1px;
   background: transparent;
   color: #dd0000;
-}
-
-.tabulator-row .tabulator-cell:first-child .tabulator-col-resize-handle.prev {
-  display: none;
 }
 
 .tabulator-row .tabulator-cell.tabulator-row-handle {
@@ -790,7 +780,7 @@
   color: #d00;
 }
 
-.tabulator-menu {
+.tabulator-popup-container {
   position: absolute;
   display: inline-block;
   box-sizing: border-box;
@@ -801,6 +791,19 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   z-index: 10000;
+}
+
+.tabulator-popup {
+  padding: 5px;
+}
+
+.tabulator-tooltip {
+  max-width: Min(500px, 100%);
+  padding: 3px 5px;
+  border-radius: 2px;
+  box-shadow: none;
+  font-size: 12px;
+  pointer-events: none;
 }
 
 .tabulator-menu .tabulator-menu-item {
@@ -842,55 +845,70 @@
   border-top: 1px solid #fff;
 }
 
-.tabulator-edit-select-list {
-  position: absolute;
-  display: inline-block;
-  box-sizing: border-box;
+.tabulator-edit-list {
   max-height: 200px;
-  background: #f3f3f3;
-  border: 1px solid #fff;
   font-size: 16px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  z-index: 10000;
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-item {
+.tabulator-edit-list .tabulator-edit-list-item {
   padding: 4px;
   color: #333;
+  outline: none;
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-item.active {
+.tabulator-edit-list .tabulator-edit-list-item.active {
   color: #f3f3f3;
   background: #1D68CD;
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-item.active.focused {
+.tabulator-edit-list .tabulator-edit-list-item.active.focused {
   outline: 1px solid rgba(243, 243, 243, 0.5);
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-item.focused {
+.tabulator-edit-list .tabulator-edit-list-item.focused {
   outline: 1px solid #1D68CD;
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-item:hover {
+.tabulator-edit-list .tabulator-edit-list-item:hover {
   cursor: pointer;
   color: #f3f3f3;
   background: #1D68CD;
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-notice {
+.tabulator-edit-list .tabulator-edit-list-placeholder {
   padding: 4px;
   color: #333;
   text-align: center;
 }
 
-.tabulator-edit-select-list .tabulator-edit-select-list-group {
+.tabulator-edit-list .tabulator-edit-list-group {
   border-bottom: 1px solid #fff;
   padding: 4px;
   padding-top: 6px;
   color: #333;
   font-weight: bold;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.tabulator-edit-list-group-level-2,
+.tabulator-edit-list .tabulator-edit-list-group.tabulator-edit-list-group-level-2 {
+  padding-left: 12px;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.tabulator-edit-list-group-level-3,
+.tabulator-edit-list .tabulator-edit-list-group.tabulator-edit-list-group-level-3 {
+  padding-left: 20px;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.tabulator-edit-list-group-level-4,
+.tabulator-edit-list .tabulator-edit-list-group.tabulator-edit-list-group-level-4 {
+  padding-left: 28px;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.tabulator-edit-list-group-level-5,
+.tabulator-edit-list .tabulator-edit-list-group.tabulator-edit-list-group-level-5 {
+  padding-left: 36px;
 }
 
 .tabulator.tabulator-ltr {
@@ -940,17 +958,6 @@
 .tabulator.tabulator-rtl .tabulator-row .tabulator-cell .tabulator-data-tree-control {
   margin-right: initial;
   margin-left: 5px;
-}
-
-.tabulator.tabulator-rtl .tabulator-col-resize-handle {
-  position: absolute;
-  left: 0;
-  right: auto;
-}
-
-.tabulator.tabulator-rtl .tabulator-col-resize-handle.prev {
-  right: 0;
-  left: auto;
 }
 
 .tabulator-print-fullscreen {

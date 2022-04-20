@@ -85,13 +85,6 @@ export default class Cell extends CoreFeature{
 			});
 		}
 
-		//update tooltip on mouse enter
-		if (this.table.options.tooltipGenerationMode === "hover"){
-			element.addEventListener("mouseenter", (e) => {
-				this._generateTooltip();
-			});
-		}
-
 		this.dispatch("cell-init", this);
 
 		//hide cell if not visible
@@ -137,31 +130,6 @@ export default class Cell extends CoreFeature{
 		this.dispatch("cell-rendered", this);
 	}
 
-	//generate tooltip text
-	_generateTooltip(){
-		var tooltip = this.column.tooltip;
-
-		if(tooltip){
-			if(tooltip === true){
-				tooltip = this.value;
-			}else if(typeof(tooltip) == "function"){
-				tooltip = tooltip(this.getComponent());
-
-				if(tooltip === false){
-					tooltip = "";
-				}
-			}
-
-			if(typeof tooltip === "undefined"){
-				tooltip = "";
-			}
-
-			this.element.setAttribute("title", tooltip);
-		}else{
-			this.element.setAttribute("title", "");
-		}
-	}
-
 	//////////////////// Getters ////////////////////
 	getElement(containerOnly){
 		if(!this.loaded){
@@ -183,8 +151,8 @@ export default class Cell extends CoreFeature{
 	}
 
 	//////////////////// Actions ////////////////////
-	setValue(value, mutate){
-		var changed = this.setValueProcessData(value, mutate);
+	setValue(value, mutate, force){
+		var changed = this.setValueProcessData(value, mutate, force);
 
 		if(changed){
 			this.dispatch("cell-value-updated", this);
@@ -203,10 +171,10 @@ export default class Cell extends CoreFeature{
 		}
 	}
 
-	setValueProcessData(value, mutate){
+	setValueProcessData(value, mutate, force){
 		var changed = false;
 
-		if(this.value !== value){
+		if(this.value !== value || force){
 
 			changed = true;
 
@@ -242,7 +210,6 @@ export default class Cell extends CoreFeature{
 
 	layoutElement(){
 		this._generateContents();
-		this._generateTooltip();
 
 		this.dispatch("cell-layout", this);
 	}
@@ -279,11 +246,15 @@ export default class Cell extends CoreFeature{
 	clearHeight(){
 		this.element.style.height = "";
 		this.height = null;
+
+		this.dispatch("cell-height", this, "");
 	}
 
 	setHeight(){
 		this.height = this.row.height;
-		this.element.style.height =  this.row.heightStyled;
+		this.element.style.height = this.row.heightStyled;
+
+		this.dispatch("cell-height", this, this.row.heightStyled);
 	}
 
 	getHeight(){

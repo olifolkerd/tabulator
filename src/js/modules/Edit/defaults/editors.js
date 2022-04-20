@@ -3,6 +3,7 @@ import textarea from './editors/textarea.js';
 import number from './editors/number.js';
 import range from './editors/range.js';
 import select from './editors/select.js';
+import list from './editors/list.js';
 import autocomplete from './editors/autocomplete.js';
 import star from './editors/star.js';
 import progress from './editors/progress.js';
@@ -14,6 +15,7 @@ export default {
     number:number,
     range:range,
 	select:select,
+	list:list,
 	autocomplete:autocomplete,
 	star:star,
 	progress:progress,

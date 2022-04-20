@@ -266,10 +266,11 @@ class Filter extends Module{
 					}
 
 					self.headerFilters[field] = {value:value, func:filterFunc, type:type, params:params || {}};
-
 				}else{
 					delete self.headerFilters[field];
 				}
+
+				column.modules.filter.value = value;
 
 				filterChangeCheck = JSON.stringify(self.headerFilters);
 
@@ -299,6 +300,8 @@ class Filter extends Module{
 		success = column.modules.filter.success,
 		field = column.getField(),
 		filterElement, editor, editorElement, cellWrapper, typingTimer, searchTrigger, params;
+
+		column.modules.filter.value = initialValue;
 
 		//handle aborted edit
 		function cancel(){}
@@ -522,7 +525,7 @@ class Filter extends Module{
 	//programmatically get value of header filter
 	getHeaderFilterValue(column){
 		if(column.modules.filter && column.modules.filter.headerElement){
-			return column.modules.filter.headerElement.value;
+			return column.modules.filter.value;
 		} else {
 			console.warn("Column Filter Error - No header filter set on column:", column.getField());
 		}
@@ -821,7 +824,7 @@ class Filter extends Module{
 		activeRowComponents = [];
 
 		if(this.subscribedExternal("dataFiltering")){
-			this.dispatchExternal("dataFiltering", this.getFilters());
+			this.dispatchExternal("dataFiltering", this.getFilters(true));
 		}
 
 		if(this.table.options.filterMode !== "remote" && (this.filterList.length || Object.keys(this.headerFilters).length)){
@@ -842,7 +845,7 @@ class Filter extends Module{
 				activeRowComponents.push(row.getComponent());
 			});
 
-			this.dispatchExternal("dataFiltered", this.getFilters(), activeRowComponents);
+			this.dispatchExternal("dataFiltered", this.getFilters(true), activeRowComponents);
 		}
 
 		return activeRows;

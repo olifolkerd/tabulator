@@ -1,4 +1,5 @@
 import CoreFeature from './CoreFeature.js';
+import Popup from './tools/Popup.js';
 
 class Module extends CoreFeature{
 
@@ -26,12 +27,16 @@ class Module extends CoreFeature{
 	}
 
 	///////////////////////////////////
-	/// Public Function Registation ///
+	/// Public Function Registration ///
 	///////////////////////////////////
 
 	registerTableFunction(name, func){
 		if(typeof this.table[name] === "undefined"){
-			this.table[name] = func;
+			this.table[name] = (...args) => {
+				this.table.initGuard(name);
+
+				return func(...args);
+			}
 		}else{
 			console.warn("Unable to bind table function, name already in use", name)
 		}
@@ -64,6 +69,43 @@ class Module extends CoreFeature{
 			this.table.rowManager.refreshActiveData(handler, false, renderInPosition);
 		}
 	}
+
+	///////////////////////////////////
+	//////// Footer Management ////////
+	///////////////////////////////////
+
+	footerAppend(element){
+		return this.table.footerManager.append(element)
+	}
+
+	footerPrepend(element){
+		return this.table.footerManager.prepend(element)
+	}
+
+	footerRemove(element){
+		return this.table.footerManager.remove(element)
+	} 
+
+	///////////////////////////////////
+	//////// Popups Management ////////
+	///////////////////////////////////
+	
+	popup(menuEl, menuContainer){
+		return new Popup(this.table, menuEl, menuContainer);
+	}
+
+	///////////////////////////////////
+	//////// Alert Management ////////
+	///////////////////////////////////
+
+	alert(content, type){
+		return this.table.alertManager.alert(content, type);
+	}
+
+	clearAlert(){
+		return this.table.alertManager.clear();
+	}
+	
 }
 
 export default Module;

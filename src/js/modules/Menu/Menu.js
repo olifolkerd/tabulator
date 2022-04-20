@@ -1,5 +1,4 @@
 import Module from '../../core/Module.js';
-import Helpers from '../../core/tools/Helpers.js';
 
 class Menu extends Module{
 	
@@ -7,69 +6,44 @@ class Menu extends Module{
 		super(table);
 		
 		this.menuContainer = null;
-		this.menuElements = [];
-		this.blurEvent = this.hideMenu.bind(this);
-		this.escEvent = this.escMenu.bind(this);
 		this.nestedMenuBlock = false;
-		this.positionReversedX = false;
 		
 		this.currentComponent = null;
+		this.rootPopup = null;
 		
 		this.columnSubscribers = {};
 		
+		this.registerTableOption("menuContainer", undefined); //deprecated
+
 		this.registerTableOption("rowContextMenu", false);
 		this.registerTableOption("rowClickMenu", false);
 		this.registerTableOption("groupContextMenu", false);
 		this.registerTableOption("groupClickMenu", false);
-		this.registerTableOption("menuContainer", false);
 		
 		this.registerColumnOption("headerContextMenu");
 		this.registerColumnOption("headerClickMenu");
 		this.registerColumnOption("headerMenu");
+		this.registerColumnOption("headerMenuIcon");
 		this.registerColumnOption("contextMenu");
 		this.registerColumnOption("clickMenu");
+		
 	}
 	
 	initialize(){
-		this.lookupMenuContainer();
-		
+		this.deprecationCheck();
 		this.initializeRowWatchers();
 		this.initializeGroupWatchers();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
-	
-	lookupMenuContainer(){
-		
-		this.menuContainer = this.table.options.menuContainer;
-		
-		if(typeof this.menuContainer === "string"){
-			this.menuContainer = document.querySelector(this.menuContainer);
-			
-			if(!this.menuContainer){
-				console.warn("Menu Error - no container element found matching selector:",  this.table.options.menuContainer , "(defaulting to document body)");
-			}
-		}else if (this.menuContainer === true){
-			this.menuContainer = this.table.element;
+
+	deprecationCheck(){
+		if(typeof this.table.options.menuContainer !== "undefined"){
+			console.warn("Use of the menuContainer option is now deprecated. Please use the popupContainer option instead");
+
+			this.table.options.popupContainer = this.table.options.menuContainer;
 		}
-		
-		if(this.menuContainer && !this.checkMenuContainerIsParent(this.menuContainer)){
-			this.menuContainer = false;
-			console.warn("Menu Error - container element does not contain this table:",  this.table.options.menuContainer , "(defaulting to document body)");
-		}
-		
-		if(!this.menuContainer){
-			this.menuContainer = document.body;
-		}
-	}
-	
-	checkMenuContainerIsParent(container, element = this.table.element){
-		if(container === element){
-			return true;
-		}else{
-			return element.parentNode ? this.checkMenuContainerIsParent(container, element.parentNode) : false;
-		}
-	}
+	}	
 	
 	initializeRowWatchers(){
 		if(this.table.options.rowContextMenu){
@@ -127,11 +101,25 @@ class Menu extends Module{
 	}
 	
 	initializeColumnHeaderMenu(column){
-		var headerMenuEl;
+		var icon = column.definition.headerMenuIcon,
+		headerMenuEl;
 		
 		headerMenuEl = document.createElement("span");
-		headerMenuEl.classList.add("tabulator-header-menu-button");
-		headerMenuEl.innerHTML = "&vellip;";
+		headerMenuEl.classList.add("tabulator-header-popup-button");
+
+		if(icon){
+			if(typeof icon === "function"){
+				icon = icon(column.getComponent());
+			}
+
+			if(icon instanceof HTMLElement){
+				headerMenuEl.appendChild(icon);
+			}else{
+				headerMenuEl.innerHTML = icon;
+			}
+		}else{
+			headerMenuEl.innerHTML = "&vellip;";
+		}
 		
 		headerMenuEl.addEventListener("click", (e) => {
 			e.stopPropagation();
@@ -170,15 +158,16 @@ class Menu extends Module{
 			component = component._row;
 		}
 		
-		menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
+		menu = typeof menu == "function" ? menu.call(this.table, e, component.getComponent()) : menu;
 		
 		this.loadMenu(e, component, menu);
 	}
 	
-	loadMenu(e, component, menu, parentEl){
-		var touch = !(e instanceof MouseEvent);
+	loadMenu(e, component, menu, parentEl, parentPopup){
+		var touch = !(e instanceof MouseEvent),		
+		menuEl = document.createElement("div"),
+		popup;
 		
-		var menuEl = document.createElement("div");
 		menuEl.classList.add("tabulator-menu");
 		
 		if(!touch){
@@ -193,7 +182,7 @@ class Menu extends Module{
 		if(!parentEl){
 			if(this.nestedMenuBlock){
 				//abort if child menu already open
-				if(this.isOpen()){
+				if(this.rootPopup){
 					return;
 				}
 			}else{
@@ -202,8 +191,14 @@ class Menu extends Module{
 				}, 100)
 			}
 			
-			this.hideMenu();
-			this.menuElements = [];
+			if(this.rootPopup){
+				this.rootPopup.hide();	
+			}
+			
+			this.rootPopup = popup = this.popup(menuEl);
+			
+		}else{
+			popup = parentPopup.child(menuEl);
 		}
 		
 		menu.forEach((item) => {
@@ -239,8 +234,7 @@ class Menu extends Module{
 					if(item.menu && item.menu.length){
 						itemEl.addEventListener("click", (e) => {
 							e.stopPropagation();
-							this.hideOldSubMenus(menuEl);
-							this.loadMenu(e, component, item.menu, itemEl);
+							this.loadMenu(e, component, item.menu, itemEl, popup);
 						});
 					}else{
 						if(item.action){
@@ -260,118 +254,24 @@ class Menu extends Module{
 		});
 		
 		menuEl.addEventListener("click", (e) => {
-			this.hideMenu();
+			this.rootPopup.hide();
 		});
 		
-		this.menuElements.push(menuEl);
-		this.positionMenu(menuEl, parentEl, touch, e);
+		popup.show(parentEl || e);
 		
-		this.currentComponent = component
-		
-		this.dispatchExternal("menuOpened", component.getComponent())
-	}
-	
-	hideOldSubMenus(menuEl){
-		var index = this.menuElements.indexOf(menuEl);
-		
-		if(index > -1){
-			for(let i = this.menuElements.length - 1; i > index; i--){
-				var el = this.menuElements[i];
+		if(popup === this.rootPopup){
+			this.rootPopup.hideOnBlur(() => {
+				this.rootPopup = null;
 				
-				if(el.parentNode){
-					el.parentNode.removeChild(el);
+				if(this.currentComponent){
+					this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
+					this.currentComponent = null;
 				}
-				
-				this.menuElements.pop();
-			}
-		}
-	}
-	
-	positionMenu(element, parentEl, touch, e){
-		var x, y, parentOffset;
-		
-		if(!parentEl){
-			x = touch ? e.touches[0].pageX : e.pageX;
-			y = touch ? e.touches[0].pageY : e.pageY;
-			
-			if(this.menuContainer !== document.body){
-				parentOffset = Helpers.elOffset(this.menuContainer);
-				
-				x -= parentOffset.left;
-				y -= parentOffset.top;
-			}
-			
-			this.positionReversedX = false;
-		}else{
-			parentOffset = Helpers.elOffset(parentEl);
-			x = parentOffset.left + parentEl.offsetWidth;
-			y = parentOffset.top - 1;
-		}
-		
-		element.style.top = y + "px";
-		element.style.left = x + "px";
-		
-		setTimeout(() => {
-			this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
-			this.subscribe("cell-editing", this.blurEvent);
-			document.body.addEventListener("click", this.blurEvent);
-			document.body.addEventListener("contextmenu", this.blurEvent);
-			window.addEventListener("resize", this.blurEvent);
-			document.body.addEventListener("keydown", this.escEvent);
-		}, 100);
-		
-		this.menuContainer.appendChild(element);
-		
-		//move menu to start on right edge if it is too close to the edge of the screen
-		if((x + element.offsetWidth) >= this.menuContainer.offsetWidth || this.positionReversedX){
-			element.style.left = "";
-			
-			if(parentEl){
-				element.style.right = (this.menuContainer.offsetWidth - parentOffset.left) + "px";
-			}else{
-				element.style.right = (this.menuContainer.offsetWidth - x) + "px";
-			}
-			
-			this.positionReversedX = true;
-		}
-		
-		//move menu to start on bottom edge if it is too close to the edge of the screen
-		if((y + element.offsetHeight) > this.menuContainer.offsetHeight) {
-			if(parentEl){
-				element.style.top = (parseInt(element.style.top) - element.offsetHeight + parentEl.offsetHeight + 1) + "px";
-			}else{
-				element.style.top = (parseInt(element.style.top) - element.offsetHeight) + "px";
-			}
-		}
-	}
-	
-	isOpen(){
-		return !!this.menuElements.length;
-	}
-	
-	escMenu(e){
-		if(e.keyCode == 27){
-			this.hideMenu();
-		}
-	}
-	
-	hideMenu(){	
-		this.menuElements.forEach((menuEl) => {
-			if(menuEl.parentNode){
-				menuEl.parentNode.removeChild(menuEl);
-			}
-		});
-		
-		document.body.removeEventListener("keydown", this.escEvent);
-		document.body.removeEventListener("click", this.blurEvent);
-		document.body.removeEventListener("contextmenu", this.blurEvent);
-		window.removeEventListener("resize", this.blurEvent);
-		this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
-		this.unsubscribe("cell-editing", this.blurEvent);
-		
-		if(this.currentComponent){
-			this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
-			this.currentComponent = null;
+			});
+
+			this.currentComponent = component;
+
+			this.dispatchExternal("menuOpened", component.getComponent())
 		}
 	}
 }

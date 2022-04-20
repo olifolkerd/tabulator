@@ -39,7 +39,12 @@ class FrozenColumns extends Module{
 		this.subscribe("row-layout-after", this.layoutRow.bind(this));
 		this.subscribe("table-layout", this.layout.bind(this));
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 		this.subscribe("columns-loading", this.reset.bind(this));
+
+		this.subscribe("column-add", this.reinitializeColumns.bind(this));
+		this.subscribe("column-delete", this.reinitializeColumns.bind(this));
+
 		this.subscribe("table-redraw", this.layout.bind(this));
 		this.subscribe("layout-refreshing", this.blockLayout.bind(this));
 		this.subscribe("layout-refreshed", this.unblockLayout.bind(this));
@@ -55,6 +60,14 @@ class FrozenColumns extends Module{
 	
 	layoutCell(cell){
 		this.layoutElement(cell.element, cell.column)
+	}
+
+	reinitializeColumns(){
+		this.reset();
+
+		this.table.columnManager.columnsByIndex.forEach((column) => {
+			this.initializeColumn(column);
+		});
 	}
 	
 	//initialize specific column
@@ -83,8 +96,6 @@ class FrozenColumns extends Module{
 	}
 	
 	frozenCheck(column){
-		var frozen = false;
-		
 		if(column.parent.isGroup && column.definition.frozen){
 			console.warn("Frozen Column Error - Parent column group must be frozen, not individual columns or sub column groups");
 		}
@@ -94,8 +105,6 @@ class FrozenColumns extends Module{
 		}else{
 			return column.definition.frozen;
 		}
-		
-		return frozen;
 	}
 	
 	//quick layout to smooth horizontal scrolling
@@ -246,11 +255,24 @@ class FrozenColumns extends Module{
 	
 	//layout columns appropriately
 	layout(){
+		var visibleRows = [],
+		otherRows = [];
+
 		if(this.active && !this.blocked){
 			//calculate row padding
 			this.calcMargins();
-			
-			this.table.rowManager.getDisplayRows().forEach((row) =>{
+
+			//calculate left columns
+			this.layoutColumnPosition();
+
+			visibleRows = this.table.rowManager.getVisibleRows();
+			otherRows = this.table.rowManager.getDisplayRows().filter(row => !visibleRows.includes(row));
+
+			otherRows.forEach((row) =>{
+				row.deinitialize();
+			});
+
+			visibleRows.forEach((row) =>{
 				if(row.type === "row"){
 					this.layoutRow(row);
 				}
@@ -258,12 +280,12 @@ class FrozenColumns extends Module{
 			
 			this.layoutCalcRows();
 			
-			//calculate left columns
-			this.layoutColumnPosition(true);
+
 		}
 	}
 	
 	layoutRow(row){
+		// console.trace("row")
 		var rowEl = row.getElement();
 		
 		rowEl.style.paddingLeft = this.leftMargin;

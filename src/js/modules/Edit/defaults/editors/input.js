@@ -28,6 +28,10 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	onRendered(function(){
 		input.focus({preventScroll: true});
 		input.style.height = "100%";
+
+		if(editorParams.selectContents){
+			input.select();
+		}
 	});
 
 	function onChange(e){

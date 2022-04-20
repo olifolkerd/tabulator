@@ -212,7 +212,7 @@ class ColumnCalcs extends Module{
 
 		if(this.botInitialized){
 			this.botInitialized = false;
-			this.table.footerManager.remove(this.botElement);
+			this.footerRemove(this.botElement);
 			changed = true;
 		}
 
@@ -230,7 +230,7 @@ class ColumnCalcs extends Module{
 
 	initializeBottomRow(){
 		if(!this.botInitialized){
-			this.table.footerManager.prepend(this.botElement);
+			this.footerPrepend(this.botElement);
 			this.botInitialized = true;
 		}
 	}

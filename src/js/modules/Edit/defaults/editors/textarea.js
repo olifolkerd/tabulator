@@ -39,6 +39,10 @@ export default function(cell, onRendered, success, cancel, editorParams){
         input.scrollHeight;
         input.style.height = input.scrollHeight + "px";
         cell.getRow().normalizeHeight();
+
+        if(editorParams.selectContents){
+			input.select();
+		}
     });
 
     function onChange(e){
