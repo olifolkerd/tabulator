@@ -1,4 +1,4 @@
-/* Tabulator v5.1.8 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.2.0 (c) Oliver Folkerd 2022 */
 class CoreFeature{
 
 	constructor(table){
@@ -9310,10 +9310,12 @@ function money(cell, formatterParams, onRendered){
 	integer = number[0];
 	decimal = number.length > 1 ? decimalSym + number[1] : "";
 
-	rgx = /(\d+)(\d{3})/;
+	if (formatterParams.thousand !== false) {
+		rgx = /(\d+)(\d{3})/;
 
-	while (rgx.test(integer)){
-		integer = integer.replace(rgx, "$1" + thousandSym + "$2");
+		while (rgx.test(integer)){
+			integer = integer.replace(rgx, "$1" + thousandSym + "$2");
+		}
 	}
 
 	return after ? sign + integer + decimal + symbol : sign + symbol + integer + decimal;
@@ -9469,7 +9471,15 @@ function datetime(cell, formatterParams, onRendered){
 	var value = cell.getValue();
 
 	if(typeof DT != "undefined"){
-		var newDatetime = inputFormat === "iso" ? DT.fromISO(String(value)) : DT.fromFormat(String(value), inputFormat);
+		var newDatetime;
+
+		if(DT.isDateTime(value)){
+			 newDatetime = value;
+		 }else if(inputFormat === "iso"){
+			 newDatetime = DT.fromISO(String(value));
+		 }else {
+			 newDatetime = DT.fromFormat(String(value), inputFormat);
+		 }
 
 		if(newDatetime.isValid){
 			if(formatterParams.timezone){
@@ -9502,8 +9512,15 @@ function datetimediff (cell, formatterParams, onRendered) {
 	var value = cell.getValue();
 
 	if(typeof DT != "undefined"){
-		
-		var newDatetime = inputFormat === "iso" ? DT.fromISO(String(value)) : DT.fromFormat(String(value), inputFormat);
+		var newDatetime;
+
+		if(DT.isDateTime(value)){
+			 newDatetime = value;
+		 }else if(inputFormat === "iso"){
+			 newDatetime = DT.fromISO(String(value));
+		 }else {
+			 newDatetime = DT.fromFormat(String(value), inputFormat);
+		 }
 
 		if (newDatetime.isValid){
 			if(humanize){
@@ -17900,8 +17917,21 @@ function datetime$1(a, b, aRow, bRow, column, dir, params){
 	emptyAlign = 0;
 
 	if(typeof DT != "undefined"){
-		a = format === "iso" ? DT.fromISO(String(a)) : DT.fromFormat(String(a), format);
-		b = format === "iso" ? DT.fromISO(String(b)) : DT.fromFormat(String(b), format);
+		if(DT.isDateTime(a)){
+			 a = a;
+		}else if(inputFormat === "iso"){
+			 a = DT.fromISO(String(a));
+		}else {
+			 a = DT.fromFormat(String(a), inputFormat);
+		}
+
+		if(DT.isDateTime(b)){
+			 b = b;
+		}else if(inputFormat === "iso"){
+			 a = DT.fromISO(String(b));
+		}else {
+			 b = DT.fromFormat(String(b), inputFormat);
+		}
 
 		if(!a.isValid){
 			emptyAlign = !b.isValid ? 0 : -1;

@@ -1141,6 +1141,7 @@
 
 .tabulator-popup {
   padding: 5px;
+  border-radius: 3px;
 }
 
 .tabulator-tooltip {
