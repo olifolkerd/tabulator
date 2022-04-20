@@ -25,10 +25,12 @@ export default function(cell, formatterParams, onRendered){
 	integer = number[0];
 	decimal = number.length > 1 ? decimalSym + number[1] : "";
 
-	rgx = /(\d+)(\d{3})/;
+	if (formatterParams.thousand !== false) {
+		rgx = /(\d+)(\d{3})/;
 
-	while (rgx.test(integer)){
-		integer = integer.replace(rgx, "$1" + thousandSym + "$2");
+		while (rgx.test(integer)){
+			integer = integer.replace(rgx, "$1" + thousandSym + "$2");
+		}
 	}
 
 	return after ? sign + integer + decimal + symbol : sign + symbol + integer + decimal;
