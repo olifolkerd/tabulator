@@ -1,4 +1,4 @@
-/* Tabulator v5.2.0 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.2.1 (c) Oliver Folkerd 2022 */
 class CoreFeature{
 
 	constructor(table){
@@ -17919,7 +17919,7 @@ function datetime$1(a, b, aRow, bRow, column, dir, params){
 	if(typeof DT != "undefined"){
 		if(DT.isDateTime(a)){
 			 a = a;
-		}else if(inputFormat === "iso"){
+		}else if(format === "iso"){
 			 a = DT.fromISO(String(a));
 		}else {
 			 a = DT.fromFormat(String(a), format);

@@ -1,4 +1,4 @@
-/* Tabulator v5.2.0 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.2.1 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -25436,18 +25436,18 @@
     if (typeof DT != "undefined") {
       if (DT.isDateTime(a)) {
         a = a;
-      } else if (inputFormat === "iso") {
+      } else if (format === "iso") {
         a = DT.fromISO(String(a));
       } else {
-        a = DT.fromFormat(String(a), inputFormat);
+        a = DT.fromFormat(String(a), format);
       }
 
       if (DT.isDateTime(b)) {
         b = b;
-      } else if (inputFormat === "iso") {
+      } else if (format === "iso") {
         a = DT.fromISO(String(b));
       } else {
-        b = DT.fromFormat(String(b), inputFormat);
+        b = DT.fromFormat(String(b), format);
       }
 
       if (!a.isValid) {
