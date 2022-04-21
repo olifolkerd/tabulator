@@ -562,7 +562,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			cursor:ew-resize;
 		}
 
-		&:last-child{
+		&:last-of-type{
 			width:3px;
 			margin-right:0;
 		}

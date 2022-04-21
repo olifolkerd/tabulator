@@ -770,7 +770,7 @@
   cursor: ew-resize;
 }
 
-.tabulator .tabulator-col-resize-handle:last-child {
+.tabulator .tabulator-col-resize-handle:last-of-type {
   width: 3px;
   margin-right: 0;
 }

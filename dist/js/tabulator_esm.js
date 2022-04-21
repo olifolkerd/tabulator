@@ -16661,7 +16661,7 @@ class ResizeColumns extends Module{
 		
 		if((mode === true || mode == type) && this._checkResizability(nearestColumn)){
 			
-			var handle = document.createElement('div');
+			var handle = document.createElement('span');
 			handle.className = "tabulator-col-resize-handle";
 			
 			handle.addEventListener("click", function(e){
