@@ -561,6 +561,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		&:hover{
 			cursor:ew-resize;
 		}
+
+		&:last-child{
+			width:3px;
+			margin-right:0;
+		}
 	}
 	
 	

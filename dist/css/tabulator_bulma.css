@@ -424,6 +424,11 @@
   cursor: ew-resize;
 }
 
+.tabulator .tabulator-col-resize-handle:last-child {
+  width: 3px;
+  margin-right: 0;
+}
+
 .tabulator .tabulator-alert {
   position: absolute;
   display: flex;
