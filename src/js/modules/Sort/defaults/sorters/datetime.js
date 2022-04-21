@@ -11,15 +11,15 @@ export default function(a, b, aRow, bRow, column, dir, params){
 		}else if(inputFormat === "iso"){
 			 a = DT.fromISO(String(a));
 		}else{
-			 a = DT.fromFormat(String(a), inputFormat);
+			 a = DT.fromFormat(String(a), format);
 		}
 
 		if(DT.isDateTime(b)){
 			 b = b;
-		}else if(inputFormat === "iso"){
+		}else if(format === "iso"){
 			 a = DT.fromISO(String(b));
 		}else{
-			 b = DT.fromFormat(String(b), inputFormat);
+			 b = DT.fromFormat(String(b), format);
 		}
 
 		if(!a.isValid){
