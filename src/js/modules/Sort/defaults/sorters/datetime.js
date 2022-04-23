@@ -17,7 +17,7 @@ export default function(a, b, aRow, bRow, column, dir, params){
 		if(DT.isDateTime(b)){
 			 b = b;
 		}else if(format === "iso"){
-			 a = DT.fromISO(String(b));
+			 b = DT.fromISO(String(b));
 		}else{
 			 b = DT.fromFormat(String(b), format);
 		}
