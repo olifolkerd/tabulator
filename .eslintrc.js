@@ -13,9 +13,10 @@ module.exports = {
 		"ecmaVersion": "latest",
 		"sourceType": "module"
 	},
+	"plugins": ["only-warn"],
 	"rules": {
-		"semi": "warn",
-		"indent": ["warn", "tab"],
+		"semi": "error",
+		"indent": ["error", "tab"],
 		"no-unused-vars": ["warn", { "vars": "all", "args": "none", "ignoreRestSiblings": false }],
 		"no-fallthrough": "off",
 		"no-inner-declarations": "off",

@@ -53,6 +53,7 @@
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "eslint": "^8.10.0",
+    "eslint-plugin-only-warn": "^1.0.3",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.2",
     "node-sass": "^5.0.0",
