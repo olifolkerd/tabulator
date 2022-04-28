@@ -89,7 +89,7 @@ class Validate extends Module{
 		var invalid = [];
 		
 		column.cells.forEach((cell) => {
-			if(!this.cellValidate(cell)){
+			if(this.cellValidate(cell) !== true){
 				invalid.push(cell.getComponent());
 			}
 		});
@@ -105,7 +105,7 @@ class Validate extends Module{
 		var invalid = [];
 		
 		row.cells.forEach((cell) => {
-			if(!this.cellValidate(cell)){
+			if(this.cellValidate(cell) !== true){
 				invalid.push(cell.getComponent());
 			}
 		});
