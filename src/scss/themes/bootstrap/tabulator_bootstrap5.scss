@@ -544,3 +544,23 @@ $table-cell-padding-sm: 5px;
 		}
 	}
 }
+
+.tabulator-popup-container{
+	background:#fff;
+}
+
+.tabulator-edit-list{
+	.tabulator-edit-list-item{
+		&.active{
+			color:#fff;
+
+			&.focused{
+				outline:1px solid rgba(#fff, .5);
+			}
+		}
+
+		&:hover{
+			color:#fff;
+		}
+	}
+}

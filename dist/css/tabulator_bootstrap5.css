@@ -1577,4 +1577,20 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   background: #ccc;
 }
 
+.tabulator-popup-container {
+  background: #fff;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.active {
+  color: #fff;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.active.focused {
+  outline: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.tabulator-edit-list .tabulator-edit-list-item:hover {
+  color: #fff;
+}
+
 /*# sourceMappingURL=tabulator_bootstrap5.css.map */
