@@ -13406,7 +13406,7 @@ class MoveColumns extends Module{
 		config = {},
 		colEl;
 		
-		if(!column.modules.frozen){
+		if(!column.modules.frozen && !column.isGroup){
 			colEl = column.getElement();
 			
 			config.mousemove = function(e){
