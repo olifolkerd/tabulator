@@ -186,6 +186,8 @@ export default class Renderer extends CoreFeature{
 						this.elementVertical.scrollTop = this.elementVertical.scrollTop - this.elementVertical.clientHeight + rowEl.offsetHeight;
 					}
 
+					case "top":
+					this.elementVertical.scrollTop = rowEl.offsetTop;					
 					break;
 				}
 
