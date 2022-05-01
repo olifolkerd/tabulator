@@ -421,6 +421,7 @@ class Persistence extends Module{
 				if(this.config.columns === true || this.config.columns == undefined){
 					keys =  Object.keys(colDef);
 					keys.push("width");
+					keys.push("visible");
 				}else{
 					keys = this.config.columns;
 				}

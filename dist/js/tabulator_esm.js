@@ -15880,6 +15880,7 @@ class Persistence extends Module{
 				if(this.config.columns === true || this.config.columns == undefined){
 					keys =  Object.keys(colDef);
 					keys.push("width");
+					keys.push("visible");
 				}else {
 					keys = this.config.columns;
 				}
@@ -18874,7 +18875,7 @@ class Validate extends Module{
 		var invalid = [];
 		
 		column.cells.forEach((cell) => {
-			if(!this.cellValidate(cell)){
+			if(this.cellValidate(cell) !== true){
 				invalid.push(cell.getComponent());
 			}
 		});
@@ -18890,7 +18891,7 @@ class Validate extends Module{
 		var invalid = [];
 		
 		row.cells.forEach((cell) => {
-			if(!this.cellValidate(cell)){
+			if(this.cellValidate(cell) !== true){
 				invalid.push(cell.getComponent());
 			}
 		});
