@@ -1,4 +1,4 @@
-/* Tabulator v5.2.2 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.2.3 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -2442,6 +2442,8 @@
                   _this2.elementVertical.scrollTop = _this2.elementVertical.scrollTop - _this2.elementVertical.clientHeight + rowEl.offsetHeight;
                 }
 
+              case "top":
+                _this2.elementVertical.scrollTop = rowEl.offsetTop;
                 break;
             }
 
@@ -5913,7 +5915,9 @@
             this.redrawBlockRenderInPosition = true;
           }
         } else {
+          this.dispatchExternal("renderStarted");
           this.renderer.rerenderRows(callback);
+          this.dispatchExternal("renderComplete");
         }
       }
     }, {
@@ -10997,7 +11001,22 @@
           this.subscribe("edit-cancelled", this.cellValueChanged.bind(this));
           this.subscribe("column-moving-rows", this.columnMoving.bind(this));
           this.subscribe("table-built", this.initializeElementField.bind(this));
+          this.subscribe("table-redrawing", this.tableRedrawing.bind(this));
           this.registerDisplayHandler(this.getRows.bind(this), 30);
+        }
+      }
+    }, {
+      key: "tableRedrawing",
+      value: function tableRedrawing(force) {
+        var _this2 = this;
+
+        var rows;
+
+        if (force) {
+          rows = this.table.rowManager.getRows();
+          rows.forEach(function (row) {
+            _this2.reinitializeRowChildren(row);
+          });
         }
       }
     }, {
@@ -11014,11 +11033,11 @@
     }, {
       key: "columnMoving",
       value: function columnMoving() {
-        var _this2 = this;
+        var _this3 = this;
 
         var rows = [];
         this.table.rowManager.rows.forEach(function (row) {
-          rows = rows.concat(_this2.getTreeChildren(row, false, true));
+          rows = rows.concat(_this3.getTreeChildren(row, false, true));
         });
         return rows;
       }
@@ -11123,7 +11142,7 @@
     }, {
       key: "generateControlElement",
       value: function generateControlElement(row, el) {
-        var _this3 = this;
+        var _this4 = this;
 
         var config = row.modules.dataTree,
             el = el || row.getCells()[0].getElement(),
@@ -11135,14 +11154,14 @@
             config.controlEl.addEventListener("click", function (e) {
               e.stopPropagation();
 
-              _this3.collapseRow(row);
+              _this4.collapseRow(row);
             });
           } else {
             config.controlEl = this.expandEl.cloneNode(true);
             config.controlEl.addEventListener("click", function (e) {
               e.stopPropagation();
 
-              _this3.expandRow(row);
+              _this4.expandRow(row);
             });
           }
 
@@ -11170,7 +11189,7 @@
     }, {
       key: "getRows",
       value: function getRows(rows) {
-        var _this4 = this;
+        var _this5 = this;
 
         var output = [];
         rows.forEach(function (row, i) {
@@ -11182,7 +11201,7 @@
             config = row.modules.dataTree.children;
 
             if (!config.index && config.children !== false) {
-              children = _this4.getChildren(row);
+              children = _this5.getChildren(row);
               children.forEach(function (child) {
                 child.create();
                 output.push(child);
@@ -11195,7 +11214,7 @@
     }, {
       key: "getChildren",
       value: function getChildren(row, allChildren) {
-        var _this5 = this;
+        var _this6 = this;
 
         var config = row.modules.dataTree,
             children = [],
@@ -11219,7 +11238,7 @@
           children.forEach(function (child) {
             output.push(child);
 
-            var subChildren = _this5.getChildren(child);
+            var subChildren = _this6.getChildren(child);
 
             subChildren.forEach(function (sub) {
               output.push(sub);
@@ -11232,7 +11251,7 @@
     }, {
       key: "generateChildren",
       value: function generateChildren(row) {
-        var _this6 = this;
+        var _this7 = this;
 
         var children = [];
         var childArray = row.getData()[this.field];
@@ -11242,13 +11261,13 @@
         }
 
         childArray.forEach(function (childData) {
-          var childRow = new Row(childData || {}, _this6.table.rowManager);
+          var childRow = new Row(childData || {}, _this7.table.rowManager);
           childRow.create();
           childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
           childRow.modules.dataTree.parent = row;
 
           if (childRow.modules.dataTree.children) {
-            childRow.modules.dataTree.open = _this6.startOpen(childRow.getComponent(), childRow.modules.dataTree.index);
+            childRow.modules.dataTree.open = _this7.startOpen(childRow.getComponent(), childRow.modules.dataTree.index);
           }
 
           children.push(childRow);
@@ -11389,7 +11408,7 @@
     }, {
       key: "findChildIndex",
       value: function findChildIndex(subject, parent) {
-        var _this7 = this;
+        var _this8 = this;
 
         var match = false;
 
@@ -11416,7 +11435,7 @@
         } else {
           //subject should be treated as the index of the row
           match = parent.data[this.field].find(function (row) {
-            return row.data[_this7.table.options.index] == subject;
+            return row.data[_this8.table.options.index] == subject;
           });
         }
 
@@ -11436,7 +11455,7 @@
     }, {
       key: "getTreeChildren",
       value: function getTreeChildren(row, component, recurse) {
-        var _this8 = this;
+        var _this9 = this;
 
         var config = row.modules.dataTree,
             output = [];
@@ -11451,7 +11470,7 @@
               output.push(component ? childRow.getComponent() : childRow);
 
               if (recurse) {
-                output = output.concat(_this8.getTreeChildren(childRow, component, recurse));
+                output = output.concat(_this9.getTreeChildren(childRow, component, recurse));
               }
             }
           });
@@ -17189,7 +17208,6 @@
       _this.rightPadding = 0;
       _this.initializationMode = "left";
       _this.active = false;
-      _this.scrollEndTimer = false;
       _this.blocked = true;
 
       _this.registerColumnOption("frozen");
@@ -17296,21 +17314,12 @@
     }, {
       key: "scrollHorizontal",
       value: function scrollHorizontal() {
-        var _this3 = this;
-
-        var rows;
 
         if (this.active) {
-          clearTimeout(this.scrollEndTimer);
-          rows = this.table.rowManager.getVisibleRows();
           this.calcMargins(true);
           this.layoutColumnPosition();
           this.layoutCalcRows();
-          rows.forEach(function (row) {
-            if (row.type === "row") {
-              _this3.layoutRow(row);
-            }
-          });
+          this.reinitializeRows();
         }
       } //calculate margins for rows
 
@@ -17347,19 +17356,19 @@
     }, {
       key: "layoutGroupCalcs",
       value: function layoutGroupCalcs(groups) {
-        var _this4 = this;
+        var _this3 = this;
 
         groups.forEach(function (group) {
           if (group.calcs.top) {
-            _this4.layoutRow(group.calcs.top);
+            _this3.layoutRow(group.calcs.top);
           }
 
           if (group.calcs.bottom) {
-            _this4.layoutRow(group.calcs.bottom);
+            _this3.layoutRow(group.calcs.bottom);
           }
 
           if (group.groupList && group.groupList.length) {
-            _this4.layoutGroupCalcs(group.groupList && group.groupList);
+            _this3.layoutGroupCalcs(group.groupList && group.groupList);
           }
         });
       } //calculate column positions and layout headers
@@ -17367,7 +17376,7 @@
     }, {
       key: "layoutColumnPosition",
       value: function layoutColumnPosition(allCells) {
-        var _this5 = this;
+        var _this4 = this;
 
         var leftParents = [];
         var leftMargin = 0;
@@ -17375,23 +17384,23 @@
         this.table.columnManager.headersElement.style.marginLeft = this.leftMargin;
         this.table.columnManager.element.style.paddingRight = this.rightMargin;
         this.leftColumns.forEach(function (column, i) {
-          column.modules.frozen.margin = leftMargin + _this5.table.columnManager.scrollLeft + "px";
+          column.modules.frozen.margin = leftMargin + _this4.table.columnManager.scrollLeft + "px";
 
           if (column.visible) {
             leftMargin += column.getWidth();
           }
 
-          if (i == _this5.leftColumns.length - 1) {
+          if (i == _this4.leftColumns.length - 1) {
             column.modules.frozen.edge = true;
           } else {
             column.modules.frozen.edge = false;
           }
 
           if (column.parent.isGroup) {
-            var parentEl = _this5.getColGroupParentElement(column);
+            var parentEl = _this4.getColGroupParentElement(column);
 
             if (!leftParents.includes(parentEl)) {
-              _this5.layoutElement(parentEl, column);
+              _this4.layoutElement(parentEl, column);
 
               leftParents.push(parentEl);
             }
@@ -17400,12 +17409,12 @@
               parentEl.classList.add("tabulator-frozen-" + column.modules.frozen.position);
             }
           } else {
-            _this5.layoutElement(column.getElement(), column);
+            _this4.layoutElement(column.getElement(), column);
           }
 
           if (allCells) {
             column.cells.forEach(function (cell) {
-              _this5.layoutElement(cell.getElement(true), column);
+              _this4.layoutElement(cell.getElement(true), column);
             });
           }
         });
@@ -17414,23 +17423,23 @@
             rightMargin += column.getWidth();
           }
 
-          column.modules.frozen.margin = _this5.rightPadding - rightMargin + "px";
+          column.modules.frozen.margin = _this4.rightPadding - rightMargin + "px";
 
-          if (i == _this5.rightColumns.length - 1) {
+          if (i == _this4.rightColumns.length - 1) {
             column.modules.frozen.edge = true;
           } else {
             column.modules.frozen.edge = false;
           }
 
           if (column.parent.isGroup) {
-            _this5.layoutElement(_this5.getColGroupParentElement(column), column);
+            _this4.layoutElement(_this4.getColGroupParentElement(column), column);
           } else {
-            _this5.layoutElement(column.getElement(), column);
+            _this4.layoutElement(column.getElement(), column);
           }
 
           if (allCells) {
             column.cells.forEach(function (cell) {
-              _this5.layoutElement(cell.getElement(true), column);
+              _this4.layoutElement(cell.getElement(true), column);
             });
           }
         });
@@ -17444,35 +17453,37 @@
     }, {
       key: "layout",
       value: function layout() {
-        var _this6 = this;
-
-        var visibleRows = [],
-            otherRows = [];
-
         if (this.active && !this.blocked) {
           //calculate row padding
           this.calcMargins(); //calculate left columns
 
           this.layoutColumnPosition();
-          visibleRows = this.table.rowManager.getVisibleRows();
-          otherRows = this.table.rowManager.getDisplayRows().filter(function (row) {
-            return !visibleRows.includes(row);
-          });
-          otherRows.forEach(function (row) {
-            row.deinitialize();
-          });
-          visibleRows.forEach(function (row) {
-            if (row.type === "row") {
-              _this6.layoutRow(row);
-            }
-          });
+          this.reinitializeRows();
           this.layoutCalcRows();
         }
       }
     }, {
+      key: "reinitializeRows",
+      value: function reinitializeRows() {
+        var _this5 = this;
+
+        var visibleRows = this.table.rowManager.getVisibleRows();
+        var otherRows = this.table.rowManager.getRows().filter(function (row) {
+          return !visibleRows.includes(row);
+        });
+        otherRows.forEach(function (row) {
+          row.deinitialize();
+        });
+        visibleRows.forEach(function (row) {
+          if (row.type === "row") {
+            _this5.layoutRow(row);
+          }
+        });
+      }
+    }, {
       key: "layoutRow",
       value: function layoutRow(row) {
-        var _this7 = this;
+        var _this6 = this;
 
         // console.trace("row")
         var rowEl = row.getElement();
@@ -17486,14 +17497,14 @@
           var cell = row.getCell(column);
 
           if (cell) {
-            _this7.layoutElement(cell.getElement(true), column);
+            _this6.layoutElement(cell.getElement(true), column);
           }
         });
         this.rightColumns.forEach(function (column) {
           var cell = row.getCell(column);
 
           if (cell) {
-            _this7.layoutElement(cell.getElement(true), column);
+            _this6.layoutElement(cell.getElement(true), column);
           }
         });
       }
@@ -20679,7 +20690,7 @@
             config = {},
             colEl;
 
-        if (!column.modules.frozen) {
+        if (!column.modules.frozen && !column.isGroup) {
           colEl = column.getElement();
 
           config.mousemove = function (e) {
@@ -23245,6 +23256,7 @@
             if (_this3.config.columns === true || _this3.config.columns == undefined) {
               keys = Object.keys(colDef);
               keys.push("width");
+              keys.push("visible");
             } else {
               keys = _this3.config.columns;
             }
@@ -26442,7 +26454,7 @@
 
         var invalid = [];
         column.cells.forEach(function (cell) {
-          if (!_this3.cellValidate(cell)) {
+          if (_this3.cellValidate(cell) !== true) {
             invalid.push(cell.getComponent());
           }
         });
@@ -26458,7 +26470,7 @@
 
         var invalid = [];
         row.cells.forEach(function (cell) {
-          if (!_this4.cellValidate(cell)) {
+          if (_this4.cellValidate(cell) !== true) {
             invalid.push(cell.getComponent());
           }
         });
