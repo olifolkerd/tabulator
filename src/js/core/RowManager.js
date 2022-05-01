@@ -848,7 +848,9 @@ export default class RowManager extends CoreFeature{
 				this.redrawBlockRenderInPosition = true;
 			}
 		}else{
+			this.dispatchExternal("renderStarted");
 			this.renderer.rerenderRows(callback);
+			this.dispatchExternal("renderComplete");
 		}
 	}
 	
