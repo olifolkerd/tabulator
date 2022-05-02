@@ -475,7 +475,7 @@ export default class Edit{
             values = this._ajaxRequest(this.params.valuesURL, this.input.value);
         }else{
             if(typeof this.params.valuesLookup === "function"){
-                values = this.params.valuesLookup(cell, this.input.value);
+                values = this.params.valuesLookup(this.cell, this.input.value);
             }else if(this.params.valuesLookup){
                 values = this._uniqueColumnValues(this.params.valuesLookupField);
             }
