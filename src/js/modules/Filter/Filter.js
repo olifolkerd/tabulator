@@ -556,7 +556,7 @@ class Filter extends Module{
 	refreshFilter(){
 		if(this.tableInitialized){
 			if(this.table.options.filterMode === "remote"){
-				this.reloadData();
+				this.reloadData(null, false, false);
 			}else{
 				this.refreshData(true);
 			}
