@@ -10,7 +10,7 @@ export default class DataLoader extends CoreFeature{
 
 	initialize(){}
 
-	load(data, params, config, replace, silent){
+	load(data, params, config, replace, silent, columnsChanged){
 		var requestNo = ++this.requestOrder;
 
 		this.dispatchExternal("dataLoading", data);
@@ -46,7 +46,7 @@ export default class DataLoader extends CoreFeature{
 
 					if(rowData !== false){
 						this.dispatchExternal("dataLoaded", rowData);
-						this.table.rowManager.setData(rowData,  replace, !replace);
+						this.table.rowManager.setData(rowData,  replace, typeof columnsChanged === "undefined" ? !replace : columnsChanged);
 					}
 				}else{
 					console.warn("Data Load Response Blocked - An active data load request was blocked by an attempt to change table data while the request was being made");
@@ -73,7 +73,7 @@ export default class DataLoader extends CoreFeature{
 				data = [];
 			}
 
-			this.table.rowManager.setData(data, replace, !replace);
+			this.table.rowManager.setData(data, replace, typeof columnsChanged === "undefined" ? !replace : columnsChanged);
 			return Promise.resolve();
 		}
 	}

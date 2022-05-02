@@ -8,8 +8,8 @@ export default class CoreFeature{
 	/////////////// DataLoad /////////////////
 	//////////////////////////////////////////
 
-	reloadData(data, silent){
-		return this.table.dataLoader.load(data, undefined, undefined, undefined, silent);
+	reloadData(data, silent, columnsChanged){
+		return this.table.dataLoader.load(data, undefined, undefined, undefined, silent, columnsChanged);
 	}
 
 	//////////////////////////////////////////
