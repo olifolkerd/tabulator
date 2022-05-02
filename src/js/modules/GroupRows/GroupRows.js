@@ -436,6 +436,10 @@ class GroupRows extends Module{
 	getRowGroup(row){
 		var match = false;
 
+		if(this.options("dataTree")){
+			row = this.table.modules.dataTree.getTreeParentRoot(row);
+		}
+
 		this.groupList.forEach((group) => {
 			var result = group.getRowGroup(row);
 

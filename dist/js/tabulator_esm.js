@@ -4448,6 +4448,10 @@ class DataTree extends Module{
 		return row.modules.dataTree.parent ? row.modules.dataTree.parent.getComponent() : false;
 	}
 
+	getTreeParentRoot(row){
+		return row.modules.dataTree.parent ? this.getTreeParentRoot(row.modules.dataTree.parent) : row;
+	}
+
 	getFilteredTreeChildren(row){
 		var config = row.modules.dataTree,
 		output = [], children;
@@ -11683,6 +11687,10 @@ class GroupRows extends Module{
 
 	getRowGroup(row){
 		var match = false;
+
+		if(this.options("dataTree")){
+			row = this.table.modules.dataTree.getTreeParentRoot(row);
+		}
 
 		this.groupList.forEach((group) => {
 			var result = group.getRowGroup(row);

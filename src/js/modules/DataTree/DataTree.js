@@ -432,6 +432,10 @@ class DataTree extends Module{
 		return row.modules.dataTree.parent ? row.modules.dataTree.parent.getComponent() : false;
 	}
 
+	getTreeParentRoot(row){
+		return row.modules.dataTree.parent ? this.getTreeParentRoot(row.modules.dataTree.parent) : row;
+	}
+
 	getFilteredTreeChildren(row){
 		var config = row.modules.dataTree,
 		output = [], children;
