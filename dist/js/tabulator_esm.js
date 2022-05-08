@@ -24336,6 +24336,8 @@ class Tabulator {
 		//clear DOM
 		while(element.firstChild) element.removeChild(element.firstChild);
 		element.classList.remove("tabulator");
+
+		this.ExternalEventBus.dispatch("tableDestroyed");
 	}
 	
 	_detectBrowser(){
