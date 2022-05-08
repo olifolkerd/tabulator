@@ -16665,8 +16665,6 @@ class ResizeColumns extends Module{
 	reinitializeColumn(column){
 		var frozenOffset = column.modules.frozen ? (column.modules.frozen.marginValue + column.getWidth() + "px") : false;
 		
-		console.log("offset", frozenOffset);
-		
 		column.cells.forEach((cell) => {
 			if(cell.modules.resize && cell.modules.resize.handleEl){
 				if(frozenOffset){
@@ -16731,7 +16729,6 @@ class ResizeColumns extends Module{
 			});
 			
 			if(column.modules.frozen){
-				console.log("froze", column.modules.frozen.marginValue + column.getWidth() + "px");
 				handle.style.position = "absolute";
 				handle.style.left = column.modules.frozen.marginValue + column.getWidth() + "px";
 			}
