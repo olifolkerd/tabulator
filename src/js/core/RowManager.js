@@ -92,15 +92,6 @@ export default class RowManager extends CoreFeature{
 		return this.tableElement;
 	}
 	
-	//return position of row in table
-	getRowPosition(row, active){
-		if(active){
-			return this.activeRows.indexOf(row);
-		}else{
-			return this.rows.indexOf(row);
-		}
-	}
-	
 	initialize(){
 		this.initializePlaceholder()
 		this.initializeRenderer();
@@ -179,12 +170,10 @@ export default class RowManager extends CoreFeature{
 		return match || false;
 	}
 	
-	getRowFromPosition(position, active){
-		if(active){
-			return this.activeRows[position];
-		}else{
-			return this.rows[position];
-		}
+	getRowFromPosition(position){
+		return this.getDisplayRows().find((row) => {
+			return row.getPosition() === position && row.isDisplayed();
+		});
 	}
 	
 	scrollToRow(row, position, ifVisible){
@@ -284,7 +273,7 @@ export default class RowManager extends CoreFeature{
 			this.reRenderInPosition();
 		}
 		
-		this.regenerateRowNumbers();
+		this.regenerateRowPositions();
 		
 		this.dispatchExternal("rowDeleted", row.getComponent());
 		
@@ -328,7 +317,7 @@ export default class RowManager extends CoreFeature{
 			
 			this.refreshActiveData(false, false, true);
 			
-			this.regenerateRowNumbers();
+			this.regenerateRowPositions();
 			
 			if(rows.length){
 				this._clearPlaceholder();
@@ -434,7 +423,7 @@ export default class RowManager extends CoreFeature{
 		
 		this.moveRowActual(from, to, after);
 		
-		this.regenerateRowNumbers();
+		this.regenerateRowPositions();
 		
 		this.dispatch("row-moved", from, to, after);
 		this.dispatchExternal("rowMoved", from.getComponent());
@@ -719,8 +708,6 @@ export default class RowManager extends CoreFeature{
 			
 			this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
 			
-			this.regenerateRowNumbers();
-			
 			case "display":
 			index = 0;
 			this.resetDisplayRows();
@@ -734,20 +721,21 @@ export default class RowManager extends CoreFeature{
 			
 			case "end":
 			//case to handle scenario when trying to skip past end stage
+			this.regenerateRowPositions();
 		}
 	}
 	
-	//regenerate row numbers for row number formatter if in use
-	regenerateRowNumbers(){
-		if(this.rowNumColumn){
-			this.activeRows.forEach((row) => {
-				var cell = row.getCell(this.rowNumColumn);
-				
-				if(cell){
-					cell._generateContents();
-				}
-			});
-		}
+	//regenerate row positions
+	regenerateRowPositions(){
+		var rows = this.getDisplayRows();
+		var index = 1;
+
+		rows.forEach((row) => {
+			if (row.type === "row"){
+				row.setPosition(index);
+				index++;
+			}
+		});
 	}
 	
 	setActiveRows(activeRows){

@@ -513,8 +513,8 @@ class Tabulator {
 	}
 	
 	//get row object
-	getRowFromPosition(position, active){
-		var row = this.rowManager.getRowFromPosition(position, active);
+	getRowFromPosition(position){
+		var row = this.rowManager.getRowFromPosition(position);
 		
 		if(row){
 			return row.getComponent();
@@ -649,11 +649,11 @@ class Tabulator {
 	}
 	
 	//get position of row in table
-	getRowPosition(index, active){
+	getRowPosition(index){
 		var row = this.rowManager.findRow(index);
 		
 		if(row){
-			return this.rowManager.getRowPosition(row, active);
+			return row.getPosition();
 		}else{
 			console.warn("Position Error - No matching row found:", index);
 			return false;

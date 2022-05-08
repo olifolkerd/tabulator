@@ -2949,8 +2949,12 @@ class RowComponent$1 {
 		return this._row.getData("data")[this._row.table.options.index];
 	}
 
-	getPosition(active){
-		return this._row.table.rowManager.getRowPosition(this._row, active);
+	getPosition(){
+		return this._row.getPosition();
+	}
+
+	watchPosition(callback){
+		return this._row.watchPosition(callback);
 	}
 
 	delete(){
@@ -3012,6 +3016,8 @@ class Row extends CoreFeature{
 		this.outerHeight = 0; //hold elements outer height
 		this.initialized = false; //element has been rendered
 		this.heightInitialized = false; //element has resized cells to fit
+		this.position = 0; //store position of element in row list
+		this.positionWatchers = [];
 		
 		this.component = null;
 		
@@ -3410,6 +3416,30 @@ class Row extends CoreFeature{
 		
 		this.element = false;
 		this.modules = {};
+	}
+
+	isDisplayed(){
+		return this.table.rowManager.getDisplayRows().includes(this);
+	}
+
+	getPosition(){
+		return this.isDisplayed() ? this.position : false;
+	}
+
+	setPosition(position){
+		if(position != this.position){
+			this.position = position;
+
+			this.positionWatchers.forEach((callback) => {
+				callback(this.position);
+			});
+		}
+	}
+
+	watchPosition(callback){
+		this.positionWatchers.push(callback);
+
+		callback(this.position);
 	}
 	
 	getGroup(){
@@ -6036,7 +6066,7 @@ class Edit{
             values = this._ajaxRequest(this.params.valuesURL, this.input.value);
         }else {
             if(typeof this.params.valuesLookup === "function"){
-                values = this.params.valuesLookup(cell, this.input.value);
+                values = this.params.valuesLookup(this.cell, this.input.value);
             }else if(this.params.valuesLookup){
                 values = this._uniqueColumnValues(this.params.valuesLookupField);
             }
@@ -9805,7 +9835,14 @@ function buttonCross(cell, formatterParams, onRendered){
 }
 
 function rownum(cell, formatterParams, onRendered){
-	return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1 || "";
+	var content = document.createElement("span");
+	var row = cell.getRow();
+
+	row.watchPosition((position) => {
+		content.innerText = position;
+	});
+	
+	return content;
 }
 
 function handle(cell, formatterParams, onRendered){
@@ -11918,7 +11955,7 @@ class History extends Module{
 	}
 
 	rowMoved(from, to, after){
-		this.action("rowMove", from, {posFrom:this.table.rowManager.getRowPosition(from), posTo:this.table.rowManager.getRowPosition(to), to:to, after:after});
+		this.action("rowMove", from, {posFrom:from.getPosition(), posTo:to.getPosition(), to:to, after:after});
 	}
 
 	rowAdded(row, data, pos, index){
@@ -21429,15 +21466,6 @@ class RowManager extends CoreFeature{
 		return this.tableElement;
 	}
 	
-	//return position of row in table
-	getRowPosition(row, active){
-		if(active){
-			return this.activeRows.indexOf(row);
-		}else {
-			return this.rows.indexOf(row);
-		}
-	}
-	
 	initialize(){
 		this.initializePlaceholder();
 		this.initializeRenderer();
@@ -21516,12 +21544,10 @@ class RowManager extends CoreFeature{
 		return match || false;
 	}
 	
-	getRowFromPosition(position, active){
-		if(active){
-			return this.activeRows[position];
-		}else {
-			return this.rows[position];
-		}
+	getRowFromPosition(position){
+		return this.getDisplayRows().find((row) => {
+			return row.getPosition() === position && row.isDisplayed();
+		});
 	}
 	
 	scrollToRow(row, position, ifVisible){
@@ -21621,7 +21647,7 @@ class RowManager extends CoreFeature{
 			this.reRenderInPosition();
 		}
 		
-		this.regenerateRowNumbers();
+		this.regenerateRowPositions();
 		
 		this.dispatchExternal("rowDeleted", row.getComponent());
 		
@@ -21664,7 +21690,7 @@ class RowManager extends CoreFeature{
 			
 			this.refreshActiveData(false, false, true);
 			
-			this.regenerateRowNumbers();
+			this.regenerateRowPositions();
 			
 			if(rows.length){
 				this._clearPlaceholder();
@@ -21770,7 +21796,7 @@ class RowManager extends CoreFeature{
 		
 		this.moveRowActual(from, to, after);
 		
-		this.regenerateRowNumbers();
+		this.regenerateRowPositions();
 		
 		this.dispatch("row-moved", from, to, after);
 		this.dispatchExternal("rowMoved", from.getComponent());
@@ -22054,8 +22080,6 @@ class RowManager extends CoreFeature{
 			
 			this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
 			
-			this.regenerateRowNumbers();
-			
 			case "display":
 			index = 0;
 			this.resetDisplayRows();
@@ -22066,21 +22090,24 @@ class RowManager extends CoreFeature{
 				
 				this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
 			}
+			
+			case "end":
 			//case to handle scenario when trying to skip past end stage
+			this.regenerateRowPositions();
 		}
 	}
 	
-	//regenerate row numbers for row number formatter if in use
-	regenerateRowNumbers(){
-		if(this.rowNumColumn){
-			this.activeRows.forEach((row) => {
-				var cell = row.getCell(this.rowNumColumn);
-				
-				if(cell){
-					cell._generateContents();
-				}
-			});
-		}
+	//regenerate row positions
+	regenerateRowPositions(){
+		var rows = this.getDisplayRows();
+		var index = 1;
+
+		rows.forEach((row) => {
+			if (row.type === "row"){
+				row.setPosition(index);
+				index++;
+			}
+		});
 	}
 	
 	setActiveRows(activeRows){
@@ -24527,8 +24554,8 @@ class Tabulator {
 	}
 	
 	//get row object
-	getRowFromPosition(position, active){
-		var row = this.rowManager.getRowFromPosition(position, active);
+	getRowFromPosition(position){
+		var row = this.rowManager.getRowFromPosition(position);
 		
 		if(row){
 			return row.getComponent();
@@ -24662,11 +24689,11 @@ class Tabulator {
 	}
 	
 	//get position of row in table
-	getRowPosition(index, active){
+	getRowPosition(index){
 		var row = this.rowManager.findRow(index);
 		
 		if(row){
-			return this.rowManager.getRowPosition(row, active);
+			return row.getPosition();
 		}else {
 			console.warn("Position Error - No matching row found:", index);
 			return false;
