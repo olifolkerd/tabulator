@@ -6036,7 +6036,7 @@ class Edit{
             values = this._ajaxRequest(this.params.valuesURL, this.input.value);
         }else {
             if(typeof this.params.valuesLookup === "function"){
-                values = this.params.valuesLookup(cell, this.input.value);
+                values = this.params.valuesLookup(this.cell, this.input.value);
             }else if(this.params.valuesLookup){
                 values = this._uniqueColumnValues(this.params.valuesLookupField);
             }
@@ -10312,7 +10312,8 @@ class FrozenColumns extends Module{
 		this.table.columnManager.element.style.paddingRight = this.rightMargin;
 		
 		this.leftColumns.forEach((column, i) => {	
-			column.modules.frozen.margin = (leftMargin + this.table.columnManager.scrollLeft) + "px";
+			column.modules.frozen.marginValue = leftMargin + this.table.columnManager.scrollLeft;
+			column.modules.frozen.margin = column.modules.frozen.marginValue + "px";
 			
 			if(column.visible){
 				leftMargin += column.getWidth();
@@ -10351,7 +10352,8 @@ class FrozenColumns extends Module{
 				rightMargin += column.getWidth();
 			}
 			
-			column.modules.frozen.margin = (this.rightPadding - rightMargin) + "px";
+			column.modules.frozen.marginValue = this.rightPadding - rightMargin;
+			column.modules.frozen.margin = column.modules.frozen.marginValue + "px";
 			
 			if(i == this.rightColumns.length - 1){
 				column.modules.frozen.edge = true;
@@ -16611,6 +16613,7 @@ class ResizeColumns extends Module{
 			
 			this.subscribe("column-hide", this.deInitializeColumn.bind(this));
 			this.subscribe("column-show", this.columnLayoutUpdated.bind(this));
+			this.subscribe("column-width", this.columnWidthUpdated.bind(this));
 			
 			this.subscribe("column-delete", this.deInitializeComponent.bind(this));
 			this.subscribe("column-height", this.resizeHandle.bind(this));
@@ -16645,14 +16648,40 @@ class ResizeColumns extends Module{
 		}
 	}
 	
+	columnWidthUpdated(column){
+		if(column.modules.frozen){
+			if(this.table.modules.frozenColumns.leftColumns.includes(column)){
+				this.table.modules.frozenColumns.leftColumns.forEach((col) => {
+					this.reinitializeColumn(col);
+				});
+			}else if(this.table.modules.frozenColumns.rightColumns.includes(column)){
+				this.table.modules.frozenColumns.rightColumns.forEach((col) => {
+					this.reinitializeColumn(col);
+				});
+			}
+		}
+	}
+	
 	reinitializeColumn(column){
+		var frozenOffset = column.modules.frozen ? (column.modules.frozen.marginValue + column.getWidth() + "px") : false;
+		
+		console.log("offset", frozenOffset);
+		
 		column.cells.forEach((cell) => {
 			if(cell.modules.resize && cell.modules.resize.handleEl){
+				if(frozenOffset){
+					cell.modules.resize.handleEl.style.left = frozenOffset;
+				}
+				
 				cell.element.after(cell.modules.resize.handleEl);
 			}
 		});
 		
 		if(column.modules.resize && column.modules.resize.handleEl){
+			if(frozenOffset){
+				column.modules.resize.handleEl.style.left = frozenOffset;
+			}
+			
 			column.element.after(column.modules.resize.handleEl);
 		}
 	}
@@ -16700,6 +16729,12 @@ class ResizeColumns extends Module{
 					self.table.externalEvents.dispatch("columnResized", nearestColumn.getComponent());
 				}
 			});
+			
+			if(column.modules.frozen){
+				console.log("froze", column.modules.frozen.marginValue + column.getWidth() + "px");
+				handle.style.position = "absolute";
+				handle.style.left = column.modules.frozen.marginValue + column.getWidth() + "px";
+			}
 			
 			config.handleEl = handle;
 			
@@ -16751,27 +16786,27 @@ class ResizeColumns extends Module{
 			startDiff = x - self.startX,
 			moveDiff = x - self.latestX,
 			blockedBefore, blockedAfter;
-
+			
 			self.latestX = x;
 			
 			if(self.table.rtl){
 				startDiff = -startDiff;
 				moveDiff = -moveDiff;
 			}
-
+			
 			blockedBefore = column.width == column.minWidth || column.width == column.maxWidth;
-
+			
 			column.setWidth(self.startWidth + startDiff);
-
+			
 			blockedAfter = column.width == column.minWidth || column.width == column.maxWidth;
-
+			
 			if(moveDiff < 0){
 				self.nextColumn = self.initialNextColumn;
 			}
 			
 			if(self.table.options.resizableColumnFit && self.nextColumn && !(blockedBefore && blockedAfter)){
 				let colWidth = self.nextColumn.getWidth();
-
+				
 				if(moveDiff > 0){
 					if(colWidth <= self.nextColumn.minWidth){
 						self.nextColumn = self.nextColumn.nextColumn();
