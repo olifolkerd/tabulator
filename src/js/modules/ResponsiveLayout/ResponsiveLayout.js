@@ -36,7 +36,8 @@ class ResponsiveLayout extends Module{
 			this.subscribe("column-delete", this.initializeResponsivity.bind(this));
 
 			this.subscribe("table-redrawing", this.tableRedraw.bind(this));
-
+			this.subscribe("row-data-changed", this.generateCollapsedRowContent.bind(this));
+			
 			if(this.table.options.responsiveLayout === "collapse"){
 				this.subscribe("row-init", this.initializeRow.bind(this));
 				this.subscribe("row-layout", this.layoutRow.bind(this));
