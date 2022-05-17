@@ -62,16 +62,19 @@ export default class Edit{
     
     _initializeValue(){
         var initialValue = this.cell.getValue();
-        
-        if(typeof initialValue === "undefined" && typeof this.params.defaultValue !== "undefined"){
+
+        if(initialValue === "" && typeof this.params.defaultValue !== "undefined"){
             initialValue = this.params.defaultValue;
         }
-        
-        this.initialValues = this.params.multiselect ? initialValue : [initialValue];
-        
+
+        if(typeof initialValue === "string"){
+            initialValue = [initialValue];
+        }
+        this.initialValues = initialValue;
+
         if(this.isFilter){
-            this.input.value = this.initialValues.join(",");
-            this.headerFilterInitialListGen();            
+            this.input.value = this.initialValues ? this.initialValues.join(",") : [];
+            this.headerFilterInitialListGen();
         }
     }
     
