@@ -23,6 +23,8 @@ export default function(cell, formatterParams, onRendered){
 				collapseEl.style.display = 'none';
 			}
 		}
+		
+		cell.getTable().rowManager.adjustTableSize();
 	}
 
 	el.addEventListener("click", function(e){
