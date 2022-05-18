@@ -1,65 +1,73 @@
 {
-  "name": "tabulator-tables",
-  "version": "5.2.4",
-  "description": "Interactive table generation JavaScript library",
-  "style": "dist/css/tabulator.css",
-  "main": "dist/js/tabulator.js",
-  "module": "dist/js/tabulator_esm.js",
-  "sideEffects": [
-    "**/*.css",
-    "**/*.scss"
-  ],
-  "scripts": {
-    "build": "rollup -c build/rollup.js",
-    "dev": "rollup -c build/rollup.js -w --environment TARGET:dev",
-    "dev:css": "rollup -c build/rollup.js -w --environment TARGET:css",
-    "dev:esm": "rollup -c build/rollup.js -w --environment TARGET:esm",
-    "dev:umd": "rollup -c build/rollup.js -w --environment TARGET:umd"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/olifolkerd/tabulator.git"
-  },
-  "keywords": [
-    "table",
-    "grid",
-    "datagrid",
-    "tabulator",
-    "editable",
-    "sort",
-    "format",
-    "resizable",
-    "list",
-    "scrollable",
-    "ajax",
-    "json",
-    "widget",
-    "jquery",
-    "react",
-    "angular",
-    "vue"
-  ],
-  "author": "Oli Folkerd",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/olifolkerd/tabulator/issues"
-  },
-  "homepage": "http://tabulator.info/",
-  "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/preset-env": "^7.12.11",
-    "@rollup/plugin-babel": "^5.2.2",
-    "@rollup/plugin-node-resolve": "^11.0.1",
-    "fs-extra": "^9.0.1",
-    "globby": "^11.0.2",
-    "node-sass": "^5.0.0",
-    "postcss": "^8.2.4",
-    "postcss-prettify": "^0.3.4",
-    "rollup": "^2.36.1",
-    "rollup-plugin-license": "^2.2.0",
-    "rollup-plugin-postcss": "^4.0.0",
-    "rollup-plugin-terser": "^7.0.2"
-  },
-  "dependencies": {}
+	"name": "tabulator-tables",
+	"version": "5.2.4",
+	"description": "Interactive table generation JavaScript library",
+	"style": "dist/css/tabulator.css",
+	"main": "dist/js/tabulator.js",
+	"module": "dist/js/tabulator_esm.js",
+	"type": "module",
+	"sideEffects": [
+		"**/*.css",
+		"**/*.scss"
+	],
+	"scripts": {
+		"test": "ava",
+		"build": "rollup -c build/rollup.js",
+		"dev": "rollup -c build/rollup.js -w --environment TARGET:dev",
+		"dev:css": "rollup -c build/rollup.js -w --environment TARGET:css",
+		"dev:esm": "rollup -c build/rollup.js -w --environment TARGET:esm",
+		"dev:umd": "rollup -c build/rollup.js -w --environment TARGET:umd"
+	},
+	"ava": {
+		"require": [
+			"./test/_setup-browser-env.js"
+		]
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/olifolkerd/tabulator.git"
+	},
+	"keywords": [
+		"table",
+		"grid",
+		"datagrid",
+		"tabulator",
+		"editable",
+		"sort",
+		"format",
+		"resizable",
+		"list",
+		"scrollable",
+		"ajax",
+		"json",
+		"widget",
+		"jquery",
+		"react",
+		"angular",
+		"vue"
+	],
+	"author": "Oli Folkerd",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/olifolkerd/tabulator/issues"
+	},
+	"homepage": "http://tabulator.info/",
+	"devDependencies": {
+		"@babel/core": "^7.12.10",
+		"@babel/plugin-proposal-class-properties": "^7.12.1",
+		"@babel/preset-env": "^7.12.11",
+		"@rollup/plugin-babel": "^5.2.2",
+		"@rollup/plugin-node-resolve": "^11.0.1",
+		"ava": "^4.2.0",
+		"browser-env": "^3.3.0",
+		"fs-extra": "^9.0.1",
+		"globby": "^11.0.2",
+		"node-sass": "^7.0.1",
+		"postcss": "^8.2.4",
+		"postcss-prettify": "^0.3.4",
+		"rollup": "^2.36.1",
+		"rollup-plugin-license": "^2.2.0",
+		"rollup-plugin-postcss": "^4.0.0",
+		"rollup-plugin-terser": "^7.0.2"
+	}
 }
