@@ -23,13 +23,12 @@ export default function(cell, formatterParams, onRendered){
 				collapseEl.style.display = 'none';
 			}
 		}
-		
-		cell.getTable().rowManager.adjustTableSize();
 	}
 
 	el.addEventListener("click", function(e){
 		e.stopImmediatePropagation();
 		toggleList(!config.open);
+		cell.getTable().rowManager.adjustTableSize();
 	});
 
 	toggleList(config.open);
