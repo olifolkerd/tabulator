@@ -442,6 +442,7 @@ class Edit extends Module{
 			var self = this,
 			element = cell.getElement(true);
 
+			element.classList.add("tabulator-cell-editable");
 			element.setAttribute("tabindex", 0);
 
 			element.addEventListener("click", function(e){
