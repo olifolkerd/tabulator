@@ -6,6 +6,10 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	var cellValue = cell.getValue(),
 	input = document.createElement("input");
 
+	if((cellValue === null || typeof cellValue === "undefined")) {
+		cellValue = "";
+	}
+
 	input.setAttribute("type", editorParams.search ? "search" : "text");
 
 	input.style.padding = "4px";
@@ -23,7 +27,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 
-	input.value = typeof cellValue !== "undefined" ? cellValue : "";
+	input.value = cellValue;
 
 	onRendered(function(){
 		input.focus({preventScroll: true});
@@ -35,7 +39,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	});
 
 	function onChange(e){
-		if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value !== cellValue){
+		if(input.value !== cellValue){
 			if(success(input.value)){
 				cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
 			}
