@@ -143,7 +143,7 @@ class DataTree extends Module{
 	initializeElementField(){
 		var firstCol = this.table.columnManager.getFirstVisibleColumn();
 
-		this.elementField = this.table.options.dataTreeElementColumn || (firstCol ? firstCol.field : false);
+		this.elementField = this.table.options.dataTreeElementColumn || (firstCol && firstCol.field ? firstCol.field : false);
 	}
 	
 	getRowChildren(row){
