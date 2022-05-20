@@ -282,11 +282,7 @@ class Edit extends Module{
 				let cell = row.cells[i];
 
 				if(cell.column.modules.edit && Helpers.elVisible(cell.getElement())){
-					let allowEdit = true;
-
-					if(typeof cell.column.modules.edit.check == "function"){
-						allowEdit = cell.column.modules.edit.check(cell.getComponent());
-					}
+					let allowEdit = this.allowEdit(cell);
 
 					if(allowEdit){
 						nextCell = cell;
@@ -304,13 +300,10 @@ class Edit extends Module{
 
 		if(index > 0){
 			for(var i = index-1; i >= 0; i--){
-				let cell = row.cells[i],
-				allowEdit = true;
+				let cell = row.cells[i];
 
 				if(cell.column.modules.edit && Helpers.elVisible(cell.getElement())){
-					if(typeof cell.column.modules.edit.check == "function"){
-						allowEdit = cell.column.modules.edit.check(cell.getComponent());
-					}
+					let allowEdit = this.allowEdit(cell);
 
 					if(allowEdit){
 						prevCell = cell;
@@ -411,6 +404,7 @@ class Edit extends Module{
 			while(cellEl.firstChild) cellEl.removeChild(cellEl.firstChild);
 
 			cell.row.getElement().classList.remove("tabulator-row-editing");
+            		cell.table.element.classList.remove("tabulator-table-editing");
 		}
 	}
 
@@ -442,7 +436,9 @@ class Edit extends Module{
 			var self = this,
 			element = cell.getElement(true);
 
-			element.classList.add("tabulator-cell-editable");
+			if(this.allowEdit(cell)) {
+				element.classList.add("tabulator-cell-editable");
+			}
 			element.setAttribute("tabindex", 0);
 
 			element.addEventListener("click", function(e){
@@ -523,6 +519,20 @@ class Edit extends Module{
 		}
 	}
 
+	allowEdit(cell) {
+		switch(typeof cell.column.modules.edit.check){
+		    case "function":
+			return cell.column.modules.edit.check(cell.getComponent());
+
+		    case "string":
+			return !!cell.row.data[cell.column.modules.edit.check];
+
+		    case "boolean":
+			return cell.column.modules.edit.check;
+		}
+		return true;
+	}
+
 	edit(cell, e, forceEdit){
 		var self = this,
 		allowEdit = true,
@@ -589,15 +599,7 @@ class Edit extends Module{
 				e.stopPropagation();
 			}
 
-			switch(typeof cell.column.modules.edit.check){
-				case "function":
-				allowEdit = cell.column.modules.edit.check(cell.getComponent());
-				break;
-
-				case "boolean":
-				allowEdit = cell.column.modules.edit.check;
-				break;
-			}
+            		allowEdit = this.allowEdit(cell);
 
 			if(allowEdit || forceEdit){
 
@@ -634,6 +636,7 @@ class Edit extends Module{
 					if(cellEditor instanceof Node){
 						element.classList.add("tabulator-editing");
 						cell.row.getElement().classList.add("tabulator-row-editing");
+						cell.table.element.classList.add("tabulator-table-editing");
 						while(element.firstChild) element.removeChild(element.firstChild);
 						element.appendChild(cellEditor);
 
