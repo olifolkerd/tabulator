@@ -30,7 +30,7 @@ export default function(list, options, setFileContents){
 
 					switch(typeof col.value){
 						case "object":
-						col.value = col.value ? JSON.stringify(col.value) : "";
+						col.value = col.value !== null ? JSON.stringify(col.value) : "";
 						break;
 
 						case "undefined":

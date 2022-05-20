@@ -510,7 +510,7 @@ class Export extends Module{
 				}else{
 					switch(typeof value){
 						case "object":
-						value = value ? JSON.stringify(value) : "";
+						value = value !== null ? JSON.stringify(value) : "";
 						break;
 
 						case "undefined":
