@@ -73,7 +73,7 @@ export default class Edit{
         this.initialValues = initialValue;
 
         if(this.isFilter){
-            this.input.value = this.initialValues ? this.initialValues.join(",") : [];
+            this.input.value = this.initialValues.join(",");
             this.headerFilterInitialListGen();
         }
     }
