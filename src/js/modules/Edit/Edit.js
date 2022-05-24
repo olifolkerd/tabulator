@@ -520,17 +520,19 @@ class Edit extends Module{
 	}
 
 	allowEdit(cell) {
+		var check = true;
 		switch(typeof cell.column.modules.edit.check){
 		    case "function":
-			return cell.column.modules.edit.check(cell.getComponent());
-
+			check = cell.column.modules.edit.check(cell.getComponent());
+			break;
 		    case "string":
-			return !!cell.row.data[cell.column.modules.edit.check];
-
+			check = !!cell.row.data[cell.column.modules.edit.check];
+			break;
 		    case "boolean":
-			return cell.column.modules.edit.check;
+			check = cell.column.modules.edit.check;
+			break;
 		}
-		return true;
+		return check;
 	}
 
 	edit(cell, e, forceEdit){
