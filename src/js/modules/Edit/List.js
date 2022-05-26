@@ -70,7 +70,7 @@ export default class Edit{
         this.initialValues = this.params.multiselect ? initialValue : [initialValue];
         
         if(this.isFilter){
-            this.input.value = this.initialValues.join(",");
+            this.input.value = this.initialValues ? this.initialValues.join(",") : "";
             this.headerFilterInitialListGen();            
         }
     }

@@ -1564,7 +1564,6 @@ class Cell extends CoreFeature{
 			}
 			break;
 			case "undefined":
-			case "null":
 			this.element.innerHTML = "";
 			break;
 			default:
@@ -2284,7 +2283,6 @@ class Column extends CoreFeature{
 			}
 			break;
 			case "undefined":
-			case "null":
 			el.innerHTML = "";
 			break;
 			default:
@@ -4650,11 +4648,10 @@ function csv(list, options, setFileContents){
 
 					switch(typeof col.value){
 						case "object":
-						col.value = JSON.stringify(col.value);
+						col.value = col.value !== null ? JSON.stringify(col.value) : "";
 						break;
 
 						case "undefined":
-						case "null":
 						col.value = "";
 						break;
 					}
@@ -4774,11 +4771,10 @@ function pdf(list, options, setFileContents){
 			if(col){
 				switch(typeof col.value){
 					case "object":
-					col.value = JSON.stringify(col.value);
+					col.value = col.value !== null ? JSON.stringify(col.value) : "";
 					break;
 
 					case "undefined":
-					case "null":
 					col.value = "";
 					break;
 				}
@@ -5631,7 +5627,7 @@ class Edit{
         this.initialValues = this.params.multiselect ? initialValue : [initialValue];
         
         if(this.isFilter){
-            this.input.value = this.initialValues.join(",");
+            this.input.value = this.initialValues ? this.initialValues.join(",") : "";
             this.headerFilterInitialListGen();            
         }
     }
@@ -8188,11 +8184,10 @@ class Export extends Module{
 				}else {
 					switch(typeof value){
 						case "object":
-						value = JSON.stringify(value);
+						value = value !== null ? JSON.stringify(value) : "";
 						break;
 
 						case "undefined":
-						case "null":
 						value = "";
 						break;
 
@@ -15150,7 +15145,6 @@ class Page extends Module{
 				}
 				break;
 				case "undefined":
-				case "null":
 				this.pageCounterElement.innerHTML = "";
 				break;
 				default:
