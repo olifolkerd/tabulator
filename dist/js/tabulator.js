@@ -1,4 +1,4 @@
-/* Tabulator v5.2.4 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.2.5 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -897,7 +897,6 @@
             break;
 
           case "undefined":
-          case "null":
             this.element.innerHTML = "";
             break;
 
@@ -1277,7 +1276,6 @@
           }
         }
 
-        this.contentElement = this._bindEvents();
         this.contentElement = this._buildColumnHeaderContent();
         this.element.appendChild(this.contentElement);
 
@@ -1288,92 +1286,12 @@
         }
 
         this.dispatch("column-init", this);
-      }
-    }, {
-      key: "_bindEvents",
-      value: function _bindEvents() {
-        var _this3 = this;
-
-        var def = this.definition,
-            dblTap,
-            tapHold,
-            tap; //setup header click event bindings
-
-        if (typeof def.headerClick == "function") {
-          this.element.addEventListener("click", function (e) {
-            def.headerClick(e, _this3.getComponent());
-          });
-        }
-
-        if (typeof def.headerDblClick == "function") {
-          this.element.addEventListener("dblclick", function (e) {
-            def.headerDblClick(e, _this3.getComponent());
-          });
-        }
-
-        if (typeof def.headerContext == "function") {
-          this.element.addEventListener("contextmenu", function (e) {
-            def.headerContext(e, _this3.getComponent());
-          });
-        } //setup header tap event bindings
-
-
-        if (typeof def.headerTap == "function") {
-          tap = false;
-          this.element.addEventListener("touchstart", function (e) {
-            tap = true;
-          }, {
-            passive: true
-          });
-          this.element.addEventListener("touchend", function (e) {
-            if (tap) {
-              def.headerTap(e, _this3.getComponent());
-            }
-
-            tap = false;
-          });
-        }
-
-        if (typeof def.headerDblTap == "function") {
-          dblTap = null;
-          this.element.addEventListener("touchend", function (e) {
-            if (dblTap) {
-              clearTimeout(dblTap);
-              dblTap = null;
-              def.headerDblTap(e, _this3.getComponent());
-            } else {
-              dblTap = setTimeout(function () {
-                clearTimeout(dblTap);
-                dblTap = null;
-              }, 300);
-            }
-          });
-        }
-
-        if (typeof def.headerTapHold == "function") {
-          tapHold = null;
-          this.element.addEventListener("touchstart", function (e) {
-            clearTimeout(tapHold);
-            tapHold = setTimeout(function () {
-              clearTimeout(tapHold);
-              tapHold = null;
-              tap = false;
-              def.headerTapHold(e, this.getComponent());
-            }, 1000);
-          }, {
-            passive: true
-          });
-          this.element.addEventListener("touchend", function (e) {
-            clearTimeout(tapHold);
-            tapHold = null;
-          });
-        }
       } //build header element for header
 
     }, {
       key: "_buildColumnHeader",
       value: function _buildColumnHeader() {
-        var _this4 = this;
+        var _this3 = this;
 
         var def = this.definition,
             table = this.table;
@@ -1391,7 +1309,7 @@
         if (def.cssClass) {
           var classeNames = def.cssClass.split(" ");
           classeNames.forEach(function (className) {
-            _this4.element.classList.add(className);
+            _this3.element.classList.add(className);
           });
         }
 
@@ -1434,7 +1352,7 @@
     }, {
       key: "_buildColumnHeaderTitle",
       value: function _buildColumnHeaderTitle() {
-        var _this5 = this;
+        var _this4 = this;
 
         var def = this.definition;
         var titleHolderElement = document.createElement("div");
@@ -1450,7 +1368,7 @@
           titleElement.addEventListener("change", function () {
             def.title = titleElement.value;
 
-            _this5.dispatchExternal("columnTitleChanged", _this5.getComponent());
+            _this4.dispatchExternal("columnTitleChanged", _this4.getComponent());
           });
           titleHolderElement.appendChild(titleElement);
 
@@ -1464,7 +1382,7 @@
         } else {
           if (def.field) {
             this.langBind("columns|" + def.field, function (text) {
-              _this5._formatColumnHeaderTitle(titleHolderElement, text || def.title || "&nbsp;");
+              _this4._formatColumnHeaderTitle(titleHolderElement, text || def.title || "&nbsp;");
             });
           } else {
             this._formatColumnHeaderTitle(titleHolderElement, def.title || "&nbsp;");
@@ -1492,7 +1410,6 @@
             break;
 
           case "undefined":
-          case "null":
             el.innerHTML = "";
             break;
 
@@ -1504,7 +1421,7 @@
     }, {
       key: "_buildGroupHeader",
       value: function _buildGroupHeader() {
-        var _this6 = this;
+        var _this5 = this;
 
         this.element.classList.add("tabulator-col-group");
         this.element.setAttribute("role", "columngroup");
@@ -1513,7 +1430,7 @@
         if (this.definition.cssClass) {
           var classeNames = this.definition.cssClass.split(" ");
           classeNames.forEach(function (className) {
-            _this6.element.classList.add(className);
+            _this5.element.classList.add(className);
           });
         }
 
@@ -1944,40 +1861,40 @@
     }, {
       key: "delete",
       value: function _delete() {
-        var _this7 = this;
+        var _this6 = this;
 
         return new Promise(function (resolve, reject) {
 
-          if (_this7.isGroup) {
-            _this7.columns.forEach(function (column) {
+          if (_this6.isGroup) {
+            _this6.columns.forEach(function (column) {
               column["delete"]();
             });
           }
 
-          _this7.dispatch("column-delete", _this7);
+          _this6.dispatch("column-delete", _this6);
 
-          var cellCount = _this7.cells.length;
+          var cellCount = _this6.cells.length;
 
           for (var i = 0; i < cellCount; i++) {
-            _this7.cells[0]["delete"]();
+            _this6.cells[0]["delete"]();
           }
 
-          if (_this7.element.parentNode) {
-            _this7.element.parentNode.removeChild(_this7.element);
+          if (_this6.element.parentNode) {
+            _this6.element.parentNode.removeChild(_this6.element);
           }
 
-          _this7.element = false;
-          _this7.contentElement = false;
-          _this7.titleElement = false;
-          _this7.groupElement = false;
+          _this6.element = false;
+          _this6.contentElement = false;
+          _this6.titleElement = false;
+          _this6.groupElement = false;
 
-          if (_this7.parent.isGroup) {
-            _this7.parent.removeChild(_this7);
+          if (_this6.parent.isGroup) {
+            _this6.parent.removeChild(_this6);
           }
 
-          _this7.table.columnManager.deregisterColumn(_this7);
+          _this6.table.columnManager.deregisterColumn(_this6);
 
-          _this7.table.columnManager.renderer.rerenderColumns(true);
+          _this6.table.columnManager.renderer.rerenderColumns(true);
 
           resolve();
         });
@@ -2078,7 +1995,7 @@
     }, {
       key: "updateDefinition",
       value: function updateDefinition(updates) {
-        var _this8 = this;
+        var _this7 = this;
 
         var definition;
 
@@ -2087,11 +2004,11 @@
             definition = Object.assign({}, this.getDefinition());
             definition = Object.assign(definition, updates);
             return this.table.columnManager.addColumn(definition, false, this).then(function (column) {
-              if (definition.field == _this8.field) {
-                _this8.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+              if (definition.field == _this7.field) {
+                _this7.field = false; //cleair field name to prevent deletion of duplicate column from arrays
               }
 
-              return _this8["delete"]().then(function () {
+              return _this7["delete"]().then(function () {
                 return column.getComponent();
               });
             });
@@ -2441,6 +2358,8 @@
                 } else {
                   _this2.elementVertical.scrollTop = _this2.elementVertical.scrollTop - _this2.elementVertical.clientHeight + rowEl.offsetHeight;
                 }
+
+                break;
 
               case "top":
                 _this2.elementVertical.scrollTop = rowEl.offsetTop;
@@ -5103,8 +5022,8 @@
       value: function createHolderElement() {
         var el = document.createElement("div");
         el.classList.add("tabulator-tableholder");
-        el.setAttribute("tabindex", 0);
-        el.setAttribute("role", "rowgroup");
+        el.setAttribute("tabindex", 0); // el.setAttribute("role", "rowgroup");
+
         return el;
       }
     }, {
@@ -7212,6 +7131,7 @@
 
       _this.blurEvent = _this.hide.bind(_assertThisInitialized(_this), false);
       _this.escEvent = _this._escapeCheck.bind(_assertThisInitialized(_this));
+      _this.destroyBinding = _this.hide.bind(_assertThisInitialized(_this), true);
       return _this;
     }
 
@@ -7344,6 +7264,7 @@
         this._fitToScreen(x, y, parentEl, parentOffset, position);
 
         this.visible = true;
+        this.subscribe("table-destroy", this.destroyBinding);
         return this;
       }
     }, {
@@ -7446,6 +7367,8 @@
           if (this.blurCallback && !silent) {
             this.blurCallback();
           }
+
+          this.unsubscribe("table-destroy", this.destroyBinding);
         }
 
         return this;
@@ -11529,11 +11452,10 @@
             if (col) {
               switch (_typeof(col.value)) {
                 case "object":
-                  col.value = JSON.stringify(col.value);
+                  col.value = col.value !== null ? JSON.stringify(col.value) : "";
                   break;
 
                 case "undefined":
-                case "null":
                   col.value = "";
                   break;
               }
@@ -11647,11 +11569,10 @@
         if (col) {
           switch (_typeof(col.value)) {
             case "object":
-              col.value = JSON.stringify(col.value);
+              col.value = col.value !== null ? JSON.stringify(col.value) : "";
               break;
 
             case "undefined":
-            case "null":
               col.value = "";
               break;
           }
@@ -12522,7 +12443,7 @@
         this.initialValues = this.params.multiselect ? initialValue : [initialValue];
 
         if (this.isFilter) {
-          this.input.value = this.initialValues.join(",");
+          this.input.value = this.initialValues ? this.initialValues.join(",") : "";
           this.headerFilterInitialListGen();
         }
       }
@@ -15170,11 +15091,10 @@
             } else {
               switch (_typeof(value)) {
                 case "object":
-                  value = JSON.stringify(value);
+                  value = value !== null ? JSON.stringify(value) : "";
                   break;
 
                 case "undefined":
-                case "null":
                   value = "";
                   break;
 
@@ -22499,7 +22419,6 @@
               break;
 
             case "undefined":
-            case "null":
               this.pageCounterElement.innerHTML = "";
               break;
 
@@ -24155,7 +24074,7 @@
 
           config.handleEl = handle;
 
-          if (element.parentNode) {
+          if (element.parentNode && column.visible) {
             element.after(handle);
           }
         }
@@ -26067,7 +25986,7 @@
       key: "setColumnHeader",
       value: function setColumnHeader(column, dir) {
         column.modules.sort.dir = dir;
-        column.getElement().setAttribute("aria-sort", dir);
+        column.getElement().setAttribute("aria-sort", dir === "asc" ? "ascending" : "descending");
       } //sort each item in sort list
 
     }, {
