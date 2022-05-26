@@ -16650,7 +16650,7 @@ class ResizeColumns extends Module{
 			
 			config.handleEl = handle;
 			
-			if(element.parentNode){
+			if(element.parentNode && column.visible){
 				element.after(handle);			
 			}
 		}
