@@ -317,6 +317,15 @@ $table-cell-padding-sm: 5px;
 				}
 			}
 		}
+
+		.tabulator-row{
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
+		.tabulator-col-resize-handle{
+			padding:0;
+		}
 	}
 
 

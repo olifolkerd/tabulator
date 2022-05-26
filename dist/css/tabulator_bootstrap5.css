@@ -1342,6 +1342,15 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   padding: 5px !important;
 }
 
+.tabulator.table-sm .tabulator-row {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.tabulator.table-sm .tabulator-col-resize-handle {
+  padding: 0;
+}
+
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-primary {
   background: theme-color-level("primary", -9) !important;
 }
