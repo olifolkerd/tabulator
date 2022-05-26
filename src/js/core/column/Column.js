@@ -377,7 +377,6 @@ class Column extends CoreFeature{
 			}
 			break;
 			case "undefined":
-			case "null":
 			el.innerHTML = "";
 			break;
 			default:
