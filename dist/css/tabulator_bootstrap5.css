@@ -1352,35 +1352,35 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-primary {
-  background: theme-color-level("primary", -9) !important;
+  background: #cfe2ff !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-secondary {
-  background: theme-color-level("secondary", -9) !important;
+  background: #e2e3e5 !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-success {
-  background: theme-color-level("success", -9) !important;
+  background: #d1e7dd !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-info {
-  background: theme-color-level("info", -9) !important;
+  background: #cff4fc !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-warning {
-  background: theme-color-level("warning", -9) !important;
+  background: #fff3cd !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-danger {
-  background: theme-color-level("danger", -9) !important;
+  background: #f8d7da !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-light {
-  background: theme-color-level("light", -9) !important;
+  background: #f8f9fa !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table {
-  background: theme-color-level("dark", -9) !important;
+  background: #212529 !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.table-active {
@@ -1388,35 +1388,35 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-primary {
-  background: theme-color-level("primary", 0) !important;
+  background: #cfe2ff !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-secondary {
-  background: theme-color-level("secondary", 0) !important;
+  background: #e2e3e5 !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-success {
-  background: theme-color-level("success", 0) !important;
+  background: #d1e7dd !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-info {
-  background: theme-color-level("info", 0) !important;
+  background: #cff4fc !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-warning {
-  background: theme-color-level("warning", 0) !important;
+  background: #fff3cd !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-danger {
-  background: theme-color-level("danger", 0) !important;
+  background: #f8d7da !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-light {
-  background: theme-color-level("light", 0) !important;
+  background: #f8f9fa !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-dark {
-  background: theme-color-level("dark", 0) !important;
+  background: #212529 !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.bg-active {
@@ -1424,35 +1424,35 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-primary {
-  background: theme-color-level("primary", -9) !important;
+  background: #cfe2ff !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-secondary {
-  background: theme-color-level("secondary", -9) !important;
+  background: #e2e3e5 !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-success {
-  background: theme-color-level("success", -9) !important;
+  background: #d1e7dd !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-info {
-  background: theme-color-level("info", -9) !important;
+  background: #cff4fc !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-warning {
-  background: theme-color-level("warning", -9) !important;
+  background: #fff3cd !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-danger {
-  background: theme-color-level("danger", -9) !important;
+  background: #f8d7da !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-light {
-  background: theme-color-level("light", -9) !important;
+  background: #f8f9fa !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table {
-  background: theme-color-level("dark", -9) !important;
+  background: #212529 !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.table-active {
@@ -1460,35 +1460,35 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-primary {
-  background: theme-color-level("primary", 0) !important;
+  background: #cfe2ff !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-secondary {
-  background: theme-color-level("secondary", 0) !important;
+  background: #e2e3e5 !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-success {
-  background: theme-color-level("success", 0) !important;
+  background: #d1e7dd !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-info {
-  background: theme-color-level("info", 0) !important;
+  background: #cff4fc !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-warning {
-  background: theme-color-level("warning", 0) !important;
+  background: #fff3cd !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-danger {
-  background: theme-color-level("danger", 0) !important;
+  background: #f8d7da !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-light {
-  background: theme-color-level("light", 0) !important;
+  background: #f8f9fa !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-dark {
-  background: theme-color-level("dark", 0) !important;
+  background: #212529 !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.bg-active {

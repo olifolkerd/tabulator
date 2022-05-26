@@ -334,56 +334,56 @@ $table-cell-padding-sm: 5px;
 		.tabulator-table{
 			.tabulator-row{
 				&.table-primary{
-					background:theme-color-level("primary", -9) !important;
+					background:map-get($table-variants, "primary") !important;
 				}
 				&.table-secondary{
-					background:theme-color-level("secondary", -9) !important;
+					background:map-get($table-variants, "secondary") !important;
 				}
 				&.table-success{
-					background:theme-color-level("success", -9) !important;
+					background:map-get($table-variants, "success") !important;
 				}
 				&.table-info{
-					background:theme-color-level("info", -9) !important;
+					background:map-get($table-variants, "info") !important;
 				}
 				&.table-warning{
-					background:theme-color-level("warning", -9) !important;
+					background:map-get($table-variants, "warning") !important;
 				}
 				&.table-danger{
-					background:theme-color-level("danger", -9) !important;
+					background:map-get($table-variants, "danger") !important;
 				}
 				&.table-light{
-					background:theme-color-level("light", -9) !important;
+					background:map-get($table-variants, "light") !important;
 				}
 				&.table{
-					background:theme-color-level("dark", -9) !important;
+					background:map-get($table-variants, "dark") !important;
 				}
 				&.table-active{
 					background:$table-active-bg !important;
 				}
 
 				&.bg-primary{
-					background:theme-color-level("primary", 0) !important;
+					background:map-get($table-variants, "primary") !important;
 				}
 				&.bg-secondary{
-					background:theme-color-level("secondary", 0) !important;
+					background:map-get($table-variants, "secondary") !important;
 				}
 				&.bg-success{
-					background:theme-color-level("success", 0) !important;
+					background:map-get($table-variants, "success") !important;
 				}
 				&.bg-info{
-					background:theme-color-level("info", 0) !important;
+					background:map-get($table-variants, "info") !important;
 				}
 				&.bg-warning{
-					background:theme-color-level("warning", 0) !important;
+					background:map-get($table-variants, "warning") !important;
 				}
 				&.bg-danger{
-					background:theme-color-level("danger", 0) !important;
+					background:map-get($table-variants, "danger") !important;
 				}
 				&.bg-light{
-					background:theme-color-level("light", 0) !important;
+					background:map-get($table-variants, "light") !important;
 				}
 				&.bg-dark{
-					background:theme-color-level("dark", 0) !important;
+					background:map-get($table-variants, "dark") !important;
 				}
 				&.bg-active{
 					background:$table-active-bg !important;
@@ -391,56 +391,56 @@ $table-cell-padding-sm: 5px;
 
 				.tabulator-cell{
 					&.table-primary{
-						background:theme-color-level("primary", -9) !important;
+						background:map-get($table-variants, "primary") !important;
 					}
 					&.table-secondary{
-						background:theme-color-level("secondary", -9) !important;
+						background:map-get($table-variants, "secondary") !important;
 					}
 					&.table-success{
-						background:theme-color-level("success", -9) !important;
+						background:map-get($table-variants, "success") !important;
 					}
 					&.table-info{
-						background:theme-color-level("info", -9) !important;
+						background:map-get($table-variants, "info") !important;
 					}
 					&.table-warning{
-						background:theme-color-level("warning", -9) !important;
+						background:map-get($table-variants, "warning") !important;
 					}
 					&.table-danger{
-						background:theme-color-level("danger", -9) !important;
+						background:map-get($table-variants, "danger") !important;
 					}
 					&.table-light{
-						background:theme-color-level("light", -9) !important;
+						background:map-get($table-variants, "light") !important;
 					}
 					&.table{
-						background:theme-color-level("dark", -9) !important;
+						background:map-get($table-variants, "dark") !important;
 					}
 					&.table-active{
 						background:$table-active-bg !important;
 					}
 
 					&.bg-primary{
-						background:theme-color-level("primary", 0) !important;
+						background:map-get($table-variants, "primary") !important;
 					}
 					&.bg-secondary{
-						background:theme-color-level("secondary", 0) !important;
+						background:map-get($table-variants, "secondary") !important;
 					}
 					&.bg-success{
-						background:theme-color-level("success", 0) !important;
+						background:map-get($table-variants, "success") !important;
 					}
 					&.bg-info{
-						background:theme-color-level("info", 0) !important;
+						background:map-get($table-variants, "info") !important;
 					}
 					&.bg-warning{
-						background:theme-color-level("warning", 0) !important;
+						background:map-get($table-variants, "warning") !important;
 					}
 					&.bg-danger{
-						background:theme-color-level("danger", 0) !important;
+						background:map-get($table-variants, "danger") !important;
 					}
 					&.bg-light{
-						background:theme-color-level("light", 0) !important;
+						background:map-get($table-variants, "light") !important;
 					}
 					&.bg-dark{
-						background:theme-color-level("dark", 0) !important;
+						background:map-get($table-variants, "dark") !important;
 					}
 					&.bg-active{
 						background:$table-active-bg !important;
