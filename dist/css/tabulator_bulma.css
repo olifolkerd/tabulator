@@ -1265,4 +1265,16 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   color: #363636;
 }
 
+.tabulator-popup-container {
+  background: white;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.active {
+  color: white;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item:hover {
+  color: white;
+}
+
 /*# sourceMappingURL=tabulator_bulma.css.map */
