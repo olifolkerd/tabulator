@@ -22,6 +22,8 @@ export default class Popup extends CoreFeature{
         
         this.blurEvent = this.hide.bind(this, false);
         this.escEvent = this._escapeCheck.bind(this);
+
+        this.destroyBinding = this.hide.bind(this, true);
     }
     
     _lookupContainer(){
@@ -139,6 +141,8 @@ export default class Popup extends CoreFeature{
         this._fitToScreen(x, y, parentEl, parentOffset, position);
         
         this.visible = true;
+
+        this.subscribe("table-destroy", this.destroyBinding);
         
         return this;
     }
@@ -234,6 +238,8 @@ export default class Popup extends CoreFeature{
             if(this.blurCallback && !silent){
                 this.blurCallback();
             }
+
+            this.unsubscribe("table-destroy", this.destroyBinding);
         }
         
         return this;
