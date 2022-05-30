@@ -1,11 +1,19 @@
-![Tabulator Table](http://olifolkerd.github.io/tabulator/images/tabulator.png)
+<p align="center">
+  <img height="200" src="http://tabulator.info/images/logos/t_hollow.png">
+</p>
 
+<p align="center">
 An easy to use interactive table generation JavaScript library
+</p>
 
-Full documentation & demos can be found at: [http://tabulator.info](http://tabulator.info)
+<p align="center">
+Full documentation & demos can be found at:  <a href="http://tabulator.info">http://tabulator.info</a>
+</p>
+
 ***
 ![Tabulator Table](http://tabulator.info/images/tabulator_table.jpg)
 ***
+
 
 Features
 ================================
