@@ -3,6 +3,10 @@
 </p>
 
 <p align="center">
+	<img height="50" src="http://tabulator.info/images/tabulator.png">
+</p>
+
+<p align="center">
 An easy to use interactive table generation JavaScript library
 </p>
 
