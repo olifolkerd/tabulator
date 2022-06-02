@@ -49,6 +49,7 @@ class Edit extends Module{
 	initialize(){
 		this.subscribe("cell-init", this.bindEditor.bind(this));
 		this.subscribe("cell-delete", this.clearEdited.bind(this));
+        	this.subscribe("cell-value-changed", this.updateCellClass.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
@@ -116,6 +117,15 @@ class Edit extends Module{
 	///////////////////////////////////
 	///////// Table Functions /////////
 	///////////////////////////////////
+	updateCellClass(cell){
+		if(this.allowEdit(cell)) {
+		    cell.getElement().classList.add("tabulator-cell-editable");
+		}
+		else {
+		    cell.getElement().classList.remove("tabulator-cell-editable");
+		}
+	}
+
 	clearCellEdited(cells){
 		if(!cells){
 			cells = this.table.modules.edit.getEditedCells();
@@ -436,9 +446,7 @@ class Edit extends Module{
 			var self = this,
 			element = cell.getElement(true);
 
-			if(this.allowEdit(cell)) {
-				element.classList.add("tabulator-cell-editable");
-			}
+            		this.updateCellClass(cell);
 			element.setAttribute("tabindex", 0);
 
 			element.addEventListener("click", function(e){
