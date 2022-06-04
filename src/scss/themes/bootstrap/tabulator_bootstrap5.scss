@@ -166,29 +166,29 @@ $table-cell-padding-sm: 5px;
 
 	&.thead-dark{
 		.tabulator-header{
-			border-color: $table-border-color;
-			background-color: $table-bg;
+			border-color: $borderColor;
+			background-color: $backgroundColor;
 			color: $table-color;
 
 			.tabulator-col{
-				border-color: $table-border-color;
-				background-color: $table-bg;
+				border-color: $borderColor;
+				background-color: $backgroundColor;
 				color: $table-color;
 			}
 		}
 	}
 
 	&.table{
-		background-color: $table-bg;
+		background-color: $backgroundColor;
 
 		&:not(.thead-light) .tabulator-header{
-			border-color: $table-border-color;
-			background-color: $table-bg;
+			border-color: $borderColor;
+			background-color: $backgroundColor;
 			color: $table-color;
 
 			.tabulator-col{
-				border-color: $table-border-color;
-				background-color: $table-bg;
+				border-color: $borderColor;
+				background-color: $backgroundColor;
 				color: $table-color;
 			}
 		}
@@ -199,12 +199,12 @@ $table-cell-padding-sm: 5px;
 
 
 		.tabulator-row{
-			border-color: $table-border-color;
-			background-color: $table-bg;
+			border-color: $borderColor;
+			background-color: $backgroundColor;
 			color: $table-color;
 
 			&:hover{
-				background-color: $table-border-color;
+				background-color: $borderColor;
 
 				.tabulator-cell{
 					background-color: $table-hover-bg;
@@ -217,15 +217,15 @@ $table-cell-padding-sm: 5px;
 		}
 
 		.tabulator-footer{
-			border-color: $table-border-color !important;
+			border-color: $borderColor !important;
 
 			.tabulator-calcs-holder{
-				border-color: $table-border-color !important;
-				background:$table-bg !important;
+				border-color: $borderColor !important;
+				background:$backgroundColor !important;
 
 				.tabulator-row{
-					border-color: $table-border-color !important;
-					background-color: $table-bg !important;
+					border-color: $borderColor !important;
+					background-color: $backgroundColor !important;
 					color: $table-color !important;
 				}
 			}
