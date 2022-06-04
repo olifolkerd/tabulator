@@ -23,7 +23,13 @@ export default class Popup extends CoreFeature{
         this.blurEvent = this.hide.bind(this, false);
         this.escEvent = this._escapeCheck.bind(this);
 
-        this.destroyBinding = this.hide.bind(this, true);
+        this.destroyBinding = this.tableDestroyed;
+        this.destroyed = false;
+    }
+
+    tableDestroyed(){
+        this.destroyed = true;
+        this.hide(true);
     }
     
     _lookupContainer(){
@@ -107,6 +113,10 @@ export default class Popup extends CoreFeature{
     
     show(origin, position){
         var x, y, parentEl, parentOffset, containerOffset, coords;
+
+        if(this.destroyed || this.table.destroyed){
+            return this;
+        }
         
         if(origin instanceof HTMLElement){
             parentEl = origin;

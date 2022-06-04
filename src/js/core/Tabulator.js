@@ -50,6 +50,7 @@ class Tabulator {
 		this.optionsList = new OptionsList(this, "table constructor");
 		
 		this.initialized = false;
+		this.destroyed = false;
 		
 		if(this.initializeElement(element)){
 			
@@ -278,6 +279,8 @@ class Tabulator {
 	//deconstructor
 	destroy(){
 		var element = this.element;
+		
+		this.destroyed = true;
 		
 		TableRegistry.deregister(this); //deregister table from inter-device communication
 		

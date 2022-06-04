@@ -195,7 +195,13 @@ class Popup extends CoreFeature{
         this.blurEvent = this.hide.bind(this, false);
         this.escEvent = this._escapeCheck.bind(this);
 
-        this.destroyBinding = this.hide.bind(this, true);
+        this.destroyBinding = this.tableDestroyed;
+        this.destroyed = false;
+    }
+
+    tableDestroyed(){
+        this.destroyed = true;
+        this.hide(true);
     }
     
     _lookupContainer(){
@@ -279,6 +285,10 @@ class Popup extends CoreFeature{
     
     show(origin, position){
         var x, y, parentEl, parentOffset, coords;
+
+        if(this.destroyed || this.table.destroyed){
+            return this;
+        }
         
         if(origin instanceof HTMLElement){
             parentEl = origin;
@@ -24020,6 +24030,7 @@ class Tabulator {
 		this.optionsList = new OptionsList(this, "table constructor");
 		
 		this.initialized = false;
+		this.destroyed = false;
 		
 		if(this.initializeElement(element)){
 			
@@ -24247,6 +24258,8 @@ class Tabulator {
 	//deconstructor
 	destroy(){
 		var element = this.element;
+		
+		this.destroyed = true;
 		
 		TableRegistry.deregister(this); //deregister table from inter-device communication
 		
