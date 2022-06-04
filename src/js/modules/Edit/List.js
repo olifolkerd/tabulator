@@ -602,6 +602,12 @@ export default class Edit{
             
             this._parseListItem(value, data, 0);
         });
+
+        if(!this.currentItems.length && this.params.freetext){
+            this.input.value = this.initialValues;
+            this.typing = true;
+            this.lastAction = "typing";
+        }
         
         this.data = data;
         
@@ -946,6 +952,8 @@ export default class Edit{
         }else{
             this.currentItems = [item];
             item.selected = true;
+
+            console.log("choose")
             
             this.input.value = item.label;
             
