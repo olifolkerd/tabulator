@@ -325,6 +325,10 @@ class Popup extends CoreFeature{
         this.visible = true;
 
         this.subscribe("table-destroy", this.destroyBinding);
+
+        this.element.addEventListener("mousedown", (e) => {
+            e.stopPropagation();
+        });
         
         return this;
     }
@@ -376,8 +380,10 @@ class Popup extends CoreFeature{
                 this.subscribe("cell-editing", this.blurEvent);
                 document.body.addEventListener("click", this.blurEvent);
                 document.body.addEventListener("contextmenu", this.blurEvent);
+                document.body.addEventListener("mousedown", this.blurEvent);
                 window.addEventListener("resize", this.blurEvent);
                 document.body.addEventListener("keydown", this.escEvent);
+
             }, 100);
             
             this.blurCallback = callback;
@@ -398,6 +404,7 @@ class Popup extends CoreFeature{
                 document.body.removeEventListener("keydown", this.escEvent);
                 document.body.removeEventListener("click", this.blurEvent);
                 document.body.removeEventListener("contextmenu", this.blurEvent);
+                document.body.removeEventListener("mousedown", this.blurEvent);
                 window.removeEventListener("resize", this.blurEvent);
                 this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
                 this.unsubscribe("cell-editing", this.blurEvent);
