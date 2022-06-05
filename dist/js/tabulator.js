@@ -1,4 +1,4 @@
-/* Tabulator v5.2.6 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.2.7 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -7131,11 +7131,18 @@
 
       _this.blurEvent = _this.hide.bind(_assertThisInitialized(_this), false);
       _this.escEvent = _this._escapeCheck.bind(_assertThisInitialized(_this));
-      _this.destroyBinding = _this.hide.bind(_assertThisInitialized(_this), true);
+      _this.destroyBinding = _this.tableDestroyed;
+      _this.destroyed = false;
       return _this;
     }
 
     _createClass(Popup, [{
+      key: "tableDestroyed",
+      value: function tableDestroyed() {
+        this.destroyed = true;
+        this.hide(true);
+      }
+    }, {
       key: "_lookupContainer",
       value: function _lookupContainer() {
         var container = this.table.options.popupContainer;
@@ -7233,6 +7240,10 @@
       value: function show(origin, position) {
         var x, y, parentEl, parentOffset, coords;
 
+        if (this.destroyed || this.table.destroyed) {
+          return this;
+        }
+
         if (origin instanceof HTMLElement) {
           parentEl = origin;
           coords = this.elementPositionCoords(origin, position);
@@ -7265,6 +7276,9 @@
 
         this.visible = true;
         this.subscribe("table-destroy", this.destroyBinding);
+        this.element.addEventListener("mousedown", function (e) {
+          e.stopPropagation();
+        });
         return this;
       }
     }, {
@@ -7320,6 +7334,7 @@
 
             document.body.addEventListener("click", _this2.blurEvent);
             document.body.addEventListener("contextmenu", _this2.blurEvent);
+            document.body.addEventListener("mousedown", _this2.blurEvent);
             window.addEventListener("resize", _this2.blurEvent);
             document.body.addEventListener("keydown", _this2.escEvent);
           }, 100);
@@ -7345,6 +7360,7 @@
             document.body.removeEventListener("keydown", this.escEvent);
             document.body.removeEventListener("click", this.blurEvent);
             document.body.removeEventListener("contextmenu", this.blurEvent);
+            document.body.removeEventListener("mousedown", this.blurEvent);
             window.removeEventListener("resize", this.blurEvent);
             this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
             this.unsubscribe("cell-editing", this.blurEvent);
@@ -8372,6 +8388,7 @@
 
       this.optionsList = new OptionsList(this, "table constructor");
       this.initialized = false;
+      this.destroyed = false;
 
       if (this.initializeElement(element)) {
         this.initializeCoreSystems(options); //delay table creation to allow event bindings immediately after the constructor
@@ -8598,6 +8615,7 @@
       key: "destroy",
       value: function destroy() {
         var element = this.element;
+        this.destroyed = true;
         TableRegistry.deregister(this); //deregister table from inter-device communication
 
         this.eventBus.dispatch("table-destroy"); //clear row data
@@ -12399,6 +12417,7 @@
       this.values = [];
       this.popup = null;
       this.listIteration = 0;
+      this.lastAction = "";
       this.blurable = true;
       this.actions = {
         success: success,
@@ -12772,10 +12791,12 @@
     }, {
       key: "_keyEnter",
       value: function _keyEnter(e) {
-        if (this.focusedItem) {
-          this._chooseItem(this.focusedItem);
+        if (this.params.autocomplete && this.lastAction === "typing") {
+          this._resolveValue(true);
         } else {
-          this._cancel();
+          if (this.focusedItem) {
+            this._chooseItem(this.focusedItem);
+          }
         }
       }
     }, {
@@ -12808,6 +12829,7 @@
       value: function _keyAutoCompLetter(e) {
         this._filter();
 
+        this.lastAction = "typing";
         this.typing = true;
       }
     }, {
@@ -12833,6 +12855,8 @@
     }, {
       key: "_focusItem",
       value: function _focusItem(item) {
+        this.lastAction = "focus";
+
         if (this.focusedItem && this.focusedItem.element) {
           this.focusedItem.element.classList.remove("focused");
         }
@@ -13013,6 +13037,13 @@
 
           _this4._parseListItem(value, data, 0);
         });
+
+        if (!this.currentItems.length && this.params.freetext) {
+          this.input.value = this.initialValues;
+          this.typing = true;
+          this.lastAction = "typing";
+        }
+
         this.data = data;
         return data;
       }
@@ -13384,6 +13415,7 @@
         } else {
           this.currentItems = [item];
           item.selected = true;
+          console.log("choose");
           this.input.value = item.label;
 
           this._styleItem(item);
