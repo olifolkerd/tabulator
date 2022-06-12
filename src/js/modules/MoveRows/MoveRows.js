@@ -392,10 +392,32 @@ class MoveRows extends Module{
 	moveHoverTable(e){
 		var rowHolder = this.table.rowManager.getElement(),
 		scrollTop = rowHolder.scrollTop,
-		yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolder.getBoundingClientRect().top) + scrollTop,
+		rowHolderTop = rowHolder.getBoundingClientRect().top,
+		yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolderTop) + scrollTop,
 		scrollPos;
 
 		this.hoverElement.style.top = (yPos - this.startY) + "px";
+
+		var MINSPEED = 2;
+		var MAXSPEED = 5;
+
+        function convertRange(oldVal, oldMin, oldMax, newMin, newMax) {
+          var oldRange = (oldMax - oldMin);
+          var newRange = (newMax - newMin);
+          var newVal = (((oldVal - oldMin) * newRange) / oldRange) + newMin;
+          return newVal;
+        }
+
+        if (e.pageY > rowHolder.offsetHeight - (0.35 * rowHolder.offsetHeight)) {
+            var convertedRange = Math.round(convertRange(e.pageY, rowHolder.offsetHeight / 2, rowHolder.offsetHeight, MINSPEED, MAXSPEED));
+            var clampedRange = Math.max(MINSPEED, Math.min(convertedRange, MAXSPEED));
+          rowHolder.scrollTop += clampedRange;
+        }
+        if (e.pageY - rowHolderTop < (0.35 * rowHolder.offsetHeight)) {
+          var convertedRange = Math.round(convertRange(e.pageY, 0, rowHolder.offsetHeight / 2, MINSPEED, MAXSPEED));
+          var clampedRange = Math.max(MINSPEED, Math.min(convertedRange, MAXSPEED));
+          rowHolder.scrollTop -= clampedRange;
+        }
 	}
 
 	moveHoverConnections(e){
