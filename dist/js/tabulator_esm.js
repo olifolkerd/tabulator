@@ -5756,7 +5756,7 @@ class Edit{
 			}
 		}
         
-		if(params.filterRemote && !(typeof params.valuesLookup === "function" || typeof params.valuesURL)){
+		if(params.filterRemote && !(typeof params.valuesLookup === "function" || params.valuesURL)){
 			params.filterRemote = false;
 			console.warn("list editor config error - filterRemote option should only be used when values list is populated from a remote source");
 		}
