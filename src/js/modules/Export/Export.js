@@ -148,7 +148,13 @@ class Export extends Module{
 	}
 
 	columnVisCheck(column){
-		return column.definition[this.colVisProp] !== false && (column.visible || (!column.visible && column.definition[this.colVisProp]));
+		var visProp = column.definition[this.colVisProp];
+
+		if(typeof visProp === "function"){
+			visProp = visProp.call(this.table, column.getComponent());
+		}
+
+		return visProp !== false && (column.visible || (!column.visible && visProp));
 	}
 
 	headersToExportRows(columns){
