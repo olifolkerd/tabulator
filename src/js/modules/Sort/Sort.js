@@ -117,16 +117,25 @@ class Sort extends Module{
 			arrowEl = document.createElement("div");
 			arrowEl.classList.add("tabulator-col-sorter");
 
-			if(typeof this.table.options.headerSortElement == "object"){
-				arrowEl.appendChild(this.table.options.headerSortElement);
-			}else{
-				arrowEl.innerHTML = this.table.options.headerSortElement;
+			switch(this.table.options.headerSortElement){
+				case "function":
+					//do nothing
+				break;
+
+				case "object":
+					arrowEl.appendChild(this.table.options.headerSortElement);
+				break;
+					
+				default:
+					arrowEl.innerHTML = this.table.options.headerSortElement;
 			}
 
 			//create sorter arrow
 			column.titleHolderElement.appendChild(arrowEl);
 
 			column.modules.sort.element = arrowEl;
+
+			this.setColumnHeaderSortIcon(column, "none");
 
 			//sort on click
 			colEl.addEventListener("click", (e) => {
@@ -367,10 +376,11 @@ class Sort extends Module{
 
 	//clear sort arrows on columns
 	clearColumnHeaders(){
-		this.table.columnManager.getRealColumns().forEach(function(column){
+		this.table.columnManager.getRealColumns().forEach((column) => {
 			if(column.modules.sort){
 				column.modules.sort.dir = "none";
 				column.getElement().setAttribute("aria-sort", "none");
+				this.setColumnHeaderSortIcon(column, "none");
 			}
 		});
 	}
@@ -379,6 +389,24 @@ class Sort extends Module{
 	setColumnHeader(column, dir){
 		column.modules.sort.dir = dir;
 		column.getElement().setAttribute("aria-sort", dir === "asc" ? "ascending" : "descending");
+		this.setColumnHeaderSortIcon(column, dir);
+	}
+
+	setColumnHeaderSortIcon(column, dir){
+		var sortEl = column.modules.sort.element,
+		arrowEl;
+
+		if(typeof this.table.options.headerSortElement === "function"){
+			while(sortEl.firstChild) sortEl.removeChild(sortEl.firstChild);
+
+			arrowEl = this.table.options.headerSortElement.call(this.table, column.getComponent(), dir);
+			
+			if(typeof arrowEl === "object"){
+				sortEl.appendChild(arrowEl);
+			}else{
+				sortEl.innerHTML = arrowEl;
+			}
+		}
 	}
 
 	//sort each item in sort list
