@@ -19764,32 +19764,30 @@ class VirtualDomHorizontal extends Renderer{
 				}
 			});
 			
-			if(change){
-				if(change && this.table.rowManager.getDisplayRows().length){
-					this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
+			if(change && this.table.rowManager.getDisplayRows().length){
+				this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
+				
+				row = this.chain("rows-sample", [1], [], () => {
+					return this.table.rowManager.getDisplayRows();
+				})[0];
+				
+				if(row){
+					rowEl = row.getElement();
 					
-					row = this.chain("rows-sample", [1], [], () => {
-						return this.table.rowManager.getDisplayRows();
-					})[0];
+					row.generateCells();
 					
-					if(row){
-						rowEl = row.getElement();
+					this.tableElement.appendChild(rowEl);
+					
+					for(let colEnd = 0; colEnd < row.cells.length; colEnd++){
+						let cell = row.cells[colEnd];
+						rowEl.appendChild(cell.getElement());
 						
-						row.generateCells();
-						
-						this.tableElement.appendChild(rowEl);
-						
-						for(let colEnd = 0; colEnd < row.cells.length; colEnd++){
-							let cell = row.cells[colEnd];
-							rowEl.appendChild(cell.getElement());
-							
-							cell.column.reinitializeWidth();
-						}
-						
-						rowEl.parentNode.removeChild(rowEl);
-
-						this.rerenderColumns(false, true);
+						cell.column.reinitializeWidth();
 					}
+					
+					rowEl.parentNode.removeChild(rowEl);
+
+					this.rerenderColumns(false, true);
 				}
 			}
 		}else {
