@@ -16,7 +16,7 @@ module.exports = {
 	"plugins": ["only-warn"],
 	"rules": {
 		"semi": "error",
-		"indent": ["error", "tab"],
+		"indent": ["error", "tab", {VariableDeclarator:0, "SwitchCase": 1}],
 		"no-unused-vars": ["warn", { "vars": "all", "args": "none", "ignoreRestSiblings": false }],
 		"no-fallthrough": "off",
 		"no-inner-declarations": "off",
