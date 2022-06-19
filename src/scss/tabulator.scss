@@ -49,11 +49,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	text-align: left;
 	overflow:hidden;
 	
-	-webkit-transform: translatez(0);
-	-moz-transform: translatez(0);
-	-ms-transform: translatez(0);
-	-o-transform: translatez(0);
-	transform: translatez(0);
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
 	
 	&[tabulator-layout="fitDataFill"]{
 		.tabulator-tableholder{
