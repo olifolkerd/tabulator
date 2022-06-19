@@ -265,7 +265,7 @@ class Filter extends Module{
 						}
 					}
 
-					self.headerFilters[field] = {value:value, func:filterFunc, type:type, params:params || {}};
+					self.headerFilters[field] = {value:value, func:filterFunc, type:type};
 				}else{
 					delete self.headerFilters[field];
 				}
