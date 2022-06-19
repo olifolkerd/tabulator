@@ -21528,8 +21528,10 @@ class RowManager extends CoreFeature{
 				});
 				
 				return match || false;
+			}else if(subject === null){
+				return false;
 			}
-		}else if(typeof subject == "undefined" || subject === null){
+		}else if(typeof subject == "undefined"){
 			return false;
 		}else {
 			//subject should be treated as the index of the row
