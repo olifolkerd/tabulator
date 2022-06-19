@@ -4680,7 +4680,7 @@ function json(list, options, setFileContents){
 	setFileContents(fileContents, "application/json");
 }
 
-function pdf(list, options, setFileContents){
+function pdf(list, options = {}, setFileContents){
 	var header = [],
 	body = [],
 	autoTableParams = {},
@@ -4697,7 +4697,7 @@ function pdf(list, options, setFileContents){
 		fillColor: 232,
 	},
 	jsPDFParams = options.jsPDF || {},
-	title = options && options.title ? options.title : "";
+	title = options.title ? options.title : "";
 
 	if(!jsPDFParams.orientation){
 		jsPDFParams.orientation = options.orientation || "landscape";
