@@ -82,6 +82,13 @@ export default function(cell, onRendered, success, cancel, editorParams){
     input.addEventListener("keydown", function(e){
 
         switch(e.keyCode){
+
+            case 13:
+                if(e.shiftKey && editorParams.shiftEnterSubmit){
+                    onChange(e);
+                }
+            break;
+
             case 27:
             cancel();
             break;
