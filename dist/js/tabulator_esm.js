@@ -18012,9 +18012,7 @@ function boolean(a, b, aRow, bRow, column, dir, params){
 
 //sort if element contains any data
 function array(a, b, aRow, bRow, column, dir, params){
-	var el1 = 0,
-	el2 = 0,
-	type = params.type || "length",
+	var type = params.type || "length",
 	alignEmptyValues = params.alignEmptyValues,
 	emptyAlign = 0;
 
@@ -18056,12 +18054,7 @@ function array(a, b, aRow, bRow, column, dir, params){
 	}else if(!Array.isArray(b)){
 		emptyAlign = 1;
 	}else {
-
-		//compare valid values
-		el1 = a ? calc(a) : 0;
-		el2 = b ? calc(b) : 0;
-
-		return el2 - el1;
+		return calc(b) - calc(a);
 	}
 
 	//fix empty values in position
