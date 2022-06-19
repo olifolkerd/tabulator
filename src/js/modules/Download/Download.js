@@ -7,7 +7,10 @@ class Download extends Module{
 	constructor(table){
 		super(table);
 
-		this.registerTableOption("downloadReady", function(data, blob){return blob;}); //function to manipulate download data
+		this.registerTableOption("downloadEncoder", function(data, mimeType){
+			return new Blob([data],{type:mimeType});
+		}); //function to manipulate download data
+		this.registerTableOption("downloadReady", false); //warn of function deprecation
 		this.registerTableOption("downloadConfig", {}); //download config
 		this.registerTableOption("downloadRowRange", "active"); //restrict download to active rows only
 
@@ -16,9 +19,17 @@ class Download extends Module{
 	}
 
 	initialize(){
+		this.deprecationCheck();
+
 		this.registerTableFunction("download", this.download.bind(this));
 		this.registerTableFunction("downloadToTab", this.downloadToTab.bind(this));
 	}
+
+	deprecationCheck(){
+		if(typeof this.table.options.downloadReady){
+			console.warn("Use of the downloadReady option is now deprecated. Please use the downloadEncoder option instead");
+		}
+	}	
 
 	///////////////////////////////////
 	///////// Table Functions /////////
@@ -93,10 +104,10 @@ class Download extends Module{
 
 	triggerDownload(data, mime, type, filename, newTab){
 		var element = document.createElement('a'),
-		blob = new Blob([data],{type:mime}),
+		blob = this.table.options.downloadEncoder(data, mime),
 		filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
-		blob = this.table.options.downloadReady(data, blob);
+		
 
 		if(blob){
 
