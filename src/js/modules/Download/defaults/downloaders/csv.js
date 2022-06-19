@@ -1,5 +1,5 @@
-export default function(list, options, setFileContents){
-	var delimiter = options && options.delimiter ? options.delimiter : ",",
+export default function(list, options = {}, setFileContents){
+	var delimiter = options.delimiter ? options.delimiter : ",",
 	fileContents = [],
 	headers = [];
 

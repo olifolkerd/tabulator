@@ -4585,8 +4585,8 @@ class DataTree extends Module{
 
 DataTree.moduleName = "dataTree";
 
-function csv(list, options, setFileContents){
-	var delimiter = options && options.delimiter ? options.delimiter : ",",
+function csv(list, options = {}, setFileContents){
+	var delimiter = options.delimiter ? options.delimiter : ",",
 	fileContents = [],
 	headers = [];
 
