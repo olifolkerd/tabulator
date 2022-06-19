@@ -22,5 +22,6 @@ module.exports = {
 		"no-fallthrough": "off",
 		"no-inner-declarations": "off",
 		"no-prototype-builtins": "off",
+		"no-empty": ["error", { "allowEmptyCatch": true }],
 	}
 }
