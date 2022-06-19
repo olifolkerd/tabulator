@@ -9649,12 +9649,12 @@ function traffic(cell, formatterParams, onRendered){
 	return el;
 }
 
-function progress$1(cell, formatterParams, onRendered){ //progress bar
+function progress$1(cell, formatterParams = {}, onRendered){ //progress bar
 	var value = this.sanitizeHTML(cell.getValue()) || 0,
 	element = cell.getElement(),
-	max = formatterParams && formatterParams.max ? formatterParams.max : 100,
-	min = formatterParams && formatterParams.min ? formatterParams.min : 0,
-	legendAlign = formatterParams && formatterParams.legendAlign ? formatterParams.legendAlign : "center",
+	max = formatterParams.max ? formatterParams.max : 100,
+	min = formatterParams.min ? formatterParams.min : 0,
+	legendAlign = formatterParams.legendAlign ? formatterParams.legendAlign : "center",
 	percent, percentValue, color, legend, legendColor;
 
 	//make sure value is in range
