@@ -334,21 +334,25 @@ class Sort extends Module{
 
 			//build list of valid sorters and trigger column specific callbacks before sort begins
 			sortList.forEach(function(item, i){
-				var sortObj = item.column.modules.sort;
+				var sortObj;
 
-				if(item.column && sortObj){
+				if(item.column){
+					sortObj = item.column.modules.sort;
 
-					//if no sorter has been defined, take a guess
-					if(!sortObj.sorter){
-						sortObj.sorter = self.findSorter(item.column);
+					if(sortObj){
+
+						//if no sorter has been defined, take a guess
+						if(!sortObj.sorter){
+							sortObj.sorter = self.findSorter(item.column);
+						}
+
+						item.params = typeof sortObj.params === "function" ? sortObj.params(item.column.getComponent(), item.dir) : sortObj.params;
+
+						sortListActual.push(item);
 					}
 
-					item.params = typeof sortObj.params === "function" ? sortObj.params(item.column.getComponent(), item.dir) : sortObj.params;
-
-					sortListActual.push(item);
+					self.setColumnHeader(item.column, item.dir);
 				}
-
-				self.setColumnHeader(item.column, item.dir);
 			});
 
 			//sort data
