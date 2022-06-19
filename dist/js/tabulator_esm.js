@@ -6303,7 +6303,7 @@ class Edit{
 	_defaultFilterFunc(term, label, value, item){
 		term = String(term).toLowerCase();
         
-		if(label !== null || typeof label !== "undefined"){
+		if(label !== null && typeof label !== "undefined"){
 			if(String(label).toLowerCase().indexOf(term) > -1 || String(value).toLowerCase().indexOf(term) > -1){
 				return true;
 			}
