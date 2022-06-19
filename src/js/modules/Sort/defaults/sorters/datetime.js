@@ -41,4 +41,4 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	}else{
 		console.error("Sort Error - 'datetime' sorter is dependant on luxon.js");
 	}
-};
+}

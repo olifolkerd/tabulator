@@ -98,20 +98,20 @@ class DataTree extends Module{
 
 			switch(typeof options.dataTreeStartExpanded){
 				case "boolean":
-				this.startOpen = function(row, index){
-					return options.dataTreeStartExpanded;
-				};
-				break;
+					this.startOpen = function(row, index){
+						return options.dataTreeStartExpanded;
+					};
+					break;
 
 				case "function":
-				this.startOpen = options.dataTreeStartExpanded;
-				break;
+					this.startOpen = options.dataTreeStartExpanded;
+					break;
 
 				default:
-				this.startOpen = function(row, index){
-					return options.dataTreeStartExpanded[index];
-				};
-				break;
+					this.startOpen = function(row, index){
+						return options.dataTreeStartExpanded[index];
+					};
+					break;
 			}
 
 			this.subscribe("row-init", this.initializeRow.bind(this));
@@ -543,7 +543,7 @@ class DataTree extends Module{
 			}
 
 		}else if(typeof subject == "undefined" || subject === null){
-			match = false
+			match = false;
 		}else{
 			//subject should be treated as the index of the row
 			match = parent.data[this.field].find((row) => {

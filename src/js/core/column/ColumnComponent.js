@@ -11,10 +11,10 @@ export default class ColumnComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else{
-					return target._column.table.componentFunctionBinder.handle("column", target._column, name)
+					return target._column.table.componentFunctionBinder.handle("column", target._column, name);
 				}
 			}
-		})
+		});
 	}
 
 	getElement(){
@@ -111,7 +111,7 @@ export default class ColumnComponent {
 		var toColumn = this._column.table.columnManager.findColumn(to);
 
 		if(toColumn){
-			this._column.table.columnManager.moveColumn(this._column, toColumn, after)
+			this._column.table.columnManager.moveColumn(this._column, toColumn, after);
 		}else{
 			console.warn("Move Error - No matching column found:", toColumn);
 		}

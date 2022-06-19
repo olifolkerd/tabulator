@@ -159,7 +159,7 @@ export default class Renderer extends CoreFeature{
 				}
 
 				if(position === "nearest"){
-					position = this.scrollToRowNearestTop(row) ? "top" : "bottom"
+					position = this.scrollToRowNearestTop(row) ? "top" : "bottom";
 				}
 
 				//scroll to row
@@ -170,27 +170,27 @@ export default class Renderer extends CoreFeature{
 					case "middle":
 					case "center":
 
-					if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
-						this.elementVertical.scrollTop = this.elementVertical.scrollTop + (rowEl.offsetTop - this.elementVertical.scrollTop) - ((this.elementVertical.scrollHeight - rowEl.offsetTop) / 2);
-					}else{
-						this.elementVertical.scrollTop = this.elementVertical.scrollTop - (this.elementVertical.clientHeight / 2);
-					}
+						if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
+							this.elementVertical.scrollTop = this.elementVertical.scrollTop + (rowEl.offsetTop - this.elementVertical.scrollTop) - ((this.elementVertical.scrollHeight - rowEl.offsetTop) / 2);
+						}else{
+							this.elementVertical.scrollTop = this.elementVertical.scrollTop - (this.elementVertical.clientHeight / 2);
+						}
 
-					break;
+						break;
 
 					case "bottom":
 
-					if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
-						this.elementVertical.scrollTop = this.elementVertical.scrollTop - (this.elementVertical.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
-					}else{
-						this.elementVertical.scrollTop = this.elementVertical.scrollTop - this.elementVertical.clientHeight + rowEl.offsetHeight;
-					}
+						if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
+							this.elementVertical.scrollTop = this.elementVertical.scrollTop - (this.elementVertical.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
+						}else{
+							this.elementVertical.scrollTop = this.elementVertical.scrollTop - this.elementVertical.clientHeight + rowEl.offsetHeight;
+						}
 
-					break;
+						break;
 
 					case "top":
-					this.elementVertical.scrollTop = rowEl.offsetTop;					
-					break;
+						this.elementVertical.scrollTop = rowEl.offsetTop;					
+						break;
 				}
 
 				resolve();

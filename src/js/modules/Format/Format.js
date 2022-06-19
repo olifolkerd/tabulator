@@ -51,21 +51,21 @@ class Format extends Module{
 		//set column formatter
 		switch(typeof formatter){
 			case "string":
-			if(Format.formatters[formatter]){
-				config.formatter = Format.formatters[formatter];
-			}else{
-				console.warn("Formatter Error - No such formatter found: ", formatter);
-				config.formatter = Format.formatters.plaintext;
-			}
-			break;
+				if(Format.formatters[formatter]){
+					config.formatter = Format.formatters[formatter];
+				}else{
+					console.warn("Formatter Error - No such formatter found: ", formatter);
+					config.formatter = Format.formatters.plaintext;
+				}
+				break;
 
 			case "function":
-			config.formatter = formatter;
-			break;
+				config.formatter = formatter;
+				break;
 
 			default:
-			config.formatter = Format.formatters.plaintext;
-			break;
+				config.formatter = Format.formatters.plaintext;
+				break;
 		}
 
 		return config;
@@ -180,21 +180,21 @@ class Format extends Module{
 
 		switch(typeof formatter){
 			case "string":
-			if(Format.formatters[formatter]){
-				formatter = Format.formatters[formatter]
-			}else{
-				console.warn("Formatter Error - No such formatter found: ", formatter);
-				formatter = Format.formatters.plaintext;
-			}
-			break;
+				if(Format.formatters[formatter]){
+					formatter = Format.formatters[formatter];
+				}else{
+					console.warn("Formatter Error - No such formatter found: ", formatter);
+					formatter = Format.formatters.plaintext;
+				}
+				break;
 
 			case "function":
-			formatter = formatter;
-			break;
+				formatter = formatter;
+				break;
 
 			default:
-			formatter = Format.formatters.plaintext;
-			break;
+				formatter = Format.formatters.plaintext;
+				break;
 		}
 
 		return formatter;

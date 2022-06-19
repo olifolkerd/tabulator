@@ -277,7 +277,7 @@ class GroupRows extends Module{
 	// get grouped table data in the same format as getData()
 	userGetGroupedData(){
 		return this.table.options.groupBy ?
-		this.getGroupedData() : this.getData()
+			this.getGroupedData() : this.getData();
 	}
 
 
@@ -425,7 +425,7 @@ class GroupRows extends Module{
 			}
 		});
 
-		return groupListData
+		return groupListData;
 	}
 
 	getGroupedData(){

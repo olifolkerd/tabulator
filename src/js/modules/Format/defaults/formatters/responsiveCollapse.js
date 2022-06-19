@@ -33,4 +33,4 @@ export default function(cell, formatterParams, onRendered){
 	toggleList(config.open);
 
 	return el;
-};
+}

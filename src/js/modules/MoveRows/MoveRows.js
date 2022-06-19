@@ -200,7 +200,7 @@ class MoveRows extends Module{
 				this.startMove(e, row);
 			}, this.checkPeriod);
 		}, {passive: true});
-		this.moving, this.toRow, this.toRowAfter
+		this.moving, this.toRow, this.toRowAfter;
 		element.addEventListener("touchmove", (e) => {
 
 			var halfCol, diff, moveToRow;
@@ -221,7 +221,7 @@ class MoveRows extends Module{
 						moveToRow = nextRow;
 
 						if(moveToRow !== row){
-							startYMove = e.touches[0].pageY
+							startYMove = e.touches[0].pageY;
 							moveToRow.getElement().parentNode.insertBefore(this.placeholderElement, moveToRow.getElement().nextSibling);
 							this.moveRow(moveToRow, true);
 						}
@@ -514,7 +514,7 @@ class MoveRows extends Module{
 
 			this.dispatchExternal("movableRowsReceivingStop", table);
 		}else{
-			console.warn("Move Row Error - trying to disconnect from non connected table")
+			console.warn("Move Row Error - trying to disconnect from non connected table");
 		}
 	}
 
@@ -525,16 +525,16 @@ class MoveRows extends Module{
 
 			switch(typeof this.table.options.movableRowsSender){
 				case "string":
-				sender = this.senders[this.table.options.movableRowsSender];
-				break;
+					sender = this.senders[this.table.options.movableRowsSender];
+					break;
 
 				case "function":
-				sender = this.table.options.movableRowsSender;
-				break;
+					sender = this.table.options.movableRowsSender;
+					break;
 			}
 
 			if(sender){
-				sender.call(this, this.moving.getComponent(), row ? row.getComponent() : undefined, table)
+				sender.call(this, this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 			}else{
 				if(this.table.options.movableRowsSender){
 					console.warn("Mover Row Error - no matching sender found:", this.table.options.movableRowsSender);
@@ -557,18 +557,18 @@ class MoveRows extends Module{
 
 		switch(typeof this.table.options.movableRowsReceiver){
 			case "string":
-			receiver = this.receivers[this.table.options.movableRowsReceiver];
-			break;
+				receiver = this.receivers[this.table.options.movableRowsReceiver];
+				break;
 
 			case "function":
-			receiver = this.table.options.movableRowsReceiver;
-			break;
+				receiver = this.table.options.movableRowsReceiver;
+				break;
 		}
 
 		if(receiver){
-			success = receiver.call(this, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable)
+			success = receiver.call(this, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}else{
-			console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceiver)
+			console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceiver);
 		}
 
 		if(success){
@@ -586,16 +586,16 @@ class MoveRows extends Module{
 	commsReceived(table, action, data){
 		switch(action){
 			case "connect":
-			return this.connect(table, data.row);
-			break;
+				return this.connect(table, data.row);
+				break;
 
 			case "disconnect":
-			return this.disconnect(table);
-			break;
+				return this.disconnect(table);
+				break;
 
 			case "dropcomplete":
-			return this.dropComplete(table, data.row, data.success);
-			break;
+				return this.dropComplete(table, data.row, data.success);
+				break;
 		}
 	}
 }

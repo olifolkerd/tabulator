@@ -174,275 +174,275 @@ class Helpers{
 }
 
 class Popup extends CoreFeature{
-    constructor(table, element, parent){
-        super(table);
+	constructor(table, element, parent){
+		super(table);
         
-        this.element = element;
-        this.container = this._lookupContainer();
+		this.element = element;
+		this.container = this._lookupContainer();
         
-        this.parent = parent;
+		this.parent = parent;
         
-        this.reversedX = false;
-        this.childPopup = null;
-        this.blurable = false;
-        this.blurCallback = null;
-        this.renderedCallback = null;
+		this.reversedX = false;
+		this.childPopup = null;
+		this.blurable = false;
+		this.blurCallback = null;
+		this.renderedCallback = null;
         
-        this.visible = false;
+		this.visible = false;
         
-        this.element.classList.add("tabulator-popup-container");
+		this.element.classList.add("tabulator-popup-container");
         
-        this.blurEvent = this.hide.bind(this, false);
-        this.escEvent = this._escapeCheck.bind(this);
+		this.blurEvent = this.hide.bind(this, false);
+		this.escEvent = this._escapeCheck.bind(this);
 
-        this.destroyBinding = this.tableDestroyed;
-        this.destroyed = false;
-    }
+		this.destroyBinding = this.tableDestroyed;
+		this.destroyed = false;
+	}
 
-    tableDestroyed(){
-        this.destroyed = true;
-        this.hide(true);
-    }
+	tableDestroyed(){
+		this.destroyed = true;
+		this.hide(true);
+	}
     
-    _lookupContainer(){
-        var container = this.table.options.popupContainer;
+	_lookupContainer(){
+		var container = this.table.options.popupContainer;
         
-        if(typeof container === "string"){
-            container = document.querySelector(container);
+		if(typeof container === "string"){
+			container = document.querySelector(container);
             
-            if(!container){
-                console.warn("Menu Error - no container element found matching selector:",  this.table.options.popupContainer , "(defaulting to document body)");
-            }
-        }else if (container === true){
-            container = this.table.element;
-        }
+			if(!container){
+				console.warn("Menu Error - no container element found matching selector:",  this.table.options.popupContainer , "(defaulting to document body)");
+			}
+		}else if (container === true){
+			container = this.table.element;
+		}
         
-        if(container && !this._checkContainerIsParent(container)){
-            container = false;
-            console.warn("Menu Error - container element does not contain this table:",  this.table.options.popupContainer , "(defaulting to document body)");
-        }
+		if(container && !this._checkContainerIsParent(container)){
+			container = false;
+			console.warn("Menu Error - container element does not contain this table:",  this.table.options.popupContainer , "(defaulting to document body)");
+		}
         
-        if(!container){
-            container = document.body;
-        }
+		if(!container){
+			container = document.body;
+		}
         
-        return container;
-    }
+		return container;
+	}
     
-    _checkContainerIsParent(container, element = this.table.element){
-        if(container === element){
-            return true;
-        }else {
-            return element.parentNode ? this._checkContainerIsParent(container, element.parentNode) : false;
-        }
-    }
+	_checkContainerIsParent(container, element = this.table.element){
+		if(container === element){
+			return true;
+		}else {
+			return element.parentNode ? this._checkContainerIsParent(container, element.parentNode) : false;
+		}
+	}
     
-    renderCallback(callback){
-        this.renderedCallback = callback;
-    }
+	renderCallback(callback){
+		this.renderedCallback = callback;
+	}
     
-    containerEventCoords(e){
-        var touch = !(e instanceof MouseEvent);
+	containerEventCoords(e){
+		var touch = !(e instanceof MouseEvent);
         
-        var x = touch ? e.touches[0].pageX : e.pageX;
-        var y = touch ? e.touches[0].pageY : e.pageY;
+		var x = touch ? e.touches[0].pageX : e.pageX;
+		var y = touch ? e.touches[0].pageY : e.pageY;
         
-        if(this.container !== document.body){
-            let parentOffset = Helpers.elOffset(this.container);
+		if(this.container !== document.body){
+			let parentOffset = Helpers.elOffset(this.container);
             
-            x -= parentOffset.left;
-            y -= parentOffset.top;
-        }
+			x -= parentOffset.left;
+			y -= parentOffset.top;
+		}
         
-        return {x, y};
-    }
+		return {x, y};
+	}
     
-    elementPositionCoords(element, position = "right"){
-        var offset = Helpers.elOffset(element),
-        containerOffset, x, y;
+	elementPositionCoords(element, position = "right"){
+		var offset = Helpers.elOffset(element),
+		containerOffset, x, y;
         
-        if(this.container !== document.body){
-            containerOffset = Helpers.elOffset(this.container);
+		if(this.container !== document.body){
+			containerOffset = Helpers.elOffset(this.container);
             
-            offset.left -= containerOffset.left;
-            offset.top -= containerOffset.top;
-        }
+			offset.left -= containerOffset.left;
+			offset.top -= containerOffset.top;
+		}
         
-        switch(position){
-            case "right":
-            x = offset.left + element.offsetWidth;
-            y = offset.top - 1;
-            break;
+		switch(position){
+			case "right":
+				x = offset.left + element.offsetWidth;
+				y = offset.top - 1;
+				break;
             
-            case "bottom":
-            x = offset.left;
-            y = offset.top + element.offsetHeight;
-            break;
-        }
+			case "bottom":
+				x = offset.left;
+				y = offset.top + element.offsetHeight;
+				break;
+		}
         
-        return {x, y, offset};
-    }
+		return {x, y, offset};
+	}
     
-    show(origin, position){
-        var x, y, parentEl, parentOffset, coords;
+	show(origin, position){
+		var x, y, parentEl, parentOffset, coords;
 
-        if(this.destroyed || this.table.destroyed){
-            return this;
-        }
+		if(this.destroyed || this.table.destroyed){
+			return this;
+		}
         
-        if(origin instanceof HTMLElement){
-            parentEl = origin;
-            coords = this.elementPositionCoords(origin, position);
+		if(origin instanceof HTMLElement){
+			parentEl = origin;
+			coords = this.elementPositionCoords(origin, position);
             
-            parentOffset = coords.offset;
-            x = coords.x;
-            y = coords.y;
+			parentOffset = coords.offset;
+			x = coords.x;
+			y = coords.y;
             
-        }else if(typeof origin === "number"){
-            parentOffset = {top:0, left:0};
-            x = origin;
-            y = position;
-        }else {
-            coords = this.containerEventCoords(origin);
+		}else if(typeof origin === "number"){
+			parentOffset = {top:0, left:0};
+			x = origin;
+			y = position;
+		}else {
+			coords = this.containerEventCoords(origin);
             
-            x = coords.x;
-            y = coords.y;
+			x = coords.x;
+			y = coords.y;
             
-            this.reversedX = false;
-        }
+			this.reversedX = false;
+		}
         
-        this.element.style.top = y + "px";
-        this.element.style.left = x + "px";
+		this.element.style.top = y + "px";
+		this.element.style.left = x + "px";
         
-        this.container.appendChild(this.element);
+		this.container.appendChild(this.element);
         
-        if(typeof this.renderedCallback === "function"){
-            this.renderedCallback();
-        }
+		if(typeof this.renderedCallback === "function"){
+			this.renderedCallback();
+		}
         
-        this._fitToScreen(x, y, parentEl, parentOffset, position);
+		this._fitToScreen(x, y, parentEl, parentOffset, position);
         
-        this.visible = true;
+		this.visible = true;
 
-        this.subscribe("table-destroy", this.destroyBinding);
+		this.subscribe("table-destroy", this.destroyBinding);
 
-        this.element.addEventListener("mousedown", (e) => {
-            e.stopPropagation();
-        });
+		this.element.addEventListener("mousedown", (e) => {
+			e.stopPropagation();
+		});
         
-        return this;
-    }
+		return this;
+	}
     
-    _fitToScreen(x, y, parentEl, parentOffset, position){
-        var scrollTop = this.container === document.body ? document.documentElement.scrollTop : this.container.scrollTop;
+	_fitToScreen(x, y, parentEl, parentOffset, position){
+		var scrollTop = this.container === document.body ? document.documentElement.scrollTop : this.container.scrollTop;
 
-        //move menu to start on right edge if it is too close to the edge of the screen
-        if((x + this.element.offsetWidth) >= this.container.offsetWidth || this.reversedX){
-            this.element.style.left = "";
+		//move menu to start on right edge if it is too close to the edge of the screen
+		if((x + this.element.offsetWidth) >= this.container.offsetWidth || this.reversedX){
+			this.element.style.left = "";
             
-            if(parentEl){
-                this.element.style.right = (this.container.offsetWidth - parentOffset.left) + "px";
-            }else {
-                this.element.style.right = (this.container.offsetWidth - x) + "px";
-            }
+			if(parentEl){
+				this.element.style.right = (this.container.offsetWidth - parentOffset.left) + "px";
+			}else {
+				this.element.style.right = (this.container.offsetWidth - x) + "px";
+			}
             
-            this.reversedX = true;
-        }
+			this.reversedX = true;
+		}
 
-        //move menu to start on bottom edge if it is too close to the edge of the screen
-        if((y + this.element.offsetHeight) > Math.max(this.container.offsetHeight, scrollTop ? this.container.scrollHeight : 0)) {
-            if(parentEl){
-                switch(position){
-                    case "bottom":
-                    this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight - parentEl.offsetHeight - 1) + "px";
-                    break;
+		//move menu to start on bottom edge if it is too close to the edge of the screen
+		if((y + this.element.offsetHeight) > Math.max(this.container.offsetHeight, scrollTop ? this.container.scrollHeight : 0)) {
+			if(parentEl){
+				switch(position){
+					case "bottom":
+						this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight - parentEl.offsetHeight - 1) + "px";
+						break;
 
-                    default:
-                    this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight + parentEl.offsetHeight + 1) + "px";
-                }
+					default:
+						this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight + parentEl.offsetHeight + 1) + "px";
+				}
                 
-            }else {
-                this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight) + "px";
-            }
-        }
-    }
+			}else {
+				this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight) + "px";
+			}
+		}
+	}
     
-    isVisible(){
-        return this.visible;
-    }
+	isVisible(){
+		return this.visible;
+	}
     
-    hideOnBlur(callback){
-        this.blurable = true;
+	hideOnBlur(callback){
+		this.blurable = true;
         
-        if(this.visible){
-            setTimeout(() => {
-                this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
-                this.subscribe("cell-editing", this.blurEvent);
-                document.body.addEventListener("click", this.blurEvent);
-                document.body.addEventListener("contextmenu", this.blurEvent);
-                document.body.addEventListener("mousedown", this.blurEvent);
-                window.addEventListener("resize", this.blurEvent);
-                document.body.addEventListener("keydown", this.escEvent);
+		if(this.visible){
+			setTimeout(() => {
+				this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
+				this.subscribe("cell-editing", this.blurEvent);
+				document.body.addEventListener("click", this.blurEvent);
+				document.body.addEventListener("contextmenu", this.blurEvent);
+				document.body.addEventListener("mousedown", this.blurEvent);
+				window.addEventListener("resize", this.blurEvent);
+				document.body.addEventListener("keydown", this.escEvent);
 
-            }, 100);
+			}, 100);
             
-            this.blurCallback = callback;
-        }
+			this.blurCallback = callback;
+		}
         
-        return this;
-    }
+		return this;
+	}
     
-    _escapeCheck(e){
-        if(e.keyCode == 27){
-            this.hide();
-        }
-    }
+	_escapeCheck(e){
+		if(e.keyCode == 27){
+			this.hide();
+		}
+	}
     
-    hide(silent = false){
-        if(this.visible){
-            if(this.blurable){
-                document.body.removeEventListener("keydown", this.escEvent);
-                document.body.removeEventListener("click", this.blurEvent);
-                document.body.removeEventListener("contextmenu", this.blurEvent);
-                document.body.removeEventListener("mousedown", this.blurEvent);
-                window.removeEventListener("resize", this.blurEvent);
-                this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
-                this.unsubscribe("cell-editing", this.blurEvent);
-            }
+	hide(silent = false){
+		if(this.visible){
+			if(this.blurable){
+				document.body.removeEventListener("keydown", this.escEvent);
+				document.body.removeEventListener("click", this.blurEvent);
+				document.body.removeEventListener("contextmenu", this.blurEvent);
+				document.body.removeEventListener("mousedown", this.blurEvent);
+				window.removeEventListener("resize", this.blurEvent);
+				this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
+				this.unsubscribe("cell-editing", this.blurEvent);
+			}
             
-            if(this.childPopup){
-                this.childPopup.hide();
-            }
+			if(this.childPopup){
+				this.childPopup.hide();
+			}
             
-            if(this.parent){
-                this.parent.childPopup = null;
-            }
+			if(this.parent){
+				this.parent.childPopup = null;
+			}
             
-            if(this.element.parentNode){
-                this.element.parentNode.removeChild(this.element);
-            }
+			if(this.element.parentNode){
+				this.element.parentNode.removeChild(this.element);
+			}
 
-             this.visible = false;
+			this.visible = false;
 
-            if(this.blurCallback && !silent){
-                this.blurCallback();
-            }
+			if(this.blurCallback && !silent){
+				this.blurCallback();
+			}
 
-            this.unsubscribe("table-destroy", this.destroyBinding);
-        }
+			this.unsubscribe("table-destroy", this.destroyBinding);
+		}
         
-        return this;
-    }
+		return this;
+	}
     
-    child(element){
-        if(this.childPopup){
-            this.childPopup.hide();
-        }
+	child(element){
+		if(this.childPopup){
+			this.childPopup.hide();
+		}
         
-        this.childPopup = new Popup(this.table, element, this);
+		this.childPopup = new Popup(this.table, element, this);
         
-        return this.childPopup;
-    }
+		return this.childPopup;
+	}
 }
 
 class Module extends CoreFeature{
@@ -519,15 +519,15 @@ class Module extends CoreFeature{
 	///////////////////////////////////
 
 	footerAppend(element){
-		return this.table.footerManager.append(element)
+		return this.table.footerManager.append(element);
 	}
 
 	footerPrepend(element){
-		return this.table.footerManager.prepend(element)
+		return this.table.footerManager.prepend(element);
 	}
 
 	footerRemove(element){
-		return this.table.footerManager.remove(element)
+		return this.table.footerManager.remove(element);
 	} 
 
 	///////////////////////////////////
@@ -614,16 +614,16 @@ class Accessor extends Module{
 		//set column accessor
 		switch(typeof value){
 			case "string":
-			if(Accessor.accessors[value]){
-				accessor = Accessor.accessors[value];
-			}else {
-				console.warn("Accessor Error - No such accessor found, ignoring: ", value);
-			}
-			break;
+				if(Accessor.accessors[value]){
+					accessor = Accessor.accessors[value];
+				}else {
+					console.warn("Accessor Error - No such accessor found, ignoring: ", value);
+				}
+				break;
 
 			case "function":
-			accessor = value;
-			break;
+				accessor = value;
+				break;
 		}
 
 		return accessor;
@@ -776,24 +776,24 @@ function defaultLoaderPromise(url, config, params){
 
 			//send request
 			fetch(url, config)
-			.then((response)=>{
-				if(response.ok) {
-					response.json()
-					.then((data)=>{
-						resolve(data);
-					}).catch((error)=>{
-						reject(error);
-						console.warn("Ajax Load Error - Invalid JSON returned", error);
-					});
-				}else {
-					console.error("Ajax Load Error - Connection Error: " + response.status, response.statusText);
-					reject(response);
-				}
-			})
-			.catch((error)=>{
-				console.error("Ajax Load Error - Connection Error: ", error);
-				reject(error);
-			});
+				.then((response)=>{
+					if(response.ok) {
+						response.json()
+							.then((data)=>{
+								resolve(data);
+							}).catch((error)=>{
+								reject(error);
+								console.warn("Ajax Load Error - Invalid JSON returned", error);
+							});
+					}else {
+						console.error("Ajax Load Error - Connection Error: " + response.status, response.statusText);
+						reject(response);
+					}
+				})
+				.catch((error)=>{
+					console.error("Ajax Load Error - Connection Error: ", error);
+					reject(error);
+				});
 		}else {
 			console.warn("Ajax Load Error - No URL Set");
 			resolve([]);
@@ -962,13 +962,13 @@ class Ajax extends Module{
 	sendRequest(url, params, config){
 		if(this.table.options.ajaxRequesting.call(this.table, url, params) !== false){
 			return this.loaderPromise(url, config, params)
-			.then((data)=>{
-				if(this.table.options.ajaxResponse){
-					data = this.table.options.ajaxResponse.call(this.table, url, params, data);
-				}
+				.then((data)=>{
+					if(this.table.options.ajaxResponse){
+						data = this.table.options.ajaxResponse.call(this.table, url, params, data);
+					}
 				
-				return data;
-			});
+					return data;
+				});
 		}else {
 			return Promise.reject();
 		}
@@ -1184,15 +1184,15 @@ class Clipboard extends Module{
 					}else {
 						switch(typeof col.value){
 							case "object":
-							value = JSON.stringify(col.value);
-							break;
+								value = JSON.stringify(col.value);
+								break;
 
 							case "undefined":
-							value = "";
-							break;
+								value = "";
+								break;
 
 							default:
-							value = col.value;
+								value = col.value;
 						}
 					}
 				}
@@ -1245,32 +1245,32 @@ class Clipboard extends Module{
 
 		switch(typeof action){
 			case "string":
-			this.pasteAction = Clipboard.pasteActions[action];
+				this.pasteAction = Clipboard.pasteActions[action];
 
-			if(!this.pasteAction){
-				console.warn("Clipboard Error - No such paste action found:", action);
-			}
-			break;
+				if(!this.pasteAction){
+					console.warn("Clipboard Error - No such paste action found:", action);
+				}
+				break;
 
 			case "function":
-			this.pasteAction = action;
-			break;
+				this.pasteAction = action;
+				break;
 		}
 	}
 
 	setPasteParser(parser){
 		switch(typeof parser){
 			case "string":
-			this.pasteParser = Clipboard.pasteParsers[parser];
+				this.pasteParser = Clipboard.pasteParsers[parser];
 
-			if(!this.pasteParser){
-				console.warn("Clipboard Error - No such paste parser found:", parser);
-			}
-			break;
+				if(!this.pasteParser){
+					console.warn("Clipboard Error - No such paste parser found:", parser);
+				}
+				break;
 
 			case "function":
-			this.pasteParser = parser;
-			break;
+				this.pasteParser = parser;
+				break;
 		}
 	}
 
@@ -1354,10 +1354,10 @@ class CalcComponent{
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._row.table.componentFunctionBinder.handle("row", target._row, name)
+					return target._row.table.componentFunctionBinder.handle("row", target._row, name);
 				}
 			}
-		})
+		});
 	}
 
 	getData(transform){
@@ -1403,10 +1403,10 @@ class CellComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._cell.table.componentFunctionBinder.handle("cell", target._cell, name)
+					return target._cell.table.componentFunctionBinder.handle("cell", target._cell, name);
 				}
 			}
-		})
+		});
 	}
 
 	getValue(){
@@ -1572,25 +1572,25 @@ class Cell extends CoreFeature{
 
 		switch(typeof val){
 			case "object":
-			if(val instanceof Node){
+				if(val instanceof Node){
 
-				//clear previous cell contents
-				while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
+					//clear previous cell contents
+					while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
 
-				this.element.appendChild(val);
-			}else {
-				this.element.innerHTML = "";
+					this.element.appendChild(val);
+				}else {
+					this.element.innerHTML = "";
 
-				if(val != null){
-					console.warn("Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", val);
+					if(val != null){
+						console.warn("Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", val);
+					}
 				}
-			}
-			break;
+				break;
 			case "undefined":
-			this.element.innerHTML = "";
-			break;
+				this.element.innerHTML = "";
+				break;
 			default:
-			this.element.innerHTML = val;
+				this.element.innerHTML = val;
 		}
 	}
 
@@ -1775,10 +1775,10 @@ class ColumnComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._column.table.componentFunctionBinder.handle("column", target._column, name)
+					return target._column.table.componentFunctionBinder.handle("column", target._column, name);
 				}
 			}
-		})
+		});
 	}
 
 	getElement(){
@@ -2219,18 +2219,18 @@ class Column extends CoreFeature{
 
 		switch(typeof contents){
 			case "object":
-			if(contents instanceof Node){
-				el.appendChild(contents);
-			}else {
-				el.innerHTML = "";
-				console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
-			}
-			break;
+				if(contents instanceof Node){
+					el.appendChild(contents);
+				}else {
+					el.innerHTML = "";
+					console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
+				}
+				break;
 			case "undefined":
-			el.innerHTML = "";
-			break;
+				el.innerHTML = "";
+				break;
 			default:
-			el.innerHTML = contents;
+				el.innerHTML = contents;
 		}
 	}
 
@@ -2805,18 +2805,18 @@ class Column extends CoreFeature{
 				definition = Object.assign(definition, updates);
 
 				return this.table.columnManager.addColumn(definition, false, this)
-				.then((column) => {
+					.then((column) => {
 
-					if(definition.field == this.field){
-						this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
-					}
+						if(definition.field == this.field){
+							this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+						}
 
-					return this.delete()
-					.then(() => {
-						return column.getComponent();
+						return this.delete()
+							.then(() => {
+								return column.getComponent();
+							});
+
 					});
-
-				});
 			}else {
 				console.error("Column Update Error - The updateDefinition function is only available on ungrouped columns");
 				return Promise.reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
@@ -2858,10 +2858,10 @@ class RowComponent$1 {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._row.table.componentFunctionBinder.handle("row", target._row, name)
+					return target._row.table.componentFunctionBinder.handle("row", target._row, name);
 				}
 			}
-		})
+		});
 	}
 
 	getData(transform){
@@ -3623,16 +3623,16 @@ class ColumnCalcs extends Module{
 
 			switch(typeof def.topCalc){
 				case "string":
-				if(ColumnCalcs.calculations[def.topCalc]){
-					config.topCalc = ColumnCalcs.calculations[def.topCalc];
-				}else {
-					console.warn("Column Calc Error - No such calculation found, ignoring: ", def.topCalc);
-				}
-				break;
+					if(ColumnCalcs.calculations[def.topCalc]){
+						config.topCalc = ColumnCalcs.calculations[def.topCalc];
+					}else {
+						console.warn("Column Calc Error - No such calculation found, ignoring: ", def.topCalc);
+					}
+					break;
 
 				case "function":
-				config.topCalc = def.topCalc;
-				break
+					config.topCalc = def.topCalc;
+					break;
 
 			}
 
@@ -3650,16 +3650,16 @@ class ColumnCalcs extends Module{
 		if(def.bottomCalc){
 			switch(typeof def.bottomCalc){
 				case "string":
-				if(ColumnCalcs.calculations[def.bottomCalc]){
-					config.botCalc = ColumnCalcs.calculations[def.bottomCalc];
-				}else {
-					console.warn("Column Calc Error - No such calculation found, ignoring: ", def.bottomCalc);
-				}
-				break;
+					if(ColumnCalcs.calculations[def.bottomCalc]){
+						config.botCalc = ColumnCalcs.calculations[def.bottomCalc];
+					}else {
+						console.warn("Column Calc Error - No such calculation found, ignoring: ", def.bottomCalc);
+					}
+					break;
 
 				case "function":
-				config.botCalc = def.bottomCalc;
-				break
+					config.botCalc = def.bottomCalc;
+					break;
 
 			}
 
@@ -3676,7 +3676,7 @@ class ColumnCalcs extends Module{
 	}
 
 	//dummy functions to handle being mock column manager
-	registerColumnField(){};
+	registerColumnField(){}
 
 	removeCalcs(){
 		var changed = false;
@@ -3861,38 +3861,38 @@ class ColumnCalcs extends Module{
 
 			this.table.columnManager.columnsByIndex.forEach((column) => {
 
-					//set field name of mock column
-					this.genColumn.setField(column.getField());
-					this.genColumn.hozAlign = column.hozAlign;
+				//set field name of mock column
+				this.genColumn.setField(column.getField());
+				this.genColumn.hozAlign = column.hozAlign;
 
-					if(column.definition[pos + "CalcFormatter"] && this.table.modExists("format")){
-						this.genColumn.modules.format = {
-							formatter: this.table.modules.format.getFormatter(column.definition[pos + "CalcFormatter"]),
-							params: column.definition[pos + "CalcFormatterParams"] || {},
-						};
-					}else {
-						this.genColumn.modules.format = {
-							formatter: this.table.modules.format.getFormatter("plaintext"),
-							params:{}
-						};
-					}
+				if(column.definition[pos + "CalcFormatter"] && this.table.modExists("format")){
+					this.genColumn.modules.format = {
+						formatter: this.table.modules.format.getFormatter(column.definition[pos + "CalcFormatter"]),
+						params: column.definition[pos + "CalcFormatterParams"] || {},
+					};
+				}else {
+					this.genColumn.modules.format = {
+						formatter: this.table.modules.format.getFormatter("plaintext"),
+						params:{}
+					};
+				}
 
-					//ensure css class defintion is replicated to calculation cell
-					this.genColumn.definition.cssClass = column.definition.cssClass;
+				//ensure css class defintion is replicated to calculation cell
+				this.genColumn.definition.cssClass = column.definition.cssClass;
 
-					//generate cell and assign to correct column
-					var cell = new Cell(this.genColumn, row);
-					cell.getElement();
-					cell.column = column;
-					cell.setWidth();
+				//generate cell and assign to correct column
+				var cell = new Cell(this.genColumn, row);
+				cell.getElement();
+				cell.column = column;
+				cell.setWidth();
 
-					column.cells.push(cell);
-					cells.push(cell);
+				column.cells.push(cell);
+				cells.push(cell);
 
-					if(!column.visible){
-						cell.hide();
-					}
-				});
+				if(!column.visible){
+					cell.hide();
+				}
+			});
 
 			row.cells = cells;
 		};
@@ -4086,20 +4086,20 @@ class DataTree extends Module{
 
 			switch(typeof options.dataTreeStartExpanded){
 				case "boolean":
-				this.startOpen = function(row, index){
-					return options.dataTreeStartExpanded;
-				};
-				break;
+					this.startOpen = function(row, index){
+						return options.dataTreeStartExpanded;
+					};
+					break;
 
 				case "function":
-				this.startOpen = options.dataTreeStartExpanded;
-				break;
+					this.startOpen = options.dataTreeStartExpanded;
+					break;
 
 				default:
-				this.startOpen = function(row, index){
-					return options.dataTreeStartExpanded[index];
-				};
-				break;
+					this.startOpen = function(row, index){
+						return options.dataTreeStartExpanded[index];
+					};
+					break;
 			}
 
 			this.subscribe("row-init", this.initializeRow.bind(this));
@@ -4600,42 +4600,42 @@ function csv(list, options, setFileContents){
 
 		switch(row.type){
 			case "group":
-			console.warn("Download Warning - CSV downloader cannot process row groups");
-			break;
+				console.warn("Download Warning - CSV downloader cannot process row groups");
+				break;
 
 			case "calc":
-			console.warn("Download Warning - CSV downloader cannot process column calculations");
-			break;
+				console.warn("Download Warning - CSV downloader cannot process column calculations");
+				break;
 
 			case "header":
-			row.columns.forEach((col, i) => {
-				if(col && col.depth === 1){
-					headers[i] = typeof col.value == "undefined"  || col.value === null ? "" : ('"' + String(col.value).split('"').join('""') + '"');
-				}
-			});
-			break;
+				row.columns.forEach((col, i) => {
+					if(col && col.depth === 1){
+						headers[i] = typeof col.value == "undefined"  || col.value === null ? "" : ('"' + String(col.value).split('"').join('""') + '"');
+					}
+				});
+				break;
 
 			case "row":
-			row.columns.forEach((col) => {
+				row.columns.forEach((col) => {
 
-				if(col){
+					if(col){
 
-					switch(typeof col.value){
-						case "object":
-						col.value = col.value !== null ? JSON.stringify(col.value) : "";
-						break;
+						switch(typeof col.value){
+							case "object":
+								col.value = col.value !== null ? JSON.stringify(col.value) : "";
+								break;
 
-						case "undefined":
-						col.value = "";
-						break;
+							case "undefined":
+								col.value = "";
+								break;
+						}
+
+						item.push('"' + String(col.value).split('"').join('""') + '"');
 					}
+				});
 
-					item.push('"' + String(col.value).split('"').join('""') + '"');
-				}
-			});
-
-			fileContents.push(item.join(delimiter));
-			break;
+				fileContents.push(item.join(delimiter));
+				break;
 		}
 	});
 
@@ -4660,25 +4660,25 @@ function json(list, options, setFileContents){
 
 		switch(row.type){
 			case "header":
-			break;
+				break;
 
 			case "group":
-			console.warn("Download Warning - JSON downloader cannot process row groups");
-			break;
+				console.warn("Download Warning - JSON downloader cannot process row groups");
+				break;
 
 			case "calc":
-			console.warn("Download Warning - JSON downloader cannot process column calculations");
-			break;
+				console.warn("Download Warning - JSON downloader cannot process column calculations");
+				break;
 
 			case "row":
-			row.columns.forEach((col) => {
-				if(col){
-					item[col.component.getTitleDownload() || col.component.getField()] = col.value;
-				}
-			});
+				row.columns.forEach((col) => {
+					if(col){
+						item[col.component.getTitleDownload() || col.component.getField()] = col.value;
+					}
+				});
 
-			fileContents.push(item);
-			break;
+				fileContents.push(item);
+				break;
 		}
 	});
 
@@ -4719,20 +4719,20 @@ function pdf(list, options, setFileContents){
 
 		switch(row.type){
 			case "header":
-			header.push(parseRow(row));
-			break;
+				header.push(parseRow(row));
+				break;
 
 			case "group":
-			body.push(parseRow(row, rowGroupStyles));
-			break;
+				body.push(parseRow(row, rowGroupStyles));
+				break;
 
 			case "calc":
-			body.push(parseRow(row, rowCalcStyles));
-			break;
+				body.push(parseRow(row, rowCalcStyles));
+				break;
 
 			case "row":
-			body.push(parseRow(row));
-			break;
+				body.push(parseRow(row));
+				break;
 		}
 	});
 
@@ -4745,12 +4745,12 @@ function pdf(list, options, setFileContents){
 			if(col){
 				switch(typeof col.value){
 					case "object":
-					col.value = col.value !== null ? JSON.stringify(col.value) : "";
-					break;
+						col.value = col.value !== null ? JSON.stringify(col.value) : "";
+						break;
 
 					case "undefined":
-					col.value = "";
-					break;
+						col.value = "";
+						break;
 				}
 
 				cell = {
@@ -4889,7 +4889,7 @@ function xlsx(list, options, setFileContents){
 		var buf = new ArrayBuffer(s.length);
 		var view = new Uint8Array(buf);
 		for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-			return buf;
+		return buf;
 	}
 
 	output = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary'});
@@ -5082,8 +5082,8 @@ class Download extends Module{
 	commsReceived(table, action, data){
 		switch(action){
 			case "intercept":
-			this.download(data.type, "", data.options, data.active, data.intercept);
-			break;
+				this.download(data.type, "", data.options, data.active, data.intercept);
+				break;
 		}
 	}
 }
@@ -5119,30 +5119,30 @@ function maskInput(el, options){
 			}else {
 				switch(mask[index]){
 					case maskLetter:
-					if(char.toUpperCase() == char.toLowerCase()){
-						e.preventDefault();
-						e.stopPropagation();
-						return false;
-					}
-					break;
+						if(char.toUpperCase() == char.toLowerCase()){
+							e.preventDefault();
+							e.stopPropagation();
+							return false;
+						}
+						break;
 
 					case maskNumber:
-					if(isNaN(char)){
-						e.preventDefault();
-						e.stopPropagation();
-						return false;
-					}
-					break;
+						if(isNaN(char)){
+							e.preventDefault();
+							e.stopPropagation();
+							return false;
+						}
+						break;
 
 					case maskWildcard:
-					break;
+						break;
 
 					default:
-					if(char !== mask[index]){
-						e.preventDefault();
-						e.stopPropagation();
-						return false;
-					}
+						if(char !== mask[index]){
+							e.preventDefault();
+							e.stopPropagation();
+							return false;
+						}
 				}
 			}
 		}
@@ -5221,17 +5221,17 @@ function input(cell, onRendered, success, cancel, editorParams){
 		switch(e.keyCode){
 			// case 9:
 			case 13:
-			onChange();
-			break;
+				onChange();
+				break;
 
 			case 27:
-			cancel();
-			break;
+				cancel();
+				break;
 
 			case 35:
 			case 36:
-			e.stopPropagation();
-			break;
+				e.stopPropagation();
+				break;
 		}
 	});
 
@@ -5244,123 +5244,123 @@ function input(cell, onRendered, success, cancel, editorParams){
 
 //resizable text area element
 function textarea(cell, onRendered, success, cancel, editorParams){
-    var cellValue = cell.getValue(),
-    vertNav = editorParams.verticalNavigation || "hybrid",
-    value = String(cellValue !== null && typeof cellValue !== "undefined"  ? cellValue : ""),
-    count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
-    input = document.createElement("textarea"),
-    scrollHeight = 0;
+	var cellValue = cell.getValue(),
+	vertNav = editorParams.verticalNavigation || "hybrid",
+	value = String(cellValue !== null && typeof cellValue !== "undefined"  ? cellValue : ""),
+	count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
+	input = document.createElement("textarea"),
+	scrollHeight = 0;
 
-    //create and style input
-    input.style.display = "block";
-    input.style.padding = "2px";
-    input.style.height = "100%";
-    input.style.width = "100%";
-    input.style.boxSizing = "border-box";
-    input.style.whiteSpace = "pre-wrap";
-    input.style.resize = "none";
+	//create and style input
+	input.style.display = "block";
+	input.style.padding = "2px";
+	input.style.height = "100%";
+	input.style.width = "100%";
+	input.style.boxSizing = "border-box";
+	input.style.whiteSpace = "pre-wrap";
+	input.style.resize = "none";
 
-    if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
-        for (let key in editorParams.elementAttributes){
-            if(key.charAt(0) == "+"){
-                key = key.slice(1);
-                input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
-            }else {
-                input.setAttribute(key, editorParams.elementAttributes[key]);
-            }
-        }
-    }
+	if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+		for (let key in editorParams.elementAttributes){
+			if(key.charAt(0) == "+"){
+				key = key.slice(1);
+				input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+			}else {
+				input.setAttribute(key, editorParams.elementAttributes[key]);
+			}
+		}
+	}
 
-    input.value = value;
+	input.value = value;
 
-    onRendered(function(){
-        input.focus({preventScroll: true});
-        input.style.height = "100%";
+	onRendered(function(){
+		input.focus({preventScroll: true});
+		input.style.height = "100%";
 
-        input.scrollHeight;
-        input.style.height = input.scrollHeight + "px";
-        cell.getRow().normalizeHeight();
+		input.scrollHeight;
+		input.style.height = input.scrollHeight + "px";
+		cell.getRow().normalizeHeight();
 
-        if(editorParams.selectContents){
+		if(editorParams.selectContents){
 			input.select();
 		}
-    });
+	});
 
-    function onChange(e){
+	function onChange(e){
 
-        if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value !== cellValue){
+		if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value !== cellValue){
 
-            if(success(input.value)){
-                cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
-            }
+			if(success(input.value)){
+				cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
+			}
 
-            setTimeout(function(){
-                cell.getRow().normalizeHeight();
-            },300);
-        }else {
-            cancel();
-        }
-    }
+			setTimeout(function(){
+				cell.getRow().normalizeHeight();
+			},300);
+		}else {
+			cancel();
+		}
+	}
 
-    //submit new value on blur or change
-    input.addEventListener("change", onChange);
-    input.addEventListener("blur", onChange);
+	//submit new value on blur or change
+	input.addEventListener("change", onChange);
+	input.addEventListener("blur", onChange);
 
-    input.addEventListener("keyup", function(){
+	input.addEventListener("keyup", function(){
 
-        input.style.height = "";
+		input.style.height = "";
 
-        var heightNow = input.scrollHeight;
+		var heightNow = input.scrollHeight;
 
-        input.style.height = heightNow + "px";
+		input.style.height = heightNow + "px";
 
-        if(heightNow != scrollHeight){
-            scrollHeight = heightNow;
-            cell.getRow().normalizeHeight();
-        }
-    });
+		if(heightNow != scrollHeight){
+			scrollHeight = heightNow;
+			cell.getRow().normalizeHeight();
+		}
+	});
 
-    input.addEventListener("keydown", function(e){
+	input.addEventListener("keydown", function(e){
 
-        switch(e.keyCode){
+		switch(e.keyCode){
 
-            case 13:
-                if(e.shiftKey && editorParams.shiftEnterSubmit){
-                    onChange();
-                }
-            break;
+			case 13:
+				if(e.shiftKey && editorParams.shiftEnterSubmit){
+					onChange();
+				}
+				break;
 
-            case 27:
-            cancel();
-            break;
+			case 27:
+				cancel();
+				break;
 
-            case 38: //up arrow
-            if(vertNav == "editor" || (vertNav == "hybrid" && input.selectionStart)){
-                e.stopImmediatePropagation();
-                e.stopPropagation();
-            }
+			case 38: //up arrow
+				if(vertNav == "editor" || (vertNav == "hybrid" && input.selectionStart)){
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+				}
 
-            break;
+				break;
 
-            case 40: //down arrow
-            if(vertNav == "editor" || (vertNav == "hybrid" && input.selectionStart !== input.value.length)){
-                e.stopImmediatePropagation();
-                e.stopPropagation();
-            }
-            break;
+			case 40: //down arrow
+				if(vertNav == "editor" || (vertNav == "hybrid" && input.selectionStart !== input.value.length)){
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+				}
+				break;
 
-            case 35:
-            case 36:
-            e.stopPropagation();
-            break;
-        }
-    });
+			case 35:
+			case 36:
+				e.stopPropagation();
+				break;
+		}
+	});
 
-    if(editorParams.mask){
-        maskInput(input, editorParams);
-    }
+	if(editorParams.mask){
+		maskInput(input, editorParams);
+	}
 
-    return input;
+	return input;
 }
 
 //input element with type of number
@@ -5441,25 +5441,25 @@ function number(cell, onRendered, success, cancel, editorParams){
 		switch(e.keyCode){
 			case 13:
 			// case 9:
-			onChange();
-			break;
+				onChange();
+				break;
 
 			case 27:
-			cancel();
-			break;
+				cancel();
+				break;
 
 			case 38: //up arrow
 			case 40: //down arrow
-			if(vertNav == "editor"){
-				e.stopImmediatePropagation();
-				e.stopPropagation();
-			}
-			break;
+				if(vertNav == "editor"){
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+				}
+				break;
 
 			case 35:
 			case 36:
-			e.stopPropagation();
-			break;
+				e.stopPropagation();
+				break;
 		}
 	});
 
@@ -5538,12 +5538,12 @@ function range(cell, onRendered, success, cancel, editorParams){
 		switch(e.keyCode){
 			case 13:
 			// case 9:
-			onChange();
-			break;
+				onChange();
+				break;
 
 			case 27:
-			cancel();
-			break;
+				cancel();
+				break;
 		}
 	});
 
@@ -5551,1011 +5551,1011 @@ function range(cell, onRendered, success, cancel, editorParams){
 }
 
 class Edit{
-    constructor(editor, cell, onRendered, success, cancel, editorParams){
-        this.edit = editor;
-        this.table = editor.table;
-        this.cell = cell;
-        this.params = this._initializeParams(editorParams);
+	constructor(editor, cell, onRendered, success, cancel, editorParams){
+		this.edit = editor;
+		this.table = editor.table;
+		this.cell = cell;
+		this.params = this._initializeParams(editorParams);
         
-        this.data = [];
-        this.displayItems = [];
-        this.currentItems = [];
-        this.focusedItem = null;
+		this.data = [];
+		this.displayItems = [];
+		this.currentItems = [];
+		this.focusedItem = null;
         
-        this.input = this._createInputElement();
-        this.listEl = this._createListElement();
+		this.input = this._createInputElement();
+		this.listEl = this._createListElement();
         
-        this.initialValues = null; 
+		this.initialValues = null; 
         
-        this.isFilter = !cell._getSelf;
+		this.isFilter = !cell._getSelf;
         
-        this.filterTimeout = null;
-        this.filtered = false;
-        this.typing = false;
+		this.filterTimeout = null;
+		this.filtered = false;
+		this.typing = false;
         
-        this.values = []; 
-        this.popup = null;  
+		this.values = []; 
+		this.popup = null;  
         
-        this.listIteration = 0;
+		this.listIteration = 0;
         
-        this.lastAction="";
+		this.lastAction="";
         
-        this.blurable = true;
+		this.blurable = true;
         
-        this.actions = {
-            success:success,
-            cancel:cancel
-        };
+		this.actions = {
+			success:success,
+			cancel:cancel
+		};
         
-        this._deprecationCheck();
-        this._initializeValue();
+		this._deprecationCheck();
+		this._initializeValue();
         
-        onRendered(this._onRendered.bind(this));
-    }
+		onRendered(this._onRendered.bind(this));
+	}
     
-    _deprecationCheck(){
-        if(this.params.listItemFormatter){
-            console.warn("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
-        }
+	_deprecationCheck(){
+		if(this.params.listItemFormatter){
+			console.warn("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
+		}
         
-        if(this.params.sortValuesList){
-            console.warn("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
-        }
+		if(this.params.sortValuesList){
+			console.warn("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
+		}
         
-        if(this.params.searchFunc){
-            console.warn("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
-        }
+		if(this.params.searchFunc){
+			console.warn("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
+		}
         
-        if(this.params.searchingPlaceholder){
-            console.warn("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
-        }
-    }
+		if(this.params.searchingPlaceholder){
+			console.warn("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
+		}
+	}
     
-    _initializeValue(){
-        var initialValue = this.cell.getValue();
+	_initializeValue(){
+		var initialValue = this.cell.getValue();
         
-        if(typeof initialValue === "undefined" && typeof this.params.defaultValue !== "undefined"){
-            initialValue = this.params.defaultValue;
-        }
+		if(typeof initialValue === "undefined" && typeof this.params.defaultValue !== "undefined"){
+			initialValue = this.params.defaultValue;
+		}
         
-        this.initialValues = this.params.multiselect ? initialValue : [initialValue];
+		this.initialValues = this.params.multiselect ? initialValue : [initialValue];
         
-        if(this.isFilter){
-            this.input.value = this.initialValues ? this.initialValues.join(",") : "";
-            this.headerFilterInitialListGen();            
-        }
-    }
+		if(this.isFilter){
+			this.input.value = this.initialValues ? this.initialValues.join(",") : "";
+			this.headerFilterInitialListGen();            
+		}
+	}
     
-    _onRendered(){
-        var cellEl = this.cell.getElement();
+	_onRendered(){
+		var cellEl = this.cell.getElement();
         
-        function clickStop(e){
-            e.stopPropagation();
-        }
+		function clickStop(e){
+			e.stopPropagation();
+		}
         
-        this.input.style.height = "100%";
-        this.input.focus({preventScroll: true});
+		this.input.style.height = "100%";
+		this.input.focus({preventScroll: true});
         
         
-        cellEl.addEventListener("click", clickStop);
+		cellEl.addEventListener("click", clickStop);
         
-        setTimeout(() => {
-            cellEl.removeEventListener("click", clickStop);
-        }, 1000);
-    }
+		setTimeout(() => {
+			cellEl.removeEventListener("click", clickStop);
+		}, 1000);
+	}
     
-    _createListElement(){
-        var listEl = document.createElement("div");
-        listEl.classList.add("tabulator-edit-list");
+	_createListElement(){
+		var listEl = document.createElement("div");
+		listEl.classList.add("tabulator-edit-list");
         
-        listEl.addEventListener("mousedown", this._preventBlur.bind(this));
-        listEl.addEventListener("keydown", this._inputKeyDown.bind(this));
+		listEl.addEventListener("mousedown", this._preventBlur.bind(this));
+		listEl.addEventListener("keydown", this._inputKeyDown.bind(this));
         
-        return listEl;
-    }
+		return listEl;
+	}
     
-    _setListWidth(){
-        var element = this.isFilter ? this.input : this.cell.getElement();
+	_setListWidth(){
+		var element = this.isFilter ? this.input : this.cell.getElement();
         
-        this.listEl.style.minWidth = element.offsetWidth + "px";
+		this.listEl.style.minWidth = element.offsetWidth + "px";
         
-        if(this.params.maxWidth){
-            if(this.params.maxWidth === true){
-                this.listEl.style.maxWidth = element.offsetWidth + "px";
-            }else if(typeof this.params.maxWidth === "number"){
-                this.listEl.style.maxWidth = this.params.maxWidth + "px";
-            }else {
-                this.listEl.style.maxWidth = this.params.maxWidth;
-            }
-        }
+		if(this.params.maxWidth){
+			if(this.params.maxWidth === true){
+				this.listEl.style.maxWidth = element.offsetWidth + "px";
+			}else if(typeof this.params.maxWidth === "number"){
+				this.listEl.style.maxWidth = this.params.maxWidth + "px";
+			}else {
+				this.listEl.style.maxWidth = this.params.maxWidth;
+			}
+		}
         
-    }
+	}
     
-    _createInputElement(){
-        var attribs = this.params.elementAttributes;
-        var input = document.createElement("input");
+	_createInputElement(){
+		var attribs = this.params.elementAttributes;
+		var input = document.createElement("input");
         
-        input.setAttribute("type", this.params.clearable ? "search" : "text");
+		input.setAttribute("type", this.params.clearable ? "search" : "text");
         
-        input.style.padding = "4px";
-        input.style.width = "100%";
-        input.style.boxSizing = "border-box";
+		input.style.padding = "4px";
+		input.style.width = "100%";
+		input.style.boxSizing = "border-box";
         
-        if(!this.params.autocomplete){
-            input.style.cursor = "default";
-            input.style.caretColor = "transparent";
-            // input.readOnly = (this.edit.currentCell != false);
-        }
+		if(!this.params.autocomplete){
+			input.style.cursor = "default";
+			input.style.caretColor = "transparent";
+			// input.readOnly = (this.edit.currentCell != false);
+		}
         
-        if(attribs && typeof attribs == "object"){
-            for (let key in attribs){
-                if(key.charAt(0) == "+"){
-                    key = key.slice(1);
-                    input.setAttribute(key, input.getAttribute(key) + attribs["+" + key]);
-                }else {
-                    input.setAttribute(key, attribs[key]);
-                }
-            }
-        }
+		if(attribs && typeof attribs == "object"){
+			for (let key in attribs){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					input.setAttribute(key, input.getAttribute(key) + attribs["+" + key]);
+				}else {
+					input.setAttribute(key, attribs[key]);
+				}
+			}
+		}
         
-        if(this.params.mask){
-            maskInput(input, this.params);
-        }
+		if(this.params.mask){
+			maskInput(input, this.params);
+		}
         
-        this._bindInputEvents(input);
+		this._bindInputEvents(input);
         
-        return input;
-    }
+		return input;
+	}
     
-    _initializeParams(params){
-        var valueKeys = ["values", "valuesURL", "valuesLookup"],
-        valueCheck;
+	_initializeParams(params){
+		var valueKeys = ["values", "valuesURL", "valuesLookup"],
+		valueCheck;
         
-        params = Object.assign({}, params);
+		params = Object.assign({}, params);
         
-        params.verticalNavigation = params.verticalNavigation || "editor";
-        params.placeholderLoading = typeof params.placeholderLoading === "undefined" ? "Searching ..." : params.placeholderLoading;
-        params.placeholderEmpty = typeof params.placeholderEmpty === "undefined" ? "No Results Found" : params.placeholderEmpty;
-        params.filterDelay = typeof params.filterDelay === "undefined" ? 300 : params.filterDelay;
+		params.verticalNavigation = params.verticalNavigation || "editor";
+		params.placeholderLoading = typeof params.placeholderLoading === "undefined" ? "Searching ..." : params.placeholderLoading;
+		params.placeholderEmpty = typeof params.placeholderEmpty === "undefined" ? "No Results Found" : params.placeholderEmpty;
+		params.filterDelay = typeof params.filterDelay === "undefined" ? 300 : params.filterDelay;
         
-        params.emptyValue = Object.keys(params).includes("emptyValue") ? params.emptyValue : "";
+		params.emptyValue = Object.keys(params).includes("emptyValue") ? params.emptyValue : "";
         
-        valueCheck = Object.keys(params).filter(key => valueKeys.includes(key)).length;
+		valueCheck = Object.keys(params).filter(key => valueKeys.includes(key)).length;
         
-        if(!valueCheck){
-            console.warn("list editor config error - either the values, valuesURL, or valuesLookup option must be set");
-        }else if(valueCheck > 1){
-            console.warn("list editor config error - only one of the values, valuesURL, or valuesLookup options can be set on the same editor");
-        }
+		if(!valueCheck){
+			console.warn("list editor config error - either the values, valuesURL, or valuesLookup option must be set");
+		}else if(valueCheck > 1){
+			console.warn("list editor config error - only one of the values, valuesURL, or valuesLookup options can be set on the same editor");
+		}
         
-        if(params.autocomplete){
-            if(params.multiselect){
-                params.multiselect = false;
-                console.warn("list editor config error - multiselect option is not available when autocomplete is enabled");
-            }
-        }else {
-            if(params.freetext){
-                params.freetext = false;
-                console.warn("list editor config error - freetext option is only available when autocomplete is enabled");
-            }
+		if(params.autocomplete){
+			if(params.multiselect){
+				params.multiselect = false;
+				console.warn("list editor config error - multiselect option is not available when autocomplete is enabled");
+			}
+		}else {
+			if(params.freetext){
+				params.freetext = false;
+				console.warn("list editor config error - freetext option is only available when autocomplete is enabled");
+			}
             
-            if(params.filterFunc){
-                params.filterFunc = false;
-                console.warn("list editor config error - filterFunc option is only available when autocomplete is enabled");
-            }
+			if(params.filterFunc){
+				params.filterFunc = false;
+				console.warn("list editor config error - filterFunc option is only available when autocomplete is enabled");
+			}
             
-            if(params.filterRemote){
-                params.filterRemote = false;
-                console.warn("list editor config error - filterRemote option is only available when autocomplete is enabled");
-            }
+			if(params.filterRemote){
+				params.filterRemote = false;
+				console.warn("list editor config error - filterRemote option is only available when autocomplete is enabled");
+			}
             
-            if(params.mask){
-                params.mask = false;
-                console.warn("list editor config error - mask option is only available when autocomplete is enabled");
-            }
+			if(params.mask){
+				params.mask = false;
+				console.warn("list editor config error - mask option is only available when autocomplete is enabled");
+			}
             
-            if(params.allowEmpty){
-                params.allowEmpty = false;
-                console.warn("list editor config error - allowEmpty option is only available when autocomplete is enabled");
-            }
+			if(params.allowEmpty){
+				params.allowEmpty = false;
+				console.warn("list editor config error - allowEmpty option is only available when autocomplete is enabled");
+			}
             
-            if(params.listOnEmpty){
-                params.listOnEmpty = false;
-                console.warn("list editor config error - listOnEmpty option is only available when autocomplete is enabled");
-            }
-        }
+			if(params.listOnEmpty){
+				params.listOnEmpty = false;
+				console.warn("list editor config error - listOnEmpty option is only available when autocomplete is enabled");
+			}
+		}
         
-        if(params.filterRemote && !(typeof params.valuesLookup === "function" || typeof params.valuesURL)){
-            params.filterRemote = false;
-            console.warn("list editor config error - filterRemote option should only be used when values list is populated from a remote source");
-        }
-        return params;
-    }
-    //////////////////////////////////////
-    ////////// Event Handling ////////////
-    //////////////////////////////////////
+		if(params.filterRemote && !(typeof params.valuesLookup === "function" || typeof params.valuesURL)){
+			params.filterRemote = false;
+			console.warn("list editor config error - filterRemote option should only be used when values list is populated from a remote source");
+		}
+		return params;
+	}
+	//////////////////////////////////////
+	////////// Event Handling ////////////
+	//////////////////////////////////////
     
-    _bindInputEvents(input){
-        input.addEventListener("focus", this._inputFocus.bind(this));
-        input.addEventListener("click", this._inputClick.bind(this));
-        input.addEventListener("blur", this._inputBlur.bind(this));
-        input.addEventListener("keydown", this._inputKeyDown.bind(this));
-        input.addEventListener("search", this._inputSearch.bind(this));
+	_bindInputEvents(input){
+		input.addEventListener("focus", this._inputFocus.bind(this));
+		input.addEventListener("click", this._inputClick.bind(this));
+		input.addEventListener("blur", this._inputBlur.bind(this));
+		input.addEventListener("keydown", this._inputKeyDown.bind(this));
+		input.addEventListener("search", this._inputSearch.bind(this));
         
-        if(this.params.autocomplete){
-            input.addEventListener("keyup", this._inputKeyUp.bind(this));
-        }
-    }
+		if(this.params.autocomplete){
+			input.addEventListener("keyup", this._inputKeyUp.bind(this));
+		}
+	}
     
     
-    _inputFocus(e){
-        this.rebuildOptionsList();
-    }
+	_inputFocus(e){
+		this.rebuildOptionsList();
+	}
     
-    _filter(){
-        if(this.params.filterRemote){
-            clearTimeout(this.filterTimeout);
+	_filter(){
+		if(this.params.filterRemote){
+			clearTimeout(this.filterTimeout);
             
-            this.filterTimeout = setTimeout(() => {
-                this.rebuildOptionsList();
-            }, this.params.filterDelay);
-        }else {
-            this._filterList();
-        }
-    }
+			this.filterTimeout = setTimeout(() => {
+				this.rebuildOptionsList();
+			}, this.params.filterDelay);
+		}else {
+			this._filterList();
+		}
+	}
     
-    _inputClick(e){
-        e.stopPropagation();
-    }
+	_inputClick(e){
+		e.stopPropagation();
+	}
     
-    _inputBlur(e){
-        if(this.blurable && this.popup){
-            this.popup.hide();
-        }
-    }
+	_inputBlur(e){
+		if(this.blurable && this.popup){
+			this.popup.hide();
+		}
+	}
     
-    _inputSearch(){
-        this._clearChoices();
-    }
+	_inputSearch(){
+		this._clearChoices();
+	}
     
-    _inputKeyDown(e){
-        switch(e.keyCode){
+	_inputKeyDown(e){
+		switch(e.keyCode){
             
-            case 38: //up arrow
-            this._keyUp(e);
-            break
+			case 38: //up arrow
+				this._keyUp(e);
+				break;
             
-            case 40: //down arrow
-            this._keyDown(e);
-            break;
+			case 40: //down arrow
+				this._keyDown(e);
+				break;
             
-            case 37: //left arrow
-            case 39: //right arrow
-            this._keySide(e);
-            break;
+			case 37: //left arrow
+			case 39: //right arrow
+				this._keySide(e);
+				break;
             
-            case 13: //enter
-            this._keyEnter();
-            break;
+			case 13: //enter
+				this._keyEnter();
+				break;
             
-            case 27: //escape
-            this._keyEsc();
-            break;
+			case 27: //escape
+				this._keyEsc();
+				break;
             
-            case 36: //home
-            case 35: //end
-            this._keyHomeEnd(e);
-            break;
+			case 36: //home
+			case 35: //end
+				this._keyHomeEnd(e);
+				break;
             
-            case 9: //tab
-            break;
+			case 9: //tab
+				break;
             
-            default:
-            this._keySelectLetter(e);
-        }
-    }
+			default:
+				this._keySelectLetter(e);
+		}
+	}
     
-    _inputKeyUp(e){
-        switch(e.keyCode){
-            case 38: //up arrow
-            case 37: //left arrow
-            case 39: //up arrow
-            case 40: //right arrow
-            case 13: //enter
-            case 27: //escape
-            break;
+	_inputKeyUp(e){
+		switch(e.keyCode){
+			case 38: //up arrow
+			case 37: //left arrow
+			case 39: //up arrow
+			case 40: //right arrow
+			case 13: //enter
+			case 27: //escape
+				break;
             
-            default:
-            this._keyAutoCompLetter(e);
-        }
-    }
+			default:
+				this._keyAutoCompLetter(e);
+		}
+	}
     
-    _preventBlur(){
-        this.blurable = false;
+	_preventBlur(){
+		this.blurable = false;
         
-        setTimeout(function(){
-            this.blurable = true;
-        }, 10);
-    }
+		setTimeout(function(){
+			this.blurable = true;
+		}, 10);
+	}
     
-    //////////////////////////////////////
-    //////// Keyboard Navigation /////////
-    //////////////////////////////////////
+	//////////////////////////////////////
+	//////// Keyboard Navigation /////////
+	//////////////////////////////////////
     
-    _keyUp(e){
-        var index = this.displayItems.indexOf(this.focusedItem);
+	_keyUp(e){
+		var index = this.displayItems.indexOf(this.focusedItem);
         
-        if(this.params.verticalNavigation == "editor" || (this.params.verticalNavigation == "hybrid" && index)){
-            e.stopImmediatePropagation();
-            e.stopPropagation();
-            e.preventDefault();
+		if(this.params.verticalNavigation == "editor" || (this.params.verticalNavigation == "hybrid" && index)){
+			e.stopImmediatePropagation();
+			e.stopPropagation();
+			e.preventDefault();
             
-            if(index > 0){
-                this._focusItem(this.displayItems[index - 1]);
-            }
-        }
-    }
+			if(index > 0){
+				this._focusItem(this.displayItems[index - 1]);
+			}
+		}
+	}
     
-    _keyDown(e){
-        var index = this.displayItems.indexOf(this.focusedItem);
+	_keyDown(e){
+		var index = this.displayItems.indexOf(this.focusedItem);
         
-        if(this.params.verticalNavigation == "editor" || (this.params.verticalNavigation == "hybrid" && index < this.displayItems.length - 1)){
-            e.stopImmediatePropagation();
-            e.stopPropagation();
-            e.preventDefault();
+		if(this.params.verticalNavigation == "editor" || (this.params.verticalNavigation == "hybrid" && index < this.displayItems.length - 1)){
+			e.stopImmediatePropagation();
+			e.stopPropagation();
+			e.preventDefault();
             
-            if(index < this.displayItems.length - 1){
-                if(index == -1){
-                    this._focusItem(this.displayItems[0]);
-                }else {
-                    this._focusItem(this.displayItems[index + 1]);
-                }
-            }
-        }
-    }
+			if(index < this.displayItems.length - 1){
+				if(index == -1){
+					this._focusItem(this.displayItems[0]);
+				}else {
+					this._focusItem(this.displayItems[index + 1]);
+				}
+			}
+		}
+	}
     
-    _keySide(e){
-        e.stopImmediatePropagation();
-        e.stopPropagation();
-        e.preventDefault();
-    }
+	_keySide(e){
+		e.stopImmediatePropagation();
+		e.stopPropagation();
+		e.preventDefault();
+	}
     
-    _keyEnter(e){
-        if(this.params.autocomplete && this.lastAction === "typing"){
-            this._resolveValue(true);
-        }else {
-            if(this.focusedItem){
-                this._chooseItem(this.focusedItem);
-            }
-        }
-    }
+	_keyEnter(e){
+		if(this.params.autocomplete && this.lastAction === "typing"){
+			this._resolveValue(true);
+		}else {
+			if(this.focusedItem){
+				this._chooseItem(this.focusedItem);
+			}
+		}
+	}
     
-    _keyEsc(e){
-        this._cancel();
-    }
+	_keyEsc(e){
+		this._cancel();
+	}
     
-    _keyHomeEnd(e){
-        if(this.params.autocomplete){
-            //prevent table navigation while using input element
-            e.stopImmediatePropagation();
-        }
-    }
+	_keyHomeEnd(e){
+		if(this.params.autocomplete){
+			//prevent table navigation while using input element
+			e.stopImmediatePropagation();
+		}
+	}
     
-    _keySelectLetter(e){
-        if(!this.params.autocomplete){
-            // if(this.edit.currentCell === false){
-            e.preventDefault();
-            // }
+	_keySelectLetter(e){
+		if(!this.params.autocomplete){
+			// if(this.edit.currentCell === false){
+			e.preventDefault();
+			// }
             
-            if(e.keyCode >= 38 && e.keyCode <= 90){
-                this._scrollToValue(e.keyCode);
-            }
-        }
-    }
+			if(e.keyCode >= 38 && e.keyCode <= 90){
+				this._scrollToValue(e.keyCode);
+			}
+		}
+	}
     
-    _keyAutoCompLetter(e){
-        this._filter();
-        this.lastAction = "typing";
-        this.typing = true;
-    }
-    
-    
-    _scrollToValue(char){
-        clearTimeout(this.filterTimeout);
-        
-        var character = String.fromCharCode(char).toLowerCase();
-        this.filterTerm += character.toLowerCase();
-        
-        var match = this.displayItems.find((item) => {
-            return typeof item.label !== "undefined" && item.label.toLowerCase().startsWith(this.filterTerm);
-        });
-        
-        if(match){
-            this._focusItem(match);
-        }
-        
-        this.filterTimeout = setTimeout(() => {
-            this.filterTerm = "";
-        }, 800);
-    }
-    
-    _focusItem(item){
-        this.lastAction = "focus";
-        
-        if(this.focusedItem && this.focusedItem.element){
-            this.focusedItem.element.classList.remove("focused");
-        }
-        
-        this.focusedItem = item;
-        
-        if(item && item.element){
-            item.element.classList.add("focused");
-            item.element.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
-        }
-    }
+	_keyAutoCompLetter(e){
+		this._filter();
+		this.lastAction = "typing";
+		this.typing = true;
+	}
     
     
-    //////////////////////////////////////
-    /////// Data List Generation /////////
-    //////////////////////////////////////
-    headerFilterInitialListGen(){
-        this._generateOptions(true);
-    }
-    
-    rebuildOptionsList(){
-        this._generateOptions()
-        .then(this._sortOptions.bind(this))
-        .then(this._buildList.bind(this))
-        .then(this._showList.bind(this))
-        .catch((e) => {
-            if(!Number.isInteger(e)){
-                console.error("List generation error", e);
-            }
-        });
-    }
-    
-    _filterList(){
-        this._buildList(this._filterOptions());
-        this._showList();
-    }
-    
-    _generateOptions(silent){
-        var values = [];
-        var itteration = ++ this.listIteration;
+	_scrollToValue(char){
+		clearTimeout(this.filterTimeout);
         
-        this.filtered = false;
+		var character = String.fromCharCode(char).toLowerCase();
+		this.filterTerm += character.toLowerCase();
         
-        if(this.params.values){
-            values = this.params.values;
-        }else if (this.params.valuesURL){
-            values = this._ajaxRequest(this.params.valuesURL, this.input.value);
-        }else {
-            if(typeof this.params.valuesLookup === "function"){
-                values = this.params.valuesLookup(this.cell, this.input.value);
-            }else if(this.params.valuesLookup){
-                values = this._uniqueColumnValues(this.params.valuesLookupField);
-            }
-        }
+		var match = this.displayItems.find((item) => {
+			return typeof item.label !== "undefined" && item.label.toLowerCase().startsWith(this.filterTerm);
+		});
         
-        if(values instanceof Promise){
-            if(!silent){
-                this._addPlaceholder(this.params.placeholderLoading);
-            }
+		if(match){
+			this._focusItem(match);
+		}
+        
+		this.filterTimeout = setTimeout(() => {
+			this.filterTerm = "";
+		}, 800);
+	}
+    
+	_focusItem(item){
+		this.lastAction = "focus";
+        
+		if(this.focusedItem && this.focusedItem.element){
+			this.focusedItem.element.classList.remove("focused");
+		}
+        
+		this.focusedItem = item;
+        
+		if(item && item.element){
+			item.element.classList.add("focused");
+			item.element.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
+		}
+	}
+    
+    
+	//////////////////////////////////////
+	/////// Data List Generation /////////
+	//////////////////////////////////////
+	headerFilterInitialListGen(){
+		this._generateOptions(true);
+	}
+    
+	rebuildOptionsList(){
+		this._generateOptions()
+			.then(this._sortOptions.bind(this))
+			.then(this._buildList.bind(this))
+			.then(this._showList.bind(this))
+			.catch((e) => {
+				if(!Number.isInteger(e)){
+					console.error("List generation error", e);
+				}
+			});
+	}
+    
+	_filterList(){
+		this._buildList(this._filterOptions());
+		this._showList();
+	}
+    
+	_generateOptions(silent){
+		var values = [];
+		var itteration = ++ this.listIteration;
+        
+		this.filtered = false;
+        
+		if(this.params.values){
+			values = this.params.values;
+		}else if (this.params.valuesURL){
+			values = this._ajaxRequest(this.params.valuesURL, this.input.value);
+		}else {
+			if(typeof this.params.valuesLookup === "function"){
+				values = this.params.valuesLookup(this.cell, this.input.value);
+			}else if(this.params.valuesLookup){
+				values = this._uniqueColumnValues(this.params.valuesLookupField);
+			}
+		}
+        
+		if(values instanceof Promise){
+			if(!silent){
+				this._addPlaceholder(this.params.placeholderLoading);
+			}
             
-            return values.then()
-            .then((responseValues) => {
-                if(this.listIteration === itteration){
-                    return this._parseList(responseValues);
-                }else {
-                    return Promise.reject(itteration);
-                }
-            });
-        }else {
-            return Promise.resolve(this._parseList(values))
-        }
-    }
+			return values.then()
+				.then((responseValues) => {
+					if(this.listIteration === itteration){
+						return this._parseList(responseValues);
+					}else {
+						return Promise.reject(itteration);
+					}
+				});
+		}else {
+			return Promise.resolve(this._parseList(values));
+		}
+	}
     
-    _addPlaceholder(contents){
-        var placeholder = document.createElement("div");
+	_addPlaceholder(contents){
+		var placeholder = document.createElement("div");
         
-        if(typeof contents === "function"){
-            contents = contents(cell.getComponent(), this.listEl);
-        }
+		if(typeof contents === "function"){
+			contents = contents(cell.getComponent(), this.listEl);
+		}
         
-        if(contents){
-            this._clearList();
+		if(contents){
+			this._clearList();
             
-            if(contents instanceof HTMLElement){
-                placeholder = contents;
-            }else {
-                placeholder.classList.add("tabulator-edit-list-placeholder");
-                placeholder.innerHTML = contents;
-            }
+			if(contents instanceof HTMLElement){
+				placeholder = contents;
+			}else {
+				placeholder.classList.add("tabulator-edit-list-placeholder");
+				placeholder.innerHTML = contents;
+			}
             
-            this.listEl.appendChild(placeholder);
+			this.listEl.appendChild(placeholder);
             
-            this._showList();
-        }
-    }
+			this._showList();
+		}
+	}
     
-    _ajaxRequest(url, term){
-        var params = this.params.filterRemote ? {term:term} : {};
-        url = urlBuilder(url, {}, params);
+	_ajaxRequest(url, term){
+		var params = this.params.filterRemote ? {term:term} : {};
+		url = urlBuilder(url, {}, params);
         
-        return fetch(url)
-        .then((response)=>{
-            if(response.ok) {
-                return response.json()
-                .catch((error)=>{
-                    console.warn("List Ajax Load Error - Invalid JSON returned", error);
-                    return Promise.reject(error);
-                });
-            }else {
-                console.error("List Ajax Load Error - Connection Error: " + response.status, response.statusText);
-                return Promise.reject(response);
-            }
-        })
-        .catch((error)=>{
-            console.error("List Ajax Load Error - Connection Error: ", error);
-            return Promise.reject(error);
-        });
-    }
+		return fetch(url)
+			.then((response)=>{
+				if(response.ok) {
+					return response.json()
+						.catch((error)=>{
+							console.warn("List Ajax Load Error - Invalid JSON returned", error);
+							return Promise.reject(error);
+						});
+				}else {
+					console.error("List Ajax Load Error - Connection Error: " + response.status, response.statusText);
+					return Promise.reject(response);
+				}
+			})
+			.catch((error)=>{
+				console.error("List Ajax Load Error - Connection Error: ", error);
+				return Promise.reject(error);
+			});
+	}
     
-    _uniqueColumnValues(field){
-        var output = {},
-        data = this.table.getData(this.params.valuesLookup),
-        column;
+	_uniqueColumnValues(field){
+		var output = {},
+		data = this.table.getData(this.params.valuesLookup),
+		column;
         
-        if(field){
-            column = this.table.columnManager.getColumnByField(field);
-        }else {
-            column = this.cell.getColumn()._getSelf();
-        }
+		if(field){
+			column = this.table.columnManager.getColumnByField(field);
+		}else {
+			column = this.cell.getColumn()._getSelf();
+		}
         
-        if(column){
-            data.forEach((row) => {
-                var val = column.getFieldValue(row);
+		if(column){
+			data.forEach((row) => {
+				var val = column.getFieldValue(row);
                 
-                if(val !== null && typeof val !== "undefined" && val !== ""){
-                    output[val] = true;
-                }
-            });
-        }else {
-            console.warn("unable to find matching column to create select lookup list:", field);
-            output = [];
-        }
+				if(val !== null && typeof val !== "undefined" && val !== ""){
+					output[val] = true;
+				}
+			});
+		}else {
+			console.warn("unable to find matching column to create select lookup list:", field);
+			output = [];
+		}
         
-        return Object.keys(output);
-    }
+		return Object.keys(output);
+	}
     
     
-    _parseList(inputValues){
-        var data = [];
+	_parseList(inputValues){
+		var data = [];
         
-        if(!Array.isArray(inputValues)){
-            inputValues = Object.entries(inputValues).map(([key, value]) => {
-                return {
-                    label:value,
-                    value:key,
-                };
-            });
-        }
+		if(!Array.isArray(inputValues)){
+			inputValues = Object.entries(inputValues).map(([key, value]) => {
+				return {
+					label:value,
+					value:key,
+				};
+			});
+		}
         
-        inputValues.forEach((value) => {
-            if(typeof value !== "object"){
-                value = {
-                    label:value,
-                    value:value,
-                };
-            }
+		inputValues.forEach((value) => {
+			if(typeof value !== "object"){
+				value = {
+					label:value,
+					value:value,
+				};
+			}
             
-            this._parseListItem(value, data, 0);
-        });
+			this._parseListItem(value, data, 0);
+		});
 
-        if(!this.currentItems.length && this.params.freetext){
-            this.input.value = this.initialValues;
-            this.typing = true;
-            this.lastAction = "typing";
-        }
+		if(!this.currentItems.length && this.params.freetext){
+			this.input.value = this.initialValues;
+			this.typing = true;
+			this.lastAction = "typing";
+		}
         
-        this.data = data;
+		this.data = data;
         
-        return data;    
-    }
+		return data;    
+	}
     
-    _parseListItem(option, data, level){
-        var item = {};
+	_parseListItem(option, data, level){
+		var item = {};
         
-        if(option.options){
-            item = this._parseListGroup(option, level + 1);
-        }else {
-            item = {
-                label:option.label,
-                value:option.value,
-                itemParams:option.itemParams,
-                elementAttributes: option.elementAttributes,
-                element:false,
-                selected:false,
-                visible:true,
-                level:level,
-                original:option,
-            };
+		if(option.options){
+			item = this._parseListGroup(option, level + 1);
+		}else {
+			item = {
+				label:option.label,
+				value:option.value,
+				itemParams:option.itemParams,
+				elementAttributes: option.elementAttributes,
+				element:false,
+				selected:false,
+				visible:true,
+				level:level,
+				original:option,
+			};
             
-            if(this.initialValues && this.initialValues.indexOf(option.value) > -1){
-                this._chooseItem(item, true);
-            }
-        }
+			if(this.initialValues && this.initialValues.indexOf(option.value) > -1){
+				this._chooseItem(item, true);
+			}
+		}
         
-        data.push(item);
-    }
+		data.push(item);
+	}
     
-    _parseListGroup(option, level){
-        var item = {
-            label:option.label,
-            group:true,
-            itemParams:option.itemParams,
-            elementAttributes:option.elementAttributes,
-            element:false,
-            visible:true,
-            level:level,
-            options:[],
-            original:option,
-        };
+	_parseListGroup(option, level){
+		var item = {
+			label:option.label,
+			group:true,
+			itemParams:option.itemParams,
+			elementAttributes:option.elementAttributes,
+			element:false,
+			visible:true,
+			level:level,
+			options:[],
+			original:option,
+		};
         
-        option.options.forEach((child) => {
-            this._parseListItem(child, item.options, level);
-        });
+		option.options.forEach((child) => {
+			this._parseListItem(child, item.options, level);
+		});
         
-        return item;
-    }
+		return item;
+	}
     
-    _sortOptions(options){
-        var sorter;
+	_sortOptions(options){
+		var sorter;
         
-        if(this.params.sort){
-            sorter = typeof this.params.sort === "function" ? this.params.sort : this._defaultSortFunction.bind(this);
+		if(this.params.sort){
+			sorter = typeof this.params.sort === "function" ? this.params.sort : this._defaultSortFunction.bind(this);
             
-            this._sortGroup(sorter, options);
-        }
+			this._sortGroup(sorter, options);
+		}
         
-        return options;
-    }
+		return options;
+	}
     
-    _sortGroup(sorter, options){
-        options.sort((a,b) => {
-            return sorter(a.label, b.label, a.value, b.value, a.original, b.original);
-        });
+	_sortGroup(sorter, options){
+		options.sort((a,b) => {
+			return sorter(a.label, b.label, a.value, b.value, a.original, b.original);
+		});
         
-        options.forEach((option) => {
-            if(option.group){
-                this._sortGroup(sorter, option.options);
-            }
-        });
-    }
+		options.forEach((option) => {
+			if(option.group){
+				this._sortGroup(sorter, option.options);
+			}
+		});
+	}
     
-    _defaultSortFunction(as, bs){
-        var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
-        var emptyAlign = 0;
+	_defaultSortFunction(as, bs){
+		var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
+		var emptyAlign = 0;
         
-        if(this.params.sort === "desc"){
-            [as, bs] = [bs, as];
-        }
+		if(this.params.sort === "desc"){
+			[as, bs] = [bs, as];
+		}
         
-        //handle empty values
-        if(!as && as!== 0){
-            emptyAlign =  !bs && bs!== 0 ? 0 : -1;
-        }else if(!bs && bs!== 0){
-            emptyAlign =  1;
-        }else {
-            if(isFinite(as) && isFinite(bs)) return as - bs;
-            a = String(as).toLowerCase();
-            b = String(bs).toLowerCase();
-            if(a === b) return 0;
-            if(!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
-            a = a.match(rx);
-            b = b.match(rx);
-            L = a.length > b.length ? b.length : a.length;
-            while(i < L){
-                a1= a[i];
-                b1= b[i++];
-                if(a1 !== b1){
-                    if(isFinite(a1) && isFinite(b1)){
-                        if(a1.charAt(0) === "0") a1 = "." + a1;
-                        if(b1.charAt(0) === "0") b1 = "." + b1;
-                        return a1 - b1;
-                    }
-                    else return a1 > b1 ? 1 : -1;
-                }
-            }
+		//handle empty values
+		if(!as && as!== 0){
+			emptyAlign =  !bs && bs!== 0 ? 0 : -1;
+		}else if(!bs && bs!== 0){
+			emptyAlign =  1;
+		}else {
+			if(isFinite(as) && isFinite(bs)) return as - bs;
+			a = String(as).toLowerCase();
+			b = String(bs).toLowerCase();
+			if(a === b) return 0;
+			if(!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
+			a = a.match(rx);
+			b = b.match(rx);
+			L = a.length > b.length ? b.length : a.length;
+			while(i < L){
+				a1= a[i];
+				b1= b[i++];
+				if(a1 !== b1){
+					if(isFinite(a1) && isFinite(b1)){
+						if(a1.charAt(0) === "0") a1 = "." + a1;
+						if(b1.charAt(0) === "0") b1 = "." + b1;
+						return a1 - b1;
+					}
+					else return a1 > b1 ? 1 : -1;
+				}
+			}
             
-            return a.length > b.length;
-        }
+			return a.length > b.length;
+		}
         
-        return emptyAlign;
-    }
+		return emptyAlign;
+	}
     
-    _filterOptions(){
-        var filterFunc = this.params.filterFunc || this._defaultFilterFunc;
-        var term = this.input.value;
+	_filterOptions(){
+		var filterFunc = this.params.filterFunc || this._defaultFilterFunc;
+		var term = this.input.value;
         
-        if(term){
-            this.filtered = true;
+		if(term){
+			this.filtered = true;
             
-            this.data.forEach((item) => {
-                this._filterItem(filterFunc, term, item);
-            });
-        }else {
-            this.filtered = false;
-        }
+			this.data.forEach((item) => {
+				this._filterItem(filterFunc, term, item);
+			});
+		}else {
+			this.filtered = false;
+		}
         
-        return this.data;
-    }
+		return this.data;
+	}
     
-    _filterItem(func, term, item){
-        var matches = false;
+	_filterItem(func, term, item){
+		var matches = false;
         
-        if(!item.group){
-            item.visible = func(term, item.label, item.value, item.original);
-        }else {
-            item.options.forEach((option) => {
-                if(this._filterItem(func, term, option)){
-                    matches = true;
-                }
-            });
+		if(!item.group){
+			item.visible = func(term, item.label, item.value, item.original);
+		}else {
+			item.options.forEach((option) => {
+				if(this._filterItem(func, term, option)){
+					matches = true;
+				}
+			});
             
-            item.visible = matches;
-        }
+			item.visible = matches;
+		}
         
-        return item.visible;
-    }
+		return item.visible;
+	}
     
-    _defaultFilterFunc(term, label, value, item){
-        var term = String(term).toLowerCase();
+	_defaultFilterFunc(term, label, value, item){
+		var term = String(term).toLowerCase();
         
-        if(label !== null || typeof label !== "undefined"){
-            if(String(label).toLowerCase().indexOf(term) > -1 || String(value).toLowerCase(term).indexOf() > -1){
-                return true;
-            }
-        }
+		if(label !== null || typeof label !== "undefined"){
+			if(String(label).toLowerCase().indexOf(term) > -1 || String(value).toLowerCase(term).indexOf() > -1){
+				return true;
+			}
+		}
         
-        return false;
-    }
+		return false;
+	}
     
-    //////////////////////////////////////
-    /////////// Display List /////////////
-    //////////////////////////////////////
+	//////////////////////////////////////
+	/////////// Display List /////////////
+	//////////////////////////////////////
     
-    _clearList(){
-        while(this.listEl.firstChild) this.listEl.removeChild(this.listEl.firstChild);
+	_clearList(){
+		while(this.listEl.firstChild) this.listEl.removeChild(this.listEl.firstChild);
         
-        this.displayItems = [];
-    }
+		this.displayItems = [];
+	}
     
-    _buildList(data){
-        this._clearList();
+	_buildList(data){
+		this._clearList();
         
-        data.forEach((option) => {
-            this._buildItem(option);
-        });
+		data.forEach((option) => {
+			this._buildItem(option);
+		});
         
-        if(!this.displayItems.length){
-            this._addPlaceholder(this.params.placeholderEmpty);
-        }  
-    }
+		if(!this.displayItems.length){
+			this._addPlaceholder(this.params.placeholderEmpty);
+		}  
+	}
     
-    _buildItem(item){
-        var el = item.element,
-        contents;
+	_buildItem(item){
+		var el = item.element,
+		contents;
         
-        if(!this.filtered || item.visible){
+		if(!this.filtered || item.visible){
             
-            if(!el){
-                el = document.createElement("div");
-                el.tabIndex = 0;
+			if(!el){
+				el = document.createElement("div");
+				el.tabIndex = 0;
                 
-                contents = this.params.itemFormatter ? this.params.itemFormatter(item.label, item.value, item.original, el) : item.label;
+				contents = this.params.itemFormatter ? this.params.itemFormatter(item.label, item.value, item.original, el) : item.label;
                 
-                if(contents instanceof HTMLElement){
-                    el.appendChild(contents);
-                }else {
-                    el.innerHTML = contents;
-                }
+				if(contents instanceof HTMLElement){
+					el.appendChild(contents);
+				}else {
+					el.innerHTML = contents;
+				}
                 
-                if(item.group){
-                    el.classList.add("tabulator-edit-list-group");
-                }else {
-                    el.classList.add("tabulator-edit-list-item");
-                }
+				if(item.group){
+					el.classList.add("tabulator-edit-list-group");
+				}else {
+					el.classList.add("tabulator-edit-list-item");
+				}
                 
-                el.classList.add("tabulator-edit-list-group-level-" + item.level);
+				el.classList.add("tabulator-edit-list-group-level-" + item.level);
                 
-                if(item.elementAttributes && typeof item.elementAttributes == "object"){
-                    for (let key in item.elementAttributes){
-                        if(key.charAt(0) == "+"){
-                            key = key.slice(1);
-                            el.setAttribute(key, this.input.getAttribute(key) + item.elementAttributes["+" + key]);
-                        }else {
-                            el.setAttribute(key, item.elementAttributes[key]);
-                        }
-                    }
-                }
+				if(item.elementAttributes && typeof item.elementAttributes == "object"){
+					for (let key in item.elementAttributes){
+						if(key.charAt(0) == "+"){
+							key = key.slice(1);
+							el.setAttribute(key, this.input.getAttribute(key) + item.elementAttributes["+" + key]);
+						}else {
+							el.setAttribute(key, item.elementAttributes[key]);
+						}
+					}
+				}
                 
-                if(item.group){
-                    el.addEventListener("click", this._groupClick.bind(this, item));
-                }else {
-                    el.addEventListener("click", this._itemClick.bind(this, item));
-                }
+				if(item.group){
+					el.addEventListener("click", this._groupClick.bind(this, item));
+				}else {
+					el.addEventListener("click", this._itemClick.bind(this, item));
+				}
                 
-                el.addEventListener("mousedown", this._preventBlur.bind(this));
+				el.addEventListener("mousedown", this._preventBlur.bind(this));
                 
-                item.element = el;
-            }
+				item.element = el;
+			}
             
-            this._styleItem(item);
+			this._styleItem(item);
             
-            this.listEl.appendChild(el);
+			this.listEl.appendChild(el);
             
-            if(item.group){
-                item.options.forEach((option) => {
-                    this._buildItem(option);
-                });
-            }else {
-                this.displayItems.push(item);
-            }
-        }
-    }
+			if(item.group){
+				item.options.forEach((option) => {
+					this._buildItem(option);
+				});
+			}else {
+				this.displayItems.push(item);
+			}
+		}
+	}
     
-    _showList(){
-        var startVis = this.popup && this.popup.isVisible();
+	_showList(){
+		var startVis = this.popup && this.popup.isVisible();
         
-        if(this.input.parentNode){
-            if(this.params.autocomplete && this.input.value === "" && !this.params.listOnEmpty){
-                if(this.popup){
-                    this.popup.hide(true);
-                    return;
-                }
-            }
+		if(this.input.parentNode){
+			if(this.params.autocomplete && this.input.value === "" && !this.params.listOnEmpty){
+				if(this.popup){
+					this.popup.hide(true);
+					return;
+				}
+			}
             
-            this._setListWidth();
+			this._setListWidth();
             
-            if(!this.popup){
-                this.popup = this.edit.popup(this.listEl);
-            }
+			if(!this.popup){
+				this.popup = this.edit.popup(this.listEl);
+			}
             
-            this.popup.show(this.cell.getElement(), "bottom");
+			this.popup.show(this.cell.getElement(), "bottom");
             
-            if(!startVis){
-                this.popup.hideOnBlur(this._resolveValue.bind(this, true));
-            }
-        }
-    }
+			if(!startVis){
+				this.popup.hideOnBlur(this._resolveValue.bind(this, true));
+			}
+		}
+	}
     
-    _styleItem(item){
-        if(item && item.element){
-            if(item.selected){
-                item.element.classList.add("active");
-            }else {
-                item.element.classList.remove("active");
-            }
-        }
-    }
+	_styleItem(item){
+		if(item && item.element){
+			if(item.selected){
+				item.element.classList.add("active");
+			}else {
+				item.element.classList.remove("active");
+			}
+		}
+	}
     
-    //////////////////////////////////////
-    ///////// User Interaction ///////////
-    //////////////////////////////////////
+	//////////////////////////////////////
+	///////// User Interaction ///////////
+	//////////////////////////////////////
     
-    _itemClick(item, e){
-        e.stopPropagation();
+	_itemClick(item, e){
+		e.stopPropagation();
         
-        this._chooseItem(item);
-    }
+		this._chooseItem(item);
+	}
     
-    _groupClick(item, e){
-        e.stopPropagation();
-    }
+	_groupClick(item, e){
+		e.stopPropagation();
+	}
     
     
-    //////////////////////////////////////
-    ////// Current Item Management ///////
-    //////////////////////////////////////
+	//////////////////////////////////////
+	////// Current Item Management ///////
+	//////////////////////////////////////
     
-    _cancel(){
-        this.popup.hide(true);
-        this.actions.cancel();
-    }
+	_cancel(){
+		this.popup.hide(true);
+		this.actions.cancel();
+	}
     
-    _clearChoices(){
-        this.typing = true;
+	_clearChoices(){
+		this.typing = true;
         
-        this.currentItems.forEach((item) => {
-            item.selected = false;
-            this._styleItem(item);
-        });
+		this.currentItems.forEach((item) => {
+			item.selected = false;
+			this._styleItem(item);
+		});
         
-        this.currentItems = [];
+		this.currentItems = [];
         
-        this.focusedItem = null;
-    }
+		this.focusedItem = null;
+	}
     
-    _chooseItem(item, silent){
-        var index;
+	_chooseItem(item, silent){
+		var index;
         
-        this.typing = false;
+		this.typing = false;
         
-        if(this.params.multiselect){
-            index = this.currentItems.indexOf(item);
+		if(this.params.multiselect){
+			index = this.currentItems.indexOf(item);
             
-            if(index > -1){
-                this.currentItems.splice(index, 1);
-                item.selected = false;
-            }else {
-                this.currentItems.push(item);
-                item.selected = true;
-            }
+			if(index > -1){
+				this.currentItems.splice(index, 1);
+				item.selected = false;
+			}else {
+				this.currentItems.push(item);
+				item.selected = true;
+			}
             
-            this.input.value = this.currentItems.map(item => item.label).join(",");
+			this.input.value = this.currentItems.map(item => item.label).join(",");
             
-            this._styleItem(item);
+			this._styleItem(item);
             
-        }else {
-            this.currentItems = [item];
-            item.selected = true;
+		}else {
+			this.currentItems = [item];
+			item.selected = true;
 
-            console.log("choose");
+			console.log("choose");
             
-            this.input.value = item.label;
+			this.input.value = item.label;
             
-            this._styleItem(item);
+			this._styleItem(item);
             
-            if(!silent){
-                this._resolveValue();
-            }
-        }
+			if(!silent){
+				this._resolveValue();
+			}
+		}
         
-        this._focusItem(item);
-    }
+		this._focusItem(item);
+	}
     
-    _resolveValue(blur){
-        var output, initialValue;
+	_resolveValue(blur){
+		var output, initialValue;
         
-        this.popup.hide(true);
+		this.popup.hide(true);
         
-        if(this.params.multiselect){
-            output = this.currentItems.map(item => item.value);
-        }else {
-            if(blur && this.params.autocomplete && this.typing){
-                if(this.params.freetext || (this.params.allowEmpty && this.input.value === "")){
-                    output = this.input.value;
-                }else {
-                    this.actions.cancel();
-                    return;
-                }
-            }else {
-                if(this.currentItems[0]){
-                    output = this.currentItems[0].value;
-                }else {
-                    initialValue = this.initialValues[0];
+		if(this.params.multiselect){
+			output = this.currentItems.map(item => item.value);
+		}else {
+			if(blur && this.params.autocomplete && this.typing){
+				if(this.params.freetext || (this.params.allowEmpty && this.input.value === "")){
+					output = this.input.value;
+				}else {
+					this.actions.cancel();
+					return;
+				}
+			}else {
+				if(this.currentItems[0]){
+					output = this.currentItems[0].value;
+				}else {
+					initialValue = this.initialValues[0];
                     
-                    if(initialValue === null || typeof initialValue === "undefined" || initialValue === ""){
-                        output = initialValue;
-                    }else {
-                        output = this.params.emptyValue;
-                    }
-                }
+					if(initialValue === null || typeof initialValue === "undefined" || initialValue === ""){
+						output = initialValue;
+					}else {
+						output = this.params.emptyValue;
+					}
+				}
                 
-            }
-        }
+			}
+		}
         
-        if(output === ""){
-            output = this.params.emptyValue;
-        }
+		if(output === ""){
+			output = this.params.emptyValue;
+		}
         
-        this.actions.success(output);
+		this.actions.success(output);
         
-        if(this.isFilter){
-            this.initialValues = output && !Array.isArray[output] ? [output] : output;
-        }
-    }
+		if(this.isFilter){
+			this.initialValues = output && !Array.isArray[output] ? [output] : output;
+		}
+	}
     
 }
 
@@ -6563,15 +6563,15 @@ function select(cell, onRendered, success, cancel, editorParams){
 
 	 console.warn("The select editor has been deprecated, please use the new list editor");
 
-    var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
+	var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
 
-    return list.input;
+	return list.input;
 }
 
 function list(cell, onRendered, success, cancel, editorParams){
-    var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
+	var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
 
-    return list.input;
+	return list.input;
 }
 
 function autocomplete(cell, onRendered, success, cancel, editorParams){
@@ -6580,9 +6580,9 @@ function autocomplete(cell, onRendered, success, cancel, editorParams){
 
 	editorParams.autocomplete = true;
 
-    var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
+	var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
 
-    return list.input;
+	return list.input;
 }
 
 //star rating
@@ -6712,20 +6712,20 @@ function star(cell, onRendered, success, cancel, editorParams){
 	element.addEventListener("keydown", function(e){
 		switch(e.keyCode){
 			case 39: //right arrow
-			changeValue(value + 1);
-			break;
+				changeValue(value + 1);
+				break;
 
 			case 37: //left arrow
-			changeValue(value - 1);
-			break;
+				changeValue(value - 1);
+				break;
 
 			case 13: //enter
-			success(value);
-			break;
+				success(value);
+				break;
 
 			case 27: //escape
-			cancel();
-			break;
+				cancel();
+				break;
 		}
 	});
 
@@ -6832,23 +6832,23 @@ function progress(cell, onRendered, success, cancel, editorParams){
 	element.addEventListener("keydown", function(e){
 		switch(e.keyCode){
 			case 39: //right arrow
-			e.preventDefault();
-			bar.style.width = (bar.clientWidth + element.clientWidth/100) + "px";
-			break;
+				e.preventDefault();
+				bar.style.width = (bar.clientWidth + element.clientWidth/100) + "px";
+				break;
 
 			case 37: //left arrow
-			e.preventDefault();
-			bar.style.width = (bar.clientWidth - element.clientWidth/100) + "px";
-			break;
+				e.preventDefault();
+				bar.style.width = (bar.clientWidth - element.clientWidth/100) + "px";
+				break;
 
 			case 9: //tab
 			case 13: //enter
-			updateValue();
-			break;
+				updateValue();
+				break;
 
 			case 27: //escape
-			cancel();
-			break;
+				cancel();
+				break;
 
 		}
 	});
@@ -6963,8 +6963,8 @@ function tickCross(cell, onRendered, success, cancel, editorParams){
 var defaultEditors = {
 	input:input,
 	textarea:textarea,
-    number:number,
-    range:range,
+	number:number,
+	range:range,
 	select:select,
 	list:list,
 	autocomplete:autocomplete,
@@ -7327,30 +7327,30 @@ class Edit$1 extends Module{
 		//set column editor
 		switch(typeof column.definition.editor){
 			case "string":
-			if(this.editors[column.definition.editor]){
-				config.editor = this.editors[column.definition.editor];
-			}else {
-				console.warn("Editor Error - No such editor found: ", column.definition.editor);
-			}
-			break;
+				if(this.editors[column.definition.editor]){
+					config.editor = this.editors[column.definition.editor];
+				}else {
+					console.warn("Editor Error - No such editor found: ", column.definition.editor);
+				}
+				break;
 
 			case "function":
-			config.editor = column.definition.editor;
-			break;
+				config.editor = column.definition.editor;
+				break;
 
 			case "boolean":
-			if(column.definition.editor === true){
-				if(typeof column.definition.formatter !== "function"){
-					if(this.editors[column.definition.formatter]){
-						config.editor = this.editors[column.definition.formatter];
+				if(column.definition.editor === true){
+					if(typeof column.definition.formatter !== "function"){
+						if(this.editors[column.definition.formatter]){
+							config.editor = this.editors[column.definition.formatter];
+						}else {
+							config.editor = this.editors["input"];
+						}
 					}else {
-						config.editor = this.editors["input"];
+						console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 					}
-				}else {
-					console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 				}
-			}
-			break;
+				break;
 		}
 
 		if(config.editor){
@@ -7555,12 +7555,12 @@ class Edit$1 extends Module{
 
 			switch(typeof cell.column.modules.edit.check){
 				case "function":
-				allowEdit = cell.column.modules.edit.check(cell.getComponent());
-				break;
+					allowEdit = cell.column.modules.edit.check(cell.getComponent());
+					break;
 
 				case "boolean":
-				allowEdit = cell.column.modules.edit.check;
-				break;
+					allowEdit = cell.column.modules.edit.check;
+					break;
 			}
 
 			if(allowEdit || forceEdit){
@@ -7747,24 +7747,24 @@ class Export extends Module{
 			switch(range){
 				case true:
 				case "visible":
-				rows = this.table.rowManager.getVisibleRows(false, true);
-				break;
+					rows = this.table.rowManager.getVisibleRows(false, true);
+					break;
 
 				case "all":
-				rows = this.table.rowManager.rows;
-				break;
+					rows = this.table.rowManager.rows;
+					break;
 
 				case "selected":
-				rows = this.table.modules.selectRow.selectedRows;
-				break;
+					rows = this.table.modules.selectRow.selectedRows;
+					break;
 
 				case "active":
 				default:
-				if(this.table.options.pagination){
-					rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
-				}else {
-					rows = this.table.rowManager.getDisplayRows();
-				}
+					if(this.table.options.pagination){
+						rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
+					}else {
+						rows = this.table.rowManager.getDisplayRows();
+					}
 			}
 		}
 
@@ -7935,13 +7935,13 @@ class Export extends Module{
 		rows = rows.filter((row) => {
 			switch(row.type){
 				case "group":
-				return this.config.rowGroups !== false;
+					return this.config.rowGroups !== false;
 
 				case "calc":
-				return this.config.columnCalcs !== false;
+					return this.config.columnCalcs !== false;
 
 				case "row":
-				return !(this.table.options.dataTree && this.config.dataTree === false && row.modules.dataTree.parent);
+					return !(this.table.options.dataTree && this.config.dataTree === false && row.modules.dataTree.parent);
 			}
 
 			return true;
@@ -7954,20 +7954,20 @@ class Export extends Module{
 
 			switch(row.type){
 				case "group":
-				indent = row.level;
-				exportCols.push(new ExportColumn(row.key, row.getComponent(), columns.length, 1));
-				break;
+					indent = row.level;
+					exportCols.push(new ExportColumn(row.key, row.getComponent(), columns.length, 1));
+					break;
 
 				case "calc" :
 				case "row" :
-				columns.forEach((col) => {
-					exportCols.push(new ExportColumn(col._column.getFieldValue(rowData), col, 1, 1));
-				});
+					columns.forEach((col) => {
+						exportCols.push(new ExportColumn(col._column.getFieldValue(rowData), col, 1, 1));
+					});
 
-				if(this.table.options.dataTree && this.config.dataTree !== false){
-					indent = row.modules.dataTree.index;
-				}
-				break;
+					if(this.table.options.dataTree && this.config.dataTree !== false){
+						indent = row.modules.dataTree.index;
+					}
+					break;
 			}
 
 			exportRows.push(new ExportRow(row.type, exportCols, row.getComponent(), indent));
@@ -8009,22 +8009,22 @@ class Export extends Module{
 		list.forEach((row, i) => {
 			switch(row.type){
 				case "header":
-				headerEl.appendChild(this.genereateHeaderElement(row, setup, styles));
-				break;
+					headerEl.appendChild(this.genereateHeaderElement(row, setup, styles));
+					break;
 
 				case "group":
-				bodyEl.appendChild(this.genereateGroupElement(row, setup, styles));
-				break;
+					bodyEl.appendChild(this.genereateGroupElement(row, setup, styles));
+					break;
 
 				case "calc":
-				bodyEl.appendChild(this.genereateCalcElement(row, setup, styles));
-				break;
+					bodyEl.appendChild(this.genereateCalcElement(row, setup, styles));
+					break;
 
 				case "row":
-				let rowEl = this.genereateRowElement(row, setup, styles);
-				this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
-				bodyEl.appendChild(rowEl);
-				break;
+					let rowEl = this.genereateRowElement(row, setup, styles);
+					this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+					bodyEl.appendChild(rowEl);
+					break;
 			}
 		});
 
@@ -8197,15 +8197,15 @@ class Export extends Module{
 				}else {
 					switch(typeof value){
 						case "object":
-						value = value !== null ? JSON.stringify(value) : "";
-						break;
+							value = value !== null ? JSON.stringify(value) : "";
+							break;
 
 						case "undefined":
-						value = "";
-						break;
+							value = "";
+							break;
 
 						default:
-						value = value;
+							value = value;
 					}
 				}
 
@@ -8616,55 +8616,55 @@ class Filter extends Module{
 
 					switch(typeof column.definition.headerFilterFunc){
 						case "string":
-						if(Filter.filters[column.definition.headerFilterFunc]){
-							type = column.definition.headerFilterFunc;
+							if(Filter.filters[column.definition.headerFilterFunc]){
+								type = column.definition.headerFilterFunc;
+								filterFunc = function(data){
+									var params = column.definition.headerFilterFuncParams || {};
+									var fieldVal = column.getFieldValue(data);
+
+									params = typeof params === "function" ? params(value, fieldVal, data) : params;
+
+									return Filter.filters[column.definition.headerFilterFunc](value, fieldVal, data, params);
+								};
+							}else {
+								console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
+							}
+							break;
+
+						case "function":
 							filterFunc = function(data){
 								var params = column.definition.headerFilterFuncParams || {};
 								var fieldVal = column.getFieldValue(data);
 
 								params = typeof params === "function" ? params(value, fieldVal, data) : params;
 
-								return Filter.filters[column.definition.headerFilterFunc](value, fieldVal, data, params);
+								return column.definition.headerFilterFunc(value, fieldVal, data, params);
 							};
-						}else {
-							console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
-						}
-						break;
 
-						case "function":
-						filterFunc = function(data){
-							var params = column.definition.headerFilterFuncParams || {};
-							var fieldVal = column.getFieldValue(data);
-
-							params = typeof params === "function" ? params(value, fieldVal, data) : params;
-
-							return column.definition.headerFilterFunc(value, fieldVal, data, params);
-						};
-
-						type = filterFunc;
-						break;
+							type = filterFunc;
+							break;
 					}
 
 					if(!filterFunc){
 						switch(filterType){
 							case "partial":
-							filterFunc = function(data){
-								var colVal = column.getFieldValue(data);
+								filterFunc = function(data){
+									var colVal = column.getFieldValue(data);
 
-								if(typeof colVal !== 'undefined' && colVal !== null){
-									return String(colVal).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
-								}else {
-									return false;
-								}
-							};
-							type = "like";
-							break;
+									if(typeof colVal !== 'undefined' && colVal !== null){
+										return String(colVal).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
+									}else {
+										return false;
+									}
+								};
+								type = "like";
+								break;
 
 							default:
-							filterFunc = function(data){
-								return column.getFieldValue(data) == value;
-							};
-							type = "=";
+								filterFunc = function(data){
+									return column.getFieldValue(data) == value;
+								};
+								type = "=";
 						}
 					}
 
@@ -8726,40 +8726,40 @@ class Filter extends Module{
 			//set column editor
 			switch(typeof column.definition.headerFilter){
 				case "string":
-				if(self.table.modules.edit.editors[column.definition.headerFilter]){
-					editor = self.table.modules.edit.editors[column.definition.headerFilter];
+					if(self.table.modules.edit.editors[column.definition.headerFilter]){
+						editor = self.table.modules.edit.editors[column.definition.headerFilter];
 
-					if((column.definition.headerFilter === "tick" || column.definition.headerFilter === "tickCross") && !column.definition.headerFilterEmptyCheck){
-						column.modules.filter.emptyFunc = function(value){
-							return value !== true && value !== false;
-						};
-					}
-				}else {
-					console.warn("Filter Error - Cannot build header filter, No such editor found: ", column.definition.editor);
-				}
-				break;
-
-				case "function":
-				editor = column.definition.headerFilter;
-				break;
-
-				case "boolean":
-				if(column.modules.edit && column.modules.edit.editor){
-					editor = column.modules.edit.editor;
-				}else {
-					if(column.definition.formatter && self.table.modules.edit.editors[column.definition.formatter]){
-						editor = self.table.modules.edit.editors[column.definition.formatter];
-
-						if((column.definition.formatter === "tick" || column.definition.formatter === "tickCross") && !column.definition.headerFilterEmptyCheck){
+						if((column.definition.headerFilter === "tick" || column.definition.headerFilter === "tickCross") && !column.definition.headerFilterEmptyCheck){
 							column.modules.filter.emptyFunc = function(value){
 								return value !== true && value !== false;
 							};
 						}
 					}else {
-						editor = self.table.modules.edit.editors["input"];
+						console.warn("Filter Error - Cannot build header filter, No such editor found: ", column.definition.editor);
 					}
-				}
-				break;
+					break;
+
+				case "function":
+					editor = column.definition.headerFilter;
+					break;
+
+				case "boolean":
+					if(column.modules.edit && column.modules.edit.editor){
+						editor = column.modules.edit.editor;
+					}else {
+						if(column.definition.formatter && self.table.modules.edit.editors[column.definition.formatter]){
+							editor = self.table.modules.edit.editors[column.definition.formatter];
+
+							if((column.definition.formatter === "tick" || column.definition.formatter === "tickCross") && !column.definition.headerFilterEmptyCheck){
+								column.modules.filter.emptyFunc = function(value){
+									return value !== true && value !== false;
+								};
+							}
+						}else {
+							editor = self.table.modules.edit.editors["input"];
+						}
+					}
+					break;
 			}
 
 			if(editor){
@@ -8856,26 +8856,26 @@ class Filter extends Module{
 							((column.definition.editor === 'autocomplete' ||
 								column.definition.editor === 'tickCross') &&
 							column.definition.headerFilter === true)
-							)
-						) {
+						)
+					) {
 						editorElement.addEventListener("keyup", searchTrigger);
-					editorElement.addEventListener("search", searchTrigger);
+						editorElement.addEventListener("search", searchTrigger);
 
 
-					//update number filtered columns on change
-					if(column.modules.filter.attrType == "number"){
-						editorElement.addEventListener("change", function(e){
-							success(editorElement.value);
-						});
-					}
+						//update number filtered columns on change
+						if(column.modules.filter.attrType == "number"){
+							editorElement.addEventListener("change", function(e){
+								success(editorElement.value);
+							});
+						}
 
-					//change text inputs to search inputs to allow for clearing of field
-					if(column.modules.filter.attrType == "text" && this.table.browser !== "ie"){
-						editorElement.setAttribute("type", "search");
+						//change text inputs to search inputs to allow for clearing of field
+						if(column.modules.filter.attrType == "text" && this.table.browser !== "ie"){
+							editorElement.setAttribute("type", "search");
 						// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
-					}
+						}
 
-				}
+					}
 
 					//prevent input and select elements from propegating click to column sorters etc
 					if(column.modules.filter.tagType == "input" || column.modules.filter.tagType == "select" || column.modules.filter.tagType == "textarea"){
@@ -9027,7 +9027,7 @@ class Filter extends Module{
 
 		if(typeof filter.field == "function"){
 			filterFunc = function(data){
-				return filter.field(data, filter.type || {})// pass params to custom filter function
+				return filter.field(data, filter.type || {});// pass params to custom filter function
 			};
 		}else {
 
@@ -9364,6 +9364,7 @@ function link(cell, formatterParams, onRendered){
 
 		return value;
 	}
+
 	if(formatterParams.labelField){
 		data = cell.getData();
 		label = labelTraverse(formatterParams.labelField.split(this.table.options.nestedFieldSeparator), data);
@@ -9372,12 +9373,12 @@ function link(cell, formatterParams, onRendered){
 	if(formatterParams.label){
 		switch(typeof formatterParams.label){
 			case "string":
-			label = formatterParams.label;
-			break;
+				label = formatterParams.label;
+				break;
 
 			case "function":
-			label = formatterParams.label(cell);
-			break;
+				label = formatterParams.label(cell);
+				break;
 		}
 	}
 
@@ -9390,12 +9391,12 @@ function link(cell, formatterParams, onRendered){
 		if(formatterParams.url){
 			switch(typeof formatterParams.url){
 				case "string":
-				value = formatterParams.url;
-				break;
+					value = formatterParams.url;
+					break;
 
 				case "function":
-				value = formatterParams.url(cell);
-				break;
+					value = formatterParams.url(cell);
+					break;
 			}
 		}
 
@@ -9440,22 +9441,22 @@ function image(cell, formatterParams, onRendered){
 
 	switch(typeof formatterParams.height){
 		case "number":
-		el.style.height = formatterParams.height + "px";
-		break;
+			el.style.height = formatterParams.height + "px";
+			break;
 
 		case "string":
-		el.style.height = formatterParams.height;
-		break;
+			el.style.height = formatterParams.height;
+			break;
 	}
 
 	switch(typeof formatterParams.width){
 		case "number":
-		el.style.width = formatterParams.width + "px";
-		break;
+			el.style.width = formatterParams.width + "px";
+			break;
 
 		case "string":
-		el.style.width = formatterParams.width;
-		break;
+			el.style.width = formatterParams.width;
+			break;
 	}
 
 	el.addEventListener("load", function(){
@@ -9644,21 +9645,21 @@ function traffic(cell, formatterParams, onRendered){
 	//set color
 	switch(typeof colors){
 		case "string":
-		color = colors;
-		break;
-		case "function":
-		color = colors(value);
-		break;
-		case "object":
-		if(Array.isArray(colors)){
-			var unit = 100 / colors.length;
-			var index = Math.floor(percentValue / unit);
-
-			index = Math.min(index, colors.length - 1);
-			index = Math.max(index, 0);
-			color = colors[index];
+			color = colors;
 			break;
-		}
+		case "function":
+			color = colors(value);
+			break;
+		case "object":
+			if(Array.isArray(colors)){
+				var unit = 100 / colors.length;
+				var index = Math.floor(percentValue / unit);
+
+				index = Math.min(index, colors.length - 1);
+				index = Math.max(index, 0);
+				color = colors[index];
+				break;
+			}
 	}
 
 	el.style.backgroundColor = color;
@@ -9685,60 +9686,60 @@ function progress$1(cell, formatterParams, onRendered){ //progress bar
 	//set bar color
 	switch(typeof formatterParams.color){
 		case "string":
-		color = formatterParams.color;
-		break;
-		case "function":
-		color = formatterParams.color(value);
-		break;
-		case "object":
-		if(Array.isArray(formatterParams.color)){
-			var unit = 100 / formatterParams.color.length;
-			var index = Math.floor(percentValue / unit);
-
-			index = Math.min(index, formatterParams.color.length - 1);
-			index = Math.max(index, 0);
-			color = formatterParams.color[index];
+			color = formatterParams.color;
 			break;
-		}
+		case "function":
+			color = formatterParams.color(value);
+			break;
+		case "object":
+			if(Array.isArray(formatterParams.color)){
+				var unit = 100 / formatterParams.color.length;
+				var index = Math.floor(percentValue / unit);
+
+				index = Math.min(index, formatterParams.color.length - 1);
+				index = Math.max(index, 0);
+				color = formatterParams.color[index];
+				break;
+			}
 		default:
-		color = "#2DC214";
+			color = "#2DC214";
 	}
 
 	//generate legend
 	switch(typeof formatterParams.legend){
 		case "string":
-		legend = formatterParams.legend;
-		break;
+			legend = formatterParams.legend;
+			break;
 		case "function":
-		legend = formatterParams.legend(value);
-		break;
+			legend = formatterParams.legend(value);
+			break;
 		case "boolean":
-		legend = value;
-		break;
+			legend = value;
+			break;
 		default:
-		legend = false;
+			legend = false;
 	}
 
 	//set legend color
 	switch(typeof formatterParams.legendColor){
 		case "string":
-		legendColor = formatterParams.legendColor;
-		break;
+			legendColor = formatterParams.legendColor;
+			break;
 		case "function":
-		legendColor = formatterParams.legendColor(value);
-		break;
+			legendColor = formatterParams.legendColor(value);
+			break;
 		case "object":
-		if(Array.isArray(formatterParams.legendColor)){
-			var unit = 100 / formatterParams.legendColor.length;
-			var index = Math.floor(percentValue / unit);
+			if(Array.isArray(formatterParams.legendColor)){
+				var unit = 100 / formatterParams.legendColor.length;
+				var index = Math.floor(percentValue / unit);
 
-			index = Math.min(index, formatterParams.legendColor.length - 1);
-			index = Math.max(index, 0);
-			legendColor = formatterParams.legendColor[index];
-		}
-		break;
+				index = Math.min(index, formatterParams.legendColor.length - 1);
+				index = Math.max(index, 0);
+				legendColor = formatterParams.legendColor[index];
+			}
+			break;
 		default:
-		legendColor = "#000";
+			legendColor = "#000";
 	}
 
 	element.style.minWidth = "30px";
@@ -9995,21 +9996,21 @@ class Format extends Module{
 		//set column formatter
 		switch(typeof formatter){
 			case "string":
-			if(Format.formatters[formatter]){
-				config.formatter = Format.formatters[formatter];
-			}else {
-				console.warn("Formatter Error - No such formatter found: ", formatter);
-				config.formatter = Format.formatters.plaintext;
-			}
-			break;
+				if(Format.formatters[formatter]){
+					config.formatter = Format.formatters[formatter];
+				}else {
+					console.warn("Formatter Error - No such formatter found: ", formatter);
+					config.formatter = Format.formatters.plaintext;
+				}
+				break;
 
 			case "function":
-			config.formatter = formatter;
-			break;
+				config.formatter = formatter;
+				break;
 
 			default:
-			config.formatter = Format.formatters.plaintext;
-			break;
+				config.formatter = Format.formatters.plaintext;
+				break;
 		}
 
 		return config;
@@ -10124,21 +10125,21 @@ class Format extends Module{
 
 		switch(typeof formatter){
 			case "string":
-			if(Format.formatters[formatter]){
-				formatter = Format.formatters[formatter];
-			}else {
-				console.warn("Formatter Error - No such formatter found: ", formatter);
-				formatter = Format.formatters.plaintext;
-			}
-			break;
+				if(Format.formatters[formatter]){
+					formatter = Format.formatters[formatter];
+				}else {
+					console.warn("Formatter Error - No such formatter found: ", formatter);
+					formatter = Format.formatters.plaintext;
+				}
+				break;
 
 			case "function":
-			formatter = formatter;
-			break;
+				formatter = formatter;
+				break;
 
 			default:
-			formatter = Format.formatters.plaintext;
-			break;
+				formatter = Format.formatters.plaintext;
+				break;
 		}
 
 		return formatter;
@@ -10616,10 +10617,10 @@ class GroupComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._group.groupManager.table.componentFunctionBinder.handle("row", target._group, name)
+					return target._group.groupManager.table.componentFunctionBinder.handle("row", target._group, name);
 				}
 			}
-		})
+		});
 	}
 
 	getKey(){
@@ -11546,7 +11547,7 @@ class GroupRows extends Module{
 	// get grouped table data in the same format as getData()
 	userGetGroupedData(){
 		return this.table.options.groupBy ?
-		this.getGroupedData() : this.getData()
+			this.getGroupedData() : this.getData();
 	}
 
 
@@ -11694,7 +11695,7 @@ class GroupRows extends Module{
 			}
 		});
 
-		return groupListData
+		return groupListData;
 	}
 
 	getGroupedData(){
@@ -12251,74 +12252,74 @@ class HtmlTableImport extends Module{
 HtmlTableImport.moduleName = "htmlTableImport";
 
 function csvImporter(input){
-    var data = [],
-    row = 0, 
-    col = 0,
-    inQuote = false;
+	var data = [],
+	row = 0, 
+	col = 0,
+	inQuote = false;
     
-    //Iterate over each character
-    for (let index = 0; index < input.length; index++) {
-        let char = input[index], 
-        nextChar = input[index+1];      
+	//Iterate over each character
+	for (let index = 0; index < input.length; index++) {
+		let char = input[index], 
+		nextChar = input[index+1];      
         
-        //Initialize empty row
-        if(!data[row]){
-            data[row] = [];
-        }
+		//Initialize empty row
+		if(!data[row]){
+			data[row] = [];
+		}
 
-        //Initialize empty column
-        if(!data[row][col]){
-            data[row][col] = "";
-        }
+		//Initialize empty column
+		if(!data[row][col]){
+			data[row][col] = "";
+		}
         
-        //Handle quotation mark inside string
-        if (char == '"' && inQuote && nextChar == '"') { 
-            data[row][col] += char; 
-            index++;
-            continue; 
-        }
+		//Handle quotation mark inside string
+		if (char == '"' && inQuote && nextChar == '"') { 
+			data[row][col] += char; 
+			index++;
+			continue; 
+		}
         
-        //Begin / End Quote
-        if (char == '"') { 
-            inQuote = !inQuote;
-            continue;
-        }
+		//Begin / End Quote
+		if (char == '"') { 
+			inQuote = !inQuote;
+			continue;
+		}
         
-        //Next column (if not in quote)
-        if (char == ',' && !inQuote) { 
-            col++;
-            continue; 
-        }
+		//Next column (if not in quote)
+		if (char == ',' && !inQuote) { 
+			col++;
+			continue; 
+		}
         
-        //New row if new line and not in quote (CRLF) 
-        if (char == '\r' && nextChar == '\n' && !inQuote) { 
-            col = 0; 
-            row++; 
-            index++; 
-            continue; 
-        }
+		//New row if new line and not in quote (CRLF) 
+		if (char == '\r' && nextChar == '\n' && !inQuote) { 
+			col = 0; 
+			row++; 
+			index++; 
+			continue; 
+		}
         
-        //New row if new line and not in quote (CR or LF) 
-        if ((char == '\r' || char == '\n') && !inQuote) { 
-            col = 0;
-            row++;
-            continue; 
-        }
+		//New row if new line and not in quote (CR or LF) 
+		if ((char == '\r' || char == '\n') && !inQuote) { 
+			col = 0;
+			row++;
+			continue; 
+		}
 
-        //Normal Character, append to column
-        data[row][col] += char;
-    }
+		//Normal Character, append to column
+		data[row][col] += char;
+	}
 
-    return data;
+	return data;
 }
 
 function json$1(input){
-    try {
-        return JSON.parse(input);
-    } catch(e) {
-        console.warn("JSON Import Error - File contents is invalid JSON", e);
-        return Promise.reject();
-    }
+	try {
+		return JSON.parse(input);
+	} catch(e) {
+		console.warn("JSON Import Error - File contents is invalid JSON", e);
+		return Promise.reject();
+	}
 }
 
 var defaultImporters = {
@@ -12328,186 +12329,186 @@ var defaultImporters = {
 
 class Import extends Module{
     
-    constructor(table){
-        super(table);
+	constructor(table){
+		super(table);
         
-        this.registerTableOption("importFormat");
-        this.registerTableOption("importReader", "text");
-    }
+		this.registerTableOption("importFormat");
+		this.registerTableOption("importReader", "text");
+	}
     
-    initialize(){
-        this.registerTableFunction("import", this.importFromFile.bind(this));
+	initialize(){
+		this.registerTableFunction("import", this.importFromFile.bind(this));
 
-        if(this.table.options.importFormat){
-            this.subscribe("data-loading", this.loadDataCheck.bind(this), 10);
-            this.subscribe("data-load", this.loadData.bind(this), 10);
-        }
-    }
+		if(this.table.options.importFormat){
+			this.subscribe("data-loading", this.loadDataCheck.bind(this), 10);
+			this.subscribe("data-load", this.loadData.bind(this), 10);
+		}
+	}
 
-    loadDataCheck(data){
-        return typeof data === "string";
-    }
+	loadDataCheck(data){
+		return typeof data === "string";
+	}
 
-    loadData(data, params, config, silent, previousData){
-        return this.importData(this.lookupImporter(), data)
-        .then(this.structureData.bind(this))
-        .catch((err) => {
-            console.error("Import Error:", err || "Unable to import data");
-            return Promise.reject(err);
-        })
-    }
+	loadData(data, params, config, silent, previousData){
+		return this.importData(this.lookupImporter(), data)
+			.then(this.structureData.bind(this))
+			.catch((err) => {
+				console.error("Import Error:", err || "Unable to import data");
+				return Promise.reject(err);
+			});
+	}
 
-    lookupImporter(importFormat){
-        var importer;
+	lookupImporter(importFormat){
+		var importer;
         
-        if(!importFormat){
-            importFormat = this.table.options.importFormat;
-        }
+		if(!importFormat){
+			importFormat = this.table.options.importFormat;
+		}
         
-        if(typeof importFormat === "string"){
-            importer = Import.importers[importFormat];
-        }else {
-            importer = importFormat;
-        }
+		if(typeof importFormat === "string"){
+			importer = Import.importers[importFormat];
+		}else {
+			importer = importFormat;
+		}
 
-        if(!importer){
-            console.error("Import Error - Importer not found:", importFormat);
-        }
+		if(!importer){
+			console.error("Import Error - Importer not found:", importFormat);
+		}
         
-        return importer;
-    }
+		return importer;
+	}
     
-    importFromFile(importFormat, extension){
-        var importer = this.lookupImporter(importFormat);
+	importFromFile(importFormat, extension){
+		var importer = this.lookupImporter(importFormat);
         
-        if(importer){
-            return this.pickFile(extension)
-            .then(this.importData.bind(this, importer))
-            .then(this.structureData.bind(this))
-            .then(this.setData.bind(this))
-            .catch((err) => {
-                console.error("Import Error:", err || "Unable to import file");
-                return Promise.reject(err);
-            })
-        }
-    }
+		if(importer){
+			return this.pickFile(extension)
+				.then(this.importData.bind(this, importer))
+				.then(this.structureData.bind(this))
+				.then(this.setData.bind(this))
+				.catch((err) => {
+					console.error("Import Error:", err || "Unable to import file");
+					return Promise.reject(err);
+				});
+		}
+	}
     
-    pickFile(extensions){
-        return new Promise((resolve, reject) => {
-            var input = document.createElement("input");
-            input.type = "file";
-            input.accept = extensions;
+	pickFile(extensions){
+		return new Promise((resolve, reject) => {
+			var input = document.createElement("input");
+			input.type = "file";
+			input.accept = extensions;
             
-            input.addEventListener("change", (e) => {
-                var file = input.files[0],
-                reader = new FileReader();
+			input.addEventListener("change", (e) => {
+				var file = input.files[0],
+				reader = new FileReader();
                 
-                switch(this.table.options.importReader){
-                    case "buffer":
-                        reader.readAsArrayBuffer(file);
-                    break;
+				switch(this.table.options.importReader){
+					case "buffer":
+						reader.readAsArrayBuffer(file);
+						break;
 
-                    case "binary":
-                        reader.readAsBinaryString(file);
-                    break;
+					case "binary":
+						reader.readAsBinaryString(file);
+						break;
 
-                    case "url":
-                        reader.readAsDataURL(file);
-                    break;
+					case "url":
+						reader.readAsDataURL(file);
+						break;
 
-                    case "text":
-                    default:
-                        reader.readAsText(file);
-                }
+					case "text":
+					default:
+						reader.readAsText(file);
+				}
                   
-                reader.onload = (e) => {
-                    resolve(reader.result);
-                };
+				reader.onload = (e) => {
+					resolve(reader.result);
+				};
                 
-                reader.onerror = (e) => {
-                    console.warn("File Load Error - Unable to read file");
-                    reject();
-                };
-            });
+				reader.onerror = (e) => {
+					console.warn("File Load Error - Unable to read file");
+					reject();
+				};
+			});
             
-            input.click();
-        });
-    }
+			input.click();
+		});
+	}
     
-    importData(importer, fileContents){
-        var data = importer.call(this.table, fileContents);
+	importData(importer, fileContents){
+		var data = importer.call(this.table, fileContents);
         
-        if(data instanceof Promise){
-            return data;
-        }else {
-            return data ? Promise.resolve(data) : Promise.reject();
-        }
-    }
+		if(data instanceof Promise){
+			return data;
+		}else {
+			return data ? Promise.resolve(data) : Promise.reject();
+		}
+	}
 
-    structureData(parsedData){
-        var data = [];
+	structureData(parsedData){
+		var data = [];
         
-        if(Array.isArray(parsedData) && parsedData.length && Array.isArray(parsedData[0])){
-            if(this.table.options.autoColumns){
-                data = this.structureArrayToObject(parsedData);
-            }else {
-                data = this.structureArrayToColumns(parsedData);
-            }
+		if(Array.isArray(parsedData) && parsedData.length && Array.isArray(parsedData[0])){
+			if(this.table.options.autoColumns){
+				data = this.structureArrayToObject(parsedData);
+			}else {
+				data = this.structureArrayToColumns(parsedData);
+			}
 
-            return data;
-        }else {
-            return parsedData;
-        }
-    }
+			return data;
+		}else {
+			return parsedData;
+		}
+	}
 
-    structureArrayToObject(parsedData){
-        var columns = parsedData.shift();
+	structureArrayToObject(parsedData){
+		var columns = parsedData.shift();
 
-        var data = parsedData.map((values) => {
-            var row = {};
+		var data = parsedData.map((values) => {
+			var row = {};
 
-            columns.forEach((key, i) => {
-                row[key] = values[i];
-            });
+			columns.forEach((key, i) => {
+				row[key] = values[i];
+			});
 
-            return row;
-        });
+			return row;
+		});
 
-        return data;
-    }
+		return data;
+	}
 
-    structureArrayToColumns(parsedData){
-        var data = [],
-        columns = this.table.getColumns();
+	structureArrayToColumns(parsedData){
+		var data = [],
+		columns = this.table.getColumns();
 
-        //remove first row if it is the column names
-        if(columns[0] && parsedData[0][0]){
-            if(columns[0].getDefinition().title === parsedData[0][0]){
-                parsedData.shift();
-            }
-        }
+		//remove first row if it is the column names
+		if(columns[0] && parsedData[0][0]){
+			if(columns[0].getDefinition().title === parsedData[0][0]){
+				parsedData.shift();
+			}
+		}
         
-        //convert row arrays to objects
-        parsedData.forEach((rowData) => {
-            var row = {};
+		//convert row arrays to objects
+		parsedData.forEach((rowData) => {
+			var row = {};
 
-            rowData.forEach((value, index) => {
-                var column = columns[index];
+			rowData.forEach((value, index) => {
+				var column = columns[index];
 
-                if(column){
-                    row[column.getField()] = value;
-                }
-            });
+				if(column){
+					row[column.getField()] = value;
+				}
+			});
 
-            data.push(row);
-        });
+			data.push(row);
+		});
 
-        return data;
-    }
+		return data;
+	}
     
-    setData(data){
-        return this.table.setData(data);
-    }
+	setData(data){
+		return this.table.setData(data);
+	}
 }
 
 Import.moduleName = "import";
@@ -12757,44 +12758,44 @@ class Interaction extends Module{
 
 		switch(action){
 			case "start":
-			watchers.tap = true;
+				watchers.tap = true;
 
-			clearTimeout(watchers.tapHold);
-
-			watchers.tapHold = setTimeout(() => {
 				clearTimeout(watchers.tapHold);
-				watchers.tapHold = null;
 
-				watchers.tap = null;
-				clearTimeout(watchers.tapDbl);
-				watchers.tapDbl = null;
+				watchers.tapHold = setTimeout(() => {
+					clearTimeout(watchers.tapHold);
+					watchers.tapHold = null;
 
-				this.dispatchEvent(type + "TapHold", e,  component);
-			}, 1000);
-			break;
-
-			case "end":
-			if(watchers.tap){
-
-				watchers.tap = null;
-				this.dispatchEvent(type + "Tap", e,  component);
-			}
-
-			if(watchers.tapDbl){
-				clearTimeout(watchers.tapDbl);
-				watchers.tapDbl = null;
-
-				this.dispatchEvent(type + "DblTap", e,  component);
-			}else {
-				watchers.tapDbl = setTimeout(() => {
+					watchers.tap = null;
 					clearTimeout(watchers.tapDbl);
 					watchers.tapDbl = null;
-				}, 300);
-			}
 
-			clearTimeout(watchers.tapHold);
-			watchers.tapHold = null;
-			break;
+					this.dispatchEvent(type + "TapHold", e,  component);
+				}, 1000);
+				break;
+
+			case "end":
+				if(watchers.tap){
+
+					watchers.tap = null;
+					this.dispatchEvent(type + "Tap", e,  component);
+				}
+
+				if(watchers.tapDbl){
+					clearTimeout(watchers.tapDbl);
+					watchers.tapDbl = null;
+
+					this.dispatchEvent(type + "DblTap", e,  component);
+				}else {
+					watchers.tapDbl = setTimeout(() => {
+						clearTimeout(watchers.tapDbl);
+						watchers.tapDbl = null;
+					}, 300);
+				}
+
+				clearTimeout(watchers.tapHold);
+				watchers.tapHold = null;
+				break;
 		}
 	}
 
@@ -13024,26 +13025,26 @@ class Keybindings extends Module{
 		symbols.forEach((symbol) => {
 			switch(symbol){
 				case "ctrl":
-				binding.ctrl = true;
-				break;
+					binding.ctrl = true;
+					break;
 
 				case "shift":
-				binding.shift = true;
-				break;
+					binding.shift = true;
+					break;
 
 				case "meta":
-				binding.meta = true;
-				break;
+					binding.meta = true;
+					break;
 
 				default:
-				symbol = isNaN(symbol) ? symbol.toUpperCase().charCodeAt(0) : parseInt(symbol);
-				binding.keys.push(symbol);
+					symbol = isNaN(symbol) ? symbol.toUpperCase().charCodeAt(0) : parseInt(symbol);
+					binding.keys.push(symbol);
 
-				if(!this.watchKeys[symbol]){
-					this.watchKeys[symbol] = [];
-				}
+					if(!this.watchKeys[symbol]){
+						this.watchKeys[symbol] = [];
+					}
 
-				this.watchKeys[symbol].push(binding);
+					this.watchKeys[symbol].push(binding);
 			}
 		});
 	}
@@ -14214,12 +14215,12 @@ class MoveRows extends Module{
 
 			switch(typeof this.table.options.movableRowsSender){
 				case "string":
-				sender = this.senders[this.table.options.movableRowsSender];
-				break;
+					sender = this.senders[this.table.options.movableRowsSender];
+					break;
 
 				case "function":
-				sender = this.table.options.movableRowsSender;
-				break;
+					sender = this.table.options.movableRowsSender;
+					break;
 			}
 
 			if(sender){
@@ -14246,12 +14247,12 @@ class MoveRows extends Module{
 
 		switch(typeof this.table.options.movableRowsReceiver){
 			case "string":
-			receiver = this.receivers[this.table.options.movableRowsReceiver];
-			break;
+				receiver = this.receivers[this.table.options.movableRowsReceiver];
+				break;
 
 			case "function":
-			receiver = this.table.options.movableRowsReceiver;
-			break;
+				receiver = this.table.options.movableRowsReceiver;
+				break;
 		}
 
 		if(receiver){
@@ -14275,13 +14276,13 @@ class MoveRows extends Module{
 	commsReceived(table, action, data){
 		switch(action){
 			case "connect":
-			return this.connect(table, data.row);
+				return this.connect(table, data.row);
 
 			case "disconnect":
-			return this.disconnect(table);
+				return this.disconnect(table);
 
 			case "dropcomplete":
-			return this.dropComplete(table, data.row, data.success);
+				return this.dropComplete(table, data.row, data.success);
 		}
 	}
 }
@@ -14392,16 +14393,16 @@ class Mutator extends Module{
 		//set column mutator
 		switch(typeof value){
 			case "string":
-			if(Mutator.mutators[value]){
-				mutator = Mutator.mutators[value];
-			}else {
-				console.warn("Mutator Error - No such mutator found, ignoring: ", value);
-			}
-			break;
+				if(Mutator.mutators[value]){
+					mutator = Mutator.mutators[value];
+				}else {
+					console.warn("Mutator Error - No such mutator found, ignoring: ", value);
+				}
+				break;
 
 			case "function":
-			mutator = value;
-			break;
+				mutator = value;
+				break;
 		}
 
 		return mutator;
@@ -14527,7 +14528,7 @@ function rows(pageSize, currentRow, currentPage, totalRows, totalPages){
 
 function pages(pageSize, currentRow, currentPage, totalRows, totalPages){
 
-    var el = document.createElement("span"),
+	var el = document.createElement("span"),
 	showingEl = document.createElement("span"),
 	valueEl = document.createElement("span"),
 	ofEl = document.createElement("span"),
@@ -14683,7 +14684,7 @@ class Page extends Module{
 			}
 		}
 		
-		return {index, top}
+		return {index, top};
 	}
 	
 	calculatePageSizes(){
@@ -14745,7 +14746,7 @@ class Page extends Module{
 			row = this.rowManager.findRow(row);
 			
 			if(row){
-				return this.setPageToRow(row)
+				return this.setPageToRow(row);
 			}
 		}
 		
@@ -14773,7 +14774,7 @@ class Page extends Module{
 			
 			if(diff < margin){
 				this.nextPage()
-				.catch(() => {}); //consume the exception thrown when on the last page
+					.catch(() => {}); //consume the exception thrown when on the last page
 			}
 		}
 	}
@@ -15077,16 +15078,16 @@ class Page extends Module{
 	setPage(page){
 		switch(page){
 			case "first":
-			return this.setPage(1);
+				return this.setPage(1);
 			
 			case "prev":
-			return this.previousPage();
+				return this.previousPage();
 			
 			case "next":
-			return this.nextPage();
+				return this.nextPage();
 			
 			case "last":
-			return this.setPage(this.max);
+				return this.setPage(this.max);
 		}
 		
 		page = parseInt(page);
@@ -15110,7 +15111,7 @@ class Page extends Module{
 		if(index > -1){
 			var page = this.size === true ? 1 : Math.ceil((index + 1) / this.size);
 			
-			return this.setPage(page)
+			return this.setPage(page);
 		}else {
 			console.warn("Pagination Error - Requested row is not visible");
 			return Promise.reject();
@@ -15150,25 +15151,25 @@ class Page extends Module{
 			
 			switch(typeof content){
 				case "object":
-				if(content instanceof Node){
+					if(content instanceof Node){
 					
-					//clear previous cell contents
-					while(this.pageCounterElement.firstChild) this.pageCounterElement.removeChild(this.pageCounterElement.firstChild);
+						//clear previous cell contents
+						while(this.pageCounterElement.firstChild) this.pageCounterElement.removeChild(this.pageCounterElement.firstChild);
 					
-					this.pageCounterElement.appendChild(content);
-				}else {
-					this.pageCounterElement.innerHTML = "";
+						this.pageCounterElement.appendChild(content);
+					}else {
+						this.pageCounterElement.innerHTML = "";
 					
-					if(content != null){
-						console.warn("Page Counter Error - Page Counter has returned a type of object, the only valid page counter object return is an instance of Node, the page counter returned:", content);
+						if(content != null){
+							console.warn("Page Counter Error - Page Counter has returned a type of object, the only valid page counter object return is an instance of Node, the page counter returned:", content);
+						}
 					}
-				}
-				break;
+					break;
 				case "undefined":
-				this.pageCounterElement.innerHTML = "";
-				break;
+					this.pageCounterElement.innerHTML = "";
+					break;
 				default:
-				this.pageCounterElement.innerHTML = content;
+					this.pageCounterElement.innerHTML = content;
 			}
 		}
 	}
@@ -15240,7 +15241,7 @@ class Page extends Module{
 			
 			this.trackChanges();
 			
-			return this.trigger()
+			return this.trigger();
 			
 		}else {
 			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
@@ -15339,29 +15340,29 @@ class Page extends Module{
 		
 		switch(this.mode){
 			case "local":
-			left = this.table.rowManager.scrollLeft;
+				left = this.table.rowManager.scrollLeft;
 			
-			this.refreshData();
-			this.table.rowManager.scrollHorizontal(left);
+				this.refreshData();
+				this.table.rowManager.scrollHorizontal(left);
 			
-			this.dispatchExternal("pageLoaded", this.getPage());
+				this.dispatchExternal("pageLoaded", this.getPage());
 			
-			return Promise.resolve();
+				return Promise.resolve();
 			
 			case "remote":
-			this.dataChanging = true;
-			return this.reloadData(null)
-			.finally(() => {
-				this.dataChanging = false;
-			})
+				this.dataChanging = true;
+				return this.reloadData(null)
+					.finally(() => {
+						this.dataChanging = false;
+					});
 			
 			case "progressive_load":
 			case "progressive_scroll":
-			return this.reloadData(null, true);
+				return this.reloadData(null, true);
 			
 			default:
-			console.warn("Pagination Error - no such pagination mode:", this.mode);
-			return Promise.reject();
+				console.warn("Pagination Error - no such pagination mode:", this.mode);
+				return Promise.reject();
 		}
 	}
 	
@@ -15381,34 +15382,34 @@ class Page extends Module{
 				switch(this.mode){
 					case "progressive_load":
 					
-					if(this.page == 1){
-						this.table.rowManager.setData(data.data, false, this.page == 1);
-					}else {
-						this.table.rowManager.addRows(data.data);
-					}
+						if(this.page == 1){
+							this.table.rowManager.setData(data.data, false, this.page == 1);
+						}else {
+							this.table.rowManager.addRows(data.data);
+						}
 					
-					if(this.page < this.max){
-						setTimeout(() => {
-							this.nextPage();
-						}, this.table.options.progressiveLoadDelay);
-					}
-					break;
-					
-					case "progressive_scroll":
-					data = this.page === 1 ? data.data : this.table.rowManager.getData().concat(data.data);
-					
-					this.table.rowManager.setData(data, this.page !== 1, this.page == 1);
-					
-					margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
-					
-					if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
 						if(this.page < this.max){
 							setTimeout(() => {
 								this.nextPage();
-							});
+							}, this.table.options.progressiveLoadDelay);
 						}
-					}
-					break;
+						break;
+					
+					case "progressive_scroll":
+						data = this.page === 1 ? data.data : this.table.rowManager.getData().concat(data.data);
+					
+						this.table.rowManager.setData(data, this.page !== 1, this.page == 1);
+					
+						margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
+					
+						if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
+							if(this.page < this.max){
+								setTimeout(() => {
+									this.nextPage();
+								});
+							}
+						}
+						break;
 				}
 				
 				return false;
@@ -15797,13 +15798,13 @@ class Persistence extends Module{
 		return columns.find(function(col){
 			switch(type){
 				case "group":
-				return col.title === subject.title && col.columns.length === subject.columns.length;
+					return col.title === subject.title && col.columns.length === subject.columns.length;
 
 				case "field":
-				return col.field === subject.field;
+					return col.field === subject.field;
 
 				case "object":
-				return col === subject;
+					return col === subject;
 			}
 		});
 	}
@@ -15814,24 +15815,24 @@ class Persistence extends Module{
 
 		switch(type){
 			case "columns":
-			data = this.parseColumns(this.table.columnManager.getColumns());
-			break;
+				data = this.parseColumns(this.table.columnManager.getColumns());
+				break;
 
 			case "filter":
-			data = this.table.modules.filter.getFilters();
-			break;
+				data = this.table.modules.filter.getFilters();
+				break;
 
 			case "sort":
-			data = this.validateSorters(this.table.modules.sort.getSort());
-			break;
+				data = this.validateSorters(this.table.modules.sort.getSort());
+				break;
 
 			case "group":
-			data = this.getGroupConfig();
-			break;
+				data = this.getGroupConfig();
+				break;
 
 			case "page":
-			data = this.getPageConfig();
-			break;
+				data = this.getPageConfig();
+				break;
 		}
 
 		if(this.writeFunc){
@@ -15914,16 +15915,16 @@ class Persistence extends Module{
 				keys.forEach((key)=>{
 					switch(key){
 						case "width":
-						defStore.width = column.getWidth();
-						break;
+							defStore.width = column.getWidth();
+							break;
 						case "visible":
-						defStore.visible = column.visible;
-						break;
+							defStore.visible = column.visible;
+							break;
 
 						default:
-						if(typeof colDef[key] !== "function" && excludedKeys.indexOf(key) === -1){
-							defStore[key] = colDef[key];
-						}
+							if(typeof colDef[key] !== "function" && excludedKeys.indexOf(key) === -1){
+								defStore[key] = colDef[key];
+							}
 					}
 				});
 			}
@@ -16678,6 +16679,7 @@ class ResizeColumns extends Module{
 	
 	reinitializeColumn(column){
 		var frozenOffset = column.modules.frozen ? (column.modules.frozen.marginValue + column.getWidth() + "px") : false;
+		
 		
 		column.cells.forEach((cell) => {
 			if(cell.modules.resize && cell.modules.resize.handleEl){
@@ -17667,39 +17669,39 @@ class SelectRow extends Module{
 		
 		switch(typeof rows){
 			case "undefined":
-			this.table.rowManager.rows.forEach((row) => {
-				this._selectRow(row, true, true);
-			});
+				this.table.rowManager.rows.forEach((row) => {
+					this._selectRow(row, true, true);
+				});
 			
-			this._rowSelectionChanged();
-			break;
+				this._rowSelectionChanged();
+				break;
 			
 			case "string":
 			
-			rowMatch = this.table.rowManager.findRow(rows);
+				rowMatch = this.table.rowManager.findRow(rows);
 			
-			if(rowMatch){
-				this._selectRow(rowMatch, true, true);
-			}else {
-				this.table.rowManager.getRows(rows).forEach((row) => {
-					this._selectRow(row, true, true);
-				});
-			}
+				if(rowMatch){
+					this._selectRow(rowMatch, true, true);
+				}else {
+					this.table.rowManager.getRows(rows).forEach((row) => {
+						this._selectRow(row, true, true);
+					});
+				}
 			
-			this._rowSelectionChanged();
-			break;
+				this._rowSelectionChanged();
+				break;
 			
 			default:
-			if(Array.isArray(rows)){
-				rows.forEach((row) => {
-					this._selectRow(row, true, true);
-				});
+				if(Array.isArray(rows)){
+					rows.forEach((row) => {
+						this._selectRow(row, true, true);
+					});
 				
-				this._rowSelectionChanged();
-			}else {
-				this._selectRow(rows, false, true);
-			}
-			break;
+					this._rowSelectionChanged();
+				}else {
+					this._selectRow(rows, false, true);
+				}
+				break;
 		}
 	}
 	
@@ -17946,13 +17948,13 @@ function string(a, b, aRow, bRow, column, dir, params){
 		//compare valid values
 		switch(typeof params.locale){
 			case "boolean":
-			if(params.locale){
-				locale = this.langLocale();
-			}
-			break;
+				if(params.locale){
+					locale = this.langLocale();
+				}
+				break;
 			case "string":
-			locale = params.locale;
-			break;
+				locale = params.locale;
+				break;
 		}
 
 		return String(a).toLowerCase().localeCompare(String(b).toLowerCase(), locale);
@@ -18049,23 +18051,23 @@ function array(a, b, aRow, bRow, column, dir, params){
 
 		switch(type){
 			case "length":
-			return value.length;
+				return value.length;
 
 			case "sum":
-			return value.reduce(function(c, d){
-				return c + d;
-			});
+				return value.reduce(function(c, d){
+					return c + d;
+				});
 
 			case "max":
-			return Math.max.apply(null, value) ;
+				return Math.max.apply(null, value) ;
 
 			case "min":
-			return Math.min.apply(null, value) ;
+				return Math.min.apply(null, value) ;
 
 			case "avg":
-			return value.reduce(function(c, d){
-				return c + d;
-			}) / value.length;
+				return value.reduce(function(c, d){
+					return c + d;
+				}) / value.length;
 		}
 	}
 
@@ -18242,16 +18244,16 @@ class Sort extends Module{
 
 		switch(typeof column.definition.sorter){
 			case "string":
-			if(Sort.sorters[column.definition.sorter]){
-				sorter = Sort.sorters[column.definition.sorter];
-			}else {
-				console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
-			}
-			break;
+				if(Sort.sorters[column.definition.sorter]){
+					sorter = Sort.sorters[column.definition.sorter];
+				}else {
+					console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
+				}
+				break;
 
 			case "function":
-			sorter = column.definition.sorter;
-			break;
+				sorter = column.definition.sorter;
+				break;
 		}
 
 		column.modules.sort = {
@@ -18274,11 +18276,11 @@ class Sort extends Module{
 			switch(this.table.options.headerSortElement){
 				case "function":
 					//do nothing
-				break;
+					break;
 
 				case "object":
 					arrowEl.appendChild(this.table.options.headerSortElement);
-				break;
+					break;
 					
 				default:
 					arrowEl.innerHTML = this.table.options.headerSortElement;
@@ -18311,15 +18313,15 @@ class Sort extends Module{
 					}else {
 						switch(column.modules.sort.dir){
 							case "asc":
-							dir = "desc";
-							break;
+								dir = "desc";
+								break;
 
 							case "desc":
-							dir = "asc";
-							break;
+								dir = "asc";
+								break;
 
 							default:
-							dir = column.modules.sort.startingDir;
+								dir = column.modules.sort.startingDir;
 						}
 					}
 
@@ -18448,22 +18450,22 @@ class Sort extends Module{
 
 				switch(typeof value){
 					case "undefined":
-					sorter = "string";
-					break;
+						sorter = "string";
+						break;
 
 					case "boolean":
-					sorter = "boolean";
-					break;
+						sorter = "boolean";
+						break;
 
 					default:
-					if(!isNaN(value) && value !== ""){
-						sorter = "number";
-					}else {
-						if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
-							sorter = "alphanum";
+						if(!isNaN(value) && value !== ""){
+							sorter = "number";
+						}else {
+							if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
+								sorter = "alphanum";
+							}
 						}
-					}
-					break;
+						break;
 				}
 			}
 		}
@@ -19063,22 +19065,22 @@ class Validate extends Module{
 		
 		switch(typeof value){
 			case "string":
-			pos = value.indexOf(':');
+				pos = value.indexOf(':');
 			
-			if(pos > -1){
-				type = value.substring(0,pos);
-				params = value.substring(pos+1);
-			}else {
-				type = value;
-			}
+				if(pos > -1){
+					type = value.substring(0,pos);
+					params = value.substring(pos+1);
+				}else {
+					type = value;
+				}
 			
-			return this._buildValidator(type, params);
+				return this._buildValidator(type, params);
 			
 			case "function":
-			return this._buildValidator(value);
+				return this._buildValidator(value);
 			
 			case "object":
-			return this._buildValidator(value.type, value.parameters);
+				return this._buildValidator(value.type, value.parameters);
 		}
 	}
 	
@@ -19486,27 +19488,27 @@ class Renderer extends CoreFeature{
 					case "middle":
 					case "center":
 
-					if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
-						this.elementVertical.scrollTop = this.elementVertical.scrollTop + (rowEl.offsetTop - this.elementVertical.scrollTop) - ((this.elementVertical.scrollHeight - rowEl.offsetTop) / 2);
-					}else {
-						this.elementVertical.scrollTop = this.elementVertical.scrollTop - (this.elementVertical.clientHeight / 2);
-					}
+						if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
+							this.elementVertical.scrollTop = this.elementVertical.scrollTop + (rowEl.offsetTop - this.elementVertical.scrollTop) - ((this.elementVertical.scrollHeight - rowEl.offsetTop) / 2);
+						}else {
+							this.elementVertical.scrollTop = this.elementVertical.scrollTop - (this.elementVertical.clientHeight / 2);
+						}
 
-					break;
+						break;
 
 					case "bottom":
 
-					if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
-						this.elementVertical.scrollTop = this.elementVertical.scrollTop - (this.elementVertical.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
-					}else {
-						this.elementVertical.scrollTop = this.elementVertical.scrollTop - this.elementVertical.clientHeight + rowEl.offsetHeight;
-					}
+						if(this.elementVertical.scrollHeight - this.elementVertical.scrollTop == this.elementVertical.clientHeight){
+							this.elementVertical.scrollTop = this.elementVertical.scrollTop - (this.elementVertical.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
+						}else {
+							this.elementVertical.scrollTop = this.elementVertical.scrollTop - this.elementVertical.clientHeight + rowEl.offsetHeight;
+						}
 
-					break;
+						break;
 
 					case "top":
-					this.elementVertical.scrollTop = rowEl.offsetTop;					
-					break;
+						this.elementVertical.scrollTop = rowEl.offsetTop;					
+						break;
 				}
 
 				resolve();
@@ -20233,32 +20235,32 @@ class ColumnManager extends CoreFeature {
 
 				switch(typeof value){
 					case "undefined":
-					sorter = "string";
-					break;
+						sorter = "string";
+						break;
 
 					case "boolean":
-					sorter = "boolean";
-					break;
+						sorter = "boolean";
+						break;
 
 					case "object":
-					if(Array.isArray(value)){
-						sorter = "array";
-					}else {
-						sorter = "string";
-					}
-					break;
-
-					default:
-					if(!isNaN(value) && value !== ""){
-						sorter = "number";
-					}else {
-						if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
-							sorter = "alphanum";
+						if(Array.isArray(value)){
+							sorter = "array";
 						}else {
 							sorter = "string";
 						}
-					}
-					break;
+						break;
+
+					default:
+						if(!isNaN(value) && value !== ""){
+							sorter = "number";
+						}else {
+							if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
+								sorter = "alphanum";
+							}else {
+								sorter = "string";
+							}
+						}
+						break;
 				}
 
 				col.sorter = sorter;
@@ -20270,31 +20272,31 @@ class ColumnManager extends CoreFeature {
 
 				switch(typeof definitions){
 					case "function":
-					this.table.options.columns = definitions.call(this.table, cols);
-					break;
+						this.table.options.columns = definitions.call(this.table, cols);
+						break;
 
 					case "object":
-					if(Array.isArray(definitions)){
-						cols.forEach((col) => {
-							var match = definitions.find((def) => {
-								return def.field === col.field;
+						if(Array.isArray(definitions)){
+							cols.forEach((col) => {
+								var match = definitions.find((def) => {
+									return def.field === col.field;
+								});
+
+								if(match){
+									Object.assign(col, match);
+								}
 							});
 
-							if(match){
-								Object.assign(col, match);
-							}
-						});
+						}else {
+							cols.forEach((col) => {
+								if(definitions[col.field]){
+									Object.assign(col, definitions[col.field]);
+								}
+							});
+						}
 
-					}else {
-						cols.forEach((col) => {
-							if(definitions[col.field]){
-								Object.assign(col, definitions[col.field]);
-							}
-						});
-					}
-
-					this.table.options.columns = cols;
-					break;
+						this.table.options.columns = cols;
+						break;
 				}
 			}else {
 				this.table.options.columns = cols;
@@ -20618,12 +20620,12 @@ class ColumnManager extends CoreFeature {
 				switch(position){
 					case "middle":
 					case "center":
-					adjust = -this.element.clientWidth / 2;
-					break;
+						adjust = -this.element.clientWidth / 2;
+						break;
 
 					case "right":
-					adjust = colEl.clientWidth - this.headersElement.clientWidth;
-					break;
+						adjust = colEl.clientWidth - this.headersElement.clientWidth;
+						break;
 				}
 
 				//check column visibility
@@ -22111,28 +22113,28 @@ class RowManager extends CoreFeature{
 			
 			case "dataPipeline":
 			
-			for(let i = index; i < this.dataPipeline.length; i++){
-				let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
+				for(let i = index; i < this.dataPipeline.length; i++){
+					let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
 				
-				this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
-			}
+					this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
+				}
 			
-			this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
+				this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
 			
 			case "display":
-			index = 0;
-			this.resetDisplayRows();
+				index = 0;
+				this.resetDisplayRows();
 			
 			case "displayPipeline":
-			for(let i = index; i < this.displayPipeline.length; i++){
-				let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
+				for(let i = index; i < this.displayPipeline.length; i++){
+					let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
 				
-				this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
-			}
+					this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
+				}
 			
 			case "end":
 			//case to handle scenario when trying to skip past end stage
-			this.regenerateRowPositions();
+				this.regenerateRowPositions();
 		}
 	}
 	
@@ -22219,19 +22221,19 @@ class RowManager extends CoreFeature{
 		
 		switch(type){
 			case "active":
-			rows = this.activeRows;
-			break;
+				rows = this.activeRows;
+				break;
 			
 			case "display":
-			rows = this.table.rowManager.getDisplayRows();
-			break;
+				rows = this.table.rowManager.getDisplayRows();
+				break;
 			
 			case "visible":
-			rows = this.getVisibleRows(false, true);
-			break;
+				rows = this.getVisibleRows(false, true);
+				break;
 			
 			default:
-			rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
+				rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
 		}
 		
 		return rows;
@@ -22511,17 +22513,17 @@ class FooterManager extends CoreFeature{
 
 			switch(typeof this.table.options.footerElement){
 				case "string":
-				if(this.table.options.footerElement[0] === "<"){
-					this.containerElement.innerHTML = this.table.options.footerElement;
-				}else {
-					this.external = true;
-					this.containerElement = document.querySelector(this.table.options.footerElement);
-				}
-				break;
+					if(this.table.options.footerElement[0] === "<"){
+						this.containerElement.innerHTML = this.table.options.footerElement;
+					}else {
+						this.external = true;
+						this.containerElement = document.querySelector(this.table.options.footerElement);
+					}
+					break;
 
 				default:
-				this.element = this.table.options.footerElement;
-				break;
+					this.element = this.table.options.footerElement;
+					break;
 			}
 		}
 	}
@@ -22819,36 +22821,36 @@ class InteractionManager extends CoreFeature {
 				switch(key){
 					case "row":
 					case "group":
-					if(listener.components.includes("row") || listener.components.includes("cell") || listener.components.includes("group")){
-						let rows = this.table.rowManager.getVisibleRows(true);
+						if(listener.components.includes("row") || listener.components.includes("cell") || listener.components.includes("group")){
+							let rows = this.table.rowManager.getVisibleRows(true);
 						
-						component = rows.find((row) => {
-							return row.getElement() === target;
-						});
+							component = rows.find((row) => {
+								return row.getElement() === target;
+							});
 						
-						if(targets["row"] && targets["row"].parentNode && targets["row"].parentNode.closest(".tabulator-row")){
-							targets[key] = false;
-						}
-					}
-					break;
-					
-					case "column":
-					if(listener.components.includes("column")){
-						component = this.table.columnManager.findColumn(target);
-					}
-					break
-					
-					case "cell":
-					if(listener.components.includes("cell")){
-						if(targets["row"] instanceof Row){
-							component = targets["row"].findCell(target);
-						}else {	
-							if(targets["row"]){
-								console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?");
+							if(targets["row"] && targets["row"].parentNode && targets["row"].parentNode.closest(".tabulator-row")){
+								targets[key] = false;
 							}
 						}
-					}
-					break;
+						break;
+					
+					case "column":
+						if(listener.components.includes("column")){
+							component = this.table.columnManager.findColumn(target);
+						}
+						break;
+					
+					case "cell":
+						if(listener.components.includes("cell")){
+							if(targets["row"] instanceof Row){
+								component = targets["row"].findCell(target);
+							}else {	
+								if(targets["row"]){
+									console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?");
+								}
+							}
+						}
+						break;
 				}
 			}
 			
@@ -22913,7 +22915,7 @@ class ComponentFunctionBinder{
 			return this.bindings[type][name].bind(null, component);
 		}else {
 			if(name !== "then" && typeof name === "string" && !name.startsWith("_")){
-					console.error("The " + type + " component does not have a " + name + " function, have you checked that you have the correct Tabulator module installed?");
+				console.error("The " + type + " component does not have a " + name + " function, have you checked that you have the correct Tabulator module installed?");
 			}
 		}
 	}
@@ -22982,9 +22984,9 @@ class DataLoader extends CoreFeature{
 					this.clearAlert();
 				}, this.table.options.dataLoaderErrorTimeout);
 			})
-			.finally(() => {
-				this.loading = false;
-			})
+				.finally(() => {
+					this.loading = false;
+				});
 		}else {
 			this.dispatchExternal("dataLoaded", data);
 
@@ -23140,7 +23142,7 @@ class ExternalEventBus {
 			console.log(...args);
 		}
 
-		return this._dispatch(...arguments)
+		return this._dispatch(...arguments);
 	}
 }
 
@@ -23473,7 +23475,7 @@ function fitColumns(columns){
 		}
 
 		function calcShrink(col){
-			return  (calcWidth(col.width) - (colWidth * (col.column.definition.widthShrink || 0)))
+			return  (calcWidth(col.width) - (colWidth * (col.column.definition.widthShrink || 0)));
 		}
 
 		columns.forEach(function(col, i){
@@ -24041,64 +24043,64 @@ class ModuleBinder {
 }
 
 class Alert extends CoreFeature{
-    constructor(table){
-        super(table);
+	constructor(table){
+		super(table);
         
-        this.element = this._createAlertElement();
-        this.msgElement = this._createMsgElement();
-        this.type = null;
+		this.element = this._createAlertElement();
+		this.msgElement = this._createMsgElement();
+		this.type = null;
         
-        this.element.appendChild(this.msgElement);
-    }
+		this.element.appendChild(this.msgElement);
+	}
     
-    _createAlertElement(){
-        var el = document.createElement("div");
-        el.classList.add("tabulator-alert");
-        return el;
-    }
+	_createAlertElement(){
+		var el = document.createElement("div");
+		el.classList.add("tabulator-alert");
+		return el;
+	}
     
-    _createMsgElement(){
-        var el = document.createElement("div");
-        el.classList.add("tabulator-alert-msg");
-        el.setAttribute("role", "alert");
-        return el;
-    }
+	_createMsgElement(){
+		var el = document.createElement("div");
+		el.classList.add("tabulator-alert-msg");
+		el.setAttribute("role", "alert");
+		return el;
+	}
     
-    _typeClass(){
-        return "tabulator-alert-state-" + this.type;
-    }
+	_typeClass(){
+		return "tabulator-alert-state-" + this.type;
+	}
     
-    alert(content, type = "msg"){
-        if(content){
-            this.clear();
+	alert(content, type = "msg"){
+		if(content){
+			this.clear();
             
-            this.type = type;
+			this.type = type;
             
-            while(this.msgElement.firstChild) this.msgElement.removeChild(this.msgElement.firstChild);
+			while(this.msgElement.firstChild) this.msgElement.removeChild(this.msgElement.firstChild);
             
-            this.msgElement.classList.add(this._typeClass());
+			this.msgElement.classList.add(this._typeClass());
             
-            if(typeof content === "function"){
-                content = content();
-            }
+			if(typeof content === "function"){
+				content = content();
+			}
             
-            if(content instanceof HTMLElement){
-                this.msgElement.appendChild(content);
-            }else {
-                this.msgElement.innerHTML = content;
-            }
+			if(content instanceof HTMLElement){
+				this.msgElement.appendChild(content);
+			}else {
+				this.msgElement.innerHTML = content;
+			}
             
-            this.table.element.appendChild(this.element);
-        }
-    }
+			this.table.element.appendChild(this.element);
+		}
+	}
     
-    clear(){
-        if(this.element.parentNode){
-            this.element.parentNode.removeChild(this.element);
-        }
+	clear(){
+		if(this.element.parentNode){
+			this.element.parentNode.removeChild(this.element);
+		}
         
-        this.msgElement.classList.remove(this._typeClass());
-    }
+		this.msgElement.classList.remove(this._typeClass());
+	}
 }
 
 class Tabulator {
@@ -24236,19 +24238,20 @@ class Tabulator {
 		
 		switch(this.options.textDirection){
 			case"auto":
-			if(style.direction !== "rtl"){
-				break;
-			}			
+				if(style.direction !== "rtl"){
+					break;
+				}
+			
 			case "rtl":
-			this.element.classList.add("tabulator-rtl");
-			this.rtl = true;
-			break;
+				this.element.classList.add("tabulator-rtl");
+				this.rtl = true;
+				break;
 			
 			case "ltr":
-			this.element.classList.add("tabulator-ltr");
+				this.element.classList.add("tabulator-ltr");
 			
 			default:
-			this.rtl = false;
+				this.rtl = false;
 		}
 	}
 	
@@ -24492,13 +24495,13 @@ class Tabulator {
 						responses++;
 						
 						row.updateData(item)
-						.then(()=>{
-							responses--;
+							.then(()=>{
+								responses--;
 							
-							if(!responses){
-								resolve();
-							}
-						});
+								if(!responses){
+									resolve();
+								}
+							});
 					}
 				});
 			}else {
@@ -24520,15 +24523,15 @@ class Tabulator {
 			
 			if(data){
 				this.rowManager.addRows(data, pos, index)
-				.then((rows) => {
-					var output = [];
+					.then((rows) => {
+						var output = [];
 					
-					rows.forEach(function(row){
-						output.push(row.getComponent());
+						rows.forEach(function(row){
+							output.push(row.getComponent());
+						});
+					
+						resolve(output);
 					});
-					
-					resolve(output);
-				});
 			}else {
 				console.warn("Update Error - No data provided");
 				reject("Update Error - No data provided");
@@ -24558,24 +24561,24 @@ class Tabulator {
 					
 					if(row){
 						row.updateData(item)
-						.then(()=>{
-							responses--;
-							rows.push(row.getComponent());
+							.then(()=>{
+								responses--;
+								rows.push(row.getComponent());
 							
-							if(!responses){
-								resolve(rows);
-							}
-						});
+								if(!responses){
+									resolve(rows);
+								}
+							});
 					}else {
 						this.rowManager.addRows(item)
-						.then((newRows)=>{
-							responses--;
-							rows.push(newRows[0].getComponent());
+							.then((newRows)=>{
+								responses--;
+								rows.push(newRows[0].getComponent());
 							
-							if(!responses){
-								resolve(rows);
-							}
-						});
+								if(!responses){
+									resolve(rows);
+								}
+							});
 					}
 				});
 			}else {
@@ -24627,7 +24630,7 @@ class Tabulator {
 				foundRows.push(row);
 			}else {
 				console.error("Delete Error - No matching row found:", item);
-				return Promise.reject("Delete Error - No matching row found")
+				return Promise.reject("Delete Error - No matching row found");
 			}
 		}
 		
@@ -24655,9 +24658,9 @@ class Tabulator {
 		}
 		
 		return this.rowManager.addRows(data, pos, index)
-		.then((rows)=>{
-			return rows[0].getComponent();
-		});
+			.then((rows)=>{
+				return rows[0].getComponent();
+			});
 	}
 	
 	//update a row if it exitsts otherwise create it
@@ -24672,14 +24675,14 @@ class Tabulator {
 		
 		if(row){
 			return row.updateData(data)
-			.then(()=>{
-				return row.getComponent();
-			})
+				.then(()=>{
+					return row.getComponent();
+				});
 		}else {
 			return this.rowManager.addRows(data)
-			.then((rows)=>{
-				return rows[0].getComponent();
-			})
+				.then((rows)=>{
+					return rows[0].getComponent();
+				});
 		}
 	}
 	
@@ -24695,9 +24698,9 @@ class Tabulator {
 		
 		if(row){
 			return row.updateData(data)
-			.then(()=>{
-				return Promise.resolve(row.getComponent());
-			})
+				.then(()=>{
+					return Promise.resolve(row.getComponent());
+				});
 		}else {
 			console.warn("Update Error - No matching row found:", index);
 			return Promise.reject("Update Error - No matching row found");
@@ -24709,7 +24712,7 @@ class Tabulator {
 		var row = this.rowManager.findRow(index);
 		
 		if(row){
-			return this.rowManager.scrollToRow(row, position, ifVisible)
+			return this.rowManager.scrollToRow(row, position, ifVisible);
 		}else {
 			console.warn("Scroll Error - No matching row found:", index);
 			return Promise.reject("Scroll Error - No matching row found");
@@ -24819,9 +24822,9 @@ class Tabulator {
 		this.initGuard();
 		
 		return this.columnManager.addColumn(definition, before, column)
-		.then((column) => {
-			return column.getComponent();
-		});
+			.then((column) => {
+				return column.getComponent();
+			});
 	}
 	
 	deleteColumn(field){
@@ -24843,7 +24846,7 @@ class Tabulator {
 		this.initGuard();
 		
 		if(column){
-			return column.updateDefinition(definition)
+			return column.updateDefinition(definition);
 		}else {
 			console.warn("Column Update Error - No matching column found:", field);
 			return Promise.reject();
@@ -24873,7 +24876,7 @@ class Tabulator {
 			var column = this.columnManager.findColumn(field);
 			
 			if(column){
-				return this.columnManager.scrollToColumn(column, position, ifVisible)
+				return this.columnManager.scrollToColumn(column, position, ifVisible);
 			}else {
 				console.warn("Scroll Error - No matching column found:", field);
 				return Promise.reject("Scroll Error - No matching column found");
@@ -24960,6 +24963,7 @@ new ModuleBinder(Tabulator);
 //tabulator with all modules installed
 
 class TabulatorFull extends Tabulator {}
+
 //bind modules and static functionality
 new ModuleBinder(TabulatorFull, modules);
 

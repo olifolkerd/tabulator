@@ -88,16 +88,16 @@ class Sort extends Module{
 
 		switch(typeof column.definition.sorter){
 			case "string":
-			if(Sort.sorters[column.definition.sorter]){
-				sorter = Sort.sorters[column.definition.sorter];
-			}else{
-				console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
-			}
-			break;
+				if(Sort.sorters[column.definition.sorter]){
+					sorter = Sort.sorters[column.definition.sorter];
+				}else{
+					console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
+				}
+				break;
 
 			case "function":
-			sorter = column.definition.sorter;
-			break;
+				sorter = column.definition.sorter;
+				break;
 		}
 
 		column.modules.sort = {
@@ -120,11 +120,11 @@ class Sort extends Module{
 			switch(this.table.options.headerSortElement){
 				case "function":
 					//do nothing
-				break;
+					break;
 
 				case "object":
 					arrowEl.appendChild(this.table.options.headerSortElement);
-				break;
+					break;
 					
 				default:
 					arrowEl.innerHTML = this.table.options.headerSortElement;
@@ -157,15 +157,15 @@ class Sort extends Module{
 					}else{
 						switch(column.modules.sort.dir){
 							case "asc":
-							dir = "desc";
-							break;
+								dir = "desc";
+								break;
 
 							case "desc":
-							dir = "asc";
-							break;
+								dir = "asc";
+								break;
 
 							default:
-							dir = column.modules.sort.startingDir;
+								dir = column.modules.sort.startingDir;
 						}
 					}
 
@@ -294,22 +294,22 @@ class Sort extends Module{
 
 				switch(typeof value){
 					case "undefined":
-					sorter = "string";
-					break;
+						sorter = "string";
+						break;
 
 					case "boolean":
-					sorter = "boolean";
-					break;
+						sorter = "boolean";
+						break;
 
 					default:
-					if(!isNaN(value) && value !== ""){
-						sorter = "number";
-					}else{
-						if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
-							sorter = "alphanum";
+						if(!isNaN(value) && value !== ""){
+							sorter = "number";
+						}else{
+							if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
+								sorter = "alphanum";
+							}
 						}
-					}
-					break;
+						break;
 				}
 			}
 		}

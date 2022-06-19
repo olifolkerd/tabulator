@@ -38,4 +38,4 @@ export default function (cell, formatterParams, onRendered) {
 	}else{
 		console.error("Format Error - 'datetimediff' formatter is dependant on luxon.js");
 	}
-};
+}

@@ -2,7 +2,7 @@ export default class OptionsList {
 	constructor(table, msgType, defaults = {}){
 		this.table = table;
 		this.msgType = msgType;
-		this.registeredDefaults = Object.assign({}, defaults)
+		this.registeredDefaults = Object.assign({}, defaults);
 	}
 
 	register(option, value){
@@ -17,7 +17,7 @@ export default class OptionsList {
 		if(userOptions.debugInvalidOptions !== false || this.table.options.debugInvalidOptions){
 			for (var key in userOptions){
 				if(!output.hasOwnProperty(key)){
-					console.warn("Invalid " + this.msgType + " option:", key)
+					console.warn("Invalid " + this.msgType + " option:", key);
 				}
 			}
 		}

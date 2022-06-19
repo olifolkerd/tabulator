@@ -96,4 +96,4 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	});
 
 	return input;
-};
+}

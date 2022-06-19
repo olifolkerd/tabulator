@@ -8,7 +8,7 @@ class Accessor extends Module{
 	constructor(table){
 		super(table);
 
-		this.allowedTypes = ["", "data", "download", "clipboard", "print", "htmlOutput"] //list of accessor types
+		this.allowedTypes = ["", "data", "download", "clipboard", "print", "htmlOutput"]; //list of accessor types
 
 		this.registerColumnOption("accessor");
 		this.registerColumnOption("accessorParams");
@@ -47,7 +47,7 @@ class Accessor extends Module{
 					config[key] = {
 						accessor:accessor,
 						params: column.definition[key + "Params"] || {},
-					}
+					};
 				}
 			}
 		});
@@ -63,16 +63,16 @@ class Accessor extends Module{
 		//set column accessor
 		switch(typeof value){
 			case "string":
-			if(Accessor.accessors[value]){
-				accessor = Accessor.accessors[value]
-			}else{
-				console.warn("Accessor Error - No such accessor found, ignoring: ", value);
-			}
-			break;
+				if(Accessor.accessors[value]){
+					accessor = Accessor.accessors[value];
+				}else{
+					console.warn("Accessor Error - No such accessor found, ignoring: ", value);
+				}
+				break;
 
 			case "function":
-			accessor = value;
-			break;
+				accessor = value;
+				break;
 		}
 
 		return accessor;

@@ -116,15 +116,15 @@ class Clipboard extends Module{
 					}else{
 						switch(typeof col.value){
 							case "object":
-							value = JSON.stringify(col.value);
-							break;
+								value = JSON.stringify(col.value);
+								break;
 
 							case "undefined":
-							value = "";
-							break;
+								value = "";
+								break;
 
 							default:
-							value = col.value;
+								value = col.value;
 						}
 					}
 				}
@@ -177,32 +177,32 @@ class Clipboard extends Module{
 
 		switch(typeof action){
 			case "string":
-			this.pasteAction = Clipboard.pasteActions[action];
+				this.pasteAction = Clipboard.pasteActions[action];
 
-			if(!this.pasteAction){
-				console.warn("Clipboard Error - No such paste action found:", action);
-			}
-			break;
+				if(!this.pasteAction){
+					console.warn("Clipboard Error - No such paste action found:", action);
+				}
+				break;
 
 			case "function":
-			this.pasteAction = action;
-			break;
+				this.pasteAction = action;
+				break;
 		}
 	}
 
 	setPasteParser(parser){
 		switch(typeof parser){
 			case "string":
-			this.pasteParser = Clipboard.pasteParsers[parser];
+				this.pasteParser = Clipboard.pasteParsers[parser];
 
-			if(!this.pasteParser){
-				console.warn("Clipboard Error - No such paste parser found:", parser);
-			}
-			break;
+				if(!this.pasteParser){
+					console.warn("Clipboard Error - No such paste parser found:", parser);
+				}
+				break;
 
 			case "function":
-			this.pasteParser = parser;
-			break;
+				this.pasteParser = parser;
+				break;
 		}
 	}
 

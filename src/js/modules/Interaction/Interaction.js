@@ -61,7 +61,7 @@ class Interaction extends Module{
 			groupTap:"group",
 			groupDblTap:"group",
 			groupTapHold:"group",
-		}
+		};
 
 		this.subscribers = {};
 
@@ -90,7 +90,7 @@ class Interaction extends Module{
 				tapDbl:null,
 				tapHold:null,
 			}
-		}
+		};
 
 		this.registerColumnOption("headerClick");
 		this.registerColumnOption("headerDblClick");
@@ -121,8 +121,8 @@ class Interaction extends Module{
 	initialize(){
 		this.initializeExternalEvents();
 
-		this.subscribe("column-init", this.initializeColumn.bind(this))
-		this.subscribe("cell-dblclick", this.cellContentsSelectionFixer.bind(this))
+		this.subscribe("column-init", this.initializeColumn.bind(this));
+		this.subscribe("cell-dblclick", this.cellContentsSelectionFixer.bind(this));
 	}
 
 	cellContentsSelectionFixer(e, cell){
@@ -150,7 +150,7 @@ class Interaction extends Module{
 
 	initializeExternalEvents(){
 		for(let key in this.eventMap){
-			this.subscriptionChangeExternal(key, this.subscriptionChanged.bind(this, key))
+			this.subscriptionChangeExternal(key, this.subscriptionChanged.bind(this, key));
 		}
 	}
 
@@ -247,44 +247,44 @@ class Interaction extends Module{
 
 		switch(action){
 			case "start":
-			watchers.tap = true;
+				watchers.tap = true;
 
-			clearTimeout(watchers.tapHold);
-
-			watchers.tapHold = setTimeout(() => {
 				clearTimeout(watchers.tapHold);
-				watchers.tapHold = null;
 
-				watchers.tap = null;
-				clearTimeout(watchers.tapDbl);
-				watchers.tapDbl = null;
+				watchers.tapHold = setTimeout(() => {
+					clearTimeout(watchers.tapHold);
+					watchers.tapHold = null;
 
-				this.dispatchEvent(type + "TapHold", e,  component);
-			}, 1000);
-			break;
-
-			case "end":
-			if(watchers.tap){
-
-				watchers.tap = null;
-				this.dispatchEvent(type + "Tap", e,  component);
-			}
-
-			if(watchers.tapDbl){
-				clearTimeout(watchers.tapDbl);
-				watchers.tapDbl = null;
-
-				this.dispatchEvent(type + "DblTap", e,  component);
-			}else{
-				watchers.tapDbl = setTimeout(() => {
+					watchers.tap = null;
 					clearTimeout(watchers.tapDbl);
 					watchers.tapDbl = null;
-				}, 300);
-			}
 
-			clearTimeout(watchers.tapHold);
-			watchers.tapHold = null;
-			break;
+					this.dispatchEvent(type + "TapHold", e,  component);
+				}, 1000);
+				break;
+
+			case "end":
+				if(watchers.tap){
+
+					watchers.tap = null;
+					this.dispatchEvent(type + "Tap", e,  component);
+				}
+
+				if(watchers.tapDbl){
+					clearTimeout(watchers.tapDbl);
+					watchers.tapDbl = null;
+
+					this.dispatchEvent(type + "DblTap", e,  component);
+				}else{
+					watchers.tapDbl = setTimeout(() => {
+						clearTimeout(watchers.tapDbl);
+						watchers.tapDbl = null;
+					}, 300);
+				}
+
+				clearTimeout(watchers.tapHold);
+				watchers.tapHold = null;
+				break;
 		}
 	}
 

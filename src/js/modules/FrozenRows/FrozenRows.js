@@ -72,7 +72,7 @@ class FrozenRows extends Module{
 
 			this.rows.push(row);
 
-			this.refreshData(false, "display")
+			this.refreshData(false, "display");
 
 			this.styleRows();
 
@@ -92,7 +92,7 @@ class FrozenRows extends Module{
 
 			this.table.rowManager.adjustTableSize();
 
-			this.refreshData(false, "display")
+			this.refreshData(false, "display");
 
 			if(this.rows.length){
 				this.styleRows();

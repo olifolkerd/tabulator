@@ -92,7 +92,7 @@ class Page extends Module{
 			this.subscribe("table-built", this.calculatePageSizes.bind(this));
 			this.subscribe("data-processed", this.initialLoadComplete.bind(this));
 			
-			this.initializeProgressive(this.table.options.progressiveLoad)
+			this.initializeProgressive(this.table.options.progressiveLoad);
 			
 			if(this.table.options.progressiveLoad === "scroll"){
 				this.subscribe("scroll-vertical", this.scrollVertical.bind(this));
@@ -121,7 +121,7 @@ class Page extends Module{
 			}
 		}
 		
-		return {index, top}
+		return {index, top};
 	}
 	
 	calculatePageSizes(){
@@ -183,7 +183,7 @@ class Page extends Module{
 			row = this.rowManager.findRow(row);
 			
 			if(row){
-				return this.setPageToRow(row)
+				return this.setPageToRow(row);
 			}
 		}
 		
@@ -211,7 +211,7 @@ class Page extends Module{
 			
 			if(diff < margin){
 				this.nextPage()
-				.catch(() => {}); //consume the exception thrown when on the last page
+					.catch(() => {}); //consume the exception thrown when on the last page
 			}
 		}
 	}
@@ -382,19 +382,19 @@ class Page extends Module{
 			
 			//click bindings
 			this.firstBut.addEventListener("click", () => {
-				this.setPage(1)
+				this.setPage(1);
 			});
 			
 			this.prevBut.addEventListener("click", () => {
-				this.previousPage()
+				this.previousPage();
 			});
 			
 			this.nextBut.addEventListener("click", () => {
-				this.nextPage()
+				this.nextPage();
 			});
 			
 			this.lastBut.addEventListener("click", () => {
-				this.setPage(this.max)
+				this.setPage(this.max);
 			});
 			
 			if(this.table.options.paginationElement){
@@ -415,7 +415,7 @@ class Page extends Module{
 				
 				this.pageSizeSelect.addEventListener("change", (e) => {
 					this.setPageSize(this.pageSizeSelect.value == "true" ? true : this.pageSizeSelect.value);
-					this.setPage(1)
+					this.setPage(1);
 				});
 			}
 			
@@ -429,7 +429,7 @@ class Page extends Module{
 			if(!this.table.options.paginationElement && !hidden){
 				if(this.table.options.paginationCounter){
 
-					paginationCounterHolder 
+					paginationCounterHolder; 
 
 					if(this.table.options.paginationCounterElement){
 						if(this.table.options.paginationCounterElement instanceof HTMLElement){
@@ -517,20 +517,20 @@ class Page extends Module{
 	setPage(page){
 		switch(page){
 			case "first":
-			return this.setPage(1);
-			break;
+				return this.setPage(1);
+				break;
 			
 			case "prev":
-			return this.previousPage();
-			break;
+				return this.previousPage();
+				break;
 			
 			case "next":
-			return this.nextPage();
-			break;
+				return this.nextPage();
+				break;
 			
 			case "last":
-			return this.setPage(this.max);
-			break;
+				return this.setPage(this.max);
+				break;
 		}
 		
 		page = parseInt(page);
@@ -554,7 +554,7 @@ class Page extends Module{
 		if(index > -1){
 			var page = this.size === true ? 1 : Math.ceil((index + 1) / this.size);
 			
-			return this.setPage(page)
+			return this.setPage(page);
 		}else{
 			console.warn("Pagination Error - Requested row is not visible");
 			return Promise.reject();
@@ -594,25 +594,25 @@ class Page extends Module{
 			
 			switch(typeof content){
 				case "object":
-				if(content instanceof Node){
+					if(content instanceof Node){
 					
-					//clear previous cell contents
-					while(this.pageCounterElement.firstChild) this.pageCounterElement.removeChild(this.pageCounterElement.firstChild);
+						//clear previous cell contents
+						while(this.pageCounterElement.firstChild) this.pageCounterElement.removeChild(this.pageCounterElement.firstChild);
 					
-					this.pageCounterElement.appendChild(content);
-				}else{
-					this.pageCounterElement.innerHTML = "";
+						this.pageCounterElement.appendChild(content);
+					}else{
+						this.pageCounterElement.innerHTML = "";
 					
-					if(content != null){
-						console.warn("Page Counter Error - Page Counter has returned a type of object, the only valid page counter object return is an instance of Node, the page counter returned:", content);
+						if(content != null){
+							console.warn("Page Counter Error - Page Counter has returned a type of object, the only valid page counter object return is an instance of Node, the page counter returned:", content);
+						}
 					}
-				}
-				break;
+					break;
 				case "undefined":
-				this.pageCounterElement.innerHTML = "";
-				break;
+					this.pageCounterElement.innerHTML = "";
+					break;
 				default:
-				this.pageCounterElement.innerHTML = content;
+					this.pageCounterElement.innerHTML = content;
 			}
 		}
 	}
@@ -671,7 +671,7 @@ class Page extends Module{
 		button.textContent = page;
 		
 		button.addEventListener("click", (e) => {
-			this.setPage(page)
+			this.setPage(page);
 		});
 		
 		return button;
@@ -684,7 +684,7 @@ class Page extends Module{
 			
 			this.trackChanges();
 			
-			return this.trigger()
+			return this.trigger();
 			
 		}else{
 			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
@@ -783,32 +783,32 @@ class Page extends Module{
 		
 		switch(this.mode){
 			case "local":
-			left = this.table.rowManager.scrollLeft;
+				left = this.table.rowManager.scrollLeft;
 			
-			this.refreshData();
-			this.table.rowManager.scrollHorizontal(left);
+				this.refreshData();
+				this.table.rowManager.scrollHorizontal(left);
 			
-			this.dispatchExternal("pageLoaded", this.getPage());
+				this.dispatchExternal("pageLoaded", this.getPage());
 			
-			return Promise.resolve();
-			break;
+				return Promise.resolve();
+				break;
 			
 			case "remote":
-			this.dataChanging = true;
-			return this.reloadData(null)
-			.finally(() => {
-				this.dataChanging = false;
-			})
-			break;
+				this.dataChanging = true;
+				return this.reloadData(null)
+					.finally(() => {
+						this.dataChanging = false;
+					});
+				break;
 			
 			case "progressive_load":
 			case "progressive_scroll":
-			return this.reloadData(null, true);
-			break;
+				return this.reloadData(null, true);
+				break;
 			
 			default:
-			console.warn("Pagination Error - no such pagination mode:", this.mode);
-			return Promise.reject();
+				console.warn("Pagination Error - no such pagination mode:", this.mode);
+				return Promise.reject();
 		}
 	}
 	
@@ -828,34 +828,34 @@ class Page extends Module{
 				switch(this.mode){
 					case "progressive_load":
 					
-					if(this.page == 1){
-						this.table.rowManager.setData(data.data, false, this.page == 1)
-					}else{
-						this.table.rowManager.addRows(data.data);
-					}
+						if(this.page == 1){
+							this.table.rowManager.setData(data.data, false, this.page == 1);
+						}else{
+							this.table.rowManager.addRows(data.data);
+						}
 					
-					if(this.page < this.max){
-						setTimeout(() => {
-							this.nextPage();
-						}, this.table.options.progressiveLoadDelay);
-					}
-					break;
-					
-					case "progressive_scroll":
-					data = this.page === 1 ? data.data : this.table.rowManager.getData().concat(data.data);
-					
-					this.table.rowManager.setData(data, this.page !== 1, this.page == 1);
-					
-					margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
-					
-					if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
 						if(this.page < this.max){
 							setTimeout(() => {
 								this.nextPage();
-							});
+							}, this.table.options.progressiveLoadDelay);
 						}
-					}
-					break;
+						break;
+					
+					case "progressive_scroll":
+						data = this.page === 1 ? data.data : this.table.rowManager.getData().concat(data.data);
+					
+						this.table.rowManager.setData(data, this.page !== 1, this.page == 1);
+					
+						margin = this.table.options.progressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
+					
+						if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
+							if(this.page < this.max){
+								setTimeout(() => {
+									this.nextPage();
+								});
+							}
+						}
+						break;
 				}
 				
 				return false;

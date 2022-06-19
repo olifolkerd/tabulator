@@ -191,7 +191,7 @@ class Persistence extends Module{
 	}
 
 	setColumnLayout(layout){
-		this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout))
+		this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout));
 		return true;
 	}
 
@@ -309,16 +309,16 @@ class Persistence extends Module{
 		return columns.find(function(col){
 			switch(type){
 				case "group":
-				return col.title === subject.title && col.columns.length === subject.columns.length;
-				break;
+					return col.title === subject.title && col.columns.length === subject.columns.length;
+					break;
 
 				case "field":
-				return col.field === subject.field;
-				break;
+					return col.field === subject.field;
+					break;
 
 				case "object":
-				return col === subject;
-				break;
+					return col === subject;
+					break;
 			}
 		});
 	}
@@ -329,24 +329,24 @@ class Persistence extends Module{
 
 		switch(type){
 			case "columns":
-			data = this.parseColumns(this.table.columnManager.getColumns())
-			break;
+				data = this.parseColumns(this.table.columnManager.getColumns());
+				break;
 
 			case "filter":
-			data = this.table.modules.filter.getFilters();
-			break;
+				data = this.table.modules.filter.getFilters();
+				break;
 
 			case "sort":
-			data = this.validateSorters(this.table.modules.sort.getSort());
-			break;
+				data = this.validateSorters(this.table.modules.sort.getSort());
+				break;
 
 			case "group":
-			data = this.getGroupConfig();
-			break;
+				data = this.getGroupConfig();
+				break;
 
 			case "page":
-			data = this.getPageConfig();
-			break;
+				data = this.getPageConfig();
+				break;
 		}
 
 		if(this.writeFunc){
@@ -429,16 +429,16 @@ class Persistence extends Module{
 				keys.forEach((key)=>{
 					switch(key){
 						case "width":
-						defStore.width = column.getWidth();
-						break;
+							defStore.width = column.getWidth();
+							break;
 						case "visible":
-						defStore.visible = column.visible;
-						break;
+							defStore.visible = column.visible;
+							break;
 
 						default:
-						if(typeof colDef[key] !== "function" && excludedKeys.indexOf(key) === -1){
-							defStore[key] = colDef[key];
-						}
+							if(typeof colDef[key] !== "function" && excludedKeys.indexOf(key) === -1){
+								defStore[key] = colDef[key];
+							}
 					}
 				});
 			}

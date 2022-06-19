@@ -34,4 +34,4 @@ export default function(cell, formatterParams, onRendered){
 	}
 
 	return after ? sign + integer + decimal + symbol : sign + symbol + integer + decimal;
-};
+}

@@ -41,4 +41,4 @@ export default function(as, bs, aRow, bRow, column, dir, params){
 	}
 
 	return emptyAlign;
-};
+}

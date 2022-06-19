@@ -93,7 +93,7 @@ export default class RowManager extends CoreFeature{
 	}
 	
 	initialize(){
-		this.initializePlaceholder()
+		this.initializePlaceholder();
 		this.initializeRenderer();
 		
 		//initialize manager
@@ -580,23 +580,23 @@ export default class RowManager extends CoreFeature{
 	
 	registerDataPipelineHandler(handler, priority){
 		if(typeof priority !== "undefined"){
-			this.dataPipeline.push({handler, priority})
+			this.dataPipeline.push({handler, priority});
 			this.dataPipeline.sort((a, b) => {
 				return a.priority - b.priority;
 			});
 		}else{
-			console.error("Data pipeline handlers must have a priority in order to be registered")
+			console.error("Data pipeline handlers must have a priority in order to be registered");
 		}
 	}
 	
 	registerDisplayPipelineHandler(handler, priority){
 		if(typeof priority !== "undefined"){
-			this.displayPipeline.push({handler, priority})
+			this.displayPipeline.push({handler, priority});
 			this.displayPipeline.sort((a, b) => {
 				return a.priority - b.priority;
 			});
 		}else{
-			console.error("Display pipeline handlers must have a priority in order to be registered")
+			console.error("Display pipeline handlers must have a priority in order to be registered");
 		}
 	}
 	
@@ -640,7 +640,7 @@ export default class RowManager extends CoreFeature{
 						}
 					}
 				}else{
-					console.error("Unable to refresh data, invalid handler provided", handler)
+					console.error("Unable to refresh data, invalid handler provided", handler);
 					return;
 				}
 			}
@@ -700,28 +700,28 @@ export default class RowManager extends CoreFeature{
 			
 			case "dataPipeline":
 			
-			for(let i = index; i < this.dataPipeline.length; i++){
-				let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
+				for(let i = index; i < this.dataPipeline.length; i++){
+					let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
 				
-				this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
-			}
+					this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
+				}
 			
-			this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
+				this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
 			
 			case "display":
-			index = 0;
-			this.resetDisplayRows();
+				index = 0;
+				this.resetDisplayRows();
 			
 			case "displayPipeline":
-			for(let i = index; i < this.displayPipeline.length; i++){
-				let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
+				for(let i = index; i < this.displayPipeline.length; i++){
+					let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
 				
-				this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
-			}
+					this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
+				}
 			
 			case "end":
 			//case to handle scenario when trying to skip past end stage
-			this.regenerateRowPositions();
+				this.regenerateRowPositions();
 		}
 	}
 	
@@ -765,7 +765,7 @@ export default class RowManager extends CoreFeature{
 			this.displayRows[index] = displayRows;
 			output = true;
 		}else{
-			this.displayRows.push(displayRows)
+			this.displayRows.push(displayRows);
 			output = index = this.displayRows.length -1;
 		}
 		
@@ -808,19 +808,19 @@ export default class RowManager extends CoreFeature{
 		
 		switch(type){
 			case "active":
-			rows = this.activeRows;
-			break;
+				rows = this.activeRows;
+				break;
 			
 			case "display":
-			rows = this.table.rowManager.getDisplayRows();
-			break;
+				rows = this.table.rowManager.getDisplayRows();
+				break;
 			
 			case "visible":
-			rows = this.getVisibleRows(false, true);
-			break;
+				rows = this.getVisibleRows(false, true);
+				break;
 			
 			default:
-			rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
+				rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
 		}
 		
 		return rows;
@@ -1020,7 +1020,7 @@ export default class RowManager extends CoreFeature{
 		this.redrawBlock = false;
 		
 		if(this.redrawBlockRestoreConfig){
-			this.refreshActiveData(this.redrawBlockRestoreConfig.handler, this.redrawBlockRestoreConfig.skipStage, this.redrawBlockRestoreConfig.renderInPosition)
+			this.refreshActiveData(this.redrawBlockRestoreConfig.handler, this.redrawBlockRestoreConfig.skipStage, this.redrawBlockRestoreConfig.renderInPosition);
 			
 			this.redrawBlockRestoreConfig = false;
 		}else{

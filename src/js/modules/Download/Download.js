@@ -139,8 +139,8 @@ class Download extends Module{
 	commsReceived(table, action, data){
 		switch(action){
 			case "intercept":
-			this.download(data.type, "", data.options, data.active, data.intercept);
-			break;
+				this.download(data.type, "", data.options, data.active, data.intercept);
+				break;
 		}
 	}
 }

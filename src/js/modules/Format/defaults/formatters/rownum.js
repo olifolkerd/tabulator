@@ -4,7 +4,7 @@ export default function(cell, formatterParams, onRendered){
 
 	row.watchPosition((position) => {
 		content.innerText = position;
-	})
+	});
 	
 	return content;
-};
+}

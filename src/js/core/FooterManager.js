@@ -39,17 +39,17 @@ export default class FooterManager extends CoreFeature{
 
 			switch(typeof this.table.options.footerElement){
 				case "string":
-				if(this.table.options.footerElement[0] === "<"){
-					this.containerElement.innerHTML = this.table.options.footerElement;
-				}else{
-					this.external = true;
-					this.containerElement = document.querySelector(this.table.options.footerElement);
-				}
-				break;
+					if(this.table.options.footerElement[0] === "<"){
+						this.containerElement.innerHTML = this.table.options.footerElement;
+					}else{
+						this.external = true;
+						this.containerElement = document.querySelector(this.table.options.footerElement);
+					}
+					break;
 
 				default:
-				this.element = this.table.options.footerElement;
-				break;
+					this.element = this.table.options.footerElement;
+					break;
 			}
 		}
 	}
@@ -97,6 +97,6 @@ export default class FooterManager extends CoreFeature{
 	}
 
 	redraw(){
-		this.dispatch("footer-redraw")
+		this.dispatch("footer-redraw");
 	}
 }

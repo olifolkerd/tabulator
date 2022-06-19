@@ -37,4 +37,4 @@ export default function(columns){
 			this.table.modules.responsiveLayout.update();
 		}
 	}
-};
+}

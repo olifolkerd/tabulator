@@ -59,7 +59,7 @@ class Tabulator {
 			//delay table creation to allow event bindings immediately after the constructor
 			setTimeout(() => {
 				this._create();
-			})
+			});
 		}
 		
 		TableRegistry.register(this); //register table for inter-device communication
@@ -93,7 +93,7 @@ class Tabulator {
 		
 		this.bindModules();
 		
-		this.options = this.optionsList.generate(Tabulator.defaultOptions, options)
+		this.options = this.optionsList.generate(Tabulator.defaultOptions, options);
 		
 		this._clearObjectPointers();
 		
@@ -155,20 +155,20 @@ class Tabulator {
 		
 		switch(this.options.textDirection){
 			case"auto":
-			if(style.direction !== "rtl"){
-				break;
-			};
+				if(style.direction !== "rtl"){
+					break;
+				}
 			
 			case "rtl":
-			this.element.classList.add("tabulator-rtl");
-			this.rtl = true;
-			break;
+				this.element.classList.add("tabulator-rtl");
+				this.rtl = true;
+				break;
 			
 			case "ltr":
-			this.element.classList.add("tabulator-ltr");
+				this.element.classList.add("tabulator-ltr");
 			
 			default:
-			this.rtl = false;
+				this.rtl = false;
 		}
 	}
 	
@@ -247,7 +247,7 @@ class Tabulator {
 		//initialize core modules
 		this.modulesCore.forEach((mod) => {
 			mod.initialize();
-		})
+		});
 		
 		//build table elements
 		element.appendChild(this.columnManager.getElement());
@@ -412,13 +412,13 @@ class Tabulator {
 						responses++;
 						
 						row.updateData(item)
-						.then(()=>{
-							responses--;
+							.then(()=>{
+								responses--;
 							
-							if(!responses){
-								resolve();
-							}
-						});
+								if(!responses){
+									resolve();
+								}
+							});
 					}
 				});
 			}else{
@@ -440,15 +440,15 @@ class Tabulator {
 			
 			if(data){
 				this.rowManager.addRows(data, pos, index)
-				.then((rows) => {
-					var output = [];
+					.then((rows) => {
+						var output = [];
 					
-					rows.forEach(function(row){
-						output.push(row.getComponent());
+						rows.forEach(function(row){
+							output.push(row.getComponent());
+						});
+					
+						resolve(output);
 					});
-					
-					resolve(output);
-				});
 			}else{
 				console.warn("Update Error - No data provided");
 				reject("Update Error - No data provided");
@@ -478,24 +478,24 @@ class Tabulator {
 					
 					if(row){
 						row.updateData(item)
-						.then(()=>{
-							responses--;
-							rows.push(row.getComponent());
+							.then(()=>{
+								responses--;
+								rows.push(row.getComponent());
 							
-							if(!responses){
-								resolve(rows);
-							}
-						});
+								if(!responses){
+									resolve(rows);
+								}
+							});
 					}else{
 						this.rowManager.addRows(item)
-						.then((newRows)=>{
-							responses--;
-							rows.push(newRows[0].getComponent());
+							.then((newRows)=>{
+								responses--;
+								rows.push(newRows[0].getComponent());
 							
-							if(!responses){
-								resolve(rows);
-							}
-						});
+								if(!responses){
+									resolve(rows);
+								}
+							});
 					}
 				});
 			}else{
@@ -547,7 +547,7 @@ class Tabulator {
 				foundRows.push(row);
 			}else{
 				console.error("Delete Error - No matching row found:", item);
-				return Promise.reject("Delete Error - No matching row found")
+				return Promise.reject("Delete Error - No matching row found");
 				break;
 			}
 		}
@@ -559,7 +559,7 @@ class Tabulator {
 		
 		//delete rows
 		foundRows.forEach((row) =>{
-			row.delete()
+			row.delete();
 		});
 		
 		this.rowManager.reRenderInPosition();
@@ -576,9 +576,9 @@ class Tabulator {
 		}
 		
 		return this.rowManager.addRows(data, pos, index)
-		.then((rows)=>{
-			return rows[0].getComponent();
-		});
+			.then((rows)=>{
+				return rows[0].getComponent();
+			});
 	}
 	
 	//update a row if it exitsts otherwise create it
@@ -593,14 +593,14 @@ class Tabulator {
 		
 		if(row){
 			return row.updateData(data)
-			.then(()=>{
-				return row.getComponent();
-			})
+				.then(()=>{
+					return row.getComponent();
+				});
 		}else{
 			return this.rowManager.addRows(data)
-			.then((rows)=>{
-				return rows[0].getComponent();
-			})
+				.then((rows)=>{
+					return rows[0].getComponent();
+				});
 		}
 	}
 	
@@ -616,9 +616,9 @@ class Tabulator {
 		
 		if(row){
 			return row.updateData(data)
-			.then(()=>{
-				return Promise.resolve(row.getComponent());
-			})
+				.then(()=>{
+					return Promise.resolve(row.getComponent());
+				});
 		}else{
 			console.warn("Update Error - No matching row found:", index);
 			return Promise.reject("Update Error - No matching row found");
@@ -630,7 +630,7 @@ class Tabulator {
 		var row = this.rowManager.findRow(index);
 		
 		if(row){
-			return this.rowManager.scrollToRow(row, position, ifVisible)
+			return this.rowManager.scrollToRow(row, position, ifVisible);
 		}else{
 			console.warn("Scroll Error - No matching row found:", index);
 			return Promise.reject("Scroll Error - No matching row found");
@@ -740,9 +740,9 @@ class Tabulator {
 		this.initGuard();
 		
 		return this.columnManager.addColumn(definition, before, column)
-		.then((column) => {
-			return column.getComponent();
-		});
+			.then((column) => {
+				return column.getComponent();
+			});
 	}
 	
 	deleteColumn(field){
@@ -764,7 +764,7 @@ class Tabulator {
 		this.initGuard();
 		
 		if(column){
-			return column.updateDefinition(definition)
+			return column.updateDefinition(definition);
 		}else{
 			console.warn("Column Update Error - No matching column found:", field);
 			return Promise.reject();
@@ -779,7 +779,7 @@ class Tabulator {
 		
 		if(fromColumn){
 			if(toColumn){
-				this.columnManager.moveColumn(fromColumn, toColumn, after)
+				this.columnManager.moveColumn(fromColumn, toColumn, after);
 			}else{
 				console.warn("Move Error - No matching column found:", toColumn);
 			}
@@ -794,7 +794,7 @@ class Tabulator {
 			var column = this.columnManager.findColumn(field);
 			
 			if(column){
-				return this.columnManager.scrollToColumn(column, position, ifVisible)
+				return this.columnManager.scrollToColumn(column, position, ifVisible);
 			}else{
 				console.warn("Scroll Error - No matching column found:", field);
 				return Promise.reject("Scroll Error - No matching column found");
@@ -832,7 +832,7 @@ class Tabulator {
 		var args = Array.from(arguments),
 		key = args.shift();
 		
-		this.externalEvents.dispatch(...arguments)
+		this.externalEvents.dispatch(...arguments);
 	}
 
 	//////////////////// Alerts ///////////////////

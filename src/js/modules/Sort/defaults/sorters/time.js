@@ -7,4 +7,4 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	}
 
 	return datetime.call(this, a, b, aRow, bRow, column, dir, params);
-};
+}

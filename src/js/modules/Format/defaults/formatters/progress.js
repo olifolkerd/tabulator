@@ -19,60 +19,60 @@ export default function(cell, formatterParams, onRendered){ //progress bar
 	//set bar color
 	switch(typeof formatterParams.color){
 		case "string":
-		color = formatterParams.color;
-		break;
-		case "function":
-		color = formatterParams.color(value);
-		break;
-		case "object":
-		if(Array.isArray(formatterParams.color)){
-			var unit = 100 / formatterParams.color.length;
-			var index = Math.floor(percentValue / unit);
-
-			index = Math.min(index, formatterParams.color.length - 1);
-			index = Math.max(index, 0);
-			color = formatterParams.color[index];
+			color = formatterParams.color;
 			break;
-		}
+		case "function":
+			color = formatterParams.color(value);
+			break;
+		case "object":
+			if(Array.isArray(formatterParams.color)){
+				var unit = 100 / formatterParams.color.length;
+				var index = Math.floor(percentValue / unit);
+
+				index = Math.min(index, formatterParams.color.length - 1);
+				index = Math.max(index, 0);
+				color = formatterParams.color[index];
+				break;
+			}
 		default:
-		color = "#2DC214";
+			color = "#2DC214";
 	}
 
 	//generate legend
 	switch(typeof formatterParams.legend){
 		case "string":
-		legend = formatterParams.legend;
-		break;
+			legend = formatterParams.legend;
+			break;
 		case "function":
-		legend = formatterParams.legend(value);
-		break;
+			legend = formatterParams.legend(value);
+			break;
 		case "boolean":
-		legend = value;
-		break;
+			legend = value;
+			break;
 		default:
-		legend = false;
+			legend = false;
 	}
 
 	//set legend color
 	switch(typeof formatterParams.legendColor){
 		case "string":
-		legendColor = formatterParams.legendColor;
-		break;
+			legendColor = formatterParams.legendColor;
+			break;
 		case "function":
-		legendColor = formatterParams.legendColor(value);
-		break;
+			legendColor = formatterParams.legendColor(value);
+			break;
 		case "object":
-		if(Array.isArray(formatterParams.legendColor)){
-			var unit = 100 / formatterParams.legendColor.length;
-			var index = Math.floor(percentValue / unit);
+			if(Array.isArray(formatterParams.legendColor)){
+				var unit = 100 / formatterParams.legendColor.length;
+				var index = Math.floor(percentValue / unit);
 
-			index = Math.min(index, formatterParams.legendColor.length - 1);
-			index = Math.max(index, 0);
-			legendColor = formatterParams.legendColor[index];
-		}
-		break;
+				index = Math.min(index, formatterParams.legendColor.length - 1);
+				index = Math.max(index, 0);
+				legendColor = formatterParams.legendColor[index];
+			}
+			break;
 		default:
-		legendColor = "#000";
+			legendColor = "#000";
 	}
 
 	element.style.minWidth = "30px";
@@ -131,4 +131,4 @@ export default function(cell, formatterParams, onRendered){ //progress bar
 	});
 
 	return "";
-};
+}

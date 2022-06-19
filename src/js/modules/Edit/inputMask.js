@@ -26,33 +26,33 @@ export default function maskInput(el, options){
 			}else{
 				switch(mask[index]){
 					case maskLetter:
-					if(char.toUpperCase() == char.toLowerCase()){
-						e.preventDefault();
-						e.stopPropagation();
-						success = false;
-						return false;
-					}
-					break;
+						if(char.toUpperCase() == char.toLowerCase()){
+							e.preventDefault();
+							e.stopPropagation();
+							success = false;
+							return false;
+						}
+						break;
 
 					case maskNumber:
-					if(isNaN(char)){
-						e.preventDefault();
-						e.stopPropagation();
-						success = false;
-						return false;
-					}
-					break;
+						if(isNaN(char)){
+							e.preventDefault();
+							e.stopPropagation();
+							success = false;
+							return false;
+						}
+						break;
 
 					case maskWildcard:
-					break;
+						break;
 
 					default:
-					if(char !== mask[index]){
-						e.preventDefault();
-						e.stopPropagation();
-						success = false;
-						return false;
-					}
+						if(char !== mask[index]){
+							e.preventDefault();
+							e.stopPropagation();
+							success = false;
+							return false;
+						}
 				}
 			}
 

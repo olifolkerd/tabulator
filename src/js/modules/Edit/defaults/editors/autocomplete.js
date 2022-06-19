@@ -6,7 +6,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 	editorParams.autocomplete = true;
 
-    var list = new List(this, cell, onRendered, success, cancel, editorParams);
+	var list = new List(this, cell, onRendered, success, cancel, editorParams);
 
-    return list.input;
+	return list.input;
 }

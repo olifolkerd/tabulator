@@ -459,7 +459,7 @@ export default class VirtualDomHorizontal extends Renderer{
 							try {
 								row.getElement().removeChild(cell.getElement());
 							} catch (ex) {
-								console.warn("Could not removeColRight", ex.message)
+								console.warn("Could not removeColRight", ex.message);
 							}
 						}
 					});
@@ -496,7 +496,7 @@ export default class VirtualDomHorizontal extends Renderer{
 							try {
 								row.getElement().removeChild(cell.getElement());
 							} catch (ex) {
-								console.warn("Could not removeColLeft", ex.message)
+								console.warn("Could not removeColLeft", ex.message);
 							}
 						}
 					});

@@ -213,55 +213,55 @@ class Filter extends Module{
 
 					switch(typeof column.definition.headerFilterFunc){
 						case "string":
-						if(Filter.filters[column.definition.headerFilterFunc]){
-							type = column.definition.headerFilterFunc;
+							if(Filter.filters[column.definition.headerFilterFunc]){
+								type = column.definition.headerFilterFunc;
+								filterFunc = function(data){
+									var params = column.definition.headerFilterFuncParams || {};
+									var fieldVal = column.getFieldValue(data);
+
+									params = typeof params === "function" ? params(value, fieldVal, data) : params;
+
+									return Filter.filters[column.definition.headerFilterFunc](value, fieldVal, data, params);
+								};
+							}else{
+								console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
+							}
+							break;
+
+						case "function":
 							filterFunc = function(data){
 								var params = column.definition.headerFilterFuncParams || {};
 								var fieldVal = column.getFieldValue(data);
 
 								params = typeof params === "function" ? params(value, fieldVal, data) : params;
 
-								return Filter.filters[column.definition.headerFilterFunc](value, fieldVal, data, params);
+								return column.definition.headerFilterFunc(value, fieldVal, data, params);
 							};
-						}else{
-							console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
-						}
-						break;
 
-						case "function":
-						filterFunc = function(data){
-							var params = column.definition.headerFilterFuncParams || {};
-							var fieldVal = column.getFieldValue(data);
-
-							params = typeof params === "function" ? params(value, fieldVal, data) : params;
-
-							return column.definition.headerFilterFunc(value, fieldVal, data, params);
-						};
-
-						type = filterFunc;
-						break;
+							type = filterFunc;
+							break;
 					}
 
 					if(!filterFunc){
 						switch(filterType){
 							case "partial":
-							filterFunc = function(data){
-								var colVal = column.getFieldValue(data);
+								filterFunc = function(data){
+									var colVal = column.getFieldValue(data);
 
-								if(typeof colVal !== 'undefined' && colVal !== null){
-									return String(colVal).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
-								}else{
-									return false;
-								}
-							};
-							type = "like";
-							break;
+									if(typeof colVal !== 'undefined' && colVal !== null){
+										return String(colVal).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
+									}else{
+										return false;
+									}
+								};
+								type = "like";
+								break;
 
 							default:
-							filterFunc = function(data){
-								return column.getFieldValue(data) == value;
-							};
-							type = "=";
+								filterFunc = function(data){
+									return column.getFieldValue(data) == value;
+								};
+								type = "=";
 						}
 					}
 
@@ -323,40 +323,40 @@ class Filter extends Module{
 			//set column editor
 			switch(typeof column.definition.headerFilter){
 				case "string":
-				if(self.table.modules.edit.editors[column.definition.headerFilter]){
-					editor = self.table.modules.edit.editors[column.definition.headerFilter];
+					if(self.table.modules.edit.editors[column.definition.headerFilter]){
+						editor = self.table.modules.edit.editors[column.definition.headerFilter];
 
-					if((column.definition.headerFilter === "tick" || column.definition.headerFilter === "tickCross") && !column.definition.headerFilterEmptyCheck){
-						column.modules.filter.emptyFunc = function(value){
-							return value !== true && value !== false;
-						};
-					}
-				}else{
-					console.warn("Filter Error - Cannot build header filter, No such editor found: ", column.definition.editor);
-				}
-				break;
-
-				case "function":
-				editor = column.definition.headerFilter;
-				break;
-
-				case "boolean":
-				if(column.modules.edit && column.modules.edit.editor){
-					editor = column.modules.edit.editor;
-				}else{
-					if(column.definition.formatter && self.table.modules.edit.editors[column.definition.formatter]){
-						editor = self.table.modules.edit.editors[column.definition.formatter];
-
-						if((column.definition.formatter === "tick" || column.definition.formatter === "tickCross") && !column.definition.headerFilterEmptyCheck){
+						if((column.definition.headerFilter === "tick" || column.definition.headerFilter === "tickCross") && !column.definition.headerFilterEmptyCheck){
 							column.modules.filter.emptyFunc = function(value){
 								return value !== true && value !== false;
 							};
 						}
 					}else{
-						editor = self.table.modules.edit.editors["input"];
+						console.warn("Filter Error - Cannot build header filter, No such editor found: ", column.definition.editor);
 					}
-				}
-				break;
+					break;
+
+				case "function":
+					editor = column.definition.headerFilter;
+					break;
+
+				case "boolean":
+					if(column.modules.edit && column.modules.edit.editor){
+						editor = column.modules.edit.editor;
+					}else{
+						if(column.definition.formatter && self.table.modules.edit.editors[column.definition.formatter]){
+							editor = self.table.modules.edit.editors[column.definition.formatter];
+
+							if((column.definition.formatter === "tick" || column.definition.formatter === "tickCross") && !column.definition.headerFilterEmptyCheck){
+								column.modules.filter.emptyFunc = function(value){
+									return value !== true && value !== false;
+								};
+							}
+						}else{
+							editor = self.table.modules.edit.editors["input"];
+						}
+					}
+					break;
 			}
 
 			if(editor){
@@ -453,26 +453,26 @@ class Filter extends Module{
 							((column.definition.editor === 'autocomplete' ||
 								column.definition.editor === 'tickCross') &&
 							column.definition.headerFilter === true)
-							)
-						) {
+						)
+					) {
 						editorElement.addEventListener("keyup", searchTrigger);
-					editorElement.addEventListener("search", searchTrigger);
+						editorElement.addEventListener("search", searchTrigger);
 
 
-					//update number filtered columns on change
-					if(column.modules.filter.attrType == "number"){
-						editorElement.addEventListener("change", function(e){
-							success(editorElement.value);
-						});
-					}
+						//update number filtered columns on change
+						if(column.modules.filter.attrType == "number"){
+							editorElement.addEventListener("change", function(e){
+								success(editorElement.value);
+							});
+						}
 
-					//change text inputs to search inputs to allow for clearing of field
-					if(column.modules.filter.attrType == "text" && this.table.browser !== "ie"){
-						editorElement.setAttribute("type", "search");
+						//change text inputs to search inputs to allow for clearing of field
+						if(column.modules.filter.attrType == "text" && this.table.browser !== "ie"){
+							editorElement.setAttribute("type", "search");
 						// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
-					}
+						}
 
-				}
+					}
 
 					//prevent input and select elements from propegating click to column sorters etc
 					if(column.modules.filter.tagType == "input" || column.modules.filter.tagType == "select" || column.modules.filter.tagType == "textarea"){
@@ -624,7 +624,7 @@ class Filter extends Module{
 
 		if(typeof filter.field == "function"){
 			filterFunc = function(data){
-				return filter.field(data, filter.type || {})// pass params to custom filter function
+				return filter.field(data, filter.type || {});// pass params to custom filter function
 			};
 		}else{
 
@@ -698,7 +698,7 @@ class Filter extends Module{
 			if(Array.isArray(filter)){
 				output.push(this.filtersToArray(filter, ajax));
 			}else{
-				item = {field:filter.field, type:filter.type, value:filter.value}
+				item = {field:filter.field, type:filter.type, value:filter.value};
 
 				if(ajax){
 					if(typeof item.type == "function"){

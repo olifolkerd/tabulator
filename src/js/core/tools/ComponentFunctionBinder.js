@@ -12,7 +12,7 @@ export default class ComponentFunctionBinder{
 		}
 
 		if(this.bindings[type][funcName]){
-			console.warn("Unable to bind component handler, a matching function name is already bound", type, funcName, handler)
+			console.warn("Unable to bind component handler, a matching function name is already bound", type, funcName, handler);
 		}else{
 			this.bindings[type][funcName] = handler;
 		}
@@ -23,7 +23,7 @@ export default class ComponentFunctionBinder{
 			return this.bindings[type][name].bind(null, component);
 		}else{
 			if(name !== "then" && typeof name === "string" && !name.startsWith("_")){
-					console.error("The " + type + " component does not have a " + name + " function, have you checked that you have the correct Tabulator module installed?")
+				console.error("The " + type + " component does not have a " + name + " function, have you checked that you have the correct Tabulator module installed?");
 			}
 		}
 	}

@@ -34,4 +34,4 @@ export default function(cell, formatterParams, onRendered){
 	}else{
 		console.error("Format Error - 'datetime' formatter is dependant on luxon.js");
 	}
-};
+}

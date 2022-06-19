@@ -78,7 +78,7 @@ export default class Bundler{
 		var builds = ["jquery_wrapper.js"];
 
 		builds.forEach((build) => {
-			fs.copySync("./src/js/builds/" + build, "./dist/js/" + build)
+			fs.copySync("./src/js/builds/" + build, "./dist/js/" + build);
 		});
 	}
 
@@ -155,6 +155,6 @@ export default class Bundler{
 		        exports: "default",
 		        sourcemap: true,
 		    },
-		})
+		});
 	}
 }

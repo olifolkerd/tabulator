@@ -77,10 +77,10 @@ class Edit extends Module{
 					cell.getElement().firstChild.blur();
 
 					if(newRow === true){
-						newRow = this.table.addRow({})
+						newRow = this.table.addRow({});
 					}else{
 						if(typeof newRow == "function"){
-							newRow = this.table.addRow(newRow(cell.row.getComponent()))
+							newRow = this.table.addRow(newRow(cell.row.getComponent()));
 						}else{
 							newRow = this.table.addRow(Object.assign({}, newRow));
 						}
@@ -89,7 +89,7 @@ class Edit extends Module{
 					newRow.then(() => {
 						setTimeout(() => {
 							cell.getComponent().navigateNext();
-						})
+						});
 					});
 				}
 			}
@@ -358,30 +358,30 @@ class Edit extends Module{
 		//set column editor
 		switch(typeof column.definition.editor){
 			case "string":
-			if(this.editors[column.definition.editor]){
-				config.editor = this.editors[column.definition.editor];
-			}else{
-				console.warn("Editor Error - No such editor found: ", column.definition.editor);
-			}
-			break;
+				if(this.editors[column.definition.editor]){
+					config.editor = this.editors[column.definition.editor];
+				}else{
+					console.warn("Editor Error - No such editor found: ", column.definition.editor);
+				}
+				break;
 
 			case "function":
-			config.editor = column.definition.editor;
-			break;
+				config.editor = column.definition.editor;
+				break;
 
 			case "boolean":
-			if(column.definition.editor === true){
-				if(typeof column.definition.formatter !== "function"){
-					if(this.editors[column.definition.formatter]){
-						config.editor = this.editors[column.definition.formatter];
+				if(column.definition.editor === true){
+					if(typeof column.definition.formatter !== "function"){
+						if(this.editors[column.definition.formatter]){
+							config.editor = this.editors[column.definition.formatter];
+						}else{
+							config.editor = this.editors["input"];
+						}
 					}else{
-						config.editor = this.editors["input"];
+						console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 					}
-				}else{
-					console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 				}
-			}
-			break;
+				break;
 		}
 
 		if(config.editor){
@@ -590,12 +590,12 @@ class Edit extends Module{
 
 			switch(typeof cell.column.modules.edit.check){
 				case "function":
-				allowEdit = cell.column.modules.edit.check(cell.getComponent());
-				break;
+					allowEdit = cell.column.modules.edit.check(cell.getComponent());
+					break;
 
 				case "boolean":
-				allowEdit = cell.column.modules.edit.check;
-				break;
+					allowEdit = cell.column.modules.edit.check;
+					break;
 			}
 
 			if(allowEdit || forceEdit){

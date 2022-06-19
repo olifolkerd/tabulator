@@ -13,7 +13,6 @@ module.exports = {
 		"ecmaVersion": "latest",
 		"sourceType": "module"
 	},
-	"plugins": ["only-warn"],
 	"rules": {
 		"semi": "error",
 		"indent": ["error", "tab", {VariableDeclarator:0, "SwitchCase": 1}],

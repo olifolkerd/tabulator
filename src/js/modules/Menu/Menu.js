@@ -75,7 +75,7 @@ class Menu extends Module{
 		if(def.headerContextMenu && !this.columnSubscribers.headerContextMenu){
 			this.columnSubscribers.headerContextMenu = this.loadMenuTableColumnEvent.bind(this, "headerContextMenu");
 			this.subscribe("column-contextmenu", this.columnSubscribers.headerContextMenu);
-			this.table.on("headerTapHold", this.loadMenuTableColumnEvent.bind(this, "headerContextMenu"))
+			this.table.on("headerTapHold", this.loadMenuTableColumnEvent.bind(this, "headerContextMenu"));
 		}
 		
 		if(def.headerClickMenu && !this.columnSubscribers.headerClickMenu){
@@ -91,7 +91,7 @@ class Menu extends Module{
 		if(def.contextMenu && !this.columnSubscribers.contextMenu){
 			this.columnSubscribers.contextMenu = this.loadMenuTableCellEvent.bind(this, "contextMenu");
 			this.subscribe("cell-contextmenu", this.columnSubscribers.contextMenu);
-			this.table.on("cellTapHold", this.loadMenuTableCellEvent.bind(this, "contextMenu"))
+			this.table.on("cellTapHold", this.loadMenuTableCellEvent.bind(this, "contextMenu"));
 		}
 		
 		if(def.clickMenu && !this.columnSubscribers.clickMenu){
@@ -188,7 +188,7 @@ class Menu extends Module{
 			}else{
 				this.nestedMenuBlock = setTimeout(() => {
 					this.nestedMenuBlock = false;
-				}, 100)
+				}, 100);
 			}
 			
 			if(this.rootPopup){
@@ -271,7 +271,7 @@ class Menu extends Module{
 
 			this.currentComponent = component;
 
-			this.dispatchExternal("menuOpened", component.getComponent())
+			this.dispatchExternal("menuOpened", component.getComponent());
 		}
 	}
 }

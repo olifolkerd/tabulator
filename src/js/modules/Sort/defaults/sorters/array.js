@@ -10,28 +10,28 @@ export default function(a, b, aRow, bRow, column, dir, params){
 
 		switch(type){
 			case "length":
-			return value.length;
-			break;
+				return value.length;
+				break;
 
 			case "sum":
-			return value.reduce(function(c, d){
-				return c + d;
-			});
-			break;
+				return value.reduce(function(c, d){
+					return c + d;
+				});
+				break;
 
 			case "max":
-			return Math.max.apply(null, value) ;
-			break;
+				return Math.max.apply(null, value) ;
+				break;
 
 			case "min":
-			return Math.min.apply(null, value) ;
-			break;
+				return Math.min.apply(null, value) ;
+				break;
 
 			case "avg":
-			return value.reduce(function(c, d){
-				return c + d;
-			}) / value.length;
-			break;
+				return value.reduce(function(c, d){
+					return c + d;
+				}) / value.length;
+				break;
 		}
 	}
 
@@ -55,4 +55,4 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	}
 
 	return emptyAlign;
-};
+}

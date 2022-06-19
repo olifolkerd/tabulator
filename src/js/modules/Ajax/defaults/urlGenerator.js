@@ -41,4 +41,4 @@ export default function(url, config, params){
 	}
 
 	return url;
-};
+}

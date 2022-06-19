@@ -31,20 +31,20 @@ export default function(list, options, setFileContents){
 
 		switch(row.type){
 			case "header":
-			header.push(parseRow(row));
-			break;
+				header.push(parseRow(row));
+				break;
 
 			case "group":
-			body.push(parseRow(row, rowGroupStyles));
-			break;
+				body.push(parseRow(row, rowGroupStyles));
+				break;
 
 			case "calc":
-			body.push(parseRow(row, rowCalcStyles));
-			break;
+				body.push(parseRow(row, rowCalcStyles));
+				break;
 
 			case "row":
-			body.push(parseRow(row));
-			break;
+				body.push(parseRow(row));
+				break;
 		}
 	});
 
@@ -57,12 +57,12 @@ export default function(list, options, setFileContents){
 			if(col){
 				switch(typeof col.value){
 					case "object":
-					col.value = col.value !== null ? JSON.stringify(col.value) : "";
-					break;
+						col.value = col.value !== null ? JSON.stringify(col.value) : "";
+						break;
 
 					case "undefined":
-					col.value = "";
-					break;
+						col.value = "";
+						break;
 				}
 
 				cell = {
@@ -110,4 +110,4 @@ export default function(list, options, setFileContents){
 	}
 
 	setFileContents(doc.output("arraybuffer"), "application/pdf");
-};
+}

@@ -63,24 +63,24 @@ class Export extends Module{
 			switch(range){
 				case true:
 				case "visible":
-				rows = this.table.rowManager.getVisibleRows(false, true);
-				break;
+					rows = this.table.rowManager.getVisibleRows(false, true);
+					break;
 
 				case "all":
-				rows = this.table.rowManager.rows;
-				break;
+					rows = this.table.rowManager.rows;
+					break;
 
 				case "selected":
-				rows = this.table.modules.selectRow.selectedRows;
-				break;
+					rows = this.table.modules.selectRow.selectedRows;
+					break;
 
 				case "active":
 				default:
-				if(this.table.options.pagination){
-					rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
-				}else{
-					rows = this.table.rowManager.getDisplayRows();
-				}
+					if(this.table.options.pagination){
+						rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
+					}else{
+						rows = this.table.rowManager.getDisplayRows();
+					}
 			}
 		}
 
@@ -251,16 +251,16 @@ class Export extends Module{
 		rows = rows.filter((row) => {
 			switch(row.type){
 				case "group":
-				return this.config.rowGroups !== false;
-				break;
+					return this.config.rowGroups !== false;
+					break;
 
 				case "calc":
-				return this.config.columnCalcs !== false;
-				break;
+					return this.config.columnCalcs !== false;
+					break;
 
 				case "row":
-				return !(this.table.options.dataTree && this.config.dataTree === false && row.modules.dataTree.parent);
-				break;
+					return !(this.table.options.dataTree && this.config.dataTree === false && row.modules.dataTree.parent);
+					break;
 			}
 
 			return true;
@@ -273,20 +273,20 @@ class Export extends Module{
 
 			switch(row.type){
 				case "group":
-				indent = row.level;
-				exportCols.push(new ExportColumn(row.key, row.getComponent(), columns.length, 1));
-				break;
+					indent = row.level;
+					exportCols.push(new ExportColumn(row.key, row.getComponent(), columns.length, 1));
+					break;
 
 				case "calc" :
 				case "row" :
-				columns.forEach((col) => {
-					exportCols.push(new ExportColumn(col._column.getFieldValue(rowData), col, 1, 1));
-				});
+					columns.forEach((col) => {
+						exportCols.push(new ExportColumn(col._column.getFieldValue(rowData), col, 1, 1));
+					});
 
-				if(this.table.options.dataTree && this.config.dataTree !== false){
-					indent = row.modules.dataTree.index;
-				}
-				break;
+					if(this.table.options.dataTree && this.config.dataTree !== false){
+						indent = row.modules.dataTree.index;
+					}
+					break;
 			}
 
 			exportRows.push(new ExportRow(row.type, exportCols, row.getComponent(), indent));
@@ -328,22 +328,22 @@ class Export extends Module{
 		list.forEach((row, i) => {
 			switch(row.type){
 				case "header":
-				headerEl.appendChild(this.genereateHeaderElement(row, setup, styles));
-				break;
+					headerEl.appendChild(this.genereateHeaderElement(row, setup, styles));
+					break;
 
 				case "group":
-				bodyEl.appendChild(this.genereateGroupElement(row, setup, styles));
-				break;
+					bodyEl.appendChild(this.genereateGroupElement(row, setup, styles));
+					break;
 
 				case "calc":
-				bodyEl.appendChild(this.genereateCalcElement(row, setup, styles));
-				break;
+					bodyEl.appendChild(this.genereateCalcElement(row, setup, styles));
+					break;
 
 				case "row":
-				let rowEl = this.genereateRowElement(row, setup, styles);
-				this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
-				bodyEl.appendChild(rowEl);
-				break;
+					let rowEl = this.genereateRowElement(row, setup, styles);
+					this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+					bodyEl.appendChild(rowEl);
+					break;
 			}
 		});
 
@@ -516,15 +516,15 @@ class Export extends Module{
 				}else{
 					switch(typeof value){
 						case "object":
-						value = value !== null ? JSON.stringify(value) : "";
-						break;
+							value = value !== null ? JSON.stringify(value) : "";
+							break;
 
 						case "undefined":
-						value = "";
-						break;
+							value = "";
+							break;
 
 						default:
-						value = value;
+							value = value;
 					}
 				}
 

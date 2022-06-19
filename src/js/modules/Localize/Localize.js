@@ -62,7 +62,7 @@ class Localize extends Module{
 	_setLangProp(lang, values){
 		for(let key in values){
 			if(lang[key] && typeof lang[key] == "object"){
-				this._setLangProp(lang[key], values[key])
+				this._setLangProp(lang[key], values[key]);
 			}else{
 				lang[key] = values[key];
 			}

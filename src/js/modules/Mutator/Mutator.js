@@ -67,16 +67,16 @@ class Mutator extends Module{
 		//set column mutator
 		switch(typeof value){
 			case "string":
-			if(Mutator.mutators[value]){
-				mutator = Mutator.mutators[value];
-			}else{
-				console.warn("Mutator Error - No such mutator found, ignoring: ", value);
-			}
-			break;
+				if(Mutator.mutators[value]){
+					mutator = Mutator.mutators[value];
+				}else{
+					console.warn("Mutator Error - No such mutator found, ignoring: ", value);
+				}
+				break;
 
 			case "function":
-			mutator = value;
-			break;
+				mutator = value;
+				break;
 		}
 
 		return mutator;
