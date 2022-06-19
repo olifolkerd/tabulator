@@ -27,8 +27,6 @@ export default function(list, options, setFileContents){
 
 	//parse row list
 	list.forEach((row) => {
-		var item = {};
-
 		switch(row.type){
 			case "header":
 				header.push(parseRow(row));

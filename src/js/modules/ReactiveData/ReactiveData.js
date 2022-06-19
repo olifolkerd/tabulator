@@ -27,7 +27,7 @@ class ReactiveData extends Module{
 
 	watchData(data){
 		var self = this,
-		pushFunc, version;
+		version;
 
 		this.currentVersion ++;
 

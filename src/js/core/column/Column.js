@@ -173,8 +173,7 @@ class Column extends CoreFeature{
 
 	//build header element for header
 	_buildColumnHeader(){
-		var def = this.definition,
-		table = this.table;
+		var def = this.definition;
 
 		this.dispatch("column-layout", this);
 
@@ -187,10 +186,10 @@ class Column extends CoreFeature{
 			}
 		}
 
-		//asign additional css classes to column header
+		//assign additional css classes to column header
 		if(def.cssClass){
-			var classeNames = def.cssClass.split(" ");
-			classeNames.forEach((className) => {
+			var classNames = def.cssClass.split(" ");
+			classNames.forEach((className) => {
 				this.element.classList.add(className);
 			});
 		}
@@ -220,9 +219,6 @@ class Column extends CoreFeature{
 	}
 
 	_buildColumnHeaderContent(){
-		var def = this.definition,
-		table = this.table;
-
 		var contentElement = document.createElement("div");
 		contentElement.classList.add("tabulator-col-content");
 
@@ -240,8 +236,7 @@ class Column extends CoreFeature{
 
 	//build title element of column
 	_buildColumnHeaderTitle(){
-		var def = this.definition,
-		title;
+		var def = this.definition;
 
 		var titleHolderElement = document.createElement("div");
 		titleHolderElement.classList.add("tabulator-col-title");
@@ -313,8 +308,8 @@ class Column extends CoreFeature{
 
 		//asign additional css classes to column header
 		if(this.definition.cssClass){
-			var classeNames = this.definition.cssClass.split(" ");
-			classeNames.forEach((className) => {
+			var classNames = this.definition.cssClass.split(" ");
+			classNames.forEach((className) => {
 				this.element.classList.add(className);
 			});
 		}
@@ -443,13 +438,13 @@ class Column extends CoreFeature{
 		}
 	}
 
-	//// Retreive Column Information ////
+	//// Retrieve Column Information ////
 	//return column header element
 	getElement(){
 		return this.element;
 	}
 
-	//return colunm group element
+	//return column group element
 	getGroupElement(){
 		return this.groupElement;
 	}
@@ -742,8 +737,6 @@ class Column extends CoreFeature{
 
 	delete(){
 		return new Promise((resolve, reject) => {
-			var index;
-
 			if(this.isGroup){
 				this.columns.forEach(function(column){
 					column.delete();

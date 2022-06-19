@@ -1,5 +1,4 @@
 import Module from '../../core/Module.js';
-import Helpers from '../../core/tools/Helpers.js';
 
 import Cell from '../../core/cell/Cell.js';
 import Column from '../../core/column/Column.js';
@@ -126,6 +125,8 @@ class Interaction extends Module{
 	}
 
 	cellContentsSelectionFixer(e, cell){
+		var range;
+
 		if(this.table.modExists("edit")){
 			if (this.table.modules.edit.currentCell === this){
 				return; //prevent instant selection of editor content
@@ -136,11 +137,11 @@ class Interaction extends Module{
 
 		try{
 			if (document.selection) { // IE
-				var range = document.body.createTextRange();
+				range = document.body.createTextRange();
 				range.moveToElementText(this.element);
 				range.select();
 			} else if (window.getSelection) {
-				var range = document.createRange();
+				range = document.createRange();
 				range.selectNode(this.element);
 				window.getSelection().removeAllRanges();
 				window.getSelection().addRange(range);
@@ -155,8 +156,6 @@ class Interaction extends Module{
 	}
 
 	subscriptionChanged(key, added){
-		var index;
-
 		if(added){
 			if(!this.subscribers[key]){
 				if(this.eventMap[key].includes("-")){

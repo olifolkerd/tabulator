@@ -510,7 +510,7 @@ export default class Edit{
 		var placeholder = document.createElement("div");
         
 		if(typeof contents === "function"){
-			contents = contents(cell.getComponent(), this.listEl);
+			contents = contents(this.cell.getComponent(), this.listEl);
 		}
         
 		if(contents){
@@ -726,9 +726,8 @@ export default class Edit{
 	}
     
 	_filterOptions(){
-		var filterFunc = this.params.filterFunc || this._defaultFilterFunc;
-		var term = this.input.value;
-		var results = [];
+		var filterFunc = this.params.filterFunc || this._defaultFilterFunc,
+		term = this.input.value;
         
 		if(term){
 			this.filtered = true;
@@ -762,7 +761,7 @@ export default class Edit{
 	}
     
 	_defaultFilterFunc(term, label, value, item){
-		var term = String(term).toLowerCase();
+		term = String(term).toLowerCase();
         
 		if(label !== null || typeof label !== "undefined"){
 			if(String(label).toLowerCase().indexOf(term) > -1 || String(value).toLowerCase(term).indexOf() > -1){

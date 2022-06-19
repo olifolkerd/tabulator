@@ -518,19 +518,15 @@ class Page extends Module{
 		switch(page){
 			case "first":
 				return this.setPage(1);
-				break;
-			
+	
 			case "prev":
 				return this.previousPage();
-				break;
 			
 			case "next":
 				return this.nextPage();
-				break;
 			
 			case "last":
 				return this.setPage(this.max);
-				break;
 		}
 		
 		page = parseInt(page);
@@ -791,7 +787,6 @@ class Page extends Module{
 				this.dispatchExternal("pageLoaded", this.getPage());
 			
 				return Promise.resolve();
-				break;
 			
 			case "remote":
 				this.dataChanging = true;
@@ -799,12 +794,10 @@ class Page extends Module{
 					.finally(() => {
 						this.dataChanging = false;
 					});
-				break;
 			
 			case "progressive_load":
 			case "progressive_scroll":
 				return this.reloadData(null, true);
-				break;
 			
 			default:
 				console.warn("Pagination Error - no such pagination mode:", this.mode);
@@ -813,7 +806,7 @@ class Page extends Module{
 	}
 	
 	_parseRemoteData(data){
-		var left, data, margin;
+		var margin;
 		
 		if(typeof data.last_page === "undefined"){
 			console.warn("Remote Pagination Error - Server response missing '" + (this.options("dataReceiveParams").last_page || "last_page") + "' property");

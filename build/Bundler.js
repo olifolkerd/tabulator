@@ -19,9 +19,9 @@ export default class Bundler{
 
 	bundle(){
 		if(this.env){
-		    this.watch(this.env);
+			this.watch(this.env);
 		}else{
-		    this.build();
+			this.build();
 		}
 
 		return this.bundles;
@@ -29,24 +29,24 @@ export default class Bundler{
 
 	watch(env){
 		console.log("Building Dev Package Bundles: ", env);
-	    switch(env){
-	    	case "css":
-	    		this.bundleCSS(false);
-	    	break;
+		switch(env){
+			case "css":
+				this.bundleCSS(false);
+				break;
 
-	    	case "esm":
-	    		this.bundleESM(false);
-	    	break;
+			case "esm":
+				this.bundleESM(false);
+				break;
 
-	    	case "umd":
-	    		this.bundleUMD(false);
-	    	break;
+			case "umd":
+				this.bundleUMD(false);
+				break;
 
-	    	default:
-	    		this.bundleCSS(false);
-	    		this.bundleESM(false);
-	    	break;
-	    }
+			default:
+				this.bundleCSS(false);
+				this.bundleESM(false);
+				break;
+		}
 	}
 
 	build(){
@@ -89,72 +89,72 @@ export default class Bundler{
 			file = file.pop().replace(".scss", (minify ? ".min" : "") + ".css");
 
 			return {
-			    input: inputFile,
-			    output: {
-			        file: "./dist/css/" + file,
-			        format: "es",
-			    },
-			    plugins: [
-			        postcss({
-			            modules: false,
-			            extract: true,
-			            minimize: minify,
-			            sourceMap: true,
-			            plugins: [require('postcss-prettify')]
-			        }),
-			    ]
+				input: inputFile,
+				output: {
+					file: "./dist/css/" + file,
+					format: "es",
+				},
+				plugins: [
+					postcss({
+						modules: false,
+						extract: true,
+						minimize: minify,
+						sourceMap: true,
+						plugins: [require('postcss-prettify')]
+					}),
+				]
 			};
 		}));
 	}
 
 	bundleESM(minify){
 		this.bundles.push({
-		    input:"src/js/builds/esm.js",
-		    plugins: [
-		        nodeResolve(),
-		        minify ? terser() : null,
-		        license({
-		            banner: {
-		                commentStyle:"none",
-		                content:this.version,
-		            },
-		        }),
-		    ],
-		    output: [
-		        {
-		            file: "dist/js/tabulator_esm" + (minify ? ".min" : "") + ".js",
-		            format: "esm",
-		            exports: "named",
-		            sourcemap: true,
-		        },
-		    ],
+			input:"src/js/builds/esm.js",
+			plugins: [
+				nodeResolve(),
+				minify ? terser() : null,
+				license({
+					banner: {
+						commentStyle:"none",
+						content:this.version,
+					},
+				}),
+			],
+			output: [
+				{
+					file: "dist/js/tabulator_esm" + (minify ? ".min" : "") + ".js",
+					format: "esm",
+					exports: "named",
+					sourcemap: true,
+				},
+			],
 		});
 	}
 
 	bundleUMD(minify){
 		this.bundles.push({
-		    input:"src/js/builds/usd.js",
-		    plugins: [
-		        nodeResolve(),
-		        babel({
-		            babelHelpers: "bundled",
-		        }),
-		        minify ? terser() : null,
-		        license({
-		            banner: {
-		                commentStyle:"none",
-		                content:this.version,
-		            },
-		        }),
-		    ],
-		    output: {
-		        file: "dist/js/tabulator" + (minify ? ".min" : "") + ".js",
-		        format: "umd",
-		        name: "Tabulator",
-		        esModule: false,
-		        exports: "default",
-		        sourcemap: true,
-		    },
+			input:"src/js/builds/usd.js",
+			plugins: [
+				nodeResolve(),
+				babel({
+					babelHelpers: "bundled",
+				}),
+				minify ? terser() : null,
+				license({
+					banner: {
+						commentStyle:"none",
+						content:this.version,
+					},
+				}),
+			],
+			output: {
+				file: "dist/js/tabulator" + (minify ? ".min" : "") + ".js",
+				format: "umd",
+				name: "Tabulator",
+				esModule: false,
+				exports: "default",
+				sourcemap: true,
+			},
 		});
 	}
 }

@@ -112,7 +112,7 @@ export default class Popup extends CoreFeature{
 	}
     
 	show(origin, position){
-		var x, y, parentEl, parentOffset, containerOffset, coords;
+		var x, y, parentEl, parentOffset, coords;
 
 		if(this.destroyed || this.table.destroyed){
 			return this;

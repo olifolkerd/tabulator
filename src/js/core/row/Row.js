@@ -248,14 +248,14 @@ export default class Row extends CoreFeature{
 			newRowData = this.chain("row-data-changing", [this, tempData, updatedData], null, updatedData);
 			
 			//set data
-			for (var attrname in newRowData) {
+			for (let attrname in newRowData) {
 				this.data[attrname] = newRowData[attrname];
 			}
 			
 			this.dispatch("row-data-save-after", this);
 			
 			//update affected cells only
-			for (var attrname in updatedData) {
+			for (let attrname in updatedData) {
 				
 				let columns = this.table.columnManager.getColumnsByFieldRoot(attrname);
 				
@@ -377,8 +377,6 @@ export default class Row extends CoreFeature{
 	}
 	
 	deleteActual(blockRedraw){
-		var index = this.table.rowManager.getRowIndex(this);
-		
 		this.detatchModules();
 		
 		this.table.rowManager.deleteRow(this, blockRedraw);

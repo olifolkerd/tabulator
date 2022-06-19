@@ -107,9 +107,7 @@ class FrozenColumns extends Module{
 	}
 	
 	//quick layout to smooth horizontal scrolling
-	scrollHorizontal(){
-		var rows;
-		
+	scrollHorizontal(){	
 		if(this.active){		
 			this.calcMargins(true);
 			

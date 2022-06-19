@@ -2,11 +2,9 @@ import maskInput from '../../inputMask.js';
 
 //resizable text area element
 export default function(cell, onRendered, success, cancel, editorParams){
-	var self = this,
-	cellValue = cell.getValue(),
+	var cellValue = cell.getValue(),
 	vertNav = editorParams.verticalNavigation || "hybrid",
 	value = String(cellValue !== null && typeof cellValue !== "undefined"  ? cellValue : ""),
-	count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
 	input = document.createElement("textarea"),
 	scrollHeight = 0;
 

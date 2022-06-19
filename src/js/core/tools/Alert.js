@@ -1,5 +1,4 @@
 import CoreFeature from '../CoreFeature.js';
-import Helpers from './Helpers.js';
 
 export default class Alert extends CoreFeature{
 	constructor(table){

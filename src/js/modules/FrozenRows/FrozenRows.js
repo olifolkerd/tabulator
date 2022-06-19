@@ -47,9 +47,7 @@ class FrozenRows extends Module{
 
 	//filter frozen rows out of display data
 	getRows(rows){
-		var self = this,
-		frozen = [],
-		output = rows.slice(0);
+		var output = rows.slice(0);
 
 		this.rows.forEach(function(row){
 			var index = output.indexOf(row);
@@ -82,8 +80,6 @@ class FrozenRows extends Module{
 	}
 
 	unfreezeRow(row){
-		var index = this.rows.indexOf(row);
-
 		if(row.modules.frozen){
 
 			row.modules.frozen = false;

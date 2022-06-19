@@ -3,13 +3,13 @@ export default function(columns){
 	var totalWidth = this.table.element.clientWidth; //table element width
 	var fixedWidth = 0; //total width of columns with a defined width
 	var flexWidth = 0; //total width available to flexible columns
-	var flexGrowUnits = 0; //total number of widthGrow blocks accross all columns
+	var flexGrowUnits = 0; //total number of widthGrow blocks across all columns
 	var flexColWidth = 0; //desired width of flexible columns
 	var flexColumns = []; //array of flexible width columns
 	var fixedShrinkColumns = []; //array of fixed width columns that can shrink
-	var flexShrinkUnits = 0; //total number of widthShrink blocks accross all columns
+	var flexShrinkUnits = 0; //total number of widthShrink blocks across all columns
 	var overflowWidth = 0; //horizontal overflow width
-	var gapFill=0; //number of pixels to be added to final column to close and half pixel gaps
+	var gapFill = 0; //number of pixels to be added to final column to close and half pixel gaps
 
 	function calcWidth(width){
 		var colWidth;
@@ -29,7 +29,6 @@ export default function(columns){
 
 	//ensure columns resize to take up the correct amount of space
 	function scaleColumns(columns, freeSpace, colWidth, shrinkCols){
-
 		var oversizeCols = [],
 		oversizeSpace = 0,
 		remainingSpace = 0,
@@ -140,7 +139,7 @@ export default function(columns){
 	flexColWidth = Math.floor(flexWidth / flexGrowUnits);
 
 	//generate column widths
-	var gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth, false);
+	gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth, false);
 
 	//increase width of last column to account for rounding errors
 	if(flexColumns.length && gapFill > 0){

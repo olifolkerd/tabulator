@@ -116,7 +116,7 @@ export default class InternalEventBus {
 
 		if(this.events[key]){
 			this.events[key].forEach((subscriber) => {
-				let callResult = subscriber.callback.apply(this, args);
+				subscriber.callback.apply(this, args);
 			});
 		}
 	}

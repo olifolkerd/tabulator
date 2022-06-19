@@ -7,56 +7,56 @@ class Sort extends Module{
 	constructor(table){
 		super(table);
 
-	 	this.sortList = []; //holder current sort
-	 	this.changed = false; //has the sort changed since last render
+		this.sortList = []; //holder current sort
+		this.changed = false; //has the sort changed since last render
 
-	 	this.registerTableOption("sortMode", "local"); //local or remote sorting
+		this.registerTableOption("sortMode", "local"); //local or remote sorting
 
-	 	this.registerTableOption("initialSort", false); //initial sorting criteria
-	 	this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
-	 	this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
-	 	this.registerTableOption("headerSortElement", "<div class='tabulator-arrow'></div>"); //header sort element
+		this.registerTableOption("initialSort", false); //initial sorting criteria
+		this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
+		this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
+		this.registerTableOption("headerSortElement", "<div class='tabulator-arrow'></div>"); //header sort element
 
-	 	this.registerColumnOption("sorter");
-	 	this.registerColumnOption("sorterParams");
+		this.registerColumnOption("sorter");
+		this.registerColumnOption("sorterParams");
 
-	 	this.registerColumnOption("headerSort", true);
-	 	this.registerColumnOption("headerSortStartingDir");
-	 	this.registerColumnOption("headerSortTristate");
+		this.registerColumnOption("headerSort", true);
+		this.registerColumnOption("headerSortStartingDir");
+		this.registerColumnOption("headerSortTristate");
 
-	 }
+	}
 
-	 initialize(){
-	 	this.subscribe("column-layout", this.initializeColumn.bind(this));
-	 	this.subscribe("table-built", this.tableBuilt.bind(this));
-	 	this.registerDataHandler(this.sort.bind(this), 20);
+	initialize(){
+		this.subscribe("column-layout", this.initializeColumn.bind(this));
+		this.subscribe("table-built", this.tableBuilt.bind(this));
+		this.registerDataHandler(this.sort.bind(this), 20);
 
-	 	this.registerTableFunction("setSort", this.userSetSort.bind(this));
-	 	this.registerTableFunction("getSorters", this.getSort.bind(this));
-	 	this.registerTableFunction("clearSort", this.clearSort.bind(this));
+		this.registerTableFunction("setSort", this.userSetSort.bind(this));
+		this.registerTableFunction("getSorters", this.getSort.bind(this));
+		this.registerTableFunction("clearSort", this.clearSort.bind(this));
 
-	 	if(this.table.options.sortMode === "remote"){
-	 		this.subscribe("data-params", this.remoteSortParams.bind(this));
-	 	}
-	 }
+		if(this.table.options.sortMode === "remote"){
+			this.subscribe("data-params", this.remoteSortParams.bind(this));
+		}
+	}
 
-	 tableBuilt(){
-	 	if(this.table.options.initialSort){
-	 		this.setSort(this.table.options.initialSort);
-	 	}
-	 }
+	tableBuilt(){
+		if(this.table.options.initialSort){
+			this.setSort(this.table.options.initialSort);
+		}
+	}
 
-	 remoteSortParams(data, config, silent, params){
-	 	var sorters = this.getSort();
+	remoteSortParams(data, config, silent, params){
+		var sorters = this.getSort();
 
-	 	sorters.forEach((item) => {
-	 		delete item.column;
-	 	});
+		sorters.forEach((item) => {
+			delete item.column;
+		});
 
-	 	params.sort = sorters;
+		params.sort = sorters;
 
-	 	return params;
-	 }
+		return params;
+	}
 
 
 	///////////////////////////////////
@@ -322,8 +322,7 @@ class Sort extends Module{
 		var self = this,
 		sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
 		sortListActual = [],
-		rowComponents = [],
-		lastSort;
+		rowComponents = [];
 
 		if(this.subscribedExternal("dataSorting")){
 			this.dispatchExternal("dataSorting", self.getSort());
@@ -432,7 +431,7 @@ class Sort extends Module{
 
 	//process individual rows for a sort function on active data
 	_sortRow(a, b, column, dir, params){
-		var el1Comp, el2Comp, colComp;
+		var el1Comp, el2Comp;
 
 		//switch elements depending on search direction
 		var el1 = dir == "asc" ? a : b;

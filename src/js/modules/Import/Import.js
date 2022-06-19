@@ -76,8 +76,7 @@ class Import extends Module{
             
 			input.addEventListener("change", (e) => {
 				var file = input.files[0],
-				reader = new FileReader(),
-				data;
+				reader = new FileReader();
                 
 				switch(this.table.options.importReader){
 					case "buffer":

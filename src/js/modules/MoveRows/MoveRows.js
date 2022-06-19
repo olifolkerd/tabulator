@@ -65,25 +65,26 @@ class MoveRows extends Module{
 
 	initializeGroupHeader(group){
 		var self = this,
-		config = {},
-		rowEl;
+		config = {};
 
 		//inter table drag drop
 		config.mouseup = function(e){
-			self.tableRowDrop(e, row);
+			self.tableRowDrop(e, group);
 		}.bind(self);
 
 		//same table drag drop
 		config.mousemove = function(e){
+			var rowEl;
+
 			if(((e.pageY - Helpers.elOffset(group.element).top) + self.table.rowManager.element.scrollTop) > (group.getHeight() / 2)){
 				if(self.toRow !== group || !self.toRowAfter){
-					var rowEl = group.getElement();
+					rowEl = group.getElement();
 					rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
 					self.moveRow(group, true);
 				}
 			}else{
 				if(self.toRow !== group || self.toRowAfter){
-					var rowEl = group.getElement();
+					rowEl = group.getElement();
 					if(rowEl.previousSibling){
 						rowEl.parentNode.insertBefore(self.placeholderElement, rowEl);
 						self.moveRow(group, false);
@@ -182,13 +183,11 @@ class MoveRows extends Module{
 
 	bindTouchEvents(row, element){
 		var startYMove = false, //shifting center position of the cell
-		dir = false,
-		currentRow, nextRow, prevRow, nextRowHeight, prevRowHeight, nextRowHeightLast, prevRowHeightLast;
+		nextRow, prevRow, nextRowHeight, prevRowHeight, nextRowHeightLast, prevRowHeightLast;
 
 		element.addEventListener("touchstart", (e) => {
 			this.checkTimeout = setTimeout(() => {
 				this.touchMove = true;
-				currentRow = row;
 				nextRow = row.nextRow();
 				nextRowHeight = nextRow ? nextRow.getHeight()/2 : 0;
 				prevRow = row.prevRow();
@@ -203,7 +202,7 @@ class MoveRows extends Module{
 		this.moving, this.toRow, this.toRowAfter;
 		element.addEventListener("touchmove", (e) => {
 
-			var halfCol, diff, moveToRow;
+			var diff, moveToRow;
 
 			if(this.moving){
 				e.preventDefault();
@@ -239,7 +238,6 @@ class MoveRows extends Module{
 				}
 
 				if(moveToRow){
-					currentRow = moveToRow;
 					nextRow = moveToRow.nextRow();
 					nextRowHeightLast = nextRowHeight;
 					nextRowHeight = nextRow ? nextRow.getHeight() / 2 : 0;
@@ -392,8 +390,7 @@ class MoveRows extends Module{
 	moveHoverTable(e){
 		var rowHolder = this.table.rowManager.getElement(),
 		scrollTop = rowHolder.scrollTop,
-		yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolder.getBoundingClientRect().top) + scrollTop,
-		scrollPos;
+		yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolder.getBoundingClientRect().top) + scrollTop;
 
 		this.hoverElement.style.top = (yPos - this.startY) + "px";
 	}
@@ -587,15 +584,12 @@ class MoveRows extends Module{
 		switch(action){
 			case "connect":
 				return this.connect(table, data.row);
-				break;
 
 			case "disconnect":
 				return this.disconnect(table);
-				break;
 
 			case "dropcomplete":
 				return this.dropComplete(table, data.row, data.success);
-				break;
 		}
 	}
 }

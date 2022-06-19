@@ -6,7 +6,7 @@ export default function(cell, formatterParams, onRendered){ //progress bar
 	max = formatterParams && formatterParams.max ? formatterParams.max : 100,
 	min = formatterParams && formatterParams.min ? formatterParams.min : 0,
 	legendAlign = formatterParams && formatterParams.legendAlign ? formatterParams.legendAlign : "center",
-	percent, percentValue, color, legend, legendColor, top, left, right, bottom;
+	percent, percentValue, color, legend, legendColor;
 
 	//make sure value is in range
 	percentValue = parseFloat(value) <= max ? parseFloat(value) : max;
@@ -26,8 +26,8 @@ export default function(cell, formatterParams, onRendered){ //progress bar
 			break;
 		case "object":
 			if(Array.isArray(formatterParams.color)){
-				var unit = 100 / formatterParams.color.length;
-				var index = Math.floor(percentValue / unit);
+				let unit = 100 / formatterParams.color.length;
+				let index = Math.floor(percentValue / unit);
 
 				index = Math.min(index, formatterParams.color.length - 1);
 				index = Math.max(index, 0);
@@ -63,8 +63,8 @@ export default function(cell, formatterParams, onRendered){ //progress bar
 			break;
 		case "object":
 			if(Array.isArray(formatterParams.legendColor)){
-				var unit = 100 / formatterParams.legendColor.length;
-				var index = Math.floor(percentValue / unit);
+				let unit = 100 / formatterParams.legendColor.length;
+				let index = Math.floor(percentValue / unit);
 
 				index = Math.min(index, formatterParams.legendColor.length - 1);
 				index = Math.max(index, 0);

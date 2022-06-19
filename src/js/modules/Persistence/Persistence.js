@@ -156,8 +156,7 @@ class Persistence extends Module{
 	}
 
 	tableBuilt(){
-		var options = this.table.options,
-		sorters, filters;
+		var sorters, filters;
 
 		if(this.config.sort){
 			sorters = this.load("sort");
@@ -310,15 +309,12 @@ class Persistence extends Module{
 			switch(type){
 				case "group":
 					return col.title === subject.title && col.columns.length === subject.columns.length;
-					break;
 
 				case "field":
 					return col.field === subject.field;
-					break;
 
 				case "object":
 					return col === subject;
-					break;
 			}
 		});
 	}

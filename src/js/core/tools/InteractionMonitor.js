@@ -1,5 +1,4 @@
 import CoreFeature from '../CoreFeature.js';
-import Helpers from './Helpers.js';
 import Row from '../row/Row.js';
 
 export default class InteractionManager extends CoreFeature {

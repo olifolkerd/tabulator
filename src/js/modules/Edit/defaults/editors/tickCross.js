@@ -49,8 +49,6 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			checkedValue = editorParams.trueValue;
 		}else if(falseValueSet && !checkedValue){
 			checkedValue = editorParams.falseValue;
-		}else{
-			checkedValue = checkedValue;
 		}
 
 		if(tristate){

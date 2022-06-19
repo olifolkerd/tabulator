@@ -26,7 +26,7 @@ class Download extends Module{
 	}
 
 	deprecationCheck(){
-		if(typeof this.table.options.downloadReady){
+		if(this.table.options.downloadReady){
 			console.warn("Use of the downloadReady option is now deprecated. Please use the downloadEncoder option instead");
 		}
 	}	
@@ -104,16 +104,14 @@ class Download extends Module{
 
 	triggerDownload(data, mime, type, filename, newTab){
 		var element = document.createElement('a'),
-		blob = this.table.options.downloadEncoder(data, mime),
-		filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
-
-		
+		blob = this.table.options.downloadEncoder(data, mime);
 
 		if(blob){
-
 			if(newTab){
 				window.open(window.URL.createObjectURL(blob));
 			}else{
+				filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
+				
 				if(navigator.msSaveOrOpenBlob){
 					navigator.msSaveOrOpenBlob(blob, filename);
 				}else{

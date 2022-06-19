@@ -203,15 +203,12 @@ class Validate extends Module{
 				}
 			
 				return this._buildValidator(type, params);
-				break;
 			
 			case "function":
 				return this._buildValidator(value);
-				break;
 			
 			case "object":
 				return this._buildValidator(value.type, value.parameters);
-				break;
 		}
 	}
 	

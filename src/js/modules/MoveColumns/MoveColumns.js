@@ -90,13 +90,11 @@ class MoveColumns extends Module{
 	bindTouchEvents(column){
 		var colEl = column.getElement(),
 		startXMove = false, //shifting center position of the cell
-		dir = false,
-		currentCol, nextCol, prevCol, nextColWidth, prevColWidth, nextColWidthLast, prevColWidthLast;
+		nextCol, prevCol, nextColWidth, prevColWidth, nextColWidthLast, prevColWidthLast;
 		
 		colEl.addEventListener("touchstart", (e) => {
 			this.checkTimeout = setTimeout(() => {
 				this.touchMove = true;
-				currentCol = column;
 				nextCol = column.nextColumn();
 				nextColWidth = nextCol ? nextCol.getWidth()/2 : 0;
 				prevCol = column.prevColumn();
@@ -110,7 +108,7 @@ class MoveColumns extends Module{
 		}, {passive: true});
 		
 		colEl.addEventListener("touchmove", (e) => {
-			var halfCol, diff, moveToCol;
+			var diff, moveToCol;
 			
 			if(this.moving){
 				this.moveHover(e);
@@ -144,7 +142,6 @@ class MoveColumns extends Module{
 				}
 				
 				if(moveToCol){
-					currentCol = moveToCol;
 					nextCol = moveToCol.nextColumn();
 					nextColWidthLast = nextColWidth;
 					nextColWidth = nextCol ? nextCol.getWidth() / 2 : 0;

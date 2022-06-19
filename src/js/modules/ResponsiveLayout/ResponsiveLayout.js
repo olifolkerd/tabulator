@@ -23,9 +23,6 @@ class ResponsiveLayout extends Module{
 
 	//generate responsive columns list
 	initialize(){
-		var self = this,
-		columns = [];
-
 		if(this.table.options.responsiveLayout){
 			this.subscribe("column-layout", this.initializeColumn.bind(this));
 			this.subscribe("column-show", this.updateColumnVisibility.bind(this));

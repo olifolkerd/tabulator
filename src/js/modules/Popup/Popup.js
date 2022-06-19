@@ -51,8 +51,7 @@ class Popup extends Module{
 	}
 	
 	initializeColumn(column){
-		var options = ["headerContextPopup", "headerClickPopup"],
-		def = column.definition;
+		var def = column.definition;
 		
 		//handle column events
 		if(def.headerContextPopup && !this.columnSubscribers.headerContextPopup){

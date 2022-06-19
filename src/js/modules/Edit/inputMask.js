@@ -2,8 +2,7 @@ export default function maskInput(el, options){
 	var mask = options.mask,
 	maskLetter = typeof options.maskLetterChar !== "undefined" ? options.maskLetterChar : "A",
 	maskNumber = typeof options.maskNumberChar !== "undefined" ? options.maskNumberChar : "9",
-	maskWildcard = typeof options.maskWildcardChar !== "undefined" ? options.maskWildcardChar : "*",
-	success = false;
+	maskWildcard = typeof options.maskWildcardChar !== "undefined" ? options.maskWildcardChar : "*";
 
 	function fillSymbols(index){
 		var symbol = mask[index];
@@ -21,7 +20,6 @@ export default function maskInput(el, options){
 			if(index >= mask.length){
 				e.preventDefault();
 				e.stopPropagation();
-				success = false;
 				return false;
 			}else{
 				switch(mask[index]){
@@ -29,7 +27,6 @@ export default function maskInput(el, options){
 						if(char.toUpperCase() == char.toLowerCase()){
 							e.preventDefault();
 							e.stopPropagation();
-							success = false;
 							return false;
 						}
 						break;
@@ -38,7 +35,6 @@ export default function maskInput(el, options){
 						if(isNaN(char)){
 							e.preventDefault();
 							e.stopPropagation();
-							success = false;
 							return false;
 						}
 						break;
@@ -50,13 +46,10 @@ export default function maskInput(el, options){
 						if(char !== mask[index]){
 							e.preventDefault();
 							e.stopPropagation();
-							success = false;
 							return false;
 						}
 				}
 			}
-
-			success = true;
 		}
 
 		return;

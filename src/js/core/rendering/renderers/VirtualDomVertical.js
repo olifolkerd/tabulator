@@ -330,9 +330,10 @@ export default class VirtualDomVertical extends Renderer{
 		addedRows = [],
 		paddingAdjust = 0,
 		index = this.vDomTop -1,
-		i = 0;
+		i = 0,
+		working = true;
 
-		while(true){
+		while(working){
 			if(this.vDomTop){
 				let row = rows[index],
 				rowHeight, initialized;
@@ -368,15 +369,15 @@ export default class VirtualDomVertical extends Renderer{
 						i++;
 
 					}else{
-						break;
+						working = false;
 					}
 
 				}else{
-					break;
+					working = false;
 				}
 
 			}else{
-				break;
+				working = false;
 			}
 		}
 
@@ -405,11 +406,12 @@ export default class VirtualDomVertical extends Renderer{
 	_removeTopRow(rows, fillableSpace){
 		var removableRows = [],
 		paddingAdjust = 0,
-		i = 0;
+		i = 0,
+		working = true;
 
-		while(true){
+		while(working){
 			let row = rows[this.vDomTop],
-			rowHeight, diff;
+			rowHeight;
 
 			if(row && i < this.vDomMaxRenderChain){
 				rowHeight = row.getHeight() || this.vDomRowHeight;
@@ -423,10 +425,10 @@ export default class VirtualDomVertical extends Renderer{
 					removableRows.push(row);
 					i++;
 				}else{
-					break;
+					working = false;
 				}
 			}else{
-				break;
+				working = false;
 			}
 		}
 
@@ -450,9 +452,10 @@ export default class VirtualDomVertical extends Renderer{
 		addedRows = [],
 		paddingAdjust = 0,
 		index = this.vDomBottom + 1,
-		i = 0;
+		i = 0,
+		working = true;
 
-		while(true){
+		while(working){
 			let row = rows[index],
 			rowHeight, initialized;
 
@@ -486,10 +489,10 @@ export default class VirtualDomVertical extends Renderer{
 					index++;
 					i++;
 				}else{
-					break;
+					working = false;
 				}
 			}else{
-				break;
+				working = false;
 			}
 		}
 
@@ -514,11 +517,12 @@ export default class VirtualDomVertical extends Renderer{
 	_removeBottomRow(rows, fillableSpace){
 		var removableRows = [],
 		paddingAdjust = 0,
-		i = 0;
+		i = 0,
+		working = true;
 
-		while(true){
+		while(working){
 			let row = rows[this.vDomBottom],
-			rowHeight, diff;
+			rowHeight;
 
 			if(row && i < this.vDomMaxRenderChain){
 				rowHeight = row.getHeight() || this.vDomRowHeight;
@@ -532,10 +536,10 @@ export default class VirtualDomVertical extends Renderer{
 					removableRows.push(row);
 					i++;
 				}else{
-					break;
+					working = false;
 				}
 			}else{
-				break;
+				working = false;
 			}
 		}
 

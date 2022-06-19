@@ -15,14 +15,14 @@ export default class OptionsList {
 		Object.assign(output, defaultOptions);
 
 		if(userOptions.debugInvalidOptions !== false || this.table.options.debugInvalidOptions){
-			for (var key in userOptions){
+			for (let key in userOptions){
 				if(!output.hasOwnProperty(key)){
 					console.warn("Invalid " + this.msgType + " option:", key);
 				}
 			}
 		}
 
-		for (var key in output){
+		for (let key in output){
 			if(key in userOptions){
 				output[key] = userOptions[key];
 			}else{

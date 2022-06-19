@@ -252,7 +252,7 @@ class ColumnCalcs extends Module{
 					this.topRow.deleteCells();
 				}
 
-				row = this.generateRow("top", this.rowsToData(rows));
+				row = this.generateRow("top", data);
 				this.topRow = row;
 				while(this.topElement.firstChild) this.topElement.removeChild(this.topElement.firstChild);
 				this.topElement.appendChild(row.getElement());
@@ -264,7 +264,7 @@ class ColumnCalcs extends Module{
 					this.botRow.deleteCells();
 				}
 
-				row = this.generateRow("bottom", this.rowsToData(rows));
+				row = this.generateRow("bottom", data);
 				this.botRow = row;
 				while(this.botElement.firstChild) this.botElement.removeChild(this.botElement.firstChild);
 				this.botElement.appendChild(row.getElement());

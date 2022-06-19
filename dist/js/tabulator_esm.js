@@ -1086,7 +1086,7 @@ class Clipboard extends Module{
 		this.registerTableOption("clipboard", false); //enable clipboard
 		this.registerTableOption("clipboardCopyStyled", true); //formatted table data
 		this.registerTableOption("clipboardCopyConfig", false); //clipboard config
-		this.registerTableOption("clipboardCopyFormatter", false); //DEPRICATED - REMOVE in 5.0
+		this.registerTableOption("clipboardCopyFormatter", false); //DEPRECATED - REMOVE in 5.0
 		this.registerTableOption("clipboardCopyRowRange", "active"); //restrict clipboard to visible rows only
 		this.registerTableOption("clipboardPasteParser", "table"); //convert pasted clipboard data to rows
 		this.registerTableOption("clipboardPasteAction", "insert"); //how to insert pasted data into the table
@@ -1115,7 +1115,7 @@ class Clipboard extends Module{
 						}
 					}else {
 
-						var list = this.table.modules.export.generateExportList(this.table.options.clipboardCopyConfig, this.table.options.clipboardCopyStyled, this.rowRange, "clipboard");
+						list = this.table.modules.export.generateExportList(this.table.options.clipboardCopyConfig, this.table.options.clipboardCopyStyled, this.rowRange, "clipboard");
 
 						html = this.table.modules.export.genereateHTMLTable(list);
 						plain = html ? this.generatePlainContent(list) : "";
@@ -1207,7 +1207,7 @@ class Clipboard extends Module{
 	}
 
 	copy (range, internal) {
-		var range, sel, textRange;
+		var sel, textRange;
 		this.blocked = false;
 		this.customSelection = false;
 
@@ -1512,7 +1512,6 @@ class Cell extends CoreFeature{
 		this.element = document.createElement('div');
 		this.element.className = "tabulator-cell";
 		this.element.setAttribute("role", "gridcell");
-		this.element = this.element;
 	}
 
 	_configureCell(){
@@ -2103,8 +2102,7 @@ class Column extends CoreFeature{
 
 	//build header element for header
 	_buildColumnHeader(){
-		var def = this.definition,
-		table = this.table;
+		var def = this.definition;
 
 		this.dispatch("column-layout", this);
 
@@ -2117,10 +2115,10 @@ class Column extends CoreFeature{
 			}
 		}
 
-		//asign additional css classes to column header
+		//assign additional css classes to column header
 		if(def.cssClass){
-			var classeNames = def.cssClass.split(" ");
-			classeNames.forEach((className) => {
+			var classNames = def.cssClass.split(" ");
+			classNames.forEach((className) => {
 				this.element.classList.add(className);
 			});
 		}
@@ -2150,9 +2148,6 @@ class Column extends CoreFeature{
 	}
 
 	_buildColumnHeaderContent(){
-		var def = this.definition,
-		table = this.table;
-
 		var contentElement = document.createElement("div");
 		contentElement.classList.add("tabulator-col-content");
 
@@ -2170,7 +2165,7 @@ class Column extends CoreFeature{
 
 	//build title element of column
 	_buildColumnHeaderTitle(){
-		var def = this.definition;
+		var def = this.definition;
 
 		var titleHolderElement = document.createElement("div");
 		titleHolderElement.classList.add("tabulator-col-title");
@@ -2242,8 +2237,8 @@ class Column extends CoreFeature{
 
 		//asign additional css classes to column header
 		if(this.definition.cssClass){
-			var classeNames = this.definition.cssClass.split(" ");
-			classeNames.forEach((className) => {
+			var classNames = this.definition.cssClass.split(" ");
+			classNames.forEach((className) => {
 				this.element.classList.add(className);
 			});
 		}
@@ -2372,13 +2367,13 @@ class Column extends CoreFeature{
 		}
 	}
 
-	//// Retreive Column Information ////
+	//// Retrieve Column Information ////
 	//return column header element
 	getElement(){
 		return this.element;
 	}
 
-	//return colunm group element
+	//return column group element
 	getGroupElement(){
 		return this.groupElement;
 	}
@@ -2671,7 +2666,6 @@ class Column extends CoreFeature{
 
 	delete(){
 		return new Promise((resolve, reject) => {
-
 			if(this.isGroup){
 				this.columns.forEach(function(column){
 					column.delete();
@@ -2848,7 +2842,7 @@ class Column extends CoreFeature{
 Column.defaultOptionList = defaultColumnOptions;
 
 //public row object
-class RowComponent$1 {
+class RowComponent {
 
 	constructor (row){
 		this._row = row;
@@ -3188,14 +3182,14 @@ class Row extends CoreFeature{
 			newRowData = this.chain("row-data-changing", [this, tempData, updatedData], null, updatedData);
 			
 			//set data
-			for (var attrname in newRowData) {
+			for (let attrname in newRowData) {
 				this.data[attrname] = newRowData[attrname];
 			}
 			
 			this.dispatch("row-data-save-after", this);
 			
 			//update affected cells only
-			for (var attrname in updatedData) {
+			for (let attrname in updatedData) {
 				
 				let columns = this.table.columnManager.getColumnsByFieldRoot(attrname);
 				
@@ -3317,8 +3311,6 @@ class Row extends CoreFeature{
 	}
 	
 	deleteActual(blockRedraw){
-		var index = this.table.rowManager.getRowIndex(this);
-		
 		this.detatchModules();
 		
 		this.table.rowManager.deleteRow(this, blockRedraw);
@@ -3391,7 +3383,7 @@ class Row extends CoreFeature{
 	//////////////// Object Generation /////////////////
 	getComponent(){
 		if(!this.component){
-			this.component = new RowComponent$1(this);
+			this.component = new RowComponent(this);
 		}
 		
 		return this.component;
@@ -3719,17 +3711,17 @@ class ColumnCalcs extends Module{
 	}
 
 	recalc(rows){
-		var row;
+		var data, row;
 
 		if(this.topInitialized || this.botInitialized){
-			this.rowsToData(rows);
+			data = this.rowsToData(rows);
 
 			if(this.topInitialized){
 				if(this.topRow){
 					this.topRow.deleteCells();
 				}
 
-				row = this.generateRow("top", this.rowsToData(rows));
+				row = this.generateRow("top", data);
 				this.topRow = row;
 				while(this.topElement.firstChild) this.topElement.removeChild(this.topElement.firstChild);
 				this.topElement.appendChild(row.getElement());
@@ -3741,7 +3733,7 @@ class ColumnCalcs extends Module{
 					this.botRow.deleteCells();
 				}
 
-				row = this.generateRow("bottom", this.rowsToData(rows));
+				row = this.generateRow("bottom", data);
 				this.botRow = row;
 				while(this.botElement.firstChild) this.botElement.removeChild(this.botElement.firstChild);
 				this.botElement.appendChild(row.getElement());
@@ -4245,8 +4237,9 @@ class DataTree extends Module{
 
 	generateControlElement(row, el){
 		var config = row.modules.dataTree,
-		el = el || row.getCells()[0].getElement(),
 		oldControl = config.controlEl;
+
+		el = el || row.getCells()[0].getElement();
 
 		if(config.children !== false){
 
@@ -4716,7 +4709,6 @@ function pdf(list, options, setFileContents){
 
 	//parse row list
 	list.forEach((row) => {
-
 		switch(row.type){
 			case "header":
 				header.push(parseRow(row));
@@ -4969,7 +4961,7 @@ class Download extends Module{
 	}
 
 	deprecationCheck(){
-		if(typeof this.table.options.downloadReady){
+		if(this.table.options.downloadReady){
 			console.warn("Use of the downloadReady option is now deprecated. Please use the downloadEncoder option instead");
 		}
 	}	
@@ -5047,16 +5039,14 @@ class Download extends Module{
 
 	triggerDownload(data, mime, type, filename, newTab){
 		var element = document.createElement('a'),
-		blob = this.table.options.downloadEncoder(data, mime),
-		filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
-
-		
+		blob = this.table.options.downloadEncoder(data, mime);
 
 		if(blob){
-
 			if(newTab){
 				window.open(window.URL.createObjectURL(blob));
 			}else {
+				filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
+				
 				if(navigator.msSaveOrOpenBlob){
 					navigator.msSaveOrOpenBlob(blob, filename);
 				}else {
@@ -5097,7 +5087,7 @@ function maskInput(el, options){
 	var mask = options.mask,
 	maskLetter = typeof options.maskLetterChar !== "undefined" ? options.maskLetterChar : "A",
 	maskNumber = typeof options.maskNumberChar !== "undefined" ? options.maskNumberChar : "9",
-	maskWildcard = typeof options.maskWildcardChar !== "undefined" ? options.maskWildcardChar : "*";
+	maskWildcard = typeof options.maskWildcardChar !== "undefined" ? options.maskWildcardChar : "*";
 
 	function fillSymbols(index){
 		var symbol = mask[index];
@@ -5247,7 +5237,6 @@ function textarea(cell, onRendered, success, cancel, editorParams){
 	var cellValue = cell.getValue(),
 	vertNav = editorParams.verticalNavigation || "hybrid",
 	value = String(cellValue !== null && typeof cellValue !== "undefined"  ? cellValue : ""),
-	count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
 	input = document.createElement("textarea"),
 	scrollHeight = 0;
 
@@ -6059,7 +6048,7 @@ class Edit{
 		var placeholder = document.createElement("div");
         
 		if(typeof contents === "function"){
-			contents = contents(cell.getComponent(), this.listEl);
+			contents = contents(this.cell.getComponent(), this.listEl);
 		}
         
 		if(contents){
@@ -6275,8 +6264,8 @@ class Edit{
 	}
     
 	_filterOptions(){
-		var filterFunc = this.params.filterFunc || this._defaultFilterFunc;
-		var term = this.input.value;
+		var filterFunc = this.params.filterFunc || this._defaultFilterFunc,
+		term = this.input.value;
         
 		if(term){
 			this.filtered = true;
@@ -6310,7 +6299,7 @@ class Edit{
 	}
     
 	_defaultFilterFunc(term, label, value, item){
-		var term = String(term).toLowerCase();
+		term = String(term).toLowerCase();
         
 		if(label !== null || typeof label !== "undefined"){
 			if(String(label).toLowerCase().indexOf(term) > -1 || String(value).toLowerCase(term).indexOf() > -1){
@@ -6561,7 +6550,7 @@ class Edit{
 
 function select(cell, onRendered, success, cancel, editorParams){
 
-	 console.warn("The select editor has been deprecated, please use the new list editor");
+	console.warn("The select editor has been deprecated, please use the new list editor");
 
 	var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
 
@@ -6911,8 +6900,6 @@ function tickCross(cell, onRendered, success, cancel, editorParams){
 			checkedValue = editorParams.trueValue;
 		}else if(falseValueSet && !checkedValue){
 			checkedValue = editorParams.falseValue;
-		}else {
-			checkedValue = checkedValue;
 		}
 
 		if(tristate){
@@ -7454,8 +7441,7 @@ class Edit$1 extends Module{
 		if(this.table.rowManager.getRenderMode() == "virtual"){
 			var topEdge = this.table.rowManager.element.scrollTop,
 			bottomEdge = this.table.rowManager.element.clientHeight + this.table.rowManager.element.scrollTop,
-			rowEl = cell.row.getElement(),
-			offset = rowEl.offsetTop;
+			rowEl = cell.row.getElement();
 
 			if(rowEl.offsetTop < topEdge){
 				this.table.rowManager.element.scrollTop -= (topEdge - rowEl.offsetTop);
@@ -7467,8 +7453,7 @@ class Edit$1 extends Module{
 
 			var leftEdge = this.table.rowManager.element.scrollLeft,
 			rightEdge = this.table.rowManager.element.clientWidth + this.table.rowManager.element.scrollLeft,
-			cellEl = cell.getElement(),
-			offset = cellEl.offsetLeft;
+			cellEl = cell.getElement();
 
 			if(this.table.modExists("frozenColumns")){
 				leftEdge += parseInt(this.table.modules.frozenColumns.leftMargin);
@@ -8007,6 +7992,8 @@ class Export extends Module{
 		}
 
 		list.forEach((row, i) => {
+			let rowEl;
+
 			switch(row.type){
 				case "header":
 					headerEl.appendChild(this.genereateHeaderElement(row, setup, styles));
@@ -8021,7 +8008,8 @@ class Export extends Module{
 					break;
 
 				case "row":
-					let rowEl = this.genereateRowElement(row, setup, styles);
+					rowEl = this.genereateRowElement(row, setup, styles);
+
 					this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
 					bodyEl.appendChild(rowEl);
 					break;
@@ -8114,9 +8102,7 @@ class Export extends Module{
 		if(setup.groupHeader && setup.groupHeader[row.indent]){
 			group.value = setup.groupHeader[row.indent](group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
 		}else {
-			if(setup.groupHeader === false){
-				group.value = group.value;
-			}else {
+			if(setup.groupHeader !== false){
 				group.value = row.component._group.generator(group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
 			}
 		}
@@ -8153,7 +8139,7 @@ class Export extends Module{
 
 		rowEl.classList.add("tabulator-print-table-row");
 
-		row.columns.forEach((col) => {
+		row.columns.forEach((col, i) => {
 			if(col){
 				var cellEl = document.createElement("td"),
 				column = col.component._column,
@@ -8203,9 +8189,6 @@ class Export extends Module{
 						case "undefined":
 							value = "";
 							break;
-
-						default:
-							value = value;
 					}
 				}
 
@@ -9129,7 +9112,6 @@ class Filter extends Module{
 
 	//remove filter from array
 	removeFilter(field, type, value){
-
 		if(!Array.isArray(field)){
 			field = [{field:field, type:type, value:value}];
 		}
@@ -9500,12 +9482,12 @@ function datetime(cell, formatterParams, onRendered){
 		var newDatetime;
 
 		if(DT.isDateTime(value)){
-			 newDatetime = value;
-		 }else if(inputFormat === "iso"){
-			 newDatetime = DT.fromISO(String(value));
-		 }else {
-			 newDatetime = DT.fromFormat(String(value), inputFormat);
-		 }
+			newDatetime = value;
+		}else if(inputFormat === "iso"){
+			newDatetime = DT.fromISO(String(value));
+		}else {
+			newDatetime = DT.fromFormat(String(value), inputFormat);
+		}
 
 		if(newDatetime.isValid){
 			if(formatterParams.timezone){
@@ -9541,12 +9523,12 @@ function datetimediff (cell, formatterParams, onRendered) {
 		var newDatetime;
 
 		if(DT.isDateTime(value)){
-			 newDatetime = value;
-		 }else if(inputFormat === "iso"){
-			 newDatetime = DT.fromISO(String(value));
-		 }else {
-			 newDatetime = DT.fromFormat(String(value), inputFormat);
-		 }
+			newDatetime = value;
+		}else if(inputFormat === "iso"){
+			newDatetime = DT.fromISO(String(value));
+		}else {
+			newDatetime = DT.fromFormat(String(value), inputFormat);
+		}
 
 		if (newDatetime.isValid){
 			if(humanize){
@@ -9693,8 +9675,8 @@ function progress$1(cell, formatterParams, onRendered){ //progress bar
 			break;
 		case "object":
 			if(Array.isArray(formatterParams.color)){
-				var unit = 100 / formatterParams.color.length;
-				var index = Math.floor(percentValue / unit);
+				let unit = 100 / formatterParams.color.length;
+				let index = Math.floor(percentValue / unit);
 
 				index = Math.min(index, formatterParams.color.length - 1);
 				index = Math.max(index, 0);
@@ -9730,8 +9712,8 @@ function progress$1(cell, formatterParams, onRendered){ //progress bar
 			break;
 		case "object":
 			if(Array.isArray(formatterParams.legendColor)){
-				var unit = 100 / formatterParams.legendColor.length;
-				var index = Math.floor(percentValue / unit);
+				let unit = 100 / formatterParams.legendColor.length;
+				let index = Math.floor(percentValue / unit);
 
 				index = Math.min(index, formatterParams.legendColor.length - 1);
 				index = Math.max(index, 0);
@@ -9882,7 +9864,7 @@ function rowSelection(cell, formatterParams, onRendered){
 		if(typeof cell.getRow == 'function'){
 			var row = cell.getRow();
 
-			if(row instanceof RowComponent$1){
+			if(row instanceof RowComponent){
 
 				checkbox.addEventListener("change", (e) => {
 					if(this.table.options.selectableRangeMode === "click"){
@@ -10076,7 +10058,7 @@ class Format extends Module{
 		params;
 
 		if(formatter){
-			params = typeof formatter.params === "function" ? formatter.params(component) : formatter.params;
+			params = typeof formatter.params === "function" ? formatter.params(cell.getComponent()) : formatter.params;
 
 			function onRendered(callback){
 				if(!cell.modules.format){
@@ -10107,7 +10089,7 @@ class Format extends Module{
 				'=': '&#x3D;'
 			};
 
-			return String(value).replace(/[&<>"'`=\/]/g, function (s) {
+			return String(value).replace(/[&<>"'`=/]/g, function (s) {
 				return entityMap[s];
 			});
 		}else {
@@ -10121,8 +10103,6 @@ class Format extends Module{
 
 	//get formatter for cell
 	getFormatter(formatter){
-		var formatter;
-
 		switch(typeof formatter){
 			case "string":
 				if(Format.formatters[formatter]){
@@ -10134,7 +10114,7 @@ class Format extends Module{
 				break;
 
 			case "function":
-				formatter = formatter;
+				//Custom formatter Function, do nothing
 				break;
 
 			default:
@@ -10258,8 +10238,7 @@ class FrozenColumns extends Module{
 	}
 	
 	//quick layout to smooth horizontal scrolling
-	scrollHorizontal(){
-		
+	scrollHorizontal(){	
 		if(this.active){		
 			this.calcMargins(true);
 			
@@ -10562,8 +10541,6 @@ class FrozenRows extends Module{
 	}
 
 	unfreezeRow(row){
-		var index = this.rows.indexOf(row);
-
 		if(row.modules.frozen){
 
 			row.modules.frozen = false;
@@ -11785,10 +11762,10 @@ class GroupRows extends Module{
 			var oldRowGroup = row.modules.group,
 			oldGroupPath = oldRowGroup.getPath(),
 			newGroupPath = this.getExpectedPath(row),
-			samePath = true;
+			samePath;
 
 			// figure out if new group path is the same as old group path
-			var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every((element, index) => {
+			samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every((element, index) => {
 				return element === newGroupPath[index];
 			});
 
@@ -11812,7 +11789,7 @@ class GroupRows extends Module{
 	}
 
 	updateGroupRows(force){
-		var output = [];
+		var output = [];
 
 		this.groupList.forEach((group) => {
 			output = output.concat(group.getHeadersAndRows());
@@ -12097,10 +12074,9 @@ class HtmlTableImport extends Module{
 	parseTable(){
 		var element = this.table.originalElement,
 		options = this.table.options,
-		columns = options.columns,
 		headers = element.getElementsByTagName("th"),
 		rows = element.getElementsByTagName("tbody")[0],
-		data = [];
+		data = [];
 
 		this.hasIndex = false;
 
@@ -12401,7 +12377,7 @@ class Import extends Module{
             
 			input.addEventListener("change", (e) => {
 				var file = input.files[0],
-				reader = new FileReader();
+				reader = new FileReader();
                 
 				switch(this.table.options.importReader){
 					case "buffer":
@@ -12638,6 +12614,8 @@ class Interaction extends Module{
 	}
 
 	cellContentsSelectionFixer(e, cell){
+		var range;
+
 		if(this.table.modExists("edit")){
 			if (this.table.modules.edit.currentCell === this){
 				return; //prevent instant selection of editor content
@@ -12648,11 +12626,11 @@ class Interaction extends Module{
 
 		try{
 			if (document.selection) { // IE
-				var range = document.body.createTextRange();
+				range = document.body.createTextRange();
 				range.moveToElementText(this.element);
 				range.select();
 			} else if (window.getSelection) {
-				var range = document.createRange();
+				range = document.createRange();
 				range.selectNode(this.element);
 				window.getSelection().removeAllRanges();
 				window.getSelection().addRange(range);
@@ -12667,7 +12645,6 @@ class Interaction extends Module{
 	}
 
 	subscriptionChanged(key, added){
-
 		if(added){
 			if(!this.subscribers[key]){
 				if(this.eventMap[key].includes("-")){
@@ -12843,8 +12820,7 @@ var defaultActions = {
 	},
 	scrollPageUp:function(e){
 		var rowManager = this.table.rowManager,
-		newPos = rowManager.scrollTop - rowManager.element.clientHeight,
-		scrollMax = rowManager.element.scrollHeight;
+		newPos = rowManager.scrollTop - rowManager.element.clientHeight;
 
 		e.preventDefault();
 
@@ -13192,7 +13168,7 @@ class Menu extends Module{
 	}
 	
 	initializeColumn(column){
-		var def = column.definition;
+		var	def = column.definition;
 		
 		//handle column events
 		if(def.headerContextMenu && !this.columnSubscribers.headerContextMenu){
@@ -13760,24 +13736,26 @@ class MoveRows extends Module{
 
 	initializeGroupHeader(group){
 		var self = this,
-		config = {};
+		config = {};
 
 		//inter table drag drop
 		config.mouseup = function(e){
-			self.tableRowDrop(e, row);
+			self.tableRowDrop(e, group);
 		}.bind(self);
 
 		//same table drag drop
 		config.mousemove = function(e){
+			var rowEl;
+
 			if(((e.pageY - Helpers.elOffset(group.element).top) + self.table.rowManager.element.scrollTop) > (group.getHeight() / 2)){
 				if(self.toRow !== group || !self.toRowAfter){
-					var rowEl = group.getElement();
+					rowEl = group.getElement();
 					rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
 					self.moveRow(group, true);
 				}
 			}else {
 				if(self.toRow !== group || self.toRowAfter){
-					var rowEl = group.getElement();
+					rowEl = group.getElement();
 					if(rowEl.previousSibling){
 						rowEl.parentNode.insertBefore(self.placeholderElement, rowEl);
 						self.moveRow(group, false);
@@ -14083,7 +14061,7 @@ class MoveRows extends Module{
 	moveHoverTable(e){
 		var rowHolder = this.table.rowManager.getElement(),
 		scrollTop = rowHolder.scrollTop,
-		yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolder.getBoundingClientRect().top) + scrollTop;
+		yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolder.getBoundingClientRect().top) + scrollTop;
 
 		this.hoverElement.style.top = (yPos - this.startY) + "px";
 	}
@@ -15079,7 +15057,7 @@ class Page extends Module{
 		switch(page){
 			case "first":
 				return this.setPage(1);
-			
+	
 			case "prev":
 				return this.previousPage();
 			
@@ -15367,7 +15345,7 @@ class Page extends Module{
 	}
 	
 	_parseRemoteData(data){
-		var data, margin;
+		var margin;
 		
 		if(typeof data.last_page === "undefined"){
 			console.warn("Remote Pagination Error - Server response missing '" + (this.options("dataReceiveParams").last_page || "last_page") + "' property");
@@ -15645,8 +15623,7 @@ class Persistence extends Module{
 	}
 
 	tableBuilt(){
-		var options = this.table.options,
-		sorters, filters;
+		var sorters, filters;
 
 		if(this.config.sort){
 			sorters = this.load("sort");
@@ -17142,7 +17119,6 @@ class ResponsiveLayout extends Module{
 
 	//generate responsive columns list
 	initialize(){
-
 		if(this.table.options.responsiveLayout){
 			this.subscribe("column-layout", this.initializeColumn.bind(this));
 			this.subscribe("column-show", this.updateColumnVisibility.bind(this));
@@ -17707,7 +17683,6 @@ class SelectRow extends Module{
 	
 	//select an individual row
 	_selectRow(rowInfo, silent, force){
-		
 		//handle max row count
 		if(!isNaN(this.table.options.selectable) && this.table.options.selectable !== true && !force){
 			if(this.selectedRows.length >= this.table.options.selectable){
@@ -17976,20 +17951,20 @@ function datetime$1(a, b, aRow, bRow, column, dir, params){
 	emptyAlign = 0;
 
 	if(typeof DT != "undefined"){
-		if(DT.isDateTime(a)){
-			 a = a;
-		}else if(format === "iso"){
-			 a = DT.fromISO(String(a));
-		}else {
-			 a = DT.fromFormat(String(a), format);
+		if(!DT.isDateTime(a)){
+			if(format === "iso"){
+				a = DT.fromISO(String(a));
+			}else {
+				a = DT.fromFormat(String(a), format);
+			}
 		}
 
-		if(DT.isDateTime(b)){
-			 b = b;
-		}else if(format === "iso"){
-			 b = DT.fromISO(String(b));
-		}else {
-			 b = DT.fromFormat(String(b), format);
+		if(!DT.isDateTime(b)){
+			if(format === "iso"){
+				b = DT.fromISO(String(b));
+			}else {
+				b = DT.fromFormat(String(b), format);
+			}
 		}
 
 		if(!a.isValid){
@@ -18041,34 +18016,42 @@ function boolean(a, b, aRow, bRow, column, dir, params){
 
 //sort if element contains any data
 function array(a, b, aRow, bRow, column, dir, params){
-	var el1 = 0;
-	var el2 = 0;
-	var type = params.type || "length";
-	var alignEmptyValues = params.alignEmptyValues;
-	var emptyAlign = 0;
+	var el1 = 0,
+	el2 = 0,
+	type = params.type || "length",
+	alignEmptyValues = params.alignEmptyValues,
+	emptyAlign = 0;
 
 	function calc(value){
+		var result;
 
 		switch(type){
 			case "length":
-				return value.length;
+				result = value.length;
+				break;
 
 			case "sum":
-				return value.reduce(function(c, d){
+				result = value.reduce(function(c, d){
 					return c + d;
 				});
+				break;
 
 			case "max":
-				return Math.max.apply(null, value) ;
+				result = Math.max.apply(null, value) ;
+				break;
 
 			case "min":
-				return Math.min.apply(null, value) ;
+				result = Math.min.apply(null, value) ;
+				break;
 
 			case "avg":
-				return value.reduce(function(c, d){
+				result = value.reduce(function(c, d){
 					return c + d;
 				}) / value.length;
+				break;
 		}
+
+		return result;
 	}
 
 	//handle non array values
@@ -18163,56 +18146,56 @@ class Sort extends Module{
 	constructor(table){
 		super(table);
 
-	 	this.sortList = []; //holder current sort
-	 	this.changed = false; //has the sort changed since last render
+		this.sortList = []; //holder current sort
+		this.changed = false; //has the sort changed since last render
 
-	 	this.registerTableOption("sortMode", "local"); //local or remote sorting
+		this.registerTableOption("sortMode", "local"); //local or remote sorting
 
-	 	this.registerTableOption("initialSort", false); //initial sorting criteria
-	 	this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
-	 	this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
-	 	this.registerTableOption("headerSortElement", "<div class='tabulator-arrow'></div>"); //header sort element
+		this.registerTableOption("initialSort", false); //initial sorting criteria
+		this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
+		this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
+		this.registerTableOption("headerSortElement", "<div class='tabulator-arrow'></div>"); //header sort element
 
-	 	this.registerColumnOption("sorter");
-	 	this.registerColumnOption("sorterParams");
+		this.registerColumnOption("sorter");
+		this.registerColumnOption("sorterParams");
 
-	 	this.registerColumnOption("headerSort", true);
-	 	this.registerColumnOption("headerSortStartingDir");
-	 	this.registerColumnOption("headerSortTristate");
+		this.registerColumnOption("headerSort", true);
+		this.registerColumnOption("headerSortStartingDir");
+		this.registerColumnOption("headerSortTristate");
 
-	 }
+	}
 
-	 initialize(){
-	 	this.subscribe("column-layout", this.initializeColumn.bind(this));
-	 	this.subscribe("table-built", this.tableBuilt.bind(this));
-	 	this.registerDataHandler(this.sort.bind(this), 20);
+	initialize(){
+		this.subscribe("column-layout", this.initializeColumn.bind(this));
+		this.subscribe("table-built", this.tableBuilt.bind(this));
+		this.registerDataHandler(this.sort.bind(this), 20);
 
-	 	this.registerTableFunction("setSort", this.userSetSort.bind(this));
-	 	this.registerTableFunction("getSorters", this.getSort.bind(this));
-	 	this.registerTableFunction("clearSort", this.clearSort.bind(this));
+		this.registerTableFunction("setSort", this.userSetSort.bind(this));
+		this.registerTableFunction("getSorters", this.getSort.bind(this));
+		this.registerTableFunction("clearSort", this.clearSort.bind(this));
 
-	 	if(this.table.options.sortMode === "remote"){
-	 		this.subscribe("data-params", this.remoteSortParams.bind(this));
-	 	}
-	 }
+		if(this.table.options.sortMode === "remote"){
+			this.subscribe("data-params", this.remoteSortParams.bind(this));
+		}
+	}
 
-	 tableBuilt(){
-	 	if(this.table.options.initialSort){
-	 		this.setSort(this.table.options.initialSort);
-	 	}
-	 }
+	tableBuilt(){
+		if(this.table.options.initialSort){
+			this.setSort(this.table.options.initialSort);
+		}
+	}
 
-	 remoteSortParams(data, config, silent, params){
-	 	var sorters = this.getSort();
+	remoteSortParams(data, config, silent, params){
+		var sorters = this.getSort();
 
-	 	sorters.forEach((item) => {
-	 		delete item.column;
-	 	});
+		sorters.forEach((item) => {
+			delete item.column;
+		});
 
-	 	params.sort = sorters;
+		params.sort = sorters;
 
-	 	return params;
-	 }
+		return params;
+	}
 
 
 	///////////////////////////////////
@@ -18478,7 +18461,7 @@ class Sort extends Module{
 		var self = this,
 		sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
 		sortListActual = [],
-		rowComponents = [];
+		rowComponents = [];
 
 		if(this.subscribedExternal("dataSorting")){
 			this.dispatchExternal("dataSorting", self.getSort());
@@ -19294,14 +19277,14 @@ class OptionsList {
 		Object.assign(output, defaultOptions);
 
 		if(userOptions.debugInvalidOptions !== false || this.table.options.debugInvalidOptions){
-			for (var key in userOptions){
+			for (let key in userOptions){
 				if(!output.hasOwnProperty(key)){
 					console.warn("Invalid " + this.msgType + " option:", key);
 				}
 			}
 		}
 
-		for (var key in output){
+		for (let key in output){
 			if(key in userOptions){
 				output[key] = userOptions[key];
 			}else {
@@ -19521,7 +19504,7 @@ class Renderer extends CoreFeature{
 	}
 }
 
-class BaiscHorizontal extends Renderer{
+class BasicHorizontal extends Renderer{
 	constructor(table){
 		super(table);
 	}
@@ -19774,8 +19757,6 @@ class VirtualDomHorizontal extends Renderer{
 	
 	dataChange(){
 		var change = false,
-		collsWidth = 0,
-		colEnd = 0,
 		row, rowEl;
 		
 		if(this.isFitData){
@@ -19787,42 +19768,28 @@ class VirtualDomHorizontal extends Renderer{
 			
 			if(change){
 				if(change && this.table.rowManager.getDisplayRows().length){
-					
 					this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
 					
-					var row = this.chain("rows-sample", [1], [], () => {
+					row = this.chain("rows-sample", [1], [], () => {
 						return this.table.rowManager.getDisplayRows();
 					})[0];
 					
 					if(row){
-						
 						rowEl = row.getElement();
 						
 						row.generateCells();
 						
 						this.tableElement.appendChild(rowEl);
 						
-						for(var colEnd = 0; colEnd < row.cells.length; colEnd++){
+						for(let colEnd = 0; colEnd < row.cells.length; colEnd++){
 							let cell = row.cells[colEnd];
 							rowEl.appendChild(cell.getElement());
 							
 							cell.column.reinitializeWidth();
-							
-							collsWidth += cell.column.getWidth();
-							
-							// if(collsWidth > this.vDomScrollPosRight){
-							// 	break;
-							// }
 						}
 						
 						rowEl.parentNode.removeChild(rowEl);
-						
-						// this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
-						
-						// for(colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++){
-						// 	this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
-						// }
-						
+
 						this.rerenderColumns(false, true);
 					}
 				}
@@ -19895,9 +19862,10 @@ class VirtualDomHorizontal extends Renderer{
 	}
 	
 	addColRight(){
-		var changes = false;
+		var changes = false,
+		working = true;
 		
-		while(true){
+		while(working){
 			
 			let column = this.columns[this.rightCol + 1];
 			
@@ -19923,10 +19891,10 @@ class VirtualDomHorizontal extends Renderer{
 						this.vDomPadRight -= column.getWidth();
 					}	
 				}else {
-					break;
+					working = false;
 				}
 			}else {
-				break;
+				working = false;
 			}
 		}
 		
@@ -19936,9 +19904,10 @@ class VirtualDomHorizontal extends Renderer{
 	}
 	
 	addColLeft(){
-		var changes = false;
+		var changes = false,
+		working = true;
 		
-		while(true){
+		while(working){
 			let column = this.columns[this.leftCol - 1];
 			
 			if(column){
@@ -19969,10 +19938,10 @@ class VirtualDomHorizontal extends Renderer{
 					}
 					
 				}else {
-					break;
+					working = false;
 				}
 			}else {
-				break;
+				working = false;
 			}
 		}
 		
@@ -19982,9 +19951,10 @@ class VirtualDomHorizontal extends Renderer{
 	}
 	
 	removeColRight(){
-		var changes = false;
+		var changes = false,
+		working = true;
 		
-		while(true){
+		while(working){
 			let column = this.columns[this.rightCol];
 			
 			if(column){
@@ -20006,10 +19976,10 @@ class VirtualDomHorizontal extends Renderer{
 					this.vDomPadRight += column.getWidth();
 					this.rightCol --;
 				}else {
-					break;
+					working = false;
 				}
 			}else {
-				break;
+				working = false;
 			}
 		}
 		
@@ -20019,9 +19989,10 @@ class VirtualDomHorizontal extends Renderer{
 	}
 	
 	removeColLeft(){
-		var changes = false;
+		var changes = false,
+		working = true;
 		
-		while(true){
+		while(working){
 			let column = this.columns[this.leftCol];
 			
 			if(column){
@@ -20043,17 +20014,16 @@ class VirtualDomHorizontal extends Renderer{
 					this.vDomPadLeft += column.getWidth();
 					this.leftCol ++;
 				}else {
-					break;
+					working = false;
 				}
 			}else {
-				break;
+				working = false;
 			}
 		}
 		
 		if(changes){
 			this.tableElement.style.paddingLeft = this.vDomPadLeft + "px";
 		}
-		
 	}
 	
 	fitDataColActualWidthCheck(column){
@@ -20144,7 +20114,7 @@ class ColumnManager extends CoreFeature {
 
 		var renderers = {
 			"virtual": VirtualDomHorizontal,
-			"basic": BaiscHorizontal,
+			"basic": BasicHorizontal,
 		};
 
 		if(typeof this.table.options.renderHorizontal === "string"){
@@ -20157,7 +20127,7 @@ class ColumnManager extends CoreFeature {
 			this.renderer = new renderClass(this.table, this.element, this.tableElement);
 			this.renderer.initialize();
 		}else {
-			console.error("Unable to find matching renderer:", table.options.renderHorizontal);
+			console.error("Unable to find matching renderer:", this.table.options.renderHorizontal);
 		}
 	}
 
@@ -20450,7 +20420,7 @@ class ColumnManager extends CoreFeature {
 		return this.columnsByIndex[index];
 	}
 
-	getFirstVisibleColumn(index){
+	getFirstVisibleColumn(){
 		var index = this.columnsByIndex.findIndex((col) => {
 			return col.visible;
 		});
@@ -21181,9 +21151,10 @@ class VirtualDomVertical extends Renderer{
 		addedRows = [],
 		paddingAdjust = 0,
 		index = this.vDomTop -1,
-		i = 0;
+		i = 0,
+		working = true;
 
-		while(true){
+		while(working){
 			if(this.vDomTop){
 				let row = rows[index],
 				rowHeight, initialized;
@@ -21219,15 +21190,15 @@ class VirtualDomVertical extends Renderer{
 						i++;
 
 					}else {
-						break;
+						working = false;
 					}
 
 				}else {
-					break;
+					working = false;
 				}
 
 			}else {
-				break;
+				working = false;
 			}
 		}
 
@@ -21256,9 +21227,10 @@ class VirtualDomVertical extends Renderer{
 	_removeTopRow(rows, fillableSpace){
 		var removableRows = [],
 		paddingAdjust = 0,
-		i = 0;
+		i = 0,
+		working = true;
 
-		while(true){
+		while(working){
 			let row = rows[this.vDomTop],
 			rowHeight;
 
@@ -21274,10 +21246,10 @@ class VirtualDomVertical extends Renderer{
 					removableRows.push(row);
 					i++;
 				}else {
-					break;
+					working = false;
 				}
 			}else {
-				break;
+				working = false;
 			}
 		}
 
@@ -21301,9 +21273,10 @@ class VirtualDomVertical extends Renderer{
 		addedRows = [],
 		paddingAdjust = 0,
 		index = this.vDomBottom + 1,
-		i = 0;
+		i = 0,
+		working = true;
 
-		while(true){
+		while(working){
 			let row = rows[index],
 			rowHeight, initialized;
 
@@ -21337,10 +21310,10 @@ class VirtualDomVertical extends Renderer{
 					index++;
 					i++;
 				}else {
-					break;
+					working = false;
 				}
 			}else {
-				break;
+				working = false;
 			}
 		}
 
@@ -21365,9 +21338,10 @@ class VirtualDomVertical extends Renderer{
 	_removeBottomRow(rows, fillableSpace){
 		var removableRows = [],
 		paddingAdjust = 0,
-		i = 0;
+		i = 0,
+		working = true;
 
-		while(true){
+		while(working){
 			let row = rows[this.vDomBottom],
 			rowHeight;
 
@@ -21383,10 +21357,10 @@ class VirtualDomVertical extends Renderer{
 					removableRows.push(row);
 					i++;
 				}else {
-					break;
+					working = false;
 				}
 			}else {
-				break;
+				working = false;
 			}
 		}
 
@@ -21551,7 +21525,7 @@ class RowManager extends CoreFeature{
 			if(subject instanceof Row){
 				//subject is row element
 				return subject;
-			}else if(subject instanceof RowComponent$1){
+			}else if(subject instanceof RowComponent){
 				//subject is public row component
 				return subject._getSelf() || false;
 			}else if(typeof HTMLElement !== "undefined" && subject instanceof HTMLElement){
@@ -21716,8 +21690,6 @@ class RowManager extends CoreFeature{
 			if(!Array.isArray(data)){
 				data = [data];
 			}
-			
-			data.length - 1;
 			
 			if((typeof index == "undefined" && pos) || (typeof index !== "undefined" && !pos)){
 				data.reverse();
@@ -22019,7 +21991,7 @@ class RowManager extends CoreFeature{
 		var table = this.table,
 		stage = "",
 		index = 0,
-		cascadeOrder = ["all", "dataPipeline", "display", "displayPipeline", "end"];
+		cascadeOrder = ["all", "dataPipeline", "display", "displayPipeline", "end"];
 		
 		
 		if(typeof handler === "function"){
@@ -22279,7 +22251,7 @@ class RowManager extends CoreFeature{
 				this.fixedHeight = false;
 			}
 		}else {
-			console.error("Unable to find matching renderer:", table.options.renderVertical);
+			console.error("Unable to find matching renderer:", this.table.options.renderVertical);
 		}
 	}
 	
@@ -22329,9 +22301,7 @@ class RowManager extends CoreFeature{
 		}
 	}
 	
-	_clearTable(){
-		var element = this.tableElement;
-		
+	_clearTable(){	
 		this._clearPlaceholder();
 		
 		this.scrollTop = 0;
@@ -22384,7 +22354,7 @@ class RowManager extends CoreFeature{
 	
 	//adjust the height of the table holder to fit in the Tabulator element
 	adjustTableSize(){
-		var initialHeight = this.element.clientHeight;
+		var initialHeight = this.element.clientHeight;
 		
 		if(this.renderer.verticalFillMode === "fill"){
 			let otherHeight =  Math.floor(this.table.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
@@ -23264,7 +23234,7 @@ class InternalEventBus {
 
 		if(this.events[key]){
 			this.events[key].forEach((subscriber) => {
-				let callResult = subscriber.callback.apply(this, args);
+				subscriber.callback.apply(this, args);
 			});
 		}
 	}
@@ -23434,13 +23404,13 @@ function fitColumns(columns){
 	var totalWidth = this.table.element.clientWidth; //table element width
 	var fixedWidth = 0; //total width of columns with a defined width
 	var flexWidth = 0; //total width available to flexible columns
-	var flexGrowUnits = 0; //total number of widthGrow blocks accross all columns
+	var flexGrowUnits = 0; //total number of widthGrow blocks across all columns
 	var flexColWidth = 0; //desired width of flexible columns
 	var flexColumns = []; //array of flexible width columns
 	var fixedShrinkColumns = []; //array of fixed width columns that can shrink
-	var flexShrinkUnits = 0; //total number of widthShrink blocks accross all columns
+	var flexShrinkUnits = 0; //total number of widthShrink blocks across all columns
 	var overflowWidth = 0; //horizontal overflow width
-	var gapFill=0; //number of pixels to be added to final column to close and half pixel gaps
+	var gapFill = 0; //number of pixels to be added to final column to close and half pixel gaps
 
 	function calcWidth(width){
 		var colWidth;
@@ -23460,7 +23430,6 @@ function fitColumns(columns){
 
 	//ensure columns resize to take up the correct amount of space
 	function scaleColumns(columns, freeSpace, colWidth, shrinkCols){
-
 		var oversizeCols = [],
 		oversizeSpace = 0,
 		remainingSpace = 0,
@@ -23571,7 +23540,7 @@ function fitColumns(columns){
 	flexColWidth = Math.floor(flexWidth / flexGrowUnits);
 
 	//generate column widths
-	var gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth, false);
+	gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth, false);
 
 	//increase width of last column to account for rounding errors
 	if(flexColumns.length && gapFill > 0){
@@ -23826,8 +23795,8 @@ class Localize extends Module{
 
 	//get text for current locale
 	getText(path, value){
-		var path = value ? path + "|" + value : path,
-		pathArray = path.split("|"),
+		var fillPath = value ? path + "|" + value : path,
+		pathArray = fillPath.split("|"),
 		text = this._getLangElement(pathArray, this.locale);
 
 		// if(text === false){
@@ -24402,7 +24371,7 @@ class Tabulator {
 			this.browserSlow = false;
 		}
 		
-		this.browserMobile = /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(ua)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(ua.slice(0,4));
+		this.browserMobile = /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(ua)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw-(n|u)|c55\/|capi|ccwa|cdm-|cell|chtm|cldc|cmd-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc-s|devi|dica|dmob|do(c|p)o|ds(12|-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(-|_)|g1 u|g560|gene|gf-5|g-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd-(m|p|t)|hei-|hi(pt|ta)|hp( i|ip)|hs-c|ht(c(-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i-(20|go|ma)|i230|iac( |-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|-[a-w])|libw|lynx|m1-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|-([1-8]|c))|phil|pire|pl(ay|uc)|pn-2|po(ck|rt|se)|prox|psio|pt-g|qa-a|qc(07|12|21|32|60|-[2-7]|i-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h-|oo|p-)|sdk\/|se(c(-|0|1)|47|mc|nd|ri)|sgh-|shar|sie(-|m)|sk-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h-|v-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl-|tdg-|tel(i|m)|tim-|t-mo|to(pl|sh)|ts(70|m-|m3|m5)|tx-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas-|your|zeto|zte-/i.test(ua.slice(0,4));
 	}
 	
 	initGuard(func, msg){
@@ -24911,8 +24880,8 @@ class Tabulator {
 	}
 	
 	dispatchEvent(){
-		var args = Array.from(arguments),
-		key = args.shift();
+		var args = Array.from(arguments);
+		args.shift();
 		
 		this.externalEvents.dispatch(...arguments);
 	}
@@ -25013,5 +24982,5 @@ class PseudoRow {
 	clearCellHeight(){}
 }
 
-export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit$1 as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup$1 as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent$1 as RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Tooltip as TooltipModule, Validate as ValidateModule };
+export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit$1 as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup$1 as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Tooltip as TooltipModule, Validate as ValidateModule };
 //# sourceMappingURL=tabulator_esm.js.map

@@ -726,8 +726,6 @@ class Filter extends Module{
 
 	//remove filter from array
 	removeFilter(field, type, value){
-		var changed = false;
-
 		if(!Array.isArray(field)){
 			field = [{field:field, type:type, value:value}];
 		}
@@ -747,7 +745,6 @@ class Filter extends Module{
 
 			if(index > -1){
 				this.filterList.splice(index, 1);
-				changed = true;
 			}else{
 				console.warn("Filter Error - No matching filter type found, ignoring: ", filter.type);
 			}

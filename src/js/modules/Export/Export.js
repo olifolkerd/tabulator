@@ -252,15 +252,12 @@ class Export extends Module{
 			switch(row.type){
 				case "group":
 					return this.config.rowGroups !== false;
-					break;
 
 				case "calc":
 					return this.config.columnCalcs !== false;
-					break;
 
 				case "row":
 					return !(this.table.options.dataTree && this.config.dataTree === false && row.modules.dataTree.parent);
-					break;
 			}
 
 			return true;
@@ -326,6 +323,8 @@ class Export extends Module{
 		}
 
 		list.forEach((row, i) => {
+			let rowEl;
+
 			switch(row.type){
 				case "header":
 					headerEl.appendChild(this.genereateHeaderElement(row, setup, styles));
@@ -340,7 +339,8 @@ class Export extends Module{
 					break;
 
 				case "row":
-					let rowEl = this.genereateRowElement(row, setup, styles);
+					rowEl = this.genereateRowElement(row, setup, styles);
+
 					this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
 					bodyEl.appendChild(rowEl);
 					break;
@@ -433,9 +433,7 @@ class Export extends Module{
 		if(setup.groupHeader && setup.groupHeader[row.indent]){
 			group.value = setup.groupHeader[row.indent](group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
 		}else{
-			if(setup.groupHeader === false){
-				group.value = group.value;
-			}else{
+			if(setup.groupHeader !== false){
 				group.value = row.component._group.generator(group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
 			}
 		}
@@ -472,7 +470,7 @@ class Export extends Module{
 
 		rowEl.classList.add("tabulator-print-table-row");
 
-		row.columns.forEach((col) => {
+		row.columns.forEach((col, i) => {
 			if(col){
 				var cellEl = document.createElement("td"),
 				column = col.component._column,
@@ -522,9 +520,6 @@ class Export extends Module{
 						case "undefined":
 							value = "";
 							break;
-
-						default:
-							value = value;
 					}
 				}
 

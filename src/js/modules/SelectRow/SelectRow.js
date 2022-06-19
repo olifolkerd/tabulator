@@ -246,8 +246,6 @@ class SelectRow extends Module{
 	
 	//select an individual row
 	_selectRow(rowInfo, silent, force){
-		var index;
-		
 		//handle max row count
 		if(!isNaN(this.table.options.selectable) && this.table.options.selectable !== true && !force){
 			if(this.selectedRows.length >= this.table.options.selectable){
