@@ -18056,16 +18056,16 @@ function array(a, b, aRow, bRow, column, dir, params){
 
 	//handle non array values
 	if(!Array.isArray(a)){
-		alignEmptyValues = !Array.isArray(b) ? 0 : -1;
+		emptyAlign = !Array.isArray(b) ? 0 : -1;
 	}else if(!Array.isArray(b)){
-		alignEmptyValues = 1;
+		emptyAlign = 1;
 	}else {
 
 		//compare valid values
 		el1 = a ? calc(a) : 0;
 		el2 = b ? calc(b) : 0;
 
-		return el1 - el2;
+		return el2 - el1;
 	}
 
 	//fix empty values in position
