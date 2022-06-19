@@ -21,5 +21,6 @@ module.exports = {
 		"no-unused-vars": ["warn", { "vars": "all", "args": "none", "ignoreRestSiblings": false }],
 		"no-fallthrough": "off",
 		"no-inner-declarations": "off",
+		"no-prototype-builtins": "off",
 	}
 }
