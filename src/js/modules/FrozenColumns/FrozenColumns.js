@@ -160,7 +160,7 @@ class FrozenColumns extends Module{
 			}
 			
 			if(group.groupList && group.groupList.length){
-				this.layoutGroupCalcs(group.groupList && group.groupList);
+				this.layoutGroupCalcs(group.groupList);
 			}
 		});
 	}
