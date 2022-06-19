@@ -74,7 +74,6 @@ class GroupRows extends Module{
 	configureGroupSetup(){
 		if(this.table.options.groupBy){
 			var groupBy = this.table.options.groupBy,
-			startOpen = this.table.options.groupStartOpen,
 			groupHeader = this.table.options.groupHeader;
 
 			this.allowedValues = this.table.options.groupValues;

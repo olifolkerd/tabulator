@@ -8583,9 +8583,9 @@ class Filter extends Module{
 	//initialize column header filter
 	initializeColumn(column, value){
 		var self = this,
-		field = column.getField();
+		field = column.getField();
 
-		//handle successfull value change
+		//handle successfully value change
 		function success(value){
 			var filterType = (column.modules.filter.tagType == "input" && column.modules.filter.attrType == "text") || column.modules.filter.tagType == "textarea" ? "partial" : "match",
 			type = "",
@@ -11319,7 +11319,6 @@ class GroupRows extends Module{
 	configureGroupSetup(){
 		if(this.table.options.groupBy){
 			var groupBy = this.table.options.groupBy,
-			startOpen = this.table.options.groupStartOpen,
 			groupHeader = this.table.options.groupHeader;
 
 			this.allowedValues = this.table.options.groupValues;
