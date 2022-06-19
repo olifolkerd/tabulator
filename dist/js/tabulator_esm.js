@@ -11339,7 +11339,7 @@ class GroupRows extends Module{
 
 			this.groupIDLookups = [];
 
-			if(Array.isArray(groupBy) || groupBy){
+			if(Array.isArray(groupBy)){
 				if(this.table.modExists("columnCalcs") && this.table.options.columnCalcs != "table" && this.table.options.columnCalcs != "both"){
 					this.table.modules.columnCalcs.removeCalcs();
 				}
@@ -11389,17 +11389,6 @@ class GroupRows extends Module{
 					values:this.allowedValues ? this.allowedValues[i] : false,
 				});
 			});
-
-			if(startOpen){
-				if(!Array.isArray(startOpen)){
-					startOpen = [startOpen];
-				}
-
-				startOpen.forEach((level) => {
-				});
-
-				this.startOpen = startOpen;
-			}
 
 			if(groupHeader){
 				this.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
