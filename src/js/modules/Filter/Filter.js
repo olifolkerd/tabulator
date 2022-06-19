@@ -400,15 +400,9 @@ class Filter extends Module{
 				}
 
 				//set Placeholder Text
-				if(field){
-					self.langBind("headerFilters|columns|" + column.definition.field, function(value){
-						editorElement.setAttribute("placeholder", typeof value !== "undefined" && value ? value : self.langText("headerFilters|default"));
-					});
-				}else{
-					self.langBind("headerFilters|default", function(value){
-						editorElement.setAttribute("placeholder", value);
-					});
-				}
+				self.langBind("headerFilters|columns|" + column.definition.field, function(value){
+					editorElement.setAttribute("placeholder", typeof value !== "undefined" && value ? value : self.langText("headerFilters|default"));
+				});
 
 				//focus on element on click
 				editorElement.addEventListener("click", function(e){
