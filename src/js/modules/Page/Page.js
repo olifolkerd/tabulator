@@ -609,7 +609,6 @@ class Page extends Module{
 				}
 				break;
 				case "undefined":
-				case "null":
 				this.pageCounterElement.innerHTML = "";
 				break;
 				default:

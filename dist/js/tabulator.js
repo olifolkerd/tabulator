@@ -1,4 +1,4 @@
-/* Tabulator v5.2.3 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.2.7 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -323,8 +323,8 @@
 
     _createClass(CoreFeature, [{
       key: "reloadData",
-      value: function reloadData(data, silent) {
-        return this.table.dataLoader.load(data, undefined, undefined, undefined, silent);
+      value: function reloadData(data, silent, columnsChanged) {
+        return this.table.dataLoader.load(data, undefined, undefined, undefined, silent, columnsChanged);
       } //////////////////////////////////////////
       ///////////// Localization ///////////////
       //////////////////////////////////////////
@@ -897,7 +897,6 @@
             break;
 
           case "undefined":
-          case "null":
             this.element.innerHTML = "";
             break;
 
@@ -1277,7 +1276,6 @@
           }
         }
 
-        this.contentElement = this._bindEvents();
         this.contentElement = this._buildColumnHeaderContent();
         this.element.appendChild(this.contentElement);
 
@@ -1288,92 +1286,12 @@
         }
 
         this.dispatch("column-init", this);
-      }
-    }, {
-      key: "_bindEvents",
-      value: function _bindEvents() {
-        var _this3 = this;
-
-        var def = this.definition,
-            dblTap,
-            tapHold,
-            tap; //setup header click event bindings
-
-        if (typeof def.headerClick == "function") {
-          this.element.addEventListener("click", function (e) {
-            def.headerClick(e, _this3.getComponent());
-          });
-        }
-
-        if (typeof def.headerDblClick == "function") {
-          this.element.addEventListener("dblclick", function (e) {
-            def.headerDblClick(e, _this3.getComponent());
-          });
-        }
-
-        if (typeof def.headerContext == "function") {
-          this.element.addEventListener("contextmenu", function (e) {
-            def.headerContext(e, _this3.getComponent());
-          });
-        } //setup header tap event bindings
-
-
-        if (typeof def.headerTap == "function") {
-          tap = false;
-          this.element.addEventListener("touchstart", function (e) {
-            tap = true;
-          }, {
-            passive: true
-          });
-          this.element.addEventListener("touchend", function (e) {
-            if (tap) {
-              def.headerTap(e, _this3.getComponent());
-            }
-
-            tap = false;
-          });
-        }
-
-        if (typeof def.headerDblTap == "function") {
-          dblTap = null;
-          this.element.addEventListener("touchend", function (e) {
-            if (dblTap) {
-              clearTimeout(dblTap);
-              dblTap = null;
-              def.headerDblTap(e, _this3.getComponent());
-            } else {
-              dblTap = setTimeout(function () {
-                clearTimeout(dblTap);
-                dblTap = null;
-              }, 300);
-            }
-          });
-        }
-
-        if (typeof def.headerTapHold == "function") {
-          tapHold = null;
-          this.element.addEventListener("touchstart", function (e) {
-            clearTimeout(tapHold);
-            tapHold = setTimeout(function () {
-              clearTimeout(tapHold);
-              tapHold = null;
-              tap = false;
-              def.headerTapHold(e, this.getComponent());
-            }, 1000);
-          }, {
-            passive: true
-          });
-          this.element.addEventListener("touchend", function (e) {
-            clearTimeout(tapHold);
-            tapHold = null;
-          });
-        }
       } //build header element for header
 
     }, {
       key: "_buildColumnHeader",
       value: function _buildColumnHeader() {
-        var _this4 = this;
+        var _this3 = this;
 
         var def = this.definition,
             table = this.table;
@@ -1391,7 +1309,7 @@
         if (def.cssClass) {
           var classeNames = def.cssClass.split(" ");
           classeNames.forEach(function (className) {
-            _this4.element.classList.add(className);
+            _this3.element.classList.add(className);
           });
         }
 
@@ -1434,7 +1352,7 @@
     }, {
       key: "_buildColumnHeaderTitle",
       value: function _buildColumnHeaderTitle() {
-        var _this5 = this;
+        var _this4 = this;
 
         var def = this.definition;
         var titleHolderElement = document.createElement("div");
@@ -1450,7 +1368,7 @@
           titleElement.addEventListener("change", function () {
             def.title = titleElement.value;
 
-            _this5.dispatchExternal("columnTitleChanged", _this5.getComponent());
+            _this4.dispatchExternal("columnTitleChanged", _this4.getComponent());
           });
           titleHolderElement.appendChild(titleElement);
 
@@ -1464,7 +1382,7 @@
         } else {
           if (def.field) {
             this.langBind("columns|" + def.field, function (text) {
-              _this5._formatColumnHeaderTitle(titleHolderElement, text || def.title || "&nbsp;");
+              _this4._formatColumnHeaderTitle(titleHolderElement, text || def.title || "&nbsp;");
             });
           } else {
             this._formatColumnHeaderTitle(titleHolderElement, def.title || "&nbsp;");
@@ -1492,7 +1410,6 @@
             break;
 
           case "undefined":
-          case "null":
             el.innerHTML = "";
             break;
 
@@ -1504,7 +1421,7 @@
     }, {
       key: "_buildGroupHeader",
       value: function _buildGroupHeader() {
-        var _this6 = this;
+        var _this5 = this;
 
         this.element.classList.add("tabulator-col-group");
         this.element.setAttribute("role", "columngroup");
@@ -1513,7 +1430,7 @@
         if (this.definition.cssClass) {
           var classeNames = this.definition.cssClass.split(" ");
           classeNames.forEach(function (className) {
-            _this6.element.classList.add(className);
+            _this5.element.classList.add(className);
           });
         }
 
@@ -1944,40 +1861,40 @@
     }, {
       key: "delete",
       value: function _delete() {
-        var _this7 = this;
+        var _this6 = this;
 
         return new Promise(function (resolve, reject) {
 
-          if (_this7.isGroup) {
-            _this7.columns.forEach(function (column) {
+          if (_this6.isGroup) {
+            _this6.columns.forEach(function (column) {
               column["delete"]();
             });
           }
 
-          _this7.dispatch("column-delete", _this7);
+          _this6.dispatch("column-delete", _this6);
 
-          var cellCount = _this7.cells.length;
+          var cellCount = _this6.cells.length;
 
           for (var i = 0; i < cellCount; i++) {
-            _this7.cells[0]["delete"]();
+            _this6.cells[0]["delete"]();
           }
 
-          if (_this7.element.parentNode) {
-            _this7.element.parentNode.removeChild(_this7.element);
+          if (_this6.element.parentNode) {
+            _this6.element.parentNode.removeChild(_this6.element);
           }
 
-          _this7.element = false;
-          _this7.contentElement = false;
-          _this7.titleElement = false;
-          _this7.groupElement = false;
+          _this6.element = false;
+          _this6.contentElement = false;
+          _this6.titleElement = false;
+          _this6.groupElement = false;
 
-          if (_this7.parent.isGroup) {
-            _this7.parent.removeChild(_this7);
+          if (_this6.parent.isGroup) {
+            _this6.parent.removeChild(_this6);
           }
 
-          _this7.table.columnManager.deregisterColumn(_this7);
+          _this6.table.columnManager.deregisterColumn(_this6);
 
-          _this7.table.columnManager.renderer.rerenderColumns(true);
+          _this6.table.columnManager.renderer.rerenderColumns(true);
 
           resolve();
         });
@@ -2078,7 +1995,7 @@
     }, {
       key: "updateDefinition",
       value: function updateDefinition(updates) {
-        var _this8 = this;
+        var _this7 = this;
 
         var definition;
 
@@ -2087,11 +2004,11 @@
             definition = Object.assign({}, this.getDefinition());
             definition = Object.assign(definition, updates);
             return this.table.columnManager.addColumn(definition, false, this).then(function (column) {
-              if (definition.field == _this8.field) {
-                _this8.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+              if (definition.field == _this7.field) {
+                _this7.field = false; //cleair field name to prevent deletion of duplicate column from arrays
               }
 
-              return _this8["delete"]().then(function () {
+              return _this7["delete"]().then(function () {
                 return column.getComponent();
               });
             });
@@ -2441,6 +2358,8 @@
                 } else {
                   _this2.elementVertical.scrollTop = _this2.elementVertical.scrollTop - _this2.elementVertical.clientHeight + rowEl.offsetHeight;
                 }
+
+                break;
 
               case "top":
                 _this2.elementVertical.scrollTop = rowEl.offsetTop;
@@ -5103,8 +5022,8 @@
       value: function createHolderElement() {
         var el = document.createElement("div");
         el.classList.add("tabulator-tableholder");
-        el.setAttribute("tabindex", 0);
-        el.setAttribute("role", "rowgroup");
+        el.setAttribute("tabindex", 0); // el.setAttribute("role", "rowgroup");
+
         return el;
       }
     }, {
@@ -6691,7 +6610,7 @@
       value: function initialize() {}
     }, {
       key: "load",
-      value: function load(data, params, config, replace, silent) {
+      value: function load(data, params, config, replace, silent, columnsChanged) {
         var _this2 = this;
 
         var requestNo = ++this.requestOrder;
@@ -6725,7 +6644,7 @@
               if (rowData !== false) {
                 _this2.dispatchExternal("dataLoaded", rowData);
 
-                _this2.table.rowManager.setData(rowData, replace, !replace);
+                _this2.table.rowManager.setData(rowData, replace, typeof columnsChanged === "undefined" ? !replace : columnsChanged);
               }
             } else {
               console.warn("Data Load Response Blocked - An active data load request was blocked by an attempt to change table data while the request was being made");
@@ -6752,7 +6671,7 @@
             data = [];
           }
 
-          this.table.rowManager.setData(data, replace, !replace);
+          this.table.rowManager.setData(data, replace, typeof columnsChanged === "undefined" ? !replace : columnsChanged);
           return Promise.resolve();
         }
       }
@@ -7212,10 +7131,18 @@
 
       _this.blurEvent = _this.hide.bind(_assertThisInitialized(_this), false);
       _this.escEvent = _this._escapeCheck.bind(_assertThisInitialized(_this));
+      _this.destroyBinding = _this.tableDestroyed;
+      _this.destroyed = false;
       return _this;
     }
 
     _createClass(Popup, [{
+      key: "tableDestroyed",
+      value: function tableDestroyed() {
+        this.destroyed = true;
+        this.hide(true);
+      }
+    }, {
       key: "_lookupContainer",
       value: function _lookupContainer() {
         var container = this.table.options.popupContainer;
@@ -7313,6 +7240,10 @@
       value: function show(origin, position) {
         var x, y, parentEl, parentOffset, coords;
 
+        if (this.destroyed || this.table.destroyed) {
+          return this;
+        }
+
         if (origin instanceof HTMLElement) {
           parentEl = origin;
           coords = this.elementPositionCoords(origin, position);
@@ -7344,6 +7275,10 @@
         this._fitToScreen(x, y, parentEl, parentOffset, position);
 
         this.visible = true;
+        this.subscribe("table-destroy", this.destroyBinding);
+        this.element.addEventListener("mousedown", function (e) {
+          e.stopPropagation();
+        });
         return this;
       }
     }, {
@@ -7399,6 +7334,7 @@
 
             document.body.addEventListener("click", _this2.blurEvent);
             document.body.addEventListener("contextmenu", _this2.blurEvent);
+            document.body.addEventListener("mousedown", _this2.blurEvent);
             window.addEventListener("resize", _this2.blurEvent);
             document.body.addEventListener("keydown", _this2.escEvent);
           }, 100);
@@ -7424,6 +7360,7 @@
             document.body.removeEventListener("keydown", this.escEvent);
             document.body.removeEventListener("click", this.blurEvent);
             document.body.removeEventListener("contextmenu", this.blurEvent);
+            document.body.removeEventListener("mousedown", this.blurEvent);
             window.removeEventListener("resize", this.blurEvent);
             this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
             this.unsubscribe("cell-editing", this.blurEvent);
@@ -7446,6 +7383,8 @@
           if (this.blurCallback && !silent) {
             this.blurCallback();
           }
+
+          this.unsubscribe("table-destroy", this.destroyBinding);
         }
 
         return this;
@@ -8449,6 +8388,7 @@
 
       this.optionsList = new OptionsList(this, "table constructor");
       this.initialized = false;
+      this.destroyed = false;
 
       if (this.initializeElement(element)) {
         this.initializeCoreSystems(options); //delay table creation to allow event bindings immediately after the constructor
@@ -8675,6 +8615,7 @@
       key: "destroy",
       value: function destroy() {
         var element = this.element;
+        this.destroyed = true;
         TableRegistry.deregister(this); //deregister table from inter-device communication
 
         this.eventBus.dispatch("table-destroy"); //clear row data
@@ -11322,6 +11263,11 @@
         return row.modules.dataTree.parent ? row.modules.dataTree.parent.getComponent() : false;
       }
     }, {
+      key: "getTreeParentRoot",
+      value: function getTreeParentRoot(row) {
+        return row.modules.dataTree.parent ? this.getTreeParentRoot(row.modules.dataTree.parent) : row;
+      }
+    }, {
       key: "getFilteredTreeChildren",
       value: function getFilteredTreeChildren(row) {
         var config = row.modules.dataTree,
@@ -11524,11 +11470,10 @@
             if (col) {
               switch (_typeof(col.value)) {
                 case "object":
-                  col.value = JSON.stringify(col.value);
+                  col.value = col.value !== null ? JSON.stringify(col.value) : "";
                   break;
 
                 case "undefined":
-                case "null":
                   col.value = "";
                   break;
               }
@@ -11642,11 +11587,10 @@
         if (col) {
           switch (_typeof(col.value)) {
             case "object":
-              col.value = JSON.stringify(col.value);
+              col.value = col.value !== null ? JSON.stringify(col.value) : "";
               break;
 
             case "undefined":
-            case "null":
               col.value = "";
               break;
           }
@@ -12473,6 +12417,7 @@
       this.values = [];
       this.popup = null;
       this.listIteration = 0;
+      this.lastAction = "";
       this.blurable = true;
       this.actions = {
         success: success,
@@ -12517,7 +12462,7 @@
         this.initialValues = this.params.multiselect ? initialValue : [initialValue];
 
         if (this.isFilter) {
-          this.input.value = this.initialValues.join(",");
+          this.input.value = this.initialValues ? this.initialValues.join(",") : "";
           this.headerFilterInitialListGen();
         }
       }
@@ -12846,10 +12791,12 @@
     }, {
       key: "_keyEnter",
       value: function _keyEnter(e) {
-        if (this.focusedItem) {
-          this._chooseItem(this.focusedItem);
+        if (this.params.autocomplete && this.lastAction === "typing") {
+          this._resolveValue(true);
         } else {
-          this._cancel();
+          if (this.focusedItem) {
+            this._chooseItem(this.focusedItem);
+          }
         }
       }
     }, {
@@ -12882,6 +12829,7 @@
       value: function _keyAutoCompLetter(e) {
         this._filter();
 
+        this.lastAction = "typing";
         this.typing = true;
       }
     }, {
@@ -12907,6 +12855,8 @@
     }, {
       key: "_focusItem",
       value: function _focusItem(item) {
+        this.lastAction = "focus";
+
         if (this.focusedItem && this.focusedItem.element) {
           this.focusedItem.element.classList.remove("focused");
         }
@@ -12961,7 +12911,7 @@
           values = this._ajaxRequest(this.params.valuesURL, this.input.value);
         } else {
           if (typeof this.params.valuesLookup === "function") {
-            values = this.params.valuesLookup(cell, this.input.value);
+            values = this.params.valuesLookup(this.cell, this.input.value);
           } else if (this.params.valuesLookup) {
             values = this._uniqueColumnValues(this.params.valuesLookupField);
           }
@@ -13087,6 +13037,13 @@
 
           _this4._parseListItem(value, data, 0);
         });
+
+        if (!this.currentItems.length && this.params.freetext) {
+          this.input.value = this.initialValues;
+          this.typing = true;
+          this.lastAction = "typing";
+        }
+
         this.data = data;
         return data;
       }
@@ -13458,6 +13415,7 @@
         } else {
           this.currentItems = [item];
           item.selected = true;
+          console.log("choose");
           this.input.value = item.label;
 
           this._styleItem(item);
@@ -15165,11 +15123,10 @@
             } else {
               switch (_typeof(value)) {
                 case "object":
-                  value = JSON.stringify(value);
+                  value = value !== null ? JSON.stringify(value) : "";
                   break;
 
                 case "undefined":
-                case "null":
                   value = "";
                   break;
 
@@ -15954,7 +15911,7 @@
       value: function refreshFilter() {
         if (this.tableInitialized) {
           if (this.table.options.filterMode === "remote") {
-            this.reloadData();
+            this.reloadData(null, false, false);
           } else {
             this.refreshData(true);
           }
@@ -17384,7 +17341,8 @@
         this.table.columnManager.headersElement.style.marginLeft = this.leftMargin;
         this.table.columnManager.element.style.paddingRight = this.rightMargin;
         this.leftColumns.forEach(function (column, i) {
-          column.modules.frozen.margin = leftMargin + _this4.table.columnManager.scrollLeft + "px";
+          column.modules.frozen.marginValue = leftMargin + _this4.table.columnManager.scrollLeft;
+          column.modules.frozen.margin = column.modules.frozen.marginValue + "px";
 
           if (column.visible) {
             leftMargin += column.getWidth();
@@ -17423,7 +17381,8 @@
             rightMargin += column.getWidth();
           }
 
-          column.modules.frozen.margin = _this4.rightPadding - rightMargin + "px";
+          column.modules.frozen.marginValue = _this4.rightPadding - rightMargin;
+          column.modules.frozen.margin = column.modules.frozen.marginValue + "px";
 
           if (i == _this4.rightColumns.length - 1) {
             column.modules.frozen.edge = true;
@@ -18830,6 +18789,11 @@
       key: "getRowGroup",
       value: function getRowGroup(row) {
         var match = false;
+
+        if (this.options("dataTree")) {
+          row = this.table.modules.dataTree.getTreeParentRoot(row);
+        }
+
         this.groupList.forEach(function (group) {
           var result = group.getRowGroup(row);
 
@@ -22487,7 +22451,6 @@
               break;
 
             case "undefined":
-            case "null":
               this.pageCounterElement.innerHTML = "";
               break;
 
@@ -24018,6 +23981,7 @@
           this.subscribe("column-moved", this.columnLayoutUpdated.bind(this));
           this.subscribe("column-hide", this.deInitializeColumn.bind(this));
           this.subscribe("column-show", this.columnLayoutUpdated.bind(this));
+          this.subscribe("column-width", this.columnWidthUpdated.bind(this));
           this.subscribe("column-delete", this.deInitializeComponent.bind(this));
           this.subscribe("column-height", this.resizeHandle.bind(this));
           this.initialized = true;
@@ -24051,15 +24015,41 @@
         }
       }
     }, {
+      key: "columnWidthUpdated",
+      value: function columnWidthUpdated(column) {
+        var _this2 = this;
+
+        if (column.modules.frozen) {
+          if (this.table.modules.frozenColumns.leftColumns.includes(column)) {
+            this.table.modules.frozenColumns.leftColumns.forEach(function (col) {
+              _this2.reinitializeColumn(col);
+            });
+          } else if (this.table.modules.frozenColumns.rightColumns.includes(column)) {
+            this.table.modules.frozenColumns.rightColumns.forEach(function (col) {
+              _this2.reinitializeColumn(col);
+            });
+          }
+        }
+      }
+    }, {
       key: "reinitializeColumn",
       value: function reinitializeColumn(column) {
+        var frozenOffset = column.modules.frozen ? column.modules.frozen.marginValue + column.getWidth() + "px" : false;
         column.cells.forEach(function (cell) {
           if (cell.modules.resize && cell.modules.resize.handleEl) {
+            if (frozenOffset) {
+              cell.modules.resize.handleEl.style.left = frozenOffset;
+            }
+
             cell.element.after(cell.modules.resize.handleEl);
           }
         });
 
         if (column.modules.resize && column.modules.resize.handleEl) {
+          if (frozenOffset) {
+            column.modules.resize.handleEl.style.left = frozenOffset;
+          }
+
           column.element.after(column.modules.resize.handleEl);
         }
       }
@@ -24108,9 +24098,15 @@
               self.table.externalEvents.dispatch("columnResized", nearestColumn.getComponent());
             }
           });
+
+          if (column.modules.frozen) {
+            handle.style.position = "absolute";
+            handle.style.left = column.modules.frozen.marginValue + column.getWidth() + "px";
+          }
+
           config.handleEl = handle;
 
-          if (element.parentNode) {
+          if (element.parentNode && column.visible) {
             element.after(handle);
           }
         }
@@ -24120,11 +24116,11 @@
     }, {
       key: "deInitializeColumn",
       value: function deInitializeColumn(column) {
-        var _this2 = this;
+        var _this3 = this;
 
         this.deInitializeComponent(column);
         column.cells.forEach(function (cell) {
-          _this2.deInitializeComponent(cell);
+          _this3.deInitializeComponent(cell);
         });
       }
     }, {
@@ -25846,7 +25842,7 @@
       key: "refreshSort",
       value: function refreshSort() {
         if (this.table.options.sortMode === "remote") {
-          this.reloadData();
+          this.reloadData(null, false, false);
         } else {
           this.refreshData(true);
         } //TODO - Persist left position of row manager
@@ -26022,7 +26018,7 @@
       key: "setColumnHeader",
       value: function setColumnHeader(column, dir) {
         column.modules.sort.dir = dir;
-        column.getElement().setAttribute("aria-sort", dir);
+        column.getElement().setAttribute("aria-sort", dir === "asc" ? "ascending" : "descending");
       } //sort each item in sort list
 
     }, {

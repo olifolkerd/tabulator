@@ -166,20 +166,20 @@
   border-bottom: 6px solid #bbb;
 }
 
-.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="asc"] .tabulator-col-content .tabulator-col-sorter {
+.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="ascending"] .tabulator-col-content .tabulator-col-sorter {
   color: #363636;
 }
 
-.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="asc"] .tabulator-col-content .tabulator-col-sorter .tabulator-arrow {
+.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="ascending"] .tabulator-col-content .tabulator-col-sorter .tabulator-arrow {
   border-top: none;
   border-bottom: 6px solid #363636;
 }
 
-.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="desc"] .tabulator-col-content .tabulator-col-sorter {
+.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="descending"] .tabulator-col-content .tabulator-col-sorter {
   color: #363636;
 }
 
-.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="desc"] .tabulator-col-content .tabulator-col-sorter .tabulator-arrow {
+.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="descending"] .tabulator-col-content .tabulator-col-sorter .tabulator-arrow {
   border-bottom: none;
   border-top: 6px solid #363636;
   color: #363636;
@@ -1263,6 +1263,18 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   border-right: none;
   border-top: 1px solid #999;
   color: #363636;
+}
+
+.tabulator-popup-container {
+  background: white;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.active {
+  color: white;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item:hover {
+  color: white;
 }
 
 /*# sourceMappingURL=tabulator_bulma.css.map */

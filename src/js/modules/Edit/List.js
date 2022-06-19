@@ -29,6 +29,8 @@ export default class Edit{
         
         this.listIteration = 0;
         
+        this.lastAction="";
+        
         this.blurable = true;
         
         this.actions = {
@@ -70,7 +72,7 @@ export default class Edit{
         this.initialValues = this.params.multiselect ? initialValue : [initialValue];
         
         if(this.isFilter){
-            this.input.value = this.initialValues.join(",");
+            this.input.value = this.initialValues ? this.initialValues.join(",") : "";
             this.headerFilterInitialListGen();            
         }
     }
@@ -159,7 +161,7 @@ export default class Edit{
     _initializeParams(params){
         var valueKeys = ["values", "valuesURL", "valuesLookup"],
         valueCheck;
-
+        
         params = Object.assign({}, params);
         
         params.verticalNavigation = params.verticalNavigation || "editor";
@@ -168,9 +170,9 @@ export default class Edit{
         params.filterDelay = typeof params.filterDelay === "undefined" ? 300 : params.filterDelay;
         
         params.emptyValue = Object.keys(params).includes("emptyValue") ? params.emptyValue : "";
-
+        
         valueCheck = Object.keys(params).filter(key => valueKeys.includes(key)).length;
-
+        
         if(!valueCheck){
             console.warn("list editor config error - either the values, valuesURL, or valuesLookup option must be set")
         }else if(valueCheck > 1){
@@ -370,10 +372,12 @@ export default class Edit{
     }
     
     _keyEnter(e){
-        if(this.focusedItem){
-            this._chooseItem(this.focusedItem);
+        if(this.params.autocomplete && this.lastAction === "typing"){
+            this._resolveValue(true);
         }else{
-            this._cancel();
+            if(this.focusedItem){
+                this._chooseItem(this.focusedItem);
+            }
         }
     }
     
@@ -402,6 +406,7 @@ export default class Edit{
     
     _keyAutoCompLetter(e){
         this._filter();
+        this.lastAction = "typing";
         this.typing = true;
     }
     
@@ -426,6 +431,8 @@ export default class Edit{
     }
     
     _focusItem(item){
+        this.lastAction = "focus";
+        
         if(this.focusedItem && this.focusedItem.element){
             this.focusedItem.element.classList.remove("focused");
         }
@@ -595,6 +602,12 @@ export default class Edit{
             
             this._parseListItem(value, data, 0);
         });
+
+        if(!this.currentItems.length && this.params.freetext){
+            this.input.value = this.initialValues;
+            this.typing = true;
+            this.lastAction = "typing";
+        }
         
         this.data = data;
         
@@ -939,6 +952,8 @@ export default class Edit{
         }else{
             this.currentItems = [item];
             item.selected = true;
+
+            console.log("choose")
             
             this.input.value = item.label;
             

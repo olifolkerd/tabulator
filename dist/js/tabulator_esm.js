@@ -1,4 +1,4 @@
-/* Tabulator v5.2.3 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.2.7 (c) Oliver Folkerd 2022 */
 class CoreFeature{
 
 	constructor(table){
@@ -194,6 +194,14 @@ class Popup extends CoreFeature{
         
         this.blurEvent = this.hide.bind(this, false);
         this.escEvent = this._escapeCheck.bind(this);
+
+        this.destroyBinding = this.tableDestroyed;
+        this.destroyed = false;
+    }
+
+    tableDestroyed(){
+        this.destroyed = true;
+        this.hide(true);
     }
     
     _lookupContainer(){
@@ -277,6 +285,10 @@ class Popup extends CoreFeature{
     
     show(origin, position){
         var x, y, parentEl, parentOffset, coords;
+
+        if(this.destroyed || this.table.destroyed){
+            return this;
+        }
         
         if(origin instanceof HTMLElement){
             parentEl = origin;
@@ -311,6 +323,12 @@ class Popup extends CoreFeature{
         this._fitToScreen(x, y, parentEl, parentOffset, position);
         
         this.visible = true;
+
+        this.subscribe("table-destroy", this.destroyBinding);
+
+        this.element.addEventListener("mousedown", (e) => {
+            e.stopPropagation();
+        });
         
         return this;
     }
@@ -362,8 +380,10 @@ class Popup extends CoreFeature{
                 this.subscribe("cell-editing", this.blurEvent);
                 document.body.addEventListener("click", this.blurEvent);
                 document.body.addEventListener("contextmenu", this.blurEvent);
+                document.body.addEventListener("mousedown", this.blurEvent);
                 window.addEventListener("resize", this.blurEvent);
                 document.body.addEventListener("keydown", this.escEvent);
+
             }, 100);
             
             this.blurCallback = callback;
@@ -384,6 +404,7 @@ class Popup extends CoreFeature{
                 document.body.removeEventListener("keydown", this.escEvent);
                 document.body.removeEventListener("click", this.blurEvent);
                 document.body.removeEventListener("contextmenu", this.blurEvent);
+                document.body.removeEventListener("mousedown", this.blurEvent);
                 window.removeEventListener("resize", this.blurEvent);
                 this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
                 this.unsubscribe("cell-editing", this.blurEvent);
@@ -406,6 +427,8 @@ class Popup extends CoreFeature{
             if(this.blurCallback && !silent){
                 this.blurCallback();
             }
+
+            this.unsubscribe("table-destroy", this.destroyBinding);
         }
         
         return this;
@@ -1564,7 +1587,6 @@ class Cell extends CoreFeature{
 			}
 			break;
 			case "undefined":
-			case "null":
 			this.element.innerHTML = "";
 			break;
 			default:
@@ -2066,8 +2088,6 @@ class Column extends CoreFeature{
 			}
 		}
 
-		this.contentElement = this._bindEvents();
-
 		this.contentElement = this._buildColumnHeaderContent();
 
 		this.element.appendChild(this.contentElement);
@@ -2079,83 +2099,6 @@ class Column extends CoreFeature{
 		}
 
 		this.dispatch("column-init", this);
-	}
-
-	_bindEvents(){
-		var def = this.definition,
-		dblTap,	tapHold, tap;
-
-		//setup header click event bindings
-		if(typeof(def.headerClick) == "function"){
-			this.element.addEventListener("click", (e) => {def.headerClick(e, this.getComponent());});
-		}
-
-		if(typeof(def.headerDblClick) == "function"){
-			this.element.addEventListener("dblclick", (e) => {def.headerDblClick(e, this.getComponent());});
-		}
-
-		if(typeof(def.headerContext) == "function"){
-			this.element.addEventListener("contextmenu", (e) => {def.headerContext(e, this.getComponent());});
-		}
-
-		//setup header tap event bindings
-		if(typeof(def.headerTap) == "function"){
-			tap = false;
-
-			this.element.addEventListener("touchstart", (e) => {
-				tap = true;
-			}, {passive: true});
-
-			this.element.addEventListener("touchend", (e) => {
-				if(tap){
-					def.headerTap(e, this.getComponent());
-				}
-
-				tap = false;
-			});
-		}
-
-		if(typeof(def.headerDblTap) == "function"){
-			dblTap = null;
-
-			this.element.addEventListener("touchend", (e) => {
-
-				if(dblTap){
-					clearTimeout(dblTap);
-					dblTap = null;
-
-					def.headerDblTap(e, this.getComponent());
-				}else {
-
-					dblTap = setTimeout(() => {
-						clearTimeout(dblTap);
-						dblTap = null;
-					}, 300);
-				}
-
-			});
-		}
-
-		if(typeof(def.headerTapHold) == "function"){
-			tapHold = null;
-
-			this.element.addEventListener("touchstart", (e) => {
-				clearTimeout(tapHold);
-
-				tapHold = setTimeout(function(){
-					clearTimeout(tapHold);
-					tapHold = null;
-					tap = false;
-					def.headerTapHold(e, this.getComponent());
-				}, 1000);
-
-			}, {passive: true});
-
-			this.element.addEventListener("touchend", (e) => {
-				clearTimeout(tapHold);
-				tapHold = null;
-			});
-		}
 	}
 
 	//build header element for header
@@ -2284,7 +2227,6 @@ class Column extends CoreFeature{
 			}
 			break;
 			case "undefined":
-			case "null":
 			el.innerHTML = "";
 			break;
 			default:
@@ -4680,11 +4622,10 @@ function csv(list, options, setFileContents){
 
 					switch(typeof col.value){
 						case "object":
-						col.value = JSON.stringify(col.value);
+						col.value = col.value !== null ? JSON.stringify(col.value) : "";
 						break;
 
 						case "undefined":
-						case "null":
 						col.value = "";
 						break;
 					}
@@ -4804,11 +4745,10 @@ function pdf(list, options, setFileContents){
 			if(col){
 				switch(typeof col.value){
 					case "object":
-					col.value = JSON.stringify(col.value);
+					col.value = col.value !== null ? JSON.stringify(col.value) : "";
 					break;
 
 					case "undefined":
-					case "null":
 					col.value = "";
 					break;
 				}
@@ -5627,6 +5567,8 @@ class Edit{
         
         this.listIteration = 0;
         
+        this.lastAction="";
+        
         this.blurable = true;
         
         this.actions = {
@@ -5668,7 +5610,7 @@ class Edit{
         this.initialValues = this.params.multiselect ? initialValue : [initialValue];
         
         if(this.isFilter){
-            this.input.value = this.initialValues.join(",");
+            this.input.value = this.initialValues ? this.initialValues.join(",") : "";
             this.headerFilterInitialListGen();            
         }
     }
@@ -5757,7 +5699,7 @@ class Edit{
     _initializeParams(params){
         var valueKeys = ["values", "valuesURL", "valuesLookup"],
         valueCheck;
-
+        
         params = Object.assign({}, params);
         
         params.verticalNavigation = params.verticalNavigation || "editor";
@@ -5766,9 +5708,9 @@ class Edit{
         params.filterDelay = typeof params.filterDelay === "undefined" ? 300 : params.filterDelay;
         
         params.emptyValue = Object.keys(params).includes("emptyValue") ? params.emptyValue : "";
-
+        
         valueCheck = Object.keys(params).filter(key => valueKeys.includes(key)).length;
-
+        
         if(!valueCheck){
             console.warn("list editor config error - either the values, valuesURL, or valuesLookup option must be set");
         }else if(valueCheck > 1){
@@ -5968,10 +5910,12 @@ class Edit{
     }
     
     _keyEnter(e){
-        if(this.focusedItem){
-            this._chooseItem(this.focusedItem);
+        if(this.params.autocomplete && this.lastAction === "typing"){
+            this._resolveValue(true);
         }else {
-            this._cancel();
+            if(this.focusedItem){
+                this._chooseItem(this.focusedItem);
+            }
         }
     }
     
@@ -6000,6 +5944,7 @@ class Edit{
     
     _keyAutoCompLetter(e){
         this._filter();
+        this.lastAction = "typing";
         this.typing = true;
     }
     
@@ -6024,6 +5969,8 @@ class Edit{
     }
     
     _focusItem(item){
+        this.lastAction = "focus";
+        
         if(this.focusedItem && this.focusedItem.element){
             this.focusedItem.element.classList.remove("focused");
         }
@@ -6193,6 +6140,12 @@ class Edit{
             
             this._parseListItem(value, data, 0);
         });
+
+        if(!this.currentItems.length && this.params.freetext){
+            this.input.value = this.initialValues;
+            this.typing = true;
+            this.lastAction = "typing";
+        }
         
         this.data = data;
         
@@ -6536,6 +6489,8 @@ class Edit{
         }else {
             this.currentItems = [item];
             item.selected = true;
+
+            console.log("choose");
             
             this.input.value = item.label;
             
@@ -8231,11 +8186,10 @@ class Export extends Module{
 				}else {
 					switch(typeof value){
 						case "object":
-						value = JSON.stringify(value);
+						value = value !== null ? JSON.stringify(value) : "";
 						break;
 
 						case "undefined":
-						case "null":
 						value = "";
 						break;
 
@@ -10362,7 +10316,8 @@ class FrozenColumns extends Module{
 		this.table.columnManager.element.style.paddingRight = this.rightMargin;
 		
 		this.leftColumns.forEach((column, i) => {	
-			column.modules.frozen.margin = (leftMargin + this.table.columnManager.scrollLeft) + "px";
+			column.modules.frozen.marginValue = leftMargin + this.table.columnManager.scrollLeft;
+			column.modules.frozen.margin = column.modules.frozen.marginValue + "px";
 			
 			if(column.visible){
 				leftMargin += column.getWidth();
@@ -10401,7 +10356,8 @@ class FrozenColumns extends Module{
 				rightMargin += column.getWidth();
 			}
 			
-			column.modules.frozen.margin = (this.rightPadding - rightMargin) + "px";
+			column.modules.frozen.marginValue = this.rightPadding - rightMargin;
+			column.modules.frozen.margin = column.modules.frozen.marginValue + "px";
 			
 			if(i == this.rightColumns.length - 1){
 				column.modules.frozen.edge = true;
@@ -15198,7 +15154,6 @@ class Page extends Module{
 				}
 				break;
 				case "undefined":
-				case "null":
 				this.pageCounterElement.innerHTML = "";
 				break;
 				default:
@@ -16661,6 +16616,7 @@ class ResizeColumns extends Module{
 			
 			this.subscribe("column-hide", this.deInitializeColumn.bind(this));
 			this.subscribe("column-show", this.columnLayoutUpdated.bind(this));
+			this.subscribe("column-width", this.columnWidthUpdated.bind(this));
 			
 			this.subscribe("column-delete", this.deInitializeComponent.bind(this));
 			this.subscribe("column-height", this.resizeHandle.bind(this));
@@ -16695,14 +16651,38 @@ class ResizeColumns extends Module{
 		}
 	}
 	
+	columnWidthUpdated(column){
+		if(column.modules.frozen){
+			if(this.table.modules.frozenColumns.leftColumns.includes(column)){
+				this.table.modules.frozenColumns.leftColumns.forEach((col) => {
+					this.reinitializeColumn(col);
+				});
+			}else if(this.table.modules.frozenColumns.rightColumns.includes(column)){
+				this.table.modules.frozenColumns.rightColumns.forEach((col) => {
+					this.reinitializeColumn(col);
+				});
+			}
+		}
+	}
+	
 	reinitializeColumn(column){
+		var frozenOffset = column.modules.frozen ? (column.modules.frozen.marginValue + column.getWidth() + "px") : false;
+		
 		column.cells.forEach((cell) => {
 			if(cell.modules.resize && cell.modules.resize.handleEl){
+				if(frozenOffset){
+					cell.modules.resize.handleEl.style.left = frozenOffset;
+				}
+				
 				cell.element.after(cell.modules.resize.handleEl);
 			}
 		});
 		
 		if(column.modules.resize && column.modules.resize.handleEl){
+			if(frozenOffset){
+				column.modules.resize.handleEl.style.left = frozenOffset;
+			}
+			
 			column.element.after(column.modules.resize.handleEl);
 		}
 	}
@@ -16751,9 +16731,14 @@ class ResizeColumns extends Module{
 				}
 			});
 			
+			if(column.modules.frozen){
+				handle.style.position = "absolute";
+				handle.style.left = column.modules.frozen.marginValue + column.getWidth() + "px";
+			}
+			
 			config.handleEl = handle;
 			
-			if(element.parentNode){
+			if(element.parentNode && column.visible){
 				element.after(handle);			
 			}
 		}
@@ -16801,27 +16786,27 @@ class ResizeColumns extends Module{
 			startDiff = x - self.startX,
 			moveDiff = x - self.latestX,
 			blockedBefore, blockedAfter;
-
+			
 			self.latestX = x;
 			
 			if(self.table.rtl){
 				startDiff = -startDiff;
 				moveDiff = -moveDiff;
 			}
-
+			
 			blockedBefore = column.width == column.minWidth || column.width == column.maxWidth;
-
+			
 			column.setWidth(self.startWidth + startDiff);
-
+			
 			blockedAfter = column.width == column.minWidth || column.width == column.maxWidth;
-
+			
 			if(moveDiff < 0){
 				self.nextColumn = self.initialNextColumn;
 			}
 			
 			if(self.table.options.resizableColumnFit && self.nextColumn && !(blockedBefore && blockedAfter)){
 				let colWidth = self.nextColumn.getWidth();
-
+				
 				if(moveDiff > 0){
 					if(colWidth <= self.nextColumn.minWidth){
 						self.nextColumn = self.nextColumn.nextColumn();
@@ -18535,7 +18520,7 @@ class Sort extends Module{
 	//set the column header sort direction
 	setColumnHeader(column, dir){
 		column.modules.sort.dir = dir;
-		column.getElement().setAttribute("aria-sort", dir);
+		column.getElement().setAttribute("aria-sort", dir === "asc" ? "ascending" : "descending");
 	}
 
 	//sort each item in sort list
@@ -19477,6 +19462,8 @@ class Renderer extends CoreFeature{
 					}else {
 						this.elementVertical.scrollTop = this.elementVertical.scrollTop - this.elementVertical.clientHeight + rowEl.offsetHeight;
 					}
+
+					break;
 
 					case "top":
 					this.elementVertical.scrollTop = rowEl.offsetTop;					
@@ -21438,7 +21425,7 @@ class RowManager extends CoreFeature{
 		
 		el.classList.add("tabulator-tableholder");
 		el.setAttribute("tabindex", 0);
-		el.setAttribute("role", "rowgroup");
+		// el.setAttribute("role", "rowgroup");
 		
 		return el;
 	}
@@ -24105,6 +24092,7 @@ class Tabulator {
 		this.optionsList = new OptionsList(this, "table constructor");
 		
 		this.initialized = false;
+		this.destroyed = false;
 		
 		if(this.initializeElement(element)){
 			
@@ -24332,6 +24320,8 @@ class Tabulator {
 	//deconstructor
 	destroy(){
 		var element = this.element;
+		
+		this.destroyed = true;
 		
 		TableRegistry.deregister(this); //deregister table from inter-device communication
 		

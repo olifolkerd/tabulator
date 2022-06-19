@@ -22,6 +22,14 @@ export default class Popup extends CoreFeature{
         
         this.blurEvent = this.hide.bind(this, false);
         this.escEvent = this._escapeCheck.bind(this);
+
+        this.destroyBinding = this.tableDestroyed;
+        this.destroyed = false;
+    }
+
+    tableDestroyed(){
+        this.destroyed = true;
+        this.hide(true);
     }
     
     _lookupContainer(){
@@ -105,6 +113,10 @@ export default class Popup extends CoreFeature{
     
     show(origin, position){
         var x, y, parentEl, parentOffset, containerOffset, coords;
+
+        if(this.destroyed || this.table.destroyed){
+            return this;
+        }
         
         if(origin instanceof HTMLElement){
             parentEl = origin;
@@ -139,6 +151,12 @@ export default class Popup extends CoreFeature{
         this._fitToScreen(x, y, parentEl, parentOffset, position);
         
         this.visible = true;
+
+        this.subscribe("table-destroy", this.destroyBinding);
+
+        this.element.addEventListener("mousedown", (e) => {
+            e.stopPropagation();
+        })
         
         return this;
     }
@@ -190,8 +208,10 @@ export default class Popup extends CoreFeature{
                 this.subscribe("cell-editing", this.blurEvent);
                 document.body.addEventListener("click", this.blurEvent);
                 document.body.addEventListener("contextmenu", this.blurEvent);
+                document.body.addEventListener("mousedown", this.blurEvent);
                 window.addEventListener("resize", this.blurEvent);
                 document.body.addEventListener("keydown", this.escEvent);
+
             }, 100);
             
             this.blurCallback = callback;
@@ -212,6 +232,7 @@ export default class Popup extends CoreFeature{
                 document.body.removeEventListener("keydown", this.escEvent);
                 document.body.removeEventListener("click", this.blurEvent);
                 document.body.removeEventListener("contextmenu", this.blurEvent);
+                document.body.removeEventListener("mousedown", this.blurEvent);
                 window.removeEventListener("resize", this.blurEvent);
                 this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
                 this.unsubscribe("cell-editing", this.blurEvent);
@@ -234,6 +255,8 @@ export default class Popup extends CoreFeature{
             if(this.blurCallback && !silent){
                 this.blurCallback();
             }
+
+            this.unsubscribe("table-destroy", this.destroyBinding);
         }
         
         return this;

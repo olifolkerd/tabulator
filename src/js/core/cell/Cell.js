@@ -118,7 +118,6 @@ export default class Cell extends CoreFeature{
 			}
 			break;
 			case "undefined":
-			case "null":
 			this.element.innerHTML = "";
 			break;
 			default:

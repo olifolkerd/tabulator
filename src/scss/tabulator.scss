@@ -244,7 +244,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					}
 				}
 				
-				&[aria-sort="asc"]{
+				&[aria-sort="ascending"]{
 					.tabulator-col-content .tabulator-col-sorter{
 						color: $sortArrowActive;
 						
@@ -256,7 +256,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					}
 				}
 				
-				&[aria-sort="desc"]{
+				&[aria-sort="descending"]{
 					.tabulator-col-content .tabulator-col-sorter{
 						color: $sortArrowActive;
 						

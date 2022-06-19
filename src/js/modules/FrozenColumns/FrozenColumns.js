@@ -178,7 +178,8 @@ class FrozenColumns extends Module{
 		this.table.columnManager.element.style.paddingRight = this.rightMargin;
 		
 		this.leftColumns.forEach((column, i) => {	
-			column.modules.frozen.margin = (leftMargin + this.table.columnManager.scrollLeft) + "px";
+			column.modules.frozen.marginValue = leftMargin + this.table.columnManager.scrollLeft;
+			column.modules.frozen.margin = column.modules.frozen.marginValue + "px";
 			
 			if(column.visible){
 				leftMargin += column.getWidth();
@@ -217,7 +218,8 @@ class FrozenColumns extends Module{
 				rightMargin += column.getWidth();
 			}
 			
-			column.modules.frozen.margin = (this.rightPadding - rightMargin) + "px";
+			column.modules.frozen.marginValue = this.rightPadding - rightMargin;
+			column.modules.frozen.margin = column.modules.frozen.marginValue + "px";
 			
 			if(i == this.rightColumns.length - 1){
 				column.modules.frozen.edge = true;
