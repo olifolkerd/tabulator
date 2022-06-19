@@ -426,7 +426,7 @@ class Page extends Module{
 			this.element.appendChild(this.nextBut);
 			this.element.appendChild(this.lastBut);
 			
-			if(!this.table.options.paginationElement && !hidden){
+			if(!this.table.options.paginationElement){
 				if(this.table.options.paginationCounter){
 
 					paginationCounterHolder; 
