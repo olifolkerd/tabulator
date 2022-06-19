@@ -103,7 +103,7 @@ export default function(list, options = {}, setFileContents){
 
 	doc.autoTable(autoTableParams);
 
-	if(options && options.documentProcessing){
+	if(options.documentProcessing){
 		options.documentProcessing(doc);
 	}
 
