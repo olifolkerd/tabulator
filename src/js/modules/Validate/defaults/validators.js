@@ -17,7 +17,7 @@ export default {
 		}
 		
 		value = Number(value);
-		
+
 		return !isNaN(value) && isFinite(value) && value % 1 !== 0;
 	},
 
@@ -91,11 +91,12 @@ export default {
 		if(value === "" || value === null || typeof value === "undefined"){
 			return true;
 		}
+
 		if(typeof parameters == "string"){
 			parameters = parameters.split("|");
 		}
 
-		return value === "" || parameters.indexOf(value) > -1;
+		return parameters.indexOf(value) > -1;
 	},
 
 	//must match provided regex
