@@ -4768,7 +4768,7 @@ function pdf(list, options = {}, setFileContents){
 	//configure PDF
 	var doc = new jspdf.jsPDF(jsPDFParams); //set document to landscape, better for most tables
 
-	if(options && options.autoTable){
+	if(options.autoTable){
 		if(typeof options.autoTable === "function"){
 			autoTableParams = options.autoTable(doc) || {};
 		}else {
