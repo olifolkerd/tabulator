@@ -543,9 +543,11 @@ class DataTree extends Module{
 						match = match.data;
 					}
 				}
+			}else if(subject === null){
+				match = false;
 			}
 
-		}else if(typeof subject == "undefined" || subject === null){
+		}else if(typeof subject == "undefined"){
 			match = false;
 		}else{
 			//subject should be treated as the index of the row
