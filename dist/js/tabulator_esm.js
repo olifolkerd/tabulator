@@ -18690,7 +18690,7 @@ class Tooltip extends Module{
 			contentsEl.innerHTML = tooltip;
 		}
 		
-		if(tooltip || tooltip === 0 || tooltip === "0" || tooltip === false){
+		if(tooltip || tooltip === 0 || tooltip === false){
 			contentsEl.classList.add("tabulator-tooltip");
 
 			contentsEl.addEventListener("mousemove", e => e.preventDefault());
