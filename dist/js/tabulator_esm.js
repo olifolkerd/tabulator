@@ -11295,7 +11295,6 @@ class GroupRows extends Module{
 	//initialize group configuration
 	initialize(){
 		if(this.table.options.groupBy){
-
 			if(this.table.options.groupUpdateOnCellEdit){
 				this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
 				this.subscribe("row-data-changed", this.reassignRowToGroup.bind(this), 0);
@@ -11397,6 +11396,9 @@ class GroupRows extends Module{
 			if(groupHeader){
 				this.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
 			}
+		}else {
+			this.groupList = [];
+			this.groups = {};
 		}
 	}
 
@@ -11461,6 +11463,7 @@ class GroupRows extends Module{
 
 	setGroupBy(groups){
 		this.table.options.groupBy = groups;
+
 		if(!this.initialized){
 			this.initialize();
 		}else {
