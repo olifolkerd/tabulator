@@ -475,7 +475,8 @@ class Export extends Module{
 				var cellEl = document.createElement("td"),
 				column = col.component._column,
 				index = this.table.columnManager.findColumnIndex(column),
-				value = col.value;
+				value = col.value,
+				cellStyle;
 
 				var cellWrapper = {
 					modules:{},
@@ -529,8 +530,10 @@ class Export extends Module{
 					cellEl.innerHTML = value;
 				}
 
-				if(styles.styleCells[index] || styles.firstCell){
-					this.mapElementStyles(styles.styleCells[index] || styles.firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
+				cellStyle = styles.styleCells && styles.styleCells[index] ? styles.styleCells[index] : styles.firstCell;
+
+				if(cellStyle){
+					this.mapElementStyles(cellStyle, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
 
 					if(column.definition.align){
 						cellEl.style.textAlign = column.definition.align;
