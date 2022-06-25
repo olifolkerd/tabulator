@@ -3,6 +3,7 @@ export default {
 	debugEventsExternal:false, //flag to console log events
 	debugEventsInternal:false, //flag to console log events
 	debugInvalidOptions:true, //allow toggling of invalid option warnings
+	debugInvalidComponentFuncs:true, //allow toggling of invalid component warnings
 	debugInitialization:true, //allow toggling of invalid option warnings
 
 	height:false, //height of tabulator

@@ -19192,6 +19192,7 @@ var defaultOptions = {
 	debugEventsExternal:false, //flag to console log events
 	debugEventsInternal:false, //flag to console log events
 	debugInvalidOptions:true, //allow toggling of invalid option warnings
+	debugInvalidComponentFuncs:true, //allow toggling of invalid component warnings
 	debugInitialization:true, //allow toggling of invalid option warnings
 
 	height:false, //height of tabulator
@@ -22876,7 +22877,9 @@ class ComponentFunctionBinder{
 			return this.bindings[type][name].bind(null, component);
 		}else {
 			if(name !== "then" && typeof name === "string" && !name.startsWith("_")){
-				console.error("The " + type + " component does not have a " + name + " function, have you checked that you have the correct Tabulator module installed?");
+				if(this.table.options.debugInvalidComponentFuncs){
+					console.error("The " + type + " component does not have a " + name + " function, have you checked that you have the correct Tabulator module installed?");
+				}
 			}
 		}
 	}
