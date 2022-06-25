@@ -531,7 +531,7 @@ class MoveRows extends Module{
 			}
 
 			if(sender){
-				sender.call(this, this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+				sender.call(this, this.moving ? this.moving.getComponent() : undefined, row ? row.getComponent() : undefined, table);
 			}else{
 				if(this.table.options.movableRowsSender){
 					console.warn("Mover Row Error - no matching sender found:", this.table.options.movableRowsSender);
