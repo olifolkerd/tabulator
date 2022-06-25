@@ -951,8 +951,6 @@ export default class Edit{
 		}else{
 			this.currentItems = [item];
 			item.selected = true;
-
-			console.log("choose");
             
 			this.input.value = item.label;
             
