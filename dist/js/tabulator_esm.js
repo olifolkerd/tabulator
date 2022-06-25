@@ -7369,6 +7369,7 @@ class Edit$1 extends Module{
 			while(cellEl.firstChild) cellEl.removeChild(cellEl.firstChild);
 
 			cell.row.getElement().classList.remove("tabulator-row-editing");
+			cell.table.element.classList.remove("tabulator-table-editing");
 		}
 	}
 
@@ -7585,6 +7586,7 @@ class Edit$1 extends Module{
 					if(cellEditor instanceof Node){
 						element.classList.add("tabulator-editing");
 						cell.row.getElement().classList.add("tabulator-row-editing");
+						cell.table.element.classList.add("tabulator-table-editing");
 						while(element.firstChild) element.removeChild(element.firstChild);
 						element.appendChild(cellEditor);
 
@@ -8146,7 +8148,8 @@ class Export extends Module{
 				var cellEl = document.createElement("td"),
 				column = col.component._column,
 				index = this.table.columnManager.findColumnIndex(column),
-				value = col.value;
+				value = col.value,
+				cellStyle;
 
 				var cellWrapper = {
 					modules:{},
@@ -8200,8 +8203,10 @@ class Export extends Module{
 					cellEl.innerHTML = value;
 				}
 
-				if(styles.styleCells[index] || styles.firstCell){
-					this.mapElementStyles(styles.styleCells[index] || styles.firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
+				cellStyle = styles.styleCells && styles.styleCells[index] ? styles.styleCells[index] : styles.firstCell;
+
+				if(cellStyle){
+					this.mapElementStyles(cellStyle, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
 
 					if(column.definition.align){
 						cellEl.style.textAlign = column.definition.align;
