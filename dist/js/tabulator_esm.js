@@ -10508,7 +10508,7 @@ class FrozenRows extends Module{
 		rowType = typeof frozenRows;
 
 		if(rowType === "number"){
-			if((row.getPosition() + this.rows.length) <= frozenRows){
+			if(row.getPosition() && (row.getPosition() + this.rows.length) <= frozenRows){
 				this.freezeRow(row);
 			}
 		}else if(rowType === "function"){
