@@ -391,8 +391,8 @@ class MoveRows extends Module{
 		var rowHolder = this.table.rowManager.getElement(),
 		scrollTop = rowHolder.scrollTop,
 		yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolder.getBoundingClientRect().top) + scrollTop;
-
-		this.hoverElement.style.top = (yPos - this.startY) + "px";
+		
+		this.hoverElement.style.top = Math.min(yPos - this.startY, this.table.rowManager.element.scrollHeight - this.hoverElement.offsetHeight) + "px";
 	}
 
 	moveHoverConnections(e){
