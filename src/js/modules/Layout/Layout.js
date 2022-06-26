@@ -35,10 +35,9 @@ class Layout extends Module{
 	}
 
 	//trigger table layout
-	layout(){
+	layout(dataChanged){
 		this.dispatch("layout-refreshing");
-		Layout.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
-
+		Layout.modes[this.mode].call(this, this.table.columnManager.columnsByIndex, dataChanged);
 		this.dispatch("layout-refreshed");
 	}
 }

@@ -1,5 +1,5 @@
 //resize columns to fit
-export default function(columns){
+export default function(columns, forced){
 	var totalWidth = this.table.element.clientWidth; //table element width
 	var fixedWidth = 0; //total width of columns with a defined width
 	var flexWidth = 0; //total width available to flexible columns

@@ -884,7 +884,7 @@ export default class RowManager extends CoreFeature{
 			
 			if(this.firstRender){
 				this.firstRender = false;
-				this.layoutRefresh();
+				this.layoutRefresh(true);
 			}
 		}else{
 			this.renderEmptyScroll();

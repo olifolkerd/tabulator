@@ -666,7 +666,7 @@ export default class ColumnManager extends CoreFeature {
 		}
 
 		if(!this.confirm("table-redrawing", force)){
-			this.layoutRefresh();
+			this.layoutRefresh(force);
 		}
 
 		this.dispatch("table-redraw", force);

@@ -50,8 +50,8 @@ class CoreFeature{
 		return this.table.modules.layout.getMode();
 	}
 
-	layoutRefresh(){
-		return this.table.modules.layout.layout();
+	layoutRefresh(force){
+		return this.table.modules.layout.layout(force);
 	}
 
 
@@ -17068,124 +17068,156 @@ class ResizeRows extends Module{
 ResizeRows.moduleName = "resizeRows";
 
 class ResizeTable extends Module{
-
+	
 	constructor(table){
 		super(table);
-
+		
 		this.binding = false;
-		this.observer = false;
+		this.visibilityObserver = false;
+		this.resizeObserver = false;
 		this.containerObserver = false;
-
+		
 		this.tableHeight = 0;
 		this.tableWidth = 0;
 		this.containerHeight = 0;
 		this.containerWidth = 0;
-
+		
 		this.autoResize = false;
-
+		
+		this.visible = false;
+		
+		this.initialized = false;
+		this.initialRedraw = false;
+		
 		this.registerTableOption("autoResize", true); //auto resize table
 	}
-
+	
 	initialize(){
 		if(this.table.options.autoResize){
 			var table = this.table,
 			tableStyle;
-
+			
 			this.tableHeight = table.element.clientHeight;
 			this.tableWidth = table.element.clientWidth;
-
+			
 			if(table.element.parentNode){
 				this.containerHeight = table.element.parentNode.clientHeight;
 				this.containerWidth = table.element.parentNode.clientWidth;
 			}
-
-			if(typeof ResizeObserver !== "undefined" && table.rowManager.getRenderMode() === "virtual"){
-
+			
+			if(typeof IntersectionObserver !== "undefined" && typeof ResizeObserver !== "undefined" && table.rowManager.getRenderMode() === "virtual"){
+				
+				this.initializeVisibilityObserver();
+				
 				this.autoResize = true;
-
-				this.observer = new ResizeObserver((entry) => {
+				
+				this.resizeObserver = new ResizeObserver((entry) => {
 					if(!table.browserMobile || (table.browserMobile &&!table.modules.edit.currentCell)){
-
+						
 						var nodeHeight = Math.floor(entry[0].contentRect.height);
 						var nodeWidth = Math.floor(entry[0].contentRect.width);
-
+						
 						if(this.tableHeight != nodeHeight || this.tableWidth != nodeWidth){
 							this.tableHeight = nodeHeight;
 							this.tableWidth = nodeWidth;
-
+							
 							if(table.element.parentNode){
 								this.containerHeight = table.element.parentNode.clientHeight;
 								this.containerWidth = table.element.parentNode.clientWidth;
 							}
-
-							this.table.columnManager.renderer.rerenderColumns(true);
-
-							table.redraw();
+							
+							console.log("resize");
+							this.redrawTable();
 						}
-
 					}
 				});
-
-				this.observer.observe(table.element);
-
+				
+				this.resizeObserver.observe(table.element);
+				
 				tableStyle = window.getComputedStyle(table.element);
-
+				
 				if(this.table.element.parentNode && !this.table.rowManager.fixedHeight && (tableStyle.getPropertyValue("max-height") || tableStyle.getPropertyValue("min-height"))){
-
+					
 					this.containerObserver = new ResizeObserver((entry) => {
 						if(!table.browserMobile || (table.browserMobile &&!table.modules.edit.currentCell)){
-
+							
 							var nodeHeight = Math.floor(entry[0].contentRect.height);
 							var nodeWidth = Math.floor(entry[0].contentRect.width);
-
+							
 							if(this.containerHeight != nodeHeight || this.containerWidth != nodeWidth){
 								this.containerHeight = nodeHeight;
 								this.containerWidth = nodeWidth;
 								this.tableHeight = table.element.clientHeight;
 								this.tableWidth = table.element.clientWidth;
 							}
-
-							table.columnManager.renderer.rerenderColumns(true);
-
-							table.redraw();
+							
+							this.redrawTable();
 						}
 					});
-
+					
 					this.containerObserver.observe(this.table.element.parentNode);
 				}
-
+				
 				this.subscribe("table-resize", this.tableResized.bind(this));
-
+				
 			}else {
 				this.binding = function(){
 					if(!table.browserMobile || (table.browserMobile && !table.modules.edit.currentCell)){
-
 						table.columnManager.renderer.rerenderColumns(true);
-
 						table.redraw();
 					}
 				};
-
+				
 				window.addEventListener("resize", this.binding);
 			}
-
+			
 			this.subscribe("table-destroy", this.clearBindings.bind(this));
 		}
 	}
+	
+	initializeVisibilityObserver(){
+		this.visibilityObserver = new IntersectionObserver((entries) => {
+			this.visible = entries[0].isIntersecting;
 
+			if(!this.initialized){
+				this.initialized = true;
+				this.initialRedraw = !this.visible;
+			}
+
+			if(this.visible){
+				this.redrawTable(this.initialRedraw);
+				this.initialRedraw = false;
+			}
+			
+		});
+		
+		this.visibilityObserver.observe(this.table.element);
+	}
+	
+	redrawTable(force){
+		if(this.initialized && this.visible){
+			this.table.columnManager.renderer.rerenderColumns(true);
+			this.table.redraw(force);
+		}
+	}
+	
 	tableResized(){
 		this.table.rowManager.redraw();
 	}
-
+	
 	clearBindings(){
 		if(this.binding){
 			window.removeEventListener("resize", this.binding);
 		}
-
-		if(this.observer){
-			this.observer.unobserve(this.table.element);
+		
+		if(this.resizeObserver){
+			this.resizeObserver.unobserve(this.table.element);
 		}
-
+		
+		if(this.visibilityObserver){
+			this.visibilityObserver.unobserve(this.table.element);
+		}
+		
 		if(this.containerObserver){
 			this.containerObserver.unobserve(this.table.element.parentNode);
 		}
@@ -20835,7 +20867,7 @@ class ColumnManager extends CoreFeature {
 		}
 
 		if(!this.confirm("table-redrawing", force)){
-			this.layoutRefresh();
+			this.layoutRefresh(force);
 		}
 
 		this.dispatch("table-redraw", force);
@@ -22372,7 +22404,7 @@ class RowManager extends CoreFeature{
 			
 			if(this.firstRender){
 				this.firstRender = false;
-				this.layoutRefresh();
+				this.layoutRefresh(true);
 			}
 		}else {
 			this.renderEmptyScroll();
@@ -23442,16 +23474,18 @@ class TableRegistry {
 TableRegistry.tables = [];
 
 //resize columns to fit data they contain
-function fitData(columns){
-	this.table.columnManager.renderer.reinitializeColumnWidths(columns);
-
+function fitData(columns, forced){
+	if(forced){
+		this.table.columnManager.renderer.reinitializeColumnWidths(columns);
+	}
+	
 	if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
 		this.table.modules.responsiveLayout.update();
 	}
 }
 
 //resize columns to fit data they contain and stretch row to fill table, also used for fitDataTable
-function fitDataGeneral(columns){
+function fitDataGeneral(columns, forced){
 	columns.forEach(function(column){
 		column.reinitializeWidth();
 	});
@@ -23462,7 +23496,7 @@ function fitDataGeneral(columns){
 }
 
 //resize columns to fit data the contain and stretch last column to fill table
-function fitDataStretch(columns){
+function fitDataStretch(columns, forced){
 	var colsWidth = 0,
 	tableWidth = this.table.rowManager.element.clientWidth,
 	gap = 0,
@@ -23503,7 +23537,7 @@ function fitDataStretch(columns){
 }
 
 //resize columns to fit
-function fitColumns(columns){
+function fitColumns(columns, forced){
 	var totalWidth = this.table.element.clientWidth; //table element width
 	var fixedWidth = 0; //total width of columns with a defined width
 	var flexWidth = 0; //total width available to flexible columns
@@ -23717,10 +23751,9 @@ class Layout extends Module{
 	}
 
 	//trigger table layout
-	layout(){
+	layout(dataChanged){
 		this.dispatch("layout-refreshing");
-		Layout.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
-
+		Layout.modes[this.mode].call(this, this.table.columnManager.columnsByIndex, dataChanged);
 		this.dispatch("layout-refreshed");
 	}
 }
