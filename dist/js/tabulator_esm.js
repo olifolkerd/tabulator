@@ -9850,6 +9850,7 @@ function responsiveCollapse(cell, formatterParams, onRendered){
 	el.addEventListener("click", function(e){
 		e.stopImmediatePropagation();
 		toggleList(!config.open);
+		cell.getTable().rowManager.adjustTableSize();
 	});
 
 	toggleList(config.open);
