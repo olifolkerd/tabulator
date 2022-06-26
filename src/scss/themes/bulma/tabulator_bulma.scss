@@ -42,45 +42,45 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 
 .tabulator{
 	border:none;
-
+	
 	.tabulator-header{
 		border:$table-cell-border;
 		border-width:$table-head-cell-border-width;
-
+		
 		.tabulator-col{
 			border-right:none;
-
+			
 			&.tabulator-moving{
 				border:none;
 			}
-
+			
 			.tabulator-col-content{
 				padding:$table-cell-padding;
-
+				
 				.tabulator-col-sorter{
 					right:0px;
 				}
 			}
-
+			
 			.tabulator-header-filter{
 				input{
 					border:$button-border-width solid $button-border-color;
 				}
 			}
 		}
-
+		
 		.tabulator-calcs-holder{
 			.tabulator-row{
 				.tabulator-cell{
 					border-bottom-width:0;
 				}
 			}
-
+			
 			border:$table-cell-border;
 			border-width:$table-foot-cell-border-width;
 		}
 	}
-
+	
 	.tabulator-tableholder{
 		.tabulator-table{
 			.tabulator-row{
@@ -89,12 +89,12 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 						border:$table-cell-border;
 						border-width:$table-head-cell-border-width;
 					}
-
+					
 					&.tabulator-calcs-bottom{
 						border:$table-cell-border;
 						border-width:$table-foot-cell-border-width;
 					}
-
+					
 					.tabulator-cell{
 						border-bottom-width:0;
 					}
@@ -102,39 +102,39 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 			}
 		}
 	}
-
+	
 	.tabulator-footer{
 		padding:$table-cell-padding;
 		border:$table-cell-border;
 		border-width:$table-foot-cell-border-width;
-
+		
 		.tabulator-calcs-holder{
 			margin:-5px -10px 10px -10px;
-
+			
 			border:$table-cell-border;
 			border-width:$table-head-cell-border-width;
-
+			
 			.tabulator-row{
 				.tabulator-cell{
 					border-bottom-width:0;
 				}
 			}
 		}
-
+		
 		.tabulator-page{
 			margin:0 0.1875em;
 			padding:$button-padding-vertical $button-padding-horizontal;
-
+			
 			border:$button-border-width solid $button-border-color;
-
+			
 			font-size: $textSize;
-
+			
 			&.active{
 				border-color:$button-active-border-color;
 				color:$button-active-color;
 				font-weight:bold;
 			}
-
+			
 			&:not(.disabled){
 				&:hover{
 					cursor:pointer;
@@ -145,9 +145,9 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 			}
 		}
 	}
-
+	
 	//Bulma theming classes
-
+	
 	&.is-striped{
 		.tabulator-row{
 			&:nth-child(even){
@@ -155,16 +155,16 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 			}
 		}
 	}
-
+	
 	&.is-bordered{
 		border:$table-cell-border;
-
+		
 		.tabulator-header{
 			.tabulator-col{
 				border-right:$table-cell-border;
 			}
 		}
-
+		
 		.tabulator-tableholder{
 			.tabulator-table{
 				.tabulator-row{
@@ -175,7 +175,7 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 			}
 		}
 	}
-
+	
 	&.is-narrow{
 		.tabulator-header{
 			.tabulator-col{
@@ -184,7 +184,7 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 				}
 			}
 		}
-
+		
 		.tabulator-tableholder{
 			.tabulator-table{
 				.tabulator-row{
@@ -199,25 +199,25 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 
 .tabulator-row{
 	min-height:14px + ($headerMargin * 2);
-
+	
 	&.tabulator-row-even{
 		background-color: inherit;
 	}
-
+	
 	&.tabulator-selected{
 		background-color:$rowSelectedBackground !important;
 	}
-
+	
 	&.tabulator-selected:hover{
 		background-color:darken($rowSelectedBackground, 10%) !important;
 	}
-
+	
 	.tabulator-cell{
 		padding:$table-cell-padding;
 		border:$table-cell-border;
 		border-width:$table-cell-border-width;
 	}
-
+	
 	&.tabulator-group{
 		border-bottom:1px solid #999;
 		border-right:none;
@@ -236,3 +236,18 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 	}
 }
 
+.tabulator-popup-container{
+	background: $backgroundColor,
+}
+
+.tabulator-edit-list{
+	.tabulator-edit-list-item{
+		&.active{
+			color:$backgroundColor;
+		}
+
+		&:hover{
+			color:$backgroundColor;
+		}
+	}
+}

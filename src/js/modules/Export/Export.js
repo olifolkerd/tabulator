@@ -63,24 +63,24 @@ class Export extends Module{
 			switch(range){
 				case true:
 				case "visible":
-				rows = this.table.rowManager.getVisibleRows(false, true);
-				break;
+					rows = this.table.rowManager.getVisibleRows(false, true);
+					break;
 
 				case "all":
-				rows = this.table.rowManager.rows;
-				break;
+					rows = this.table.rowManager.rows;
+					break;
 
 				case "selected":
-				rows = this.table.modules.selectRow.selectedRows;
-				break;
+					rows = this.table.modules.selectRow.selectedRows;
+					break;
 
 				case "active":
 				default:
-				if(this.table.options.pagination){
-					rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
-				}else{
-					rows = this.table.rowManager.getDisplayRows();
-				}
+					if(this.table.options.pagination){
+						rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
+					}else{
+						rows = this.table.rowManager.getDisplayRows();
+					}
 			}
 		}
 
@@ -148,7 +148,13 @@ class Export extends Module{
 	}
 
 	columnVisCheck(column){
-		return column.definition[this.colVisProp] !== false && (column.visible || (!column.visible && column.definition[this.colVisProp]));
+		var visProp = column.definition[this.colVisProp];
+
+		if(typeof visProp === "function"){
+			visProp = visProp.call(this.table, column.getComponent());
+		}
+
+		return visProp !== false && (column.visible || (!column.visible && visProp));
 	}
 
 	headersToExportRows(columns){
@@ -245,16 +251,13 @@ class Export extends Module{
 		rows = rows.filter((row) => {
 			switch(row.type){
 				case "group":
-				return this.config.rowGroups !== false;
-				break;
+					return this.config.rowGroups !== false;
 
 				case "calc":
-				return this.config.columnCalcs !== false;
-				break;
+					return this.config.columnCalcs !== false;
 
 				case "row":
-				return !(this.table.options.dataTree && this.config.dataTree === false && row.modules.dataTree.parent);
-				break;
+					return !(this.table.options.dataTree && this.config.dataTree === false && row.modules.dataTree.parent);
 			}
 
 			return true;
@@ -267,20 +270,20 @@ class Export extends Module{
 
 			switch(row.type){
 				case "group":
-				indent = row.level;
-				exportCols.push(new ExportColumn(row.key, row.getComponent(), columns.length, 1));
-				break;
+					indent = row.level;
+					exportCols.push(new ExportColumn(row.key, row.getComponent(), columns.length, 1));
+					break;
 
 				case "calc" :
 				case "row" :
-				columns.forEach((col) => {
-					exportCols.push(new ExportColumn(col._column.getFieldValue(rowData), col, 1, 1));
-				});
+					columns.forEach((col) => {
+						exportCols.push(new ExportColumn(col._column.getFieldValue(rowData), col, 1, 1));
+					});
 
-				if(this.table.options.dataTree && this.config.dataTree !== false){
-					indent = row.modules.dataTree.index;
-				}
-				break;
+					if(this.table.options.dataTree && this.config.dataTree !== false){
+						indent = row.modules.dataTree.index;
+					}
+					break;
 			}
 
 			exportRows.push(new ExportRow(row.type, exportCols, row.getComponent(), indent));
@@ -320,24 +323,27 @@ class Export extends Module{
 		}
 
 		list.forEach((row, i) => {
+			let rowEl;
+
 			switch(row.type){
 				case "header":
-				headerEl.appendChild(this.genereateHeaderElement(row, setup, styles));
-				break;
+					headerEl.appendChild(this.genereateHeaderElement(row, setup, styles));
+					break;
 
 				case "group":
-				bodyEl.appendChild(this.genereateGroupElement(row, setup, styles));
-				break;
+					bodyEl.appendChild(this.genereateGroupElement(row, setup, styles));
+					break;
 
 				case "calc":
-				bodyEl.appendChild(this.genereateCalcElement(row, setup, styles));
-				break;
+					bodyEl.appendChild(this.genereateCalcElement(row, setup, styles));
+					break;
 
 				case "row":
-				let rowEl = this.genereateRowElement(row, setup, styles);
-				this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
-				bodyEl.appendChild(rowEl);
-				break;
+					rowEl = this.genereateRowElement(row, setup, styles);
+
+					this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+					bodyEl.appendChild(rowEl);
+					break;
 			}
 		});
 
@@ -427,9 +433,7 @@ class Export extends Module{
 		if(setup.groupHeader && setup.groupHeader[row.indent]){
 			group.value = setup.groupHeader[row.indent](group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
 		}else{
-			if(setup.groupHeader === false){
-				group.value = group.value;
-			}else{
+			if(setup.groupHeader !== false){
 				group.value = row.component._group.generator(group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
 			}
 		}
@@ -466,12 +470,13 @@ class Export extends Module{
 
 		rowEl.classList.add("tabulator-print-table-row");
 
-		row.columns.forEach((col) => {
+		row.columns.forEach((col, i) => {
 			if(col){
 				var cellEl = document.createElement("td"),
 				column = col.component._column,
 				index = this.table.columnManager.findColumnIndex(column),
-				value = col.value;
+				value = col.value,
+				cellStyle;
 
 				var cellWrapper = {
 					modules:{},
@@ -510,16 +515,12 @@ class Export extends Module{
 				}else{
 					switch(typeof value){
 						case "object":
-						value = JSON.stringify(value);
-						break;
+							value = value !== null ? JSON.stringify(value) : "";
+							break;
 
 						case "undefined":
-						case "null":
-						value = "";
-						break;
-
-						default:
-						value = value;
+							value = "";
+							break;
 					}
 				}
 
@@ -529,8 +530,10 @@ class Export extends Module{
 					cellEl.innerHTML = value;
 				}
 
-				if(styles.styleCells[index] || styles.firstCell){
-					this.mapElementStyles(styles.styleCells[index] || styles.firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
+				cellStyle = styles.styleCells && styles.styleCells[index] ? styles.styleCells[index] : styles.firstCell;
+
+				if(cellStyle){
+					this.mapElementStyles(cellStyle, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
 
 					if(column.definition.align){
 						cellEl.style.textAlign = column.definition.align;

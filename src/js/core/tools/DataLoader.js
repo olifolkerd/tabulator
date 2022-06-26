@@ -63,9 +63,9 @@ export default class DataLoader extends CoreFeature{
 					this.clearAlert();
 				}, this.table.options.dataLoaderErrorTimeout);
 			})
-			.finally(() => {
-				this.loading = false;
-			})
+				.finally(() => {
+					this.loading = false;
+				});
 		}else{
 			this.dispatchExternal("dataLoaded", data);
 

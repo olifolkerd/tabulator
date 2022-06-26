@@ -77,10 +77,10 @@ class Edit extends Module{
 					cell.getElement().firstChild.blur();
 
 					if(newRow === true){
-						newRow = this.table.addRow({})
+						newRow = this.table.addRow({});
 					}else{
 						if(typeof newRow == "function"){
-							newRow = this.table.addRow(newRow(cell.row.getComponent()))
+							newRow = this.table.addRow(newRow(cell.row.getComponent()));
 						}else{
 							newRow = this.table.addRow(Object.assign({}, newRow));
 						}
@@ -89,7 +89,7 @@ class Edit extends Module{
 					newRow.then(() => {
 						setTimeout(() => {
 							cell.getComponent().navigateNext();
-						})
+						});
 					});
 				}
 			}
@@ -347,8 +347,7 @@ class Edit extends Module{
 
 	//initialize column editor
 	initializeColumn(column){
-		var self = this,
-		config = {
+		var config = {
 			editor:false,
 			blocked:false,
 			check:column.definition.editable,
@@ -358,30 +357,30 @@ class Edit extends Module{
 		//set column editor
 		switch(typeof column.definition.editor){
 			case "string":
-			if(this.editors[column.definition.editor]){
-				config.editor = this.editors[column.definition.editor];
-			}else{
-				console.warn("Editor Error - No such editor found: ", column.definition.editor);
-			}
-			break;
+				if(this.editors[column.definition.editor]){
+					config.editor = this.editors[column.definition.editor];
+				}else{
+					console.warn("Editor Error - No such editor found: ", column.definition.editor);
+				}
+				break;
 
 			case "function":
-			config.editor = column.definition.editor;
-			break;
+				config.editor = column.definition.editor;
+				break;
 
 			case "boolean":
-			if(column.definition.editor === true){
-				if(typeof column.definition.formatter !== "function"){
-					if(this.editors[column.definition.formatter]){
-						config.editor = this.editors[column.definition.formatter];
+				if(column.definition.editor === true){
+					if(typeof column.definition.formatter !== "function"){
+						if(this.editors[column.definition.formatter]){
+							config.editor = this.editors[column.definition.formatter];
+						}else{
+							config.editor = this.editors["input"];
+						}
 					}else{
-						config.editor = this.editors["input"];
+						console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 					}
-				}else{
-					console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 				}
-			}
-			break;
+				break;
 		}
 
 		if(config.editor){
@@ -411,6 +410,7 @@ class Edit extends Module{
 			while(cellEl.firstChild) cellEl.removeChild(cellEl.firstChild);
 
 			cell.row.getElement().classList.remove("tabulator-row-editing");
+			cell.table.element.classList.remove("tabulator-table-editing");
 		}
 	}
 
@@ -485,8 +485,7 @@ class Edit extends Module{
 		if(this.table.rowManager.getRenderMode() == "virtual"){
 			var topEdge = this.table.rowManager.element.scrollTop,
 			bottomEdge = this.table.rowManager.element.clientHeight + this.table.rowManager.element.scrollTop,
-			rowEl = cell.row.getElement(),
-			offset = rowEl.offsetTop;
+			rowEl = cell.row.getElement();
 
 			if(rowEl.offsetTop < topEdge){
 				this.table.rowManager.element.scrollTop -= (topEdge - rowEl.offsetTop);
@@ -498,8 +497,7 @@ class Edit extends Module{
 
 			var leftEdge = this.table.rowManager.element.scrollLeft,
 			rightEdge = this.table.rowManager.element.clientWidth + this.table.rowManager.element.scrollLeft,
-			cellEl = cell.getElement(),
-			offset = cellEl.offsetLeft;
+			cellEl = cell.getElement();
 
 			if(this.table.modExists("frozenColumns")){
 				leftEdge += parseInt(this.table.modules.frozenColumns.leftMargin);
@@ -590,12 +588,12 @@ class Edit extends Module{
 
 			switch(typeof cell.column.modules.edit.check){
 				case "function":
-				allowEdit = cell.column.modules.edit.check(cell.getComponent());
-				break;
+					allowEdit = cell.column.modules.edit.check(cell.getComponent());
+					break;
 
 				case "boolean":
-				allowEdit = cell.column.modules.edit.check;
-				break;
+					allowEdit = cell.column.modules.edit.check;
+					break;
 			}
 
 			if(allowEdit || forceEdit){
@@ -633,6 +631,7 @@ class Edit extends Module{
 					if(cellEditor instanceof Node){
 						element.classList.add("tabulator-editing");
 						cell.row.getElement().classList.add("tabulator-row-editing");
+						cell.table.element.classList.add("tabulator-table-editing");
 						while(element.firstChild) element.removeChild(element.firstChild);
 						element.appendChild(cellEditor);
 

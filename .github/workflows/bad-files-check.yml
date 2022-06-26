@@ -1,0 +1,39 @@
+name: Bad files check
+on:
+  pull_request:
+
+jobs:
+  check:
+    name: Dist check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+
+      - name: Get specific changed files in dist
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v17.3
+        with:
+          files: |
+            dist
+
+      - name: Check file existence
+        id: check_files
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "yarn.lock"
+
+      - name: Fail if dist files changed
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        run: |
+          echo "Oops! Looks like you modified some files in dist/. Please remove them from your PR, thanks!"
+          exit 1
+
+      - name: Fail if yarn lock exists
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          echo "Oops! Looks like you checked in a yarn.lock file, we use npm and package-lock.json. Please remove it from your PR, thanks!"
+          exit 1

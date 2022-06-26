@@ -173,7 +173,7 @@ class SelectRow extends Module{
 				
 				if(this.table.options.selectable !== true){
 					if(toggledRows.length > this.table.options.selectable){
-						toggledRows = toggledRows.slice(0, this.table.options.selectable)
+						toggledRows = toggledRows.slice(0, this.table.options.selectable);
 					}
 				}
 				
@@ -208,46 +208,44 @@ class SelectRow extends Module{
 		
 		switch(typeof rows){
 			case "undefined":
-			this.table.rowManager.rows.forEach((row) => {
-				this._selectRow(row, true, true);
-			});
+				this.table.rowManager.rows.forEach((row) => {
+					this._selectRow(row, true, true);
+				});
 			
-			this._rowSelectionChanged();
-			break;
+				this._rowSelectionChanged();
+				break;
 			
 			case "string":
 			
-			rowMatch = this.table.rowManager.findRow(rows);
+				rowMatch = this.table.rowManager.findRow(rows);
 			
-			if(rowMatch){
-				this._selectRow(rowMatch, true, true);
-			}else{
-				this.table.rowManager.getRows(rows).forEach((row) => {
-					this._selectRow(row, true, true);
-				});
-			}
+				if(rowMatch){
+					this._selectRow(rowMatch, true, true);
+				}else{
+					this.table.rowManager.getRows(rows).forEach((row) => {
+						this._selectRow(row, true, true);
+					});
+				}
 			
-			this._rowSelectionChanged();
-			break;
+				this._rowSelectionChanged();
+				break;
 			
 			default:
-			if(Array.isArray(rows)){
-				rows.forEach((row) => {
-					this._selectRow(row, true, true);
-				});
+				if(Array.isArray(rows)){
+					rows.forEach((row) => {
+						this._selectRow(row, true, true);
+					});
 				
-				this._rowSelectionChanged();
-			}else{
-				this._selectRow(rows, false, true);
-			}
-			break;
+					this._rowSelectionChanged();
+				}else{
+					this._selectRow(rows, false, true);
+				}
+				break;
 		}
 	}
 	
 	//select an individual row
 	_selectRow(rowInfo, silent, force){
-		var index;
-		
 		//handle max row count
 		if(!isNaN(this.table.options.selectable) && this.table.options.selectable !== true && !force){
 			if(this.selectedRows.length >= this.table.options.selectable){

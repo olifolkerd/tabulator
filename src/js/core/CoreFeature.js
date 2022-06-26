@@ -49,8 +49,8 @@ export default class CoreFeature{
 		return this.table.modules.layout.getMode();
 	}
 
-	layoutRefresh(){
-		return this.table.modules.layout.layout();
+	layoutRefresh(force){
+		return this.table.modules.layout.layout(force);
 	}
 
 

@@ -84,7 +84,7 @@ class ResizeColumns extends Module{
 	
 	reinitializeColumn(column){
 		var frozenOffset = column.modules.frozen ? (column.modules.frozen.marginValue + column.getWidth() + "px") : false;
-		;
+		
 		
 		column.cells.forEach((cell) => {
 			if(cell.modules.resize && cell.modules.resize.handleEl){
@@ -156,7 +156,7 @@ class ResizeColumns extends Module{
 			
 			config.handleEl = handle;
 			
-			if(element.parentNode){
+			if(element.parentNode && column.visible){
 				element.after(handle);			
 			}
 		}

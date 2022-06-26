@@ -37,4 +37,4 @@ export default function(pageSize, currentRow, currentPage, totalRows, totalPages
 	}
 	
 	return el;
-};
+}

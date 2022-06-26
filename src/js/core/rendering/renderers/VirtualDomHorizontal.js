@@ -1,5 +1,4 @@
 import Renderer from '../Renderer.js';
-import Helpers from '../../tools/Helpers.js';
 
 export default class VirtualDomHorizontal extends Renderer{
 	constructor(table){
@@ -235,9 +234,7 @@ export default class VirtualDomHorizontal extends Renderer{
 	
 	dataChange(){
 		var change = false,
-		collsWidth = 0,
-		colEnd = 0,
-		group, row, rowEl;
+		row, rowEl;
 		
 		if(this.isFitData){
 			this.table.columnManager.columnsByIndex.forEach((column) => {
@@ -246,46 +243,30 @@ export default class VirtualDomHorizontal extends Renderer{
 				}
 			});
 			
-			if(change){
-				if(change && this.table.rowManager.getDisplayRows().length){
+			if(change && this.table.rowManager.getDisplayRows().length){
+				this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
+				
+				row = this.chain("rows-sample", [1], [], () => {
+					return this.table.rowManager.getDisplayRows();
+				})[0];
+				
+				if(row){
+					rowEl = row.getElement();
 					
-					this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
+					row.generateCells();
 					
-					var row = this.chain("rows-sample", [1], [], () => {
-						return this.table.rowManager.getDisplayRows();
-					})[0];
+					this.tableElement.appendChild(rowEl);
 					
-					if(row){
+					for(let colEnd = 0; colEnd < row.cells.length; colEnd++){
+						let cell = row.cells[colEnd];
+						rowEl.appendChild(cell.getElement());
 						
-						rowEl = row.getElement();
-						
-						row.generateCells();
-						
-						this.tableElement.appendChild(rowEl);
-						
-						for(var colEnd = 0; colEnd < row.cells.length; colEnd++){
-							let cell = row.cells[colEnd];
-							rowEl.appendChild(cell.getElement());
-							
-							cell.column.reinitializeWidth();
-							
-							collsWidth += cell.column.getWidth();
-							
-							// if(collsWidth > this.vDomScrollPosRight){
-							// 	break;
-							// }
-						}
-						
-						rowEl.parentNode.removeChild(rowEl);
-						
-						// this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
-						
-						// for(colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++){
-						// 	this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
-						// }
-						
-						this.rerenderColumns(false, true);
+						cell.column.reinitializeWidth();
 					}
+					
+					rowEl.parentNode.removeChild(rowEl);
+
+					this.rerenderColumns(false, true);
 				}
 			}
 		}else{
@@ -356,9 +337,10 @@ export default class VirtualDomHorizontal extends Renderer{
 	}
 	
 	addColRight(){
-		var changes = false;
+		var changes = false,
+		working = true;
 		
-		while(true){
+		while(working){
 			
 			let column = this.columns[this.rightCol + 1];
 			
@@ -384,10 +366,10 @@ export default class VirtualDomHorizontal extends Renderer{
 						this.vDomPadRight -= column.getWidth();
 					}	
 				}else{
-					break;
+					working = false;
 				}
 			}else{
-				break;
+				working = false;
 			}
 		}
 		
@@ -397,9 +379,10 @@ export default class VirtualDomHorizontal extends Renderer{
 	}
 	
 	addColLeft(){
-		var changes = false;
+		var changes = false,
+		working = true;
 		
-		while(true){
+		while(working){
 			let column = this.columns[this.leftCol - 1];
 			
 			if(column){
@@ -430,10 +413,10 @@ export default class VirtualDomHorizontal extends Renderer{
 					}
 					
 				}else{
-					break;
+					working = false;
 				}
 			}else{
-				break;
+				working = false;
 			}
 		}
 		
@@ -443,9 +426,10 @@ export default class VirtualDomHorizontal extends Renderer{
 	}
 	
 	removeColRight(){
-		var changes = false;
+		var changes = false,
+		working = true;
 		
-		while(true){
+		while(working){
 			let column = this.columns[this.rightCol];
 			
 			if(column){
@@ -459,7 +443,7 @@ export default class VirtualDomHorizontal extends Renderer{
 							try {
 								row.getElement().removeChild(cell.getElement());
 							} catch (ex) {
-								console.warn("Could not removeColRight", ex.message)
+								console.warn("Could not removeColRight", ex.message);
 							}
 						}
 					});
@@ -467,10 +451,10 @@ export default class VirtualDomHorizontal extends Renderer{
 					this.vDomPadRight += column.getWidth();
 					this.rightCol --;
 				}else{
-					break;
+					working = false;
 				}
 			}else{
-				break;
+				working = false;
 			}
 		}
 		
@@ -480,9 +464,10 @@ export default class VirtualDomHorizontal extends Renderer{
 	}
 	
 	removeColLeft(){
-		var changes = false;
+		var changes = false,
+		working = true;
 		
-		while(true){
+		while(working){
 			let column = this.columns[this.leftCol];
 			
 			if(column){
@@ -496,7 +481,7 @@ export default class VirtualDomHorizontal extends Renderer{
 							try {
 								row.getElement().removeChild(cell.getElement());
 							} catch (ex) {
-								console.warn("Could not removeColLeft", ex.message)
+								console.warn("Could not removeColLeft", ex.message);
 							}
 						}
 					});
@@ -504,17 +489,16 @@ export default class VirtualDomHorizontal extends Renderer{
 					this.vDomPadLeft += column.getWidth();
 					this.leftCol ++;
 				}else{
-					break;
+					working = false;
 				}
 			}else{
-				break;
+				working = false;
 			}
 		}
 		
 		if(changes){
 			this.tableElement.style.paddingLeft = this.vDomPadLeft + "px";
 		}
-		
 	}
 	
 	fitDataColActualWidthCheck(column){

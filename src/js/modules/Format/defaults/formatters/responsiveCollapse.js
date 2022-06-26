@@ -1,6 +1,5 @@
 export default function(cell, formatterParams, onRendered){
-	var open = false,
-	el = document.createElement("div"),
+	var el = document.createElement("div"),
 	config = cell.getRow()._row.modules.responsiveLayout;
 
 	el.classList.add("tabulator-responsive-collapse-toggle");

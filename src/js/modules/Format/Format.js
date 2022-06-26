@@ -51,21 +51,21 @@ class Format extends Module{
 		//set column formatter
 		switch(typeof formatter){
 			case "string":
-			if(Format.formatters[formatter]){
-				config.formatter = Format.formatters[formatter];
-			}else{
-				console.warn("Formatter Error - No such formatter found: ", formatter);
-				config.formatter = Format.formatters.plaintext;
-			}
-			break;
+				if(Format.formatters[formatter]){
+					config.formatter = Format.formatters[formatter];
+				}else{
+					console.warn("Formatter Error - No such formatter found: ", formatter);
+					config.formatter = Format.formatters.plaintext;
+				}
+				break;
 
 			case "function":
-			config.formatter = formatter;
-			break;
+				config.formatter = formatter;
+				break;
 
 			default:
-			config.formatter = Format.formatters.plaintext;
-			break;
+				config.formatter = Format.formatters.plaintext;
+				break;
 		}
 
 		return config;
@@ -131,7 +131,7 @@ class Format extends Module{
 		params;
 
 		if(formatter){
-			params = typeof formatter.params === "function" ? formatter.params(component) : formatter.params;
+			params = typeof formatter.params === "function" ? formatter.params(cell.getComponent()) : formatter.params;
 
 			function onRendered(callback){
 				if(!cell.modules.format){
@@ -162,7 +162,7 @@ class Format extends Module{
 				'=': '&#x3D;'
 			};
 
-			return String(value).replace(/[&<>"'`=\/]/g, function (s) {
+			return String(value).replace(/[&<>"'`=/]/g, function (s) {
 				return entityMap[s];
 			});
 		}else{
@@ -176,25 +176,23 @@ class Format extends Module{
 
 	//get formatter for cell
 	getFormatter(formatter){
-		var formatter;
-
 		switch(typeof formatter){
 			case "string":
-			if(Format.formatters[formatter]){
-				formatter = Format.formatters[formatter]
-			}else{
-				console.warn("Formatter Error - No such formatter found: ", formatter);
-				formatter = Format.formatters.plaintext;
-			}
-			break;
+				if(Format.formatters[formatter]){
+					formatter = Format.formatters[formatter];
+				}else{
+					console.warn("Formatter Error - No such formatter found: ", formatter);
+					formatter = Format.formatters.plaintext;
+				}
+				break;
 
 			case "function":
-			formatter = formatter;
-			break;
+				//Custom formatter Function, do nothing
+				break;
 
 			default:
-			formatter = Format.formatters.plaintext;
-			break;
+				formatter = Format.formatters.plaintext;
+				break;
 		}
 
 		return formatter;

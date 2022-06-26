@@ -51,14 +51,13 @@ class Popup extends Module{
 	}
 	
 	initializeColumn(column){
-		var options = ["headerContextPopup", "headerClickPopup"],
-		def = column.definition;
+		var def = column.definition;
 		
 		//handle column events
 		if(def.headerContextPopup && !this.columnSubscribers.headerContextPopup){
 			this.columnSubscribers.headerContextPopup = this.loadPopupTableColumnEvent.bind(this, "headerContextPopup");
 			this.subscribe("column-contextmenu", this.columnSubscribers.headerContextPopup);
-			this.table.on("headerTapHold", this.loadPopupTableColumnEvent.bind(this, "headerContextPopup"))
+			this.table.on("headerTapHold", this.loadPopupTableColumnEvent.bind(this, "headerContextPopup"));
 		}
 		
 		if(def.headerClickPopup && !this.columnSubscribers.headerClickPopup){
@@ -74,7 +73,7 @@ class Popup extends Module{
 		if(def.contextPopup && !this.columnSubscribers.contextPopup){
 			this.columnSubscribers.contextPopup = this.loadPopupTableCellEvent.bind(this, "contextPopup");
 			this.subscribe("cell-contextmenu", this.columnSubscribers.contextPopup);
-			this.table.on("cellTapHold", this.loadPopupTableCellEvent.bind(this, "contextPopup"))
+			this.table.on("cellTapHold", this.loadPopupTableCellEvent.bind(this, "contextPopup"));
 		}
 		
 		if(def.clickPopup && !this.columnSubscribers.clickPopup){
@@ -185,7 +184,7 @@ class Popup extends Module{
 
 
 
-		this.dispatchExternal("popupOpened", component.getComponent())
+		this.dispatchExternal("popupOpened", component.getComponent());
 	}
 }
 

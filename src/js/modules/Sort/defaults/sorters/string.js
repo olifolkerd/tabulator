@@ -13,13 +13,13 @@ export default function(a, b, aRow, bRow, column, dir, params){
 		//compare valid values
 		switch(typeof params.locale){
 			case "boolean":
-			if(params.locale){
-				locale = this.langLocale();
-			}
-			break;
+				if(params.locale){
+					locale = this.langLocale();
+				}
+				break;
 			case "string":
-			locale = params.locale;
-			break;
+				locale = params.locale;
+				break;
 		}
 
 		return String(a).toLowerCase().localeCompare(String(b).toLowerCase(), locale);
@@ -31,4 +31,4 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	}
 
 	return emptyAlign;
-};
+}

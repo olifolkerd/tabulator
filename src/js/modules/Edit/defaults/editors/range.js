@@ -66,14 +66,14 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		switch(e.keyCode){
 			case 13:
 			// case 9:
-			onChange();
-			break;
+				onChange();
+				break;
 
 			case 27:
-			cancel();
-			break;
+				cancel();
+				break;
 		}
 	});
 
 	return input;
-};
+}
