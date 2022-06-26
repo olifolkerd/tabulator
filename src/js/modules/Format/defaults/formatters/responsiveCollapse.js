@@ -27,9 +27,10 @@ export default function(cell, formatterParams, onRendered){
 	el.addEventListener("click", function(e){
 		e.stopImmediatePropagation();
 		toggleList(!config.open);
+		cell.getTable().rowManager.adjustTableSize();
 	});
 
 	toggleList(config.open);
 
 	return el;
-}
+};
