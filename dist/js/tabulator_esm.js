@@ -16238,10 +16238,10 @@ class ReactiveData extends Module{
 	
 	initialize(){
 		if(this.table.options.reactiveData){
-			this.subscribe("cell-value-save-before", this.block.bind(this));
-			this.subscribe("cell-value-save-after", this.unblock.bind(this));
-			this.subscribe("row-data-save-before", this.block.bind(this));
-			this.subscribe("row-data-save-after", this.unblock.bind(this));
+			this.subscribe("cell-value-save-before", this.block.bind(this, "cellsave"));
+			this.subscribe("cell-value-save-after", this.unblock.bind(this, "cellsave"));
+			this.subscribe("row-data-save-before", this.block.bind(this, "rowsave"));
+			this.subscribe("row-data-save-after", this.unblock.bind(this, "rowsave"));
 			this.subscribe("row-data-init-after", this.watchRow.bind(this));
 			this.subscribe("data-processing", this.watchData.bind(this));
 			this.subscribe("table-destroy", this.unwatchData.bind(this));
@@ -16267,15 +16267,22 @@ class ReactiveData extends Module{
 			enumerable: false,
 			configurable: true,
 			value: function(){
-				var args = Array.from(arguments);
-				
-				if(!self.blocked && version === self.currentVersion){
+				var args = Array.from(arguments),
+				result;
+
+				if(!self.blocked && version === self.currentVersion){	
+					self.block("data-push");
+
 					args.forEach((arg) => {
 						self.table.rowManager.addRowActual(arg, false);
 					});
+					
+					result = self.origFuncs.push.apply(data, arguments);
+					
+					self.unblock("data-push");
 				}
 				
-				return self.origFuncs.push.apply(data, arguments);
+				return result;
 			}
 		});
 		
@@ -16286,15 +16293,22 @@ class ReactiveData extends Module{
 			enumerable: false,
 			configurable: true,
 			value: function(){
-				var args = Array.from(arguments);
+				var args = Array.from(arguments),
+				result;
 				
 				if(!self.blocked && version === self.currentVersion){
+					self.block("data-unshift");
+					
 					args.forEach((arg) => {
 						self.table.rowManager.addRowActual(arg, true);
 					});
+					
+					result = self.origFuncs.unshift.apply(data, arguments);
+					
+					self.unblock("data-unshift");
 				}
 				
-				return self.origFuncs.unshift.apply(data, arguments);
+				return result;
 			}
 		});
 		
@@ -16306,9 +16320,11 @@ class ReactiveData extends Module{
 			enumerable: false,
 			configurable: true,
 			value: function(){
-				var row;
+				var row, result;
 				
 				if(!self.blocked && version === self.currentVersion){
+					self.block("data-shift");
+					
 					if(self.data.length){
 						row = self.table.rowManager.getRowFromDataObject(self.data[0]);
 						
@@ -16316,9 +16332,13 @@ class ReactiveData extends Module{
 							row.deleteActual();
 						}
 					}
+
+					result = self.origFuncs.shift.call(data);
+
+					self.unblock("data-shift");
 				}
 				
-				return self.origFuncs.shift.call(data);
+				return result;
 			}
 		});
 		
@@ -16329,8 +16349,11 @@ class ReactiveData extends Module{
 			enumerable: false,
 			configurable: true,
 			value: function(){
-				var row;
+				var row, result;
+			
 				if(!self.blocked && version === self.currentVersion){
+					self.block("data-pop");
+					
 					if(self.data.length){
 						row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
 						
@@ -16338,8 +16361,13 @@ class ReactiveData extends Module{
 							row.deleteActual();
 						}
 					}
+
+					result = self.origFuncs.pop.call(data);
+					
+					self.unblock("data-pop");
 				}
-				return self.origFuncs.pop.call(data);
+
+				return result;
 			}
 		});
 		
@@ -16355,10 +16383,10 @@ class ReactiveData extends Module{
 				start = args[0] < 0 ? data.length + args[0] : args[0],
 				end = args[1],
 				newRows = args[2] ? args.slice(2) : false,
-				startRow;
+				startRow, result;
 				
 				if(!self.blocked && version === self.currentVersion){
-					
+					self.block("data-splice");
 					//add new rows
 					if(newRows){
 						startRow = data[start] ? self.table.rowManager.getRowFromDataObject(data[start]) : false;
@@ -16392,9 +16420,13 @@ class ReactiveData extends Module{
 					if(newRows || end !== 0){
 						self.table.rowManager.reRenderInPosition();
 					}
+
+					result = self.origFuncs.splice.apply(data, arguments);
+					
+					self.unblock("data-splice");
 				}
 				
-				return self.origFuncs.splice.apply(data, arguments);
+				return result ;
 			}
 		});
 	}
@@ -16415,8 +16447,6 @@ class ReactiveData extends Module{
 	watchRow(row){
 		var data = row.getData();
 		
-		this.blocked = true;
-		
 		for(var key in data){
 			this.watchKey(row, data, key);
 		}
@@ -16424,12 +16454,11 @@ class ReactiveData extends Module{
 		if(this.table.options.dataTree){
 			this.watchTreeChildren(row);
 		}
-		
-		this.blocked = false;
 	}
 	
 	watchTreeChildren (row){
-		var childField = row.getData()[this.table.options.dataTreeChildField],
+		var self = this,
+		childField = row.getData()[this.table.options.dataTreeChildField],
 		origFuncs = {};
 		
 		if(childField){
@@ -16440,9 +16469,14 @@ class ReactiveData extends Module{
 				enumerable: false,
 				configurable: true,
 				value: () => {
-					var result = origFuncs.push.apply(childField, arguments);
-					
-					this.rebuildTree(row);
+					if(!self.blocked){
+						self.block("tree-push");
+						
+						var result = origFuncs.push.apply(childField, arguments);
+						this.rebuildTree(row);
+						
+						self.unblock("tree-push");
+					}
 					
 					return result;
 				}
@@ -16454,9 +16488,14 @@ class ReactiveData extends Module{
 				enumerable: false,
 				configurable: true,
 				value: () => {
-					var result =  origFuncs.unshift.apply(childField, arguments);
-					
-					this.rebuildTree(row);
+					if(!self.blocked){
+						self.block("tree-unshift");
+						
+						var result =  origFuncs.unshift.apply(childField, arguments);
+						this.rebuildTree(row);
+						
+						self.unblock("tree-unshift");
+					}
 					
 					return result;
 				}
@@ -16468,9 +16507,14 @@ class ReactiveData extends Module{
 				enumerable: false,
 				configurable: true,
 				value: () => {
-					var result =  origFuncs.shift.call(childField);
-					
-					this.rebuildTree(row);
+					if(!self.blocked){
+						self.block("tree-shift");
+						
+						var result =  origFuncs.shift.call(childField);
+						this.rebuildTree(row);
+						
+						self.unblock("tree-shift");
+					}
 					
 					return result;
 				}
@@ -16482,9 +16526,14 @@ class ReactiveData extends Module{
 				enumerable: false,
 				configurable: true,
 				value: () => {
-					var result =  origFuncs.pop.call(childField);
-					
-					this.rebuildTree(row);
+					if(!self.blocked){
+						self.block("tree-pop");
+						
+						var result =  origFuncs.pop.call(childField);
+						this.rebuildTree(row);
+						
+						self.unblock("tree-pop");
+					}
 					
 					return result;
 				}
@@ -16496,9 +16545,14 @@ class ReactiveData extends Module{
 				enumerable: false,
 				configurable: true,
 				value: () => {
-					var result =  origFuncs.splice.apply(childField, arguments);
-					
-					this.rebuildTree(row);
+					if(!self.blocked){
+						self.block("tree-splice");
+						
+						var result =  origFuncs.splice.apply(childField, arguments);
+						this.rebuildTree(row);
+						
+						self.unblock("tree-splice");
+					}
 					
 					return result;
 				}
@@ -16513,17 +16567,22 @@ class ReactiveData extends Module{
 	}
 	
 	watchKey(row, data, key){
-		var props = Object.getOwnPropertyDescriptor(data, key),
+		var self = this,
+		props = Object.getOwnPropertyDescriptor(data, key),
 		value = data[key],
 		version = this.currentVersion;
 		
 		Object.defineProperty(data, key, {
 			set: (newValue) => {
 				value = newValue;
-				if(!this.blocked && version === this.currentVersion){
+				if(!self.blocked && version === self.currentVersion){
+					self.block("key");
+					
 					var update = {};
 					update[key] = newValue;
 					row.updateData(update);
+					
+					self.unblock("key");
 				}
 				
 				if(props.set){
@@ -16551,12 +16610,16 @@ class ReactiveData extends Module{
 		}
 	}
 	
-	block(){
-		this.blocked = true;
+	block(key){
+		if(!this.blocked){
+			this.blocked = key;
+		}
 	}
 	
-	unblock(){
-		this.blocked = false;
+	unblock(key){
+		if(this.blocked === key){
+			this.blocked = false;
+		}
 	}
 }
 
