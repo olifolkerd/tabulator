@@ -1201,6 +1201,13 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 	}
+
+	.tabulator-footer {
+		.tabulator-calcs-holder{
+			text-align: initial;
+		}
+
+	}
 	
 }
 

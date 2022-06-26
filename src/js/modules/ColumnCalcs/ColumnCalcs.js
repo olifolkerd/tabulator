@@ -237,7 +237,11 @@ class ColumnCalcs extends Module{
 
 	scrollHorizontal(left){
 		if(this.botInitialized && this.botRow){
-			this.botRow.getElement().style.marginLeft = (-left) + "px";
+			if(this.table.rtl){
+				this.botRow.getElement().style.marginRight = (left) + "px";
+			}else{
+				this.botRow.getElement().style.marginLeft = (-left) + "px";
+			}	
 		}
 	}
 
