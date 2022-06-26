@@ -58,8 +58,7 @@ class ResizeTable extends Module{
 								this.containerHeight = table.element.parentNode.clientHeight;
 								this.containerWidth = table.element.parentNode.clientWidth;
 							}
-							
-							console.log("resize")
+						
 							this.redrawTable();
 						}
 					}
