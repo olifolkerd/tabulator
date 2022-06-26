@@ -6542,7 +6542,8 @@ class Edit{
 		this.actions.success(output);
         
 		if(this.isFilter){
-			this.initialValues = output && !Array.isArray[output] ? [output] : output;
+			this.initialValues = output && !Array.isArray(output) ? [output] : output;
+			this.currentItems = [];
 		}
 	}
     
