@@ -21050,7 +21050,12 @@ class VirtualDomVertical extends Renderer{
 			callback();
 		}
 
-		this._virtualRenderFill((topRow === false ? this.rows.length - 1 : topRow), true, topOffset || 0);
+		if(this.rows().length){
+			this._virtualRenderFill((topRow === false ? this.rows.length - 1 : topRow), true, topOffset || 0);
+		}else {
+			this.clear();
+			this.table.rowManager._showPlaceholder();
+		}
 
 		this.scrollColumns(left);
 	}
