@@ -82,7 +82,6 @@ export default function(cell, formatterParams = {}, onRendered){ //progress bar
 
 	var barEl = document.createElement("div");
 	barEl.style.display = "inline-block";
-	barEl.style.position = "absolute";
 	barEl.style.width = percentValue + "%";
 	barEl.style.backgroundColor = color;
 	barEl.style.height = "100%";
