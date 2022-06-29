@@ -6424,7 +6424,9 @@ class Edit{
 			this.popup.show(this.cell.getElement(), "bottom");
 			
 			if(!startVis){
-				this.popup.hideOnBlur(this._resolveValue.bind(this, true));
+				setTimeout(() => {
+					this.popup.hideOnBlur(this._resolveValue.bind(this, true));
+				});
 			}
 		}
 	}
