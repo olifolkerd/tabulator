@@ -967,13 +967,15 @@ export default class RowManager extends CoreFeature{
 	
 	//adjust the height of the table holder to fit in the Tabulator element
 	adjustTableSize(){
-		var initialHeight = this.element.clientHeight;
+		var initialHeight = this.element.clientHeight, minHeight;
 		
 		if(this.renderer.verticalFillMode === "fill"){
 			let otherHeight =  Math.floor(this.table.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
 			
 			if(this.fixedHeight){
-				this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
+				minHeight = isNaN(this.table.options.minHeight) ? this.table.options.minHeight : this.table.options.minHeight + "px";
+
+				this.element.style.minHeight = minHeight || "calc(100% - " + otherHeight + "px)";
 				this.element.style.height = "calc(100% - " + otherHeight + "px)";
 				this.element.style.maxHeight = "calc(100% - " + otherHeight + "px)";
 			}else{
