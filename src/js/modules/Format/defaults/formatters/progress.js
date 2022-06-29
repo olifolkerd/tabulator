@@ -86,6 +86,9 @@ export default function(cell, formatterParams = {}, onRendered){ //progress bar
 	barEl.style.width = percentValue + "%";
 	barEl.style.backgroundColor = color;
 	barEl.style.height = "100%";
+	if (formatterParams.hozAlign === "right") {
+	  barEl.style.right = "0";
+	}
 
 	barEl.setAttribute('data-max', max);
 	barEl.setAttribute('data-min', min);
