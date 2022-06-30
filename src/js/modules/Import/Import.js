@@ -21,7 +21,7 @@ class Import extends Module{
 	}
 
 	loadDataCheck(data){
-		return typeof data === "string";
+		return this.table.options.importFormat && (typeof data === "string" || (Array.isArray(data) && data.length && Array.isArray(data));
 	}
 
 	loadData(data, params, config, silent, previousData){
@@ -45,6 +45,8 @@ class Import extends Module{
 		}else{
 			importer = importFormat;
 		}
+
+		console.log("i", importer)
 
 		if(!importer){
 			console.error("Import Error - Importer not found:", importFormat);
