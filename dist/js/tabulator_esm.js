@@ -12335,9 +12335,14 @@ function json$1(input){
 	}
 }
 
+function arrayImporter(input){
+	return input;
+}
+
 var defaultImporters = {
 	csv:csvImporter,
 	json:json$1,
+	array:arrayImporter,
 };
 
 class Import extends Module{
@@ -12359,7 +12364,7 @@ class Import extends Module{
 	}
 
 	loadDataCheck(data){
-		return typeof data === "string";
+		return true;
 	}
 
 	loadData(data, params, config, silent, previousData){
@@ -12383,6 +12388,8 @@ class Import extends Module{
 		}else {
 			importer = importFormat;
 		}
+
+		console.log("i", importer);
 
 		if(!importer){
 			console.error("Import Error - Importer not found:", importFormat);
