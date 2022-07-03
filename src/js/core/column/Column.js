@@ -555,7 +555,7 @@ class Column extends CoreFeature{
 			}
 
 			if(!this.silent){
-				this.table.columnManager.renderer.rerenderColumns();
+				this.table.columnManager.rerenderColumns();
 			}
 		}
 	}
@@ -588,7 +588,7 @@ class Column extends CoreFeature{
 			}
 
 			if(!this.silent){
-				this.table.columnManager.renderer.rerenderColumns();
+				this.table.columnManager.rerenderColumns();
 			}
 		}
 	}
@@ -753,7 +753,7 @@ class Column extends CoreFeature{
 
 			this.table.columnManager.deregisterColumn(this);
 
-			this.table.columnManager.renderer.rerenderColumns(true);
+			this.table.columnManager.rerenderColumns(true);
 
 			resolve();
 		});

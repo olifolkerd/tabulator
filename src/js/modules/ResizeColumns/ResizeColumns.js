@@ -236,7 +236,7 @@ class ResizeColumns extends Module{
 				}
 			}
 			
-			self.table.columnManager.renderer.rerenderColumns(true);
+			self.table.columnManager.rerenderColumns(true);
 			
 			if(!self.table.browserSlow && column.modules.resize && column.modules.resize.variableHeight){
 				column.checkCellHeights();

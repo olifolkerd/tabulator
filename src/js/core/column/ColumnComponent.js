@@ -146,7 +146,7 @@ export default class ColumnComponent {
 			result =  this._column.setWidth(width);
 		}
 
-		this._column.table.columnManager.renderer.rerenderColumns(true);
+		this._column.table.columnManager.rerenderColumns(true);
 
 		return result;
 	}

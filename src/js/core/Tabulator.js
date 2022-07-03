@@ -349,14 +349,16 @@ class Tabulator {
 	blockRedraw(){
 		this.initGuard();
 		
-		return this.rowManager.blockRedraw();
+		this.rowManager.blockRedraw();
+		this.columnManager.blockRedraw();
 	}
 	
 	//restore table redrawing
 	restoreRedraw(){
 		this.initGuard();
-		
-		return this.rowManager.restoreRedraw();
+
+		this.rowManager.restoreRedraw();
+		this.columnManager.restoreRedraw();
 	}
 	
 	//load data
