@@ -467,7 +467,7 @@ class Filter extends Module{
 
 					}
 
-					//prevent input and select elements from propegating click to column sorters etc
+					//prevent input and select elements from propagating click to column sorters etc
 					if(column.modules.filter.tagType == "input" || column.modules.filter.tagType == "select" || column.modules.filter.tagType == "textarea"){
 						editorElement.addEventListener("mousedown",function(e){
 							e.stopPropagation();
@@ -506,7 +506,7 @@ class Filter extends Module{
 		});
 	}
 
-	//programatically set focus of header filter
+	//programmatically set focus of header filter
 	setHeaderFilterFocus(column){
 		if(column.modules.filter && column.modules.filter.headerElement){
 			column.modules.filter.headerElement.focus();
@@ -524,7 +524,7 @@ class Filter extends Module{
 		}
 	}
 
-	//programatically set value of header filter
+	//programmatically set value of header filter
 	setHeaderFilterValue(column, value){
 		if (column){
 			if(column.modules.filter && column.modules.filter.headerElement){

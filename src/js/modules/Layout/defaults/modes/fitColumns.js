@@ -146,7 +146,7 @@ export default function(columns, forced){
 		flexColumns[flexColumns.length-1].width += + gapFill;
 	}
 
-	//caculate space for columns to be shrunk into
+	//calculate space for columns to be shrunk into
 	flexColumns.forEach(function(col){
 		flexWidth -= col.width;
 	});

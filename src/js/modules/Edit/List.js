@@ -476,7 +476,7 @@ export default class Edit{
 	
 	_generateOptions(silent){
 		var values = [];
-		var itteration = ++ this.listIteration;
+		var iteration = ++ this.listIteration;
 		
 		this.filtered = false;
 		
@@ -499,10 +499,10 @@ export default class Edit{
 			
 			return values.then()
 				.then((responseValues) => {
-					if(this.listIteration === itteration){
+					if(this.listIteration === iteration){
 						return this._parseList(responseValues);
 					}else{
-						return Promise.reject(itteration);
+						return Promise.reject(iteration);
 					}
 				});
 		}else{

@@ -102,12 +102,12 @@ class Page extends Module{
 	
 	rowAddingPosition(row, top){
 		var rowManager = this.table.rowManager,
-		dispRows = rowManager.getDisplayRows(),
+		displayRows = rowManager.getDisplayRows(),
 		index;
 		
 		if(top){
-			if(dispRows.length){
-				index = dispRows[0];
+			if(displayRows.length){
+				index = displayRows[0];
 			}else{
 				if(rowManager.activeRows.length){
 					index = rowManager.activeRows[rowManager.activeRows.length-1];
@@ -115,9 +115,9 @@ class Page extends Module{
 				}
 			}
 		}else{
-			if(dispRows.length){
-				index = dispRows[dispRows.length - 1];
-				top = dispRows.length < this.size ? false : true;
+			if(displayRows.length){
+				index = displayRows[displayRows.length - 1];
+				top = displayRows.length < this.size ? false : true;
 			}
 		}
 		

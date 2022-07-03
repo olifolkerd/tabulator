@@ -4,18 +4,18 @@ $backgroundColor: #888 !default; //background color of tabulator
 $borderColor:#999 !default; //border to tabulator
 $textSize:14px !default; //table text size
 
-//header themeing
+//header theming
 $headerBackgroundColor:#e6e6e6 !default; //border to tabulator
-$headerTextColor:#555 !default; //header text colour
+$headerTextColor:#555 !default; //header text color
 $headerBorderColor:#aaa !default;  //header border color
-$headerSeperatorColor:#999 !default; //header bottom seperator color
+$headerSeperatorColor:#999 !default; //header bottom separator color
 $headerMargin:4px !default; //padding round header
 
 //column header arrows
 $sortArrowActive: #666 !default;
 $sortArrowInactive: #bbb !default;
 
-//row themeing
+//row theming
 $rowBackgroundColor:#fff !default; //table row background color
 $rowAltBackgroundColor:#EFEFEF !default; //table row background color
 $rowBorderColor:#aaa !default; //table border color
@@ -28,11 +28,11 @@ $rowSelectedBackgroundHover: #769BCC !default;//row background color when select
 $editBoxColor:#1D68CD !default; //border color for edit boxes
 $errorColor:#dd0000 !default; //error indication
 
-//footer themeing
+//footer theming
 $footerBackgroundColor:#e6e6e6 !default; //border to tabulator
-$footerTextColor:#555 !default; //footer text colour
+$footerTextColor:#555 !default; //footer text color
 $footerBorderColor:#aaa !default; //footer border color
-$footerSeperatorColor:#999 !default; //footer bottom seperator color
+$footerSeperatorColor:#999 !default; //footer bottom separator color
 $footerActiveColor:#d00 !default; //footer bottom active text color
 
 

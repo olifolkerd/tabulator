@@ -36,7 +36,7 @@ class Localize extends Module{
 		this.registerTableFunction("getLang", this.getLang.bind(this));
 	}
 
-	//set header placehoder
+	//set header placeholder
 	setHeaderFilterPlaceholder(placeholder){
 		this.langList.default.headerFilters.default = placeholder;
 	}
@@ -73,7 +73,7 @@ class Localize extends Module{
 	setLocale(desiredLocale){
 		desiredLocale = desiredLocale || "default";
 
-		//fill in any matching languge values
+		//fill in any matching language values
 		function traverseLang(trans, path){
 			for(var prop in trans){
 				if(typeof trans[prop] == "object"){
@@ -87,7 +87,7 @@ class Localize extends Module{
 			}
 		}
 
-		//determing correct locale to load
+		//determining correct locale to load
 		if(desiredLocale === true && navigator.language){
 			//get local from system
 			desiredLocale = navigator.language.toLowerCase();
@@ -177,7 +177,7 @@ class Localize extends Module{
 		callback(this.getText(path), this.lang);
 	}
 
-	//itterate through bindings and trigger updates
+	//iterate through bindings and trigger updates
 	_executeBindings(){
 		for(let path in this.bindings){
 			this.bindings[path].forEach((binding) => {

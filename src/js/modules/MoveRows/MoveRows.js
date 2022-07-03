@@ -12,7 +12,7 @@ class MoveRows extends Module{
 		this.checkPeriod = 150; //period to wait on mousedown to consider this a move and not a click
 		this.moving = false; //currently moving row
 		this.toRow = false; //destination row
-		this.toRowAfter = false; //position of moving row relative to the desitnation row
+		this.toRowAfter = false; //position of moving row relative to the destination row
 		this.hasHandle = false; //row has handle instead of fully movable row
 		this.startY = 0; //starting Y position within header element
 		this.startX = 0; //starting X position within header element
@@ -493,7 +493,7 @@ class MoveRows extends Module{
 		}
 	}
 
-	//close incomming connection
+	//close incoming connection
 	disconnect(table){
 		if(table === this.connectedTable){
 			this.connectedTable = false;

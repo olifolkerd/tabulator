@@ -7,7 +7,7 @@ class Mutator extends Module{
 	constructor(table){
 		super(table);
 
-		this.allowedTypes = ["", "data", "edit", "clipboard"]; //list of muatation types
+		this.allowedTypes = ["", "data", "edit", "clipboard"]; //list of mutation types
 		this.enabled = true;
 
 		this.registerColumnOption("mutator");

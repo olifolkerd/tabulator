@@ -7,9 +7,9 @@ $backgroundColor: #fff !default; //background color of tabulator
 $borderColor:$table-border-color !default; //border to tabulator
 $textSize:16px !default; //table text size
 
-//header themeing
+//header theming
 $headerBackgroundColor:#fff !default; //border to tabulator
-$headerSeperatorColor:$table-border-color !default; //header bottom seperator color
+$headerSeperatorColor:$table-border-color !default; //header bottom separator color
 
 $cellPadding:15px !default; //padding round header
 
@@ -17,7 +17,7 @@ $cellPadding:15px !default; //padding round header
 $sortArrowActive: #666 !default;
 $sortArrowInactive: #bbb !default;
 
-//row themeing
+//row theming
 $rowBackgroundColor:transparent !default; //table row background color
 $rowAltBackgroundColor: $table-striped-color !default; //table row background color
 $rowBorderColor:$table-border-color !default; //table border color
@@ -30,9 +30,9 @@ $rowSelectedBackgroundHover: $primary-color !default;//row background color when
 $editBoxColor:$primary-color !default; //border color for edit boxes
 $errorColor:#dd0000 !default; //error indication
 
-//footer themeing
+//footer theming
 $footerBorderColor:$table-border-color !default; //footer border color
-$footerSeperatorColor:$table-border-color !default; //footer bottom seperator color
+$footerSeperatorColor:$table-border-color !default; //footer bottom separator color
 $footerActiveColor:$primary-color !default; //footer bottom active text color
 
 @import "../../tabulator.scss";

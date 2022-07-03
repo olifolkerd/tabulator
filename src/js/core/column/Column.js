@@ -481,7 +481,7 @@ class Column extends CoreFeature{
 		return this.cells;
 	}
 
-	//retreive the top column in a group of columns
+	//retrieve the top column in a group of columns
 	getTopColumn(){
 		if(this.parent.isGroup){
 			return this.parent.getTopColumn();
@@ -860,7 +860,7 @@ class Column extends CoreFeature{
 					.then((column) => {
 
 						if(definition.field == this.field){
-							this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+							this.field = false; //clear field name to prevent deletion of duplicate column from arrays
 						}
 
 						return this.delete()

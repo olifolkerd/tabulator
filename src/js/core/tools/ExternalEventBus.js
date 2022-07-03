@@ -18,7 +18,7 @@ export default class ExternalEventBus {
 		this.subscriptionNotifiers[key].push(callback);
 
 		if(this.subscribed(key)){
-			this._notifiySubscriptionChange(key, true);
+			this._notifySubscriptionChange(key, true);
 		}
 	}
 
@@ -29,7 +29,7 @@ export default class ExternalEventBus {
 
 		this.events[key].push(callback);
 
-		this._notifiySubscriptionChange(key, true);
+		this._notifySubscriptionChange(key, true);
 	}
 
 	unsubscribe(key, callback){
@@ -55,14 +55,14 @@ export default class ExternalEventBus {
 			return;
 		}
 
-		this._notifiySubscriptionChange(key, false);
+		this._notifySubscriptionChange(key, false);
 	}
 
 	subscribed(key){
 		return this.events[key] && this.events[key].length;
 	}
 
-	_notifiySubscriptionChange(key, subscribed){
+	_notifySubscriptionChange(key, subscribed){
 		var notifiers = this.subscriptionNotifiers[key];
 
 		if(notifiers){

@@ -18,7 +18,7 @@ export default class InternalEventBus {
 		this.subscriptionNotifiers[key].push(callback);
 
 		if(this.subscribed(key)){
-			this._notifiySubscriptionChange(key, true);
+			this._notifySubscriptionChange(key, true);
 		}
 	}
 
@@ -33,7 +33,7 @@ export default class InternalEventBus {
 			return a.priority - b.priority;
 		});
 
-		this._notifiySubscriptionChange(key, true);
+		this._notifySubscriptionChange(key, true);
 	}
 
 	unsubscribe(key, callback){
@@ -57,7 +57,7 @@ export default class InternalEventBus {
 			return;
 		}
 
-		this._notifiySubscriptionChange(key, false);
+		this._notifySubscriptionChange(key, false);
 	}
 
 	subscribed(key){
@@ -100,7 +100,7 @@ export default class InternalEventBus {
 		return confirmed;
 	}
 
-	_notifiySubscriptionChange(key, subscribed){
+	_notifySubscriptionChange(key, subscribed){
 		var notifiers = this.subscriptionNotifiers[key];
 
 		if(notifiers){

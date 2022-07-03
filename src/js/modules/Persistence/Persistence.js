@@ -42,7 +42,7 @@ class Persistence extends Module{
 			//determine persistent layout storage type
 			var mode = this.table.options.persistenceMode,
 			id = this.table.options.persistenceID,
-			retreivedData;
+			retrievedData;
 
 			this.mode = mode !== true ?  mode : (this.localStorageTest() ? "local" : "cookie");
 
@@ -95,32 +95,32 @@ class Persistence extends Module{
 
 			//load pagination data if needed
 			if(this.config.page){
-				retreivedData = this.retreiveData("page");
+				retrievedData = this.retrieveData("page");
 
-				if(retreivedData){
-					if(typeof retreivedData.paginationSize !== "undefined" && (this.config.page === true || this.config.page.size)){
-						this.table.options.paginationSize = retreivedData.paginationSize;
+				if(retrievedData){
+					if(typeof retrievedData.paginationSize !== "undefined" && (this.config.page === true || this.config.page.size)){
+						this.table.options.paginationSize = retrievedData.paginationSize;
 					}
 
-					if(typeof retreivedData.paginationInitialPage !== "undefined" && (this.config.page === true || this.config.page.page)){
-						this.table.options.paginationInitialPage = retreivedData.paginationInitialPage;
+					if(typeof retrievedData.paginationInitialPage !== "undefined" && (this.config.page === true || this.config.page.page)){
+						this.table.options.paginationInitialPage = retrievedData.paginationInitialPage;
 					}
 				}
 			}
 
 			//load group data if needed
 			if(this.config.group){
-				retreivedData = this.retreiveData("group");
+				retrievedData = this.retrieveData("group");
 
-				if(retreivedData){
-					if(typeof retreivedData.groupBy !== "undefined" && (this.config.group === true || this.config.group.groupBy)){
-						this.table.options.groupBy = retreivedData.groupBy;
+				if(retrievedData){
+					if(typeof retrievedData.groupBy !== "undefined" && (this.config.group === true || this.config.group.groupBy)){
+						this.table.options.groupBy = retrievedData.groupBy;
 					}
-					if(typeof retreivedData.groupStartOpen !== "undefined" && (this.config.group === true || this.config.group.groupStartOpen)){
-						this.table.options.groupStartOpen = retreivedData.groupStartOpen;
+					if(typeof retrievedData.groupStartOpen !== "undefined" && (this.config.group === true || this.config.group.groupStartOpen)){
+						this.table.options.groupStartOpen = retrievedData.groupStartOpen;
 					}
-					if(typeof retreivedData.groupHeader !== "undefined" && (this.config.group === true || this.config.group.groupHeader)){
-						this.table.options.groupHeader = retreivedData.groupHeader;
+					if(typeof retrievedData.groupHeader !== "undefined" && (this.config.group === true || this.config.group.groupHeader)){
+						this.table.options.groupHeader = retrievedData.groupHeader;
 					}
 				}
 			}
@@ -240,7 +240,7 @@ class Persistence extends Module{
 
 	//load saved definitions
 	load(type, current){
-		var data = this.retreiveData(type);
+		var data = this.retrieveData(type);
 
 		if(current){
 			data = data ? this.mergeDefinition(current, data) : current;
@@ -249,8 +249,8 @@ class Persistence extends Module{
 		return data;
 	}
 
-	//retreive data from memory
-	retreiveData(type){
+	//retrieve data from memory
+	retrieveData(type){
 		return this.readFunc ? this.readFunc(this.id, type) : false;
 	}
 

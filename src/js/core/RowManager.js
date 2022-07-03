@@ -692,7 +692,7 @@ export default class RowManager extends CoreFeature{
 		//cascade through data refresh stages
 		switch(stage){
 			case "all":
-			//handle case where alldata needs refreshing
+			//handle case where all data needs refreshing
 			
 			case "dataPipeline":
 			
@@ -790,7 +790,7 @@ export default class RowManager extends CoreFeature{
 		return rows;
 	}
 	
-	//repeat action accross display rows
+	//repeat action across display rows
 	displayRowIterator(callback){
 		this.activeRowsPipeline.forEach(callback);
 		this.displayRows.forEach(callback);
@@ -997,7 +997,7 @@ export default class RowManager extends CoreFeature{
 		this._positionPlaceholder();
 	}
 	
-	//renitialize all rows
+	//reinitialize all rows
 	reinitialize(){
 		this.rows.forEach(function(row){
 			row.reinitialize(true);

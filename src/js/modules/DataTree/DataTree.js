@@ -31,7 +31,7 @@ class DataTree extends Module{
 		this.registerTableOption("dataTreeExpandElement", false);//data tree row expand element
 		this.registerTableOption("dataTreeStartExpanded", false);
 		this.registerTableOption("dataTreeChildColumnCalcs", false);//include visible data tree rows in column calculations
-		this.registerTableOption("dataTreeSelectPropagate", false);//seleccting a parent row selects its children
+		this.registerTableOption("dataTreeSelectPropagate", false);//selecting a parent row selects its children
 
 		//register component functions
 		this.registerComponentFunction("row", "treeCollapse", this.collapseRow.bind(this));

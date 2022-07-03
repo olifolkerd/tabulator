@@ -1,4 +1,4 @@
-// read peristence information from storage
+// read persistance information from storage
 export default {
 	local:function(id, type){
 		var data = localStorage.getItem(id + "-" + type);

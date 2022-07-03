@@ -268,7 +268,7 @@ class ResizeColumns extends Module{
 			}
 		}
 		
-		e.stopPropagation(); //prevent resize from interfereing with movable columns
+		e.stopPropagation(); //prevent resize from interfering with movable columns
 		
 		//block editor from taking action while resizing is taking place
 		if(self.startColumn.modules.edit){

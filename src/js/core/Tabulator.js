@@ -580,7 +580,7 @@ class Tabulator {
 			});
 	}
 	
-	//update a row if it exitsts otherwise create it
+	//update a row if it exists otherwise create it
 	updateOrAddRow(index, data){
 		var row = this.rowManager.findRow(index);
 		

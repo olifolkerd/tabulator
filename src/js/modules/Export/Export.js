@@ -12,7 +12,7 @@ class Export extends Module{
 		this.cloneTableStyle = true;
 		this.colVisProp = "";
 
-		this.registerTableOption("htmlOutputConfig", false); //html outypu config
+		this.registerTableOption("htmlOutputConfig", false); //html output config
 
 		this.registerColumnOption("htmlOutput");
 		this.registerColumnOption("titleHtmlOutput");
@@ -42,10 +42,10 @@ class Export extends Module{
 		return headers.concat(body);
 	}
 
-	genereateTable(config, style, range, colVisProp){
+	generateTable(config, style, range, colVisProp){
 		var list = this.generateExportList(config, style, range, colVisProp);
 
-		return this.genereateTableElement(list);
+		return this.generateTableElement(list);
 	}
 
 	rowLookup(range){
@@ -198,7 +198,7 @@ class Export extends Module{
 			}
 		}
 
-		//calculate maximum header debth
+		//calculate maximum header depth
 		columns.forEach(function(column){
 			if(column.depth > headerDepth){
 				headerDepth = column.depth;
@@ -292,7 +292,7 @@ class Export extends Module{
 		return exportRows;
 	}
 
-	genereateTableElement(list){
+	generateTableElement(list){
 		var table = document.createElement("table"),
 		headerEl = document.createElement("thead"),
 		bodyEl = document.createElement("tbody"),
@@ -327,19 +327,19 @@ class Export extends Module{
 
 			switch(row.type){
 				case "header":
-					headerEl.appendChild(this.genereateHeaderElement(row, setup, styles));
+					headerEl.appendChild(this.generateHeaderElement(row, setup, styles));
 					break;
 
 				case "group":
-					bodyEl.appendChild(this.genereateGroupElement(row, setup, styles));
+					bodyEl.appendChild(this.generateGroupElement(row, setup, styles));
 					break;
 
 				case "calc":
-					bodyEl.appendChild(this.genereateCalcElement(row, setup, styles));
+					bodyEl.appendChild(this.generateCalcElement(row, setup, styles));
 					break;
 
 				case "row":
-					rowEl = this.genereateRowElement(row, setup, styles);
+					rowEl = this.generateRowElement(row, setup, styles);
 
 					this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
 					bodyEl.appendChild(rowEl);
@@ -379,7 +379,7 @@ class Export extends Module{
 		return styles;
 	}
 
-	genereateHeaderElement(row, setup, styles){
+	generateHeaderElement(row, setup, styles){
 		var rowEl = document.createElement("tr");
 
 		row.columns.forEach((column) => {
@@ -422,7 +422,7 @@ class Export extends Module{
 		return rowEl;
 	}
 
-	genereateGroupElement(row, setup, styles){
+	generateGroupElement(row, setup, styles){
 
 		var rowEl = document.createElement("tr"),
 		cellEl = document.createElement("td"),
@@ -456,8 +456,8 @@ class Export extends Module{
 		return rowEl;
 	}
 
-	genereateCalcElement(row, setup, styles){
-		var rowEl = this.genereateRowElement(row, setup, styles);
+	generateCalcElement(row, setup, styles){
+		var rowEl = this.generateRowElement(row, setup, styles);
 
 		rowEl.classList.add("tabulator-print-table-calcs");
 		this.mapElementStyles(styles.calcRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
@@ -465,7 +465,7 @@ class Export extends Module{
 		return rowEl;
 	}
 
-	genereateRowElement(row, setup, styles){
+	generateRowElement(row, setup, styles){
 		var rowEl = document.createElement("tr");
 
 		rowEl.classList.add("tabulator-print-table-row");
@@ -566,10 +566,10 @@ class Export extends Module{
 		return rowEl;
 	}
 
-	genereateHTMLTable(list){
+	generateHTMLTable(list){
 		var holder = document.createElement("div");
 
-		holder.appendChild(this.genereateTableElement(list));
+		holder.appendChild(this.generateTableElement(list));
 
 		return holder.innerHTML;
 	}
@@ -577,7 +577,7 @@ class Export extends Module{
 	getHtml(visible, style, config, colVisProp){
 		var list = this.generateExportList(config || this.table.options.htmlOutputConfig, style, visible, colVisProp || "htmlOutput");
 
-		return this.genereateHTMLTable(list);
+		return this.generateHTMLTable(list);
 	}
 
 	mapElementStyles(from, to, props){

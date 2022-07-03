@@ -49,7 +49,7 @@ class Clipboard extends Module{
 
 						list = this.table.modules.export.generateExportList(this.table.options.clipboardCopyConfig, this.table.options.clipboardCopyStyled, this.rowRange, "clipboard");
 
-						html = this.table.modules.export.genereateHTMLTable(list);
+						html = this.table.modules.export.generateHTMLTable(list);
 						plain = html ? this.generatePlainContent(list) : "";
 
 						if(this.table.options.clipboardCopyFormatter){

@@ -373,14 +373,14 @@ export default class ColumnManager extends CoreFeature {
 		return this.columnsByIndex;
 	}
 
-	//travers across columns and call action
+	//traverse across columns and call action
 	traverse(callback){
 		this.columnsByIndex.forEach((column,i) =>{
 			callback(column, i);
 		});
 	}
 
-	//get defintions of actual columns
+	//get definitions of actual columns
 	getDefinitions(active){
 		var output = [];
 

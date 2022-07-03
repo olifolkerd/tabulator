@@ -4,7 +4,7 @@ import TableRegistry from './TableRegistry.js';
 export default class ModuleBinder {
 	
 	constructor(tabulator, modules){
-		this.bindStaticFuctionality(tabulator);
+		this.bindStaticFunctionality(tabulator);
 		this.bindModules(tabulator, coreModules, true);
 		
 		if(modules){
@@ -12,7 +12,7 @@ export default class ModuleBinder {
 		}
 	}
 	
-	bindStaticFuctionality(tabulator){
+	bindStaticFunctionality(tabulator){
 		tabulator.moduleBindings = {};
 		
 		tabulator.extendModule = function(name, property, values){

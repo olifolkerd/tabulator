@@ -9,7 +9,7 @@ class Edit extends Module{
 		super(table);
 
 		this.currentCell = false; //hold currently editing cell
-		this.mouseClick = false; //hold mousedown state to prevent click binding being overriden by editor opening
+		this.mouseClick = false; //hold mousedown state to prevent click binding being overridden by editor opening
 		this.recursionBlock = false; //prevent focus recursion
 		this.invalidEdit = false;
 		this.editedCells = [];
@@ -33,7 +33,7 @@ class Edit extends Module{
 		this.registerTableFunction("navigateUp", this.navigateUp.bind(this));
 		this.registerTableFunction("navigateDown", this.navigateDown.bind(this));
 
-		this.registerComponentFunction("cell", "isEdited", this.cellisEdited.bind(this));
+		this.registerComponentFunction("cell", "isEdited", this.cellIsEdited.bind(this));
 		this.registerComponentFunction("cell", "clearEdited", this.clearEdited.bind(this));
 		this.registerComponentFunction("cell", "edit", this.editCell.bind(this));
 		this.registerComponentFunction("cell", "cancelEdit", this.cellCancelEdit.bind(this));
@@ -100,7 +100,7 @@ class Edit extends Module{
 	///////// Cell Functions //////////
 	///////////////////////////////////
 
-	cellisEdited(cell){
+	cellIsEdited(cell){
 		return !! cell.modules.edit && cell.modules.edit.edited;
 	}
 

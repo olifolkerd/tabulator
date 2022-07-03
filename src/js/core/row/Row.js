@@ -13,7 +13,7 @@ export default class Row extends CoreFeature{
 		this.modules = {}; //hold module variables;
 		this.cells = [];
 		this.height = 0; //hold element height
-		this.heightStyled = ""; //hold element height prestyled to improve render efficiency
+		this.heightStyled = ""; //hold element height pre-styled to improve render efficiency
 		this.manualHeight = false; //user has manually set row height
 		this.outerHeight = 0; //hold elements outer height
 		this.initialized = false; //element has been rendered
@@ -377,7 +377,7 @@ export default class Row extends CoreFeature{
 	}
 	
 	deleteActual(blockRedraw){
-		this.detatchModules();
+		this.detachModules();
 		
 		this.table.rowManager.deleteRow(this, blockRedraw);
 		
@@ -390,7 +390,7 @@ export default class Row extends CoreFeature{
 		this.dispatch("row-deleted", this);
 	}
 	
-	detatchModules(){
+	detachModules(){
 		this.dispatch("row-deleting", this);
 	}
 	
@@ -403,7 +403,7 @@ export default class Row extends CoreFeature{
 	}
 	
 	wipe(){
-		this.detatchModules();
+		this.detachModules();
 		this.deleteCells();
 		
 		if(this.element){

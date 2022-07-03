@@ -404,7 +404,7 @@ class ColumnCalcs extends Module{
 					};
 				}
 
-				//ensure css class defintion is replicated to calculation cell
+				//ensure css class definition is replicated to calculation cell
 				this.genColumn.definition.cssClass = column.definition.cssClass;
 
 				//generate cell and assign to correct column

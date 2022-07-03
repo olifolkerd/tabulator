@@ -12,7 +12,7 @@ class MoveColumns extends Module{
 		this.checkPeriod = 250; //period to wait on mousedown to consider this a move and not a click
 		this.moving = false; //currently moving column
 		this.toCol = false; //destination column
-		this.toColAfter = false; //position of moving column relative to the desitnation column
+		this.toColAfter = false; //position of moving column relative to the destination column
 		this.startX = 0; //starting position within header element
 		this.autoScrollMargin = 40; //auto scroll on edge when within margin
 		this.autoScrollStep = 5; //auto scroll distance in pixels

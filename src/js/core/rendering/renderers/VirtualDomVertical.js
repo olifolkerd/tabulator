@@ -13,7 +13,7 @@ export default class VirtualDomVertical extends Renderer{
 		this.vDomRowHeight = 20; //approximation of row heights for padding
 
 		this.vDomTop = 0; //hold position for first rendered row in the virtual DOM
-		this.vDomBottom = 0; //hold possition for last rendered row in the virtual DOM
+		this.vDomBottom = 0; //hold position for last rendered row in the virtual DOM
 
 		this.vDomScrollPosTop = 0; //last scroll position of the vDom top;
 		this.vDomScrollPosBottom = 0; //last scroll position of the vDom bottom;
@@ -297,7 +297,7 @@ export default class VirtualDomVertical extends Renderer{
 
 			if(!position){
 				this.vDomTopPad = 0;
-				//adjust rowheight to match average of rendered elements
+				//adjust row height to match average of rendered elements
 				this.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
 				this.vDomBottomPad = this.vDomRowHeight * (rowsCount - this.vDomBottom -1);
 

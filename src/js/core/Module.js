@@ -10,7 +10,7 @@ class Module extends CoreFeature{
 	}
 
 	initialize(){
-		// setup module when table is initialized, to be overriden in module
+		// setup module when table is initialized, to be overridden in module
 	}
 
 

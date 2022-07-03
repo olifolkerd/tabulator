@@ -51,7 +51,7 @@ class HtmlTableImport extends Module{
 			cells = row.getElementsByTagName("td"),
 			item = {};
 
-			//create index if the dont exist in table
+			//create index if the don't exist in table
 			if(!this.hasIndex){
 				item[options.index] = index;
 			}

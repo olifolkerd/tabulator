@@ -193,7 +193,7 @@ class Interaction extends Module{
 	}
 
 	unsubscribeTouchEvents(key){
-		var notouch = true,
+		var noTouch = true,
 		type = this.eventMap[key];
 
 		if(this.subscribers[key] && !this.subscribedExternal(key)){
@@ -202,12 +202,12 @@ class Interaction extends Module{
 			for(let i in this.eventMap){
 				if(this.eventMap[i] === type){
 					if(this.subscribers[i]){
-						notouch = false;
+						noTouch = false;
 					}
 				}
 			}
 
-			if(notouch){
+			if(noTouch){
 				this.unsubscribe(type + "-touchstart", this.touchSubscribers[type + "-touchstart"]);
 				this.unsubscribe(type + "-touchend", this.touchSubscribers[type + "-touchend"]);
 
