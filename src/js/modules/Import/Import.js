@@ -21,7 +21,7 @@ class Import extends Module{
 	}
 
 	loadDataCheck(data){
-		return this.table.options.importFormat && (typeof data === "string" || (Array.isArray(data) && data.length && Array.isArray(data));
+		return this.table.options.importFormat && (typeof data === "string" || (Array.isArray(data) && data.length && Array.isArray(data)));
 	}
 
 	loadData(data, params, config, silent, previousData){
