@@ -45,9 +45,11 @@
 }
 
 .tabulator .tabulator-header .tabulator-col {
-  display: inline-block;
+  display: inline-flex;
   position: relative;
   box-sizing: border-box;
+  flex-direction: column;
+  justify-content: flex-start;
   border-right: 1px solid #aaa;
   background: transparent;
   text-align: left;

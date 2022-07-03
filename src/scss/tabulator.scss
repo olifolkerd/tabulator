@@ -97,11 +97,16 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		
 		//individual column header element
 		.tabulator-col{
-			display:inline-block;
+			display:inline-flex;
 			position:relative;
 			box-sizing:border-box;
+
+			flex-direction: column;
+			justify-content: flex-start;
+
 			border-right:1px solid $headerBorderColor;
 			background:$headerBackgroundColor;
+
 			text-align:left;
 			vertical-align: bottom;
 			overflow: hidden;

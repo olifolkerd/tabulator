@@ -292,8 +292,7 @@ export default class ColumnManager extends CoreFeature {
 			});
 
 			this.columns.forEach((column) => {
-				var height;
-				height = column.getHeight();
+				var height = column.getHeight();
 				
 				if(height > minHeight){
 					minHeight = height;

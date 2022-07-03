@@ -76,6 +76,15 @@ class Column extends CoreFeature{
 		el.setAttribute("role", "columnheader");
 		el.setAttribute("aria-sort", "none");
 
+		switch(this.table.options.columnHeaderVertAlign){
+			case "middle":
+				el.style.justifyContent = "center";
+				break;
+			case "bottom":
+				el.style.justifyContent = "flex-end";
+				break;
+		}
+
 		return el;
 	}
 
@@ -398,13 +407,13 @@ class Column extends CoreFeature{
 		}
 
 		//vertically align cell contents
-		if(!this.isGroup && alignment !== "top"){
-			if(alignment === "bottom"){
-				this.element.style.paddingTop = (this.element.clientHeight - this.contentElement.offsetHeight) + "px";
-			}else{
-				this.element.style.paddingTop = ((this.element.clientHeight - this.contentElement.offsetHeight) / 2) + "px";
-			}
-		}
+		// if(!this.isGroup && alignment !== "top"){
+		// 	if(alignment === "bottom"){
+		// 		this.element.style.paddingTop = (this.element.clientHeight - this.contentElement.offsetHeight) + "px";
+		// 	}else{
+		// 		this.element.style.paddingTop = ((this.element.clientHeight - this.contentElement.offsetHeight) / 2) + "px";
+		// 	}
+		// }
 
 		this.columns.forEach(function(column){
 			column.verticalAlign(alignment);
