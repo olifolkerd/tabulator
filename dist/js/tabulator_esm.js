@@ -12385,8 +12385,6 @@ class Import extends Module{
 			importer = importFormat;
 		}
 
-		console.log("i", importer);
-
 		if(!importer){
 			console.error("Import Error - Importer not found:", importFormat);
 		}
