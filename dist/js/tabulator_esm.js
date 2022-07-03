@@ -11498,9 +11498,9 @@ class GroupRows extends Module{
 
 		if(!this.initialized){
 			this.initialize();
-		}else {
-			this.configureGroupSetup();
 		}
+
+		this.configureGroupSetup();
 
 		this.refreshData();
 
