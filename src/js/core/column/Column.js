@@ -39,12 +39,12 @@ class Column extends CoreFeature{
 		this.modules = {}; //hold module variables;
 
 		this.width = null; //column width
-		this.widthStyled = ""; //column width prestyled to improve render efficiency
+		this.widthStyled = ""; //column width pre-styled to improve render efficiency
 		this.maxWidth = null; //column maximum width
-		this.maxWidthStyled = ""; //column maximum prestyled to improve render efficiency
+		this.maxWidthStyled = ""; //column maximum pre-styled to improve render efficiency
 		this.maxInitialWidth = null;
 		this.minWidth = null; //column minimum width
-		this.minWidthStyled = ""; //column minimum prestyled to improve render efficiency
+		this.minWidthStyled = ""; //column minimum pre-styled to improve render efficiency
 		this.widthFixed = false; //user has specified a width for this column
 
 		this.visible = true; //default visible state
@@ -67,8 +67,6 @@ class Column extends CoreFeature{
 		}
 
 		this._initialize();
-
-		this.bindModuleColumns();
 	}
 
 	createElement (){
@@ -140,10 +138,6 @@ class Column extends CoreFeature{
 		}
 	}
 
-	_mapDepricatedFunctionality(){
-		//all previously deprecated functionality removed in the 5.0 release
-	}
-
 	//build header element
 	_initialize(){
 		var def = this.definition;
@@ -211,7 +205,7 @@ class Column extends CoreFeature{
 
 		this.reinitializeWidth();
 
-		//set orizontal text alignment
+		//set horizontal text alignment
 		this.hozAlign = this.definition.hozAlign;
 		this.vertAlign = this.definition.vertAlign;
 
@@ -417,7 +411,7 @@ class Column extends CoreFeature{
 		});
 	}
 
-	//clear vertical alignmenet
+	//clear vertical alignment
 	clearVerticalAlign(){
 		this.element.style.paddingTop = "";
 		this.element.style.height = "";
@@ -429,13 +423,6 @@ class Column extends CoreFeature{
 		});
 
 		this.dispatch("column-height", this, "");
-	}
-
-	bindModuleColumns (){
-		//check if rownum formatter is being used on a column
-		if(this.definition.formatter == "rownum"){
-			this.table.rowManager.rowNumColumn = this;
-		}
 	}
 
 	//// Retrieve Column Information ////
