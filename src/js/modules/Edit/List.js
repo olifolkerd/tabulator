@@ -38,27 +38,27 @@ export default class Edit{
 			cancel:cancel
 		};
 		
-		this._deprecationCheck();
+		this._deprecatedOptionsCheck();
 		this._initializeValue();
 		
 		onRendered(this._onRendered.bind(this));
 	}
 	
-	_deprecationCheck(){
+	_deprecatedOptionsCheck(){
 		if(this.params.listItemFormatter){
-			console.warn("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
+			this.cell.getTable().deprecationAdvisor.msg("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
 		}
 		
 		if(this.params.sortValuesList){
-			console.warn("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
+			this.cell.getTable().deprecationAdvisor.msg("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
 		}
 		
 		if(this.params.searchFunc){
-			console.warn("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
+			this.cell.getTable().deprecationAdvisor.msg("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
 		}
 		
 		if(this.params.searchingPlaceholder){
-			console.warn("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
+			this.cell.getTable().deprecationAdvisor.msg("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
 		}
 	}
 	

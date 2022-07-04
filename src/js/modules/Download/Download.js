@@ -19,16 +19,14 @@ class Download extends Module{
 	}
 
 	initialize(){
-		this.deprecationCheck();
+		this.deprecatedOptionsCheck();
 
 		this.registerTableFunction("download", this.download.bind(this));
 		this.registerTableFunction("downloadToTab", this.downloadToTab.bind(this));
 	}
 
-	deprecationCheck(){
-		if(this.table.options.downloadReady){
-			console.warn("Use of the downloadReady option is now deprecated. Please use the downloadEncoder option instead");
-		}
+	deprecatedOptionsCheck(){
+		this.deprecationCheck("downloadReady", "downloadEncoder");
 	}	
 
 	///////////////////////////////////

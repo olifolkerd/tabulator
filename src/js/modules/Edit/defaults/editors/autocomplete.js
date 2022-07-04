@@ -2,7 +2,7 @@ import List from '../../List.js';
 
 export default function(cell, onRendered, success, cancel, editorParams){
 
-	console.warn("The autocomplete editor has been deprecated, please use the new list editor with the 'autocomplete' editorParam");
+	this.deprecationMsg("The autocomplete editor has been deprecated, please use the new list editor with the 'autocomplete' editorParam");
 
 	editorParams.autocomplete = true;
 

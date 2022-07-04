@@ -115,7 +115,21 @@ class CoreFeature{
 		return this.table.options[key];
 	}
 
+	//////////////////////////////////////////
+	/////////// Deprecation Checks ///////////
+	//////////////////////////////////////////
 
+	deprecationCheck(oldOption, newOption){
+		return this.table.deprecationAdvisor.check(oldOption, newOption);
+	}
+
+	deprecationCheckMsg(oldOption, msg){
+		return this.table.deprecationAdvisor.checkMsg(oldOption, msg);
+	}
+
+	deprecationMsg(msg){
+		return this.table.deprecationAdvisor.msg(msg);
+	}
 	//////////////////////////////////////////
 	//////////////// Modules /////////////////
 	//////////////////////////////////////////
@@ -4965,16 +4979,14 @@ class Download extends Module{
 	}
 
 	initialize(){
-		this.deprecationCheck();
+		this.deprecatedOptionsCheck();
 
 		this.registerTableFunction("download", this.download.bind(this));
 		this.registerTableFunction("downloadToTab", this.downloadToTab.bind(this));
 	}
 
-	deprecationCheck(){
-		if(this.table.options.downloadReady){
-			console.warn("Use of the downloadReady option is now deprecated. Please use the downloadEncoder option instead");
-		}
+	deprecatedOptionsCheck(){
+		this.deprecationCheck("downloadReady", "downloadEncoder");
 	}	
 
 	///////////////////////////////////
@@ -5587,27 +5599,27 @@ class Edit{
 			cancel:cancel
 		};
 		
-		this._deprecationCheck();
+		this._deprecatedOptionsCheck();
 		this._initializeValue();
 		
 		onRendered(this._onRendered.bind(this));
 	}
 	
-	_deprecationCheck(){
+	_deprecatedOptionsCheck(){
 		if(this.params.listItemFormatter){
-			console.warn("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
+			this.cell.getTable().deprecationAdvisor.msg("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
 		}
 		
 		if(this.params.sortValuesList){
-			console.warn("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
+			this.cell.getTable().deprecationAdvisor.msg("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
 		}
 		
 		if(this.params.searchFunc){
-			console.warn("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
+			this.cell.getTable().deprecationAdvisor.msg("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
 		}
 		
 		if(this.params.searchingPlaceholder){
-			console.warn("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
+			this.cell.getTable().deprecationAdvisor.msg("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
 		}
 	}
 	
@@ -6582,7 +6594,7 @@ class Edit{
 
 function select(cell, onRendered, success, cancel, editorParams){
 
-	console.warn("The select editor has been deprecated, please use the new list editor");
+	this.deprecationMsg("The select editor has been deprecated, please use the new list editor");
 
 	var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
 
@@ -6597,7 +6609,7 @@ function list(cell, onRendered, success, cancel, editorParams){
 
 function autocomplete(cell, onRendered, success, cancel, editorParams){
 
-	console.warn("The autocomplete editor has been deprecated, please use the new list editor with the 'autocomplete' editorParam");
+	this.deprecationMsg("The autocomplete editor has been deprecated, please use the new list editor with the 'autocomplete' editorParam");
 
 	editorParams.autocomplete = true;
 
@@ -13191,17 +13203,15 @@ class Menu extends Module{
 	}
 	
 	initialize(){
-		this.deprecationCheck();
+		this.deprecatedOptionsCheck();
 		this.initializeRowWatchers();
 		this.initializeGroupWatchers();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
 
-	deprecationCheck(){
-		if(typeof this.table.options.menuContainer !== "undefined"){
-			console.warn("Use of the menuContainer option is now deprecated. Please use the popupContainer option instead");
-
+	deprecatedOptionsCheck(){
+		if(!this.deprecationCheck("menuContainer", "popupContainer")){
 			this.table.options.popupContainer = this.table.options.menuContainer;
 		}
 	}	
@@ -18765,15 +18775,13 @@ class Tooltip extends Module{
 	}
 	
 	initialize(){
-		this.deprecationCheck();
+		this.deprecatedOptionsCheck();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
 	
-	deprecationCheck(){
-		if(typeof this.table.options.tooltipGenerationMode !== "undefined"){
-			console.warn("Use of the tooltipGenerationMode option is now deprecated. This option is no longer needed as tooltips are always generated on hover now");
-		}
+	deprecatedOptionsCheck(){
+		this.deprecationCheckMsg("tooltipGenerationMode", "This option is no longer needed as tooltips are always generated on hover now");
 	}	
 	
 	initializeColumn(column){
@@ -23478,6 +23486,50 @@ class InternalEventBus {
 	}
 }
 
+class DeprecationAdvisor extends CoreFeature{
+	
+	constructor(table){
+		super(table);
+	}
+
+	_warnUser(){
+		console.warn(...arguments);
+	}
+	
+	check(oldOption, newOption){
+		var msg = "";
+
+		if(typeof this.options(oldOption) !== "undefined"){
+			msg = "Deprecated Setup Option - Use of the %c" + oldOption + "%c option is now deprecated";
+
+			if(newOption){
+				msg = msg + ", Please use the %c" + newOption + "%c option instead";
+				this._warnUser(msg, 'font-weight: bold;', 'font-weight: normal;', 'font-weight: bold;', 'font-weight: normal;');
+			}else {
+				this._warnUser(msg, 'font-weight: bold;', 'font-weight: normal;');
+			}
+
+			return false;
+		}else {
+			return true;
+		}
+	}
+
+	checkMsg(oldOption, msg){
+		if(typeof this.options(oldOption) !== "undefined"){
+			this._warnUser("%cDeprecated Setup Option - Use of the %c" + oldOption + " %c option is now deprecated, " + msg, 'font-weight: normal;', 'font-weight: bold;', 'font-weight: normal;');
+
+			return false;
+		}else {
+			return true;
+		}
+	}
+
+	msg(msg){
+		this._warnUser(msg);
+	}
+}
+
 class TableRegistry {
 
 	static register(table){
@@ -24299,6 +24351,7 @@ class Tabulator {
 		this.modulesCore = []; //hold core modules bound to this table (for initialization purposes)
 		this.modulesRegular = []; //hold regular modules bound to this table (for initialization purposes)
 		
+		this.deprecationAdvisor = new DeprecationAdvisor(this);
 		this.optionsList = new OptionsList(this, "table constructor");
 		
 		this.initialized = false;

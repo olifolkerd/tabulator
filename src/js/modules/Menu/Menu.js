@@ -30,17 +30,15 @@ class Menu extends Module{
 	}
 	
 	initialize(){
-		this.deprecationCheck();
+		this.deprecatedOptionsCheck();
 		this.initializeRowWatchers();
 		this.initializeGroupWatchers();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
 
-	deprecationCheck(){
-		if(typeof this.table.options.menuContainer !== "undefined"){
-			console.warn("Use of the menuContainer option is now deprecated. Please use the popupContainer option instead");
-
+	deprecatedOptionsCheck(){
+		if(!this.deprecationCheck("menuContainer", "popupContainer")){
 			this.table.options.popupContainer = this.table.options.menuContainer;
 		}
 	}	

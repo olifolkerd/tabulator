@@ -20,15 +20,13 @@ class Tooltip extends Module{
 	}
 	
 	initialize(){
-		this.deprecationCheck();
+		this.deprecatedOptionsCheck();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
 	
-	deprecationCheck(){
-		if(typeof this.table.options.tooltipGenerationMode !== "undefined"){
-			console.warn("Use of the tooltipGenerationMode option is now deprecated. This option is no longer needed as tooltips are always generated on hover now");
-		}
+	deprecatedOptionsCheck(){
+		this.deprecationCheckMsg("tooltipGenerationMode", "This option is no longer needed as tooltips are always generated on hover now");
 	}	
 	
 	initializeColumn(column){

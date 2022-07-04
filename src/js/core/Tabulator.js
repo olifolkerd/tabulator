@@ -13,6 +13,8 @@ import DataLoader from './tools/DataLoader.js';
 import ExternalEventBus from './tools/ExternalEventBus.js';
 import InternalEventBus from './tools/InternalEventBus.js';
 
+import DeprecationAdvisor from './tools/DeprecationAdvisor.js';
+
 import TableRegistry from './tools/TableRegistry.js';
 import ModuleBinder from './tools/ModuleBinder.js';
 
@@ -47,6 +49,7 @@ class Tabulator {
 		this.modulesCore = []; //hold core modules bound to this table (for initialization purposes)
 		this.modulesRegular = []; //hold regular modules bound to this table (for initialization purposes)
 		
+		this.deprecationAdvisor = new DeprecationAdvisor(this);
 		this.optionsList = new OptionsList(this, "table constructor");
 		
 		this.initialized = false;
