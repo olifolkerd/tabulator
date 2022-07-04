@@ -189,6 +189,7 @@ class Popup extends CoreFeature{
 		this.renderedCallback = null;
         
 		this.visible = false;
+		this.hideable = true;
         
 		this.element.classList.add("tabulator-popup-container");
         
@@ -397,9 +398,17 @@ class Popup extends CoreFeature{
 			this.hide();
 		}
 	}
+
+	blockHide(){
+		this.hideable = false;
+	}
+
+	restoreHide(){
+		this.hideable = true;
+	}
     
 	hide(silent = false){
-		if(this.visible){
+		if(this.visible && this.hideable){
 			if(this.blurable){
 				document.body.removeEventListener("keydown", this.escEvent);
 				document.body.removeEventListener("click", this.blurEvent);
@@ -5633,6 +5642,8 @@ class Edit{
 		setTimeout(() => {
 			cellEl.removeEventListener("click", clickStop);
 		}, 1000);
+		
+		this.input.addEventListener("mousedown", this._preventPopupBlur.bind(this));
 	}
 	
 	_createListElement(){
@@ -5817,36 +5828,36 @@ class Edit{
 		switch(e.keyCode){
 			
 			case 38: //up arrow
-				this._keyUp(e);
-				break;
+			this._keyUp(e);
+			break;
 			
 			case 40: //down arrow
-				this._keyDown(e);
-				break;
+			this._keyDown(e);
+			break;
 			
 			case 37: //left arrow
 			case 39: //right arrow
-				this._keySide(e);
-				break;
+			this._keySide(e);
+			break;
 			
 			case 13: //enter
-				this._keyEnter();
-				break;
+			this._keyEnter();
+			break;
 			
 			case 27: //escape
-				this._keyEsc();
-				break;
+			this._keyEsc();
+			break;
 			
 			case 36: //home
 			case 35: //end
-				this._keyHomeEnd(e);
-				break;
+			this._keyHomeEnd(e);
+			break;
 			
 			case 9: //tab
-				break;
+			break;
 			
 			default:
-				this._keySelectLetter(e);
+			this._keySelectLetter(e);
 		}
 	}
 	
@@ -5858,17 +5869,29 @@ class Edit{
 			case 40: //right arrow
 			case 13: //enter
 			case 27: //escape
-				break;
+			break;
 			
 			default:
-				this._keyAutoCompLetter(e);
+			this._keyAutoCompLetter(e);
 		}
+	}
+	
+	_preventPopupBlur(){
+		if(this.popup){
+			this.popup.blockHide();
+		}
+		
+		setTimeout(() =>{
+			if(this.popup){
+				this.popup.restoreHide();
+			}
+		}, 10);
 	}
 	
 	_preventBlur(){
 		this.blurable = false;
 		
-		setTimeout(function(){
+		setTimeout(() =>{
 			this.blurable = true;
 		}, 10);
 	}
@@ -5999,14 +6022,14 @@ class Edit{
 	
 	rebuildOptionsList(){
 		this._generateOptions()
-			.then(this._sortOptions.bind(this))
-			.then(this._buildList.bind(this))
-			.then(this._showList.bind(this))
-			.catch((e) => {
-				if(!Number.isInteger(e)){
-					console.error("List generation error", e);
-				}
-			});
+		.then(this._sortOptions.bind(this))
+		.then(this._buildList.bind(this))
+		.then(this._showList.bind(this))
+		.catch((e) => {
+			if(!Number.isInteger(e)){
+				console.error("List generation error", e);
+			}
+		});
 	}
 	
 	_filterList(){
@@ -6038,13 +6061,13 @@ class Edit{
 			}
 			
 			return values.then()
-				.then((responseValues) => {
-					if(this.listIteration === iteration){
-						return this._parseList(responseValues);
-					}else {
-						return Promise.reject(iteration);
-					}
-				});
+			.then((responseValues) => {
+				if(this.listIteration === iteration){
+					return this._parseList(responseValues);
+				}else {
+					return Promise.reject(iteration);
+				}
+			});
 		}else {
 			return Promise.resolve(this._parseList(values));
 		}
@@ -6078,22 +6101,22 @@ class Edit{
 		url = urlBuilder(url, {}, params);
 		
 		return fetch(url)
-			.then((response)=>{
-				if(response.ok) {
-					return response.json()
-						.catch((error)=>{
-							console.warn("List Ajax Load Error - Invalid JSON returned", error);
-							return Promise.reject(error);
-						});
-				}else {
-					console.error("List Ajax Load Error - Connection Error: " + response.status, response.statusText);
-					return Promise.reject(response);
-				}
-			})
-			.catch((error)=>{
-				console.error("List Ajax Load Error - Connection Error: ", error);
-				return Promise.reject(error);
-			});
+		.then((response)=>{
+			if(response.ok) {
+				return response.json()
+				.catch((error)=>{
+					console.warn("List Ajax Load Error - Invalid JSON returned", error);
+					return Promise.reject(error);
+				});
+			}else {
+				console.error("List Ajax Load Error - Connection Error: " + response.status, response.statusText);
+				return Promise.reject(response);
+			}
+		})
+		.catch((error)=>{
+			console.error("List Ajax Load Error - Connection Error: ", error);
+			return Promise.reject(error);
+		});
 	}
 	
 	_uniqueColumnValues(field){
@@ -6512,7 +6535,7 @@ class Edit{
 	
 	_resolveValue(blur){
 		var output, initialValue;
-		
+
 		if(this.popup){
 			this.popup.hide(true);
 		}
