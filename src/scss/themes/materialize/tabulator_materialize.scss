@@ -9,7 +9,7 @@ $textSize:16px !default; //table text size
 
 //header theming
 $headerBackgroundColor:#fff !default; //border to tabulator
-$headerSeperatorColor:$table-border-color !default; //header bottom separator color
+$headerSeparatorColor:$table-border-color !default; //header bottom separator color
 
 $cellPadding:15px !default; //padding round header
 
@@ -32,7 +32,7 @@ $errorColor:#dd0000 !default; //error indication
 
 //footer theming
 $footerBorderColor:$table-border-color !default; //footer border color
-$footerSeperatorColor:$table-border-color !default; //footer bottom separator color
+$footerSeparatorColor:$table-border-color !default; //footer bottom separator color
 $footerActiveColor:$primary-color !default; //footer bottom active text color
 
 @import "../../tabulator.scss";
@@ -74,7 +74,7 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 		.tabulator-calcs-holder{
 			width:100%;
 
-			border-bottom:1px solid $headerSeperatorColor;
+			border-bottom:1px solid $headerSeparatorColor;
 		}
 
 		.tabulator-frozen-rows-holder{

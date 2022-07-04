@@ -10,7 +10,7 @@ $textSize:16px !default; //table text size
 
 //header theming
 $headerBackgroundColor:#fff !default; //border to tabulator
-$headerSeperatorColor:$table-border-color !default; //header bottom separator color
+$headerSeparatorColor:$table-border-color !default; //header bottom separator color
 
 $cellPadding:12px !default; //padding round header
 
@@ -33,7 +33,7 @@ $errorColor:#dd0000 !default; //error indication
 
 //footer theming
 $footerBorderColor:$pagination-border-color !default; //footer border color
-$footerSeperatorColor:$table-border-color !default; //footer bottom separator color
+$footerSeparatorColor:$table-border-color !default; //footer bottom separator color
 $footerActiveColor:$pagination-active-color !default; //footer bottom active text color
 
 $table-cell-padding-sm: 5px;
@@ -45,8 +45,8 @@ $table-cell-padding-sm: 5px;
 	border:none;
 
 	.tabulator-header{
-		border-top:1px solid $headerSeperatorColor;
-		border-bottom:2px solid $headerSeperatorColor;
+		border-top:1px solid $headerSeparatorColor;
+		border-bottom:2px solid $headerSeparatorColor;
 		color:inherit;
 
 		.tabulator-col{
@@ -96,7 +96,7 @@ $table-cell-padding-sm: 5px;
 
 		.tabulator-calcs-holder{
 			width:100%;
-			border-bottom:1px solid $headerSeperatorColor;
+			border-bottom:1px solid $headerSeparatorColor;
 		}
 	}
 
