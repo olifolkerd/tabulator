@@ -17,6 +17,7 @@ export default class Popup extends CoreFeature{
 		this.renderedCallback = null;
         
 		this.visible = false;
+		this.hideable = true;
         
 		this.element.classList.add("tabulator-popup-container");
         
@@ -225,9 +226,17 @@ export default class Popup extends CoreFeature{
 			this.hide();
 		}
 	}
+
+	blockHide(){
+		this.hideable = false;
+	}
+
+	restoreHide(){
+		this.hideable = true;
+	}
     
 	hide(silent = false){
-		if(this.visible){
+		if(this.visible && this.hideable){
 			if(this.blurable){
 				document.body.removeEventListener("keydown", this.escEvent);
 				document.body.removeEventListener("click", this.blurEvent);
