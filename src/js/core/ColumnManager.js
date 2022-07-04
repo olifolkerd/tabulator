@@ -138,32 +138,32 @@ export default class ColumnManager extends CoreFeature {
 				
 				switch(typeof value){
 					case "undefined":
-					sorter = "string";
-					break;
+						sorter = "string";
+						break;
 					
 					case "boolean":
-					sorter = "boolean";
-					break;
+						sorter = "boolean";
+						break;
 					
 					case "object":
-					if(Array.isArray(value)){
-						sorter = "array";
-					}else{
-						sorter = "string";
-					}
-					break;
-					
-					default:
-					if(!isNaN(value) && value !== ""){
-						sorter = "number";
-					}else{
-						if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
-							sorter = "alphanum";
+						if(Array.isArray(value)){
+							sorter = "array";
 						}else{
 							sorter = "string";
 						}
-					}
-					break;
+						break;
+					
+					default:
+						if(!isNaN(value) && value !== ""){
+							sorter = "number";
+						}else{
+							if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
+								sorter = "alphanum";
+							}else{
+								sorter = "string";
+							}
+						}
+						break;
 				}
 				
 				col.sorter = sorter;
@@ -175,31 +175,31 @@ export default class ColumnManager extends CoreFeature {
 				
 				switch(typeof definitions){
 					case "function":
-					this.table.options.columns = definitions.call(this.table, cols);
-					break;
+						this.table.options.columns = definitions.call(this.table, cols);
+						break;
 					
 					case "object":
-					if(Array.isArray(definitions)){
-						cols.forEach((col) => {
-							var match = definitions.find((def) => {
-								return def.field === col.field;
+						if(Array.isArray(definitions)){
+							cols.forEach((col) => {
+								var match = definitions.find((def) => {
+									return def.field === col.field;
+								});
+								
+								if(match){
+									Object.assign(col, match);
+								}
 							});
 							
-							if(match){
-								Object.assign(col, match);
-							}
-						});
+						}else{
+							cols.forEach((col) => {
+								if(definitions[col.field]){
+									Object.assign(col, definitions[col.field]);
+								}
+							});
+						}
 						
-					}else{
-						cols.forEach((col) => {
-							if(definitions[col.field]){
-								Object.assign(col, definitions[col.field]);
-							}
-						});
-					}
-					
-					this.table.options.columns = cols;
-					break;
+						this.table.options.columns = cols;
+						break;
 				}
 			}else{
 				this.table.options.columns = cols;
@@ -290,7 +290,7 @@ export default class ColumnManager extends CoreFeature {
 			this.columns.forEach((column) => {
 				column.clearVerticalAlign();
 			});
-
+			
 			this.columns.forEach((column) => {
 				var height = column.getHeight();
 				
@@ -526,12 +526,12 @@ export default class ColumnManager extends CoreFeature {
 				switch(position){
 					case "middle":
 					case "center":
-					adjust = -this.element.clientWidth / 2;
-					break;
+						adjust = -this.element.clientWidth / 2;
+						break;
 					
 					case "right":
-					adjust = colEl.clientWidth - this.headersElement.clientWidth;
-					break;
+						adjust = colEl.clientWidth - this.headersElement.clientWidth;
+						break;
 				}
 				
 				//check column visibility
