@@ -5760,6 +5760,104 @@ function time(cell, onRendered, success, cancel, editorParams){
 	return input;
 }
 
+//input element
+function datetime(cell, onRendered, success, cancel, editorParams){
+	var inputFormat = editorParams.inputFormat,
+	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
+	newDatetime;
+
+	//create and style input
+	var cellValue = cell.getValue(),
+	input = document.createElement("input");
+	
+	input.type = "datetime-local";
+	input.style.padding = "4px";
+	input.style.width = "100%";
+	input.style.boxSizing = "border-box";
+	
+	if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+		for (let key in editorParams.elementAttributes){
+			if(key.charAt(0) == "+"){
+				key = key.slice(1);
+				input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+			}else {
+				input.setAttribute(key, editorParams.elementAttributes[key]);
+			}
+		}
+	}
+	
+	cellValue = typeof cellValue !== "undefined" ? cellValue : "";
+	
+	if(inputFormat){
+		if(DT){
+			if(DT.isDateTime(cellValue)){
+				newDatetime = cellValue;
+			}else if(inputFormat === "iso"){
+				newDatetime = DT.fromISO(String(cellValue));
+			}else {
+				newDatetime = DT.fromFormat(String(cellValue), inputFormat);
+			}
+
+			cellValue = newDatetime.toFormat("yyyy-MM-dd")  + "T" + newDatetime.toFormat("hh:mm");
+		}else {
+			console.error("Editor Error - 'date' editor 'inputFormat' param is dependant on luxon.js");
+		}
+	}
+
+	input.value = cellValue;
+	
+	onRendered(function(){
+		input.focus({preventScroll: true});
+		input.style.height = "100%";
+		
+		if(editorParams.selectContents){
+			input.select();
+		}
+	});
+	
+	function onChange(e){
+		var value = input.value;
+
+		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
+
+			if(value && inputFormat){
+				value = DT.fromISO(String(value)).toFormat(inputFormat);
+			}
+
+			if(success(value)){
+				cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
+			}
+		}else {
+			cancel();
+		}
+	}
+	
+	//submit new value on blur or change
+	input.addEventListener("change", onChange);
+	input.addEventListener("blur", onChange);
+	
+	//submit new value on enter
+	input.addEventListener("keydown", function(e){
+		switch(e.keyCode){
+			// case 9:
+			case 13:
+			onChange();
+			break;
+			
+			case 27:
+			cancel();
+			break;
+			
+			case 35:
+			case 36:
+			e.stopPropagation();
+			break;
+		}
+	});
+	
+	return input;
+}
+
 class Edit{
 	constructor(editor, cell, onRendered, success, cancel, editorParams){
 		this.edit = editor;
@@ -7196,6 +7294,7 @@ var defaultEditors = {
 	range:range,
 	date:date,
 	time:time,
+	datetime:datetime,
 	select:select,
 	list:list,
 	autocomplete:autocomplete,
@@ -9714,7 +9813,7 @@ function tickCross$1(cell, formatterParams, onRendered){
 	}
 }
 
-function datetime(cell, formatterParams, onRendered){
+function datetime$1(cell, formatterParams, onRendered){
 	var DT = window.DateTime || luxon.DateTime;
 	var inputFormat = formatterParams.inputFormat || "yyyy-MM-dd HH:mm:ss";
 	var	outputFormat = formatterParams.outputFormat || "dd/MM/yyyy HH:mm:ss";
@@ -10157,7 +10256,7 @@ var defaultFormatters = {
 	link:link,
 	image:image,
 	tickCross:tickCross$1,
-	datetime:datetime,
+	datetime:datetime$1,
 	datetimediff:datetimediff,
 	lookup:lookup,
 	star:star$1,
@@ -18309,7 +18408,7 @@ function string(a, b, aRow, bRow, column, dir, params){
 }
 
 //sort datetime
-function datetime$1(a, b, aRow, bRow, column, dir, params){
+function datetime$2(a, b, aRow, bRow, column, dir, params){
 	var DT = window.DateTime || luxon.DateTime;
 	var format = params.format || "dd/MM/yyyy HH:mm:ss",
 	alignEmptyValues = params.alignEmptyValues,
@@ -18359,7 +18458,7 @@ function date$1(a, b, aRow, bRow, column, dir, params){
 		params.format = "dd/MM/yyyy";
 	}
 
-	return datetime$1.call(this, a, b, aRow, bRow, column, dir, params);
+	return datetime$2.call(this, a, b, aRow, bRow, column, dir, params);
 }
 
 //sort times
@@ -18368,7 +18467,7 @@ function time$1(a, b, aRow, bRow, column, dir, params){
 		params.format = "HH:mm";
 	}
 
-	return datetime$1.call(this, a, b, aRow, bRow, column, dir, params);
+	return datetime$2.call(this, a, b, aRow, bRow, column, dir, params);
 }
 
 //sort booleans
@@ -18492,7 +18591,7 @@ var defaultSorters = {
 	string:string,
 	date:date$1,
 	time:time$1,
-	datetime:datetime$1,
+	datetime:datetime$2,
 	boolean:boolean,
 	array:array,
 	exists:exists,
