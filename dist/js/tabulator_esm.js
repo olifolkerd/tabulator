@@ -5564,7 +5564,7 @@ function range(cell, onRendered, success, cancel, editorParams){
 
 //input element
 function date(cell, onRendered, success, cancel, editorParams){
-	var inputFormat = editorParams.inputFormat,
+	var inputFormat = editorParams.format,
 	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null;
 	
 	//create and style input
@@ -5675,7 +5675,7 @@ function date(cell, onRendered, success, cancel, editorParams){
 
 //input element
 function time(cell, onRendered, success, cancel, editorParams){
-	var inputFormat = editorParams.inputFormat,
+	var inputFormat = editorParams.format,
 	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
 	newDatetime;
 
@@ -5774,7 +5774,7 @@ function time(cell, onRendered, success, cancel, editorParams){
 
 //input element
 function datetime(cell, onRendered, success, cancel, editorParams){
-	var inputFormat = editorParams.inputFormat,
+	var inputFormat = editorParams.format,
 	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
 	newDatetime;
 

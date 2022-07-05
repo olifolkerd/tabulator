@@ -1,6 +1,6 @@
 //input element
 export default function(cell, onRendered, success, cancel, editorParams){
-	var inputFormat = editorParams.inputFormat,
+	var inputFormat = editorParams.format,
 	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null;
 	
 	//create and style input
