@@ -3,6 +3,7 @@ import textarea from './editors/textarea.js';
 import number from './editors/number.js';
 import range from './editors/range.js';
 import date from './editors/date.js';
+import time from './editors/time.js';
 import select from './editors/select.js';
 import list from './editors/list.js';
 import autocomplete from './editors/autocomplete.js';
@@ -16,6 +17,7 @@ export default {
 	number:number,
 	range:range,
 	date:date,
+	time:time,
 	select:select,
 	list:list,
 	autocomplete:autocomplete,
