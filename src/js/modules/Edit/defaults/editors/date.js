@@ -1,17 +1,38 @@
 //input element
 export default function(cell, onRendered, success, cancel, editorParams){
 	var inputFormat = editorParams.inputFormat,
-	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
-	newDatetime;
-
+	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null;
+	
 	//create and style input
 	var cellValue = cell.getValue(),
 	input = document.createElement("input");
+	
+	function convertDate(value){
+		var newDatetime;
+		
+		if(DT.isDateTime(value)){
+			newDatetime = value;
+		}else if(inputFormat === "iso"){
+			newDatetime = DT.fromISO(String(value));
+		}else{
+			newDatetime = DT.fromFormat(String(value), inputFormat);
+		}
+		
+		return newDatetime.toFormat("yyyy-MM-dd");
+	}
 	
 	input.type = "date";
 	input.style.padding = "4px";
 	input.style.width = "100%";
 	input.style.boxSizing = "border-box";
+
+	if(editorParams.max){
+		input.setAttribute("max", inputFormat ? convertDate(editorParams.max) : editorParams.max);
+	}
+
+	if(editorParams.min){
+		input.setAttribute("min", inputFormat ? convertDate(editorParams.min) : editorParams.min);
+	}
 	
 	if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
 		for (let key in editorParams.elementAttributes){
@@ -27,22 +48,13 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	cellValue = typeof cellValue !== "undefined" ? cellValue : "";
 	
 	if(inputFormat){
-		if(DT){
-			if(DT.isDateTime(cellValue)){
-				newDatetime = cellValue;
-			}else if(inputFormat === "iso"){
-				newDatetime = DT.fromISO(String(cellValue));
-			}else{
-				newDatetime = DT.fromFormat(String(cellValue), inputFormat);
-			}
-
-			cellValue = newDatetime.toFormat("yyyy-MM-dd");
-
+		if(DT){		
+			cellValue = convertDate(cellValue);			
 		}else{
 			console.error("Editor Error - 'date' editor 'inputFormat' param is dependant on luxon.js");
 		}
 	}
-
+	
 	input.value = cellValue;
 	
 	onRendered(function(){
@@ -56,13 +68,13 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	
 	function onChange(e){
 		var value = input.value;
-
+		
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
-
+			
 			if(value && inputFormat){
 				value = DT.fromFormat(String(value), "yyyy-MM-dd").toFormat(inputFormat);
 			}
-
+			
 			if(success(value)){
 				cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
 			}
