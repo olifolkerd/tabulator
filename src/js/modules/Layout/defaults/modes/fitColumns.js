@@ -101,6 +101,11 @@ export default function(columns){
 		totalWidth -= this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
 	}
 
+	// Update min width on tableholder if set
+	if(this.table.rowManager.tableElement.style.minWidth) {
+		this.table.rowManager.tableElement.style.minWidth = totalWidth + "px";
+	}
+
 	columns.forEach(function(column){
 		var width, minWidth, colWidth;
 
