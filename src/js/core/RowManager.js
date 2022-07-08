@@ -839,7 +839,7 @@ export default class RowManager extends CoreFeature{
 			if(!this.fixedHeight){
 				this.adjustTableSize();
 			}
-
+			
 			this.dispatchExternal("renderComplete");
 		}
 	}
@@ -923,6 +923,9 @@ export default class RowManager extends CoreFeature{
 		
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
+
+		// clear empty table placeholder min
+		this.tableElement.style.minWidth = "";
 		
 		this.renderer.clearRows();
 	}

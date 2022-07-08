@@ -22731,13 +22731,12 @@ class RowManager extends CoreFeature{
 			}
 		}else {
 			this.dispatchExternal("renderStarted");
-			
 			this.renderer.rerenderRows(callback);
 
 			if(!this.fixedHeight){
 				this.adjustTableSize();
 			}
-
+			
 			this.dispatchExternal("renderComplete");
 		}
 	}
@@ -22821,6 +22820,9 @@ class RowManager extends CoreFeature{
 		
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
+
+		// clear empty table placeholder min
+		this.tableElement.style.minWidth = "";
 		
 		this.renderer.clearRows();
 	}
