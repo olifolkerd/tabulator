@@ -6,20 +6,20 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	emptyAlign = 0;
 
 	if(typeof DT != "undefined"){
-		if(DT.isDateTime(a)){
-			 a = a;
-		}else if(format === "iso"){
-			 a = DT.fromISO(String(a));
-		}else{
-			 a = DT.fromFormat(String(a), format);
+		if(!DT.isDateTime(a)){
+			if(format === "iso"){
+				a = DT.fromISO(String(a));
+			}else{
+				a = DT.fromFormat(String(a), format);
+			}
 		}
 
-		if(DT.isDateTime(b)){
-			 b = b;
-		}else if(format === "iso"){
-			 b = DT.fromISO(String(b));
-		}else{
-			 b = DT.fromFormat(String(b), format);
+		if(!DT.isDateTime(b)){
+			if(format === "iso"){
+				b = DT.fromISO(String(b));
+			}else{
+				b = DT.fromFormat(String(b), format);
+			}
 		}
 
 		if(!a.isValid){
@@ -41,4 +41,4 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	}else{
 		console.error("Sort Error - 'datetime' sorter is dependant on luxon.js");
 	}
-};
+}

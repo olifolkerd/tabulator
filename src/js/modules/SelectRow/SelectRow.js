@@ -15,7 +15,7 @@ class SelectRow extends Module{
 		this.registerTableOption("selectableRangeMode", "drag");  //highlight rows on hover
 		this.registerTableOption("selectableRollingSelection", true); //roll selection once maximum number of selectable rows is reached
 		this.registerTableOption("selectablePersistence", true); // maintain selection when table view is updated
-		this.registerTableOption("selectableCheck", function(data, row){return true;}); //check wheather row is selectable
+		this.registerTableOption("selectableCheck", function(data, row){return true;}); //check whether row is selectable
 		
 		this.registerTableFunction("selectRow", this.selectRows.bind(this));
 		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
@@ -173,7 +173,7 @@ class SelectRow extends Module{
 				
 				if(this.table.options.selectable !== true){
 					if(toggledRows.length > this.table.options.selectable){
-						toggledRows = toggledRows.slice(0, this.table.options.selectable)
+						toggledRows = toggledRows.slice(0, this.table.options.selectable);
 					}
 				}
 				
@@ -208,46 +208,44 @@ class SelectRow extends Module{
 		
 		switch(typeof rows){
 			case "undefined":
-			this.table.rowManager.rows.forEach((row) => {
-				this._selectRow(row, true, true);
-			});
+				this.table.rowManager.rows.forEach((row) => {
+					this._selectRow(row, true, true);
+				});
 			
-			this._rowSelectionChanged();
-			break;
+				this._rowSelectionChanged();
+				break;
 			
 			case "string":
 			
-			rowMatch = this.table.rowManager.findRow(rows);
+				rowMatch = this.table.rowManager.findRow(rows);
 			
-			if(rowMatch){
-				this._selectRow(rowMatch, true, true);
-			}else{
-				this.table.rowManager.getRows(rows).forEach((row) => {
-					this._selectRow(row, true, true);
-				});
-			}
+				if(rowMatch){
+					this._selectRow(rowMatch, true, true);
+				}else{
+					this.table.rowManager.getRows(rows).forEach((row) => {
+						this._selectRow(row, true, true);
+					});
+				}
 			
-			this._rowSelectionChanged();
-			break;
+				this._rowSelectionChanged();
+				break;
 			
 			default:
-			if(Array.isArray(rows)){
-				rows.forEach((row) => {
-					this._selectRow(row, true, true);
-				});
+				if(Array.isArray(rows)){
+					rows.forEach((row) => {
+						this._selectRow(row, true, true);
+					});
 				
-				this._rowSelectionChanged();
-			}else{
-				this._selectRow(rows, false, true);
-			}
-			break;
+					this._rowSelectionChanged();
+				}else{
+					this._selectRow(rows, false, true);
+				}
+				break;
 		}
 	}
 	
 	//select an individual row
 	_selectRow(rowInfo, silent, force){
-		var index;
-		
 		//handle max row count
 		if(!isNaN(this.table.options.selectable) && this.table.options.selectable !== true && !force){
 			if(this.selectedRows.length >= this.table.options.selectable){

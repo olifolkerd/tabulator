@@ -125,22 +125,22 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	element.addEventListener("keydown", function(e){
 		switch(e.keyCode){
 			case 39: //right arrow
-			changeValue(value + 1);
-			break;
+				changeValue(value + 1);
+				break;
 
 			case 37: //left arrow
-			changeValue(value - 1);
-			break;
+				changeValue(value - 1);
+				break;
 
 			case 13: //enter
-			success(value);
-			break;
+				success(value);
+				break;
 
 			case 27: //escape
-			cancel();
-			break;
+				cancel();
+				break;
 		}
 	});
 
 	return starsHolder;
-};
+}

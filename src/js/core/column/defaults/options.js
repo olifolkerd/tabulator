@@ -14,4 +14,4 @@ export default {
 	"headerVertical": undefined,
 	"headerHozAlign": undefined,
 	"editableTitle": undefined,
-}
+};

@@ -12,7 +12,7 @@ class Export extends Module{
 		this.cloneTableStyle = true;
 		this.colVisProp = "";
 
-		this.registerTableOption("htmlOutputConfig", false); //html outypu config
+		this.registerTableOption("htmlOutputConfig", false); //html output config
 
 		this.registerColumnOption("htmlOutput");
 		this.registerColumnOption("titleHtmlOutput");
@@ -42,10 +42,10 @@ class Export extends Module{
 		return headers.concat(body);
 	}
 
-	genereateTable(config, style, range, colVisProp){
+	generateTable(config, style, range, colVisProp){
 		var list = this.generateExportList(config, style, range, colVisProp);
 
-		return this.genereateTableElement(list);
+		return this.generateTableElement(list);
 	}
 
 	rowLookup(range){
@@ -63,24 +63,24 @@ class Export extends Module{
 			switch(range){
 				case true:
 				case "visible":
-				rows = this.table.rowManager.getVisibleRows(false, true);
-				break;
+					rows = this.table.rowManager.getVisibleRows(false, true);
+					break;
 
 				case "all":
-				rows = this.table.rowManager.rows;
-				break;
+					rows = this.table.rowManager.rows;
+					break;
 
 				case "selected":
-				rows = this.table.modules.selectRow.selectedRows;
-				break;
+					rows = this.table.modules.selectRow.selectedRows;
+					break;
 
 				case "active":
 				default:
-				if(this.table.options.pagination){
-					rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
-				}else{
-					rows = this.table.rowManager.getDisplayRows();
-				}
+					if(this.table.options.pagination){
+						rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
+					}else{
+						rows = this.table.rowManager.getDisplayRows();
+					}
 			}
 		}
 
@@ -148,7 +148,13 @@ class Export extends Module{
 	}
 
 	columnVisCheck(column){
-		return column.definition[this.colVisProp] !== false && (column.visible || (!column.visible && column.definition[this.colVisProp]));
+		var visProp = column.definition[this.colVisProp];
+
+		if(typeof visProp === "function"){
+			visProp = visProp.call(this.table, column.getComponent());
+		}
+
+		return visProp !== false && (column.visible || (!column.visible && visProp));
 	}
 
 	headersToExportRows(columns){
@@ -192,7 +198,7 @@ class Export extends Module{
 			}
 		}
 
-		//calculate maximum header debth
+		//calculate maximum header depth
 		columns.forEach(function(column){
 			if(column.depth > headerDepth){
 				headerDepth = column.depth;
@@ -245,16 +251,13 @@ class Export extends Module{
 		rows = rows.filter((row) => {
 			switch(row.type){
 				case "group":
-				return this.config.rowGroups !== false;
-				break;
+					return this.config.rowGroups !== false;
 
 				case "calc":
-				return this.config.columnCalcs !== false;
-				break;
+					return this.config.columnCalcs !== false;
 
 				case "row":
-				return !(this.table.options.dataTree && this.config.dataTree === false && row.modules.dataTree.parent);
-				break;
+					return !(this.table.options.dataTree && this.config.dataTree === false && row.modules.dataTree.parent);
 			}
 
 			return true;
@@ -267,20 +270,20 @@ class Export extends Module{
 
 			switch(row.type){
 				case "group":
-				indent = row.level;
-				exportCols.push(new ExportColumn(row.key, row.getComponent(), columns.length, 1));
-				break;
+					indent = row.level;
+					exportCols.push(new ExportColumn(row.key, row.getComponent(), columns.length, 1));
+					break;
 
 				case "calc" :
 				case "row" :
-				columns.forEach((col) => {
-					exportCols.push(new ExportColumn(col._column.getFieldValue(rowData), col, 1, 1));
-				});
+					columns.forEach((col) => {
+						exportCols.push(new ExportColumn(col._column.getFieldValue(rowData), col, 1, 1));
+					});
 
-				if(this.table.options.dataTree && this.config.dataTree !== false){
-					indent = row.modules.dataTree.index;
-				}
-				break;
+					if(this.table.options.dataTree && this.config.dataTree !== false){
+						indent = row.modules.dataTree.index;
+					}
+					break;
 			}
 
 			exportRows.push(new ExportRow(row.type, exportCols, row.getComponent(), indent));
@@ -289,7 +292,7 @@ class Export extends Module{
 		return exportRows;
 	}
 
-	genereateTableElement(list){
+	generateTableElement(list){
 		var table = document.createElement("table"),
 		headerEl = document.createElement("thead"),
 		bodyEl = document.createElement("tbody"),
@@ -320,24 +323,27 @@ class Export extends Module{
 		}
 
 		list.forEach((row, i) => {
+			let rowEl;
+
 			switch(row.type){
 				case "header":
-				headerEl.appendChild(this.genereateHeaderElement(row, setup, styles));
-				break;
+					headerEl.appendChild(this.generateHeaderElement(row, setup, styles));
+					break;
 
 				case "group":
-				bodyEl.appendChild(this.genereateGroupElement(row, setup, styles));
-				break;
+					bodyEl.appendChild(this.generateGroupElement(row, setup, styles));
+					break;
 
 				case "calc":
-				bodyEl.appendChild(this.genereateCalcElement(row, setup, styles));
-				break;
+					bodyEl.appendChild(this.generateCalcElement(row, setup, styles));
+					break;
 
 				case "row":
-				let rowEl = this.genereateRowElement(row, setup, styles);
-				this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
-				bodyEl.appendChild(rowEl);
-				break;
+					rowEl = this.generateRowElement(row, setup, styles);
+
+					this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+					bodyEl.appendChild(rowEl);
+					break;
 			}
 		});
 
@@ -373,7 +379,7 @@ class Export extends Module{
 		return styles;
 	}
 
-	genereateHeaderElement(row, setup, styles){
+	generateHeaderElement(row, setup, styles){
 		var rowEl = document.createElement("tr");
 
 		row.columns.forEach((column) => {
@@ -416,7 +422,7 @@ class Export extends Module{
 		return rowEl;
 	}
 
-	genereateGroupElement(row, setup, styles){
+	generateGroupElement(row, setup, styles){
 
 		var rowEl = document.createElement("tr"),
 		cellEl = document.createElement("td"),
@@ -427,9 +433,7 @@ class Export extends Module{
 		if(setup.groupHeader && setup.groupHeader[row.indent]){
 			group.value = setup.groupHeader[row.indent](group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
 		}else{
-			if(setup.groupHeader === false){
-				group.value = group.value;
-			}else{
+			if(setup.groupHeader !== false){
 				group.value = row.component._group.generator(group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
 			}
 		}
@@ -452,8 +456,8 @@ class Export extends Module{
 		return rowEl;
 	}
 
-	genereateCalcElement(row, setup, styles){
-		var rowEl = this.genereateRowElement(row, setup, styles);
+	generateCalcElement(row, setup, styles){
+		var rowEl = this.generateRowElement(row, setup, styles);
 
 		rowEl.classList.add("tabulator-print-table-calcs");
 		this.mapElementStyles(styles.calcRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
@@ -461,17 +465,18 @@ class Export extends Module{
 		return rowEl;
 	}
 
-	genereateRowElement(row, setup, styles){
+	generateRowElement(row, setup, styles){
 		var rowEl = document.createElement("tr");
 
 		rowEl.classList.add("tabulator-print-table-row");
 
-		row.columns.forEach((col) => {
+		row.columns.forEach((col, i) => {
 			if(col){
 				var cellEl = document.createElement("td"),
 				column = col.component._column,
 				index = this.table.columnManager.findColumnIndex(column),
-				value = col.value;
+				value = col.value,
+				cellStyle;
 
 				var cellWrapper = {
 					modules:{},
@@ -510,15 +515,12 @@ class Export extends Module{
 				}else{
 					switch(typeof value){
 						case "object":
-						value = value !== null ? JSON.stringify(value) : "";
-						break;
+							value = value !== null ? JSON.stringify(value) : "";
+							break;
 
 						case "undefined":
-						value = "";
-						break;
-
-						default:
-						value = value;
+							value = "";
+							break;
 					}
 				}
 
@@ -528,8 +530,10 @@ class Export extends Module{
 					cellEl.innerHTML = value;
 				}
 
-				if(styles.styleCells[index] || styles.firstCell){
-					this.mapElementStyles(styles.styleCells[index] || styles.firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
+				cellStyle = styles.styleCells && styles.styleCells[index] ? styles.styleCells[index] : styles.firstCell;
+
+				if(cellStyle){
+					this.mapElementStyles(cellStyle, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
 
 					if(column.definition.align){
 						cellEl.style.textAlign = column.definition.align;
@@ -562,10 +566,10 @@ class Export extends Module{
 		return rowEl;
 	}
 
-	genereateHTMLTable(list){
+	generateHTMLTable(list){
 		var holder = document.createElement("div");
 
-		holder.appendChild(this.genereateTableElement(list));
+		holder.appendChild(this.generateTableElement(list));
 
 		return holder.innerHTML;
 	}
@@ -573,7 +577,7 @@ class Export extends Module{
 	getHtml(visible, style, config, colVisProp){
 		var list = this.generateExportList(config || this.table.options.htmlOutputConfig, style, visible, colVisProp || "htmlOutput");
 
-		return this.genereateHTMLTable(list);
+		return this.generateHTMLTable(list);
 	}
 
 	mapElementStyles(from, to, props){

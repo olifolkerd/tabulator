@@ -178,7 +178,7 @@ class Group{
 	
 	getRowIndex(row){}
 	
-	//update row data to match grouping contraints
+	//update row data to match grouping constraints
 	conformRowData(data){
 		if(this.field){
 			data[this.field] = this.key;
@@ -474,11 +474,11 @@ class Group{
 		return output;
 	}
 	
-	getRows(compoment){
+	getRows(component){
 		var output = [];
 		
 		this.rows.forEach(function(row){
-			output.push(compoment ? row.getComponent() : row);
+			output.push(component ? row.getComponent() : row);
 		});
 		
 		return output;

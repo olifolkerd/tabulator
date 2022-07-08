@@ -7,4 +7,4 @@ export default function (cell, formatterParams, onRendered) {
 	}
 
 	return formatterParams[value];
-};
+}

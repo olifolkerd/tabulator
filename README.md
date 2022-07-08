@@ -57,19 +57,19 @@ var table = new Tabulator("#example-table", {});
 
 
 ### Bower Installation
-To get Tabulator via the Bower package manager, open a terminal in your project directory and run the following commmand:
+To get Tabulator via the Bower package manager, open a terminal in your project directory and run the following command:
 ```
 bower install tabulator --save
 ```
 
 ### NPM Installation
-To get Tabulator via the NPM package manager, open a terminal in your project directory and run the following commmand:
+To get Tabulator via the NPM package manager, open a terminal in your project directory and run the following command:
 ```
 npm install tabulator-tables --save
 ```
 
 ### CDN - UNPKG
-To access Tabulator directly from the UNPKG CDN servers, include the following two lines at the start of your project, instead of the localy hosted versions:
+To access Tabulator directly from the UNPKG CDN servers, include the following two lines at the start of your project, instead of the locally hosted versions:
 ```html
 <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
 <script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>

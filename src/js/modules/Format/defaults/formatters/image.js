@@ -14,22 +14,22 @@ export default function(cell, formatterParams, onRendered){
 
 	switch(typeof formatterParams.height){
 		case "number":
-		el.style.height = formatterParams.height + "px";
-		break;
+			el.style.height = formatterParams.height + "px";
+			break;
 
 		case "string":
-		el.style.height = formatterParams.height;
-		break;
+			el.style.height = formatterParams.height;
+			break;
 	}
 
 	switch(typeof formatterParams.width){
 		case "number":
-		el.style.width = formatterParams.width + "px";
-		break;
+			el.style.width = formatterParams.width + "px";
+			break;
 
 		case "string":
-		el.style.width = formatterParams.width;
-		break;
+			el.style.width = formatterParams.width;
+			break;
 	}
 
 	el.addEventListener("load", function(){
@@ -37,4 +37,4 @@ export default function(cell, formatterParams, onRendered){
 	});
 
 	return el;
-};
+}

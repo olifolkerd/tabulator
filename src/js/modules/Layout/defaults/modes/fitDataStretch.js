@@ -1,5 +1,5 @@
 //resize columns to fit data the contain and stretch last column to fill table
-export default function(columns){
+export default function(columns, forced){
 	var colsWidth = 0,
 	tableWidth = this.table.rowManager.element.clientWidth,
 	gap = 0,
@@ -37,4 +37,4 @@ export default function(columns){
 			this.table.modules.responsiveLayout.update();
 		}
 	}
-};
+}

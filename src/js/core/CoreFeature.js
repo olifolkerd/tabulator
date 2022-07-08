@@ -49,8 +49,8 @@ export default class CoreFeature{
 		return this.table.modules.layout.getMode();
 	}
 
-	layoutRefresh(){
-		return this.table.modules.layout.layout();
+	layoutRefresh(force){
+		return this.table.modules.layout.layout(force);
 	}
 
 
@@ -114,7 +114,21 @@ export default class CoreFeature{
 		return this.table.options[key];
 	}
 
+	//////////////////////////////////////////
+	/////////// Deprecation Checks ///////////
+	//////////////////////////////////////////
 
+	deprecationCheck(oldOption, newOption){
+		return this.table.deprecationAdvisor.check(oldOption, newOption);
+	}
+
+	deprecationCheckMsg(oldOption, msg){
+		return this.table.deprecationAdvisor.checkMsg(oldOption, msg);
+	}
+
+	deprecationMsg(msg){
+		return this.table.deprecationAdvisor.msg(msg);
+	}
 	//////////////////////////////////////////
 	//////////////// Modules /////////////////
 	//////////////////////////////////////////

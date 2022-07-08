@@ -4,18 +4,18 @@ $backgroundColor: #888 !default; //background color of tabulator
 $borderColor:#999 !default; //border to tabulator
 $textSize:14px !default; //table text size
 
-//header themeing
+//header theming
 $headerBackgroundColor:#e6e6e6 !default; //border to tabulator
-$headerTextColor:#555 !default; //header text colour
+$headerTextColor:#555 !default; //header text color
 $headerBorderColor:#aaa !default;  //header border color
-$headerSeperatorColor:#999 !default; //header bottom seperator color
+$headerSeparatorColor:#999 !default; //header bottom separator color
 $headerMargin:4px !default; //padding round header
 
 //column header arrows
 $sortArrowActive: #666 !default;
 $sortArrowInactive: #bbb !default;
 
-//row themeing
+//row theming
 $rowBackgroundColor:#fff !default; //table row background color
 $rowAltBackgroundColor:#EFEFEF !default; //table row background color
 $rowBorderColor:#aaa !default; //table border color
@@ -28,11 +28,11 @@ $rowSelectedBackgroundHover: #769BCC !default;//row background color when select
 $editBoxColor:#1D68CD !default; //border color for edit boxes
 $errorColor:#dd0000 !default; //error indication
 
-//footer themeing
+//footer theming
 $footerBackgroundColor:#e6e6e6 !default; //border to tabulator
-$footerTextColor:#555 !default; //footer text colour
+$footerTextColor:#555 !default; //footer text color
 $footerBorderColor:#aaa !default; //footer border color
-$footerSeperatorColor:#999 !default; //footer bottom seperator color
+$footerSeparatorColor:#999 !default; //footer bottom separator color
 $footerActiveColor:#d00 !default; //footer bottom active text color
 
 
@@ -49,11 +49,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	text-align: left;
 	overflow:hidden;
 	
-	-webkit-transform: translatez(0);
-	-moz-transform: translatez(0);
-	-ms-transform: translatez(0);
-	-o-transform: translatez(0);
-	transform: translatez(0);
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
 	
 	&[tabulator-layout="fitDataFill"]{
 		.tabulator-tableholder{
@@ -78,7 +78,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		
 		width:100%;
 		
-		border-bottom:1px solid $headerSeperatorColor;
+		border-bottom:1px solid $headerSeparatorColor;
 		background-color: $headerBackgroundColor;
 		color: $headerTextColor;
 		font-weight:bold;
@@ -97,18 +97,23 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		
 		//individual column header element
 		.tabulator-col{
-			display:inline-block;
+			display:inline-flex;
 			position:relative;
 			box-sizing:border-box;
+
+			flex-direction: column;
+			justify-content: flex-start;
+
 			border-right:1px solid $headerBorderColor;
 			background:$headerBackgroundColor;
+
 			text-align:left;
 			vertical-align: bottom;
 			overflow: hidden;
 			
 			&.tabulator-moving{
 				position: absolute;
-				border:1px solid $headerSeperatorColor;
+				border:1px solid $headerSeparatorColor;
 				background:darken($headerBackgroundColor, 10%);
 				pointer-events: none;
 			}
@@ -314,7 +319,6 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		}
 		
 		.tabulator-frozen{
-			display: inline-block;
 			position: absolute;
 			
 			// background-color: inherit;
@@ -429,7 +433,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	
 	//footer element
 	.tabulator-footer{
-		border-top:1px solid $footerSeperatorColor;
+		border-top:1px solid $footerSeparatorColor;
 		background-color: $footerBackgroundColor;
 		
 		color: $footerTextColor;
@@ -1200,6 +1204,13 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				margin-left:5px;
 			}
 		}
+	}
+
+	.tabulator-footer {
+		.tabulator-calcs-holder{
+			text-align: initial;
+		}
+
 	}
 	
 }

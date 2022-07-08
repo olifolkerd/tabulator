@@ -7,7 +7,7 @@ class Mutator extends Module{
 	constructor(table){
 		super(table);
 
-		this.allowedTypes = ["", "data", "edit", "clipboard"]; //list of muatation types
+		this.allowedTypes = ["", "data", "edit", "clipboard"]; //list of mutation types
 		this.enabled = true;
 
 		this.registerColumnOption("mutator");
@@ -67,16 +67,16 @@ class Mutator extends Module{
 		//set column mutator
 		switch(typeof value){
 			case "string":
-			if(Mutator.mutators[value]){
-				mutator = Mutator.mutators[value];
-			}else{
-				console.warn("Mutator Error - No such mutator found, ignoring: ", value);
-			}
-			break;
+				if(Mutator.mutators[value]){
+					mutator = Mutator.mutators[value];
+				}else{
+					console.warn("Mutator Error - No such mutator found, ignoring: ", value);
+				}
+				break;
 
 			case "function":
-			mutator = value;
-			break;
+				mutator = value;
+				break;
 		}
 
 		return mutator;

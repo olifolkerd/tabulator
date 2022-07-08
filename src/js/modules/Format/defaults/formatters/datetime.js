@@ -9,12 +9,12 @@ export default function(cell, formatterParams, onRendered){
 		var newDatetime;
 
 		if(DT.isDateTime(value)){
-			 newDatetime = value;
-		 }else if(inputFormat === "iso"){
-			 newDatetime = DT.fromISO(String(value));
-		 }else{
-			 newDatetime = DT.fromFormat(String(value), inputFormat);
-		 }
+			newDatetime = value;
+		}else if(inputFormat === "iso"){
+			newDatetime = DT.fromISO(String(value));
+		}else{
+			newDatetime = DT.fromFormat(String(value), inputFormat);
+		}
 
 		if(newDatetime.isValid){
 			if(formatterParams.timezone){
@@ -34,4 +34,4 @@ export default function(cell, formatterParams, onRendered){
 	}else{
 		console.error("Format Error - 'datetime' formatter is dependant on luxon.js");
 	}
-};
+}

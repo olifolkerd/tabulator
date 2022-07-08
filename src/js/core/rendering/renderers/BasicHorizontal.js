@@ -1,7 +1,6 @@
 import Renderer from '../Renderer.js';
-import Helpers from '../../tools/Helpers.js';
 
-export default class BaiscHorizontal extends Renderer{
+export default class BasicHorizontal extends Renderer{
 	constructor(table){
 		super(table);
 	}

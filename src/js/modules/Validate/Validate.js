@@ -193,25 +193,22 @@ class Validate extends Module{
 		
 		switch(typeof value){
 			case "string":
-			pos = value.indexOf(':');
+				pos = value.indexOf(':');
 			
-			if(pos > -1){
-				type = value.substring(0,pos);
-				params = value.substring(pos+1);
-			}else{
-				type = value;
-			}
+				if(pos > -1){
+					type = value.substring(0,pos);
+					params = value.substring(pos+1);
+				}else{
+					type = value;
+				}
 			
-			return this._buildValidator(type, params);
-			break;
+				return this._buildValidator(type, params);
 			
 			case "function":
-			return this._buildValidator(value);
-			break;
+				return this._buildValidator(value);
 			
 			case "object":
-			return this._buildValidator(value.type, value.parameters);
-			break;
+				return this._buildValidator(value.type, value.parameters);
 		}
 	}
 	

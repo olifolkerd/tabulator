@@ -35,4 +35,4 @@ export default function(cell, formatterParams, onRendered){
 	element.setAttribute("aria-label", value);
 
 	return stars;
-};
+}

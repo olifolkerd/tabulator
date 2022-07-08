@@ -43,7 +43,6 @@ export default class Cell extends CoreFeature{
 		this.element = document.createElement('div');
 		this.element.className = "tabulator-cell";
 		this.element.setAttribute("role", "gridcell");
-		this.element = this.element;
 	}
 
 	_configureCell(){
@@ -79,9 +78,9 @@ export default class Cell extends CoreFeature{
 
 		//add class to cell if needed
 		if(this.column.definition.cssClass){
-			var classNames = this.column.definition.cssClass.split(" ")
+			var classNames = this.column.definition.cssClass.split(" ");
 			classNames.forEach((className) => {
-				element.classList.add(className)
+				element.classList.add(className);
 			});
 		}
 
@@ -103,25 +102,25 @@ export default class Cell extends CoreFeature{
 
 		switch(typeof val){
 			case "object":
-			if(val instanceof Node){
+				if(val instanceof Node){
 
-				//clear previous cell contents
-				while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
+					//clear previous cell contents
+					while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
 
-				this.element.appendChild(val);
-			}else{
-				this.element.innerHTML = "";
+					this.element.appendChild(val);
+				}else{
+					this.element.innerHTML = "";
 
-				if(val != null){
-					console.warn("Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", val);
+					if(val != null){
+						console.warn("Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", val);
+					}
 				}
-			}
-			break;
+				break;
 			case "undefined":
-			this.element.innerHTML = "";
-			break;
+				this.element.innerHTML = "";
+				break;
 			default:
-			this.element.innerHTML = val;
+				this.element.innerHTML = val;
 		}
 	}
 

@@ -4,4 +4,4 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	var el2 = typeof b == "undefined" ? 0 : 1;
 
 	return el1 - el2;
-};
+}

@@ -4,187 +4,186 @@ import defaultImporters from './defaults/importers.js';
 
 class Import extends Module{
     
-    constructor(table){
-        super(table);
+	constructor(table){
+		super(table);
         
-        this.registerTableOption("importFormat");
-        this.registerTableOption("importReader", "text");
-    }
+		this.registerTableOption("importFormat");
+		this.registerTableOption("importReader", "text");
+	}
     
-    initialize(){
-        this.registerTableFunction("import", this.importFromFile.bind(this));
+	initialize(){
+		this.registerTableFunction("import", this.importFromFile.bind(this));
 
-        if(this.table.options.importFormat){
-            this.subscribe("data-loading", this.loadDataCheck.bind(this), 10);
-            this.subscribe("data-load", this.loadData.bind(this), 10);
-        }
-    }
+		if(this.table.options.importFormat){
+			this.subscribe("data-loading", this.loadDataCheck.bind(this), 10);
+			this.subscribe("data-load", this.loadData.bind(this), 10);
+		}
+	}
 
-    loadDataCheck(data){
-        return typeof data === "string";
-    }
+	loadDataCheck(data){
+		return this.table.options.importFormat && (typeof data === "string" || (Array.isArray(data) && data.length && Array.isArray(data)));
+	}
 
-    loadData(data, params, config, silent, previousData){
-        return this.importData(this.lookupImporter(), data)
-        .then(this.structureData.bind(this))
-        .catch((err) => {
-            console.error("Import Error:", err || "Unable to import data")
-            return Promise.reject(err);
-        })
-    }
+	loadData(data, params, config, silent, previousData){
+		return this.importData(this.lookupImporter(), data)
+			.then(this.structureData.bind(this))
+			.catch((err) => {
+				console.error("Import Error:", err || "Unable to import data");
+				return Promise.reject(err);
+			});
+	}
 
-    lookupImporter(importFormat){
-        var importer;
+	lookupImporter(importFormat){
+		var importer;
         
-        if(!importFormat){
-            importFormat = this.table.options.importFormat;
-        }
+		if(!importFormat){
+			importFormat = this.table.options.importFormat;
+		}
         
-        if(typeof importFormat === "string"){
-            importer = Import.importers[importFormat];
-        }else{
-            importer = importFormat;
-        }
+		if(typeof importFormat === "string"){
+			importer = Import.importers[importFormat];
+		}else{
+			importer = importFormat;
+		}
 
-        if(!importer){
-            console.error("Import Error - Importer not found:", importFormat);
-        }
+		if(!importer){
+			console.error("Import Error - Importer not found:", importFormat);
+		}
         
-        return importer;
-    }
+		return importer;
+	}
     
-    importFromFile(importFormat, extension){
-        var importer = this.lookupImporter(importFormat);
+	importFromFile(importFormat, extension){
+		var importer = this.lookupImporter(importFormat);
         
-        if(importer){
-            return this.pickFile(extension)
-            .then(this.importData.bind(this, importer))
-            .then(this.structureData.bind(this))
-            .then(this.setData.bind(this))
-            .catch((err) => {
-                console.error("Import Error:", err || "Unable to import file")
-                return Promise.reject(err);
-            })
-        }
-    }
+		if(importer){
+			return this.pickFile(extension)
+				.then(this.importData.bind(this, importer))
+				.then(this.structureData.bind(this))
+				.then(this.setData.bind(this))
+				.catch((err) => {
+					console.error("Import Error:", err || "Unable to import file");
+					return Promise.reject(err);
+				});
+		}
+	}
     
-    pickFile(extensions){
-        return new Promise((resolve, reject) => {
-            var input = document.createElement("input");
-            input.type = "file";
-            input.accept = extensions;
+	pickFile(extensions){
+		return new Promise((resolve, reject) => {
+			var input = document.createElement("input");
+			input.type = "file";
+			input.accept = extensions;
             
-            input.addEventListener("change", (e) => {
-                var file = input.files[0],
-                reader = new FileReader(),
-                data;
+			input.addEventListener("change", (e) => {
+				var file = input.files[0],
+				reader = new FileReader();
                 
-                switch(this.table.options.importReader){
-                    case "buffer":
-                        reader.readAsArrayBuffer(file);
-                    break;
+				switch(this.table.options.importReader){
+					case "buffer":
+						reader.readAsArrayBuffer(file);
+						break;
 
-                    case "binary":
-                        reader.readAsBinaryString(file);
-                    break;
+					case "binary":
+						reader.readAsBinaryString(file);
+						break;
 
-                    case "url":
-                        reader.readAsDataURL(file);
-                    break;
+					case "url":
+						reader.readAsDataURL(file);
+						break;
 
-                    case "text":
-                    default:
-                        reader.readAsText(file);
-                }
+					case "text":
+					default:
+						reader.readAsText(file);
+				}
                   
-                reader.onload = (e) => {
-                    resolve(reader.result)
-                };
+				reader.onload = (e) => {
+					resolve(reader.result);
+				};
                 
-                reader.onerror = (e) => {
-                    console.warn("File Load Error - Unable to read file");
-                    reject();
-                };
-            });
+				reader.onerror = (e) => {
+					console.warn("File Load Error - Unable to read file");
+					reject();
+				};
+			});
             
-            input.click();
-        });
-    }
+			input.click();
+		});
+	}
     
-    importData(importer, fileContents){
-        var data = importer.call(this.table, fileContents);
+	importData(importer, fileContents){
+		var data = importer.call(this.table, fileContents);
         
-        if(data instanceof Promise){
-            return data;
-        }else{
-            return data ? Promise.resolve(data) : Promise.reject();
-        }
-    }
+		if(data instanceof Promise){
+			return data;
+		}else{
+			return data ? Promise.resolve(data) : Promise.reject();
+		}
+	}
 
-    structureData(parsedData){
-        var data = [];
+	structureData(parsedData){
+		var data = [];
         
-        if(Array.isArray(parsedData) && parsedData.length && Array.isArray(parsedData[0])){
-            if(this.table.options.autoColumns){
-                data = this.structureArrayToObject(parsedData);
-            }else{
-                data = this.structureArrayToColumns(parsedData);
-            }
+		if(Array.isArray(parsedData) && parsedData.length && Array.isArray(parsedData[0])){
+			if(this.table.options.autoColumns){
+				data = this.structureArrayToObject(parsedData);
+			}else{
+				data = this.structureArrayToColumns(parsedData);
+			}
 
-            return data;
-        }else{
-            return parsedData;
-        }
-    }
+			return data;
+		}else{
+			return parsedData;
+		}
+	}
 
-    structureArrayToObject(parsedData){
-        var columns = parsedData.shift();
+	structureArrayToObject(parsedData){
+		var columns = parsedData.shift();
 
-        var data = parsedData.map((values) => {
-            var row = {};
+		var data = parsedData.map((values) => {
+			var row = {};
 
-            columns.forEach((key, i) => {
-                row[key] = values[i];
-            })
+			columns.forEach((key, i) => {
+				row[key] = values[i];
+			});
 
-            return row;
-        })
+			return row;
+		});
 
-        return data;
-    }
+		return data;
+	}
 
-    structureArrayToColumns(parsedData){
-        var data = [],
-        columns = this.table.getColumns();
+	structureArrayToColumns(parsedData){
+		var data = [],
+		columns = this.table.getColumns();
 
-        //remove first row if it is the column names
-        if(columns[0] && parsedData[0][0]){
-            if(columns[0].getDefinition().title === parsedData[0][0]){
-                parsedData.shift();
-            }
-        }
+		//remove first row if it is the column names
+		if(columns[0] && parsedData[0][0]){
+			if(columns[0].getDefinition().title === parsedData[0][0]){
+				parsedData.shift();
+			}
+		}
         
-        //convert row arrays to objects
-        parsedData.forEach((rowData) => {
-            var row = {};
+		//convert row arrays to objects
+		parsedData.forEach((rowData) => {
+			var row = {};
 
-            rowData.forEach((value, index) => {
-                var column = columns[index];
+			rowData.forEach((value, index) => {
+				var column = columns[index];
 
-                if(column){
-                    row[column.getField()] = value;
-                }
-            })
+				if(column){
+					row[column.getField()] = value;
+				}
+			});
 
-            data.push(row);
-        });
+			data.push(row);
+		});
 
-        return data;
-    }
+		return data;
+	}
     
-    setData(data){
-        return this.table.setData(data);
-    }
+	setData(data){
+		return this.table.setData(data);
+	}
 }
 
 Import.moduleName = "import";

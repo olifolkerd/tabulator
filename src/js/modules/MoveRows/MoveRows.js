@@ -12,7 +12,7 @@ class MoveRows extends Module{
 		this.checkPeriod = 150; //period to wait on mousedown to consider this a move and not a click
 		this.moving = false; //currently moving row
 		this.toRow = false; //destination row
-		this.toRowAfter = false; //position of moving row relative to the desitnation row
+		this.toRowAfter = false; //position of moving row relative to the destination row
 		this.hasHandle = false; //row has handle instead of fully movable row
 		this.startY = 0; //starting Y position within header element
 		this.startX = 0; //starting X position within header element
@@ -65,25 +65,26 @@ class MoveRows extends Module{
 
 	initializeGroupHeader(group){
 		var self = this,
-		config = {},
-		rowEl;
+		config = {};
 
 		//inter table drag drop
 		config.mouseup = function(e){
-			self.tableRowDrop(e, row);
+			self.tableRowDrop(e, group);
 		}.bind(self);
 
 		//same table drag drop
 		config.mousemove = function(e){
+			var rowEl;
+
 			if(((e.pageY - Helpers.elOffset(group.element).top) + self.table.rowManager.element.scrollTop) > (group.getHeight() / 2)){
 				if(self.toRow !== group || !self.toRowAfter){
-					var rowEl = group.getElement();
+					rowEl = group.getElement();
 					rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
 					self.moveRow(group, true);
 				}
 			}else{
 				if(self.toRow !== group || self.toRowAfter){
-					var rowEl = group.getElement();
+					rowEl = group.getElement();
 					if(rowEl.previousSibling){
 						rowEl.parentNode.insertBefore(self.placeholderElement, rowEl);
 						self.moveRow(group, false);
@@ -182,13 +183,11 @@ class MoveRows extends Module{
 
 	bindTouchEvents(row, element){
 		var startYMove = false, //shifting center position of the cell
-		dir = false,
-		currentRow, nextRow, prevRow, nextRowHeight, prevRowHeight, nextRowHeightLast, prevRowHeightLast;
+		nextRow, prevRow, nextRowHeight, prevRowHeight, nextRowHeightLast, prevRowHeightLast;
 
 		element.addEventListener("touchstart", (e) => {
 			this.checkTimeout = setTimeout(() => {
 				this.touchMove = true;
-				currentRow = row;
 				nextRow = row.nextRow();
 				nextRowHeight = nextRow ? nextRow.getHeight()/2 : 0;
 				prevRow = row.prevRow();
@@ -200,10 +199,10 @@ class MoveRows extends Module{
 				this.startMove(e, row);
 			}, this.checkPeriod);
 		}, {passive: true});
-		this.moving, this.toRow, this.toRowAfter
+		this.moving, this.toRow, this.toRowAfter;
 		element.addEventListener("touchmove", (e) => {
 
-			var halfCol, diff, moveToRow;
+			var diff, moveToRow;
 
 			if(this.moving){
 				e.preventDefault();
@@ -221,7 +220,7 @@ class MoveRows extends Module{
 						moveToRow = nextRow;
 
 						if(moveToRow !== row){
-							startYMove = e.touches[0].pageY
+							startYMove = e.touches[0].pageY;
 							moveToRow.getElement().parentNode.insertBefore(this.placeholderElement, moveToRow.getElement().nextSibling);
 							this.moveRow(moveToRow, true);
 						}
@@ -239,7 +238,6 @@ class MoveRows extends Module{
 				}
 
 				if(moveToRow){
-					currentRow = moveToRow;
 					nextRow = moveToRow.nextRow();
 					nextRowHeightLast = nextRowHeight;
 					nextRowHeight = nextRow ? nextRow.getHeight() / 2 : 0;
@@ -392,10 +390,9 @@ class MoveRows extends Module{
 	moveHoverTable(e){
 		var rowHolder = this.table.rowManager.getElement(),
 		scrollTop = rowHolder.scrollTop,
-		yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolder.getBoundingClientRect().top) + scrollTop,
-		scrollPos;
-
-		this.hoverElement.style.top = (yPos - this.startY) + "px";
+		yPos = ((this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolder.getBoundingClientRect().top) + scrollTop;
+		
+		this.hoverElement.style.top = Math.min(yPos - this.startY, this.table.rowManager.element.scrollHeight - this.hoverElement.offsetHeight) + "px";
 	}
 
 	moveHoverConnections(e){
@@ -496,7 +493,7 @@ class MoveRows extends Module{
 		}
 	}
 
-	//close incomming connection
+	//close incoming connection
 	disconnect(table){
 		if(table === this.connectedTable){
 			this.connectedTable = false;
@@ -514,7 +511,7 @@ class MoveRows extends Module{
 
 			this.dispatchExternal("movableRowsReceivingStop", table);
 		}else{
-			console.warn("Move Row Error - trying to disconnect from non connected table")
+			console.warn("Move Row Error - trying to disconnect from non connected table");
 		}
 	}
 
@@ -525,16 +522,16 @@ class MoveRows extends Module{
 
 			switch(typeof this.table.options.movableRowsSender){
 				case "string":
-				sender = this.senders[this.table.options.movableRowsSender];
-				break;
+					sender = this.senders[this.table.options.movableRowsSender];
+					break;
 
 				case "function":
-				sender = this.table.options.movableRowsSender;
-				break;
+					sender = this.table.options.movableRowsSender;
+					break;
 			}
 
 			if(sender){
-				sender.call(this, this.moving.getComponent(), row ? row.getComponent() : undefined, table)
+				sender.call(this, this.moving ? this.moving.getComponent() : undefined, row ? row.getComponent() : undefined, table);
 			}else{
 				if(this.table.options.movableRowsSender){
 					console.warn("Mover Row Error - no matching sender found:", this.table.options.movableRowsSender);
@@ -557,18 +554,18 @@ class MoveRows extends Module{
 
 		switch(typeof this.table.options.movableRowsReceiver){
 			case "string":
-			receiver = this.receivers[this.table.options.movableRowsReceiver];
-			break;
+				receiver = this.receivers[this.table.options.movableRowsReceiver];
+				break;
 
 			case "function":
-			receiver = this.table.options.movableRowsReceiver;
-			break;
+				receiver = this.table.options.movableRowsReceiver;
+				break;
 		}
 
 		if(receiver){
-			success = receiver.call(this, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable)
+			success = receiver.call(this, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}else{
-			console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceiver)
+			console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceiver);
 		}
 
 		if(success){
@@ -586,16 +583,13 @@ class MoveRows extends Module{
 	commsReceived(table, action, data){
 		switch(action){
 			case "connect":
-			return this.connect(table, data.row);
-			break;
+				return this.connect(table, data.row);
 
 			case "disconnect":
-			return this.disconnect(table);
-			break;
+				return this.disconnect(table);
 
 			case "dropcomplete":
-			return this.dropComplete(table, data.row, data.success);
-			break;
+				return this.dropComplete(table, data.row, data.success);
 		}
 	}
 }

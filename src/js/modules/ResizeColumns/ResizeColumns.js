@@ -84,7 +84,7 @@ class ResizeColumns extends Module{
 	
 	reinitializeColumn(column){
 		var frozenOffset = column.modules.frozen ? (column.modules.frozen.marginValue + column.getWidth() + "px") : false;
-		;
+		
 		
 		column.cells.forEach((cell) => {
 			if(cell.modules.resize && cell.modules.resize.handleEl){
@@ -236,7 +236,7 @@ class ResizeColumns extends Module{
 				}
 			}
 			
-			self.table.columnManager.renderer.rerenderColumns(true);
+			self.table.columnManager.rerenderColumns(true);
 			
 			if(!self.table.browserSlow && column.modules.resize && column.modules.resize.variableHeight){
 				column.checkCellHeights();
@@ -268,7 +268,7 @@ class ResizeColumns extends Module{
 			}
 		}
 		
-		e.stopPropagation(); //prevent resize from interfereing with movable columns
+		e.stopPropagation(); //prevent resize from interfering with movable columns
 		
 		//block editor from taking action while resizing is taking place
 		if(self.startColumn.modules.edit){

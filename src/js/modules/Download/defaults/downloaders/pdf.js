@@ -1,4 +1,4 @@
-export default function(list, options, setFileContents){
+export default function(list, options = {}, setFileContents){
 	var header = [],
 	body = [],
 	autoTableParams = {},
@@ -15,7 +15,7 @@ export default function(list, options, setFileContents){
 		fillColor: 232,
 	},
 	jsPDFParams = options.jsPDF || {},
-	title = options && options.title ? options.title : "";
+	title = options.title ? options.title : "";
 
 	if(!jsPDFParams.orientation){
 		jsPDFParams.orientation = options.orientation || "landscape";
@@ -27,24 +27,22 @@ export default function(list, options, setFileContents){
 
 	//parse row list
 	list.forEach((row) => {
-		var item = {};
-
 		switch(row.type){
 			case "header":
-			header.push(parseRow(row));
-			break;
+				header.push(parseRow(row));
+				break;
 
 			case "group":
-			body.push(parseRow(row, rowGroupStyles));
-			break;
+				body.push(parseRow(row, rowGroupStyles));
+				break;
 
 			case "calc":
-			body.push(parseRow(row, rowCalcStyles));
-			break;
+				body.push(parseRow(row, rowCalcStyles));
+				break;
 
 			case "row":
-			body.push(parseRow(row));
-			break;
+				body.push(parseRow(row));
+				break;
 		}
 	});
 
@@ -57,12 +55,12 @@ export default function(list, options, setFileContents){
 			if(col){
 				switch(typeof col.value){
 					case "object":
-					col.value = col.value !== null ? JSON.stringify(col.value) : "";
-					break;
+						col.value = col.value !== null ? JSON.stringify(col.value) : "";
+						break;
 
 					case "undefined":
-					col.value = "";
-					break;
+						col.value = "";
+						break;
 				}
 
 				cell = {
@@ -86,7 +84,7 @@ export default function(list, options, setFileContents){
 	//configure PDF
 	var doc = new jspdf.jsPDF(jsPDFParams); //set document to landscape, better for most tables
 
-	if(options && options.autoTable){
+	if(options.autoTable){
 		if(typeof options.autoTable === "function"){
 			autoTableParams = options.autoTable(doc) || {};
 		}else{
@@ -105,9 +103,9 @@ export default function(list, options, setFileContents){
 
 	doc.autoTable(autoTableParams);
 
-	if(options && options.documentProcessing){
+	if(options.documentProcessing){
 		options.documentProcessing(doc);
 	}
 
 	setFileContents(doc.output("arraybuffer"), "application/pdf");
-};
+}
