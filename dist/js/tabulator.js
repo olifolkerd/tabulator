@@ -11978,7 +11978,7 @@
       }); //function to manipulate download data
 
 
-      _this.registerTableOption("downloadReady", false); //warn of function deprecation
+      _this.registerTableOption("downloadReady", undefined); //warn of function deprecation
 
 
       _this.registerTableOption("downloadConfig", {}); //download config
