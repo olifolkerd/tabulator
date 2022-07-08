@@ -412,9 +412,9 @@ class Edit extends Module{
 			
 			while(cellEl.firstChild) cellEl.removeChild(cellEl.firstChild);
 			
-			cell.row.getElement().classList.remove("tabulator-row-editing");
+			cell.row.getElement().classList.remove("tabulator-editing");
 			
-			cell.table.element.classList.remove("tabulator-table-editing");
+			cell.table.element.classList.remove("tabulator-editing");
 		}
 	}
 	
@@ -645,8 +645,8 @@ class Edit extends Module{
 					
 					if(cellEditor instanceof Node){
 						element.classList.add("tabulator-editing");
-						cell.row.getElement().classList.add("tabulator-row-editing");
-						cell.table.element.classList.add("tabulator-table-editing");
+						cell.row.getElement().classList.add("tabulator-editing");
+						cell.table.element.classList.add("tabulator-editing");
 						while(element.firstChild) element.removeChild(element.firstChild);
 						element.appendChild(cellEditor);
 						
