@@ -1,8 +1,6 @@
 //sort if element contains any data
 export default function(a, b, aRow, bRow, column, dir, params){
-	var el1 = 0,
-	el2 = 0,
-	type = params.type || "length",
+	var type = params.type || "length",
 	alignEmptyValues = params.alignEmptyValues,
 	emptyAlign = 0;
 

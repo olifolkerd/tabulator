@@ -79,17 +79,17 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		switch(e.keyCode){
 			// case 9:
 			case 13:
-			onChange(e);
-			break;
+				onChange(e);
+				break;
 			
 			case 27:
-			cancel();
-			break;
+				cancel();
+				break;
 			
 			case 35:
 			case 36:
-			e.stopPropagation();
-			break;
+				e.stopPropagation();
+				break;
 		}
 	});
 	
