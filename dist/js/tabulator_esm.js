@@ -9139,6 +9139,9 @@ class Filter extends Module{
 					getColumn:function(){
 						return column.getComponent();
 					},
+					getTable:() => {
+						return this.table;
+					},
 					getRow:function(){
 						return {
 							normalizeHeight:function(){
