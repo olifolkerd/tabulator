@@ -1,7 +1,7 @@
 export default {
 	"avg":function(values, data, calcParams){
 		var output = 0,
-		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : 2
+		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : 2;
 
 		if(values.length){
 			output = values.reduce(function(sum, value){

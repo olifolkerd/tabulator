@@ -1,14 +1,14 @@
 import Module from '../../core/Module.js';
 import Helpers from '../../core/tools/Helpers.js';
 
-import defautlAccessors from './defaults/accessors.js';
+import defaultAccessors from './defaults/accessors.js';
 
 class Accessor extends Module{
 
 	constructor(table){
 		super(table);
 
-		this.allowedTypes = ["", "data", "download", "clipboard", "print", "htmlOutput"] //list of accessor types
+		this.allowedTypes = ["", "data", "download", "clipboard", "print", "htmlOutput"]; //list of accessor types
 
 		this.registerColumnOption("accessor");
 		this.registerColumnOption("accessorParams");
@@ -47,7 +47,7 @@ class Accessor extends Module{
 					config[key] = {
 						accessor:accessor,
 						params: column.definition[key + "Params"] || {},
-					}
+					};
 				}
 			}
 		});
@@ -63,16 +63,16 @@ class Accessor extends Module{
 		//set column accessor
 		switch(typeof value){
 			case "string":
-			if(Accessor.accessors[value]){
-				accessor = Accessor.accessors[value]
-			}else{
-				console.warn("Accessor Error - No such accessor found, ignoring: ", value);
-			}
-			break;
+				if(Accessor.accessors[value]){
+					accessor = Accessor.accessors[value];
+				}else{
+					console.warn("Accessor Error - No such accessor found, ignoring: ", value);
+				}
+				break;
 
 			case "function":
-			accessor = value;
-			break;
+				accessor = value;
+				break;
 		}
 
 		return accessor;
@@ -87,7 +87,7 @@ class Accessor extends Module{
 		var data = Helpers.deepClone(row.data || {});
 
 		this.table.columnManager.traverse(function(column){
-			var value, accessor, params, colCompnent;
+			var value, accessor, params, colComponent;
 
 			if(column.modules.accessor){
 
@@ -97,9 +97,9 @@ class Accessor extends Module{
 					value = column.getFieldValue(data);
 
 					if(value != "undefined"){
-						colCompnent = column.getComponent();
-						params = typeof accessor.params === "function" ? accessor.params(value, data, type, colCompnent, rowComponent) : accessor.params;
-						column.setFieldValue(data, accessor.accessor(value, data, type, params, colCompnent, rowComponent));
+						colComponent = column.getComponent();
+						params = typeof accessor.params === "function" ? accessor.params(value, data, type, colComponent, rowComponent) : accessor.params;
+						column.setFieldValue(data, accessor.accessor(value, data, type, params, colComponent, rowComponent));
 					}
 				}
 			}
@@ -111,6 +111,6 @@ class Accessor extends Module{
 
 //load defaults
 Accessor.moduleName = "accessor";
-Accessor.accessors = defautlAccessors;
+Accessor.accessors = defaultAccessors;
 
 export default Accessor;

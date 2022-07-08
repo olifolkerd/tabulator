@@ -4,18 +4,18 @@ $backgroundColor: #fff !default; //background color of tabulator
 $borderColor:#222 !default; //border to tabulator
 $textSize:14px !default; //table text size
 
-//header themeing
+//header theming
 $headerBackgroundColor:#222 !default; //border to tabulator
-$headerTextColor:#fff !default; //header text colour
+$headerTextColor:#fff !default; //header text color
 $headerBorderColor:#aaa !default;  //header border color
-$headerSeperatorColor:#3FB449 !default; //header bottom seperator color
+$headerSeparatorColor:#3FB449 !default; //header bottom separator color
 $headerMargin:4px !default; //padding round header
 
 //column header arrows
 $sortArrowActive: #3FB449 !default;
 $sortArrowInactive: #bbb !default;
 
-//row themeing
+//row theming
 $rowBackgroundColor:#fff !default; //table row background color
 $rowAltBackgroundColor:#EFEFEF !default; //table row background color
 $rowBorderColor:#aaa !default; //table border color
@@ -28,12 +28,12 @@ $rowSelectedBackgroundHover: #769BCC !default;//row background color when select
 $editBoxColor:#1D68CD !default; //border color for edit boxes
 $errorColor:#dd0000 !default; //error indication
 
-//footer themeing
+//footer theming
 $footerBackgroundColor:#222 !default; //border to tabulator
-$footerTextColor:#222 !default; //footer text colour
+$footerTextColor:#222 !default; //footer text color
 $footerBorderColor:#aaa !default; //footer border color
-$footerSeperatorColor:#3FB449 !default; //footer bottom seperator color
-$footerActiveColor:$footerSeperatorColor !default; //footer bottom active text color
+$footerSeparatorColor:#3FB449 !default; //footer bottom separator color
+$footerActiveColor:$footerSeparatorColor !default; //footer bottom active text color
 
 @import "../tabulator.scss";
 
@@ -52,7 +52,7 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 	}
 
 	.tabulator-header{
-		border-bottom:3px solid $headerSeperatorColor;
+		border-bottom:3px solid $headerSeparatorColor;
 
 		.tabulator-col{
 			background-color: $headerBackgroundColor;
@@ -77,7 +77,7 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 	.tabulator-tableholder{
 		.tabulator-placeholder{
 			span{
-				color:$headerSeperatorColor;
+				color:$headerSeparatorColor;
 			}
 		}
 		.tabulator-table{
@@ -102,7 +102,7 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 	.tabulator-footer{
 		padding:5px 10px;
 		padding-top:8px;
-		border-top:3px solid $footerSeperatorColor;
+		border-top:3px solid $footerSeparatorColor;
 
 		.tabulator-calcs-holder{
 			margin:-8px -10px 8px -10px;
@@ -155,7 +155,7 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 	&.tabulator-group{
 		border-right:1px solid $rowBorderColor;
 		border-top:1px solid #000;
-		border-bottom:2px solid $headerSeperatorColor;
+		border-bottom:2px solid $headerSeparatorColor;
 		background:$headerBackgroundColor;
 		color:$headerTextColor;
 
@@ -164,7 +164,7 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 		}
 
 		span{
-			color:$headerSeperatorColor;
+			color:$headerSeparatorColor;
 		}
 	}
 }
@@ -173,7 +173,7 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 	border-collapse: collapse;
 
 	.tabulator-print-table-group{
-		border-bottom:2px solid $headerSeperatorColor;
+		border-bottom:2px solid $headerSeparatorColor;
 		background:$headerBackgroundColor;
 		color:$headerTextColor;
 
@@ -182,7 +182,7 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 		}
 
 		span{
-			color:$headerSeperatorColor;
+			color:$headerSeparatorColor;
 		}
 	}
 }

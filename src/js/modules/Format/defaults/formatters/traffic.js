@@ -24,24 +24,24 @@ export default function(cell, formatterParams, onRendered){
 	//set color
 	switch(typeof colors){
 		case "string":
-		color = colors;
-		break;
-		case "function":
-		color = colors(value);
-		break;
-		case "object":
-		if(Array.isArray(colors)){
-			var unit = 100 / colors.length;
-			var index = Math.floor(percentValue / unit);
-
-			index = Math.min(index, colors.length - 1);
-			index = Math.max(index, 0);
-			color = colors[index];
+			color = colors;
 			break;
-		}
+		case "function":
+			color = colors(value);
+			break;
+		case "object":
+			if(Array.isArray(colors)){
+				var unit = 100 / colors.length;
+				var index = Math.floor(percentValue / unit);
+
+				index = Math.min(index, colors.length - 1);
+				index = Math.max(index, 0);
+				color = colors[index];
+				break;
+			}
 	}
 
 	el.style.backgroundColor = color;
 
 	return el;
-};
+}

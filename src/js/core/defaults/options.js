@@ -3,7 +3,9 @@ export default {
 	debugEventsExternal:false, //flag to console log events
 	debugEventsInternal:false, //flag to console log events
 	debugInvalidOptions:true, //allow toggling of invalid option warnings
-	debugInitialization:true, //allow toggling of invalid option warnings
+	debugInvalidComponentFuncs:true, //allow toggling of invalid component warnings
+	debugInitialization:true, //allow toggling of pre initialization function call warnings
+	debugDeprecation:true, //allow toggling of deprecation warnings
 
 	height:false, //height of tabulator
 	minHeight:false, //minimum height of tabulator
@@ -60,4 +62,4 @@ export default {
 	dataSendParams:{},
 
 	dataReceiveParams:{},
-}
+};

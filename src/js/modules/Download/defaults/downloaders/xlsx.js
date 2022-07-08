@@ -89,10 +89,10 @@ export default function(list, options, setFileContents){
 		var buf = new ArrayBuffer(s.length);
 		var view = new Uint8Array(buf);
 		for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-			return buf;
+		return buf;
 	}
 
 	output = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary'});
 
 	setFileContents(s2ab(output), "application/octet-stream");
-};
+}

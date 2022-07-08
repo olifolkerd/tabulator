@@ -2,6 +2,8 @@ import Module from '../../core/Module.js';
 
 import Row from '../../core/row/Row.js';
 
+import RowComponent from '../../core/row/RowComponent.js';
+
 class DataTree extends Module{
 
 	constructor(table){
@@ -29,7 +31,7 @@ class DataTree extends Module{
 		this.registerTableOption("dataTreeExpandElement", false);//data tree row expand element
 		this.registerTableOption("dataTreeStartExpanded", false);
 		this.registerTableOption("dataTreeChildColumnCalcs", false);//include visible data tree rows in column calculations
-		this.registerTableOption("dataTreeSelectPropagate", false);//seleccting a parent row selects its children
+		this.registerTableOption("dataTreeSelectPropagate", false);//selecting a parent row selects its children
 
 		//register component functions
 		this.registerComponentFunction("row", "treeCollapse", this.collapseRow.bind(this));
@@ -98,20 +100,20 @@ class DataTree extends Module{
 
 			switch(typeof options.dataTreeStartExpanded){
 				case "boolean":
-				this.startOpen = function(row, index){
-					return options.dataTreeStartExpanded;
-				};
-				break;
+					this.startOpen = function(row, index){
+						return options.dataTreeStartExpanded;
+					};
+					break;
 
 				case "function":
-				this.startOpen = options.dataTreeStartExpanded;
-				break;
+					this.startOpen = options.dataTreeStartExpanded;
+					break;
 
 				default:
-				this.startOpen = function(row, index){
-					return options.dataTreeStartExpanded[index];
-				};
-				break;
+					this.startOpen = function(row, index){
+						return options.dataTreeStartExpanded[index];
+					};
+					break;
 			}
 
 			this.subscribe("row-init", this.initializeRow.bind(this));
@@ -257,8 +259,9 @@ class DataTree extends Module{
 
 	generateControlElement(row, el){
 		var config = row.modules.dataTree,
-		el = el || row.getCells()[0].getElement(),
 		oldControl = config.controlEl;
+
+		el = el || row.getCells()[0].getElement();
 
 		if(config.children !== false){
 
@@ -540,10 +543,12 @@ class DataTree extends Module{
 						match = match.data;
 					}
 				}
+			}else if(subject === null){
+				match = false;
 			}
 
-		}else if(typeof subject == "undefined" || subject === null){
-			match = false
+		}else if(typeof subject == "undefined"){
+			match = false;
 		}else{
 			//subject should be treated as the index of the row
 			match = parent.data[this.field].find((row) => {

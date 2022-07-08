@@ -10,7 +10,7 @@ class Module extends CoreFeature{
 	}
 
 	initialize(){
-		// setup module when table is initialized, to be overriden in module
+		// setup module when table is initialized, to be overridden in module
 	}
 
 
@@ -36,9 +36,9 @@ class Module extends CoreFeature{
 				this.table.initGuard(name);
 
 				return func(...args);
-			}
+			};
 		}else{
-			console.warn("Unable to bind table function, name already in use", name)
+			console.warn("Unable to bind table function, name already in use", name);
 		}
 	}
 
@@ -51,12 +51,12 @@ class Module extends CoreFeature{
 	///////////////////////////////////
 
 	registerDataHandler(handler, priority){
-		this.table.rowManager.registerDataPipelineHandler(handler, priority)
+		this.table.rowManager.registerDataPipelineHandler(handler, priority);
 		this._handler = handler;
 	}
 
 	registerDisplayHandler(handler, priority){
-		this.table.rowManager.registerDisplayPipelineHandler(handler, priority)
+		this.table.rowManager.registerDisplayPipelineHandler(handler, priority);
 		this._handler = handler;
 	}
 
@@ -75,15 +75,15 @@ class Module extends CoreFeature{
 	///////////////////////////////////
 
 	footerAppend(element){
-		return this.table.footerManager.append(element)
+		return this.table.footerManager.append(element);
 	}
 
 	footerPrepend(element){
-		return this.table.footerManager.prepend(element)
+		return this.table.footerManager.prepend(element);
 	}
 
 	footerRemove(element){
-		return this.table.footerManager.remove(element)
+		return this.table.footerManager.remove(element);
 	} 
 
 	///////////////////////////////////

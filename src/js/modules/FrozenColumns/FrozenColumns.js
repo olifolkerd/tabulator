@@ -58,7 +58,7 @@ class FrozenColumns extends Module{
 	}
 	
 	layoutCell(cell){
-		this.layoutElement(cell.element, cell.column)
+		this.layoutElement(cell.element, cell.column);
 	}
 	
 	reinitializeColumns(){
@@ -107,9 +107,7 @@ class FrozenColumns extends Module{
 	}
 	
 	//quick layout to smooth horizontal scrolling
-	scrollHorizontal(){
-		var rows;
-		
+	scrollHorizontal(){	
 		if(this.active){		
 			this.calcMargins(true);
 			
@@ -146,7 +144,7 @@ class FrozenColumns extends Module{
 			}
 			
 			if(this.table.modExists("groupRows")){
-				this.layoutGroupCalcs(this.table.modules.groupRows.getGroups())
+				this.layoutGroupCalcs(this.table.modules.groupRows.getGroups());
 			}
 		}
 	}
@@ -162,7 +160,7 @@ class FrozenColumns extends Module{
 			}
 			
 			if(group.groupList && group.groupList.length){
-				this.layoutGroupCalcs(group.groupList && group.groupList);
+				this.layoutGroupCalcs(group.groupList);
 			}
 		});
 	}
@@ -262,9 +260,9 @@ class FrozenColumns extends Module{
 	}
 	
 	reinitializeRows(){
-		var visibleRows = this.table.rowManager.getVisibleRows();
+		var visibleRows = this.table.rowManager.getVisibleRows(true);
 		var otherRows = this.table.rowManager.getRows().filter(row => !visibleRows.includes(row));
-
+		
 		otherRows.forEach((row) =>{
 			row.deinitialize();
 		});

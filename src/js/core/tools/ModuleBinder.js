@@ -4,7 +4,7 @@ import TableRegistry from './TableRegistry.js';
 export default class ModuleBinder {
 	
 	constructor(tabulator, modules){
-		this.bindStaticFuctionality(tabulator);
+		this.bindStaticFunctionality(tabulator);
 		this.bindModules(tabulator, coreModules, true);
 		
 		if(modules){
@@ -12,7 +12,7 @@ export default class ModuleBinder {
 		}
 	}
 	
-	bindStaticFuctionality(tabulator){
+	bindStaticFunctionality(tabulator){
 		tabulator.moduleBindings = {};
 		
 		tabulator.extendModule = function(name, property, values){
@@ -41,9 +41,9 @@ export default class ModuleBinder {
 			}
 			
 			modules.forEach((mod) => {
-				tabulator.registerModuleBinding(mod)
+				tabulator.registerModuleBinding(mod);
 			});
-		}
+		};
 		
 		tabulator.registerModuleBinding = function(mod){
 			tabulator.moduleBindings[mod.moduleName] = mod;
@@ -52,7 +52,7 @@ export default class ModuleBinder {
 		tabulator.findTable = function(query){
 			var results = TableRegistry.lookupTable(query, true);
 			return Array.isArray(results) && !results.length ? false : results;
-		}
+		};
 		
 		//ensure that module are bound to instantiated function
 		tabulator.prototype.bindModules = function(){
@@ -88,7 +88,7 @@ export default class ModuleBinder {
 			orderedEndMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
 			
 			this.modulesRegular = orderedStartMods.concat(unOrderedMods.concat(orderedEndMods));
-		}
+		};
 	}
 	
 	bindModules(tabulator, modules, core){

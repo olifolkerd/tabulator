@@ -25,8 +25,8 @@ class Keybindings extends Module{
 		this.pressedKeys = [];
 
 		if(bindings !== false){
-			Object.assign(mergedBindings, Keybindings.bindings)
-			Object.assign(mergedBindings, bindings)
+			Object.assign(mergedBindings, Keybindings.bindings);
+			Object.assign(mergedBindings, bindings);
 
 			this.mapBindings(mergedBindings);
 			this.bindEvents();
@@ -71,26 +71,26 @@ class Keybindings extends Module{
 		symbols.forEach((symbol) => {
 			switch(symbol){
 				case "ctrl":
-				binding.ctrl = true;
-				break;
+					binding.ctrl = true;
+					break;
 
 				case "shift":
-				binding.shift = true;
-				break;
+					binding.shift = true;
+					break;
 
 				case "meta":
-				binding.meta = true;
-				break;
+					binding.meta = true;
+					break;
 
 				default:
-				symbol = isNaN(symbol) ? symbol.toUpperCase().charCodeAt(0) : parseInt(symbol);
-				binding.keys.push(symbol);
+					symbol = isNaN(symbol) ? symbol.toUpperCase().charCodeAt(0) : parseInt(symbol);
+					binding.keys.push(symbol);
 
-				if(!this.watchKeys[symbol]){
-					this.watchKeys[symbol] = [];
-				}
+					if(!this.watchKeys[symbol]){
+						this.watchKeys[symbol] = [];
+					}
 
-				this.watchKeys[symbol].push(binding);
+					this.watchKeys[symbol].push(binding);
 			}
 		});
 	}

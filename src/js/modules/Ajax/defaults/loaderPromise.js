@@ -61,27 +61,27 @@ export default function(url, config, params){
 
 			//send request
 			fetch(url, config)
-			.then((response)=>{
-				if(response.ok) {
-					response.json()
-					.then((data)=>{
-						resolve(data);
-					}).catch((error)=>{
-						reject(error);
-						console.warn("Ajax Load Error - Invalid JSON returned", error);
-					});
-				}else{
-					console.error("Ajax Load Error - Connection Error: " + response.status, response.statusText);
-					reject(response);
-				}
-			})
-			.catch((error)=>{
-				console.error("Ajax Load Error - Connection Error: ", error);
-				reject(error);
-			});
+				.then((response)=>{
+					if(response.ok) {
+						response.json()
+							.then((data)=>{
+								resolve(data);
+							}).catch((error)=>{
+								reject(error);
+								console.warn("Ajax Load Error - Invalid JSON returned", error);
+							});
+					}else{
+						console.error("Ajax Load Error - Connection Error: " + response.status, response.statusText);
+						reject(response);
+					}
+				})
+				.catch((error)=>{
+					console.error("Ajax Load Error - Connection Error: ", error);
+					reject(error);
+				});
 		}else{
 			console.warn("Ajax Load Error - No URL Set");
 			resolve([]);
 		}
 	});
-};
+}

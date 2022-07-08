@@ -13,11 +13,13 @@ export default class Row extends CoreFeature{
 		this.modules = {}; //hold module variables;
 		this.cells = [];
 		this.height = 0; //hold element height
-		this.heightStyled = ""; //hold element height prestyled to improve render efficiency
+		this.heightStyled = ""; //hold element height pre-styled to improve render efficiency
 		this.manualHeight = false; //user has manually set row height
 		this.outerHeight = 0; //hold elements outer height
 		this.initialized = false; //element has been rendered
 		this.heightInitialized = false; //element has resized cells to fit
+		this.position = 0; //store position of element in row list
+		this.positionWatchers = [];
 		
 		this.component = null;
 		
@@ -246,14 +248,14 @@ export default class Row extends CoreFeature{
 			newRowData = this.chain("row-data-changing", [this, tempData, updatedData], null, updatedData);
 			
 			//set data
-			for (var attrname in newRowData) {
+			for (let attrname in newRowData) {
 				this.data[attrname] = newRowData[attrname];
 			}
 			
 			this.dispatch("row-data-save-after", this);
 			
 			//update affected cells only
-			for (var attrname in updatedData) {
+			for (let attrname in updatedData) {
 				
 				let columns = this.table.columnManager.getColumnsByFieldRoot(attrname);
 				
@@ -375,9 +377,7 @@ export default class Row extends CoreFeature{
 	}
 	
 	deleteActual(blockRedraw){
-		var index = this.table.rowManager.getRowIndex(this);
-		
-		this.detatchModules();
+		this.detachModules();
 		
 		this.table.rowManager.deleteRow(this, blockRedraw);
 		
@@ -390,7 +390,7 @@ export default class Row extends CoreFeature{
 		this.dispatch("row-deleted", this);
 	}
 	
-	detatchModules(){
+	detachModules(){
 		this.dispatch("row-deleting", this);
 	}
 	
@@ -403,7 +403,7 @@ export default class Row extends CoreFeature{
 	}
 	
 	wipe(){
-		this.detatchModules();
+		this.detachModules();
 		this.deleteCells();
 		
 		if(this.element){
@@ -416,6 +416,30 @@ export default class Row extends CoreFeature{
 		
 		this.element = false;
 		this.modules = {};
+	}
+
+	isDisplayed(){
+		return this.table.rowManager.getDisplayRows().includes(this);
+	}
+
+	getPosition(){
+		return this.isDisplayed() ? this.position : false;
+	}
+
+	setPosition(position){
+		if(position != this.position){
+			this.position = position;
+
+			this.positionWatchers.forEach((callback) => {
+				callback(this.position);
+			});
+		}
+	}
+
+	watchPosition(callback){
+		this.positionWatchers.push(callback);
+
+		callback(this.position);
 	}
 	
 	getGroup(){

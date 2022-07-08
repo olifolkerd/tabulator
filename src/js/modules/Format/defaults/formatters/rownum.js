@@ -1,3 +1,10 @@
 export default function(cell, formatterParams, onRendered){
-	return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1 || "";
-};
+	var content = document.createElement("span");
+	var row = cell.getRow();
+
+	row.watchPosition((position) => {
+		content.innerText = position;
+	});
+	
+	return content;
+}

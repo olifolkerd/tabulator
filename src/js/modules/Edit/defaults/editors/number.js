@@ -78,25 +78,25 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		switch(e.keyCode){
 			case 13:
 			// case 9:
-			onChange();
-			break;
+				onChange();
+				break;
 
 			case 27:
-			cancel();
-			break;
+				cancel();
+				break;
 
 			case 38: //up arrow
 			case 40: //down arrow
-			if(vertNav == "editor"){
-				e.stopImmediatePropagation();
-				e.stopPropagation();
-			}
-			break;
+				if(vertNav == "editor"){
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+				}
+				break;
 
 			case 35:
 			case 36:
-			e.stopPropagation();
-			break;
+				e.stopPropagation();
+				break;
 		}
 	});
 
@@ -105,4 +105,4 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	}
 
 	return input;
-};
+}

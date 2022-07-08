@@ -25,6 +25,7 @@ A clear and concise description of what the bug is.
 YOU MUST include a link to a JS Fiddle or Codepen that demonstrates the problem, it is very hard to diagnose an issue from a simple description.
 <!--
 Please read the Minimal Reproducable Example guide if you are unsure what the example should look like http://tabulator.info/community/mre
+A quick guide on creating a JS Fiddle can be found on the Tabulator website http://tabulator.info/community/jsfiddle
 
 ISSUES CREATED WITHOUT THIS EXAMPLE WILL BE CLOSED WITHOUT DISCUSSION
 -->

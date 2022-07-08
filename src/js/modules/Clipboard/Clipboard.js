@@ -18,7 +18,7 @@ class Clipboard extends Module{
 		this.registerTableOption("clipboard", false); //enable clipboard
 		this.registerTableOption("clipboardCopyStyled", true); //formatted table data
 		this.registerTableOption("clipboardCopyConfig", false); //clipboard config
-		this.registerTableOption("clipboardCopyFormatter", false); //DEPRICATED - REMOVE in 5.0
+		this.registerTableOption("clipboardCopyFormatter", false); //DEPRECATED - REMOVE in 5.0
 		this.registerTableOption("clipboardCopyRowRange", "active"); //restrict clipboard to visible rows only
 		this.registerTableOption("clipboardPasteParser", "table"); //convert pasted clipboard data to rows
 		this.registerTableOption("clipboardPasteAction", "insert"); //how to insert pasted data into the table
@@ -47,9 +47,9 @@ class Clipboard extends Module{
 						}
 					}else{
 
-						var list = this.table.modules.export.generateExportList(this.table.options.clipboardCopyConfig, this.table.options.clipboardCopyStyled, this.rowRange, "clipboard");
+						list = this.table.modules.export.generateExportList(this.table.options.clipboardCopyConfig, this.table.options.clipboardCopyStyled, this.rowRange, "clipboard");
 
-						html = this.table.modules.export.genereateHTMLTable(list);
+						html = this.table.modules.export.generateHTMLTable(list);
 						plain = html ? this.generatePlainContent(list) : "";
 
 						if(this.table.options.clipboardCopyFormatter){
@@ -116,15 +116,15 @@ class Clipboard extends Module{
 					}else{
 						switch(typeof col.value){
 							case "object":
-							value = JSON.stringify(col.value);
-							break;
+								value = JSON.stringify(col.value);
+								break;
 
 							case "undefined":
-							value = "";
-							break;
+								value = "";
+								break;
 
 							default:
-							value = col.value;
+								value = col.value;
 						}
 					}
 				}
@@ -139,7 +139,7 @@ class Clipboard extends Module{
 	}
 
 	copy (range, internal) {
-		var range, sel, textRange;
+		var sel, textRange;
 		this.blocked = false;
 		this.customSelection = false;
 
@@ -177,32 +177,32 @@ class Clipboard extends Module{
 
 		switch(typeof action){
 			case "string":
-			this.pasteAction = Clipboard.pasteActions[action];
+				this.pasteAction = Clipboard.pasteActions[action];
 
-			if(!this.pasteAction){
-				console.warn("Clipboard Error - No such paste action found:", action);
-			}
-			break;
+				if(!this.pasteAction){
+					console.warn("Clipboard Error - No such paste action found:", action);
+				}
+				break;
 
 			case "function":
-			this.pasteAction = action;
-			break;
+				this.pasteAction = action;
+				break;
 		}
 	}
 
 	setPasteParser(parser){
 		switch(typeof parser){
 			case "string":
-			this.pasteParser = Clipboard.pasteParsers[parser];
+				this.pasteParser = Clipboard.pasteParsers[parser];
 
-			if(!this.pasteParser){
-				console.warn("Clipboard Error - No such paste parser found:", parser);
-			}
-			break;
+				if(!this.pasteParser){
+					console.warn("Clipboard Error - No such paste parser found:", parser);
+				}
+				break;
 
 			case "function":
-			this.pasteParser = parser;
-			break;
+				this.pasteParser = parser;
+				break;
 		}
 	}
 

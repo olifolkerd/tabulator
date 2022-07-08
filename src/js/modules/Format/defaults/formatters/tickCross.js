@@ -19,4 +19,4 @@ export default function(cell, formatterParams, onRendered){
 			return cross || "";
 		}
 	}
-};
+}

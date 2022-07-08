@@ -29,4 +29,4 @@ export default function (list, options, setFileContents) {
 	});
 
 	setFileContents(fileContents.join("\n"), "application/x-ndjson");
-};
+}

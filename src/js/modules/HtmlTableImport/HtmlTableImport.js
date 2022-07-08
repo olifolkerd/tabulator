@@ -1,5 +1,4 @@
 import Module from '../../core/Module.js';
-import Column from '../../core/column/Column.js';
 
 class HtmlTableImport extends Module{
 
@@ -27,11 +26,9 @@ class HtmlTableImport extends Module{
 	parseTable(){
 		var element = this.table.originalElement,
 		options = this.table.options,
-		columns = options.columns,
 		headers = element.getElementsByTagName("th"),
 		rows = element.getElementsByTagName("tbody")[0],
-		data = [],
-		newTable;
+		data = [];
 
 		this.hasIndex = false;
 
@@ -54,7 +51,7 @@ class HtmlTableImport extends Module{
 			cells = row.getElementsByTagName("td"),
 			item = {};
 
-			//create index if the dont exist in table
+			//create index if the don't exist in table
 			if(!this.hasIndex){
 				item[options.index] = index;
 			}
@@ -127,7 +124,7 @@ class HtmlTableImport extends Module{
 			var header = headers[index],
 			exists = false,
 			col = this._findCol(header.textContent),
-			width, attributes;
+			width;
 
 			if(col){
 				exists = true;

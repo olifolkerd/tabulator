@@ -12,6 +12,10 @@ class FrozenRows extends Module{
 		this.registerComponentFunction("row", "freeze", this.freezeRow.bind(this));
 		this.registerComponentFunction("row", "unfreeze", this.unfreezeRow.bind(this));
 		this.registerComponentFunction("row", "isFrozen", this.isRowFrozen.bind(this));
+
+		//register table options
+		this.registerTableOption("frozenRowsField", "id"); //field to choose frozen rows by
+		this.registerTableOption("frozenRows", false); //holder for frozen row identifiers
 	}
 
 	initialize(){
@@ -26,6 +30,36 @@ class FrozenRows extends Module{
 		this.subscribe("rows-visible", this.visibleRows.bind(this));
 
 		this.registerDisplayHandler(this.getRows.bind(this), 10);
+
+		if(this.table.options.frozenRows){
+			this.subscribe("data-processed", this.initializeRows.bind(this));
+			this.subscribe("row-added", this.initializeRow.bind(this));
+		}
+	}
+
+	initializeRows(){
+		this.table.rowManager.getRows().forEach((row) => {
+			this.initializeRow(row);
+		});
+	}
+
+	initializeRow(row){
+		var frozenRows = this.table.options.frozenRows,
+		rowType = typeof frozenRows;
+
+		if(rowType === "number"){
+			if(row.getPosition() && (row.getPosition() + this.rows.length) <= frozenRows){
+				this.freezeRow(row);
+			}
+		}else if(rowType === "function"){
+			if(frozenRows.call(this.table, row.getComponent())){
+				this.freezeRow(row);
+			}
+		}else if(Array.isArray(frozenRows)){
+			if(frozenRows.includes(row.data[this.options("frozenRowsField")])){
+				this.freezeRow(row);
+			}
+		}
 	}
 
 	isRowFrozen(row){
@@ -47,9 +81,7 @@ class FrozenRows extends Module{
 
 	//filter frozen rows out of display data
 	getRows(rows){
-		var self = this,
-		frozen = [],
-		output = rows.slice(0);
+		var output = rows.slice(0);
 
 		this.rows.forEach(function(row){
 			var index = output.indexOf(row);
@@ -72,7 +104,7 @@ class FrozenRows extends Module{
 
 			this.rows.push(row);
 
-			this.refreshData(false, "display")
+			this.refreshData(false, "display");
 
 			this.styleRows();
 
@@ -82,8 +114,6 @@ class FrozenRows extends Module{
 	}
 
 	unfreezeRow(row){
-		var index = this.rows.indexOf(row);
-
 		if(row.modules.frozen){
 
 			row.modules.frozen = false;
@@ -92,7 +122,7 @@ class FrozenRows extends Module{
 
 			this.table.rowManager.adjustTableSize();
 
-			this.refreshData(false, "display")
+			this.refreshData(false, "display");
 
 			if(this.rows.length){
 				this.styleRows();
