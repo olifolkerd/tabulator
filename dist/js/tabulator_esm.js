@@ -7431,10 +7431,10 @@ class Edit$1 extends Module{
 	///////////////////////////////////
 	updateCellClass(cell){
 		if(this.allowEdit(cell)) {
-			cell.getElement().classList.add("tabulator-cell-editable");
+			cell.getElement().classList.add("tabulator-editable");
 		}
 		else {
-			cell.getElement().classList.remove("tabulator-cell-editable");
+			cell.getElement().classList.remove("tabulator-editable");
 		}
 	}
 	
