@@ -526,20 +526,24 @@ class Edit extends Module{
 	}
 	
 	allowEdit(cell) {
-		var check = true;
-		switch(typeof cell.column.modules.edit.check){
-			case "function":
-				check = cell.column.modules.edit.check(cell.getComponent());
-				break;
+		var check = cell.column.modules.edit ? true : false;
 
-			case "string":
-				check = !!cell.row.data[cell.column.modules.edit.check];
-				break;
+		if(cell.column.modules.edit){
+			switch(typeof cell.column.modules.edit.check){
+				case "function":
+					check = cell.column.modules.edit.check(cell.getComponent());
+					break;
 
-			case "boolean":
-				check = cell.column.modules.edit.check;
-				break;
+				case "string":
+					check = !!cell.row.data[cell.column.modules.edit.check];
+					break;
+
+				case "boolean":
+					check = cell.column.modules.edit.check;
+					break;
+			}
 		}
+
 		return check;
 	}
 	
