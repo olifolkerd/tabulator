@@ -11729,6 +11729,7 @@ class GroupRows extends Module{
 	configureGroupSetup(){
 		if(this.table.options.groupBy){
 			var groupBy = this.table.options.groupBy,
+			startOpen = this.table.options.groupStartOpen,
 			groupHeader = this.table.options.groupHeader;
 
 			this.allowedValues = this.table.options.groupValues;
@@ -11798,6 +11799,17 @@ class GroupRows extends Module{
 					values:this.allowedValues ? this.allowedValues[i] : false,
 				});
 			});
+
+			if(startOpen){
+				if(!Array.isArray(startOpen)){
+					startOpen = [startOpen];
+				}
+
+				startOpen.forEach((level) => {
+				});
+
+				this.startOpen = startOpen;
+			}
 
 			if(groupHeader){
 				this.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
