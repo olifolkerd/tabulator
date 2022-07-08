@@ -18995,6 +18995,7 @@
 
         if (this.table.options.groupBy) {
           var groupBy = this.table.options.groupBy,
+              startOpen = this.table.options.groupStartOpen,
               groupHeader = this.table.options.groupHeader;
           this.allowedValues = this.table.options.groupValues;
 
@@ -19065,6 +19066,16 @@
               values: _this2.allowedValues ? _this2.allowedValues[i] : false
             });
           });
+
+          if (startOpen) {
+            if (!Array.isArray(startOpen)) {
+              startOpen = [startOpen];
+            }
+
+            startOpen.forEach(function (level) {
+            });
+            this.startOpen = startOpen;
+          }
 
           if (groupHeader) {
             this.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
