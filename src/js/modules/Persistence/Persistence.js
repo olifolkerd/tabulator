@@ -90,7 +90,7 @@ class Persistence extends Module{
 				filter:this.table.options.persistence === true || this.table.options.persistence.filter,
 				group:this.table.options.persistence === true || this.table.options.persistence.group,
 				page:this.table.options.persistence === true || this.table.options.persistence.page,
-				columns:this.table.options.persistence === true ? ["title", "width", "visible"] : this.table.options.persistence.columns,
+				columns:this.table.options.persistence === true ? ["title", "width", "visible", "frozen"] : this.table.options.persistence.columns,
 			};
 
 			//load pagination data if needed
@@ -268,6 +268,7 @@ class Persistence extends Module{
 				if(this.config.columns === true || this.config.columns == undefined){
 					keys =  Object.keys(from);
 					keys.push("width");
+					keys.push("frozen");
 				}else{
 					keys = this.config.columns;
 				}
@@ -418,6 +419,7 @@ class Persistence extends Module{
 					keys =  Object.keys(colDef);
 					keys.push("width");
 					keys.push("visible");
+					keys.push("frozen");
 				}else{
 					keys = this.config.columns;
 				}
@@ -429,6 +431,9 @@ class Persistence extends Module{
 							break;
 						case "visible":
 							defStore.visible = column.visible;
+							break;
+						case "frozen":
+							defStore.frozen = !! colDef.frozen;
 							break;
 
 						default:
