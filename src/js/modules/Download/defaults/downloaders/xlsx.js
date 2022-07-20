@@ -92,7 +92,7 @@ export default function(list, options, setFileContents){
 		return buf;
 	}
 
-	output = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+	output = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary', compression:true});
 
 	setFileContents(s2ab(output), "application/octet-stream");
 }
