@@ -77,9 +77,7 @@ export default function(columns, forced){
 
 			nextColWidth = changeUnits ? Math.floor(remainingSpace/changeUnits) : remainingSpace;
 
-			gap = remainingSpace - (nextColWidth * changeUnits);
-
-			gap += scaleColumns(undersizeCols, remainingSpace, nextColWidth, shrinkCols);
+			gap = scaleColumns(undersizeCols, remainingSpace, nextColWidth, shrinkCols);
 		}else{
 			gap = changeUnits ? freeSpace - (Math.floor(freeSpace/changeUnits) * changeUnits) : freeSpace;
 
