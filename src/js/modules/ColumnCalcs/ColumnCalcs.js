@@ -93,7 +93,7 @@ class ColumnCalcs extends Module{
 
 	rowsUpdated(row){
 		if(this.table.options.groupBy){
-			this.recalcRowGroup(this);
+			this.recalcRowGroup(row);
 		}else{
 			this.recalcActiveRows();
 		}
