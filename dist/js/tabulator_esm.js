@@ -3581,7 +3581,7 @@ class ColumnCalcs extends Module{
 
 	rowsUpdated(row){
 		if(this.table.options.groupBy){
-			this.recalcRowGroup(this);
+			this.recalcRowGroup(row);
 		}else {
 			this.recalcActiveRows();
 		}
@@ -4437,7 +4437,7 @@ class DataTree extends Module{
 	}
 
 	getTreeParentRoot(row){
-		return row.modules.dataTree.parent ? this.getTreeParentRoot(row.modules.dataTree.parent) : row;
+		return row.modules.dataTree && row.modules.dataTree.parent ? this.getTreeParentRoot(row.modules.dataTree.parent) : row;
 	}
 
 	getFilteredTreeChildren(row){
