@@ -138,11 +138,11 @@ class Interaction extends Module{
 		try{
 			if (document.selection) { // IE
 				range = document.body.createTextRange();
-				range.moveToElementText(this.element);
+				range.moveToElementText(cell.getElement());
 				range.select();
 			} else if (window.getSelection) {
 				range = document.createRange();
-				range.selectNode(this.element);
+				range.selectNode(cell.getElement());
 				window.getSelection().removeAllRanges();
 				window.getSelection().addRange(range);
 			}
