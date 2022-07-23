@@ -219,7 +219,9 @@ export default class InteractionManager extends CoreFeature {
 			});
 			
 			for (let target of elTargets) {
-				targets[this.componentMap[target]] = el;
+				if(!targets[this.componentMap[target]]){
+					targets[this.componentMap[target]] = el;
+				}
 			}
 		}
 		
