@@ -2433,8 +2433,20 @@ class Column extends CoreFeature{
 	}
 
 	//return all columns in a group
-	getColumns(){
-		return this.columns;
+	getColumns(traverse){
+		var columns = [];
+
+		if(traverse){
+			this.columns.forEach((column) => {
+				columns.push(column);
+					
+				columns = columns.concat(column.getColumns(true));
+			});
+		}else {
+			columns = this.columns;
+		}
+		
+		return columns;
 	}
 
 	//return all columns in a group
@@ -20905,6 +20917,8 @@ class ColumnManager extends CoreFeature {
 	
 	//////////////// Column Details /////////////////
 	findColumn(subject){
+		var columns;
+
 		if(typeof subject == "object"){
 			
 			if(subject instanceof Column){
@@ -20914,8 +20928,16 @@ class ColumnManager extends CoreFeature {
 				//subject is public column component
 				return subject._getSelf() || false;
 			}else if(typeof HTMLElement !== "undefined" && subject instanceof HTMLElement){
+
+				columns = [];
+
+				this.columns.forEach((column) => {
+					columns.push(column);
+					columns = columns.concat(column.getColumns(true));
+				});
+
 				//subject is a HTML element of the column header
-				let match = this.columns.find((column) => {
+				let match = columns.find((column) => {
 					return column.element === subject;
 				});
 				
@@ -23333,7 +23355,9 @@ class InteractionManager extends CoreFeature {
 			});
 			
 			for (let target of elTargets) {
-				targets[this.componentMap[target]] = el;
+				if(!targets[this.componentMap[target]]){
+					targets[this.componentMap[target]] = el;
+				}
 			}
 		}
 		

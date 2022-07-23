@@ -309,6 +309,8 @@ export default class ColumnManager extends CoreFeature {
 	
 	//////////////// Column Details /////////////////
 	findColumn(subject){
+		var columns;
+
 		if(typeof subject == "object"){
 			
 			if(subject instanceof Column){
@@ -318,8 +320,16 @@ export default class ColumnManager extends CoreFeature {
 				//subject is public column component
 				return subject._getSelf() || false;
 			}else if(typeof HTMLElement !== "undefined" && subject instanceof HTMLElement){
+
+				columns = [];
+
+				this.columns.forEach((column) => {
+					columns.push(column);
+					columns = columns.concat(column.getColumns(true));
+				});
+
 				//subject is a HTML element of the column header
-				let match = this.columns.find((column) => {
+				let match = columns.find((column) => {
 					return column.element === subject;
 				});
 				

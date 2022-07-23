@@ -481,8 +481,20 @@ class Column extends CoreFeature{
 	}
 
 	//return all columns in a group
-	getColumns(){
-		return this.columns;
+	getColumns(traverse){
+		var columns = [];
+
+		if(traverse){
+			this.columns.forEach((column) => {
+				columns.push(column);
+					
+				columns = columns.concat(column.getColumns(true));
+			});
+		}else{
+			columns = this.columns;
+		}
+		
+		return columns;
 	}
 
 	//return all columns in a group
