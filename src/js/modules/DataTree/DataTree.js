@@ -51,6 +51,10 @@ class DataTree extends Module{
 			this.field = options.dataTreeChildField;
 			this.indent = options.dataTreeChildIndent;
 
+			if(this.options("movableRows")){
+				console.warn("The movableRows option is not available with dataTree enabled, moving of child rows could result in unpredictable behavior");
+			}
+
 			if(options.dataTreeBranchElement){
 
 				if(options.dataTreeBranchElement === true){
