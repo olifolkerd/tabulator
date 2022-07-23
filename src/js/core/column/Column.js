@@ -710,6 +710,12 @@ class Column extends CoreFeature{
 	}
 
 	setMinWidth(minWidth){
+		if(this.maxWidth && minWidth > this.maxWidth){
+			minWidth = this.maxWidth;
+
+			console.warn("the minWidth ("+ minWidth + "px) for column '" + this.field + "' cannot be bigger that its maxWidth ("+ this.maxWidthStyled + ")");
+		}
+
 		this.minWidth = minWidth;
 		this.minWidthStyled = minWidth ? minWidth + "px" : "";
 
@@ -721,6 +727,12 @@ class Column extends CoreFeature{
 	}
 
 	setMaxWidth(maxWidth){
+		if(this.minWidth && maxWidth < this.minWidth){
+			maxWidth = this.minWidth;
+
+			console.warn("the maxWidth ("+ maxWidth + "px) for column '" + this.field + "' cannot be smaller that its minWidth ("+ this.minWidthStyled + ")");
+		}
+
 		this.maxWidth = maxWidth;
 		this.maxWidthStyled = maxWidth ? maxWidth + "px" : "";
 
