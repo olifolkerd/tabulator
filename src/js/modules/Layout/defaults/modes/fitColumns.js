@@ -1,6 +1,6 @@
 //resize columns to fit
 export default function(columns, forced){
-	var totalWidth = this.table.element.clientWidth; //table element width
+	var totalWidth = this.table.rowManager.element.getBoundingClientRect().width; //table element width
 	var fixedWidth = 0; //total width of columns with a defined width
 	var flexWidth = 0; //total width available to flexible columns
 	var flexGrowUnits = 0; //total number of widthGrow blocks across all columns
@@ -143,7 +143,7 @@ export default function(columns, forced){
 
 	//increase width of last column to account for rounding errors
 	if(flexColumns.length && gapFill > 0){
-		flexColumns[flexColumns.length-1].width += + gapFill;
+		flexColumns[flexColumns.length-1].width += gapFill;
 	}
 
 	//calculate space for columns to be shrunk into
@@ -159,7 +159,7 @@ export default function(columns, forced){
 	}
 
 	//decrease width of last column to account for rounding errors
-	if(fixedShrinkColumns.length){
+	if(gapFill && fixedShrinkColumns.length){
 		fixedShrinkColumns[fixedShrinkColumns.length-1].width -= gapFill;
 	}
 
