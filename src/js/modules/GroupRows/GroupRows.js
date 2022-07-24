@@ -583,6 +583,28 @@ class GroupRows extends Module{
 			}
 		}
 	}
+
+	checkBasicModeGroupHeaderWidth(){
+		var element = this.table.rowManager.tableElement,
+		onlyGroupHeaders = true;
+
+		this.table.rowManager.getDisplayRows().forEach((row, index) =>{
+			this.table.rowManager.styleRow(row, index);
+			element.appendChild(row.getElement());
+			row.initialize(true);
+
+			if(row.type !== "group"){
+				onlyGroupHeaders = false;
+			}
+		});
+
+		if(onlyGroupHeaders){
+			element.style.minWidth = this.table.columnManager.getWidth() + "px";
+		}else{
+			element.style.minWidth = "";
+		}
+	}
+
 }
 
 GroupRows.moduleName = "groupRows";

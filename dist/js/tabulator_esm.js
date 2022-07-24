@@ -11443,8 +11443,6 @@ class Group{
 	
 	hide(){
 		this.visible = false;
-
-		console.log("flarp", this.groupManager.table.rowManager.getRenderMode());
 		
 		if(this.groupManager.table.rowManager.getRenderMode() == "basic" && !this.groupManager.table.options.pagination){
 			
@@ -11469,7 +11467,7 @@ class Group{
 			
 			this.groupManager.table.rowManager.setDisplayRows(this.groupManager.updateGroupRows(), this.groupManager.getDisplayIndex());
 			
-			this.groupManager.table.rowManager.checkClassicModeGroupHeaderWidth();
+			this.groupManager.checkBasicModeGroupHeaderWidth();
 			
 		}else {
 			this.groupManager.updateGroupRows(true);
@@ -11510,7 +11508,7 @@ class Group{
 			
 			this.groupManager.table.rowManager.setDisplayRows(this.groupManager.updateGroupRows(), this.groupManager.getDisplayIndex());
 			
-			this.groupManager.table.rowManager.checkClassicModeGroupHeaderWidth();
+			this.groupManager.checkBasicModeGroupHeaderWidth();
 		}else {
 			this.groupManager.updateGroupRows(true);
 		}
@@ -12271,6 +12269,28 @@ class GroupRows extends Module{
 			}
 		}
 	}
+
+	checkBasicModeGroupHeaderWidth(){
+		var element = this.table.rowManager.tableElement,
+		onlyGroupHeaders = true;
+
+		this.table.rowManager.getDisplayRows().forEach((row, index) =>{
+			this.table.rowManager.styleRow(row, index);
+			element.appendChild(row.getElement());
+			row.initialize(true);
+
+			if(row.type !== "group"){
+				onlyGroupHeaders = false;
+			}
+		});
+
+		if(onlyGroupHeaders){
+			element.style.minWidth = this.table.columnManager.getWidth() + "px";
+		}else {
+			element.style.minWidth = "";
+		}
+	}
+
 }
 
 GroupRows.moduleName = "groupRows";
