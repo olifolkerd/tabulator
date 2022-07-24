@@ -11443,8 +11443,10 @@ class Group{
 	
 	hide(){
 		this.visible = false;
+
+		console.log("flarp", this.groupManager.table.rowManager.getRenderMode());
 		
-		if(this.groupManager.table.rowManager.getRenderMode() == "classic" && !this.groupManager.table.options.pagination){
+		if(this.groupManager.table.rowManager.getRenderMode() == "basic" && !this.groupManager.table.options.pagination){
 			
 			this.element.classList.remove("tabulator-group-visible");
 			
@@ -11479,7 +11481,7 @@ class Group{
 	show(){
 		this.visible = true;
 		
-		if(this.groupManager.table.rowManager.getRenderMode() == "classic" && !this.groupManager.table.options.pagination){
+		if(this.groupManager.table.rowManager.getRenderMode() == "basic" && !this.groupManager.table.options.pagination){
 			
 			this.element.classList.add("tabulator-group-visible");
 			
@@ -22829,6 +22831,8 @@ class RowManager extends CoreFeature{
 		}
 		
 		if(renderClass){
+			this.renderMode = this.table.options.renderVertical;
+			
 			this.renderer = new renderClass(this.table, this.element, this.tableElement);
 			this.renderer.initialize();
 			
