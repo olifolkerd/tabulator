@@ -896,7 +896,7 @@ export default class Edit{
 			if(!startVis){
 				setTimeout(() => {
 					this.popup.hideOnBlur(this._resolveValue.bind(this, true));
-				});
+				}, 10);
 			}
 		}
 	}
