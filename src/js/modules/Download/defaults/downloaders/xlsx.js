@@ -5,7 +5,7 @@ export default function(list, options, setFileContents){
 	sheetName = options.sheetName || "Sheet1",
 	workbook = XLSX.utils.book_new(),
 	tableFeatures = new CoreFeature(this),
-	compression =  'compression' in options ? options.compression : true,
+	compression =  'compress' in options ? options.compress : true,
 	output;
 
 	workbook.SheetNames = [];
