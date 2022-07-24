@@ -859,6 +859,8 @@ export default class RowManager extends CoreFeature{
 		}
 		
 		if(renderClass){
+			this.renderMode = this.table.options.renderVertical;
+			
 			this.renderer = new renderClass(this.table, this.element, this.tableElement);
 			this.renderer.initialize();
 			
