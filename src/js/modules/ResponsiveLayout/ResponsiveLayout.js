@@ -113,42 +113,42 @@ class ResponsiveLayout extends Module{
 		column.modules.responsive = {order: typeof def.responsive === "undefined" ? 1 : def.responsive, visible:def.visible === false ? false : true};
 	}
 
-    toggleFlexRow(row, isOpen){
-        if(isOpen){
-            row.getElement().classList.add("tabulator-responsive-flex-open");
-            row.getCells().forEach(function(cell) {
-                var el = cell.getElement();
-                var title = cell.getColumn().getDefinition().title;
-                if(el.style.display === "none") {
-                    el.style.display = 'block';
-                    el.style.width = "100%";
-                    if(title && typeof title !== "undefined"){
-                        el.dataset.label = title;
-                    }
-                    el.classList.add("tabulator-responsive-flex-cell");
-                }
-            });
-        }
-        else {
-            row.getElement().classList.remove("tabulator-responsive-flex-open");
-            row.getCells().forEach(function(cell) {
-                var el = cell.getElement();
-                if(!el.classList.contains("tabulator-responsive-flex-cell")){
-                    return;
-                }
-                el.style.display = 'none';
-                el.classList.remove("tabulator-responsive-flex-cell");
-            });
-        }
-    }
+	toggleFlexRow(row, isOpen){
+		if(isOpen){
+			row.getElement().classList.add("tabulator-responsive-flex-open");
+			row.getCells().forEach(function(cell) {
+				var el = cell.getElement();
+				var title = cell.getColumn().getDefinition().title;
+				if(el.style.display === "none") {
+					el.style.display = 'block';
+					el.style.width = "100%";
+					if(title && typeof title !== "undefined"){
+						el.dataset.label = title;
+					}
+					el.classList.add("tabulator-responsive-flex-cell");
+				}
+			});
+		}
+		else {
+			row.getElement().classList.remove("tabulator-responsive-flex-open");
+			row.getCells().forEach(function(cell) {
+				var el = cell.getElement();
+				if(!el.classList.contains("tabulator-responsive-flex-cell")){
+					return;
+				}
+				el.style.display = 'none';
+				el.classList.remove("tabulator-responsive-flex-cell");
+			});
+		}
+	}
 
 	initializeRow(row){
 		var el;
 
 		if(row.type !== "calc"){
 			if(this.table.options.responsiveLayout === "collapse"){
-			    el = document.createElement("div");
-			    el.classList.add("tabulator-responsive-collapse");
+				el = document.createElement("div");
+				el.classList.add("tabulator-responsive-collapse");
 			}
 
 			row.modules.responsiveLayout = {
@@ -156,7 +156,7 @@ class ResponsiveLayout extends Module{
 				open:this.collapseStartOpen,
 			};
 
-			if(!this.collapseStartOpen){
+			if(this.collapseStartOpen){
 				el.style.display = 'none';
 			}
 		}
@@ -187,7 +187,7 @@ class ResponsiveLayout extends Module{
 		if(this.mode === "collapse" || this.mode === "flexCollapse"){
 			this.hiddenColumns.unshift(column);
 			if(this.mode === "collapse"){
-			    this.generateCollapsedContent();
+				this.generateCollapsedContent();
 			}
 
 			if(this.collapseHandleColumn && !colCount){
@@ -211,13 +211,13 @@ class ResponsiveLayout extends Module{
 			}
 
 			if(this.mode === "collapse"){
-			    this.generateCollapsedContent();
+				this.generateCollapsedContent();
 			}
 			if(this.mode === "flexCollapse"){
-			    column.getCells().forEach(function(cell) {
-			        var el = cell.getElement();
-			        el.classList.remove("tabulator-responsive-flex-cell");
-			    });
+				column.getCells().forEach(function(cell) {
+					var el = cell.getElement();
+					el.classList.remove("tabulator-responsive-flex-cell");
+				});
 			}
 
 			if(this.collapseHandleColumn && !this.hiddenColumns.length){
@@ -290,7 +290,7 @@ class ResponsiveLayout extends Module{
 		if(row.modules.responsiveLayout){
 			el = row.modules.responsiveLayout.element;
 			if(!el){
-			    return;
+				return;
 			}
 
 			while(el.firstChild) el.removeChild(el.firstChild);
