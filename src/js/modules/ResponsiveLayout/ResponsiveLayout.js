@@ -33,11 +33,15 @@ class ResponsiveLayout extends Module{
 			this.subscribe("column-delete", this.initializeResponsivity.bind(this));
 
 			this.subscribe("table-redrawing", this.tableRedraw.bind(this));
-			
+
 			if(this.table.options.responsiveLayout === "collapse"){
 				this.subscribe("row-data-changed", this.generateCollapsedRowContent.bind(this));
 				this.subscribe("row-init", this.initializeRow.bind(this));
 				this.subscribe("row-layout", this.layoutRow.bind(this));
+			}
+			if(this.table.options.responsiveLayout === "flexCollapse"){
+				this.subscribe("row-init", this.initializeRow.bind(this));
+				this.subscribe("row-responsive-toggled", this.toggleFlexRow.bind(this));
 			}
 		}
 	}
@@ -65,7 +69,7 @@ class ResponsiveLayout extends Module{
 					column.modules.responsive.index = i;
 					columns.push(column);
 
-					if(!column.visible && this.mode === "collapse"){
+					if(!column.visible && (this.mode === "collapse" || this.mode === "flexCollapse")){
 						this.hiddenColumns.push(column);
 					}
 				}
@@ -109,12 +113,43 @@ class ResponsiveLayout extends Module{
 		column.modules.responsive = {order: typeof def.responsive === "undefined" ? 1 : def.responsive, visible:def.visible === false ? false : true};
 	}
 
+    toggleFlexRow(row, isOpen){
+        if(isOpen){
+            row.getElement().classList.add("tabulator-responsive-flex-open");
+            row.getCells().forEach(function(cell) {
+                var el = cell.getElement();
+                var title = cell.getColumn().getDefinition().title;
+                if(el.style.display === "none") {
+                    el.style.display = 'block';
+                    el.style.width = "100%";
+                    if(title && typeof title !== "undefined"){
+                        el.dataset.label = title;
+                    }
+                    el.classList.add("tabulator-responsive-flex-cell");
+                }
+            });
+        }
+        else {
+            row.getElement().classList.remove("tabulator-responsive-flex-open");
+            row.getCells().forEach(function(cell) {
+                var el = cell.getElement();
+                if(!el.classList.contains("tabulator-responsive-flex-cell")){
+                    return;
+                }
+                el.style.display = 'none';
+                el.classList.remove("tabulator-responsive-flex-cell");
+            });
+        }
+    }
+
 	initializeRow(row){
 		var el;
 
 		if(row.type !== "calc"){
-			el = document.createElement("div");
-			el.classList.add("tabulator-responsive-collapse");
+			if(this.table.options.responsiveLayout === "collapse"){
+			    el = document.createElement("div");
+			    el.classList.add("tabulator-responsive-collapse");
+			}
 
 			row.modules.responsiveLayout = {
 				element:el,
@@ -149,9 +184,11 @@ class ResponsiveLayout extends Module{
 
 		column.hide(false, true);
 
-		if(this.mode === "collapse"){
+		if(this.mode === "collapse" || this.mode === "flexCollapse"){
 			this.hiddenColumns.unshift(column);
-			this.generateCollapsedContent();
+			if(this.mode === "collapse"){
+			    this.generateCollapsedContent();
+			}
 
 			if(this.collapseHandleColumn && !colCount){
 				this.collapseHandleColumn.show();
@@ -166,14 +203,22 @@ class ResponsiveLayout extends Module{
 		//set column width to prevent calculation loops on uninitialized columns
 		column.setWidth(column.getWidth());
 
-		if(this.mode === "collapse"){
+		if(this.mode === "collapse" || this.mode === "flexCollapse"){
 			index = this.hiddenColumns.indexOf(column);
 
 			if(index > -1){
 				this.hiddenColumns.splice(index, 1);
 			}
 
-			this.generateCollapsedContent();
+			if(this.mode === "collapse"){
+			    this.generateCollapsedContent();
+			}
+			if(this.mode === "flexCollapse"){
+			    column.getCells().forEach(function(cell) {
+			        var el = cell.getElement();
+			        el.classList.remove("tabulator-responsive-flex-cell");
+			    });
+			}
 
 			if(this.collapseHandleColumn && !this.hiddenColumns.length){
 				this.collapseHandleColumn.hide();
@@ -244,6 +289,9 @@ class ResponsiveLayout extends Module{
 
 		if(row.modules.responsiveLayout){
 			el = row.modules.responsiveLayout.element;
+			if(!el){
+			    return;
+			}
 
 			while(el.firstChild) el.removeChild(el.firstChild);
 
