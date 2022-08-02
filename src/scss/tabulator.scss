@@ -12,6 +12,7 @@ $headerSeparatorColor:#999 !default; //header bottom separator color
 $headerMargin:4px !default; //padding round header
 
 //column header arrows
+$sortArrowHover: #333;
 $sortArrowActive: #666 !default;
 $sortArrowInactive: #bbb !default;
 
@@ -233,18 +234,22 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					padding-right:25px;
 				}
 				
-				&:hover{
-					cursor:pointer;
-					background-color:darken($headerBackgroundColor, 10%);
-				}
-				
 				&[aria-sort="none"]{
 					.tabulator-col-content .tabulator-col-sorter{
 						color: $sortArrowInactive;
+
+						&:hover{
+						  cursor: pointer;
+						  color: $sortArrowHover;
+						}
 						
 						.tabulator-arrow{
 							border-top: none;
 							border-bottom: 6px solid $sortArrowInactive;
+
+							&:hover{
+							  border-bottom: 6px solid $sortArrowHover;
+							}
 						}
 					}
 				}
@@ -252,11 +257,19 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				&[aria-sort="ascending"]{
 					.tabulator-col-content .tabulator-col-sorter{
 						color: $sortArrowActive;
+
+						&:hover{
+						  cursor: pointer;
+						  color: $sortArrowHover;
+						}
 						
 						.tabulator-arrow{
 							border-top: none;
 							border-bottom: 6px solid $sortArrowActive;
-							
+
+							&:hover{
+							  border-bottom: 6px solid $sortArrowHover;
+							}
 						}
 					}
 				}
@@ -264,11 +277,19 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				&[aria-sort="descending"]{
 					.tabulator-col-content .tabulator-col-sorter{
 						color: $sortArrowActive;
+
+						&:hover{
+						  cursor: pointer;
+						  color: $sortArrowHover;
+						}
 						
 						.tabulator-arrow{
 							border-bottom: none;
 							border-top: 6px solid $sortArrowActive;
-							color: $sortArrowActive;
+
+							&:hover{
+							  border-top: 6px solid $sortArrowHover;
+							}
 						}
 					}
 				}

@@ -138,7 +138,7 @@ class Sort extends Module{
 			this.setColumnHeaderSortIcon(column, "none");
 
 			//sort on click
-			colEl.addEventListener("click", (e) => {
+			arrowEl.addEventListener("click", (e) => {
 				var dir = "",
 				sorters=[],
 				match = false;
