@@ -113,11 +113,21 @@ class Sort extends Module{
 			colEl = column.getElement();
 
 			colEl.classList.add("tabulator-sortable");
-			if (this.table.options.headerSortClickElement !== "icon") colEl.classList.add("tabulator-col-sorter-element");
 
 			arrowEl = document.createElement("div");
 			arrowEl.classList.add("tabulator-col-sorter");
-			if (this.table.options.headerSortClickElement === "icon") arrowEl.classList.add("tabulator-col-sorter-element");
+
+			switch(this.table.options.headerSortClickElement){
+				case "icon":
+					arrowEl.classList.add("tabulator-col-sorter-element");
+					break;
+				case "header":
+					colEl.classList.add("tabulator-col-sorter-element");
+					break;
+				default:
+					colEl.classList.add("tabulator-col-sorter-element");
+					break;
+			}
 
 			switch(this.table.options.headerSortElement){
 				case "function":
