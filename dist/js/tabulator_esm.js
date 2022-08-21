@@ -22702,7 +22702,7 @@ class RowManager extends CoreFeature{
 			case "displayPipeline":
 				for(let i = index; i < this.displayPipeline.length; i++){
 					let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
-					
+
 					this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
 				}
 			
@@ -22745,22 +22745,11 @@ class RowManager extends CoreFeature{
 	
 	//set display row pipeline data
 	setDisplayRows(displayRows, index){
-		
-		var output = true;
-		
-		if(index && typeof this.displayRows[index] != "undefined"){
-			this.displayRows[index] = displayRows;
-			output = true;
-		}else {
-			this.displayRows.push(displayRows);
-			output = index = this.displayRows.length -1;
-		}
-		
+		this.displayRows[index] = displayRows;
+
 		if(index == this.displayRows.length -1){
 			this.displayRowsCount = this.displayRows[this.displayRows.length -1].length;
 		}
-		
-		return output;
 	}
 	
 	getDisplayRows(index){
