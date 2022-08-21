@@ -236,12 +236,13 @@ export default class InteractionManager extends CoreFeature {
 		//ensure row component is looked up before cell
 		var keys = Object.keys(targets).reverse(),
 		listener = this.listeners[type],
+		matches = {},
 		targetMatches = {};
 		
 		for(let key of keys){
-			let component;
-			let target = targets[key];
-			let previousTarget = this.previousTargets[key];
+			let component,
+			target = targets[key],
+			previousTarget = this.previousTargets[key];
 			
 			if(previousTarget && previousTarget.target === target){
 				component = previousTarget.component;
@@ -270,8 +271,8 @@ export default class InteractionManager extends CoreFeature {
 					
 					case "cell":
 						if(listener.components.includes("cell")){
-							if(targets["row"] instanceof Row){
-								component = targets["row"].findCell(target);
+							if(matches["row"] instanceof Row){
+								component = matches["row"].findCell(target);
 							}else{	
 								if(targets["row"]){
 									console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?");
@@ -283,7 +284,7 @@ export default class InteractionManager extends CoreFeature {
 			}
 			
 			if(component){
-				targets[key] = component;
+				matches[key] = component;
 				targetMatches[key] = {
 					target:target,
 					component:component,
@@ -293,12 +294,12 @@ export default class InteractionManager extends CoreFeature {
 		
 		this.previousTargets = targetMatches;
 		
-		return targets;
+		return matches;
 	}
 	
 	triggerEvents(type, e, targets){
 		var listener = this.listeners[type];
-		
+
 		for(let key in targets){
 			if(targets[key] && listener.components.includes(key)){
 				this.dispatch(key + "-" + type, e, targets[key]);
