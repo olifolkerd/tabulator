@@ -22597,81 +22597,82 @@ class RowManager extends CoreFeature{
 		index = 0,
 		cascadeOrder = ["all", "dataPipeline", "display", "displayPipeline", "end"];
 		
-		
-		if(typeof handler === "function"){
-			index = this.dataPipeline.findIndex((item) => {
-				return item.handler === handler;
-			});
-			
-			if(index > -1){
-				stage = "dataPipeline";
-				
-				if(skipStage){
-					if(index == this.dataPipeline.length - 1){
-						stage = "display";
-					}else {
-						index++;
-					}
-				}
-			}else {
-				index = this.displayPipeline.findIndex((item) => {
+		if(!this.table.destroyed){
+			if(typeof handler === "function"){
+				index = this.dataPipeline.findIndex((item) => {
 					return item.handler === handler;
 				});
 				
 				if(index > -1){
-					stage = "displayPipeline";
+					stage = "dataPipeline";
 					
 					if(skipStage){
-						if(index == this.displayPipeline.length - 1){
-							stage = "end";
+						if(index == this.dataPipeline.length - 1){
+							stage = "display";
 						}else {
 							index++;
 						}
 					}
 				}else {
-					console.error("Unable to refresh data, invalid handler provided", handler);
-					return;
-				}
-			}
-		}else {
-			stage = handler || "all";
-			index = 0;
-		}
-		
-		if(this.redrawBlock){
-			if(!this.redrawBlockRestoreConfig || (this.redrawBlockRestoreConfig && ((this.redrawBlockRestoreConfig.stage === stage && index < this.redrawBlockRestoreConfig.index) || (cascadeOrder.indexOf(stage) < cascadeOrder.indexOf(this.redrawBlockRestoreConfig.stage))))){
-				this.redrawBlockRestoreConfig = {
-					handler: handler,
-					skipStage: skipStage,
-					renderInPosition: renderInPosition,
-					stage:stage,
-					index:index,
-				};
-			}
-			
-			return;
-		}else {
-			if(Helpers.elVisible(this.element)){
-				if(renderInPosition){
-					this.reRenderInPosition(this.refreshPipelines.bind(this, handler, stage, index, renderInPosition));
-				}else {
-					this.refreshPipelines(handler, stage, index, renderInPosition);
+					index = this.displayPipeline.findIndex((item) => {
+						return item.handler === handler;
+					});
 					
-					if(!handler){
-						this.table.columnManager.renderer.renderColumns();
-					}
-					
-					this.renderTable();
-					
-					if(table.options.layoutColumnsOnNewData){
-						this.table.columnManager.redraw(true);
+					if(index > -1){
+						stage = "displayPipeline";
+						
+						if(skipStage){
+							if(index == this.displayPipeline.length - 1){
+								stage = "end";
+							}else {
+								index++;
+							}
+						}
+					}else {
+						console.error("Unable to refresh data, invalid handler provided", handler);
+						return;
 					}
 				}
 			}else {
-				this.refreshPipelines(handler, stage, index, renderInPosition);
+				stage = handler || "all";
+				index = 0;
 			}
 			
-			this.dispatch("data-refreshed");
+			if(this.redrawBlock){
+				if(!this.redrawBlockRestoreConfig || (this.redrawBlockRestoreConfig && ((this.redrawBlockRestoreConfig.stage === stage && index < this.redrawBlockRestoreConfig.index) || (cascadeOrder.indexOf(stage) < cascadeOrder.indexOf(this.redrawBlockRestoreConfig.stage))))){
+					this.redrawBlockRestoreConfig = {
+						handler: handler,
+						skipStage: skipStage,
+						renderInPosition: renderInPosition,
+						stage:stage,
+						index:index,
+					};
+				}
+				
+				return;
+			}else {
+				if(Helpers.elVisible(this.element)){
+					if(renderInPosition){
+						this.reRenderInPosition(this.refreshPipelines.bind(this, handler, stage, index, renderInPosition));
+					}else {
+						this.refreshPipelines(handler, stage, index, renderInPosition);
+						
+						if(!handler){
+							this.table.columnManager.renderer.renderColumns();
+						}
+						
+						this.renderTable();
+						
+						if(table.options.layoutColumnsOnNewData){
+							this.table.columnManager.redraw(true);
+						}
+					}
+				}else {
+					this.refreshPipelines(handler, stage, index, renderInPosition);
+				}
+				
+				this.dispatch("data-refreshed");
+			}
 		}
 	}
 	
@@ -25133,7 +25134,7 @@ class Tabulator {
 				data = JSON.parse(data);
 			}
 			
-			if(data){
+			if(data && data.length > 0){
 				data.forEach((item) => {
 					var row = this.rowManager.findRow(item[this.options.index]);
 					
@@ -25199,7 +25200,7 @@ class Tabulator {
 				data = JSON.parse(data);
 			}
 			
-			if(data){
+			if(data && data.length > 0){
 				data.forEach((item) => {
 					var row = this.rowManager.findRow(item[this.options.index]);
 					
