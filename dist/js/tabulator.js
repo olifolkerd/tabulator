@@ -1,4 +1,4 @@
-/* Tabulator v5.3.1 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.3.2 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -3479,13 +3479,13 @@
     }, {
       key: "moveColumn",
       value: function moveColumn(from, to, after) {
-        this.moveColumnActual(from, to, after);
         to.element.parentNode.insertBefore(from.element, to.element);
 
         if (after) {
           to.element.parentNode.insertBefore(to.element, from.element);
         }
 
+        this.moveColumnActual(from, to, after);
         this.verticalAlignHeaders();
         this.table.rowManager.reinitialize();
       }
@@ -5692,80 +5692,82 @@
             index = 0,
             cascadeOrder = ["all", "dataPipeline", "display", "displayPipeline", "end"];
 
-        if (typeof handler === "function") {
-          index = this.dataPipeline.findIndex(function (item) {
-            return item.handler === handler;
-          });
-
-          if (index > -1) {
-            stage = "dataPipeline";
-
-            if (skipStage) {
-              if (index == this.dataPipeline.length - 1) {
-                stage = "display";
-              } else {
-                index++;
-              }
-            }
-          } else {
-            index = this.displayPipeline.findIndex(function (item) {
+        if (!this.table.destroyed) {
+          if (typeof handler === "function") {
+            index = this.dataPipeline.findIndex(function (item) {
               return item.handler === handler;
             });
 
             if (index > -1) {
-              stage = "displayPipeline";
+              stage = "dataPipeline";
 
               if (skipStage) {
-                if (index == this.displayPipeline.length - 1) {
-                  stage = "end";
+                if (index == this.dataPipeline.length - 1) {
+                  stage = "display";
                 } else {
                   index++;
                 }
               }
             } else {
-              console.error("Unable to refresh data, invalid handler provided", handler);
-              return;
-            }
-          }
-        } else {
-          stage = handler || "all";
-          index = 0;
-        }
+              index = this.displayPipeline.findIndex(function (item) {
+                return item.handler === handler;
+              });
 
-        if (this.redrawBlock) {
-          if (!this.redrawBlockRestoreConfig || this.redrawBlockRestoreConfig && (this.redrawBlockRestoreConfig.stage === stage && index < this.redrawBlockRestoreConfig.index || cascadeOrder.indexOf(stage) < cascadeOrder.indexOf(this.redrawBlockRestoreConfig.stage))) {
-            this.redrawBlockRestoreConfig = {
-              handler: handler,
-              skipStage: skipStage,
-              renderInPosition: renderInPosition,
-              stage: stage,
-              index: index
-            };
-          }
+              if (index > -1) {
+                stage = "displayPipeline";
 
-          return;
-        } else {
-          if (Helpers.elVisible(this.element)) {
-            if (renderInPosition) {
-              this.reRenderInPosition(this.refreshPipelines.bind(this, handler, stage, index, renderInPosition));
-            } else {
-              this.refreshPipelines(handler, stage, index, renderInPosition);
-
-              if (!handler) {
-                this.table.columnManager.renderer.renderColumns();
-              }
-
-              this.renderTable();
-
-              if (table.options.layoutColumnsOnNewData) {
-                this.table.columnManager.redraw(true);
+                if (skipStage) {
+                  if (index == this.displayPipeline.length - 1) {
+                    stage = "end";
+                  } else {
+                    index++;
+                  }
+                }
+              } else {
+                console.error("Unable to refresh data, invalid handler provided", handler);
+                return;
               }
             }
           } else {
-            this.refreshPipelines(handler, stage, index, renderInPosition);
+            stage = handler || "all";
+            index = 0;
           }
 
-          this.dispatch("data-refreshed");
+          if (this.redrawBlock) {
+            if (!this.redrawBlockRestoreConfig || this.redrawBlockRestoreConfig && (this.redrawBlockRestoreConfig.stage === stage && index < this.redrawBlockRestoreConfig.index || cascadeOrder.indexOf(stage) < cascadeOrder.indexOf(this.redrawBlockRestoreConfig.stage))) {
+              this.redrawBlockRestoreConfig = {
+                handler: handler,
+                skipStage: skipStage,
+                renderInPosition: renderInPosition,
+                stage: stage,
+                index: index
+              };
+            }
+
+            return;
+          } else {
+            if (Helpers.elVisible(this.element)) {
+              if (renderInPosition) {
+                this.reRenderInPosition(this.refreshPipelines.bind(this, handler, stage, index, renderInPosition));
+              } else {
+                this.refreshPipelines(handler, stage, index, renderInPosition);
+
+                if (!handler) {
+                  this.table.columnManager.renderer.renderColumns();
+                }
+
+                this.renderTable();
+
+                if (table.options.layoutColumnsOnNewData) {
+                  this.table.columnManager.redraw(true);
+                }
+              }
+            } else {
+              this.refreshPipelines(handler, stage, index, renderInPosition);
+            }
+
+            this.dispatch("data-refreshed");
+          }
         }
       }
     }, {
@@ -5841,21 +5843,11 @@
     }, {
       key: "setDisplayRows",
       value: function setDisplayRows(displayRows, index) {
-        var output = true;
-
-        if (index && typeof this.displayRows[index] != "undefined") {
-          this.displayRows[index] = displayRows;
-          output = true;
-        } else {
-          this.displayRows.push(displayRows);
-          output = index = this.displayRows.length - 1;
-        }
+        this.displayRows[index] = displayRows;
 
         if (index == this.displayRows.length - 1) {
           this.displayRowsCount = this.displayRows[this.displayRows.length - 1].length;
         }
-
-        return output;
       }
     }, {
       key: "getDisplayRows",
@@ -6547,6 +6539,7 @@
         //ensure row component is looked up before cell
         var keys = Object.keys(targets).reverse(),
             listener = this.listeners[type],
+            matches = {},
             targetMatches = {};
 
         var _iterator4 = _createForOfIteratorHelper(keys),
@@ -6555,9 +6548,9 @@
         try {
           var _loop = function _loop() {
             var key = _step4.value;
-            var component = void 0;
-            var target = targets[key];
-            var previousTarget = _this5.previousTargets[key];
+            var component = void 0,
+                target = targets[key],
+                previousTarget = _this5.previousTargets[key];
 
             if (previousTarget && previousTarget.target === target) {
               component = previousTarget.component;
@@ -6588,8 +6581,8 @@
 
                 case "cell":
                   if (listener.components.includes("cell")) {
-                    if (targets["row"] instanceof Row) {
-                      component = targets["row"].findCell(target);
+                    if (matches["row"] instanceof Row) {
+                      component = matches["row"].findCell(target);
                     } else {
                       if (targets["row"]) {
                         console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?");
@@ -6602,7 +6595,7 @@
             }
 
             if (component) {
-              targets[key] = component;
+              matches[key] = component;
               targetMatches[key] = {
                 target: target,
                 component: component
@@ -6620,7 +6613,7 @@
         }
 
         this.previousTargets = targetMatches;
-        return targets;
+        return matches;
       }
     }, {
       key: "triggerEvents",
@@ -8923,7 +8916,7 @@
             data = JSON.parse(data);
           }
 
-          if (data) {
+          if (data && data.length > 0) {
             data.forEach(function (item) {
               var row = _this2.rowManager.findRow(item[_this2.options.index]);
 
@@ -8987,7 +8980,7 @@
             data = JSON.parse(data);
           }
 
-          if (data) {
+          if (data && data.length > 0) {
             data.forEach(function (item) {
               var row = _this4.rowManager.findRow(item[_this4.options.index]);
 
@@ -20423,7 +20416,7 @@
         var range;
 
         if (this.table.modExists("edit")) {
-          if (this.table.modules.edit.currentCell === this) {
+          if (this.table.modules.edit.currentCell === cell) {
             return; //prevent instant selection of editor content
           }
         }
@@ -26544,13 +26537,10 @@
 
                 if (match > -1) {
                   sorters[match].dir = dir;
+                  match = sorters.splice(match, 1)[0];
 
-                  if (match != sorters.length - 1) {
-                    match = sorters.splice(match, 1)[0];
-
-                    if (dir != "none") {
-                      sorters.push(match);
-                    }
+                  if (dir != "none") {
+                    sorters.push(match);
                   }
                 } else {
                   if (dir != "none") {
@@ -26775,7 +26765,7 @@
         var sortEl = column.modules.sort.element,
             arrowEl;
 
-        if (typeof this.table.options.headerSortElement === "function") {
+        if (column.definition.headerSort && typeof this.table.options.headerSortElement === "function") {
           while (sortEl.firstChild) {
             sortEl.removeChild(sortEl.firstChild);
           }
