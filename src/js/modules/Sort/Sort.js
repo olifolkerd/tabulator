@@ -399,7 +399,7 @@ class Sort extends Module{
 		var sortEl = column.modules.sort.element,
 		arrowEl;
 
-		if(typeof this.table.options.headerSortElement === "function"){
+		if(column.definition.headerSort && typeof this.table.options.headerSortElement === "function"){
 			while(sortEl.firstChild) sortEl.removeChild(sortEl.firstChild);
 
 			arrowEl = this.table.options.headerSortElement.call(this.table, column.getComponent(), dir);
