@@ -128,7 +128,7 @@ class Interaction extends Module{
 		var range;
 
 		if(this.table.modExists("edit")){
-			if (this.table.modules.edit.currentCell === this){
+			if (this.table.modules.edit.currentCell === cell){
 				return; //prevent instant selection of editor content
 			}
 		}
