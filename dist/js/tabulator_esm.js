@@ -21075,14 +21075,14 @@ class ColumnManager extends CoreFeature {
 	}
 	
 	moveColumn(from, to, after){
-		this.moveColumnActual(from, to, after);
-		
 		to.element.parentNode.insertBefore(from.element, to.element);
 		
 		if(after){
 			to.element.parentNode.insertBefore(to.element, from.element);
 		}
 		
+		this.moveColumnActual(from, to, after);
+
 		this.verticalAlignHeaders();
 		
 		this.table.rowManager.reinitialize();
