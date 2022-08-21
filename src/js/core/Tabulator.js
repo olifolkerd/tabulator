@@ -417,7 +417,7 @@ class Tabulator {
 				data = JSON.parse(data);
 			}
 			
-			if(data){
+			if(data && data.length > 0){
 				data.forEach((item) => {
 					var row = this.rowManager.findRow(item[this.options.index]);
 					
@@ -483,7 +483,7 @@ class Tabulator {
 				data = JSON.parse(data);
 			}
 			
-			if(data){
+			if(data && data.length > 0){
 				data.forEach((item) => {
 					var row = this.rowManager.findRow(item[this.options.index]);
 					
