@@ -21,8 +21,6 @@ class Page extends Module{
 
 		this.remoteRowCountEstimate = null;
 		
-		this.displayIndex = 0; //index in display pipeline
-		
 		this.initialLoad = true;
 		this.dataChanging = false; //flag to check if data is being changed by this module
 		
@@ -470,14 +468,6 @@ class Page extends Module{
 		this.dispatch("page-changed");
 	}
 	
-	setDisplayIndex(index){
-		this.displayIndex = index;
-	}
-	
-	getDisplayIndex(){
-		return this.displayIndex;
-	}
-	
 	//calculate maximum page from number of rows
 	setMaxRows(rowCount){
 		if(!rowCount){
@@ -544,9 +534,9 @@ class Page extends Module{
 	}
 	
 	setPageToRow(row){
-		var rows = this.table.rowManager.getDisplayRows(this.displayIndex - 1);
+		var rows = this.displayRows(-1);
 		var index = rows.indexOf(row);
-		
+	
 		if(index > -1){
 			var page = this.size === true ? 1 : Math.ceil((index + 1) / this.size);
 			

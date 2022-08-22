@@ -379,9 +379,7 @@ class Group{
 				});
 			}
 			
-			this.groupManager.table.rowManager.setDisplayRows(this.groupManager.updateGroupRows(), this.groupManager.getDisplayIndex());
-			
-			this.groupManager.checkBasicModeGroupHeaderWidth();
+			this.groupManager.updateGroupRows(true);
 			
 		}else{
 			this.groupManager.updateGroupRows(true);
@@ -419,10 +417,8 @@ class Group{
 					prev = rowEl;
 				});
 			}
-			
-			this.groupManager.table.rowManager.setDisplayRows(this.groupManager.updateGroupRows(), this.groupManager.getDisplayIndex());
-			
-			this.groupManager.checkBasicModeGroupHeaderWidth();
+
+			this.groupManager.updateGroupRows(true);
 		}else{
 			this.groupManager.updateGroupRows(true);
 		}

@@ -749,10 +749,6 @@ export default class RowManager extends CoreFeature{
 		this.displayRowsCount = this.displayRows[0].length;
 	}
 	
-	getNextDisplayIndex(){
-		return this.displayRows.length;
-	}
-	
 	//set display row pipeline data
 	setDisplayRows(displayRows, index){
 		this.displayRows[index] = displayRows;

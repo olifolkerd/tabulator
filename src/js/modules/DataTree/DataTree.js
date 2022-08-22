@@ -18,8 +18,6 @@ class DataTree extends Module{
 
 		this.startOpen = function(){};
 
-		this.displayIndex = 0;
-
 		this.registerTableOption("dataTree", false); //enable data tree
 		this.registerTableOption("dataTreeFilter", true); //filter child rows
 		this.registerTableOption("dataTreeSort", true); //sort child rows
@@ -293,14 +291,6 @@ class DataTree extends Module{
 				el.insertBefore(config.controlEl, el.firstChild);
 			}
 		}
-	}
-
-	setDisplayIndex (index) {
-		this.displayIndex = index;
-	}
-
-	getDisplayIndex () {
-		return this.displayIndex;
 	}
 
 	getRows(rows){

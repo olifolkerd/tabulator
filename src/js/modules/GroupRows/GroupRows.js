@@ -13,7 +13,6 @@ class GroupRows extends Module{
 		this.groupList = []; //ordered list of groups
 		this.allowedValues = false;
 		this.groups = {}; //hold row groups
-		this.displayIndex = 0; //index in display pipeline
 
 		this.displayHandler = this.getRows.bind(this);
 
@@ -322,22 +321,12 @@ class GroupRows extends Module{
 		}
 	}
 
-
 	rowsUpdated(row){
 		this.updateGroupRows(true);
 	}
 
 	cellUpdated(cell){
 		this.reassignRowToGroup(cell.row);
-	}
-
-
-	setDisplayIndex(index){
-		this.displayIndex = index;
-	}
-
-	getDisplayIndex(){
-		return this.displayIndex;
 	}
 
 	//return appropriate rows with group headers
