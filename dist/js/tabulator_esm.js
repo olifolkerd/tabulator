@@ -12993,6 +12993,8 @@ class Interaction extends Module{
 			rowMouseOver:"row-mouseover",
 			rowMouseOut:"row-mouseout",
 			rowMouseMove:"row-mousemove",
+			rowMouseDown:"row-mousedown",
+			rowMouseUp:"row-mouseup",
 			rowTap:"row",
 			rowDblTap:"row",
 			rowTapHold:"row",
@@ -13006,6 +13008,8 @@ class Interaction extends Module{
 			cellMouseOver:"cell-mouseover",
 			cellMouseOut:"cell-mouseout",
 			cellMouseMove:"cell-mousemove",
+			cellMouseDown:"cell-mousedown",
+			cellMouseUp:"cell-mouseup",
 			cellTap:"cell",
 			cellDblTap:"cell",
 			cellTapHold:"cell",
@@ -13019,6 +13023,8 @@ class Interaction extends Module{
 			headerMouseOver:"column-mouseover",
 			headerMouseOut:"column-mouseout",
 			headerMouseMove:"column-mousemove",
+			columnMouseDown:"column-mousedown",
+			columnMouseUp:"column-mouseup",
 			headerTap:"column",
 			headerDblTap:"column",
 			headerTapHold:"column",
@@ -13032,6 +13038,8 @@ class Interaction extends Module{
 			groupMouseOver:"group-mouseover",
 			groupMouseOut:"group-mouseout",
 			groupMouseMove:"group-mousemove",
+			groupMouseDown:"group-mousedown",
+			groupMouseUp:"group-mouseup",
 			groupTap:"group",
 			groupDblTap:"group",
 			groupTapHold:"group",
@@ -13074,6 +13082,8 @@ class Interaction extends Module{
 		this.registerColumnOption("headerMouseOver");
 		this.registerColumnOption("headerMouseOut");
 		this.registerColumnOption("headerMouseMove");
+		this.registerColumnOption("headerMouseDown");
+		this.registerColumnOption("headerMouseUp");
 		this.registerColumnOption("headerTap");
 		this.registerColumnOption("headerDblTap");
 		this.registerColumnOption("headerTapHold");
@@ -13086,6 +13096,8 @@ class Interaction extends Module{
 		this.registerColumnOption("cellMouseOver");
 		this.registerColumnOption("cellMouseOut");
 		this.registerColumnOption("cellMouseMove");
+		this.registerColumnOption("cellMouseDown");
+		this.registerColumnOption("cellMouseUp");
 		this.registerColumnOption("cellTap");
 		this.registerColumnOption("cellDblTap");
 		this.registerColumnOption("cellTapHold");
@@ -23183,6 +23195,8 @@ class InteractionManager extends CoreFeature {
 			"mouseover",
 			"mouseout",
 			"mousemove",
+			"mouseup",
+			"mousedown",
 			"touchstart",
 			"touchend",
 		];
