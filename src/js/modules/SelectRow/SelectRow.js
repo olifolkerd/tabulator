@@ -221,13 +221,20 @@ class SelectRow extends Module{
 			
 				if(rowMatch){
 					this._selectRow(rowMatch, true, true);
+					this._rowSelectionChanged();
 				}else{
-					this.table.rowManager.getRows(rows).forEach((row) => {
+					rowMatch = this.table.rowManager.getRows(rows);
+					
+					rowMatch.forEach((row) => {
 						this._selectRow(row, true, true);
 					});
+
+					if(rowMatch.length){
+						this._rowSelectionChanged();
+					}
 				}
 			
-				this._rowSelectionChanged();
+				
 				break;
 			
 			default:

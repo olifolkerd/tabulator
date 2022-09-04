@@ -18228,13 +18228,20 @@ class SelectRow extends Module{
 			
 				if(rowMatch){
 					this._selectRow(rowMatch, true, true);
+					this._rowSelectionChanged();
 				}else {
-					this.table.rowManager.getRows(rows).forEach((row) => {
+					rowMatch = this.table.rowManager.getRows(rows);
+					
+					rowMatch.forEach((row) => {
 						this._selectRow(row, true, true);
 					});
+
+					if(rowMatch.length){
+						this._rowSelectionChanged();
+					}
 				}
 			
-				this._rowSelectionChanged();
+				
 				break;
 			
 			default:
@@ -22789,23 +22796,24 @@ class RowManager extends CoreFeature{
 	
 	//return only actual rows (not group headers etc)
 	getRows(type){
-		var rows;
-		
-		switch(type){
-			case "active":
-				rows = this.activeRows;
-				break;
-			
-			case "display":
-				rows = this.table.rowManager.getDisplayRows();
-				break;
+		var rows = [];
+
+		if(!type){
+			rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
+		}else {
+			switch(type){
+				case "active":
+					rows = this.activeRows;
+					break;
 				
-			case "visible":
-				rows = this.getVisibleRows(false, true);
-				break;
-				
-			default:
-				rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
+				case "display":
+					rows = this.table.rowManager.getDisplayRows();
+					break;
+					
+				case "visible":
+					rows = this.getVisibleRows(false, true);
+					break;
+			}
 		}
 		
 		return rows;
