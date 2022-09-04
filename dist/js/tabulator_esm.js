@@ -20923,6 +20923,8 @@ class ColumnManager extends CoreFeature {
 		var minHeight = 0;
 		
 		if(!this.redrawBlock){
+
+			this.element.style.height="";
 			
 			this.columns.forEach((column) => {
 				column.clearVerticalAlign();
@@ -20935,7 +20937,9 @@ class ColumnManager extends CoreFeature {
 					minHeight = height;
 				}
 			});
-			
+
+			this.element.style.height = minHeight + "px";
+
 			this.columns.forEach((column) => {
 				column.verticalAlign(this.table.options.columnHeaderVertAlign, minHeight);
 			});
