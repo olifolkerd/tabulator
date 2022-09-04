@@ -22914,9 +22914,6 @@ class RowManager extends CoreFeature{
 		
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
-
-		// clear empty table placeholder min
-		this.tableElement.style.minWidth = "";
 		
 		this.renderer.clearRows();
 	}
@@ -22933,6 +22930,9 @@ class RowManager extends CoreFeature{
 	_clearPlaceholder(){
 		if(this.placeholder && this.placeholder.parentNode){
 			this.placeholder.parentNode.removeChild(this.placeholder);
+			
+			// clear empty table placeholder min
+			this.tableElement.style.minWidth = "";
 		}
 	}
 	
