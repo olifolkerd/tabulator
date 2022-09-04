@@ -99,7 +99,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 	&.table-striped{
 		.tabulator-row{
-			&:nth-child(even){
+			&.tabulator-row-even{
 				background-color: $rowAltBackgroundColor;
 			}
 		}

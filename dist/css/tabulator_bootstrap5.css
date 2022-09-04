@@ -1293,20 +1293,20 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   color: #212529 !important;
 }
 
-.tabulator.table-striped:not(.table) .tabulator-row:nth-child(even) {
+.tabulator.table-striped:not(.table) .tabulator-row.tabulator-row-even {
   background-color: #e9ecef;
 }
 
-.tabulator.table-striped:not(.table) .tabulator-row:nth-child(even).tabulator-selected {
+.tabulator.table-striped:not(.table) .tabulator-row.tabulator-row-even.tabulator-selected {
   background-color: #9ABCEA;
 }
 
-.tabulator.table-striped:not(.table) .tabulator-row:nth-child(even).tabulator-selectable:hover {
+.tabulator.table-striped:not(.table) .tabulator-row.tabulator-row-even.tabulator-selectable:hover {
   background-color: #ced4da;
   cursor: pointer;
 }
 
-.tabulator.table-striped:not(.table) .tabulator-row:nth-child(even).tabulator-selected:hover {
+.tabulator.table-striped:not(.table) .tabulator-row.tabulator-row-even.tabulator-selected:hover {
   background-color: #769BCC;
   cursor: pointer;
 }

@@ -1173,7 +1173,7 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   color: inherit;
 }
 
-.tabulator.table-striped .tabulator-row:nth-child(even) {
+.tabulator.table-striped .tabulator-row.tabulator-row-even {
   background-color: #f9f9f9;
 }
 
