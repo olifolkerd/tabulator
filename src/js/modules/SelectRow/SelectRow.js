@@ -216,7 +216,6 @@ class SelectRow extends Module{
 				break;
 			
 			case "string":
-			
 				rowMatch = this.table.rowManager.findRow(rows);
 			
 				if(rowMatch){
@@ -233,8 +232,6 @@ class SelectRow extends Module{
 						this._rowSelectionChanged();
 					}
 				}
-			
-				
 				break;
 			
 			default:
