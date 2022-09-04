@@ -1,4 +1,4 @@
-/* Tabulator v5.3.2 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.3.3 (c) Oliver Folkerd 2022 */
 class CoreFeature{
 
 	constructor(table){
