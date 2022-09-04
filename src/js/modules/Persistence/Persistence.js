@@ -211,9 +211,10 @@ class Persistence extends Module{
 			keys.forEach((key)=>{
 				var props = Object.getOwnPropertyDescriptor(def, key);
 				var value = def[key];
+
 				if(props){
 					Object.defineProperty(def, key, {
-						set: function(newValue){
+						set: (newValue) => {
 							value = newValue;
 
 							if(!this.defWatcherBlock){
@@ -224,7 +225,7 @@ class Persistence extends Module{
 								props.set(newValue);
 							}
 						},
-						get:function(){
+						get:() => {
 							if(props.get){
 								props.get();
 							}
