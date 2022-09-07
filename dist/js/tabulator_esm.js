@@ -22935,10 +22935,10 @@ class RowManager extends CoreFeature{
 	_clearPlaceholder(){
 		if(this.placeholder && this.placeholder.parentNode){
 			this.placeholder.parentNode.removeChild(this.placeholder);
-			
-			// clear empty table placeholder min
-			this.tableElement.style.minWidth = "";
 		}
+
+		// clear empty table placeholder min
+		this.tableElement.style.minWidth = "";
 	}
 	
 	_positionPlaceholder(){
