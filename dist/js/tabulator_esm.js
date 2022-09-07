@@ -22795,7 +22795,7 @@ class RowManager extends CoreFeature{
 	getRows(type){
 		var rows = [];
 
-		if(!type){
+		if(!type || type === true){
 			rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
 		}else {
 			switch(type){
