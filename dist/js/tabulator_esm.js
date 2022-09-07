@@ -1,4 +1,4 @@
-/* Tabulator v5.3.3 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.3.0 (c) Oliver Folkerd 2022 */
 class CoreFeature{
 
 	constructor(table){
@@ -10986,11 +10986,12 @@ class FrozenRows extends Module{
 			this.topElement.appendChild(row.getElement());
 			row.initialize();
 			row.normalizeHeight();
-			this.table.rowManager.adjustTableSize();
-
+		
 			this.rows.push(row);
 
 			this.refreshData(false, "display");
+
+			this.table.rowManager.adjustTableSize();
 
 			this.styleRows();
 
