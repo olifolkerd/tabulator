@@ -4871,6 +4871,7 @@ function xlsx(list, options, setFileContents){
 	sheetName = options.sheetName || "Sheet1",
 	workbook = XLSX.utils.book_new(),
 	tableFeatures = new CoreFeature(this),
+	compression =  'compress' in options ? options.compress : true,
 	output;
 
 	workbook.SheetNames = [];
@@ -4958,7 +4959,7 @@ function xlsx(list, options, setFileContents){
 		return buf;
 	}
 
-	output = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary'});
+	output = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary', compression });
 
 	setFileContents(s2ab(output), "application/octet-stream");
 }
