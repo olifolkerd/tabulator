@@ -287,7 +287,7 @@ export default class ColumnManager extends CoreFeature {
 		
 		if(!this.redrawBlock){
 
-			this.element.style.height="";
+			this.headersElement.style.height="";
 			
 			this.columns.forEach((column) => {
 				column.clearVerticalAlign();
@@ -301,7 +301,7 @@ export default class ColumnManager extends CoreFeature {
 				}
 			});
 
-			this.element.style.height = minHeight + "px";
+			this.headersElement.style.height = minHeight + "px";
 
 			this.columns.forEach((column) => {
 				column.verticalAlign(this.table.options.columnHeaderVertAlign, minHeight);
