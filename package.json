@@ -47,10 +47,6 @@
   },
   "homepage": "http://tabulator.info/",
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/preset-env": "^7.12.11",
-    "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "eslint": "^8.10.0",
     "eslint-plugin-only-warn": "^1.0.3",

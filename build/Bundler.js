@@ -1,6 +1,5 @@
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import { terser } from "rollup-plugin-terser";
-import babel from "@rollup/plugin-babel";
 
 const license = require("rollup-plugin-license");
 const globby = require("globby");
@@ -136,9 +135,6 @@ export default class Bundler{
 			input:"src/js/builds/usd.js",
 			plugins: [
 				nodeResolve(),
-				babel({
-					babelHelpers: "bundled",
-				}),
 				minify ? terser() : null,
 				license({
 					banner: {
