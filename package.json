@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "lint": "eslint src",
+    "prebuild": "eslint src",
     "build": "rollup -c build/rollup.js",
     "dev": "rollup -c build/rollup.js -w --environment TARGET:dev",
     "dev:css": "rollup -c build/rollup.js -w --environment TARGET:css",
