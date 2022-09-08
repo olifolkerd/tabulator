@@ -16,6 +16,17 @@ export default class Bundler{
 		this.version = "/* Tabulator v" + version + " (c) Oliver Folkerd <%= moment().format('YYYY') %> */";
 	}
 
+	_suppressCircularWarnings(warn, defaultHandler){
+		var ignoredCircularFiles = [
+			"Column.js",
+			"Tabulator.js",
+		];
+
+		if(!(warn.code === "CIRCULAR_DEPENDENCY" && ignoredCircularFiles.some(file => warn.importer.includes(file)))){
+			defaultHandler(warn);
+		}
+	}
+
 	bundle(){
 		if(this.env){
 			this.watch(this.env);
@@ -127,6 +138,7 @@ export default class Bundler{
 					sourcemap: true,
 				},
 			],
+			onwarn:this._suppressCircularWarnings,
 		});
 	}
 
@@ -151,6 +163,7 @@ export default class Bundler{
 				exports: "default",
 				sourcemap: true,
 			},
+			onwarn:this._suppressCircularWarnings,
 		});
 	}
 }
