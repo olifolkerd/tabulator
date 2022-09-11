@@ -13616,15 +13616,19 @@ class Menu extends Module{
 
 		this.registerTableOption("rowContextMenu", false);
 		this.registerTableOption("rowClickMenu", false);
+		this.registerTableOption("rowDblClickMenu", false);
 		this.registerTableOption("groupContextMenu", false);
 		this.registerTableOption("groupClickMenu", false);
+		this.registerTableOption("groupDblClickMenu", false);
 		
 		this.registerColumnOption("headerContextMenu");
 		this.registerColumnOption("headerClickMenu");
+		this.registerColumnOption("headerDblClickMenu");
 		this.registerColumnOption("headerMenu");
 		this.registerColumnOption("headerMenuIcon");
 		this.registerColumnOption("contextMenu");
 		this.registerColumnOption("clickMenu");
+		this.registerColumnOption("dblClickMenu");
 		
 	}
 	
@@ -13651,6 +13655,10 @@ class Menu extends Module{
 		if(this.table.options.rowClickMenu){
 			this.subscribe("row-click", this.loadMenuEvent.bind(this, this.table.options.rowClickMenu));
 		}
+		
+		if(this.table.options.rowDblClickMenu){
+			this.subscribe("row-dblclick", this.loadMenuEvent.bind(this, this.table.options.rowDblClickMenu));
+		}
 	}
 	
 	initializeGroupWatchers(){
@@ -13661,6 +13669,10 @@ class Menu extends Module{
 		
 		if(this.table.options.groupClickMenu){
 			this.subscribe("group-click", this.loadMenuEvent.bind(this, this.table.options.groupClickMenu));
+		}
+		
+		if(this.table.options.groupDblClickMenu){
+			this.subscribe("group-dblclick", this.loadMenuEvent.bind(this, this.table.options.groupDblClickMenu));
 		}
 	}
 	
@@ -13679,6 +13691,11 @@ class Menu extends Module{
 			this.subscribe("column-click", this.columnSubscribers.headerClickMenu);
 		}
 		
+		if(def.headerDblClickMenu && !this.columnSubscribers.headerDblClickMenu){
+			this.columnSubscribers.headerDblClickMenu = this.loadMenuTableColumnEvent.bind(this, "headerDblClickMenu");
+			this.subscribe("column-dblclick", this.columnSubscribers.headerDblClickMenu);
+		}
+		
 		if(def.headerMenu){
 			this.initializeColumnHeaderMenu(column);
 		}
@@ -13693,6 +13710,11 @@ class Menu extends Module{
 		if(def.clickMenu && !this.columnSubscribers.clickMenu){
 			this.columnSubscribers.clickMenu = this.loadMenuTableCellEvent.bind(this, "clickMenu");
 			this.subscribe("cell-click", this.columnSubscribers.clickMenu);
+		}
+		
+		if(def.dblClickMenu && !this.columnSubscribers.dblClickMenu){
+			this.columnSubscribers.dblClickMenu = this.loadMenuTableCellEvent.bind(this, "dblClickMenu");
+			this.subscribe("cell-dblclick", this.columnSubscribers.dblClickMenu);
 		}
 	}
 	
