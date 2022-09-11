@@ -18734,6 +18734,7 @@ class Sort extends Module{
 		this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
 		this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
 		this.registerTableOption("headerSortElement", "<div class='tabulator-arrow'></div>"); //header sort element
+		this.registerTableOption("headerSortClickElement", "header"); //element which triggers sort when clicked
 
 		this.registerColumnOption("sorter");
 		this.registerColumnOption("sorterParams");
@@ -18831,9 +18832,20 @@ class Sort extends Module{
 
 			colEl.classList.add("tabulator-sortable");
 
-
 			arrowEl = document.createElement("div");
 			arrowEl.classList.add("tabulator-col-sorter");
+
+			switch(this.table.options.headerSortClickElement){
+				case "icon":
+					arrowEl.classList.add("tabulator-col-sorter-element");
+					break;
+				case "header":
+					colEl.classList.add("tabulator-col-sorter-element");
+					break;
+				default:
+					colEl.classList.add("tabulator-col-sorter-element");
+					break;
+			}
 
 			switch(this.table.options.headerSortElement){
 				case "function":
@@ -18856,7 +18868,7 @@ class Sort extends Module{
 			this.setColumnHeaderSortIcon(column, "none");
 
 			//sort on click
-			colEl.addEventListener("click", (e) => {
+			(this.table.options.headerSortClickElement === "icon" ? arrowEl : colEl).addEventListener("click", (e) => {
 				var dir = "",
 				sorters=[],
 				match = false;
