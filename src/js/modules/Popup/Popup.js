@@ -22,6 +22,11 @@ class Popup extends Module{
 		this.registerColumnOption("contextPopup");
 		this.registerColumnOption("clickPopup");
 		this.registerColumnOption("dblClickPopup");
+
+		this.registerComponentFunction("cell", "popup", this._componentPopupCall.bind(this));
+		this.registerComponentFunction("column", "popup", this._componentPopupCall.bind(this));
+		this.registerComponentFunction("row", "popup", this._componentPopupCall.bind(this));
+		this.registerComponentFunction("group", "popup", this._componentPopupCall.bind(this));
 		
 	}
 	
@@ -30,6 +35,10 @@ class Popup extends Module{
 		this.initializeGroupWatchers();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
+	}
+
+	_componentPopupCall(component, contents, position){
+		this.loadPopupEvent(contents, null, component, position);
 	}
 	
 	initializeRowWatchers(){
@@ -155,7 +164,7 @@ class Popup extends Module{
 		}
 	}
 	
-	loadPopupEvent(contents, e, component){
+	loadPopupEvent(contents, e, component, position){
 		var renderedCallback;
 
 		function onRendered(callback){
@@ -170,10 +179,10 @@ class Popup extends Module{
 		
 		contents = typeof contents == "function" ? contents.call(this.table, e, component.getComponent(),  onRendered) : contents;
 		
-		this.loadPopup(e, component, contents, renderedCallback);
+		this.loadPopup(e, component, contents, renderedCallback, position);
 	}
 	
-	loadPopup(e, component, contents, renderedCallback){
+	loadPopup(e, component, contents, renderedCallback, position){
 		var touch = !(e instanceof MouseEvent),
 		contentsEl, popup;
 		
@@ -199,8 +208,15 @@ class Popup extends Module{
 		if(typeof renderedCallback === "function"){
 			popup.renderCallback(renderedCallback);
 		}
+
+		if(e){
+			popup.show(e);
+		}else{
+			popup.show(component.getElement(), position || "center");
+		}
+
 		
-		popup.show(e).hideOnBlur(() => {
+		popup.hideOnBlur(() => {
 			this.dispatchExternal("popupClosed", component.getComponent());
 		});
 
