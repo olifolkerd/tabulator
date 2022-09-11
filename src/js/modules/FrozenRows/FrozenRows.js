@@ -100,11 +100,12 @@ class FrozenRows extends Module{
 			this.topElement.appendChild(row.getElement());
 			row.initialize();
 			row.normalizeHeight();
-			this.table.rowManager.adjustTableSize();
-
+		
 			this.rows.push(row);
 
 			this.refreshData(false, "display");
+
+			this.table.rowManager.adjustTableSize();
 
 			this.styleRows();
 

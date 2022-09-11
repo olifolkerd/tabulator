@@ -1,4 +1,4 @@
-/* Tabulator v5.3.3 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.3.4 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -2823,7 +2823,7 @@
 			
 			if(!this.redrawBlock){
 
-				this.element.style.height="";
+				this.headersElement.style.height="";
 				
 				this.columns.forEach((column) => {
 					column.clearVerticalAlign();
@@ -2837,7 +2837,7 @@
 					}
 				});
 
-				this.element.style.height = minHeight + "px";
+				this.headersElement.style.height = minHeight + "px";
 
 				this.columns.forEach((column) => {
 					column.verticalAlign(this.table.options.columnHeaderVertAlign, minHeight);
@@ -5239,7 +5239,7 @@
 		getRows(type){
 			var rows = [];
 
-			if(!type){
+			if(!type || type === true){
 				rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
 			}else {
 				switch(type){
@@ -5379,10 +5379,10 @@
 		_clearPlaceholder(){
 			if(this.placeholder && this.placeholder.parentNode){
 				this.placeholder.parentNode.removeChild(this.placeholder);
-				
-				// clear empty table placeholder min
-				this.tableElement.style.minWidth = "";
 			}
+
+			// clear empty table placeholder min
+			this.tableElement.style.minWidth = "";
 		}
 		
 		_positionPlaceholder(){
@@ -16836,11 +16836,12 @@
 				this.topElement.appendChild(row.getElement());
 				row.initialize();
 				row.normalizeHeight();
-				this.table.rowManager.adjustTableSize();
-
+			
 				this.rows.push(row);
 
 				this.refreshData(false, "display");
+
+				this.table.rowManager.adjustTableSize();
 
 				this.styleRows();
 
@@ -17832,8 +17833,7 @@
 		
 		// get grouped table data in the same format as getData()
 		userGetGroupedData(){
-			return this.table.options.groupBy ?
-			this.getGroupedData() : this.getData();
+			return this.table.options.groupBy ? this.getGroupedData() : this.getData();
 		}
 		
 		
@@ -23427,7 +23427,7 @@
 									this.containerHeight = table.element.parentNode.clientHeight;
 									this.containerWidth = table.element.parentNode.clientWidth;
 								}
-							
+								
 								this.redrawTable();
 							}
 						}
@@ -23479,17 +23479,16 @@
 		initializeVisibilityObserver(){
 			this.visibilityObserver = new IntersectionObserver((entries) => {
 				this.visible = entries[0].isIntersecting;
-
+				
 				if(!this.initialized){
 					this.initialized = true;
 					this.initialRedraw = !this.visible;
+				}else {
+					if(this.visible){
+						this.redrawTable(this.initialRedraw);
+						this.initialRedraw = false;
+					}
 				}
-
-				if(this.visible){
-					this.redrawTable(this.initialRedraw);
-					this.initialRedraw = false;
-				}
-				
 			});
 			
 			this.visibilityObserver.observe(this.table.element);
