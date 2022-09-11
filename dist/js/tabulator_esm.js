@@ -16418,15 +16418,19 @@ class Popup$1 extends Module{
 		
 		this.registerTableOption("rowContextPopup", false);
 		this.registerTableOption("rowClickPopup", false);
+		this.registerTableOption("rowDblClickPopup", false);
 		this.registerTableOption("groupContextPopup", false);
 		this.registerTableOption("groupClickPopup", false);
+		this.registerTableOption("groupDblClickPopup", false);
 		
 		this.registerColumnOption("headerContextPopup");
 		this.registerColumnOption("headerClickPopup");
+		this.registerColumnOption("headerDblClickPopup");
 		this.registerColumnOption("headerPopup");
 		this.registerColumnOption("headerPopupIcon");
 		this.registerColumnOption("contextPopup");
 		this.registerColumnOption("clickPopup");
+		this.registerColumnOption("dblClickPopup");
 		
 	}
 	
@@ -16446,6 +16450,10 @@ class Popup$1 extends Module{
 		if(this.table.options.rowClickPopup){
 			this.subscribe("row-click", this.loadPopupEvent.bind(this, this.table.options.rowClickPopup));
 		}
+
+		if(this.table.options.rowDblClickPopup){
+			this.subscribe("row-dblclick", this.loadPopupEvent.bind(this, this.table.options.rowDblClickPopup));
+		}
 	}
 	
 	initializeGroupWatchers(){
@@ -16456,6 +16464,10 @@ class Popup$1 extends Module{
 		
 		if(this.table.options.groupClickPopup){
 			this.subscribe("group-click", this.loadPopupEvent.bind(this, this.table.options.groupClickPopup));
+		}
+
+		if(this.table.options.groupDblClickPopup){
+			this.subscribe("group-dblclick", this.loadPopupEvent.bind(this, this.table.options.groupDblClickPopup));
 		}
 	}
 	
@@ -16472,6 +16484,11 @@ class Popup$1 extends Module{
 		if(def.headerClickPopup && !this.columnSubscribers.headerClickPopup){
 			this.columnSubscribers.headerClickPopup = this.loadPopupTableColumnEvent.bind(this, "headerClickPopup");
 			this.subscribe("column-click", this.columnSubscribers.headerClickPopup);
+		
+		
+		}if(def.headerDblClickPopup && !this.columnSubscribers.headerDblClickPopup){
+			this.columnSubscribers.headerDblClickPopup = this.loadPopupTableColumnEvent.bind(this, "headerDblClickPopup");
+			this.subscribe("column-dblclick", this.columnSubscribers.headerDblClickPopup);
 		}
 		
 		if(def.headerPopup){
@@ -16488,6 +16505,11 @@ class Popup$1 extends Module{
 		if(def.clickPopup && !this.columnSubscribers.clickPopup){
 			this.columnSubscribers.clickPopup = this.loadPopupTableCellEvent.bind(this, "clickPopup");
 			this.subscribe("cell-click", this.columnSubscribers.clickPopup);
+		}
+
+		if(def.dblClickPopup && !this.columnSubscribers.dblClickPopup){
+			this.columnSubscribers.dblClickPopup = this.loadPopupTableCellEvent.bind(this, "dblClickPopup");
+			this.subscribe("cell-click", this.columnSubscribers.dblClickPopup);
 		}
 	}
 	
