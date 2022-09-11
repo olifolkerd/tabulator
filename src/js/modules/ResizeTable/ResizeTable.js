@@ -58,7 +58,7 @@ class ResizeTable extends Module{
 								this.containerHeight = table.element.parentNode.clientHeight;
 								this.containerWidth = table.element.parentNode.clientWidth;
 							}
-						
+							
 							this.redrawTable();
 						}
 					}
@@ -110,17 +110,16 @@ class ResizeTable extends Module{
 	initializeVisibilityObserver(){
 		this.visibilityObserver = new IntersectionObserver((entries) => {
 			this.visible = entries[0].isIntersecting;
-
+			
 			if(!this.initialized){
 				this.initialized = true;
 				this.initialRedraw = !this.visible;
+			}else{
+				if(this.visible){
+					this.redrawTable(this.initialRedraw);
+					this.initialRedraw = false;
+				}
 			}
-
-			if(this.visible){
-				this.redrawTable(this.initialRedraw);
-				this.initialRedraw = false;
-			}
-			
 		});
 		
 		this.visibilityObserver.observe(this.table.element);
