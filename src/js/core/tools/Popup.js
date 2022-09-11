@@ -107,6 +107,22 @@ export default class Popup extends CoreFeature{
 				x = offset.left;
 				y = offset.top + element.offsetHeight;
 				break;
+
+			case "left":
+				x = offset.left;
+				y = offset.top - 1;
+				break;
+
+			case "top":
+				x = offset.left;
+				y = offset.top;
+				break;
+
+			case "center":
+				x = offset.left + (element.offsetWidth / 2);
+				y = offset.top + (element.offsetHeight / 2);
+				break;
+            
 		}
         
 		return {x, y, offset};
