@@ -20835,14 +20835,7 @@ class ColumnManager extends CoreFeature {
 	
 	//scroll horizontally to match table body
 	scrollHorizontal(left){
-		var scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
-		
-		// this.tempScrollBlock();
 		this.element.scrollLeft = left;
-		
-		// this.verticalScrollbarPad();
-
-		console.log("scroll", this.element.scrollLeft, this.element.scrollWidth);
 
 		this.scrollLeft = left;
 		
@@ -20851,21 +20844,20 @@ class ColumnManager extends CoreFeature {
 
 	
 	verticalScrollbarPad(){
-		var hozAdjust = 0;
+		var hozAdjust = 0, 
+		colWidth = 0;
 
 		this.columnsByIndex.forEach((col) => {
-			hozAdjust += col.width;
+			colWidth += col.width;
 		});
 
 		//adjust for vertical scrollbar moving table when present
 		if(this.table.rowManager.element.scrollHeight > this.table.rowManager.element.clientHeight){
-			hozAdjust += this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
+			hozAdjust = this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
 		}
 
-		console.log("vert pad", hozAdjust);
-
-		this.headersElement.style.width = hozAdjust + "px";
-		// this.headersElement.style.marginRight = hozAdjust + "px";
+		this.headersElement.style.width = (colWidth + hozAdjust) + "px";
+		this.element.style.paddingRight = hozAdjust + "px";
 	}
 	
 	///////////// Column Setup Functions /////////////
