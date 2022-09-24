@@ -95,6 +95,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		&.tabulator-header-hidden{
 			display:none;
 		}
+
+		.tabulator-header-contents{
+			position: relative;
+			overflow: hidden;
+		}
 		
 		//individual column header element
 		.tabulator-col{

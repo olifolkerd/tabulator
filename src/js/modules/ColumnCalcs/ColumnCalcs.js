@@ -223,7 +223,7 @@ class ColumnCalcs extends Module{
 
 	initializeTopRow(){
 		if(!this.topInitialized){
-			this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
+			this.table.columnManager.getContentsElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
 			this.topInitialized = true;
 		}
 	}

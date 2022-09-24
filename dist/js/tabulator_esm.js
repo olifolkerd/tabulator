@@ -3782,7 +3782,7 @@ class ColumnCalcs extends Module{
 
 	initializeTopRow(){
 		if(!this.topInitialized){
-			this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
+			this.table.columnManager.getContentsElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
 			this.topInitialized = true;
 		}
 	}
@@ -10921,7 +10921,7 @@ class FrozenRows extends Module{
 		this.topElement.classList.add("tabulator-frozen-rows-holder");
 
 		// this.table.columnManager.element.append(this.topElement);
-		this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
+		this.table.columnManager.getContentsElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
 
 		this.subscribe("row-deleting", this.detachRow.bind(this));
 		this.subscribe("rows-visible", this.visibleRows.bind(this));
@@ -14069,7 +14069,7 @@ class MoveColumns extends Module{
 	
 	startMove(e, column){
 		var element = column.getElement(),
-		headerElement = this.table.columnManager.getElement(),
+		headerElement = this.table.columnManager.getContentsElement(),
 		headersElement = this.table.columnManager.getHeadersElement();
 		
 		this.moving = column;
@@ -14088,7 +14088,7 @@ class MoveColumns extends Module{
 		this.hoverElement = element.cloneNode(true);
 		this.hoverElement.classList.add("tabulator-moving");
 		
-		this.table.columnManager.getElement().appendChild(this.hoverElement);
+		headerElement.appendChild(this.hoverElement);
 		
 		this.hoverElement.style.left = "0";
 		this.hoverElement.style.bottom = (headerElement.clientHeight - headersElement.offsetHeight) + "px";
@@ -14170,7 +14170,7 @@ class MoveColumns extends Module{
 	}
 	
 	moveHover(e){
-		var columnHolder = this.table.columnManager.getElement(),
+		var columnHolder = this.table.columnManager.getContentsElement(),
 		scrollLeft = columnHolder.scrollLeft,
 		xPos = ((this.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(columnHolder).left) + scrollLeft,
 		scrollPos;
@@ -20751,6 +20751,7 @@ class ColumnManager extends CoreFeature {
 		
 		this.blockHozScrollEvent = false;
 		this.headersElement = null;
+		this.contentsElement = null;
 		this.element = null ; //containing element
 		this.columns = []; // column definition object
 		this.columnsByIndex = []; //columns by index
@@ -20770,12 +20771,14 @@ class ColumnManager extends CoreFeature {
 		this.initializeRenderer();
 		
 		this.headersElement = this.createHeadersElement();
+		this.contentsElement = this.createHeaderContentsElement();
 		this.element = this.createHeaderElement();
 		
-		this.element.insertBefore(this.headersElement, this.element.firstChild);
+		this.contentsElement.insertBefore(this.headersElement, this.contentsElement.firstChild);
+		this.element.insertBefore(this.contentsElement, this.element.firstChild);
 		
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
-		this.subscribe("column-width", this.verticalScrollbarPad.bind(this));
+		// this.subscribe("column-width", this.verticalScrollbarPad.bind(this));
 	}
 	
 	initializeRenderer(){
@@ -20809,6 +20812,15 @@ class ColumnManager extends CoreFeature {
 		
 		return el;
 	}
+
+	createHeaderContentsElement (){
+		var el = document.createElement("div");
+		
+		el.classList.add("tabulator-header-contents");
+		el.setAttribute("role", "rowgroup");
+		
+		return el;
+	}
 	
 	createHeaderElement (){
 		var el = document.createElement("div");
@@ -20827,6 +20839,12 @@ class ColumnManager extends CoreFeature {
 	getElement(){
 		return this.element;
 	}
+
+	//return containing contents element
+	getContentsElement(){
+		return this.contentsElement;
+	}
+	
 	
 	//return header containing element
 	getHeadersElement(){
@@ -20835,7 +20853,7 @@ class ColumnManager extends CoreFeature {
 	
 	//scroll horizontally to match table body
 	scrollHorizontal(left){
-		this.element.scrollLeft = left;
+		this.contentsElement.scrollLeft = left;
 
 		this.scrollLeft = left;
 		
@@ -20844,20 +20862,20 @@ class ColumnManager extends CoreFeature {
 
 	
 	verticalScrollbarPad(){
-		var hozAdjust = 0, 
-		colWidth = 0;
+		// var hozAdjust = 0, 
+		// colWidth = 0;
 
-		this.columnsByIndex.forEach((col) => {
-			colWidth += col.width;
-		});
+		// this.columnsByIndex.forEach((col) => {
+		// 	colWidth += col.width;
+		// });
 
-		//adjust for vertical scrollbar moving table when present
-		if(this.table.rowManager.element.scrollHeight > this.table.rowManager.element.clientHeight){
-			hozAdjust = this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
-		}
+		// //adjust for vertical scrollbar moving table when present
+		// if(this.table.rowManager.element.scrollHeight > this.table.rowManager.element.clientHeight){
+		// 	hozAdjust = this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
+		// }
 
-		this.headersElement.style.width = (colWidth + hozAdjust) + "px";
-		this.element.style.paddingRight = hozAdjust + "px";
+		// this.headersElement.style.width = (colWidth + hozAdjust) + "px";
+		// this.element.style.paddingRight = hozAdjust + "px";
 	}
 	
 	///////////// Column Setup Functions /////////////

@@ -390,6 +390,11 @@
   display: none;
 }
 
+.tabulator .tabulator-header .tabulator-header-contents {
+  position: relative;
+  overflow: hidden;
+}
+
 .tabulator .tabulator-header .tabulator-col {
   display: inline-flex;
   position: relative;
