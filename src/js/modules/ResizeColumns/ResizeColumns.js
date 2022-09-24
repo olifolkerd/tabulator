@@ -83,7 +83,7 @@ class ResizeColumns extends Module{
 	}
 	
 	reinitializeColumn(column){
-		var frozenOffset = column.modules.frozen ? (column.modules.frozen.marginValue + column.getWidth() + "px") : false;
+		var frozenOffset = column.modules.frozen ? (column.modules.frozen.marginValue - 3 + column.getWidth() + "px") : false;
 		
 		
 		column.cells.forEach((cell) => {
@@ -150,8 +150,8 @@ class ResizeColumns extends Module{
 			});
 			
 			if(column.modules.frozen){
-				handle.style.position = "absolute";
-				handle.style.left = column.modules.frozen.marginValue + column.getWidth() + "px";
+				handle.style.position = "sticky";
+				handle.style.left = column.modules.frozen.marginValue - 3 + column.getWidth() + "px";
 			}
 			
 			config.handleEl = handle;
