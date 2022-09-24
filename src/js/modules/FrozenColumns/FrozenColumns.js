@@ -317,11 +317,16 @@ class FrozenColumns extends Module{
 	}
 
 	adjustForScrollbar(width){
+		var adjust = "";
 
 		if(this.rightColumns.length){
-			this.table.columnManager.getContentsElement().style.width = "calc(100% - " + width + "px)";
+			adjust = "calc(100% - " + width + "px)";
+			this.table.columnManager.getContentsElement().style.width = adjust;
+
+			if(this.table.modules.columnCalcs){
+				this.table.modules.columnCalcs.botElement.style.width = adjust;
+			}
 		}
-		console.log("width", width)
 	}
 	
 	_calcSpace(columns, index){
