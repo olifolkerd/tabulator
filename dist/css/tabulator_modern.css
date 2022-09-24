@@ -252,7 +252,6 @@
   background: white !important;
   border-top: 1px solid #fff;
   border-bottom: 1px solid #fff;
-  overflow: hidden;
 }
 
 .tabulator .tabulator-header .tabulator-calcs-holder .tabulator-row {
@@ -359,7 +358,6 @@
   background: white !important;
   border-bottom: 1px solid #fff;
   border-top: 1px solid #fff;
-  overflow: hidden;
 }
 
 .tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row {

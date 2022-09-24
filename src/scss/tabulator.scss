@@ -358,6 +358,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			
 			background:lighten($headerBackgroundColor, 5%) !important;
 			
+			border-top:1px solid $rowBorderColor;
+			border-bottom:1px solid $headerBorderColor;
+			
+			// overflow: hidden;
+
 			.tabulator-row{
 				background:lighten($headerBackgroundColor, 5%) !important;
 				
@@ -365,11 +370,6 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					display: none;
 				}
 			}
-			
-			border-top:1px solid $rowBorderColor;
-			border-bottom:1px solid $headerBorderColor;
-			
-			overflow: hidden;
 		}
 		
 		.tabulator-frozen-rows-holder{
@@ -486,7 +486,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			border-bottom:1px solid $rowBorderColor;
 			border-top:1px solid $rowBorderColor;
 			
-			overflow: hidden;
+			// overflow: hidden;
 			
 			.tabulator-row{
 				background:lighten($footerBackgroundColor, 5%) !important;
