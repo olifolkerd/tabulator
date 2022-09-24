@@ -81,15 +81,32 @@ class ResizeColumns extends Module{
 			}
 		}
 	}
+
+	frozenColumnOffset(column){
+		var offset = false;
+
+		if(column.modules.frozen){
+			offset = column.modules.frozen.marginValue; 
+
+			if(column.modules.frozen.position === "left"){
+				offset += column.getWidth() - 3;
+			}else{
+				if(offset){
+					offset -= 3;
+				}
+			}
+		}
+
+		return offset !== false ? offset + "px" : false;
+	}
 	
 	reinitializeColumn(column){
-		var frozenOffset = column.modules.frozen ? (column.modules.frozen.marginValue - 3 + column.getWidth() + "px") : false;
-		
+		var frozenOffset = this.frozenColumnOffset(column);
 		
 		column.cells.forEach((cell) => {
 			if(cell.modules.resize && cell.modules.resize.handleEl){
 				if(frozenOffset){
-					cell.modules.resize.handleEl.style.left = frozenOffset;
+					cell.modules.resize.handleEl.style[column.modules.frozen.position] = frozenOffset;
 				}
 				
 				cell.element.after(cell.modules.resize.handleEl);
@@ -98,7 +115,7 @@ class ResizeColumns extends Module{
 		
 		if(column.modules.resize && column.modules.resize.handleEl){
 			if(frozenOffset){
-				column.modules.resize.handleEl.style.left = frozenOffset;
+				column.modules.resize.handleEl.style[column.modules.frozen.position] = frozenOffset;
 			}
 			
 			column.element.after(column.modules.resize.handleEl);
@@ -151,7 +168,7 @@ class ResizeColumns extends Module{
 			
 			if(column.modules.frozen){
 				handle.style.position = "sticky";
-				handle.style.left = column.modules.frozen.marginValue - 3 + column.getWidth() + "px";
+				handle.style[column.modules.frozen.position] = this.frozenColumnOffset(column);
 			}
 			
 			config.handleEl = handle;
