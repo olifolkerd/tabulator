@@ -47,6 +47,7 @@ class FrozenColumns extends Module{
 		this.subscribe("table-redraw", this.layout.bind(this));
 		this.subscribe("layout-refreshing", this.blockLayout.bind(this));
 		this.subscribe("layout-refreshed", this.unblockLayout.bind(this));
+		this.subscribe("scrollbar-vertical", this.adjustForScrollbar.bind(this));
 	}
 	
 	blockLayout(){
@@ -313,6 +314,14 @@ class FrozenColumns extends Module{
 				element.classList.add("tabulator-frozen-" + column.modules.frozen.position);
 			}
 		}
+	}
+
+	adjustForScrollbar(width){
+
+		if(this.rightColumns.length){
+			this.table.columnManager.getContentsElement().style.width = "calc(100% - " + width + "px)";
+		}
+		console.log("width", width)
 	}
 	
 	_calcSpace(columns, index){

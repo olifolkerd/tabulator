@@ -358,11 +358,12 @@
 
 .tabulator .tabulator-footer .tabulator-calcs-holder {
   box-sizing: border-box;
-  width: calc(100% + 20px);
+  width: 100%;
   text-align: left;
   background: #2f2f2f !important;
   border-bottom: 1px solid #aaa;
   border-top: 1px solid #aaa;
+  overflow: hidden;
 }
 
 .tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row {

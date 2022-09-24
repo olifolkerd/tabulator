@@ -483,7 +483,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
-			width:calc(100% + 20px);
+			width:100%;
 			
 			text-align: left;
 			
@@ -491,7 +491,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			border-bottom:1px solid $rowBorderColor;
 			border-top:1px solid $rowBorderColor;
 			
-			// overflow: hidden;
+			overflow: hidden;
 			
 			.tabulator-row{
 				background:lighten($footerBackgroundColor, 5%) !important;

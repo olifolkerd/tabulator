@@ -3796,11 +3796,14 @@ class ColumnCalcs extends Module{
 
 	scrollHorizontal(left){
 		if(this.botInitialized && this.botRow){
-			if(this.table.rtl){
-				this.botRow.getElement().style.marginRight = (left) + "px";
-			}else {
-				this.botRow.getElement().style.marginLeft = (-left) + "px";
-			}	
+			// if(this.table.rtl){
+			// 	this.botRow.getElement().style.marginRight = (left) + "px";
+			// }else{
+			// 	this.botRow.getElement().style.marginLeft = (-left) + "px";
+			// }	
+
+			this.botElement.scrollLeft = left;
+			console.log("left", left, this.botElement);
 		}
 	}
 
@@ -10620,6 +10623,7 @@ class FrozenColumns extends Module{
 		this.subscribe("table-redraw", this.layout.bind(this));
 		this.subscribe("layout-refreshing", this.blockLayout.bind(this));
 		this.subscribe("layout-refreshed", this.unblockLayout.bind(this));
+		this.subscribe("scrollbar-vertical", this.adjustForScrollbar.bind(this));
 	}
 	
 	blockLayout(){
@@ -10880,6 +10884,14 @@ class FrozenColumns extends Module{
 				element.classList.add("tabulator-frozen-" + column.modules.frozen.position);
 			}
 		}
+	}
+
+	adjustForScrollbar(width){
+
+		if(this.rightColumns.length){
+			this.table.columnManager.getContentsElement().style.width = "calc(100% - " + width + "px)";
+		}
+		console.log("width", width);
 	}
 	
 	_calcSpace(columns, index){
@@ -20778,7 +20790,6 @@ class ColumnManager extends CoreFeature {
 		this.element.insertBefore(this.contentsElement, this.element.firstChild);
 		
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
-		// this.subscribe("column-width", this.verticalScrollbarPad.bind(this));
 	}
 	
 	initializeRenderer(){
@@ -20858,24 +20869,6 @@ class ColumnManager extends CoreFeature {
 		this.scrollLeft = left;
 		
 		this.renderer.scrollColumns(left);
-	}
-
-	
-	verticalScrollbarPad(){
-		// var hozAdjust = 0, 
-		// colWidth = 0;
-
-		// this.columnsByIndex.forEach((col) => {
-		// 	colWidth += col.width;
-		// });
-
-		// //adjust for vertical scrollbar moving table when present
-		// if(this.table.rowManager.element.scrollHeight > this.table.rowManager.element.clientHeight){
-		// 	hozAdjust = this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
-		// }
-
-		// this.headersElement.style.width = (colWidth + hozAdjust) + "px";
-		// this.element.style.paddingRight = hozAdjust + "px";
 	}
 	
 	///////////// Column Setup Functions /////////////
@@ -22164,6 +22157,8 @@ class RowManager extends CoreFeature{
 		
 		this.dataPipeline = []; //hold data pipeline tasks
 		this.displayPipeline = []; //hold data display pipeline tasks
+
+		this.scrollbarWidth = 0;
 		
 		this.renderer = null;
 	}
@@ -22953,9 +22948,23 @@ class RowManager extends CoreFeature{
 				this.adjustTableSize();
 			}
 
-			this.table.columnManager.verticalScrollbarPad();
+			this.scrollBarCheck();
 			
 			this.dispatchExternal("renderComplete");
+		}
+	}
+
+	scrollBarCheck(){
+		var scrollbarWidth = 0;
+
+		//adjust for vertical scrollbar moving table when present
+		if(this.element.scrollHeight > this.element.clientHeight){
+			scrollbarWidth = this.element.offsetWidth - this.element.clientWidth;
+		}
+
+		if(scrollbarWidth !== this.scrollbarWidth){
+			this.scrollbarWidth = scrollbarWidth;
+			this.dispatch("scrollbar-vertical", scrollbarWidth);
 		}
 	}
 	
@@ -23021,7 +23030,7 @@ class RowManager extends CoreFeature{
 			this._showPlaceholder();
 		}
 
-		this.table.columnManager.verticalScrollbarPad();
+		this.scrollBarCheck();
 		
 		this.dispatchExternal("renderComplete");
 	}
@@ -23121,7 +23130,7 @@ class RowManager extends CoreFeature{
 				}
 			}
 
-			this.table.columnManager.verticalScrollbarPad();
+			this.scrollBarCheck();
 		}
 		
 		this._positionPlaceholder();
