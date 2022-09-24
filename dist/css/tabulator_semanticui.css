@@ -395,6 +395,10 @@
   overflow: hidden;
 }
 
+.tabulator .tabulator-header .tabulator-header-contents .tabulator-headers {
+  display: inline-block;
+}
+
 .tabulator .tabulator-header .tabulator-col {
   display: inline-flex;
   position: relative;
