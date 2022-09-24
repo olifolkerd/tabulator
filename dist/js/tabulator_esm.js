@@ -20775,6 +20775,7 @@ class ColumnManager extends CoreFeature {
 		this.element.insertBefore(this.headersElement, this.element.firstChild);
 		
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+		this.subscribe("column-width", this.verticalScrollbarPad.bind(this));
 	}
 	
 	initializeRenderer(){
@@ -20834,23 +20835,37 @@ class ColumnManager extends CoreFeature {
 	
 	//scroll horizontally to match table body
 	scrollHorizontal(left){
-		var hozAdjust = 0,
-		scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
+		var scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
 		
 		// this.tempScrollBlock();
 		this.element.scrollLeft = left;
 		
-		//adjust for vertical scrollbar moving table when present
-		if(left > scrollWidth){
-			hozAdjust = left - scrollWidth;
-			this.element.style.marginLeft = (-(hozAdjust)) + "px";
-		}else {
-			this.element.style.marginLeft = 0;
-		}
-		
+		// this.verticalScrollbarPad();
+
+		console.log("scroll", this.element.scrollLeft, this.element.scrollWidth);
+
 		this.scrollLeft = left;
 		
 		this.renderer.scrollColumns(left);
+	}
+
+	
+	verticalScrollbarPad(){
+		var hozAdjust = 0;
+
+		this.columnsByIndex.forEach((col) => {
+			hozAdjust += col.width;
+		});
+
+		//adjust for vertical scrollbar moving table when present
+		if(this.table.rowManager.element.scrollHeight > this.table.rowManager.element.clientHeight){
+			hozAdjust += this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
+		}
+
+		console.log("vert pad", hozAdjust);
+
+		this.headersElement.style.width = hozAdjust + "px";
+		// this.headersElement.style.marginRight = hozAdjust + "px";
 	}
 	
 	///////////// Column Setup Functions /////////////
@@ -22927,6 +22942,8 @@ class RowManager extends CoreFeature{
 			if(!this.fixedHeight){
 				this.adjustTableSize();
 			}
+
+			this.table.columnManager.verticalScrollbarPad();
 			
 			this.dispatchExternal("renderComplete");
 		}
@@ -22993,6 +23010,8 @@ class RowManager extends CoreFeature{
 		if(!this.displayRowsCount){
 			this._showPlaceholder();
 		}
+
+		this.table.columnManager.verticalScrollbarPad();
 		
 		this.dispatchExternal("renderComplete");
 	}
@@ -23091,6 +23110,8 @@ class RowManager extends CoreFeature{
 					this.redraw();
 				}
 			}
+
+			this.table.columnManager.verticalScrollbarPad();
 		}
 		
 		this._positionPlaceholder();

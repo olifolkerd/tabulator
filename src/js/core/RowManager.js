@@ -826,6 +826,8 @@ export default class RowManager extends CoreFeature{
 			if(!this.fixedHeight){
 				this.adjustTableSize();
 			}
+
+			this.table.columnManager.verticalScrollbarPad();
 			
 			this.dispatchExternal("renderComplete");
 		}
@@ -892,6 +894,8 @@ export default class RowManager extends CoreFeature{
 		if(!this.displayRowsCount){
 			this._showPlaceholder();
 		}
+
+		this.table.columnManager.verticalScrollbarPad();
 		
 		this.dispatchExternal("renderComplete");
 	}
@@ -990,6 +994,8 @@ export default class RowManager extends CoreFeature{
 					this.redraw();
 				}
 			}
+
+			this.table.columnManager.verticalScrollbarPad();
 		}
 		
 		this._positionPlaceholder();

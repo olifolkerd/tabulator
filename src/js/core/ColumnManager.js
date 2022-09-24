@@ -40,6 +40,7 @@ export default class ColumnManager extends CoreFeature {
 		this.element.insertBefore(this.headersElement, this.element.firstChild);
 		
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+		this.subscribe("column-width", this.verticalScrollbarPad.bind(this));
 	}
 	
 	initializeRenderer(){
@@ -105,17 +106,32 @@ export default class ColumnManager extends CoreFeature {
 		// this.tempScrollBlock();
 		this.element.scrollLeft = left;
 		
-		//adjust for vertical scrollbar moving table when present
-		if(left > scrollWidth){
-			hozAdjust = left - scrollWidth;
-			this.element.style.marginLeft = (-(hozAdjust)) + "px";
-		}else{
-			this.element.style.marginLeft = 0;
-		}
-		
+		// this.verticalScrollbarPad();
+
+		console.log("scroll", this.element.scrollLeft, this.element.scrollWidth)
+
 		this.scrollLeft = left;
 		
 		this.renderer.scrollColumns(left);
+	}
+
+	
+	verticalScrollbarPad(){
+		var hozAdjust = 0;
+
+		this.columnsByIndex.forEach((col) => {
+			hozAdjust += col.width;
+		});
+
+		//adjust for vertical scrollbar moving table when present
+		if(this.table.rowManager.element.scrollHeight > this.table.rowManager.element.clientHeight){
+			hozAdjust += this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
+		}
+
+		console.log("vert pad", hozAdjust)
+
+		this.headersElement.style.width = hozAdjust + "px";
+		// this.headersElement.style.marginRight = hozAdjust + "px";
 	}
 	
 	///////////// Column Setup Functions /////////////
