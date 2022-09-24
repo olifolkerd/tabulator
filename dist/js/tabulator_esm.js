@@ -22834,6 +22834,10 @@ class RowManager extends CoreFeature{
 				//case to handle scenario when trying to skip past end stage
 				this.regenerateRowPositions();
 		}
+
+		if(this.getDisplayRows().length){
+			this._clearPlaceholder();
+		}
 	}
 	
 	//regenerate row positions
