@@ -43,7 +43,6 @@ export default class ColumnManager extends CoreFeature {
 		this.element.insertBefore(this.contentsElement, this.element.firstChild);
 		
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
-		// this.subscribe("column-width", this.verticalScrollbarPad.bind(this));
 	}
 	
 	initializeRenderer(){
@@ -123,24 +122,6 @@ export default class ColumnManager extends CoreFeature {
 		this.scrollLeft = left;
 		
 		this.renderer.scrollColumns(left);
-	}
-
-	
-	verticalScrollbarPad(){
-		// var hozAdjust = 0, 
-		// colWidth = 0;
-
-		// this.columnsByIndex.forEach((col) => {
-		// 	colWidth += col.width;
-		// });
-
-		// //adjust for vertical scrollbar moving table when present
-		// if(this.table.rowManager.element.scrollHeight > this.table.rowManager.element.clientHeight){
-		// 	hozAdjust = this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
-		// }
-
-		// this.headersElement.style.width = (colWidth + hozAdjust) + "px";
-		// this.element.style.paddingRight = hozAdjust + "px";
 	}
 	
 	///////////// Column Setup Functions /////////////
