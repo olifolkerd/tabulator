@@ -3582,6 +3582,9 @@ class ColumnCalcs extends Module{
 		this.topInitialized = false;
 		this.botInitialized = false;
 		
+		this.blocked = false;
+		this.recalcAfterBlock = false;
+		
 		this.registerTableOption("columnCalcs", true);
 		
 		this.registerColumnOption("topCalc");
@@ -3615,6 +3618,9 @@ class ColumnCalcs extends Module{
 		this.subscribe("rows-visible", this.visibleRows.bind(this));
 		this.subscribe("scrollbar-vertical", this.adjustForScrollbar.bind(this));
 		
+		this.subscribe("redraw-blocked", this.blockRedraw.bind(this));
+		this.subscribe("redraw-restored", this.restoreRedraw.bind(this));
+		
 		this.registerTableFunction("getCalcResults", this.getResults.bind(this));
 		this.registerTableFunction("recalc", this.userRecalc.bind(this));
 	}
@@ -3627,6 +3633,20 @@ class ColumnCalcs extends Module{
 		}
 	}
 	
+	blockRedraw(){
+		this.blocked = true;
+		this.recalcAfterBlock = false;
+	}
+	
+	
+	restoreRedraw(){
+		this.blocked = false;
+		
+		if(this.recalcAfterBlock){
+			this.recalcAfterBlock = false;
+			this.recalcActiveRowsRefresh();
+		}
+	}
 	
 	///////////////////////////////////
 	///////// Table Functions /////////
@@ -3638,6 +3658,14 @@ class ColumnCalcs extends Module{
 	///////////////////////////////////
 	///////// Internal Logic //////////
 	///////////////////////////////////
+	
+	blockCheck(){
+		if(this.blocked){
+			this.recalcAfterBlock = true;
+		}
+		
+		return this.blocked;
+	}
 	
 	visibleRows(viewable, rows){
 		if(this.topRow){
@@ -3804,38 +3832,40 @@ class ColumnCalcs extends Module{
 	recalc(rows){
 		var data, row;
 		
-		if(this.topInitialized || this.botInitialized){
-			data = this.rowsToData(rows);
-			
-			if(this.topInitialized){
-				if(this.topRow){
-					this.topRow.deleteCells();
+		if(!this.blockCheck()){
+			if(this.topInitialized || this.botInitialized){
+				data = this.rowsToData(rows);
+				
+				if(this.topInitialized){
+					if(this.topRow){
+						this.topRow.deleteCells();
+					}
+					
+					row = this.generateRow("top", data);
+					this.topRow = row;
+					while(this.topElement.firstChild) this.topElement.removeChild(this.topElement.firstChild);
+					this.topElement.appendChild(row.getElement());
+					row.initialize(true);
 				}
 				
-				row = this.generateRow("top", data);
-				this.topRow = row;
-				while(this.topElement.firstChild) this.topElement.removeChild(this.topElement.firstChild);
-				this.topElement.appendChild(row.getElement());
-				row.initialize(true);
-			}
-			
-			if(this.botInitialized){
-				if(this.botRow){
-					this.botRow.deleteCells();
+				if(this.botInitialized){
+					if(this.botRow){
+						this.botRow.deleteCells();
+					}
+					
+					row = this.generateRow("bottom", data);
+					this.botRow = row;
+					while(this.botElement.firstChild) this.botElement.removeChild(this.botElement.firstChild);
+					this.botElement.appendChild(row.getElement());
+					row.initialize(true);
 				}
 				
-				row = this.generateRow("bottom", data);
-				this.botRow = row;
-				while(this.botElement.firstChild) this.botElement.removeChild(this.botElement.firstChild);
-				this.botElement.appendChild(row.getElement());
-				row.initialize(true);
-			}
-			
-			this.table.rowManager.adjustTableSize();
-			
-			//set resizable handles
-			if(this.table.modExists("frozenColumns")){
-				this.table.modules.frozenColumns.layout();
+				this.table.rowManager.adjustTableSize();
+				
+				//set resizable handles
+				if(this.table.modExists("frozenColumns")){
+					this.table.modules.frozenColumns.layout();
+				}
 			}
 		}
 	}
@@ -3864,22 +3894,24 @@ class ColumnCalcs extends Module{
 	recalcGroup(group){
 		var data, rowData;
 		
-		if(group){
-			if(group.calcs){
-				if(group.calcs.bottom){
-					data = this.rowsToData(group.rows);
-					rowData = this.generateRowData("bottom", data);
+		if(!this.blockCheck()){
+			if(group){
+				if(group.calcs){
+					if(group.calcs.bottom){
+						data = this.rowsToData(group.rows);
+						rowData = this.generateRowData("bottom", data);
+						
+						group.calcs.bottom.updateData(rowData);
+						group.calcs.bottom.reinitialize();
+					}
 					
-					group.calcs.bottom.updateData(rowData);
-					group.calcs.bottom.reinitialize();
-				}
-				
-				if(group.calcs.top){
-					data = this.rowsToData(group.rows);
-					rowData = this.generateRowData("top", data);
-					
-					group.calcs.top.updateData(rowData);
-					group.calcs.top.reinitialize();
+					if(group.calcs.top){
+						data = this.rowsToData(group.rows);
+						rowData = this.generateRowData("top", data);
+						
+						group.calcs.top.updateData(rowData);
+						group.calcs.top.reinitialize();
+					}
 				}
 			}
 		}
