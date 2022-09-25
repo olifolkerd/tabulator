@@ -158,6 +158,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					overflow: hidden;
 					text-overflow: ellipsis;
 					vertical-align:bottom;
+
+					&.tabulator-col-title-wrap{
+						white-space: normal;
+						text-overflow: initial;
+					}
 					
 					//element to hold title editor
 					.tabulator-title-editor{

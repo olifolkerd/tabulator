@@ -2000,6 +2000,7 @@ var defaultColumnOptions = {
 	"variableHeight": undefined,
 	"headerVertical": undefined,
 	"headerHozAlign": undefined,
+	"headerWordWrap": false,
 	"editableTitle": undefined,
 };
 
@@ -2242,6 +2243,10 @@ class Column extends CoreFeature{
 
 		var titleHolderElement = document.createElement("div");
 		titleHolderElement.classList.add("tabulator-col-title");
+		
+		if(def.headerWordWrap){
+			titleHolderElement.classList.add("tabulator-col-title-wrap");
+		}
 
 		if(def.editableTitle){
 			var titleElement = document.createElement("input");

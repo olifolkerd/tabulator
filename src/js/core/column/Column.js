@@ -243,6 +243,10 @@ class Column extends CoreFeature{
 
 		var titleHolderElement = document.createElement("div");
 		titleHolderElement.classList.add("tabulator-col-title");
+		
+		if(def.headerWordWrap){
+			titleHolderElement.classList.add("tabulator-col-title-wrap");
+		}
 
 		if(def.editableTitle){
 			var titleElement = document.createElement("input");
