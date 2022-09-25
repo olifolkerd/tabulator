@@ -3293,7 +3293,7 @@ class Row extends CoreFeature{
 					
 					if(cell){
 						let value = column.getFieldValue(newRowData);
-						if(cell.getValue() != value){
+						if(cell.getValue() !== value){
 							cell.setValueProcessData(value);
 							
 							if(visible){
