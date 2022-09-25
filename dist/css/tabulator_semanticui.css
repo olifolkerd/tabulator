@@ -1076,6 +1076,7 @@
 
 .tabulator-row .tabulator-cell .tabulator-responsive-collapse-toggle:hover {
   opacity: .7;
+  cursor: pointer;
 }
 
 .tabulator-row .tabulator-cell .tabulator-responsive-collapse-toggle.open .tabulator-responsive-collapse-toggle-close {

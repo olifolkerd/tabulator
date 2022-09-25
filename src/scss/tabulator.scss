@@ -923,6 +923,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			
 			&:hover{
 				opacity:.7;
+				cursor: pointer;
 			}
 			
 			&.open{
