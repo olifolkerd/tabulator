@@ -7438,6 +7438,7 @@ class Edit$1 extends Module{
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
+		this.subscribe("row-layout", this.rowEditableCheck.bind(this));
 		this.subscribe("data-refreshing", this.cancelEdit.bind(this));
 		
 		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
@@ -7732,6 +7733,14 @@ class Edit$1 extends Module{
 			this.cancelEdit();
 		}
 	}
+
+	rowEditableCheck(row){
+		row.getCells().forEach((cell) => {
+			if(cell.column.modules.edit && typeof cell.column.modules.edit.check === "function"){
+				this.updateCellClass(cell);
+			}
+		});
+	}
 	
 	//initialize column editor
 	initializeColumn(column){
@@ -7916,7 +7925,9 @@ class Edit$1 extends Module{
 		if(cell.column.modules.edit){
 			switch(typeof cell.column.modules.edit.check){
 				case "function":
-					check = cell.column.modules.edit.check(cell.getComponent());
+					if(cell.row.initialized){
+						check = cell.column.modules.edit.check(cell.getComponent());
+					}
 					break;
 
 				case "string":
