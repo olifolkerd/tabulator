@@ -14,7 +14,7 @@ class Menu extends Module{
 		this.columnSubscribers = {};
 		
 		this.registerTableOption("menuContainer", undefined); //deprecated
-
+		
 		this.registerTableOption("rowContextMenu", false);
 		this.registerTableOption("rowClickMenu", false);
 		this.registerTableOption("rowDblClickMenu", false);
@@ -40,7 +40,7 @@ class Menu extends Module{
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
-
+	
 	deprecatedOptionsCheck(){
 		if(!this.deprecationCheck("menuContainer", "popupContainer")){
 			this.table.options.popupContainer = this.table.options.menuContainer;
@@ -125,12 +125,12 @@ class Menu extends Module{
 		
 		headerMenuEl = document.createElement("span");
 		headerMenuEl.classList.add("tabulator-header-popup-button");
-
+		
 		if(icon){
 			if(typeof icon === "function"){
 				icon = icon(column.getComponent());
 			}
-
+			
 			if(icon instanceof HTMLElement){
 				headerMenuEl.appendChild(icon);
 			}else{
@@ -273,7 +273,9 @@ class Menu extends Module{
 		});
 		
 		menuEl.addEventListener("click", (e) => {
-			this.rootPopup.hide();
+			if(this.rootPopup){
+				this.rootPopup.hide();
+			}
 		});
 		
 		popup.show(parentEl || e);
@@ -287,9 +289,9 @@ class Menu extends Module{
 					this.currentComponent = null;
 				}
 			});
-
+			
 			this.currentComponent = component;
-
+			
 			this.dispatchExternal("menuOpened", component.getComponent());
 		}
 	}
