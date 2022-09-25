@@ -124,7 +124,6 @@ export default class VirtualDomHorizontal extends Renderer{
 		},
 		colPos = 0;
 		
-		
 		if(update && !this.initialized){
 			return;
 		}
@@ -139,12 +138,13 @@ export default class VirtualDomHorizontal extends Renderer{
 		this.vDomScrollPosRight = this.scrollLeft + this.elementVertical.clientWidth + this.windowBuffer;
 		
 		this.table.columnManager.columnsByIndex.forEach((column) => {
-			var config = {};
+			var config = {},
+			width;
 			
 			if(column.visible){
-				var width = column.getWidth();
-				
-				if(!column.modules.frozen){					
+				if(!column.modules.frozen){			
+					width = column.getWidth();
+
 					config.leftPos = colPos;
 					config.rightPos = colPos + width;
 					
@@ -296,9 +296,15 @@ export default class VirtualDomHorizontal extends Renderer{
 	}
 	
 	reinitializeRows(){
-		var rows = this.getVisibleRows();
-		rows.forEach((row) => {
+		var visibleRows = this.getVisibleRows(),
+		otherRows = this.table.rowManager.getRows().filter(row => !visibleRows.includes(row));
+
+		visibleRows.forEach((row) => {
 			this.reinitializeRow(row, true);
+		});
+
+		otherRows.forEach((row) =>{
+			row.deinitialize();
 		});
 	}
 	
@@ -536,7 +542,7 @@ export default class VirtualDomHorizontal extends Renderer{
 					this.appendCell(row, column);
 				});
 			}
-			
+
 			for(let i = this.leftCol; i <= this.rightCol; i++){
 				this.appendCell(row, this.columns[i]);
 			}
