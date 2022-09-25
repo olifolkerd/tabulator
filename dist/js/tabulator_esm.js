@@ -10312,8 +10312,7 @@ function responsiveCollapse(cell, formatterParams, onRendered){
 	config = cell.getRow()._row.modules.responsiveLayout;
 
 	el.classList.add("tabulator-responsive-collapse-toggle");
-	// el.innerHTML = "<span class='tabulator-responsive-collapse-toggle-open'>+</span><span class='tabulator-responsive-collapse-toggle-close'>-</span>";
-
+	
 	el.innerHTML = `<svg class='tabulator-responsive-collapse-toggle-open' viewbox="0 0 24 24">
   <line x1="7" y1="12" x2="17" y2="12" fill="none" stroke-width="3" stroke-linecap="round" />
   <line y1="7" x1="12" y2="17" x2="12" fill="none" stroke-width="3" stroke-linecap="round" />
@@ -20281,41 +20280,18 @@ class VirtualDomHorizontal extends Renderer{
 		this.vertScrollListen();
 	}
 	
-	compatibilityCheck(){
-		var columns = this.options("columns"),
-		ok = true;
-		
+	compatibilityCheck(){		
 		if(this.options("layout") == "fitDataTable"){
 			console.warn("Horizontal Virtual DOM is not compatible with fitDataTable layout mode");
-			ok = false;
 		}
 		
 		if(this.options("responsiveLayout")){
 			console.warn("Horizontal Virtual DOM is not compatible with responsive columns");
-			ok = false;
 		}
 		
 		if(this.options("rtl")){
 			console.warn("Horizontal Virtual DOM is not currently compatible with RTL text direction");
-			ok = false;
 		}
-		
-		// if(columns){
-		// 	frozen = columns.find((col) => {
-		// 		return col.frozen;
-		// 	});
-		
-		// 	if(frozen){
-		// 		console.warn("Horizontal Virtual DOM is not compatible with frozen columns");
-		// 		ok = false;
-		// 	}
-		// }
-		
-		// if(!ok){
-		// 	options.virtualDomHoz = false;
-		// }
-		
-		return ok;
 	}
 	
 	layoutCheck(){
