@@ -32,42 +32,18 @@ export default class VirtualDomHorizontal extends Renderer{
 		this.vertScrollListen();
 	}
 	
-	compatibilityCheck(){
-		var columns = this.options("columns"),
-		frozen = false,
-		ok = true;
-		
+	compatibilityCheck(){		
 		if(this.options("layout") == "fitDataTable"){
 			console.warn("Horizontal Virtual DOM is not compatible with fitDataTable layout mode");
-			ok = false;
 		}
 		
 		if(this.options("responsiveLayout")){
 			console.warn("Horizontal Virtual DOM is not compatible with responsive columns");
-			ok = false;
 		}
 		
 		if(this.options("rtl")){
 			console.warn("Horizontal Virtual DOM is not currently compatible with RTL text direction");
-			ok = false;
 		}
-		
-		// if(columns){
-		// 	frozen = columns.find((col) => {
-		// 		return col.frozen;
-		// 	});
-		
-		// 	if(frozen){
-		// 		console.warn("Horizontal Virtual DOM is not compatible with frozen columns");
-		// 		ok = false;
-		// 	}
-		// }
-		
-		// if(!ok){
-		// 	options.virtualDomHoz = false;
-		// }
-		
-		return ok;
 	}
 	
 	layoutCheck(){
