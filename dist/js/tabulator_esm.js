@@ -20783,6 +20783,11 @@ class ColumnManager extends CoreFeature {
 		this.element.insertBefore(this.contentsElement, this.element.firstChild);
 		
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+		this.subscribe("scrollbar-vertical", this.padVerticalScrollbar.bind(this));
+	}
+
+	padVerticalScrollbar(width){
+		this.headersElement.style.marginRight = width + "px";
 	}
 	
 	initializeRenderer(){
