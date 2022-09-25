@@ -498,6 +498,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			overflow: hidden;
 			
 			.tabulator-row{
+				display: inline-block;
 				background:lighten($footerBackgroundColor, 5%) !important;
 				
 				.tabulator-col-resize-handle{

@@ -54,6 +54,7 @@ class ColumnCalcs extends Module{
 		this.subscribe("data-refreshed", this.recalcActiveRowsRefresh.bind(this));
 		this.subscribe("table-redraw", this.tableRedraw.bind(this));
 		this.subscribe("rows-visible", this.visibleRows.bind(this));
+		this.subscribe("scrollbar-vertical", this.adjustForScrollbar.bind(this));
 
 		this.registerTableFunction("getCalcResults", this.getResults.bind(this));
 		this.registerTableFunction("recalc", this.userRecalc.bind(this));
@@ -505,6 +506,12 @@ class ColumnCalcs extends Module{
 		};
 
 		return results;
+	}
+
+	adjustForScrollbar(width){
+		if(this.botRow){
+			this.botElement.style.paddingRight = width + "px";
+		}
 	}
 }
 

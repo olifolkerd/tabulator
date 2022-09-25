@@ -717,6 +717,7 @@
 }
 
 .tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row {
+  display: inline-block;
   background: white !important;
 }
 
