@@ -10312,7 +10312,16 @@ function responsiveCollapse(cell, formatterParams, onRendered){
 	config = cell.getRow()._row.modules.responsiveLayout;
 
 	el.classList.add("tabulator-responsive-collapse-toggle");
-	el.innerHTML = "<span class='tabulator-responsive-collapse-toggle-open'>+</span><span class='tabulator-responsive-collapse-toggle-close'>-</span>";
+	// el.innerHTML = "<span class='tabulator-responsive-collapse-toggle-open'>+</span><span class='tabulator-responsive-collapse-toggle-close'>-</span>";
+
+	el.innerHTML = `<svg class='tabulator-responsive-collapse-toggle-open' viewbox="0 0 24 24">
+  <line x1="7" y1="12" x2="17" y2="12" fill="none" stroke-width="3" stroke-linecap="round" />
+  <line y1="7" x1="12" y2="17" x2="12" fill="none" stroke-width="3" stroke-linecap="round" />
+</svg>
+
+<svg class='tabulator-responsive-collapse-toggle-close' viewbox="0 0 24 24">
+  <line x1="7" y1="12" x2="17" y2="12"  fill="none" stroke-width="3" stroke-linecap="round" />
+</svg>`;
 
 	cell.getElement().classList.add("tabulator-row-handle");
 
@@ -11404,38 +11413,41 @@ class Group{
 		}
 	}
 	
-	getHeadersAndRows(noCalc){
+	getHeadersAndRows(){
 		var output = [];
 		
 		output.push(this);
 		
 		this._visSet();
 		
+		
+		if(this.calcs.top){
+			this.calcs.top.detachElement();
+			this.calcs.top.deleteCells();
+		}
+		
+		if(this.calcs.bottom){
+			this.calcs.bottom.detachElement();
+			this.calcs.bottom.deleteCells();
+		}
+		
+		
+		
 		if(this.visible){
 			if(this.groupList.length){
 				this.groupList.forEach(function(group){
-					output = output.concat(group.getHeadersAndRows(noCalc));
+					output = output.concat(group.getHeadersAndRows());
 				});
 				
 			}else {
-				if(!noCalc && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasTopCalcs()){
-					if(this.calcs.top){
-						this.calcs.top.detachElement();
-						this.calcs.top.deleteCells();
-					}
-					
+				if(this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasTopCalcs()){
 					this.calcs.top = this.groupManager.table.modules.columnCalcs.generateTopRow(this.rows);
 					output.push(this.calcs.top);
 				}
 				
 				output = output.concat(this.rows);
 				
-				if(!noCalc && this.groupManager.table.options.columnCalcs != "table" &&  this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()){
-					if(this.calcs.bottom){
-						this.calcs.bottom.detachElement();
-						this.calcs.bottom.deleteCells();
-					}
-					
+				if(this.groupManager.table.options.columnCalcs != "table" &&  this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()){
 					this.calcs.bottom = this.groupManager.table.modules.columnCalcs.generateBottomRow(this.rows);
 					output.push(this.calcs.bottom);
 				}
@@ -11444,25 +11456,14 @@ class Group{
 			if(!this.groupList.length && this.groupManager.table.options.columnCalcs != "table"){
 				
 				if(this.groupManager.table.modExists("columnCalcs")){
-					
-					if(!noCalc && this.groupManager.table.modules.columnCalcs.hasTopCalcs()){
-						if(this.calcs.top){
-							this.calcs.top.detachElement();
-							this.calcs.top.deleteCells();
-						}
-						
+					if(this.groupManager.table.modules.columnCalcs.hasTopCalcs()){
 						if(this.groupManager.table.options.groupClosedShowCalcs){
 							this.calcs.top = this.groupManager.table.modules.columnCalcs.generateTopRow(this.rows);
 							output.push(this.calcs.top);
 						}
 					}
 					
-					if(!noCalc && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()){
-						if(this.calcs.bottom){
-							this.calcs.bottom.detachElement();
-							this.calcs.bottom.deleteCells();
-						}
-						
+					if(this.groupManager.table.modules.columnCalcs.hasBottomCalcs()){						
 						if(this.groupManager.table.options.groupClosedShowCalcs){
 							this.calcs.bottom = this.groupManager.table.modules.columnCalcs.generateBottomRow(this.rows);
 							output.push(this.calcs.bottom);
@@ -11573,7 +11574,7 @@ class Group{
 					prev = rowEl;
 				});
 			}
-
+			
 			this.groupManager.updateGroupRows(true);
 		}else {
 			this.groupManager.updateGroupRows(true);

@@ -740,6 +740,10 @@
   display: none;
 }
 
+.tabulator-row .tabulator-cell .tabulator-responsive-collapse-toggle svg {
+  stroke: #f3f3f3;
+}
+
 .tabulator-row .tabulator-cell .tabulator-responsive-collapse-toggle .tabulator-responsive-collapse-toggle-close {
   display: none;
 }

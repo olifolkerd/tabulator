@@ -934,6 +934,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					display:none;
 				}
 			}
+
+			svg{
+				stroke:$rowBackgroundColor;
+			}
 			
 			.tabulator-responsive-collapse-toggle-close{
 				display:none;
