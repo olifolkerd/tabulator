@@ -17512,6 +17512,8 @@ class ResizeColumns extends Module{
 			self.table.element.classList.remove("tabulator-block-select");
 			
 			if(self.startWidth !== column.getWidth()){
+				self.table.columnManager.verticalAlignHeaders();
+
 				self.dispatch("column-resized", column);
 				self.table.externalEvents.dispatch("columnResized", column.getComponent());
 			}
