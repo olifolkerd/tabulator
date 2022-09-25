@@ -993,6 +993,12 @@
   margin-left: 5px;
 }
 
+.tabulator.tabulator-rtl .tabulator-row .tabulator-col-resize-handle:last-of-type {
+  width: 3px;
+  margin-left: 0;
+  margin-right: -3px;
+}
+
 .tabulator.tabulator-rtl .tabulator-footer .tabulator-calcs-holder {
   text-align: initial;
 }

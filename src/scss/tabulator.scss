@@ -95,11 +95,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		&.tabulator-header-hidden{
 			display:none;
 		}
-
+		
 		.tabulator-header-contents{
 			position: relative;
 			overflow: hidden;
-
+			
 			.tabulator-headers{
 				display: inline-block;
 			}
@@ -371,7 +371,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			border-bottom:1px solid $headerBorderColor;
 			
 			// overflow: hidden;
-
+			
 			.tabulator-row{
 				background:lighten($headerBackgroundColor, 5%) !important;
 				
@@ -746,7 +746,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		&.tabulator-frozen{
 			display: inline-block;
 			position: sticky;
-
+			
 			left:0;
 			
 			background-color: inherit;
@@ -1235,6 +1235,16 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				margin-left:5px;
 			}
 		}
+		
+		.tabulator-col-resize-handle{
+			
+			&:last-of-type{
+				width:3px;
+				margin-left:0;
+				margin-right:-3px;
+			}
+		}
+		
 	}
 	
 	.tabulator-footer {

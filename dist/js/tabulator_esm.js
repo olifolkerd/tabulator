@@ -20787,7 +20787,11 @@ class ColumnManager extends CoreFeature {
 	}
 
 	padVerticalScrollbar(width){
-		this.headersElement.style.marginRight = width + "px";
+		if(this.table.rtl){
+			this.headersElement.style.marginLeft = width + "px";
+		}else {
+			this.headersElement.style.marginRight = width + "px";
+		}
 	}
 	
 	initializeRenderer(){
