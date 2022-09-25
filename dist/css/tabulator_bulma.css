@@ -993,6 +993,14 @@
   margin-left: 5px;
 }
 
+.tabulator.tabulator-rtl .tabulator-row .tabulator-cell.tabulator-frozen.tabulator-frozen-left {
+  border-left: 2px solid #aaa;
+}
+
+.tabulator.tabulator-rtl .tabulator-row .tabulator-cell.tabulator-frozen.tabulator-frozen-right {
+  border-right: 2px solid #aaa;
+}
+
 .tabulator.tabulator-rtl .tabulator-row .tabulator-col-resize-handle:last-of-type {
   width: 3px;
   margin-left: 0;

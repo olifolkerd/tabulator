@@ -258,11 +258,18 @@ class FrozenColumns extends Module{
 	}
 	
 	layoutElement(element, column){
+		var position;
 		
 		if(column.modules.frozen){
 			element.style.position = "sticky";
-			
-			element.style[column.modules.frozen.position] = column.modules.frozen.margin;
+
+			if(this.table.rtl){
+				position = column.modules.frozen.position === "left" ? "right" : "left";
+			}else{
+				position = column.modules.frozen.position;
+			}
+		
+			element.style[position] = column.modules.frozen.margin;
 
 			element.classList.add("tabulator-frozen");
 			

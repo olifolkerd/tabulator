@@ -1234,10 +1234,20 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				margin-right:initial;
 				margin-left:5px;
 			}
+			
+			&.tabulator-frozen{
+				
+				&.tabulator-frozen-left{
+					border-left:2px solid $rowBorderColor;
+				}
+				
+				&.tabulator-frozen-right{
+					border-right:2px solid $rowBorderColor;
+				}
+			}
 		}
 		
 		.tabulator-col-resize-handle{
-			
 			&:last-of-type{
 				width:3px;
 				margin-left:0;
