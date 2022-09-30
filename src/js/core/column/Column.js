@@ -646,11 +646,11 @@ class Column extends CoreFeature{
 
 	setWidth(width, options){
 		this.widthFixed = true;
-		this.setWidthActual(width, options || {});
+		this.setWidthActual(width, options);
 	}
 
-	setWidthActual(width, options){
-
+	setWidthActual(width, rawOptions){
+    const options = rawOptions || {};
     const maxWidth = options.maxWidth || this.maxWidth;
     const minWidth = options.minWidth || this.minWidth;
 		if(isNaN(width)){
