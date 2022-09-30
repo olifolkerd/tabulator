@@ -139,9 +139,11 @@ export default class ColumnComponent {
 
 	setWidth(width){
 		var result;
-
+		
 		if(width === true){
 			result =  this._column.reinitializeWidth(true);
+		} else if(width === 'initial') {
+			result = this._column.reinitializeWidth(false);
 		}else{
 			result =  this._column.setWidth(width);
 		}

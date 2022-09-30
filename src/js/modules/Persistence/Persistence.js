@@ -190,6 +190,23 @@ class Persistence extends Module{
 	}
 
 	setColumnLayout(layout){
+		const autoSize = [];
+		layout.forEach((layoutItem) => {
+			if ([true, 'initial'].includes(layoutItem.width)) {
+				autoSize.push({...layoutItem});
+				delete layoutItem.width;
+			}
+		});
+
+		autoSize.forEach((c) => {
+			const candidate = this.table.columnManager.getColumnByField(c.field);
+			console.log('candidate', candidate);
+			if (candidate) {
+				candidate.getComponent().setWidth(c.width);
+				const update = layout.find((l) => l.field === c.field);
+				if (update) update.width = candidate.getComponent().getWidth();
+			}
+		});
 		this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout));
 		return true;
 	}

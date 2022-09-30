@@ -69,6 +69,10 @@ class Column extends CoreFeature{
 		this._initialize();
 	}
 
+	get widthInitiallyFixed() {
+		return !!this.definition.width;
+	}
+
 	createElement (){
 		var el = document.createElement("div");
 
@@ -644,23 +648,20 @@ class Column extends CoreFeature{
 		}
 	}
 
-	setWidth(width, options){
+	setWidth(width){
 		this.widthFixed = true;
-		this.setWidthActual(width, options);
+		this.setWidthActual(width);
 	}
 
-	setWidthActual(width, rawOptions){
-		const options = rawOptions || {};
-		const maxWidth = options.maxWidth || this.maxWidth;
-		const minWidth = options.minWidth || this.minWidth;
+	setWidthActual(width){
 		if(isNaN(width)){
 			width = Math.floor((this.table.element.clientWidth/100) * parseInt(width));
 		}
 
-		width = Math.max(minWidth, width);
+		width = Math.max(this.minWidth, width);
 
-		if(maxWidth){
-			width = Math.min(maxWidth, width);
+		if(this.maxWidth){
+			width = Math.min(this.maxWidth, width);
 		}
 
 		this.width = width;
@@ -839,6 +840,7 @@ class Column extends CoreFeature{
 		//set width if present
 		if(typeof this.definition.width !== "undefined" && !force){
 			// maxInitialWidth ignored here as width specified
+			console.log("reinitializeWidth", "setWidth");
 			this.setWidth(this.definition.width);
 		}
 
@@ -855,7 +857,7 @@ class Column extends CoreFeature{
 			return;
 		}
 
-		if(!this.widthFixed){
+		if(!this.widthInitiallyFixed){
 			this.element.style.width = "";
 
 			this.cells.forEach((cell) => {
@@ -864,8 +866,12 @@ class Column extends CoreFeature{
 		}
 
 		var maxWidth = this.element.offsetWidth;
+		console.log("fitToData[mid]", this.getField(), { maxWidth, width: this.width, fixed: this.widthInitiallyFixed });
+		if (this.getField() === 'description') {
+			window.col = this;
+		}
 
-		if(!this.width || !this.widthFixed){
+		if(!this.width || !this.widthInitiallyFixed){
 			this.cells.forEach((cell) => {
 				var width = cell.getWidth();
 
@@ -874,11 +880,13 @@ class Column extends CoreFeature{
 				}
 			});
 
+
 			if(maxWidth){
 				var setTo = maxWidth + 1;
 				if (this.maxInitialWidth && !force) {
 					setTo = Math.min(setTo, this.maxInitialWidth);
 				}
+				console.log("fitToData", this.getField(), "setting", { setTo, force, mI: this.maxInitialWidth });
 				this.setWidthActual(setTo);
 			}
 		}
