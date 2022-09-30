@@ -650,9 +650,9 @@ class Column extends CoreFeature{
 	}
 
 	setWidthActual(width, rawOptions){
-    const options = rawOptions || {};
-    const maxWidth = options.maxWidth || this.maxWidth;
-    const minWidth = options.minWidth || this.minWidth;
+		const options = rawOptions || {};
+		const maxWidth = options.maxWidth || this.maxWidth;
+		const minWidth = options.minWidth || this.minWidth;
 		if(isNaN(width)){
 			width = Math.floor((this.table.element.clientWidth/100) * parseInt(width));
 		}
