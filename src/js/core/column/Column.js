@@ -644,20 +644,23 @@ class Column extends CoreFeature{
 		}
 	}
 
-	setWidth(width){
+	setWidth(width, options){
 		this.widthFixed = true;
-		this.setWidthActual(width);
+		this.setWidthActual(width, options || {});
 	}
 
-	setWidthActual(width){
+	setWidthActual(width, options){
+
+    const maxWidth = options.maxWidth || this.maxWidth;
+    const minWidth = options.minWidth || this.minWidth;
 		if(isNaN(width)){
 			width = Math.floor((this.table.element.clientWidth/100) * parseInt(width));
 		}
 
-		width = Math.max(this.minWidth, width);
+		width = Math.max(minWidth, width);
 
-		if(this.maxWidth){
-			width = Math.min(this.maxWidth, width);
+		if(maxWidth){
+			width = Math.min(maxWidth, width);
 		}
 
 		this.width = width;
