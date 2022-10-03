@@ -175,16 +175,16 @@ class ColumnCalcs extends Module{
 			
 			switch(typeof def.topCalc){
 				case "string":
-				if(ColumnCalcs.calculations[def.topCalc]){
-					config.topCalc = ColumnCalcs.calculations[def.topCalc];
-				}else{
-					console.warn("Column Calc Error - No such calculation found, ignoring: ", def.topCalc);
-				}
-				break;
+					if(ColumnCalcs.calculations[def.topCalc]){
+						config.topCalc = ColumnCalcs.calculations[def.topCalc];
+					}else{
+						console.warn("Column Calc Error - No such calculation found, ignoring: ", def.topCalc);
+					}
+					break;
 				
 				case "function":
-				config.topCalc = def.topCalc;
-				break;
+					config.topCalc = def.topCalc;
+					break;
 				
 			}
 			
@@ -202,16 +202,16 @@ class ColumnCalcs extends Module{
 		if(def.bottomCalc){
 			switch(typeof def.bottomCalc){
 				case "string":
-				if(ColumnCalcs.calculations[def.bottomCalc]){
-					config.botCalc = ColumnCalcs.calculations[def.bottomCalc];
-				}else{
-					console.warn("Column Calc Error - No such calculation found, ignoring: ", def.bottomCalc);
-				}
-				break;
+					if(ColumnCalcs.calculations[def.bottomCalc]){
+						config.botCalc = ColumnCalcs.calculations[def.bottomCalc];
+					}else{
+						console.warn("Column Calc Error - No such calculation found, ignoring: ", def.bottomCalc);
+					}
+					break;
 				
 				case "function":
-				config.botCalc = def.bottomCalc;
-				break;
+					config.botCalc = def.bottomCalc;
+					break;
 				
 			}
 			

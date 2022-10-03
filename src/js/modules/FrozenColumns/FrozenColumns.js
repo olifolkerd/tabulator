@@ -233,9 +233,6 @@ class FrozenColumns extends Module{
 	}
 	
 	layoutRow(row){
-		// console.trace("row")
-		var rowEl = row.getElement();
-		
 		if(this.table.options.layout === "fitDataFill" && this.rightColumns.length){
 			this.table.rowManager.getTableElement().style.minWidth = "calc(100% - " + this.rightMargin + ")";
 		}
