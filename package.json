@@ -10,8 +10,8 @@
     "**/*.scss"
   ],
   "scripts": {
-    "lint": "eslint src",
-    "prebuild": "eslint src",
+    "lint": "eslint src --fix",
+    "prebuild": "eslint src --fix",
     "build": "rollup -c build/rollup.js",
     "dev": "rollup -c build/rollup.js -w --environment TARGET:dev",
     "dev:css": "rollup -c build/rollup.js -w --environment TARGET:css",
