@@ -158,7 +158,7 @@ class Edit extends Module{
 				prevRow = this.table.rowManager.prevDisplayRow(cell.row, true);
 				
 				if(prevRow){
-					nextCell = this.findNextEditableCell(prevRow, prevRow.cells.length);
+					nextCell = this.findPrevEditableCell(prevRow, prevRow.cells.length);
 					
 					if(nextCell){
 						nextCell.getComponent().edit();
