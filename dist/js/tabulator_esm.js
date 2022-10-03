@@ -3745,16 +3745,16 @@ class ColumnCalcs extends Module{
 			
 			switch(typeof def.topCalc){
 				case "string":
-				if(ColumnCalcs.calculations[def.topCalc]){
-					config.topCalc = ColumnCalcs.calculations[def.topCalc];
-				}else {
-					console.warn("Column Calc Error - No such calculation found, ignoring: ", def.topCalc);
-				}
-				break;
+					if(ColumnCalcs.calculations[def.topCalc]){
+						config.topCalc = ColumnCalcs.calculations[def.topCalc];
+					}else {
+						console.warn("Column Calc Error - No such calculation found, ignoring: ", def.topCalc);
+					}
+					break;
 				
 				case "function":
-				config.topCalc = def.topCalc;
-				break;
+					config.topCalc = def.topCalc;
+					break;
 				
 			}
 			
@@ -3772,16 +3772,16 @@ class ColumnCalcs extends Module{
 		if(def.bottomCalc){
 			switch(typeof def.bottomCalc){
 				case "string":
-				if(ColumnCalcs.calculations[def.bottomCalc]){
-					config.botCalc = ColumnCalcs.calculations[def.bottomCalc];
-				}else {
-					console.warn("Column Calc Error - No such calculation found, ignoring: ", def.bottomCalc);
-				}
-				break;
+					if(ColumnCalcs.calculations[def.bottomCalc]){
+						config.botCalc = ColumnCalcs.calculations[def.bottomCalc];
+					}else {
+						console.warn("Column Calc Error - No such calculation found, ignoring: ", def.bottomCalc);
+					}
+					break;
 				
 				case "function":
-				config.botCalc = def.bottomCalc;
-				break;
+					config.botCalc = def.bottomCalc;
+					break;
 				
 			}
 			
@@ -10489,21 +10489,21 @@ class Format extends Module{
 		//set column formatter
 		switch(typeof formatter){
 			case "string":
-			if(Format.formatters[formatter]){
-				config.formatter = Format.formatters[formatter];
-			}else {
-				console.warn("Formatter Error - No such formatter found: ", formatter);
-				config.formatter = Format.formatters.plaintext;
-			}
-			break;
+				if(Format.formatters[formatter]){
+					config.formatter = Format.formatters[formatter];
+				}else {
+					console.warn("Formatter Error - No such formatter found: ", formatter);
+					config.formatter = Format.formatters.plaintext;
+				}
+				break;
 			
 			case "function":
-			config.formatter = formatter;
-			break;
+				config.formatter = formatter;
+				break;
 			
 			default:
-			config.formatter = Format.formatters.plaintext;
-			break;
+				config.formatter = Format.formatters.plaintext;
+				break;
 		}
 		
 		return config;
@@ -10622,21 +10622,21 @@ class Format extends Module{
 	getFormatter(formatter){
 		switch(typeof formatter){
 			case "string":
-			if(Format.formatters[formatter]){
-				formatter = Format.formatters[formatter];
-			}else {
-				console.warn("Formatter Error - No such formatter found: ", formatter);
-				formatter = Format.formatters.plaintext;
-			}
-			break;
+				if(Format.formatters[formatter]){
+					formatter = Format.formatters[formatter];
+				}else {
+					console.warn("Formatter Error - No such formatter found: ", formatter);
+					formatter = Format.formatters.plaintext;
+				}
+				break;
 			
 			case "function":
 			//Custom formatter Function, do nothing
-			break;
+				break;
 			
 			default:
-			formatter = Format.formatters.plaintext;
-			break;
+				formatter = Format.formatters.plaintext;
+				break;
 		}
 		
 		return formatter;
@@ -10881,9 +10881,6 @@ class FrozenColumns extends Module{
 	}
 	
 	layoutRow(row){
-		// console.trace("row")
-		var rowEl = row.getElement();
-		
 		if(this.table.options.layout === "fitDataFill" && this.rightColumns.length){
 			this.table.rowManager.getTableElement().style.minWidth = "calc(100% - " + this.rightMargin + ")";
 		}
