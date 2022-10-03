@@ -16,6 +16,7 @@ export default class ColumnManager extends CoreFeature {
 		
 		this.blockHozScrollEvent = false;
 		this.headersElement = null;
+		this.contentsElement = null;
 		this.element = null ; //containing element
 		this.columns = []; // column definition object
 		this.columnsByIndex = []; //columns by index
@@ -35,11 +36,22 @@ export default class ColumnManager extends CoreFeature {
 		this.initializeRenderer();
 		
 		this.headersElement = this.createHeadersElement();
+		this.contentsElement = this.createHeaderContentsElement();
 		this.element = this.createHeaderElement();
 		
-		this.element.insertBefore(this.headersElement, this.element.firstChild);
+		this.contentsElement.insertBefore(this.headersElement, this.contentsElement.firstChild);
+		this.element.insertBefore(this.contentsElement, this.element.firstChild);
 		
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+		this.subscribe("scrollbar-vertical", this.padVerticalScrollbar.bind(this));
+	}
+
+	padVerticalScrollbar(width){
+		if(this.table.rtl){
+			this.headersElement.style.marginLeft = width + "px";
+		}else{
+			this.headersElement.style.marginRight = width + "px";
+		}
 	}
 	
 	initializeRenderer(){
@@ -73,6 +85,15 @@ export default class ColumnManager extends CoreFeature {
 		
 		return el;
 	}
+
+	createHeaderContentsElement (){
+		var el = document.createElement("div");
+		
+		el.classList.add("tabulator-header-contents");
+		el.setAttribute("role", "rowgroup");
+		
+		return el;
+	}
 	
 	createHeaderElement (){
 		var el = document.createElement("div");
@@ -91,6 +112,12 @@ export default class ColumnManager extends CoreFeature {
 	getElement(){
 		return this.element;
 	}
+
+	//return containing contents element
+	getContentsElement(){
+		return this.contentsElement;
+	}
+	
 	
 	//return header containing element
 	getHeadersElement(){
@@ -99,20 +126,8 @@ export default class ColumnManager extends CoreFeature {
 	
 	//scroll horizontally to match table body
 	scrollHorizontal(left){
-		var hozAdjust = 0,
-		scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
-		
-		// this.tempScrollBlock();
-		this.element.scrollLeft = left;
-		
-		//adjust for vertical scrollbar moving table when present
-		if(left > scrollWidth){
-			hozAdjust = left - scrollWidth;
-			this.element.style.marginLeft = (-(hozAdjust)) + "px";
-		}else{
-			this.element.style.marginLeft = 0;
-		}
-		
+		this.contentsElement.scrollLeft = left;
+
 		this.scrollLeft = left;
 		
 		this.renderer.scrollColumns(left);

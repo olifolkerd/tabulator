@@ -24,7 +24,7 @@ class FrozenRows extends Module{
 		this.topElement.classList.add("tabulator-frozen-rows-holder");
 
 		// this.table.columnManager.element.append(this.topElement);
-		this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
+		this.table.columnManager.getContentsElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
 
 		this.subscribe("row-deleting", this.detachRow.bind(this));
 		this.subscribe("rows-visible", this.visibleRows.bind(this));

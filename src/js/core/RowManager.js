@@ -38,6 +38,8 @@ export default class RowManager extends CoreFeature{
 		
 		this.dataPipeline = []; //hold data pipeline tasks
 		this.displayPipeline = []; //hold data display pipeline tasks
+
+		this.scrollbarWidth = 0;
 		
 		this.renderer = null;
 	}
@@ -720,6 +722,10 @@ export default class RowManager extends CoreFeature{
 				//case to handle scenario when trying to skip past end stage
 				this.regenerateRowPositions();
 		}
+
+		if(this.getDisplayRows().length){
+			this._clearPlaceholder();
+		}
 	}
 	
 	//regenerate row positions
@@ -826,8 +832,24 @@ export default class RowManager extends CoreFeature{
 			if(!this.fixedHeight){
 				this.adjustTableSize();
 			}
+
+			this.scrollBarCheck();
 			
 			this.dispatchExternal("renderComplete");
+		}
+	}
+
+	scrollBarCheck(){
+		var scrollbarWidth = 0;
+
+		//adjust for vertical scrollbar moving table when present
+		if(this.element.scrollHeight > this.element.clientHeight){
+			scrollbarWidth = this.element.offsetWidth - this.element.clientWidth;
+		}
+
+		if(scrollbarWidth !== this.scrollbarWidth){
+			this.scrollbarWidth = scrollbarWidth;
+			this.dispatch("scrollbar-vertical", scrollbarWidth);
 		}
 	}
 	
@@ -892,6 +914,8 @@ export default class RowManager extends CoreFeature{
 		if(!this.displayRowsCount){
 			this._showPlaceholder();
 		}
+
+		this.scrollBarCheck();
 		
 		this.dispatchExternal("renderComplete");
 	}
@@ -990,6 +1014,8 @@ export default class RowManager extends CoreFeature{
 					this.redraw();
 				}
 			}
+
+			this.scrollBarCheck();
 		}
 		
 		this._positionPlaceholder();

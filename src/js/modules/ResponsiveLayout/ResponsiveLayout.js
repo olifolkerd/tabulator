@@ -183,22 +183,21 @@ class ResponsiveLayout extends Module{
 
 	//redraw columns to fit space
 	update(){
-		var self = this,
-		working = true;
+		var working = true;
 
 		while(working){
 
-			let width = self.table.modules.layout.getMode() == "fitColumns" ? self.table.columnManager.getFlexBaseWidth() : self.table.columnManager.getWidth();
+			let width = this.table.modules.layout.getMode() == "fitColumns" ? this.table.columnManager.getFlexBaseWidth() : this.table.columnManager.getWidth();
 
-			let diff = (self.table.options.headerVisible ? self.table.columnManager.element.clientWidth : self.table.element.clientWidth) - width;
+			let diff = (this.table.options.headerVisible ? this.table.columnManager.element.clientWidth : this.table.element.clientWidth) - width;
 
 			if(diff < 0){
 				//table is too wide
-				let column = self.columns[self.index];
+				let column = this.columns[this.index];
 
 				if(column){
-					self.hideColumn(column);
-					self.index ++;
+					this.hideColumn(column);
+					this.index ++;
 				}else{
 					working = false;
 				}
@@ -206,13 +205,13 @@ class ResponsiveLayout extends Module{
 			}else{
 
 				//table has spare space
-				let column = self.columns[self.index -1];
+				let column = this.columns[this.index -1];
 
 				if(column){
 					if(diff > 0){
 						if(diff >= column.getWidth()){
-							self.showColumn(column);
-							self.index --;
+							this.showColumn(column);
+							this.index --;
 						}else{
 							working = false;
 						}
@@ -224,18 +223,17 @@ class ResponsiveLayout extends Module{
 				}
 			}
 
-			if(!self.table.rowManager.activeRowsCount){
-				self.table.rowManager.renderEmptyScroll();
+			if(!this.table.rowManager.activeRowsCount){
+				this.table.rowManager.renderEmptyScroll();
 			}
 		}
 	}
 
 	generateCollapsedContent(){
-		var self = this,
-		rows = this.table.rowManager.getDisplayRows();
+		var rows = this.table.rowManager.getDisplayRows();
 
-		rows.forEach(function(row){
-			self.generateCollapsedRowContent(row);
+		rows.forEach((row) => {
+			this.generateCollapsedRowContent(row);
 		});
 	}
 
@@ -255,16 +253,15 @@ class ResponsiveLayout extends Module{
 	}
 
 	generateCollapsedRowData(row){
-		var self = this,
-		data = row.getData(),
+		var data = row.getData(),
 		output = [],
 		mockCellComponent;
 
-		this.hiddenColumns.forEach(function(column){
+		this.hiddenColumns.forEach((column) => {
 			var value = column.getFieldValue(data);
 
 			if(column.definition.title && column.field){
-				if(column.modules.format && self.table.options.responsiveLayoutCollapseUseFormatters){
+				if(column.modules.format && this.table.options.responsiveLayoutCollapseUseFormatters){
 
 					mockCellComponent = {
 						value:false,
@@ -284,6 +281,9 @@ class ResponsiveLayout extends Module{
 						getColumn:function(){
 							return column.getComponent();
 						},
+						getTable:() => {
+							return this.table;
+						},
 					};
 
 					function onRendered(callback){
@@ -293,7 +293,7 @@ class ResponsiveLayout extends Module{
 					output.push({
 						field: column.field,
 						title: column.definition.title,
-						value: column.modules.format.formatter.call(self.table.modules.format, mockCellComponent, column.modules.format.params, onRendered)
+						value: column.modules.format.formatter.call(this.table.modules.format, mockCellComponent, column.modules.format.params, onRendered)
 					});
 				}else{
 					output.push({

@@ -21,6 +21,8 @@ export default class InteractionManager extends CoreFeature {
 			"mouseover",
 			"mouseout",
 			"mousemove",
+			"mouseup",
+			"mousedown",
 			"touchstart",
 			"touchend",
 		];
