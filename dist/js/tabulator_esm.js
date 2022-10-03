@@ -11141,7 +11141,7 @@ class GroupComponent {
 	}
 
 	isVisible(){
-		return this._group._visible;
+		return this._group.visible;
 	}
 
 	show(){
