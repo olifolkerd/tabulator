@@ -7580,7 +7580,7 @@ class Edit$1 extends Module{
 				prevRow = this.table.rowManager.prevDisplayRow(cell.row, true);
 				
 				if(prevRow){
-					nextCell = this.findNextEditableCell(prevRow, prevRow.cells.length);
+					nextCell = this.findPrevEditableCell(prevRow, prevRow.cells.length);
 					
 					if(nextCell){
 						nextCell.getComponent().edit();
@@ -16167,6 +16167,7 @@ class Persistence extends Module{
 			this.subscribe("group-changed", this.eventSave.bind(this, "group"));
 			this.subscribe("page-changed", this.eventSave.bind(this, "page"));
 			this.subscribe("column-resized", this.eventSave.bind(this, "columns"));
+			this.subscribe("column-width", this.eventSave.bind(this, "columns"));
 			this.subscribe("layout-refreshed", this.eventSave.bind(this, "columns"));
 		}
 
