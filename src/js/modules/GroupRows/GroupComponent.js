@@ -40,7 +40,8 @@ class GroupComponent {
 	}
 
 	isVisible(){
-		return this._group._visible;
+		this._group._visSet();
+		return this._group.visible;
 	}
 
 	show(){
