@@ -13,5 +13,6 @@ export default {
 	"variableHeight": undefined,
 	"headerVertical": undefined,
 	"headerHozAlign": undefined,
+	"headerWordWrap": false,
 	"editableTitle": undefined,
 };

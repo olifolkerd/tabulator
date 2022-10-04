@@ -142,6 +142,7 @@ class Persistence extends Module{
 			this.subscribe("group-changed", this.eventSave.bind(this, "group"));
 			this.subscribe("page-changed", this.eventSave.bind(this, "page"));
 			this.subscribe("column-resized", this.eventSave.bind(this, "columns"));
+			this.subscribe("column-width", this.eventSave.bind(this, "columns"));
 			this.subscribe("layout-refreshed", this.eventSave.bind(this, "columns"));
 		}
 

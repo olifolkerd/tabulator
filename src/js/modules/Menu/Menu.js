@@ -14,18 +14,22 @@ class Menu extends Module{
 		this.columnSubscribers = {};
 		
 		this.registerTableOption("menuContainer", undefined); //deprecated
-
+		
 		this.registerTableOption("rowContextMenu", false);
 		this.registerTableOption("rowClickMenu", false);
+		this.registerTableOption("rowDblClickMenu", false);
 		this.registerTableOption("groupContextMenu", false);
 		this.registerTableOption("groupClickMenu", false);
+		this.registerTableOption("groupDblClickMenu", false);
 		
 		this.registerColumnOption("headerContextMenu");
 		this.registerColumnOption("headerClickMenu");
+		this.registerColumnOption("headerDblClickMenu");
 		this.registerColumnOption("headerMenu");
 		this.registerColumnOption("headerMenuIcon");
 		this.registerColumnOption("contextMenu");
 		this.registerColumnOption("clickMenu");
+		this.registerColumnOption("dblClickMenu");
 		
 	}
 	
@@ -36,7 +40,7 @@ class Menu extends Module{
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
-
+	
 	deprecatedOptionsCheck(){
 		if(!this.deprecationCheck("menuContainer", "popupContainer")){
 			this.table.options.popupContainer = this.table.options.menuContainer;
@@ -52,6 +56,10 @@ class Menu extends Module{
 		if(this.table.options.rowClickMenu){
 			this.subscribe("row-click", this.loadMenuEvent.bind(this, this.table.options.rowClickMenu));
 		}
+		
+		if(this.table.options.rowDblClickMenu){
+			this.subscribe("row-dblclick", this.loadMenuEvent.bind(this, this.table.options.rowDblClickMenu));
+		}
 	}
 	
 	initializeGroupWatchers(){
@@ -62,6 +70,10 @@ class Menu extends Module{
 		
 		if(this.table.options.groupClickMenu){
 			this.subscribe("group-click", this.loadMenuEvent.bind(this, this.table.options.groupClickMenu));
+		}
+		
+		if(this.table.options.groupDblClickMenu){
+			this.subscribe("group-dblclick", this.loadMenuEvent.bind(this, this.table.options.groupDblClickMenu));
 		}
 	}
 	
@@ -80,6 +92,11 @@ class Menu extends Module{
 			this.subscribe("column-click", this.columnSubscribers.headerClickMenu);
 		}
 		
+		if(def.headerDblClickMenu && !this.columnSubscribers.headerDblClickMenu){
+			this.columnSubscribers.headerDblClickMenu = this.loadMenuTableColumnEvent.bind(this, "headerDblClickMenu");
+			this.subscribe("column-dblclick", this.columnSubscribers.headerDblClickMenu);
+		}
+		
 		if(def.headerMenu){
 			this.initializeColumnHeaderMenu(column);
 		}
@@ -95,6 +112,11 @@ class Menu extends Module{
 			this.columnSubscribers.clickMenu = this.loadMenuTableCellEvent.bind(this, "clickMenu");
 			this.subscribe("cell-click", this.columnSubscribers.clickMenu);
 		}
+		
+		if(def.dblClickMenu && !this.columnSubscribers.dblClickMenu){
+			this.columnSubscribers.dblClickMenu = this.loadMenuTableCellEvent.bind(this, "dblClickMenu");
+			this.subscribe("cell-dblclick", this.columnSubscribers.dblClickMenu);
+		}
 	}
 	
 	initializeColumnHeaderMenu(column){
@@ -103,12 +125,12 @@ class Menu extends Module{
 		
 		headerMenuEl = document.createElement("span");
 		headerMenuEl.classList.add("tabulator-header-popup-button");
-
+		
 		if(icon){
 			if(typeof icon === "function"){
 				icon = icon(column.getComponent());
 			}
-
+			
 			if(icon instanceof HTMLElement){
 				headerMenuEl.appendChild(icon);
 			}else{
@@ -251,7 +273,9 @@ class Menu extends Module{
 		});
 		
 		menuEl.addEventListener("click", (e) => {
-			this.rootPopup.hide();
+			if(this.rootPopup){
+				this.rootPopup.hide();
+			}
 		});
 		
 		popup.show(parentEl || e);
@@ -265,9 +289,9 @@ class Menu extends Module{
 					this.currentComponent = null;
 				}
 			});
-
+			
 			this.currentComponent = component;
-
+			
 			this.dispatchExternal("menuOpened", component.getComponent());
 		}
 	}

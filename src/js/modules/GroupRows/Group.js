@@ -248,38 +248,41 @@ class Group{
 		}
 	}
 	
-	getHeadersAndRows(noCalc){
+	getHeadersAndRows(){
 		var output = [];
 		
 		output.push(this);
 		
 		this._visSet();
 		
+		
+		if(this.calcs.top){
+			this.calcs.top.detachElement();
+			this.calcs.top.deleteCells();
+		}
+		
+		if(this.calcs.bottom){
+			this.calcs.bottom.detachElement();
+			this.calcs.bottom.deleteCells();
+		}
+		
+		
+		
 		if(this.visible){
 			if(this.groupList.length){
 				this.groupList.forEach(function(group){
-					output = output.concat(group.getHeadersAndRows(noCalc));
+					output = output.concat(group.getHeadersAndRows());
 				});
 				
 			}else{
-				if(!noCalc && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasTopCalcs()){
-					if(this.calcs.top){
-						this.calcs.top.detachElement();
-						this.calcs.top.deleteCells();
-					}
-					
+				if(this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasTopCalcs()){
 					this.calcs.top = this.groupManager.table.modules.columnCalcs.generateTopRow(this.rows);
 					output.push(this.calcs.top);
 				}
 				
 				output = output.concat(this.rows);
 				
-				if(!noCalc && this.groupManager.table.options.columnCalcs != "table" &&  this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()){
-					if(this.calcs.bottom){
-						this.calcs.bottom.detachElement();
-						this.calcs.bottom.deleteCells();
-					}
-					
+				if(this.groupManager.table.options.columnCalcs != "table" &&  this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()){
 					this.calcs.bottom = this.groupManager.table.modules.columnCalcs.generateBottomRow(this.rows);
 					output.push(this.calcs.bottom);
 				}
@@ -288,25 +291,14 @@ class Group{
 			if(!this.groupList.length && this.groupManager.table.options.columnCalcs != "table"){
 				
 				if(this.groupManager.table.modExists("columnCalcs")){
-					
-					if(!noCalc && this.groupManager.table.modules.columnCalcs.hasTopCalcs()){
-						if(this.calcs.top){
-							this.calcs.top.detachElement();
-							this.calcs.top.deleteCells();
-						}
-						
+					if(this.groupManager.table.modules.columnCalcs.hasTopCalcs()){
 						if(this.groupManager.table.options.groupClosedShowCalcs){
 							this.calcs.top = this.groupManager.table.modules.columnCalcs.generateTopRow(this.rows);
 							output.push(this.calcs.top);
 						}
 					}
 					
-					if(!noCalc && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()){
-						if(this.calcs.bottom){
-							this.calcs.bottom.detachElement();
-							this.calcs.bottom.deleteCells();
-						}
-						
+					if(this.groupManager.table.modules.columnCalcs.hasBottomCalcs()){						
 						if(this.groupManager.table.options.groupClosedShowCalcs){
 							this.calcs.bottom = this.groupManager.table.modules.columnCalcs.generateBottomRow(this.rows);
 							output.push(this.calcs.bottom);
@@ -417,7 +409,7 @@ class Group{
 					prev = rowEl;
 				});
 			}
-
+			
 			this.groupManager.updateGroupRows(true);
 		}else{
 			this.groupManager.updateGroupRows(true);
