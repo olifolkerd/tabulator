@@ -30,6 +30,7 @@ export default class Edit{
 		this.listIteration = 0;
 		
 		this.lastAction="";
+		this.filterTerm="";
 		
 		this.blurable = true;
 		
