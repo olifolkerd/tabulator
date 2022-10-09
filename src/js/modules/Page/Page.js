@@ -486,6 +486,7 @@ class Page extends Module{
 		if(!this.initialLoad){
 			if(this.mode == "local" || force){
 				this.page = 1;
+				this.trackChanges();
 			}
 		}
 	}
