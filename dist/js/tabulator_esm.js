@@ -20784,8 +20784,6 @@ class VirtualDomHorizontal extends Renderer{
 	}
 	
 	initializeRow(row){
-
-		console.log("ini", row);
 		if(row.type !== "group"){
 			row.modules.vdomHoz = {
 				leftCol:this.leftCol,
@@ -20820,7 +20818,6 @@ class VirtualDomHorizontal extends Renderer{
 	}
 	
 	reinitializeRow(row, force){
-		console.log("reinti", force, !row.modules.vdomHoz, row.modules.vdomHoz.leftCol, this.leftCol, row.modules.vdomHoz.rightCol, this.rightCol);
 		if(row.type !== "group"){
 			if(force || !row.modules.vdomHoz || row.modules.vdomHoz.leftCol !== this.leftCol || row.modules.vdomHoz.rightCol !== this.rightCol){
 				
