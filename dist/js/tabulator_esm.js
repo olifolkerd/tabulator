@@ -9307,9 +9307,9 @@ class Filter extends Module{
 				});
 
 				editorElement.addEventListener("focus", (e) => {
-					var left = this.table.columnManager.element.scrollLeft;
+					var left = this.table.columnManager.contentsElement.scrollLeft;
 
-					var headerPos = this.table.rowManager.element.scrollLeft + parseInt(this.table.columnManager.element.style.marginLeft);
+					var headerPos = this.table.rowManager.element.scrollLeft;
 
 					if(left !== headerPos){
 						this.table.rowManager.scrollHorizontal(left);
