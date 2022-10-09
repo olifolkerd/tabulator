@@ -12144,6 +12144,9 @@ class GroupRows extends Module{
 			this.groupList.forEach(function(group){
 				group.wipe();
 			});
+			
+			this.groupList = [];
+			this.groups = {};
 		}
 	}
 	
@@ -12230,7 +12233,12 @@ class GroupRows extends Module{
 				this.assignRowToGroup(row, oldGroups);
 			});
 		}
+		
+		Object.values(oldGroups).forEach((group) => {
+			group.wipe();
+		});	
 	}
+	
 	
 	createGroup(groupID, level, oldGroups){
 		var groupKey = level + "_" + groupID,
