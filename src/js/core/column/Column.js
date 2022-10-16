@@ -721,6 +721,16 @@ class Column extends CoreFeature{
 		return width;
 	}
 
+	getLeftOffset(){
+		var offset = this.element.offsetLeft;
+
+		if(this.parent.isGroup){
+			offset += this.parent.getLeftOffset();
+		}
+
+		return offset;
+	}
+
 	getHeight(){
 		return Math.ceil(this.element.getBoundingClientRect().height);
 	}

@@ -2727,6 +2727,16 @@ class Column extends CoreFeature{
 		return width;
 	}
 
+	getLeftOffset(){
+		var offset = this.element.offsetLeft;
+
+		if(this.parent.isGroup){
+			offset += this.parent.getLeftOffset();
+		}
+
+		return offset;
+	}
+
 	getHeight(){
 		return Math.ceil(this.element.getBoundingClientRect().height);
 	}
@@ -21367,9 +21377,10 @@ class ColumnManager extends CoreFeature {
 	
 	scrollToColumn(column, position, ifVisible){
 		var left = 0,
-		offset = 0,
+		offset = column.getLeftOffset(),
 		adjust = 0,
 		colEl = column.getElement();
+		
 		
 		return new Promise((resolve, reject) => {
 			
@@ -21397,16 +21408,13 @@ class ColumnManager extends CoreFeature {
 				
 				//check column visibility
 				if(!ifVisible){
-					
-					offset = colEl.offsetLeft;
-					
 					if(offset > 0 && offset + colEl.offsetWidth < this.element.clientWidth){
 						return false;
 					}
 				}
 				
 				//calculate scroll position
-				left = colEl.offsetLeft + adjust;
+				left = offset + adjust;
 				
 				left = Math.max(Math.min(left, this.table.rowManager.element.scrollWidth - this.table.rowManager.element.clientWidth),0);
 				
