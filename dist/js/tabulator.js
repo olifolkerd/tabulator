@@ -1,4 +1,4 @@
-/* Tabulator v5.4.1 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.4.2 (c) Oliver Folkerd 2022 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -1468,6 +1468,16 @@
 			}
 
 			return width;
+		}
+
+		getLeftOffset(){
+			var offset = this.element.offsetLeft;
+
+			if(this.parent.isGroup){
+				offset += this.parent.getLeftOffset();
+			}
+
+			return offset;
 		}
 
 		getHeight(){
@@ -3099,9 +3109,10 @@
 		
 		scrollToColumn(column, position, ifVisible){
 			var left = 0,
-			offset = 0,
+			offset = column.getLeftOffset(),
 			adjust = 0,
 			colEl = column.getElement();
+			
 			
 			return new Promise((resolve, reject) => {
 				
@@ -3129,16 +3140,13 @@
 					
 					//check column visibility
 					if(!ifVisible){
-						
-						offset = colEl.offsetLeft;
-						
 						if(offset > 0 && offset + colEl.offsetWidth < this.element.clientWidth){
 							return false;
 						}
 					}
 					
 					//calculate scroll position
-					left = colEl.offsetLeft + adjust;
+					left = offset + adjust;
 					
 					left = Math.max(Math.min(left, this.table.rowManager.element.scrollWidth - this.table.rowManager.element.clientWidth),0);
 					
@@ -9730,6 +9738,16 @@
 			
 			if(changed){
 				this.table.rowManager.adjustTableSize();
+			}
+		}
+		
+		reinitializeCalcs(){
+			if(this.topCalcs.length){
+				this.initializeTopRow();
+			}
+
+			if(this.botCalcs.length){
+				this.initializeBottomRow();
 			}
 		}
 		
@@ -17119,17 +17137,19 @@
 			this.createValueGroups();
 		}
 		
-		wipe(){
-			if(this.groupList.length){
-				this.groupList.forEach(function(group){
-					group.wipe();
-				});
-			}else {
-				this.rows.forEach((row) => {
-					if(row.modules){
-						delete row.modules.group;
-					}
-				});
+		wipe(elementsOnly){
+			if(!elementsOnly){
+				if(this.groupList.length){
+					this.groupList.forEach(function(group){
+						group.wipe();
+					});
+				}else {
+					this.rows.forEach((row) => {
+						if(row.modules){
+							delete row.modules.group;
+						}
+					});
+				}
 			}
 			
 			this.element = false;
@@ -17762,7 +17782,7 @@
 				
 				this.groupIDLookups = [];
 				
-				if(Array.isArray(groupBy)){
+				if(groupBy){
 					if(this.table.modExists("columnCalcs") && this.table.options.columnCalcs != "table" && this.table.options.columnCalcs != "both"){
 						this.table.modules.columnCalcs.removeCalcs();
 					}
@@ -17902,6 +17922,10 @@
 			}
 			
 			this.configureGroupSetup();
+
+			if(!groups && this.table.modExists("columnCalcs") && this.table.options.columnCalcs === true){
+				this.table.modules.columnCalcs.reinitializeCalcs();
+			}
 			
 			this.refreshData();
 			
@@ -18148,7 +18172,7 @@
 			}
 			
 			Object.values(oldGroups).forEach((group) => {
-				group.wipe();
+				group.wipe(true);
 			});	
 		}
 		
@@ -19919,7 +19943,7 @@
 				
 				config.mousemove = function(e){
 					if(column.parent === self.moving.parent){
-						if((((self.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(colEl).left) + self.table.columnManager.element.scrollLeft) > (column.getWidth() / 2)){
+						if((((self.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(colEl).left) + self.table.columnManager.contentsElement.scrollLeft) > (column.getWidth() / 2)){
 							if(self.toCol !== column || !self.toColAfter){
 								colEl.parentNode.insertBefore(self.placeholderElement, colEl.nextSibling);
 								self.moveColumn(column, true);
