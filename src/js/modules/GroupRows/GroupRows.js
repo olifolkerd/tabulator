@@ -479,7 +479,7 @@ class GroupRows extends Module{
 		}
 		
 		Object.values(oldGroups).forEach((group) => {
-			group.wipe();
+			group.wipe(true);
 		});	
 	}
 	

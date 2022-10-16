@@ -38,17 +38,19 @@ class Group{
 		this.createValueGroups();
 	}
 	
-	wipe(){
-		if(this.groupList.length){
-			this.groupList.forEach(function(group){
-				group.wipe();
-			});
-		}else{
-			this.rows.forEach((row) => {
-				if(row.modules){
-					delete row.modules.group;
-				}
-			});
+	wipe(elementsOnly){
+		if(!elementsOnly){
+			if(this.groupList.length){
+				this.groupList.forEach(function(group){
+					group.wipe();
+				});
+			}else{
+				this.rows.forEach((row) => {
+					if(row.modules){
+						delete row.modules.group;
+					}
+				});
+			}
 		}
 		
 		this.element = false;
