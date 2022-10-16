@@ -11861,7 +11861,7 @@ class GroupRows extends Module{
 			
 			this.groupIDLookups = [];
 			
-			if(Array.isArray(groupBy)){
+			if(groupBy){
 				if(this.table.modExists("columnCalcs") && this.table.options.columnCalcs != "table" && this.table.options.columnCalcs != "both"){
 					this.table.modules.columnCalcs.removeCalcs();
 				}
