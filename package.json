@@ -53,7 +53,7 @@
     "eslint-plugin-only-warn": "^1.0.3",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.2",
-    "node-sass": "^5.0.0",
+    "node-sass": "^7.0.3",
     "postcss": "^8.2.4",
     "postcss-prettify": "^0.3.4",
     "rollup": "^2.36.1",
