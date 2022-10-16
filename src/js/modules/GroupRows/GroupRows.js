@@ -233,6 +233,10 @@ class GroupRows extends Module{
 		}
 		
 		this.configureGroupSetup();
+
+		if(!groups && this.table.modExists("columnCalcs") && this.table.options.columnCalcs === true){
+			this.table.modules.columnCalcs.reinitializeCalcs();
+		}
 		
 		this.refreshData();
 		

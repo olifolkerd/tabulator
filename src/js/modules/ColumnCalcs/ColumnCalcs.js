@@ -250,6 +250,16 @@ class ColumnCalcs extends Module{
 		}
 	}
 	
+	reinitializeCalcs(){
+		if(this.topCalcs.length){
+			this.initializeTopRow();
+		}
+
+		if(this.botCalcs.length){
+			this.initializeBottomRow();
+		}
+	}
+	
 	initializeTopRow(){
 		if(!this.topInitialized){
 			this.table.columnManager.getContentsElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
