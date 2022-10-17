@@ -807,17 +807,6 @@ class Page extends Module{
 		if(data.data){
 			this.max = parseInt(data.last_page) || 1;
 
-			if(this.page > this.max){
-				const revertToPage = this.options('paginationLastPageErrorResetTo') === 'first' ? 1 : this.max;
-				console.warn("Remote Pagination Error - Server returned last page value lower than the current page, resetting the current page to " + revertToPage);
-
-				this.page = revertToPage;
-
-				this.trackChanges();
-
-				return this.trigger();
-			}
-
 			this.remoteRowCountEstimate = typeof data.last_row !== "undefined" ? data.last_row : (data.last_page * this.size - (this.page == data.last_page ? (this.size - data.data.length) : 0));
 			
 			if(this.progressiveLoad){
@@ -856,6 +845,18 @@ class Page extends Module{
 				
 				return false;
 			}else{
+
+				if(this.page > this.max){
+					const revertToPage = this.options('paginationLastPageErrorResetTo') === 'first' ? 1 : this.max;
+					console.warn("Remote Pagination Error - Server returned last page value lower than the current page, resetting the current page to " + revertToPage);
+
+					this.page = revertToPage;
+
+					this.trackChanges();
+
+					return this.trigger();
+				}
+
 				// left = this.table.rowManager.scrollLeft;
 				this.dispatchExternal("pageLoaded",  this.getPage());
 				// this.table.rowManager.scrollHorizontal(left);
