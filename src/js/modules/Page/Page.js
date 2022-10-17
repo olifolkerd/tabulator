@@ -38,6 +38,7 @@ class Page extends Module{
 		// this.registerTableOption("paginationDataSent", {}); //pagination data sent to the server
 		// this.registerTableOption("paginationDataReceived", {}); //pagination data received from the server
 		this.registerTableOption("paginationAddRow", "page"); //add rows on table or page
+		this.registerTableOption("paginationLastPageErrorResetTo", "last"); //reset the current page when the last page < paginationInitialPage, values; 'first'|'last'
 		
 		this.registerTableOption("progressiveLoad", false); //progressive loading
 		this.registerTableOption("progressiveLoadDelay", 0); //delay between requests
@@ -805,6 +806,17 @@ class Page extends Module{
 		
 		if(data.data){
 			this.max = parseInt(data.last_page) || 1;
+
+			if( this.page > this.max ){
+				const revertToPage = this.options('paginationLastPageErrorResetTo') === 'first' ? 1 : this.max;
+				console.warn("Remote Pagination Error - Server returned last page value lower than the current page, resetting the current page to " + revertToPage );
+
+				this.page = revertToPage;
+
+				this.trackChanges();
+
+				return this.trigger();
+			}
 
 			this.remoteRowCountEstimate = typeof data.last_row !== "undefined" ? data.last_row : (data.last_page * this.size - (this.page == data.last_page ? (this.size - data.data.length) : 0));
 			
