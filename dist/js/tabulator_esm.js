@@ -6228,6 +6228,7 @@ class Edit{
 			params.filterRemote = false;
 			console.warn("list editor config error - filterRemote option should only be used when values list is populated from a remote source");
 		}
+
 		return params;
 	}
 	//////////////////////////////////////
@@ -6429,7 +6430,7 @@ class Edit{
 	}
 	
 	_keyAutoCompLetter(e){
-		this._filter();
+		//this._filter();
 		this.lastAction = "typing";
 		this.typing = true;
 	}
