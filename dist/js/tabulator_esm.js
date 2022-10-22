@@ -6430,7 +6430,9 @@ class Edit{
 	}
 	
 	_keyAutoCompLetter(e){
+		console.log(this.params.searchWhenTyping);
 		if (typeof this.params.searchWhenTyping === 'undefined' || this.params.searchWhenTyping) {
+			console.log('ffs');
 			this._filter();
 		}
 		this.lastAction = "typing";
