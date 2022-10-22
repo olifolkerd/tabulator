@@ -6228,7 +6228,6 @@ class Edit{
 			params.filterRemote = false;
 			console.warn("list editor config error - filterRemote option should only be used when values list is populated from a remote source");
 		}
-
 		return params;
 	}
 	//////////////////////////////////////
@@ -6430,11 +6429,7 @@ class Edit{
 	}
 	
 	_keyAutoCompLetter(e){
-		console.log(this.params.searchWhenTyping);
-		if (typeof this.params.searchWhenTyping === 'undefined' || this.params.searchWhenTyping) {
-			console.log('ffs');
-			this._filter();
-		}
+		this._filter();
 		this.lastAction = "typing";
 		this.typing = true;
 	}
@@ -9340,6 +9335,10 @@ class Filter extends Module{
 						this.table.rowManager.scrollHorizontal(left);
 						this.table.columnManager.scrollHorizontal(left);
 					}
+
+					if (typeof params.resetValueOnFocus === 'undefined' || params.resetValueOnFocus) {
+						editorElement.value = '';
+					}
 				});
 
 				//live update filters as user types
@@ -9350,9 +9349,11 @@ class Filter extends Module{
 						clearTimeout(typingTimer);
 					}
 
-					typingTimer = setTimeout(function(){
-						success(editorElement.value);
-					},self.table.options.headerFilterLiveFilterDelay);
+					if (typeof params.disableAutoSearch === 'undefined' || !params.disableAutoSearch) {
+						typingTimer = setTimeout(function(){
+							success(editorElement.value);
+						},self.table.options.headerFilterLiveFilterDelay);
+					}
 				};
 
 				column.modules.filter.headerElement = editorElement;

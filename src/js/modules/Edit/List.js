@@ -223,7 +223,6 @@ export default class Edit{
 			params.filterRemote = false;
 			console.warn("list editor config error - filterRemote option should only be used when values list is populated from a remote source");
 		}
-
 		return params;
 	}
 	//////////////////////////////////////
@@ -425,11 +424,7 @@ export default class Edit{
 	}
 	
 	_keyAutoCompLetter(e){
-		console.log(this.params.searchWhenTyping);
-		if (typeof this.params.searchWhenTyping === 'undefined' || this.params.searchWhenTyping) {
-			console.log('ffs');
-			this._filter();
-		}
+		this._filter();
 		this.lastAction = "typing";
 		this.typing = true;
 	}

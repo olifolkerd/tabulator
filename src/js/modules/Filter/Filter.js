@@ -421,6 +421,10 @@ class Filter extends Module{
 						this.table.rowManager.scrollHorizontal(left);
 						this.table.columnManager.scrollHorizontal(left);
 					}
+
+					if (typeof params.resetValueOnFocus === 'undefined' || params.resetValueOnFocus) {
+						editorElement.value = '';
+					}
 				});
 
 				//live update filters as user types
@@ -431,9 +435,11 @@ class Filter extends Module{
 						clearTimeout(typingTimer);
 					}
 
-					typingTimer = setTimeout(function(){
-						success(editorElement.value);
-					},self.table.options.headerFilterLiveFilterDelay);
+					if (typeof params.disableAutoSearch === 'undefined' || !params.disableAutoSearch) {
+						typingTimer = setTimeout(function(){
+							success(editorElement.value);
+						},self.table.options.headerFilterLiveFilterDelay);
+					}
 				};
 
 				column.modules.filter.headerElement = editorElement;
