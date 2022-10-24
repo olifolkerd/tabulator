@@ -1,5 +1,5 @@
 {
-  "name": "@FusionPwN/tabulator-tables",
+  "name": "@fusionpwn/tabulator-tables",
   "version": "5.4.3",
   "description": "Interactive table generation JavaScript library",
   "style": "dist/css/tabulator.css",
