@@ -38,7 +38,7 @@ class Page extends Module{
 		// this.registerTableOption("paginationDataSent", {}); //pagination data sent to the server
 		// this.registerTableOption("paginationDataReceived", {}); //pagination data received from the server
 		this.registerTableOption("paginationAddRow", "page"); //add rows on table or page
-		this.registerTableOption("paginationLastPageErrorResetTo", "last"); //reset the current page when the last page < this.page, values: 'first'|'last'
+		this.registerTableOption("paginationOutOfRange", false); //reset the current page when the last page < this.page, values: false|function|any value accepted by setPage()
 		
 		this.registerTableOption("progressiveLoad", false); //progressive loading
 		this.registerTableOption("progressiveLoadDelay", 0); //delay between requests
@@ -847,14 +847,17 @@ class Page extends Module{
 			}else{
 
 				if(this.page > this.max){
-					const revertToPage = this.options('paginationLastPageErrorResetTo') === 'first' ? 1 : this.max;
-					console.warn("Remote Pagination Error - Server returned last page value lower than the current page, resetting the current page to " + revertToPage);
+					console.warn( "Remote Pagination Error - Server returned last page value lower than the current page" );
 
-					this.page = revertToPage;
+					const paginationOutOfRange = this.options('paginationOutOfRange');
 
-					this.trackChanges();
-
-					return this.trigger();
+					if(paginationOutOfRange){
+						return this.setPage(
+							typeof paginationOutOfRange === 'function' ?
+								paginationOutOfRange.call(this, this.page, this.max) :
+								paginationOutOfRange
+						);
+					}
 				}
 
 				// left = this.table.rowManager.scrollLeft;
