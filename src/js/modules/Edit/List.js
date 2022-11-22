@@ -1006,7 +1006,7 @@ export default class Edit{
 				if(this.currentItems[0]){
 					output = this.currentItems[0].value;
 				}else{
-					initialValue = this.initialValues[0];
+					initialValue = Array.isArray(this.initialValues) ? this.initialValues[0] : this.initialValues;
 					
 					if(initialValue === null || typeof initialValue === "undefined" || initialValue === ""){
 						output = initialValue;
