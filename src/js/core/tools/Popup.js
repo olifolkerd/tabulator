@@ -25,7 +25,7 @@ export default class Popup extends CoreFeature{
 		this.blurEvent = this.hide.bind(this, false);
 		this.escEvent = this._escapeCheck.bind(this);
 		
-		this.destroyBinding = this.tableDestroyed;
+		this.destroyBinding = this.tableDestroyed.bind(this);
 		this.destroyed = false;
 	}
 	
