@@ -16,7 +16,7 @@ export default function maskInput(el, options){
 		var index = el.value.length,
 		char = e.key;
 
-		if(e.keyCode > 46){
+		if(e.keyCode > 46 && !e.ctrlKey && !e.metaKey){
 			if(index >= mask.length){
 				e.preventDefault();
 				e.stopPropagation();
