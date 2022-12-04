@@ -9097,9 +9097,13 @@ class Filter extends Module{
 
 		if(def.headerFilter){
 
-			if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
-				this.module("localize").setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
-			}
+			// console.log("fil", def.headerFilterPlaceholder);
+
+			// if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
+			// 	this.module("localize").setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
+			// }
+
+			// console.log("filll", def.headerFilterPlaceholder);
 
 			this.initializeColumn(column);
 		}
@@ -9317,7 +9321,7 @@ class Filter extends Module{
 
 				//set Placeholder Text
 				self.langBind("headerFilters|columns|" + column.definition.field, function(value){
-					editorElement.setAttribute("placeholder", typeof value !== "undefined" && value ? value : self.langText("headerFilters|default"));
+					editorElement.setAttribute("placeholder", typeof value !== "undefined" && value ? value : (column.definition.headerFilterPlaceholder || self.langText("headerFilters|default")));
 				});
 
 				//focus on element on click
@@ -22566,8 +22570,6 @@ class RowManager extends CoreFeature{
 				this.dispatch("row-added", row, data, pos, index);
 			});
 
-			console.log("refreshDisplayOnly", refreshDisplayOnly);
-			
 			this.refreshActiveData(refreshDisplayOnly ? "displayPipeline" : false, false, true);
 			
 			this.regenerateRowPositions();
@@ -24643,15 +24645,6 @@ class Localize extends Module{
 	//set header placeholder
 	setHeaderFilterPlaceholder(placeholder){
 		this.langList.default.headerFilters.default = placeholder;
-	}
-
-	//set header filter placeholder by column
-	setHeaderFilterColumnPlaceholder(column, placeholder){
-		this.langList.default.headerFilters.columns[column] = placeholder;
-
-		if(this.lang && !this.lang.headerFilters.columns[column]){
-			this.lang.headerFilters.columns[column] = placeholder;
-		}
 	}
 
 	//setup a lang description object

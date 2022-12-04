@@ -41,15 +41,6 @@ class Localize extends Module{
 		this.langList.default.headerFilters.default = placeholder;
 	}
 
-	//set header filter placeholder by column
-	setHeaderFilterColumnPlaceholder(column, placeholder){
-		this.langList.default.headerFilters.columns[column] = placeholder;
-
-		if(this.lang && !this.lang.headerFilters.columns[column]){
-			this.lang.headerFilters.columns[column] = placeholder;
-		}
-	}
-
 	//setup a lang description object
 	installLang(locale, lang){
 		if(this.langList[locale]){

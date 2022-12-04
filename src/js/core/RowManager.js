@@ -318,8 +318,6 @@ export default class RowManager extends CoreFeature{
 				this.dispatch("row-added", row, data, pos, index);
 			});
 
-			console.log("refreshDisplayOnly", refreshDisplayOnly);
-			
 			this.refreshActiveData(refreshDisplayOnly ? "displayPipeline" : false, false, true);
 			
 			this.regenerateRowPositions();
