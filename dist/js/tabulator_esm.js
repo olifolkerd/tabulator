@@ -18283,7 +18283,7 @@ class SelectRow extends Module{
 		row.modules.select = {selected:false};
 		
 		//set row selection class
-		if(self.table.options.selectableCheck.call(this.table, row.getComponent())){
+		if(self.checkRowSelectability(row)){
 			element.classList.add("tabulator-selectable");
 			element.classList.remove("tabulator-unselectable");
 			
@@ -18394,10 +18394,18 @@ class SelectRow extends Module{
 			this.lastClickedRow = row;
 		}
 	}
+
+	checkRowSelectability(row){
+		if(row.type === "row"){
+			return this.table.options.selectableCheck.call(this.table, row.getComponent());
+		}
+
+		return false;
+	}
 	
 	//toggle row selection
 	toggleRow(row){
-		if(this.table.options.selectableCheck.call(this.table, row.getComponent())){
+		if(this.checkRowSelectability(row)){
 			if(row.modules.select && row.modules.select.selected){
 				this._deselectRow(row);
 			}else {
