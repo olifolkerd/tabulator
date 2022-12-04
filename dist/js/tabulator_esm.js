@@ -22546,7 +22546,7 @@ class RowManager extends CoreFeature{
 	}
 	
 	//add multiple rows
-	addRows(data, pos, index){
+	addRows(data, pos, index, refreshDisplayOnly){
 		var rows = [];
 		
 		return new Promise((resolve, reject) => {
@@ -22565,8 +22565,10 @@ class RowManager extends CoreFeature{
 				rows.push(row);
 				this.dispatch("row-added", row, data, pos, index);
 			});
+
+			console.log("refreshDisplayOnly", refreshDisplayOnly);
 			
-			this.refreshActiveData(false, false, true);
+			this.refreshActiveData(refreshDisplayOnly ? "displayPipeline" : false, false, true);
 			
 			this.regenerateRowPositions();
 			
@@ -25577,7 +25579,7 @@ class Tabulator {
 			data = JSON.parse(data);
 		}
 		
-		return this.rowManager.addRows(data, pos, index)
+		return this.rowManager.addRows(data, pos, index, true)
 			.then((rows)=>{
 				return rows[0].getComponent();
 			});

@@ -298,7 +298,7 @@ export default class RowManager extends CoreFeature{
 	}
 	
 	//add multiple rows
-	addRows(data, pos, index){
+	addRows(data, pos, index, refreshDisplayOnly){
 		var rows = [];
 		
 		return new Promise((resolve, reject) => {
@@ -317,8 +317,10 @@ export default class RowManager extends CoreFeature{
 				rows.push(row);
 				this.dispatch("row-added", row, data, pos, index);
 			});
+
+			console.log("refreshDisplayOnly", refreshDisplayOnly);
 			
-			this.refreshActiveData(false, false, true);
+			this.refreshActiveData(refreshDisplayOnly ? "displayPipeline" : false, false, true);
 			
 			this.regenerateRowPositions();
 			

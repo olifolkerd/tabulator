@@ -586,7 +586,7 @@ class Tabulator {
 			data = JSON.parse(data);
 		}
 		
-		return this.rowManager.addRows(data, pos, index)
+		return this.rowManager.addRows(data, pos, index, true)
 			.then((rows)=>{
 				return rows[0].getComponent();
 			});
