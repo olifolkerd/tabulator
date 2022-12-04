@@ -23086,22 +23086,21 @@ class RowManager extends CoreFeature{
 	getRows(type){
 		var rows = [];
 
-		if(!type || type === true){
-			rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
-		}else {
-			switch(type){
-				case "active":
-					rows = this.activeRows;
-					break;
+		switch(type){
+			case "active":
+				rows = this.activeRows;
+				break;
+			
+			case "display":
+				rows = this.table.rowManager.getDisplayRows();
+				break;
 				
-				case "display":
-					rows = this.table.rowManager.getDisplayRows();
-					break;
-					
-				case "visible":
-					rows = this.getVisibleRows(false, true);
-					break;
-			}
+			case "visible":
+				rows = this.getVisibleRows(false, true);
+				break;
+
+			default:
+				rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
 		}
 		
 		return rows;
