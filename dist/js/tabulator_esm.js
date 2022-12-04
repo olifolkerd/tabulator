@@ -8752,7 +8752,11 @@ class Export extends Module{
 			}
 		});
 		
-		if(setup.rowFormatter && this.config.formatCells !== false){
+		if(setup.rowFormatter && row.type === "row" && this.config.formatCells !== false){
+			let formatComponent = Object.assign(row.component);
+
+			formatComponent.getElement = function(){return rowEl;};
+
 			setup.rowFormatter(row.component);
 		}
 		
@@ -8798,7 +8802,9 @@ class Export extends Module{
 				var fromStyle = window.getComputedStyle(from);
 				
 				props.forEach(function(prop){
-					to.style[lookup[prop]] = fromStyle.getPropertyValue(prop);
+					if(!to.style[lookup[prop]]){
+						to.style[lookup[prop]] = fromStyle.getPropertyValue(prop);
+					}
 				});
 			}
 		}
