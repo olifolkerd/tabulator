@@ -22326,18 +22326,32 @@ class RowManager extends CoreFeature{
 	}
 	
 	initializePlaceholder(){
+		var placeholder = this.table.options.placeholder;
+
 		//configure placeholder element
-		if(typeof this.table.options.placeholder == "string"){
+		if(placeholder){	
 			let el = document.createElement("div");
 			el.classList.add("tabulator-placeholder");
-			
-			let contents = document.createElement("div");
-			contents.classList.add("tabulator-placeholder-contents");
-			contents.innerHTML = this.table.options.placeholder;
-			
-			el.appendChild(contents);
-			
-			this.placeholderContents = contents;
+
+			if(typeof placeholder == "string"){
+				let contents = document.createElement("div");
+				contents.classList.add("tabulator-placeholder-contents");
+				contents.innerHTML = placeholder;
+				
+				el.appendChild(contents);
+				
+				this.placeholderContents = contents;
+				
+			}else if(typeof HTMLElement !== "undefined" && placeholder instanceof HTMLElement){
+				
+				el.appendChild(placeholder);
+				this.placeholderContents = placeholder;
+			}else {
+				console.warn("Invalid placeholder provided, must be string or HTML Element", placeholder);
+
+				this.el = null;
+			}
+
 			this.placeholder = el;
 		}
 	}
