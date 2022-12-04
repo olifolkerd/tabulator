@@ -235,18 +235,22 @@ export default class RowManager extends CoreFeature{
 	_wipeElements(){
 		this.dispatch("rows-wipe");
 		
+		this.destroy();
+		
+		this.adjustTableSize();
+	}
+
+	destroy(){
 		this.rows.forEach((row) => {
 			row.wipe();
 		});
-		
+
 		this.rows = [];
 		this.activeRows = [];
 		this.activeRowsPipeline = [];
 		this.activeRowsCount = 0;
 		this.displayRows = [];
 		this.displayRowsCount = 0;
-		
-		this.adjustTableSize();
 	}
 	
 	deleteRow(row, blockRedraw){
