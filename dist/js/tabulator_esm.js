@@ -16755,6 +16755,8 @@ class Print extends Module{
 
 		this.element = false;
 		this.manualBlock = false;
+		this.beforeprintEventHandler = null;
+		this.afterprintEventHandler = null;
 
 		this.registerTableOption("printAsHtml", false); //enable print as html
 		this.registerTableOption("printFormatter", false); //printing page formatter
@@ -16770,11 +16772,22 @@ class Print extends Module{
 
 	initialize(){
 		if(this.table.options.printAsHtml){
-			window.addEventListener("beforeprint", this.replaceTable.bind(this));
-			window.addEventListener("afterprint", this.cleanup.bind(this));
+			this.beforeprintEventHandler = this.replaceTable.bind(this);
+			this.afterprintEventHandler = this.cleanup.bind(this);
+
+			window.addEventListener("beforeprint", this.beforeprintEventHandler );
+			window.addEventListener("afterprint", this.afterprintEventHandler);
+			this.subscribe("table-destroy", this.destroy.bind(this));
 		}
 
 		this.registerTableFunction("print", this.printFullscreen.bind(this));
+	}
+
+	destroy(){
+		if(this.table.options.printAsHtml){
+			window.removeEventListener( "beforeprint", this.beforeprintEventHandler );
+			window.removeEventListener( "afterprint", this.afterprintEventHandler );
+		}
 	}
 
 	///////////////////////////////////
@@ -22470,18 +22483,22 @@ class RowManager extends CoreFeature{
 	_wipeElements(){
 		this.dispatch("rows-wipe");
 		
+		this.destroy();
+		
+		this.adjustTableSize();
+	}
+
+	destroy(){
 		this.rows.forEach((row) => {
 			row.wipe();
 		});
-		
+
 		this.rows = [];
 		this.activeRows = [];
 		this.activeRowsPipeline = [];
 		this.activeRowsCount = 0;
 		this.displayRows = [];
 		this.displayRowsCount = 0;
-		
-		this.adjustTableSize();
 	}
 	
 	deleteRow(row, blockRedraw){
@@ -25264,13 +25281,7 @@ class Tabulator {
 		this.eventBus.dispatch("table-destroy");
 		
 		//clear row data
-		this.rowManager.rows.forEach(function(row){
-			row.wipe();
-		});
-		
-		this.rowManager.rows = [];
-		this.rowManager.activeRows = [];
-		this.rowManager.displayRows = [];
+		this.rowManager.destroy();
 		
 		//clear DOM
 		while(element.firstChild) element.removeChild(element.firstChild);
@@ -25405,7 +25416,12 @@ class Tabulator {
 								if(!responses){
 									resolve();
 								}
+							})
+							.catch((e) => {
+								reject("Update Error - Unable to update row", item, e);
 							});
+					}else {
+						reject("Update Error - Unable to find row", item);
 					}
 				});
 			}else {
