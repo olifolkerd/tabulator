@@ -182,15 +182,6 @@ class Filter extends Module{
 		var def = column.definition;
 
 		if(def.headerFilter){
-
-			// console.log("fil", def.headerFilterPlaceholder);
-
-			// if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
-			// 	this.module("localize").setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
-			// }
-
-			// console.log("filll", def.headerFilterPlaceholder);
-
 			this.initializeColumn(column);
 		}
 	}
