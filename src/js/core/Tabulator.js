@@ -425,7 +425,12 @@ class Tabulator {
 								if(!responses){
 									resolve();
 								}
+							})
+							.catch((e) => {
+								reject("Update Error - Unable to update row", item, e);
 							});
+					}else{
+						reject("Update Error - Unable to find row", item);
 					}
 				});
 			}else{
