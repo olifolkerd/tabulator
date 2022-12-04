@@ -252,6 +252,8 @@ export default class RowManager extends CoreFeature{
 		this.destroy();
 		
 		this.adjustTableSize();
+
+		this.dispatch("rows-wiped");
 	}
 
 	destroy(){

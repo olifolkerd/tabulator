@@ -15,6 +15,8 @@ class GroupRows extends Module{
 		this.groups = {}; //hold row groups
 		
 		this.displayHandler = this.getRows.bind(this);
+
+		this.blockRedraw = false;
 		
 		//register table options
 		this.registerTableOption("groupBy", false); //enable table grouping and set field to group by
@@ -43,6 +45,10 @@ class GroupRows extends Module{
 	
 	//initialize group configuration
 	initialize(){
+		this.subscribe("table-destroy", this._blockRedrawing.bind(this));
+		this.subscribe("rows-wipe", this._blockRedrawing.bind(this));
+		this.subscribe("rows-wiped", this._restore_redrawing.bind(this));
+
 		if(this.table.options.groupBy){
 			if(this.table.options.groupUpdateOnCellEdit){
 				this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
@@ -69,6 +75,14 @@ class GroupRows extends Module{
 		}
 	}
 	
+	_blockRedrawing(){
+		this.blockRedraw = true;
+	}
+
+	_restore_redrawing(){
+		this.blockRedraw = false;
+	}
+
 	configureGroupSetup(){
 		if(this.table.options.groupBy){
 			var groupBy = this.table.options.groupBy,
@@ -555,13 +569,15 @@ class GroupRows extends Module{
 	
 	updateGroupRows(force){
 		var output = [];
-		
-		this.groupList.forEach((group) => {
-			output = output.concat(group.getHeadersAndRows());
-		});
-		
-		if(force){
-			this.refreshData(true, this.displayHandler);
+
+		if(!this.blockRedraw){
+			this.groupList.forEach((group) => {
+				output = output.concat(group.getHeadersAndRows());
+			});
+			
+			if(force){
+				this.refreshData(true);
+			}
 		}
 		
 		return output;
