@@ -11417,17 +11417,21 @@ class Group{
 				this.groupManager.removeGroup(this);
 			}
 			
-			this.groupManager.updateGroupRows(true);
+			if(!this.groupManager.table.destroyed){
+				this.groupManager.updateGroupRows(true);
+			}
 		}else {
 			
 			if(el.parentNode){
 				el.parentNode.removeChild(el);
 			}
-			
-			this.generateGroupHeaderContents();
-			
-			if(this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table"){
-				this.groupManager.table.modules.columnCalcs.recalcGroup(this);
+
+			if(!this.groupManager.table.destroyed){
+				this.generateGroupHeaderContents();
+				
+				if(this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table"){
+					this.groupManager.table.modules.columnCalcs.recalcGroup(this);
+				}
 			}
 			
 		}
