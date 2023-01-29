@@ -1,4 +1,4 @@
-/* Tabulator v5.4.3 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.4.3 (c) Oliver Folkerd 2023 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -4833,7 +4833,7 @@
 				data.forEach((item, i) => {
 					var row = this.addRow(item, pos, index, true);
 					rows.push(row);
-					this.dispatch("row-added", row, data, pos, index);
+					this.dispatch("row-added", row, item, pos, index);
 				});
 
 				this.refreshActiveData(refreshDisplayOnly ? "displayPipeline" : false, false, true);
