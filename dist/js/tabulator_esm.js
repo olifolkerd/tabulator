@@ -5783,8 +5783,7 @@ function date(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 	
-	//submit new value on blur or change
-	input.addEventListener("change", onChange);
+	//submit new value on blur
 	input.addEventListener("blur", onChange);
 	
 	//submit new value on enter
@@ -5980,8 +5979,7 @@ function datetime(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 	
-	//submit new value on blur or change
-	input.addEventListener("change", onChange);
+	//submit new value on blur
 	input.addEventListener("blur", onChange);
 	
 	//submit new value on enter
