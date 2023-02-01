@@ -1,4 +1,4 @@
-/* Tabulator v5.4.3 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.4.3 (c) Oliver Folkerd 2023 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -3712,7 +3712,7 @@
 			
 			column = this.table.columnManager.findColumn(column);
 			
-			if(!this.initialized){
+			if(!this.initialized && this.cells.length === 0){
 				this.generateCells();
 			}
 			
@@ -3736,7 +3736,7 @@
 		}
 		
 		getCells(){
-			if(!this.initialized){
+			if(!this.initialized && this.cells.length === 0){
 				this.generateCells();
 			}
 			
@@ -4833,7 +4833,7 @@
 				data.forEach((item, i) => {
 					var row = this.addRow(item, pos, index, true);
 					rows.push(row);
-					this.dispatch("row-added", row, data, pos, index);
+					this.dispatch("row-added", row, item, pos, index);
 				});
 
 				this.refreshActiveData(refreshDisplayOnly ? "displayPipeline" : false, false, true);
@@ -11703,8 +11703,7 @@
 			}
 		}
 		
-		//submit new value on blur or change
-		input.addEventListener("change", onChange);
+		//submit new value on blur
 		input.addEventListener("blur", onChange);
 		
 		//submit new value on enter
@@ -11900,8 +11899,7 @@
 			}
 		}
 		
-		//submit new value on blur or change
-		input.addEventListener("change", onChange);
+		//submit new value on blur
 		input.addEventListener("blur", onChange);
 		
 		//submit new value on enter
@@ -17063,7 +17061,7 @@
 					if (typeof target[name] !== "undefined") {
 						return target[name];
 					}else {
-						return target._group.groupManager.table.componentFunctionBinder.handle("row", target._group, name);
+						return target._group.groupManager.table.componentFunctionBinder.handle("group", target._group, name);
 					}
 				}
 			});

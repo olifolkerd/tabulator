@@ -1,4 +1,4 @@
-/* Tabulator v5.4.3 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.4.3 (c) Oliver Folkerd 2023 */
 class CoreFeature{
 
 	constructor(table){
@@ -3360,7 +3360,7 @@ class Row extends CoreFeature{
 		
 		column = this.table.columnManager.findColumn(column);
 		
-		if(!this.initialized){
+		if(!this.initialized && this.cells.length === 0){
 			this.generateCells();
 		}
 		
@@ -3384,7 +3384,7 @@ class Row extends CoreFeature{
 	}
 	
 	getCells(){
-		if(!this.initialized){
+		if(!this.initialized && this.cells.length === 0){
 			this.generateCells();
 		}
 		
@@ -5783,8 +5783,7 @@ function date(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 	
-	//submit new value on blur or change
-	input.addEventListener("change", onChange);
+	//submit new value on blur
 	input.addEventListener("blur", onChange);
 	
 	//submit new value on enter
@@ -5980,8 +5979,7 @@ function datetime(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 	
-	//submit new value on blur or change
-	input.addEventListener("change", onChange);
+	//submit new value on blur
 	input.addEventListener("blur", onChange);
 	
 	//submit new value on enter
@@ -11143,7 +11141,7 @@ class GroupComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._group.groupManager.table.componentFunctionBinder.handle("row", target._group, name);
+					return target._group.groupManager.table.componentFunctionBinder.handle("group", target._group, name);
 				}
 			}
 		});
@@ -22615,7 +22613,7 @@ class RowManager extends CoreFeature{
 			data.forEach((item, i) => {
 				var row = this.addRow(item, pos, index, true);
 				rows.push(row);
-				this.dispatch("row-added", row, data, pos, index);
+				this.dispatch("row-added", row, item, pos, index);
 			});
 
 			this.refreshActiveData(refreshDisplayOnly ? "displayPipeline" : false, false, true);
