@@ -315,7 +315,7 @@ export default class Row extends CoreFeature{
 		
 		column = this.table.columnManager.findColumn(column);
 		
-		if(!this.initialized){
+		if(!this.initialized && this.cells.length === 0){
 			this.generateCells();
 		}
 		
@@ -339,7 +339,7 @@ export default class Row extends CoreFeature{
 	}
 	
 	getCells(){
-		if(!this.initialized){
+		if(!this.initialized && this.cells.length === 0){
 			this.generateCells();
 		}
 		
