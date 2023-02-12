@@ -58,11 +58,13 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	input.value = cellValue;
 	
 	onRendered(function(){
-		input.focus({preventScroll: true});
-		input.style.height = "100%";
-		
-		if(editorParams.selectContents){
-			input.select();
+		if(!cell._getSelf){
+			input.focus({preventScroll: true});
+			input.style.height = "100%";
+			
+			if(editorParams.selectContents){
+				input.select();
+			}
 		}
 	});
 	

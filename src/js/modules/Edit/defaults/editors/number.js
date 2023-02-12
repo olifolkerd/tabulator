@@ -43,17 +43,19 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	};
 
 	onRendered(function () {
-		//submit new value on blur
-		input.removeEventListener("blur", blurFunc);
+		if(!cell._getSelf){
+			//submit new value on blur
+			input.removeEventListener("blur", blurFunc);
 
-		input.focus({preventScroll: true});
-		input.style.height = "100%";
+			input.focus({preventScroll: true});
+			input.style.height = "100%";
 
-		//submit new value on blur
-		input.addEventListener("blur", blurFunc);
+			//submit new value on blur
+			input.addEventListener("blur", blurFunc);
 
-		if(editorParams.selectContents){
-			input.select();
+			if(editorParams.selectContents){
+				input.select();
+			}
 		}
 	});
 

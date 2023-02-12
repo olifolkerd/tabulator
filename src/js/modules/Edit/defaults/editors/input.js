@@ -26,11 +26,13 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	input.value = typeof cellValue !== "undefined" ? cellValue : "";
 
 	onRendered(function(){
-		input.focus({preventScroll: true});
-		input.style.height = "100%";
+		if(!cell._getSelf){
+			input.focus({preventScroll: true});
+			input.style.height = "100%";
 
-		if(editorParams.selectContents){
-			input.select();
+			if(editorParams.selectContents){
+				input.select();
+			}
 		}
 	});
 

@@ -3,7 +3,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	var inputFormat = editorParams.format,
 	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
 	newDatetime;
-
+	
 	//create and style input
 	var cellValue = cell.getValue(),
 	input = document.createElement("input");
@@ -35,34 +35,36 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			}else{
 				newDatetime = DT.fromFormat(String(cellValue), inputFormat);
 			}
-
+			
 			cellValue = newDatetime.toFormat("hh:mm");
-
+			
 		}else{
 			console.error("Editor Error - 'date' editor 'inputFormat' param is dependant on luxon.js");
 		}
 	}
-
+	
 	input.value = cellValue;
 	
 	onRendered(function(){
-		input.focus({preventScroll: true});
-		input.style.height = "100%";
-		
-		if(editorParams.selectContents){
-			input.select();
+		if(!cell._getSelf){
+			input.focus({preventScroll: true});
+			input.style.height = "100%";
+			
+			if(editorParams.selectContents){
+				input.select();
+			}
 		}
 	});
 	
 	function onChange(){
 		var value = input.value;
-
+		
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
-
+			
 			if(value && inputFormat){
 				value = DT.fromFormat(String(value), "hh:mm").toFormat(inputFormat);
 			}
-
+			
 			if(success(value)){
 				cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
 			}

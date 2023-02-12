@@ -31,15 +31,17 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	input.value = value;
 
 	onRendered(function(){
-		input.focus({preventScroll: true});
-		input.style.height = "100%";
+		if(!cell._getSelf){
+			input.focus({preventScroll: true});
+			input.style.height = "100%";
 
-		input.scrollHeight;
-		input.style.height = input.scrollHeight + "px";
-		cell.getRow().normalizeHeight();
+			input.scrollHeight;
+			input.style.height = input.scrollHeight + "px";
+			cell.getRow().normalizeHeight();
 
-		if(editorParams.selectContents){
-			input.select();
+			if(editorParams.selectContents){
+				input.select();
+			}
 		}
 	});
 
