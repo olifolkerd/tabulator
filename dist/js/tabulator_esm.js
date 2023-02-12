@@ -1,4 +1,4 @@
-/* Tabulator v5.4.3 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.4.3 (c) Oliver Folkerd 2023 */
 class CoreFeature{
 
 	constructor(table){
@@ -3360,7 +3360,7 @@ class Row extends CoreFeature{
 		
 		column = this.table.columnManager.findColumn(column);
 		
-		if(!this.initialized){
+		if(!this.initialized && this.cells.length === 0){
 			this.generateCells();
 		}
 		
@@ -3384,7 +3384,7 @@ class Row extends CoreFeature{
 	}
 	
 	getCells(){
-		if(!this.initialized){
+		if(!this.initialized && this.cells.length === 0){
 			this.generateCells();
 		}
 		
@@ -5766,7 +5766,7 @@ function date(cell, onRendered, success, cancel, editorParams){
 		}
 	});
 	
-	function onChange(e){
+	function onChange(){
 		var value = input.value;
 		
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
@@ -5783,9 +5783,12 @@ function date(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 	
-	//submit new value on blur or change
-	input.addEventListener("change", onChange);
-	input.addEventListener("blur", onChange);
+	//submit new value on blur
+	input.addEventListener("blur", function(e) {
+		if (e.relatedTarget || e.rangeParent || e.explicitOriginalTarget !== input) {
+			onChange(); // only on a "true" blur; not when focusing browser's date/time picker
+		}
+	});
 	
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
@@ -5865,7 +5868,7 @@ function time(cell, onRendered, success, cancel, editorParams){
 		}
 	});
 	
-	function onChange(e){
+	function onChange(){
 		var value = input.value;
 
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
@@ -5882,9 +5885,12 @@ function time(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 	
-	//submit new value on blur or change
-	input.addEventListener("change", onChange);
-	input.addEventListener("blur", onChange);
+	//submit new value on blur
+	input.addEventListener("blur", function(e) {
+		if (e.relatedTarget || e.rangeParent || e.explicitOriginalTarget !== input) {
+			onChange(); // only on a "true" blur; not when focusing browser's date/time picker
+		}
+	});
 	
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
@@ -5963,7 +5969,7 @@ function datetime(cell, onRendered, success, cancel, editorParams){
 		}
 	});
 	
-	function onChange(e){
+	function onChange(){
 		var value = input.value;
 
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
@@ -5980,9 +5986,12 @@ function datetime(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 	
-	//submit new value on blur or change
-	input.addEventListener("change", onChange);
-	input.addEventListener("blur", onChange);
+	//submit new value on blur
+	input.addEventListener("blur", function(e) {
+		if (e.relatedTarget || e.rangeParent || e.explicitOriginalTarget !== input) {
+			onChange(); // only on a "true" blur; not when focusing browser's date/time picker
+		}
+	});
 	
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
@@ -11143,7 +11152,7 @@ class GroupComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				}else {
-					return target._group.groupManager.table.componentFunctionBinder.handle("row", target._group, name);
+					return target._group.groupManager.table.componentFunctionBinder.handle("group", target._group, name);
 				}
 			}
 		});
@@ -22615,7 +22624,7 @@ class RowManager extends CoreFeature{
 			data.forEach((item, i) => {
 				var row = this.addRow(item, pos, index, true);
 				rows.push(row);
-				this.dispatch("row-added", row, data, pos, index);
+				this.dispatch("row-added", row, item, pos, index);
 			});
 
 			this.refreshActiveData(refreshDisplayOnly ? "displayPipeline" : false, false, true);
@@ -24396,7 +24405,7 @@ function fitDataStretch(columns, forced){
 
 //resize columns to fit
 function fitColumns(columns, forced){
-	var totalWidth = this.table.rowManager.element.getBoundingClientRect().width; //table element width
+	var totalWidth = this.table.rowManager.element.clientWidth; //table element width
 	var fixedWidth = 0; //total width of columns with a defined width
 	var flexWidth = 0; //total width available to flexible columns
 	var flexGrowUnits = 0; //total number of widthGrow blocks across all columns
