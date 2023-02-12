@@ -53,7 +53,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		}
 	});
 	
-	function onChange(e){
+	function onChange(){
 		var value = input.value;
 
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
@@ -70,16 +70,19 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 	
-	//submit new value on blur or change
-	input.addEventListener("change", onChange);
-	input.addEventListener("blur", onChange);
+	//submit new value on blur
+	input.addEventListener("blur", function(e) {
+		if (e.relatedTarget || e.rangeParent || e.explicitOriginalTarget !== input) {
+			onChange(); // only on a "true" blur; not when focusing browser's date/time picker
+		}
+	});
 	
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
 		switch(e.keyCode){
 			// case 9:
 			case 13:
-				onChange(e);
+				onChange();
 				break;
 			
 			case 27:
