@@ -6415,9 +6415,11 @@ class Edit{
 	}
 	
 	_keySide(e){
-		e.stopImmediatePropagation();
-		e.stopPropagation();
-		e.preventDefault();
+		if(!this.params.autocomplete){
+			e.stopImmediatePropagation();
+			e.stopPropagation();
+			e.preventDefault();
+		}
 	}
 	
 	_keyEnter(e){
