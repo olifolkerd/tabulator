@@ -23,10 +23,7 @@ export default class BasicVertical extends Renderer{
 		element.scrollTop = 0;
 		element.scrollLeft = 0;
 
-		element.style.minWidth = "";
-		element.style.minHeight = "";
-		element.style.display = "";
-		element.style.visibility = "";
+		element.style.cssText = 'min-width:""; min-height:""; display:""; visibility:"";';
 	}
 
 	renderRows() {
