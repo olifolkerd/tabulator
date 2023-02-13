@@ -119,9 +119,6 @@ class Tabulator {
 	}
 	
 	_clearSelection(){
-		
-		this.element.classList.add("tabulator-block-select");
-		
 		if (window.getSelection) {
 			if (window.getSelection().empty) {  // Chrome
 				window.getSelection().empty();
@@ -131,8 +128,6 @@ class Tabulator {
 		} else if (document.selection) {  // IE?
 			document.selection.empty();
 		}
-		
-		this.element.classList.remove("tabulator-block-select");
 	}
 	
 	//create table
