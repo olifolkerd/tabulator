@@ -1007,6 +1007,7 @@ export default class RowManager extends CoreFeature{
 	//adjust the height of the table holder to fit in the Tabulator element
 	adjustTableSize(){
 		let initialHeight = this.element.clientHeight, minHeight;
+		let resized = false;
 		
 		if(this.renderer.verticalFillMode === "fill"){
 			let otherHeight =  Math.floor(this.table.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
@@ -1018,6 +1019,8 @@ export default class RowManager extends CoreFeature{
 				const height = "calc(100% - " + otherHeight + "px)";
 				this.element.style.cssText = `min-height:${minHeight}; height:${height}; max-height:${height};`;
 			} else {
+				resized = true;
+				this.element.style.height = "";
 				this.element.style.height =
 					this.table.element.clientHeight - otherHeight + "px";
 				this.element.scrollTop = this.scrollTop;
@@ -1027,6 +1030,7 @@ export default class RowManager extends CoreFeature{
 			
 			//check if the table has changed size when dealing with variable height tables
 			if(!this.fixedHeight && initialHeight != this.element.clientHeight){
+				resized = true;
 				if(this.subscribed("table-resize")){
 					this.dispatch("table-resize");
 				}else{
@@ -1038,6 +1042,7 @@ export default class RowManager extends CoreFeature{
 		}
 		
 		this._positionPlaceholder();
+		return resized;
 	}
 	
 	//reinitialize all rows
@@ -1072,15 +1077,12 @@ export default class RowManager extends CoreFeature{
 	
 	//redraw table
 	redraw (force){
-		var left = this.scrollLeft;
-		
-		this.adjustTableSize();
-		
+		const resized = this.adjustTableSize();
 		this.table.tableWidth = this.table.element.clientWidth;
 		
 		if(!force){
-			this.reRenderInPosition();
-			this.scrollHorizontal(left);
+			resized && this.reRenderInPosition();
+				this.scrollHorizontal(this.scrollLeft);
 		}else{
 			this.renderTable();
 		}
