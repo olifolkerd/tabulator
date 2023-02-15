@@ -42,7 +42,11 @@ export default class VirtualDomVertical extends Renderer{
 		// element.children.detach();
 		while(element.firstChild) element.removeChild(element.firstChild);
 
-		element.style.cssText = 'padding-top:""; padding-bottom:""; min-height:""; display:""; visibility:"";';
+		element.style.paddingTop = "";
+		element.style.paddingBottom = "";
+		element.style.minHeight = "";
+		element.style.display = "";
+		element.style.visibility = "";
 
 		this.elementVertical.scrollTop = 0;
 		this.elementVertical.scrollLeft = 0;
@@ -338,7 +342,9 @@ export default class VirtualDomVertical extends Renderer{
 				this.vDomTopPad = !forceMove ? this.scrollTop - topPadHeight : (this.vDomRowHeight * this.vDomTop) + offset;
 				this.vDomBottomPad = this.vDomBottom == rowsCount-1 ? 0 : Math.max(this.vDomScrollHeight - this.vDomTopPad - rowsHeight - topPadHeight, 0);
 			}
-			element.style.cssText = `padding-top: ${this.vDomTopPad}px; padding-bottom:${this.vDomBottomPad}px;`;
+			
+			element.style.paddingTop = this.vDomTopPad+"px";
+			element.style.paddingBottom = this.vDomBottomPad+"px";
 
 			if(forceMove){
 				this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.elementVertical.scrollWidth > this.elementVertical.clientWidth ? this.elementVertical.offsetHeight - containerHeight : 0);

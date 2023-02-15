@@ -426,7 +426,9 @@ class Column extends CoreFeature{
 
 	//clear vertical alignment
 	clearVerticalAlign(){
-		this.element.style.cssText = `padding-top:""; height:""; min-height:"";`;
+		this.element.style.paddingTop = "";
+		this.element.style.height = "";
+		this.element.style.minHeight = "";
 		this.groupElement.style.minHeight = "";
 
 		this.columns.forEach(function(column){

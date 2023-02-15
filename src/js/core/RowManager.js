@@ -1015,9 +1015,10 @@ export default class RowManager extends CoreFeature{
 			if(this.fixedHeight){
 				minHeight = isNaN(this.table.options.minHeight) ? this.table.options.minHeight : this.table.options.minHeight + "px";
 				
-				minHeight = minHeight || "calc(100% - " + otherHeight + "px)";
 				const height = "calc(100% - " + otherHeight + "px)";
-				this.element.style.cssText = `min-height:${minHeight}; height:${height}; max-height:${height};`;
+				this.element.style.minHeight = minHeight || "calc(100% - " + otherHeight + "px)";
+				this.element.style.height = height;
+				this.element.style.maxHeight = height;
 			} else {
 				resized = true;
 				this.element.style.height = "";
@@ -1082,7 +1083,7 @@ export default class RowManager extends CoreFeature{
 		
 		if(!force){
 			resized && this.reRenderInPosition();
-				this.scrollHorizontal(this.scrollLeft);
+			this.scrollHorizontal(this.scrollLeft);
 		}else{
 			this.renderTable();
 		}
