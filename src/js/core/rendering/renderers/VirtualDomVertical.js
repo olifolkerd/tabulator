@@ -218,7 +218,7 @@ export default class VirtualDomVertical extends Renderer{
 	//////////////////////////////////////
 
 	//full virtual render
-	_virtualRenderFill(position, forceMove, offset){
+	_virtualRenderFill(position, forceMove, offset) {
 		var	element = this.tableElement,
 		holder = this.elementVertical,
 		topPad = 0,
@@ -236,7 +236,7 @@ export default class VirtualDomVertical extends Renderer{
 
 		if(!position){
 			this.clear();
-		}else{
+		}else {
 			while(element.firstChild) element.removeChild(element.firstChild);
 
 			//check if position is too close to bottom of table
@@ -259,45 +259,82 @@ export default class VirtualDomVertical extends Renderer{
 
 			this.vDomBottom = position -1;
 
-			while ((rowsHeight <= containerHeight + this.vDomWindowBuffer || i < this.vDomWindowMinTotalRows) && this.vDomBottom < rowsCount -1){
-				var index = this.vDomBottom + 1,
-				row = rows[index],
-				rowHeight = 0;
+			const rowsToRender = Math.max(this.vDomWindowMinTotalRows, Math.ceil((containerHeight / this.vDomRowHeight) + (this.vDomWindowBuffer / this.vDomRowHeight)));
+			
+			let totalRows = 0;
+			while(((rowsHeight <= containerHeight + this.vDomWindowBuffer) || totalRows < this.vDomWindowMinTotalRows) && this.vDomBottom < rowsCount -1) {
+				// console.debug('1', i, this.vDomWindowMinTotalRows);
+				let renderedRows = [];
+				const dFrag = document.createDocumentFragment();
 
-				this.styleRow(row, index);
+				i = 0;
+				while ((i < rowsToRender) && this.vDomBottom < rowsCount -1) {	
+					const index = this.vDomBottom + 1,
+					row = rows[index];
 
-				element.appendChild(row.getElement());
+					this.styleRow(row, index);
 
-				row.initialize();
+					dFrag.appendChild(row.getElement());
+				
+					row.initialize();
 
-				if(!row.heightInitialized){
-					row.normalizeHeight(true);
+					if(!row.heightInitialized){
+						if(!this.table.options.rowHeight){
+							row.clearCellHeight();
+						}
+					}
+
+					this.vDomBottom ++;
+					i++;
+					renderedRows.push(row);
 				}
 
-				rowHeight = row.getHeight();
-
-				if(i < topPad){
-					topPadHeight += rowHeight;
-				}else{
-					rowsHeight += rowHeight;
+				if(!renderedRows.length){
+					break;
 				}
+				element.appendChild(dFrag);
+				
+				renderedRows.forEach(function (row) {
+					if(!row.heightInitialized) {
+						row.calcHeight(true);
+						
+					}
+				});
 
-				if(rowHeight > this.vDomWindowBuffer){
-					this.vDomWindowBuffer = rowHeight * 2;
-				}
+				renderedRows.forEach(function (row) {
+					if(!row.heightInitialized) {
+						row.setCellHeight();
+						
+					}
+				});
 
-				this.vDomBottom ++;
-				i++;
+				const me = this;
+				renderedRows.forEach(function (row) {
+					const rowHeight = row.getHeight();
+					
+					if(totalRows < topPad){
+						topPadHeight += rowHeight;
+					}else {
+						rowsHeight += rowHeight;
+					}
+
+					if(rowHeight > me.vDomWindowBuffer){
+						me.vDomWindowBuffer = rowHeight * 2;
+					}
+					totalRows++;
+				});
+				
 			}
+		
 
 			if(!position){
 				this.vDomTopPad = 0;
 				//adjust row height to match average of rendered elements
-				this.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
+				this.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / totalRows);
 				this.vDomBottomPad = this.vDomRowHeight * (rowsCount - this.vDomBottom -1);
 
 				this.vDomScrollHeight = topPadHeight + rowsHeight + this.vDomBottomPad - containerHeight;
-			}else{
+			}else {
 				this.vDomTopPad = !forceMove ? this.scrollTop - topPadHeight : (this.vDomRowHeight * this.vDomTop) + offset;
 				this.vDomBottomPad = this.vDomBottom == rowsCount-1 ? 0 : Math.max(this.vDomScrollHeight - this.vDomTopPad - rowsHeight - topPadHeight, 0);
 			}
