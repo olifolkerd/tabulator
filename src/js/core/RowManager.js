@@ -1020,7 +1020,6 @@ export default class RowManager extends CoreFeature{
 				this.element.style.height = height;
 				this.element.style.maxHeight = height;
 			} else {
-				resized = true;
 				this.element.style.height = "";
 				this.element.style.height =
 					this.table.element.clientHeight - otherHeight + "px";

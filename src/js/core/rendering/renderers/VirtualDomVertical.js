@@ -30,6 +30,7 @@ export default class VirtualDomVertical extends Renderer{
 
 		this.vDomTopNewRows = []; //rows to normalize after appending to optimize render speed
 		this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
+		this.initTableHeight = this.tableElement.clientHeight;
 	}
 
 	//////////////////////////////////////
@@ -266,7 +267,7 @@ export default class VirtualDomVertical extends Renderer{
 			const rowsToRender = Math.max(this.vDomWindowMinTotalRows, Math.ceil((containerHeight / this.vDomRowHeight) + (this.vDomWindowBuffer / this.vDomRowHeight)));
 			
 			let totalRows = 0;
-			while(((rowsHeight <= containerHeight + this.vDomWindowBuffer) || totalRows < this.vDomWindowMinTotalRows) && this.vDomBottom < rowsCount -1) {
+			while(((this.initTableHeight <= 0 || rowsHeight <= containerHeight + this.vDomWindowBuffer) || totalRows < this.vDomWindowMinTotalRows) && this.vDomBottom < rowsCount -1) {
 				// console.debug('1', i, this.vDomWindowMinTotalRows);
 				let renderedRows = [];
 				const dFrag = document.createDocumentFragment();
