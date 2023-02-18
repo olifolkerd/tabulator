@@ -20117,8 +20117,8 @@ class OptionsList {
 	}
 	
 	generate(defaultOptions, userOptions = {}){
-		var output = Object.assign({}, this.registeredDefaults);
-		var warn = userOptions.debugInvalidOptions !== false || this.table.options.debugInvalidOptions;
+		var output = Object.assign({}, this.registeredDefaults),
+		warn = this.table.options.debugInvalidOptions || userOptions.debugInvalidOptions === true;
 		
 		Object.assign(output, defaultOptions);
 		
