@@ -18311,12 +18311,14 @@ class SelectRow extends Module{
 	}
 	
 	clearSelectionData(silent){
+		var prevSelected = this.selectedRows.length;
+
 		this.selecting = false;
 		this.lastClickedRow = false;
 		this.selectPrev = [];
 		this.selectedRows = [];
 		
-		if(silent !== true){
+		if(prevSelected && silent !== true){
 			this._rowSelectionChanged();
 		}
 	}
