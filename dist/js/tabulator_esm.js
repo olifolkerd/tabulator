@@ -20111,24 +20111,28 @@ class OptionsList {
 		this.msgType = msgType;
 		this.registeredDefaults = Object.assign({}, defaults);
 	}
-
+	
 	register(option, value){
 		this.registeredDefaults[option] = value;
 	}
-
+	
 	generate(defaultOptions, userOptions = {}){
 		var output = Object.assign({}, this.registeredDefaults);
-
+		var warn = userOptions.debugInvalidOptions !== false || this.table.options.debugInvalidOptions;
+		
 		Object.assign(output, defaultOptions);
-
-		if(userOptions.debugInvalidOptions !== false || this.table.options.debugInvalidOptions){
-			for (let key in userOptions){
-				if(!output.hasOwnProperty(key)){
+		
+		for (let key in userOptions){
+			if(!output.hasOwnProperty(key)){
+				if(warn){
 					console.warn("Invalid " + this.msgType + " option:", key);
 				}
+
+				output[key] = userOptions.key;
 			}
 		}
-
+	
+		
 		for (let key in output){
 			if(key in userOptions){
 				output[key] = userOptions[key];
@@ -20142,7 +20146,7 @@ class OptionsList {
 				}
 			}
 		}
-
+		
 		return output;
 	}
 }
