@@ -311,6 +311,9 @@ class Tabulator {
 		}else if(ua.indexOf("Firefox") > -1){
 			this.browser = "firefox";
 			this.browserSlow = false;
+		}else if(ua.indexOf("Mac OS") > -1){
+			this.browser = "safari";
+			this.browserSlow = false;
 		}else{
 			this.browser = "other";
 			this.browserSlow = false;
