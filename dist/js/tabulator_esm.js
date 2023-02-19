@@ -5722,6 +5722,7 @@ function range(cell, onRendered, success, cancel, editorParams){
 //input element
 function date(cell, onRendered, success, cancel, editorParams){
 	var inputFormat = editorParams.format,
+	vertNav = editorParams.verticalNavigation || "editor",
 	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null;
 	
 	//create and style input
@@ -5843,6 +5844,14 @@ function date(cell, onRendered, success, cancel, editorParams){
 			case 36:
 				e.stopPropagation();
 				break;
+			
+			case 38: //up arrow
+			case 40: //down arrow
+				if(vertNav == "editor"){
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+				}
+				break;
 		}
 	});
 	
@@ -5852,6 +5861,7 @@ function date(cell, onRendered, success, cancel, editorParams){
 //input element
 function time(cell, onRendered, success, cancel, editorParams){
 	var inputFormat = editorParams.format,
+	vertNav = editorParams.verticalNavigation || "editor",
 	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
 	newDatetime;
 	
@@ -5961,6 +5971,14 @@ function time(cell, onRendered, success, cancel, editorParams){
 			case 36:
 				e.stopPropagation();
 				break;
+
+			case 38: //up arrow
+			case 40: //down arrow
+				if(vertNav == "editor"){
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+				}
+				break;
 		}
 	});
 	
@@ -5970,6 +5988,7 @@ function time(cell, onRendered, success, cancel, editorParams){
 //input element
 function datetime(cell, onRendered, success, cancel, editorParams){
 	var inputFormat = editorParams.format,
+	vertNav = editorParams.verticalNavigation || "editor",
 	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
 	newDatetime;
 	
@@ -6077,6 +6096,14 @@ function datetime(cell, onRendered, success, cancel, editorParams){
 			case 35:
 			case 36:
 				e.stopPropagation();
+				break;
+
+			case 38: //up arrow
+			case 40: //down arrow
+				if(vertNav == "editor"){
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+				}
 				break;
 		}
 	});
