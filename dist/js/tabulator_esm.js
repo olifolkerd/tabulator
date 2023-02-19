@@ -5772,7 +5772,7 @@ function date(cell, onRendered, success, cancel, editorParams){
 		if(DT){		
 			cellValue = convertDate(cellValue);			
 		}else {
-			console.error("Editor Error - 'date' editor 'inputFormat' param is dependant on luxon.js");
+			console.error("Editor Error - 'date' editor 'format' param is dependant on luxon.js");
 		}
 	}
 	
@@ -5876,7 +5876,7 @@ function time(cell, onRendered, success, cancel, editorParams){
 			cellValue = newDatetime.toFormat("hh:mm");
 			
 		}else {
-			console.error("Editor Error - 'date' editor 'inputFormat' param is dependant on luxon.js");
+			console.error("Editor Error - 'date' editor 'format' param is dependant on luxon.js");
 		}
 	}
 	
@@ -5979,7 +5979,7 @@ function datetime(cell, onRendered, success, cancel, editorParams){
 			
 			cellValue = newDatetime.toFormat("yyyy-MM-dd")  + "T" + newDatetime.toFormat("hh:mm");
 		}else {
-			console.error("Editor Error - 'date' editor 'inputFormat' param is dependant on luxon.js");
+			console.error("Editor Error - 'date' editor 'format' param is dependant on luxon.js");
 		}
 	}
 	

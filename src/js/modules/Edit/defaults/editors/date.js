@@ -51,7 +51,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		if(DT){		
 			cellValue = convertDate(cellValue);			
 		}else{
-			console.error("Editor Error - 'date' editor 'inputFormat' param is dependant on luxon.js");
+			console.error("Editor Error - 'date' editor 'format' param is dependant on luxon.js");
 		}
 	}
 	
