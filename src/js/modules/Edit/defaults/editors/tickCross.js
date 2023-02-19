@@ -32,7 +32,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	
 	if(this.table.browser != "firefox"){ //prevent blur issue on mac firefox
 		onRendered(function(){
-			if(!cell._getSelf){
+			if(cell._getSelf){
 				input.focus({preventScroll: true});
 			}
 		});
@@ -41,7 +41,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	input.checked = trueValueSet ? value === editorParams.trueValue : (value === true || value === "true" || value === "True" || value === 1);
 	
 	onRendered(function(){
-		if(!cell._getSelf){
+		if(cell._getSelf){
 			input.focus();
 		}
 	});

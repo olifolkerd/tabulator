@@ -5356,7 +5356,7 @@ function input(cell, onRendered, success, cancel, editorParams){
 	input.value = typeof cellValue !== "undefined" ? cellValue : "";
 
 	onRendered(function(){
-		if(!cell._getSelf){
+		if(cell._getSelf){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 
@@ -5437,7 +5437,7 @@ function textarea(cell, onRendered, success, cancel, editorParams){
 	input.value = value;
 
 	onRendered(function(){
-		if(!cell._getSelf){
+		if(cell._getSelf){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 
@@ -5571,7 +5571,7 @@ function number(cell, onRendered, success, cancel, editorParams){
 	};
 
 	onRendered(function () {
-		if(!cell._getSelf){
+		if(cell._getSelf){
 			//submit new value on blur
 			input.removeEventListener("blur", blurFunc);
 
@@ -5675,7 +5675,7 @@ function range(cell, onRendered, success, cancel, editorParams){
 	input.value = cellValue;
 	
 	onRendered(function () {
-		if(!cell._getSelf){
+		if(cell._getSelf){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 		}
@@ -5779,7 +5779,7 @@ function date(cell, onRendered, success, cancel, editorParams){
 	input.value = cellValue;
 	
 	onRendered(function(){
-		if(!cell._getSelf){
+		if(cell._getSelf){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 			
@@ -5883,7 +5883,7 @@ function time(cell, onRendered, success, cancel, editorParams){
 	input.value = cellValue;
 	
 	onRendered(function(){
-		if(!cell._getSelf){
+		if(cell._getSelf){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 			
@@ -5986,7 +5986,7 @@ function datetime(cell, onRendered, success, cancel, editorParams){
 	input.value = cellValue;
 	
 	onRendered(function(){
-		if(!cell._getSelf){
+		if(cell._getSelf){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 			
@@ -7412,7 +7412,7 @@ function tickCross(cell, onRendered, success, cancel, editorParams){
 	
 	if(this.table.browser != "firefox"){ //prevent blur issue on mac firefox
 		onRendered(function(){
-			if(!cell._getSelf){
+			if(cell._getSelf){
 				input.focus({preventScroll: true});
 			}
 		});
@@ -7421,7 +7421,7 @@ function tickCross(cell, onRendered, success, cancel, editorParams){
 	input.checked = trueValueSet ? value === editorParams.trueValue : (value === true || value === "true" || value === "True" || value === 1);
 	
 	onRendered(function(){
-		if(!cell._getSelf){
+		if(cell._getSelf){
 			input.focus();
 		}
 	});
