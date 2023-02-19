@@ -69,12 +69,19 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	});
 	
 	function onChange(){
-		var value = input.value;
+		var value = input.value,
+		luxDate;
 		
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
 			
 			if(value && inputFormat){
-				value = DT.fromFormat(String(value), "yyyy-MM-dd").toFormat(inputFormat);
+				luxDate = DT.fromFormat(String(value), "yyyy-MM-dd");
+
+				if(inputFormat === true){
+					value = luxDate;
+				}else{
+					value = luxDate.toFormat(inputFormat);
+				}
 			}
 			
 			if(success(value)){

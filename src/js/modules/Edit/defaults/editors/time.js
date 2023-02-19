@@ -57,12 +57,19 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	});
 	
 	function onChange(){
-		var value = input.value;
+		var value = input.value,
+		luxTime;
 		
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
 			
 			if(value && inputFormat){
-				value = DT.fromFormat(String(value), "hh:mm").toFormat(inputFormat);
+				luxTime = DT.fromFormat(String(value), "hh:mm");
+
+				if(inputFormat === true){
+					value = luxTime;
+				}else{
+					value = luxTime.toFormat(inputFormat);
+				}
 			}
 			
 			if(success(value)){

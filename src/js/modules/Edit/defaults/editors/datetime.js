@@ -56,12 +56,19 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	});
 	
 	function onChange(){
-		var value = input.value;
+		var value = input.value,
+		luxDateTime;
 		
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
-			
+
 			if(value && inputFormat){
-				value = DT.fromISO(String(value)).toFormat(inputFormat);
+				luxDateTime = DT.fromISO(String(value));
+
+				if(inputFormat === true){
+					value = luxDateTime;
+				}else{
+					value = luxDateTime.toFormat(inputFormat);
+				}
 			}
 			
 			if(success(value)){

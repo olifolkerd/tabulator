@@ -5790,12 +5790,19 @@ function date(cell, onRendered, success, cancel, editorParams){
 	});
 	
 	function onChange(){
-		var value = input.value;
+		var value = input.value,
+		luxDate;
 		
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
 			
 			if(value && inputFormat){
-				value = DT.fromFormat(String(value), "yyyy-MM-dd").toFormat(inputFormat);
+				luxDate = DT.fromFormat(String(value), "yyyy-MM-dd");
+
+				if(inputFormat === true){
+					value = luxDate;
+				}else {
+					value = luxDate.toFormat(inputFormat);
+				}
 			}
 			
 			if(success(value)){
@@ -5894,12 +5901,19 @@ function time(cell, onRendered, success, cancel, editorParams){
 	});
 	
 	function onChange(){
-		var value = input.value;
+		var value = input.value,
+		luxTime;
 		
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
 			
 			if(value && inputFormat){
-				value = DT.fromFormat(String(value), "hh:mm").toFormat(inputFormat);
+				luxTime = DT.fromFormat(String(value), "hh:mm");
+
+				if(inputFormat === true){
+					value = luxTime;
+				}else {
+					value = luxTime.toFormat(inputFormat);
+				}
 			}
 			
 			if(success(value)){
@@ -5997,12 +6011,19 @@ function datetime(cell, onRendered, success, cancel, editorParams){
 	});
 	
 	function onChange(){
-		var value = input.value;
+		var value = input.value,
+		luxDateTime;
 		
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
-			
+
 			if(value && inputFormat){
-				value = DT.fromISO(String(value)).toFormat(inputFormat);
+				luxDateTime = DT.fromISO(String(value));
+
+				if(inputFormat === true){
+					value = luxDateTime;
+				}else {
+					value = luxDateTime.toFormat(inputFormat);
+				}
 			}
 			
 			if(success(value)){
