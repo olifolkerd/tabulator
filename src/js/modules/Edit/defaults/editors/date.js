@@ -77,10 +77,17 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			if(value && inputFormat){
 				luxDate = DT.fromFormat(String(value), "yyyy-MM-dd");
 
-				if(inputFormat === true){
-					value = luxDate;
-				}else{
-					value = luxDate.toFormat(inputFormat);
+				switch(inputFormat){
+					case true:
+						value = luxDate;
+						break;
+
+					case "iso":
+						value = luxDate.toISO();
+						break;
+
+					default:
+						value = luxDate.toFormat(inputFormat);
 				}
 			}
 			

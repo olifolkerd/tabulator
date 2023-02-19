@@ -65,10 +65,17 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			if(value && inputFormat){
 				luxTime = DT.fromFormat(String(value), "hh:mm");
 
-				if(inputFormat === true){
-					value = luxTime;
-				}else{
-					value = luxTime.toFormat(inputFormat);
+				switch(inputFormat){
+					case true:
+						value = luxTime;
+						break;
+
+					case "iso":
+						value = luxTime.toISO();
+						break;
+
+					default:
+						value = luxTime.toFormat(inputFormat);
 				}
 			}
 			

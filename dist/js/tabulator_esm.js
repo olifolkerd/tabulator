@@ -5798,10 +5798,17 @@ function date(cell, onRendered, success, cancel, editorParams){
 			if(value && inputFormat){
 				luxDate = DT.fromFormat(String(value), "yyyy-MM-dd");
 
-				if(inputFormat === true){
-					value = luxDate;
-				}else {
-					value = luxDate.toFormat(inputFormat);
+				switch(inputFormat){
+					case true:
+						value = luxDate;
+						break;
+
+					case "iso":
+						value = luxDate.toISO();
+						break;
+
+					default:
+						value = luxDate.toFormat(inputFormat);
 				}
 			}
 			
@@ -5909,10 +5916,17 @@ function time(cell, onRendered, success, cancel, editorParams){
 			if(value && inputFormat){
 				luxTime = DT.fromFormat(String(value), "hh:mm");
 
-				if(inputFormat === true){
-					value = luxTime;
-				}else {
-					value = luxTime.toFormat(inputFormat);
+				switch(inputFormat){
+					case true:
+						value = luxTime;
+						break;
+
+					case "iso":
+						value = luxTime.toISO();
+						break;
+
+					default:
+						value = luxTime.toFormat(inputFormat);
 				}
 			}
 			
@@ -6019,10 +6033,17 @@ function datetime(cell, onRendered, success, cancel, editorParams){
 			if(value && inputFormat){
 				luxDateTime = DT.fromISO(String(value));
 
-				if(inputFormat === true){
-					value = luxDateTime;
-				}else {
-					value = luxDateTime.toFormat(inputFormat);
+				switch(inputFormat){
+					case true:
+						value = luxDateTime;
+						break;
+
+					case "iso":
+						value = luxDateTime.toISO();
+						break;
+
+					default:
+						value = luxDateTime.toFormat(inputFormat);
 				}
 			}
 			

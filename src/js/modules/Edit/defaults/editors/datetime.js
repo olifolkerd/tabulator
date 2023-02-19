@@ -64,10 +64,17 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			if(value && inputFormat){
 				luxDateTime = DT.fromISO(String(value));
 
-				if(inputFormat === true){
-					value = luxDateTime;
-				}else{
-					value = luxDateTime.toFormat(inputFormat);
+				switch(inputFormat){
+					case true:
+						value = luxDateTime;
+						break;
+
+					case "iso":
+						value = luxDateTime.toISO();
+						break;
+
+					default:
+						value = luxDateTime.toFormat(inputFormat);
 				}
 			}
 			
