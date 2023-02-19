@@ -34,7 +34,17 @@ class FrozenRows extends Module{
 		if(this.table.options.frozenRows){
 			this.subscribe("data-processed", this.initializeRows.bind(this));
 			this.subscribe("row-added", this.initializeRow.bind(this));
+			this.subscribe("table-redrawing", this.resizeHolderWidth.bind(this));
+			this.subscribe("column-resized", this.resizeHolderWidth.bind(this));
+			this.subscribe("column-show", this.resizeHolderWidth.bind(this));
+			this.subscribe("column-hide", this.resizeHolderWidth.bind(this));
 		}
+
+		this.resizeHolderWidth();
+	}
+
+	resizeHolderWidth(){
+		this.topElement.style.minWidth = this.table.columnManager.headersElement.offsetWidth + "px";
 	}
 
 	initializeRows(){

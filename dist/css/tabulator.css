@@ -276,10 +276,6 @@
   display: none;
 }
 
-.tabulator .tabulator-header .tabulator-frozen-rows-holder {
-  min-width: 600%;
-}
-
 .tabulator .tabulator-header .tabulator-frozen-rows-holder:empty {
   display: none;
 }

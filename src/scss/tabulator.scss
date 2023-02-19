@@ -386,9 +386,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 		
-		.tabulator-frozen-rows-holder{
-			min-width:600%;
-			
+		.tabulator-frozen-rows-holder{		
 			&:empty{
 				display: none;
 			}
