@@ -51,13 +51,14 @@ export default class BasicVertical extends Renderer{
 	}
 
 
-	rerenderRows(callback){
+	rerenderRows(callback){	
 		this.clearRows();
-		this.renderRows();
 
 		if(callback){
 			callback();
 		}
+
+		this.renderRows();
 	}
 
 	scrollToRowNearestTop(row){
