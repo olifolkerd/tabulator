@@ -300,7 +300,7 @@ export default class RowManager extends CoreFeature{
 		this.dispatchExternal("rowDeleted", row.getComponent());
 		
 		if(!this.displayRowsCount){
-			this._showPlaceholder();
+			this.tableEmpty();
 		}
 		
 		if(this.subscribedExternal("dataChanged")){
@@ -958,6 +958,11 @@ export default class RowManager extends CoreFeature{
 		
 		this.renderer.clearRows();
 	}
+
+	tableEmpty(){
+		this.renderEmptyScroll();
+		this._showPlaceholder();
+	}
 	
 	_showPlaceholder(){
 		if(this.placeholder){
@@ -975,6 +980,7 @@ export default class RowManager extends CoreFeature{
 
 		// clear empty table placeholder min
 		this.tableElement.style.minWidth = "";
+		this.tableElement.style.display = "";
 	}
 	
 	_positionPlaceholder(){

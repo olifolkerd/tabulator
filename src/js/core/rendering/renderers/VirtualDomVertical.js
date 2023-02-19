@@ -102,7 +102,7 @@ export default class VirtualDomVertical extends Renderer{
 			this._virtualRenderFill((topRow === false ? this.rows.length - 1 : topRow), true, topOffset || 0);
 		}else{
 			this.clear();
-			this.table.rowManager._showPlaceholder();
+			this.table.rowManager.tableEmpty();
 		}
 
 		this.scrollColumns(left);

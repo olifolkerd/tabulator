@@ -21848,7 +21848,7 @@ class VirtualDomVertical extends Renderer{
 			this._virtualRenderFill((topRow === false ? this.rows.length - 1 : topRow), true, topOffset || 0);
 		}else {
 			this.clear();
-			this.table.rowManager._showPlaceholder();
+			this.table.rowManager.tableEmpty();
 		}
 
 		this.scrollColumns(left);
@@ -22619,7 +22619,7 @@ class RowManager extends CoreFeature{
 		this.dispatchExternal("rowDeleted", row.getComponent());
 		
 		if(!this.displayRowsCount){
-			this._showPlaceholder();
+			this.tableEmpty();
 		}
 		
 		if(this.subscribedExternal("dataChanged")){
@@ -23277,6 +23277,11 @@ class RowManager extends CoreFeature{
 		
 		this.renderer.clearRows();
 	}
+
+	tableEmpty(){
+		this.renderEmptyScroll();
+		this._showPlaceholder();
+	}
 	
 	_showPlaceholder(){
 		if(this.placeholder){
@@ -23294,6 +23299,7 @@ class RowManager extends CoreFeature{
 
 		// clear empty table placeholder min
 		this.tableElement.style.minWidth = "";
+		this.tableElement.style.display = "";
 	}
 	
 	_positionPlaceholder(){
