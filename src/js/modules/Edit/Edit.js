@@ -656,8 +656,7 @@ class Edit extends Module{
 				cellEditor = cell.column.modules.edit.editor.call(self, component, onRendered, success, cancel, params);
 				
 				//if editor returned, add to DOM, if false, abort edit
-				if(cellEditor !== false){
-					
+				if(this.currentCell && cellEditor !== false){
 					if(cellEditor instanceof Node){
 						element.classList.add("tabulator-editing");
 						cell.row.getElement().classList.add("tabulator-editing");
@@ -681,7 +680,6 @@ class Edit extends Module{
 						element.blur();
 						return false;
 					}
-					
 				}else{
 					element.blur();
 					return false;
