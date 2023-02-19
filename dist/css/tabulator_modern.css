@@ -262,7 +262,6 @@
 
 .tabulator .tabulator-header .tabulator-calcs-holder {
   box-sizing: border-box;
-  min-width: 600%;
   background: white !important;
   border-top: 1px solid #fff;
   border-bottom: 1px solid #fff;
