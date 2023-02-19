@@ -23211,7 +23211,7 @@ class RowManager extends CoreFeature{
 			this.renderer = new renderClass(this.table, this.element, this.tableElement);
 			this.renderer.initialize();
 			
-			if((this.table.element.clientHeight || this.table.options.height)){
+			if((this.table.element.clientHeight || this.table.options.height) && !(this.table.options.minHeight && this.table.options.maxHeight)){
 				this.fixedHeight = true;
 			}else {
 				this.fixedHeight = false;
