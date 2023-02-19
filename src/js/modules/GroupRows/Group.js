@@ -159,7 +159,7 @@ class Group{
 		
 		row.modules.group = this;
 		
-		this.generateGroupHeaderContents();
+		// this.generateGroupHeaderContents();
 		
 		if(this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table"){
 			this.groupManager.table.modules.columnCalcs.recalcGroup(this);
@@ -198,7 +198,6 @@ class Group{
 	removeRow(row){
 		var index = this.rows.indexOf(row);
 		var el = row.getElement();
-		
 		
 		if(index > -1){
 			this.rows.splice(index, 1);
