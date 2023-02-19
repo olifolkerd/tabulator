@@ -22063,7 +22063,7 @@ class VirtualDomVertical extends Renderer{
 			this.scrollTop = Math.min(this.scrollTop, this.elementVertical.scrollHeight - containerHeight);
 
 			//adjust for horizontal scrollbar if present (and not at top of table)
-			if(this.elementVertical.scrollWidth > this.elementVertical.offsetWidth && forceMove){
+			if(this.elementVertical.scrollWidth > this.elementVertical.clientWidth && forceMove){
 				this.scrollTop += this.elementVertical.offsetHeight - containerHeight;
 			}
 
