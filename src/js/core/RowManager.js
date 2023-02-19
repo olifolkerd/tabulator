@@ -918,6 +918,11 @@ export default class RowManager extends CoreFeature{
 			
 			if(this.firstRender){
 				this.firstRender = false;
+
+				if(!this.fixedHeight){
+					this.adjustTableSize();
+				}
+				
 				this.layoutRefresh(true);
 			}
 		}else{
