@@ -194,7 +194,7 @@ class SelectRow extends Module{
 	}
 
 	checkRowSelectability(row){
-		if(row.type === "row"){
+		if(row && row.type === "row"){
 			return this.table.options.selectableCheck.call(this.table, row.getComponent());
 		}
 
@@ -214,48 +214,44 @@ class SelectRow extends Module{
 	
 	//select a number of rows
 	selectRows(rows){
-		var rowMatch;
+		var changes = [], 
+		rowMatch, change;
 		
 		switch(typeof rows){
 			case "undefined":
-				this.table.rowManager.rows.forEach((row) => {
-					this._selectRow(row, true, true);
-				});
-			
-				this._rowSelectionChanged();
+				rowMatch = this.table.rowManager.rows;
 				break;
 			
 			case "string":
 				rowMatch = this.table.rowManager.findRow(rows);
 			
-				if(rowMatch){
-					this._selectRow(rowMatch, true, true);
-					this._rowSelectionChanged();
-				}else{
+				if(!rowMatch){
 					rowMatch = this.table.rowManager.getRows(rows);
-					
-					rowMatch.forEach((row) => {
-						this._selectRow(row, true, true);
-					});
-
-					if(rowMatch.length){
-						this._rowSelectionChanged();
-					}
 				}
 				break;
 			
 			default:
-				if(Array.isArray(rows)){
-					rows.forEach((row) => {
-						this._selectRow(row, true, true);
-					});
-				
-					this._rowSelectionChanged();
-				}else{
-					this._selectRow(rows, false, true);
-				}
+				rowMatch = rows;
 				break;
 		}
+
+		if(Array.isArray(rowMatch)){
+			if(rowMatch.length){
+				rowMatch.forEach((row) => {
+					change = this._selectRow(row, true, true);
+
+					if(change){
+						changes.push(change);
+					}
+				});
+
+				this._rowSelectionChanged(false, changes);
+			}
+		}else{
+			if(rowMatch){
+				this._selectRow(rowMatch, false, true);
+			}
+		}	
 	}
 	
 	//select an individual row
@@ -293,7 +289,9 @@ class SelectRow extends Module{
 				
 				this.dispatchExternal("rowSelected", row.getComponent());
 				
-				this._rowSelectionChanged(silent);
+				this._rowSelectionChanged(silent, row);
+
+				return row;
 			}
 		}else{
 			if(!silent){
@@ -308,32 +306,44 @@ class SelectRow extends Module{
 	
 	//deselect a number of rows
 	deselectRows(rows, silent){
-		var self = this,
-		rowCount;
+		var changes = [], 
+		rowMatch, change;
 		
-		if(typeof rows == "undefined"){
+		switch(typeof rows){
+			case "undefined":
+				rowMatch = Object.assign([], this.selectedRows);
+				break;
 			
-			rowCount = self.selectedRows.length;
+			case "string":
+				rowMatch = this.table.rowManager.findRow(rows);
 			
-			for(let i = 0; i < rowCount; i++){
-				self._deselectRow(self.selectedRows[0], true);
-			}
+				if(!rowMatch){
+					rowMatch = this.table.rowManager.getRows(rows);
+				}
+				break;
 			
-			if(rowCount){
-				self._rowSelectionChanged(silent);
-			}
-			
-		}else{
-			if(Array.isArray(rows)){
-				rows.forEach(function(row){
-					self._deselectRow(row, true);
-				});
-				
-				self._rowSelectionChanged(silent);
-			}else{
-				self._deselectRow(rows, silent);
-			}
+			default:
+				rowMatch = rows;
+				break;
 		}
+
+		if(Array.isArray(rowMatch)){
+			if(rowMatch.length){
+				rowMatch.forEach((row) => {
+					change = this._deselectRow(row, true, true);
+
+					if(change){
+						changes.push(change);
+					}
+				});
+
+				this._rowSelectionChanged(silent, [], changes);
+			}
+		}else{
+			if(rowMatch){
+				this._deselectRow(rowMatch, silent, true);
+			}
+		}	
 	}
 	
 	//deselect an individual row
@@ -366,7 +376,9 @@ class SelectRow extends Module{
 				
 				this.dispatchExternal("rowDeselected", row.getComponent());
 				
-				self._rowSelectionChanged(silent);
+				self._rowSelectionChanged(silent, undefined, row);
+
+				return row;
 			}
 		}else{
 			if(!silent){
@@ -386,7 +398,6 @@ class SelectRow extends Module{
 	}
 	
 	getSelectedRows(){
-		
 		var rows = [];
 		
 		this.selectedRows.forEach(function(row){
@@ -396,7 +407,7 @@ class SelectRow extends Module{
 		return rows;
 	}
 	
-	_rowSelectionChanged(silent){
+	_rowSelectionChanged(silent, selected = [], deselected = []){
 		if(this.headerCheckboxElement){
 			if(this.selectedRows.length === 0){
 				this.headerCheckboxElement.checked = false;
@@ -411,7 +422,19 @@ class SelectRow extends Module{
 		}
 		
 		if(!silent){
-			this.dispatchExternal("rowSelectionChanged", this.getSelectedData(), this.getSelectedRows());
+			if(!Array.isArray(selected)){
+				selected = [selected];
+			}
+
+			selected = selected.map(row => row.getComponent());
+
+			if(!Array.isArray(deselected)){
+				deselected = [deselected];
+			}
+
+			deselected = deselected.map(row => row.getComponent());
+
+			this.dispatchExternal("rowSelectionChanged", this.getSelectedData(), this.getSelectedRows(), selected, deselected);
 		}
 	}
 	
