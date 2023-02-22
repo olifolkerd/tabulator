@@ -3586,6 +3586,13 @@ var defaultCalculations = {
 
 		return output;
 	},
+	"unique":function(values, data, calcParams){
+		var unique = values.filter((value, index) => {
+			return (values || value === 0) && values.indexOf(value) === index;
+		});
+
+		return unique.length;
+	},
 };
 
 class ColumnCalcs extends Module{
