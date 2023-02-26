@@ -5365,7 +5365,7 @@ function input(cell, onRendered, success, cancel, editorParams){
 	input.value = typeof cellValue !== "undefined" ? cellValue : "";
 
 	onRendered(function(){
-		if(cell._getSelf){
+		if(cell.getType() === "cell"){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 
@@ -5446,7 +5446,7 @@ function textarea(cell, onRendered, success, cancel, editorParams){
 	input.value = value;
 
 	onRendered(function(){
-		if(cell._getSelf){
+		if(cell.getType() === "cell"){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 
@@ -5580,7 +5580,7 @@ function number(cell, onRendered, success, cancel, editorParams){
 	};
 
 	onRendered(function () {
-		if(cell._getSelf){
+		if(cell.getType() === "cell"){
 			//submit new value on blur
 			input.removeEventListener("blur", blurFunc);
 
@@ -5684,7 +5684,7 @@ function range(cell, onRendered, success, cancel, editorParams){
 	input.value = cellValue;
 	
 	onRendered(function () {
-		if(cell._getSelf){
+		if(cell.getType() === "cell"){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 		}
@@ -5789,7 +5789,7 @@ function date(cell, onRendered, success, cancel, editorParams){
 	input.value = cellValue;
 	
 	onRendered(function(){
-		if(cell._getSelf){
+		if(cell.getType() === "cell"){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 			
@@ -5916,7 +5916,7 @@ function time(cell, onRendered, success, cancel, editorParams){
 	input.value = cellValue;
 	
 	onRendered(function(){
-		if(cell._getSelf){
+		if(cell.getType() == "cell"){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 			
@@ -6042,7 +6042,7 @@ function datetime(cell, onRendered, success, cancel, editorParams){
 	input.value = cellValue;
 	
 	onRendered(function(){
-		if(cell._getSelf){
+		if(cell.getType() === "cell"){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 			
@@ -6137,7 +6137,7 @@ class Edit{
 		
 		this.initialValues = null; 
 		
-		this.isFilter = !cell._getSelf;
+		this.isFilter = cell.getType() === "header";
 		
 		this.filterTimeout = null;
 		this.filtered = false;
@@ -7490,7 +7490,7 @@ function tickCross(cell, onRendered, success, cancel, editorParams){
 	
 	if(this.table.browser != "firefox" && this.table.browser != "safari"){ //prevent blur issue on mac firefox
 		onRendered(function(){
-			if(cell._getSelf){
+			if(cell.getType() === "cell"){
 				input.focus({preventScroll: true});
 			}
 		});

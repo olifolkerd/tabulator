@@ -18,7 +18,7 @@ export default class Edit{
 		
 		this.initialValues = null; 
 		
-		this.isFilter = !cell._getSelf;
+		this.isFilter = cell.getType() === "header";
 		
 		this.filterTimeout = null;
 		this.filtered = false;
