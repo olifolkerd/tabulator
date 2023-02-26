@@ -489,6 +489,9 @@ class Export extends Module{
 					getElement:function(){
 						return cellEl;
 					},
+					getType:function(){
+						return "cell";
+					},
 					getColumn:function(){
 						return column.getComponent();
 					},

@@ -38,7 +38,9 @@ export default class CellComponent {
 	getData(){
 		return this._cell.row.getData();
 	}
-
+	getType(){
+		return "cell";
+	}
 	getField(){
 		return this._cell.column.getField();
 	}

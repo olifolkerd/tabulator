@@ -375,6 +375,9 @@ class Filter extends Module{
 					getTable:() => {
 						return this.table;
 					},
+					getType:() => {
+						return "header";
+					},
 					getRow:function(){
 						return {
 							normalizeHeight:function(){

@@ -1508,7 +1508,9 @@ class CellComponent {
 	getData(){
 		return this._cell.row.getData();
 	}
-
+	getType(){
+		return "cell";
+	}
 	getField(){
 		return this._cell.column.getField();
 	}
@@ -8795,6 +8797,9 @@ class Export extends Module{
 					getElement:function(){
 						return cellEl;
 					},
+					getType:function(){
+						return "cell";
+					},
 					getColumn:function(){
 						return column.getComponent();
 					},
@@ -9407,6 +9412,9 @@ class Filter extends Module{
 					},
 					getTable:() => {
 						return this.table;
+					},
+					getType:() => {
+						return "header";
 					},
 					getRow:function(){
 						return {
@@ -10676,6 +10684,9 @@ class Format extends Module{
 				},
 				getElement:function(){
 					return el;
+				},
+				getType:function(){
+					return "header";
 				},
 				getColumn:function(){
 					return column.getComponent();
@@ -18279,6 +18290,9 @@ class ResponsiveLayout extends Module{
 						},
 						getData:function(){
 							return data;
+						},
+						getType:function(){
+							return "cell";
 						},
 						getElement:function(){
 							return document.createElement("div");
