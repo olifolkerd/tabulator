@@ -13356,8 +13356,20 @@ class Interaction extends Module{
 
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("cell-dblclick", this.cellContentsSelectionFixer.bind(this));
+		this.subscribe("scroll-horizontal", this.clearTouchWatchers.bind(this));
+		this.subscribe("scroll-vertical", this.clearTouchWatchers.bind(this));
 	}
 
+	clearTouchWatchers(){
+		var types = Object.values(this.touchWatchers);
+
+		types.forEach((type) => {
+			for(let key in type){
+				type[key] = null;
+			}
+		});
+	}
+		
 	cellContentsSelectionFixer(e, cell){
 		var range;
 
