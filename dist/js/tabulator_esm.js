@@ -9947,7 +9947,7 @@ function textarea$1(cell, formatterParams, onRendered){
 function money(cell, formatterParams, onRendered){
 	var floatVal = parseFloat(cell.getValue()),
 	sign = "",
-	number, integer, decimal, rgx;
+	number, integer, decimal, rgx, value;
 
 	var decimalSym = formatterParams.decimal || ".";
 	var thousandSym = formatterParams.thousand || ",";
@@ -9979,7 +9979,14 @@ function money(cell, formatterParams, onRendered){
 		}
 	}
 
-	return after ? sign + integer + decimal + symbol : sign + symbol + integer + decimal;
+	value = integer + decimal;
+	
+	if(sign === true){
+		value = "(" + value  + ")";
+		return after ? value + symbol : symbol + value;
+	}else {
+		return after ? sign + value + symbol : sign + symbol + value;
+	}
 }
 
 function link(cell, formatterParams, onRendered){
