@@ -159,8 +159,10 @@ $footerActiveColor:$footerSeparatorColor !default; //footer bottom active text c
 		background:$headerBackgroundColor;
 		color:$headerTextColor;
 
-		&:hover{
-			background-color:darken($headerBackgroundColor, 10%);
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				background-color:darken($headerBackgroundColor, 10%);
+			}
 		}
 
 		span{
@@ -177,8 +179,10 @@ $footerActiveColor:$footerSeparatorColor !default; //footer bottom active text c
 		background:$headerBackgroundColor;
 		color:$headerTextColor;
 
-		&:hover{
-			background-color:darken($headerBackgroundColor, 10%);
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				background-color:darken($headerBackgroundColor, 10%);
+			}
 		}
 
 		span{
