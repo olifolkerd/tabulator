@@ -6203,7 +6203,7 @@ class Edit{
 		function clickStop(e){
 			e.stopPropagation();
 		}	
-	
+		
 		if(!this.isFilter){
 			this.input.style.height = "100%";
 			this.input.focus({preventScroll: true});
@@ -6401,36 +6401,37 @@ class Edit{
 		switch(e.keyCode){
 			
 			case 38: //up arrow
-				this._keyUp(e);
-				break;
+			this._keyUp(e);
+			break;
 			
 			case 40: //down arrow
-				this._keyDown(e);
-				break;
+			this._keyDown(e);
+			break;
 			
 			case 37: //left arrow
 			case 39: //right arrow
-				this._keySide(e);
-				break;
+			this._keySide(e);
+			break;
 			
 			case 13: //enter
-				this._keyEnter();
-				break;
+			this._keyEnter();
+			break;
 			
 			case 27: //escape
-				this._keyEsc();
-				break;
+			this._keyEsc();
+			break;
 			
 			case 36: //home
 			case 35: //end
-				this._keyHomeEnd(e);
-				break;
+			this._keyHomeEnd(e);
+			break;
 			
 			case 9: //tab
-				break;
+			this._keyTab(e);
+			break;
 			
 			default:
-				this._keySelectLetter(e);
+			this._keySelectLetter(e);
 		}
 	}
 	
@@ -6442,10 +6443,10 @@ class Edit{
 			case 40: //right arrow
 			case 13: //enter
 			case 27: //escape
-				break;
+			break;
 			
 			default:
-				this._keyAutoCompLetter(e);
+			this._keyAutoCompLetter(e);
 		}
 	}
 	
@@ -6472,6 +6473,16 @@ class Edit{
 	//////////////////////////////////////
 	//////// Keyboard Navigation /////////
 	//////////////////////////////////////
+	
+	_keyTab(e){
+		if(this.params.autocomplete && this.lastAction === "typing"){
+			this._resolveValue(true);
+		}else {
+			if(this.focusedItem){
+				this._chooseItem(this.focusedItem, true);
+			}
+		}
+	}
 	
 	_keyUp(e){
 		var index = this.displayItems.indexOf(this.focusedItem);
@@ -6597,14 +6608,14 @@ class Edit{
 	
 	rebuildOptionsList(){
 		this._generateOptions()
-			.then(this._sortOptions.bind(this))
-			.then(this._buildList.bind(this))
-			.then(this._showList.bind(this))
-			.catch((e) => {
-				if(!Number.isInteger(e)){
-					console.error("List generation error", e);
-				}
-			});
+		.then(this._sortOptions.bind(this))
+		.then(this._buildList.bind(this))
+		.then(this._showList.bind(this))
+		.catch((e) => {
+			if(!Number.isInteger(e)){
+				console.error("List generation error", e);
+			}
+		});
 	}
 	
 	_filterList(){
@@ -6636,13 +6647,13 @@ class Edit{
 			}
 			
 			return values.then()
-				.then((responseValues) => {
-					if(this.listIteration === iteration){
-						return this._parseList(responseValues);
-					}else {
-						return Promise.reject(iteration);
-					}
-				});
+			.then((responseValues) => {
+				if(this.listIteration === iteration){
+					return this._parseList(responseValues);
+				}else {
+					return Promise.reject(iteration);
+				}
+			});
 		}else {
 			return Promise.resolve(this._parseList(values));
 		}
@@ -6676,22 +6687,22 @@ class Edit{
 		url = urlBuilder(url, {}, params);
 		
 		return fetch(url)
-			.then((response)=>{
-				if(response.ok) {
-					return response.json()
-						.catch((error)=>{
-							console.warn("List Ajax Load Error - Invalid JSON returned", error);
-							return Promise.reject(error);
-						});
-				}else {
-					console.error("List Ajax Load Error - Connection Error: " + response.status, response.statusText);
-					return Promise.reject(response);
-				}
-			})
-			.catch((error)=>{
-				console.error("List Ajax Load Error - Connection Error: ", error);
-				return Promise.reject(error);
-			});
+		.then((response)=>{
+			if(response.ok) {
+				return response.json()
+				.catch((error)=>{
+					console.warn("List Ajax Load Error - Invalid JSON returned", error);
+					return Promise.reject(error);
+				});
+			}else {
+				console.error("List Ajax Load Error - Connection Error: " + response.status, response.statusText);
+				return Promise.reject(response);
+			}
+		})
+		.catch((error)=>{
+			console.error("List Ajax Load Error - Connection Error: ", error);
+			return Promise.reject(error);
+		});
 	}
 	
 	_uniqueColumnValues(field){
@@ -7110,7 +7121,7 @@ class Edit{
 	
 	_resolveValue(blur){
 		var output, initialValue;
-
+		
 		if(this.popup){
 			this.popup.hide(true);
 		}
