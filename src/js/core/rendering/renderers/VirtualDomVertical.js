@@ -301,6 +301,8 @@ export default class VirtualDomVertical extends Renderer{
 				}
 				element.appendChild(rowFragment);
 				
+				// NOTE: The next 3 loops are separate on purpose
+				// This is to batch up the dom writes and reads which drastically improves performance 
 				renderedRows.forEach((row) => {
 					if(!row.heightInitialized) {
 						row.calcHeight(true);
