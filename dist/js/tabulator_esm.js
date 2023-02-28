@@ -21130,6 +21130,8 @@ class ColumnManager extends CoreFeature {
 		
 		this.contentsElement.insertBefore(this.headersElement, this.contentsElement.firstChild);
 		this.element.insertBefore(this.contentsElement, this.element.firstChild);
+
+		this.initializeScrollWheelWatcher();
 		
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 		this.subscribe("scrollbar-vertical", this.padVerticalScrollbar.bind(this));
@@ -21220,6 +21222,19 @@ class ColumnManager extends CoreFeature {
 		this.scrollLeft = left;
 		
 		this.renderer.scrollColumns(left);
+	}
+
+	initializeScrollWheelWatcher(){
+		this.contentsElement.addEventListener("wheel", (e) => {
+			var left;
+
+			if(e.deltaX){
+				left = this.contentsElement.scrollLeft + e.deltaX;
+
+				this.table.rowManager.scrollHorizontal(left);
+				this.table.columnManager.scrollHorizontal(left);
+			}
+		});
 	}
 	
 	///////////// Column Setup Functions /////////////
