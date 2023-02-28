@@ -301,23 +301,22 @@ export default class VirtualDomVertical extends Renderer{
 				}
 				element.appendChild(rowFragment);
 				
-				renderedRows.forEach(function (row) {
+				renderedRows.forEach((row) => {
 					if(!row.heightInitialized) {
 						row.calcHeight(true);
 						
 					}
 				});
 
-				renderedRows.forEach(function (row) {
+				renderedRows.forEach((row) => {
 					if(!row.heightInitialized) {
 						row.setCellHeight();
 						
 					}
 				});
 
-				const me = this;
-				renderedRows.forEach(function (row) {
-					const rowHeight = row.getHeight();
+				renderedRows.forEach((row) => {
+					rowHeight = row.getHeight();
 					
 					if(totalRowsRendered < topPad){
 						topPadHeight += rowHeight;
@@ -325,8 +324,8 @@ export default class VirtualDomVertical extends Renderer{
 						rowsHeight += rowHeight;
 					}
 
-					if(rowHeight > me.vDomWindowBuffer){
-						me.vDomWindowBuffer = rowHeight * 2;
+					if(rowHeight > this.vDomWindowBuffer){
+						this.vDomWindowBuffer = rowHeight * 2;
 					}
 					totalRowsRendered++;
 				});
