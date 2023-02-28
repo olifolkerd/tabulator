@@ -227,11 +227,19 @@ export default class VirtualDomVertical extends Renderer{
 		holder = this.elementVertical,
 		topPad = 0,
 		rowsHeight = 0,
+		rowHeight = 0,
 		heightOccupied = 0,
 		topPadHeight = 0,
 		i = 0,
 		rows = this.rows(),
 		rowsCount = rows.length,
+		index = 0,
+		row,
+		rowFragment,
+		renderedRows = [],
+		totalRowsRendered = 0,
+		rowsToRender = 0,
+		fixedheight = this.table.rowManager.fixedHeight,
 		containerHeight = this.elementVertical.clientHeight;
 
 		position = position || 0;
@@ -261,18 +269,16 @@ export default class VirtualDomVertical extends Renderer{
 		if(rowsCount && Helpers.elVisible(this.elementVertical)){
 			this.vDomTop = position;
 			this.vDomBottom = position -1;
-			const fixedheight = this.table.rowManager.fixedHeight;
 
-			const rowsToRender = !fixedheight ? rowsCount : Math.max(this.vDomWindowMinTotalRows, Math.ceil((containerHeight / this.vDomRowHeight) + (this.vDomWindowBuffer / this.vDomRowHeight)));
+			rowsToRender = rowsToRender = !fixedheight ? rowsCount : Math.max(this.vDomWindowMinTotalRows, Math.ceil((containerHeight / this.vDomRowHeight) + (this.vDomWindowBuffer / this.vDomRowHeight)));
 			
-			let totalRowsRendered = 0;
 			while(((!fixedheight || rowsHeight <= containerHeight + this.vDomWindowBuffer) || totalRowsRendered < this.vDomWindowMinTotalRows) && this.vDomBottom < rowsCount -1) {
-				const renderedRows = [];
-				const rowFragment = document.createDocumentFragment();
+				renderedRows = [];
+				rowFragment = document.createDocumentFragment();
 
 				i = 0;
 				while ((i < rowsToRender) && this.vDomBottom < rowsCount -1) {	
-					const index = this.vDomBottom + 1,
+					index = this.vDomBottom + 1,
 					row = rows[index];
 
 					this.styleRow(row, index);
