@@ -1081,7 +1081,9 @@ export default class RowManager extends CoreFeature{
 		this.table.tableWidth = this.table.element.clientWidth;
 		
 		if(!force){
-			resized && this.reRenderInPosition();
+			if(resized) {
+				this.reRenderInPosition();
+			}
 			this.scrollHorizontal(this.scrollLeft);
 		}else{
 			this.renderTable();
