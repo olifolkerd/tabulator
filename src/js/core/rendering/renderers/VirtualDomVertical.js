@@ -239,8 +239,9 @@ export default class VirtualDomVertical extends Renderer{
 		renderedRows = [],
 		totalRowsRendered = 0,
 		rowsToRender = 0,
-		fixedheight = this.table.rowManager.fixedHeight,
-		containerHeight = this.elementVertical.clientHeight;
+		fixedHeight = this.table.rowManager.fixedHeight,
+		containerHeight = this.elementVertical.clientHeight, 
+		resized = true;
 
 		position = position || 0;
 
@@ -270,9 +271,14 @@ export default class VirtualDomVertical extends Renderer{
 			this.vDomTop = position;
 			this.vDomBottom = position -1;
 
-			rowsToRender = rowsToRender = !fixedheight ? rowsCount : Math.max(this.vDomWindowMinTotalRows, Math.ceil((containerHeight / this.vDomRowHeight) + (this.vDomWindowBuffer / this.vDomRowHeight)));
-			
-			while(((!fixedheight || rowsHeight <= containerHeight + this.vDomWindowBuffer) || totalRowsRendered < this.vDomWindowMinTotalRows) && this.vDomBottom < rowsCount -1) {
+			if(fixedHeight || this.table.options.maxHeight) {
+				rowsToRender = Math.max(this.vDomWindowMinTotalRows, Math.ceil((containerHeight / this.vDomRowHeight) + (this.vDomWindowBuffer / this.vDomRowHeight)));
+			}
+			else {
+				rowsToRender = rowsCount;
+			}
+
+			while(((rowsToRender == rowsCount || rowsHeight <= containerHeight + this.vDomWindowBuffer) || totalRowsRendered < this.vDomWindowMinTotalRows) && this.vDomBottom < rowsCount -1) {
 				renderedRows = [];
 				rowFragment = document.createDocumentFragment();
 
@@ -284,10 +290,8 @@ export default class VirtualDomVertical extends Renderer{
 					this.styleRow(row, index);
 
 					row.initialize();
-					if(!row.heightInitialized){
-						if(!this.table.options.rowHeight){
-							row.clearCellHeight();
-						}
+					if(!row.heightInitialized && !this.table.options.rowHeight){
+						row.clearCellHeight();
 					}
 
 					rowFragment.appendChild(row.getElement());
@@ -331,9 +335,14 @@ export default class VirtualDomVertical extends Renderer{
 					}
 					totalRowsRendered++;
 				});
-				
+
+				resized = this.table.rowManager.adjustTableSize();
+				containerHeight = this.elementVertical.clientHeight;
+				if(resized && (fixedHeight || this.table.options.maxHeight))
+				{
+					rowsToRender = Math.max(this.vDomWindowMinTotalRows, Math.ceil((containerHeight / this.vDomRowHeight) + (this.vDomWindowBuffer / this.vDomRowHeight)));
+				}
 			}
-		
 
 			if(!position){
 				this.vDomTopPad = 0;
