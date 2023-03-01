@@ -141,7 +141,7 @@ export default class RowManager extends CoreFeature{
 				this.dispatch("scroll-vertical", top, topDir);
 				this.dispatchExternal("scrollVertical", top, topDir);
 			}
-		});
+		}, {passive: true});
 	}
 	
 	////////////////// Row Manipulation //////////////////
@@ -1016,7 +1016,7 @@ export default class RowManager extends CoreFeature{
 				minHeight = isNaN(this.table.options.minHeight) ? this.table.options.minHeight : this.table.options.minHeight + "px";
 				
 				const height = "calc(100% - " + otherHeight + "px)";
-				this.element.style.minHeight = minHeight || "calc(100% - " + otherHeight + "px)";
+				this.element.style.minHeight = minHeight || height;
 				this.element.style.height = height;
 				this.element.style.maxHeight = height;
 			} else {
