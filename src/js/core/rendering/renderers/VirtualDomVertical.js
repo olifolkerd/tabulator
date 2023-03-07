@@ -241,7 +241,8 @@ export default class VirtualDomVertical extends Renderer{
 		rowsToRender = 0,
 		fixedHeight = this.table.rowManager.fixedHeight,
 		containerHeight = this.elementVertical.clientHeight, 
-		avgRowHeight = this.table.options.rowHeight;
+		avgRowHeight = this.table.options.rowHeight, 
+		resized = true;
 
 		position = position || 0;
 
@@ -339,12 +340,11 @@ export default class VirtualDomVertical extends Renderer{
 					totalRowsRendered++;
 				});
 
-
-				avgRowHeight = rowsHeight / totalRowsRendered;
-				this.table.rowManager.adjustTableSize();
+				resized = this.table.rowManager.adjustTableSize();
 				containerHeight = this.elementVertical.clientHeight;
-				if(fixedHeight || this.table.options.maxHeight)
+				if(resized && (fixedHeight || this.table.options.maxHeight))
 				{
+					avgRowHeight = rowsHeight / totalRowsRendered;
 					rowsToRender = Math.max(this.vDomWindowMinTotalRows, Math.ceil((containerHeight / avgRowHeight) + (this.vDomWindowBuffer / avgRowHeight)));
 				}
 			}
