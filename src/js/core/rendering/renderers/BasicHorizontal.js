@@ -5,9 +5,14 @@ export default class BasicHorizontal extends Renderer{
 		super(table);
 	}
 
-	renderRowCells(row){
+	renderRowCells(row) {
+		const rowFrag = document.createDocumentFragment();
 		row.cells.forEach((cell) => {
-			row.element.appendChild(cell.getElement());
+			rowFrag.appendChild(cell.getElement());
+		});
+		row.element.appendChild(rowFrag);
+
+		row.cells.forEach((cell) => {
 			cell.cellRendered();
 		});
 	}
