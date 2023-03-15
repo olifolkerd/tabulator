@@ -1,6 +1,6 @@
 {
   "name": "@fusionpwn/tabulator-tables",
-  "version": "5.4.5",
+  "version": "5.4.6",
   "description": "Interactive table generation JavaScript library",
   "style": "dist/css/tabulator.css",
   "main": "dist/js/tabulator.js",
