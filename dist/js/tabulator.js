@@ -1,4 +1,4 @@
-/* Tabulator v5.4.3 (c) Oliver Folkerd 2022 */
+/* Tabulator v5.4.3.1 (c) Oliver Folkerd 2023 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -10137,21 +10137,48 @@
 					this.collapseEl.innerHTML = "<div class='tabulator-data-tree-control-collapse'></div>";
 				}
 
-				if(options.dataTreeExpandElement){
+				/* if(options.dataTreeExpandElement){
 					if(typeof options.dataTreeExpandElement === "string"){
 						dummyEl = document.createElement("div");
 						dummyEl.innerHTML = options.dataTreeExpandElement;
 						this.expandEl = dummyEl.firstChild;
-					}else {
+					}else{
 						this.expandEl = options.dataTreeExpandElement;
 					}
-				}else {
+				}else{
 					this.expandEl = document.createElement("div");
 					this.expandEl.classList.add("tabulator-data-tree-control");
 					this.expandEl.tabIndex = 0;
 					this.expandEl.innerHTML = "<div class='tabulator-data-tree-control-expand'></div>";
-				}
+				} */
 
+				switch (typeof options.dataTreeExpandElement) {
+					case "boolean":
+						if (options.dataTreeExpandElement === false) {
+							this.expandEl = options.dataTreeExpandElement;
+							break;
+						}
+
+					case "function":
+						if (options.dataTreeExpandElement === false) {
+							this.expandEl = options.dataTreeExpandElement;
+							break;
+						}
+						break;
+
+					case "string":
+						dummyEl = document.createElement("div");
+						dummyEl.innerHTML = options.dataTreeExpandElement;
+						this.expandEl = dummyEl.firstChild;
+						break;
+
+					default:
+						this.expandEl = document.createElement("div");
+						this.expandEl.classList.add("tabulator-data-tree-control");
+						this.expandEl.tabIndex = 0;
+						this.expandEl.innerHTML = "<div class='tabulator-data-tree-control-expand'></div>";
+						break;
+				}
 
 				switch(typeof options.dataTreeStartExpanded){
 					case "boolean":
