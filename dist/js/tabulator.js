@@ -24630,8 +24630,9 @@
 				});
 				
 				if(index > -1){
-					
-					row.getElement().classList.remove("tabulator-selected");
+					if (row.getElement()){
+						row.getElement().classList.remove("tabulator-selected");
+					}
 					if(!row.modules.select){
 						row.modules.select = {};
 					}
