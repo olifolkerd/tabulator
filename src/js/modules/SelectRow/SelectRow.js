@@ -90,6 +90,10 @@ class SelectRow extends Module{
 					element.addEventListener("click", this.handleComplexRowClick.bind(this, row));
 				}else{
 					element.addEventListener("click", function(e){
+						if (self.table.options.retainSelection && window.getSelection().toString().length !== 0) {
+							return;
+						}
+
 						if(!self.table.modExists("edit") || !self.table.modules.edit.getCurrentCell()){
 							self.table._clearSelection();
 						}
