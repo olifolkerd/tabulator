@@ -725,28 +725,28 @@ export default class RowManager extends CoreFeature{
 			
 			case "dataPipeline":
 			
-			for(let i = index; i < this.dataPipeline.length; i++){
-				let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
+				for(let i = index; i < this.dataPipeline.length; i++){
+					let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
 				
-				this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
-			}
+					this.activeRowsPipeline[i + 1] = result || this.activeRowsPipeline[i].slice(0);
+				}
 			
-			this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
+				this.setActiveRows(this.activeRowsPipeline[this.dataPipeline.length]);
 			
 			case "display":
-			index = 0;
-			this.resetDisplayRows();
+				index = 0;
+				this.resetDisplayRows();
 			
 			case "displayPipeline":
-			for(let i = index; i < this.displayPipeline.length; i++){
-				let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
+				for(let i = index; i < this.displayPipeline.length; i++){
+					let result = this.displayPipeline[i].handler((i ? this.getDisplayRows(i - 1) : this.activeRows).slice(0), renderInPosition);
 				
-				this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
-			}
+					this.setDisplayRows(result || this.getDisplayRows(i - 1).slice(0), i);
+				}
 			
 			case "end":
 			//case to handle scenario when trying to skip past end stage
-			this.regenerateRowPositions();
+				this.regenerateRowPositions();
 		}
 		
 		if(this.getDisplayRows().length){
@@ -822,19 +822,19 @@ export default class RowManager extends CoreFeature{
 		
 		switch(type){
 			case "active":
-			rows = this.activeRows;
-			break;
+				rows = this.activeRows;
+				break;
 			
 			case "display":
-			rows = this.table.rowManager.getDisplayRows();
-			break;
+				rows = this.table.rowManager.getDisplayRows();
+				break;
 			
 			case "visible":
-			rows = this.getVisibleRows(false, true);
-			break;
+				rows = this.getVisibleRows(false, true);
+				break;
 			
 			default:
-			rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
+				rows = this.chain("rows-retrieve", type, null, this.rows) || this.rows;
 		}
 		
 		return rows;
