@@ -350,7 +350,7 @@ class SelectRow extends Module{
 	_deselectRow(rowInfo, silent){
 		var self = this,
 		row = self.table.rowManager.findRow(rowInfo),
-		index;
+		index, element;
 		
 		if(row){
 			index = self.selectedRows.findIndex(function(selectedRow){
@@ -358,8 +358,13 @@ class SelectRow extends Module{
 			});
 			
 			if(index > -1){
+
+				element = row.getElement();
 				
-				row.getElement().classList.remove("tabulator-selected");
+				if(element){
+					element.classList.remove("tabulator-selected");
+				}
+				
 				if(!row.modules.select){
 					row.modules.select = {};
 				}
