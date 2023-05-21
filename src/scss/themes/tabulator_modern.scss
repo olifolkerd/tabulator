@@ -56,6 +56,10 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			border-right:2px solid $headerBorderColor;
 			background-color: $headerBackgroundColor;
 
+			&:nth-child(1) {
+				padding-left: $handleWidth;
+			}
+
 			.tabulator-col-content{
 				.tabulator-col-title{
 					.tabulator-title-editor{
