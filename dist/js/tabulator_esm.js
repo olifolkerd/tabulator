@@ -4980,7 +4980,10 @@ function xlsx(list, options, setFileContents){
 	workbook = XLSX.utils.book_new(),
 	tableFeatures = new CoreFeature(this),
 	compression =  'compress' in options ? options.compress : true,
+	writeOptions = options.writeOptions || {bookType:'xlsx', bookSST:true, compression},
 	output;
+
+	writeOptions.type = 'binary';
 
 	workbook.SheetNames = [];
 	workbook.Sheets = {};
@@ -5066,8 +5069,7 @@ function xlsx(list, options, setFileContents){
 		for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
 		return buf;
 	}
-
-	output = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary', compression });
+	output = XLSX.write(workbook, writeOptions);
 
 	setFileContents(s2ab(output), "application/octet-stream");
 }
@@ -16343,6 +16345,7 @@ class Persistence extends Module{
 			this.config = {
 				sort:this.table.options.persistence === true || this.table.options.persistence.sort,
 				filter:this.table.options.persistence === true || this.table.options.persistence.filter,
+				headerFilter:this.table.options.persistence === true || this.table.options.persistence.headerFilter,
 				group:this.table.options.persistence === true || this.table.options.persistence.group,
 				page:this.table.options.persistence === true || this.table.options.persistence.page,
 				columns:this.table.options.persistence === true ? ["title", "width", "visible"] : this.table.options.persistence.columns,
@@ -16393,6 +16396,7 @@ class Persistence extends Module{
 			this.subscribe("table-redraw", this.tableRedraw.bind(this));
 
 			this.subscribe("filter-changed", this.eventSave.bind(this, "filter"));
+			this.subscribe("filter-changed", this.eventSave.bind(this, "headerFilter"));
 			this.subscribe("sort-changed", this.eventSave.bind(this, "sort"));
 			this.subscribe("group-changed", this.eventSave.bind(this, "group"));
 			this.subscribe("page-changed", this.eventSave.bind(this, "page"));
@@ -16412,7 +16416,7 @@ class Persistence extends Module{
 	}
 
 	tableBuilt(){
-		var sorters, filters;
+		var sorters, filters, headerFilters;
 
 		if(this.config.sort){
 			sorters = this.load("sort");
@@ -16429,6 +16433,14 @@ class Persistence extends Module{
 				this.table.options.initialFilter = filters;
 			}
 		}
+		if(this.config.headerFilter){
+			headerFilters = this.load("headerFilter");
+
+			if(!headerFilters === false){
+				this.table.options.initialHeaderFilter = headerFilters;
+			}
+		}
+		
 	}
 
 	tableRedraw(force){
@@ -16587,6 +16599,10 @@ class Persistence extends Module{
 
 			case "filter":
 				data = this.table.modules.filter.getFilters();
+				break;
+
+			case "headerFilter":
+				data = this.table.modules.filter.getHeaderFilters();
 				break;
 
 			case "sort":
@@ -18744,7 +18760,7 @@ class SelectRow extends Module{
 	_deselectRow(rowInfo, silent){
 		var self = this,
 		row = self.table.rowManager.findRow(rowInfo),
-		index;
+		index, element;
 		
 		if(row){
 			index = self.selectedRows.findIndex(function(selectedRow){
@@ -18752,8 +18768,13 @@ class SelectRow extends Module{
 			});
 			
 			if(index > -1){
+
+				element = row.getElement();
 				
-				row.getElement().classList.remove("tabulator-selected");
+				if(element){
+					element.classList.remove("tabulator-selected");
+				}
+				
 				if(!row.modules.select){
 					row.modules.select = {};
 				}
@@ -20518,9 +20539,14 @@ class BasicHorizontal extends Renderer{
 		super(table);
 	}
 
-	renderRowCells(row){
+	renderRowCells(row) {
+		const rowFrag = document.createDocumentFragment();
 		row.cells.forEach((cell) => {
-			row.element.appendChild(cell.getElement());
+			rowFrag.appendChild(cell.getElement());
+		});
+		row.element.appendChild(rowFrag);
+
+		row.cells.forEach((cell) => {
 			cell.cellRendered();
 		});
 	}
@@ -20705,8 +20731,13 @@ class VirtualDomHorizontal extends Renderer{
 		if(this.initialized){
 			this.initializeRow(row);
 		}else {
+			const rowFrag = document.createDocumentFragment();
 			row.cells.forEach((cell) => {
-				row.element.appendChild(cell.getElement());
+				rowFrag.appendChild(cell.getElement());
+			});
+			row.element.appendChild(rowFrag);
+
+			row.cells.forEach((cell) => {
 				cell.cellRendered();
 			});
 		}
@@ -21873,19 +21904,22 @@ class BasicVertical extends Renderer{
 		element.style.visibility = "";
 	}
 
-	renderRows(){
+	renderRows() {
 		var element = this.tableElement,
-		onlyGroupHeaders = true;
+		onlyGroupHeaders = true,
+		tableFrag = document.createDocumentFragment();
 
 		this.rows().forEach((row, index) => {
 			this.styleRow(row, index);
-			element.appendChild(row.getElement());
 			row.initialize(true);
 
-			if(row.type !== "group"){
+			if (row.type !== "group") {
 				onlyGroupHeaders = false;
 			}
+
+			tableFrag.appendChild(row.getElement());
 		});
+		element.appendChild(tableFrag);
 
 		if(onlyGroupHeaders){
 			element.style.minWidth = this.table.columnManager.getWidth() + "px";
@@ -21966,7 +22000,6 @@ class VirtualDomVertical extends Renderer{
 
 		element.style.paddingTop = "";
 		element.style.paddingBottom = "";
-		// element.style.minWidth = "";
 		element.style.minHeight = "";
 		element.style.display = "";
 		element.style.visibility = "";
@@ -22145,17 +22178,27 @@ class VirtualDomVertical extends Renderer{
 	//////////////////////////////////////
 
 	//full virtual render
-	_virtualRenderFill(position, forceMove, offset){
+	_virtualRenderFill(position, forceMove, offset) {
 		var	element = this.tableElement,
 		holder = this.elementVertical,
 		topPad = 0,
 		rowsHeight = 0,
+		rowHeight = 0,
 		heightOccupied = 0,
 		topPadHeight = 0,
 		i = 0,
 		rows = this.rows(),
 		rowsCount = rows.length,
-		containerHeight = this.elementVertical.clientHeight;
+		index = 0,
+		row,
+		rowFragment,
+		renderedRows = [],
+		totalRowsRendered = 0,
+		rowsToRender = 0,
+		fixedHeight = this.table.rowManager.fixedHeight,
+		containerHeight = this.elementVertical.clientHeight, 
+		avgRowHeight = this.table.options.rowHeight, 
+		resized = true;
 
 		position = position || 0;
 
@@ -22183,44 +22226,89 @@ class VirtualDomVertical extends Renderer{
 
 		if(rowsCount && Helpers.elVisible(this.elementVertical)){
 			this.vDomTop = position;
-
 			this.vDomBottom = position -1;
 
-			while ((rowsHeight <= containerHeight + this.vDomWindowBuffer || i < this.vDomWindowMinTotalRows) && this.vDomBottom < rowsCount -1){
-				var index = this.vDomBottom + 1,
-				row = rows[index],
-				rowHeight = 0;
+			if(fixedHeight || this.table.options.maxHeight) {
+				if(avgRowHeight) {
+					rowsToRender = (containerHeight / avgRowHeight) + (this.vDomWindowBuffer / avgRowHeight);
+				}
+				rowsToRender = Math.max(this.vDomWindowMinTotalRows, Math.ceil(rowsToRender));
+			}
+			else {
+				rowsToRender = rowsCount;
+			}
 
-				this.styleRow(row, index);
+			while(((rowsToRender == rowsCount || rowsHeight <= containerHeight + this.vDomWindowBuffer) || totalRowsRendered < this.vDomWindowMinTotalRows) && this.vDomBottom < rowsCount -1) {
+				renderedRows = [];
+				rowFragment = document.createDocumentFragment();
 
-				element.appendChild(row.getElement());
+				i = 0;
+				while ((i < rowsToRender) && this.vDomBottom < rowsCount -1) {	
+					index = this.vDomBottom + 1,
+					row = rows[index];
 
-				row.initialize();
+					this.styleRow(row, index);
 
-				if(!row.heightInitialized){
-					row.normalizeHeight(true);
+					row.initialize();
+					if(!row.heightInitialized && !this.table.options.rowHeight){
+						row.clearCellHeight();
+					}
+
+					rowFragment.appendChild(row.getElement());
+					renderedRows.push(row);
+					this.vDomBottom ++;
+					i++;
 				}
 
-				rowHeight = row.getHeight();
-
-				if(i < topPad){
-					topPadHeight += rowHeight;
-				}else {
-					rowsHeight += rowHeight;
+				if(!renderedRows.length){
+					break;
 				}
+				element.appendChild(rowFragment);
+				
+				// NOTE: The next 3 loops are separate on purpose
+				// This is to batch up the dom writes and reads which drastically improves performance 
+				renderedRows.forEach((row) => {
+					if(!row.heightInitialized) {
+						row.calcHeight(true);
+						
+					}
+				});
 
-				if(rowHeight > this.vDomWindowBuffer){
-					this.vDomWindowBuffer = rowHeight * 2;
+				renderedRows.forEach((row) => {
+					if(!row.heightInitialized) {
+						row.setCellHeight();
+						
+					}
+				});
+
+				renderedRows.forEach((row) => {
+					rowHeight = row.getHeight();
+					
+					if(totalRowsRendered < topPad){
+						topPadHeight += rowHeight;
+					}else {
+						rowsHeight += rowHeight;
+					}
+
+					if(rowHeight > this.vDomWindowBuffer){
+						this.vDomWindowBuffer = rowHeight * 2;
+					}
+					totalRowsRendered++;
+				});
+
+				resized = this.table.rowManager.adjustTableSize();
+				containerHeight = this.elementVertical.clientHeight;
+				if(resized && (fixedHeight || this.table.options.maxHeight))
+				{
+					avgRowHeight = rowsHeight / totalRowsRendered;
+					rowsToRender = Math.max(this.vDomWindowMinTotalRows, Math.ceil((containerHeight / avgRowHeight) + (this.vDomWindowBuffer / avgRowHeight)));
 				}
-
-				this.vDomBottom ++;
-				i++;
 			}
 
 			if(!position){
 				this.vDomTopPad = 0;
 				//adjust row height to match average of rendered elements
-				this.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
+				this.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / totalRowsRendered);
 				this.vDomBottomPad = this.vDomRowHeight * (rowsCount - this.vDomBottom -1);
 
 				this.vDomScrollHeight = topPadHeight + rowsHeight + this.vDomBottomPad - containerHeight;
@@ -22228,9 +22316,9 @@ class VirtualDomVertical extends Renderer{
 				this.vDomTopPad = !forceMove ? this.scrollTop - topPadHeight : (this.vDomRowHeight * this.vDomTop) + offset;
 				this.vDomBottomPad = this.vDomBottom == rowsCount-1 ? 0 : Math.max(this.vDomScrollHeight - this.vDomTopPad - rowsHeight - topPadHeight, 0);
 			}
-
-			element.style.paddingTop = this.vDomTopPad + "px";
-			element.style.paddingBottom = this.vDomBottomPad + "px";
+			
+			element.style.paddingTop = this.vDomTopPad+"px";
+			element.style.paddingBottom = this.vDomBottomPad+"px";
 
 			if(forceMove){
 				this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.elementVertical.scrollWidth > this.elementVertical.clientWidth ? this.elementVertical.offsetHeight - containerHeight : 0);
@@ -23512,7 +23600,8 @@ class RowManager extends CoreFeature{
 	
 	//adjust the height of the table holder to fit in the Tabulator element
 	adjustTableSize(){
-		var initialHeight = this.element.clientHeight, minHeight;
+		let initialHeight = this.element.clientHeight, minHeight;
+		let resized = false;
 		
 		if(this.renderer.verticalFillMode === "fill"){
 			let otherHeight =  Math.floor(this.table.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
@@ -23520,12 +23609,14 @@ class RowManager extends CoreFeature{
 			if(this.fixedHeight){
 				minHeight = isNaN(this.table.options.minHeight) ? this.table.options.minHeight : this.table.options.minHeight + "px";
 				
+				const height = "calc(100% - " + otherHeight + "px)";
 				this.element.style.minHeight = minHeight || "calc(100% - " + otherHeight + "px)";
-				this.element.style.height = "calc(100% - " + otherHeight + "px)";
-				this.element.style.maxHeight = "calc(100% - " + otherHeight + "px)";
-			}else {
+				this.element.style.height = height;
+				this.element.style.maxHeight = height;
+			} else {
 				this.element.style.height = "";
-				this.element.style.height = (this.table.element.clientHeight - otherHeight) + "px";
+				this.element.style.height =
+					this.table.element.clientHeight - otherHeight + "px";
 				this.element.scrollTop = this.scrollTop;
 			}
 			
@@ -23533,6 +23624,7 @@ class RowManager extends CoreFeature{
 			
 			//check if the table has changed size when dealing with variable height tables
 			if(!this.fixedHeight && initialHeight != this.element.clientHeight){
+				resized = true;
 				if(this.subscribed("table-resize")){
 					this.dispatch("table-resize");
 				}else {
@@ -23544,6 +23636,7 @@ class RowManager extends CoreFeature{
 		}
 		
 		this._positionPlaceholder();
+		return resized;
 	}
 	
 	//reinitialize all rows
@@ -23578,15 +23671,14 @@ class RowManager extends CoreFeature{
 	
 	//redraw table
 	redraw (force){
-		var left = this.scrollLeft;
-		
-		this.adjustTableSize();
-		
+		const resized = this.adjustTableSize();
 		this.table.tableWidth = this.table.element.clientWidth;
 		
 		if(!force){
-			this.reRenderInPosition();
-			this.scrollHorizontal(left);
+			if(resized) {
+				this.reRenderInPosition();
+			}
+			this.scrollHorizontal(this.scrollLeft);
 		}else {
 			this.renderTable();
 		}

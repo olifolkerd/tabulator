@@ -1211,6 +1211,10 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   background-color: #fff;
 }
 
+.tabulator .tabulator-header .tabulator-col:nth-child(1) {
+  padding-left: 10px;
+}
+
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title .tabulator-title-editor {
   border: 1px solid #3759D7;
   font-size: 1em;
