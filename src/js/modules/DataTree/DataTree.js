@@ -305,7 +305,7 @@ class DataTree extends Module{
 
 				row.create();
 
-				config = row.modules.dataTree.children;
+				config = row.modules.dataTree;
 
 				if(!config.index && config.children !== false){
 					children = this.getChildren(row);
