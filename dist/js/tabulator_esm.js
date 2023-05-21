@@ -22654,6 +22654,10 @@ class RowManager extends CoreFeature{
 	initializePlaceholder(){
 		var placeholder = this.table.options.placeholder;
 
+		if(typeof placeholder === "function"){
+			placeholder = placeholder.call(this);
+		}
+
 		//configure placeholder element
 		if(placeholder){	
 			let el = document.createElement("div");
@@ -23557,6 +23561,8 @@ class RowManager extends CoreFeature{
 	
 	_showPlaceholder(){
 		if(this.placeholder){
+			this.initializePlaceholder();
+
 			this.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
 			
 			this.getElement().appendChild(this.placeholder);
