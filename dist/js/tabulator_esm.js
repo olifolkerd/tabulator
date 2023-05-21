@@ -1505,8 +1505,8 @@ class CellComponent {
 		return this._cell.row.getComponent();
 	}
 
-	getData(){
-		return this._cell.row.getData();
+	getData(transform){
+		return this._cell.row.getData(transform);
 	}
 	getType(){
 		return "cell";
@@ -4469,7 +4469,7 @@ class DataTree extends Module{
 
 				row.create();
 
-				config = row.modules.dataTree.children;
+				config = row.modules.dataTree;
 
 				if(!config.index && config.children !== false){
 					children = this.getChildren(row);
