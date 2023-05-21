@@ -88,7 +88,6 @@ class Persistence extends Module{
 			this.config = {
 				sort:this.table.options.persistence === true || this.table.options.persistence.sort,
 				filter:this.table.options.persistence === true || this.table.options.persistence.filter,
-				headerFilter:this.table.options.persistence === true || this.table.options.persistence.headerFilter,
 				group:this.table.options.persistence === true || this.table.options.persistence.group,
 				page:this.table.options.persistence === true || this.table.options.persistence.page,
 				columns:this.table.options.persistence === true ? ["title", "width", "visible"] : this.table.options.persistence.columns,
@@ -139,7 +138,6 @@ class Persistence extends Module{
 			this.subscribe("table-redraw", this.tableRedraw.bind(this));
 
 			this.subscribe("filter-changed", this.eventSave.bind(this, "filter"));
-			this.subscribe("filter-changed", this.eventSave.bind(this, "headerFilter"));
 			this.subscribe("sort-changed", this.eventSave.bind(this, "sort"));
 			this.subscribe("group-changed", this.eventSave.bind(this, "group"));
 			this.subscribe("page-changed", this.eventSave.bind(this, "page"));
@@ -159,7 +157,7 @@ class Persistence extends Module{
 	}
 
 	tableBuilt(){
-		var sorters, filters, headerFilters;
+		var sorters, filters;
 
 		if(this.config.sort){
 			sorters = this.load("sort");
@@ -176,14 +174,6 @@ class Persistence extends Module{
 				this.table.options.initialFilter = filters;
 			}
 		}
-		if(this.config.headerFilter){
-			headerFilters = this.load("headerFilter");
-
-			if(!headerFilters === false){
-				this.table.options.initialHeaderFilter = headerFilters;
-			}
-		}
-		
 	}
 
 	tableRedraw(force){
@@ -342,10 +332,6 @@ class Persistence extends Module{
 
 			case "filter":
 				data = this.table.modules.filter.getFilters();
-				break;
-
-			case "headerFilter":
-				data = this.table.modules.filter.getHeaderFilters();
 				break;
 
 			case "sort":
