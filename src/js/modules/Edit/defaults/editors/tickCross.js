@@ -32,7 +32,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	
 	if(this.table.browser != "firefox" && this.table.browser != "safari"){ //prevent blur issue on mac firefox
 		onRendered(function(){
-			if(cell._getSelf){
+			if(cell.getType() === "cell"){
 				input.focus({preventScroll: true});
 			}
 		});

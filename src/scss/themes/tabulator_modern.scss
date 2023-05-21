@@ -56,6 +56,10 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			border-right:2px solid $headerBorderColor;
 			background-color: $headerBackgroundColor;
 
+			&:nth-child(1) {
+				padding-left: $handleWidth;
+			}
+
 			.tabulator-col-content{
 				.tabulator-col-title{
 					.tabulator-title-editor{
@@ -162,11 +166,13 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		}
 	}
 
-	&.tabulator-selectable:hover{
-		cursor: pointer;
+	@media (hover:hover) and (pointer:fine){
+		&.tabulator-selectable:hover{
+			cursor: pointer;
 
-		.tabulator-cell{
-			background-color:$rowHoverBackground;
+			.tabulator-cell{
+				background-color:$rowHoverBackground;
+			}
 		}
 	}
 
@@ -176,10 +182,12 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		}
 	}
 
-	&.tabulator-selected:hover{
-		.tabulator-cell{
-			background-color:$rowSelectedBackgroundHover;
-			cursor: pointer;
+	@media (hover:hover) and (pointer:fine){
+		&.tabulator-selected:hover{
+			.tabulator-cell{
+				background-color:$rowSelectedBackgroundHover;
+				cursor: pointer;
+			}
 		}
 	}
 

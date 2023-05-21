@@ -514,8 +514,8 @@ class Edit extends Module{
 			cellEl = cell.getElement();
 			
 			if(this.table.modExists("frozenColumns")){
-				leftEdge += parseInt(this.table.modules.frozenColumns.leftMargin);
-				rightEdge -= parseInt(this.table.modules.frozenColumns.rightMargin);
+				leftEdge += parseInt(this.table.modules.frozenColumns.leftMargin || 0);
+				rightEdge -= parseInt(this.table.modules.frozenColumns.rightMargin || 0);
 			}
 			
 			if(this.table.options.renderHorizontal === "virtual"){
@@ -524,7 +524,6 @@ class Edit extends Module{
 			}
 			
 			if(cellEl.offsetLeft < leftEdge){
-				
 				this.table.rowManager.element.scrollLeft -= (leftEdge - cellEl.offsetLeft);
 			}else{
 				if(cellEl.offsetLeft + cellEl.offsetWidth  > rightEdge){

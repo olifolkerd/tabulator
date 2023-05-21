@@ -96,6 +96,9 @@ class Format extends Module{
 				getElement:function(){
 					return el;
 				},
+				getType:function(){
+					return "header";
+				},
 				getColumn:function(){
 					return column.getComponent();
 				},

@@ -22,6 +22,7 @@ class Filter extends Module{
 		this.registerTableOption("initialFilter", false); //initial filtering criteria
 		this.registerTableOption("initialHeaderFilter", false); //initial header filtering criteria
 		this.registerTableOption("headerFilterLiveFilterDelay", 300); //delay before updating column after user types in header filter
+		this.registerTableOption("placeholderHeaderFilter", false); //placeholder when header filter is empty
 
 		this.registerColumnOption("headerFilter");
 		this.registerColumnOption("headerFilterPlaceholder");
@@ -57,6 +58,7 @@ class Filter extends Module{
 		this.subscribe("column-width-fit-before", this.hideHeaderFilterElements.bind(this));
 		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
 		this.subscribe("table-built", this.tableBuilt.bind(this));
+		this.subscribe("placeholder", this.generatePlaceholder.bind(this));
 
 		if(this.table.options.filterMode === "remote"){
 			this.subscribe("data-params", this.remoteFilterParams.bind(this));
@@ -90,6 +92,12 @@ class Filter extends Module{
 	remoteFilterParams(data, config, silent, params){
 		params.filter = this.getFilters(true, true);
 		return params;
+	}
+
+	generatePlaceholder(text){
+		if(this.table.options.placeholderHeaderFilter && Object.keys(this.headerFilters).length){
+			return this.table.options.placeholderHeaderFilter;
+		}
 	}
 
 	///////////////////////////////////
@@ -374,6 +382,9 @@ class Filter extends Module{
 					},
 					getTable:() => {
 						return this.table;
+					},
+					getType:() => {
+						return "header";
 					},
 					getRow:function(){
 						return {

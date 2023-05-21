@@ -31,7 +31,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	input.value = value;
 
 	onRendered(function(){
-		if(cell._getSelf){
+		if(cell.getType() === "cell"){
 			input.focus({preventScroll: true});
 			input.style.height = "100%";
 

@@ -153,10 +153,12 @@ $table-cell-padding-sm: 5px;
 			}
 
 			&:not(.disabled){
-				&:hover{
-					border-color:$pagination-hover-border-color;
-					background:$pagination-hover-bg;
-					color:$pagination-hover-color;
+				@media (hover:hover) and (pointer:fine){
+					&:hover{
+						border-color:$pagination-hover-border-color;
+						background:$pagination-hover-bg;
+						color:$pagination-hover-color;
+					}
 				}
 			}
 		}
@@ -203,11 +205,13 @@ $table-cell-padding-sm: 5px;
 			background-color: $backgroundColor;
 			color: $table-color;
 
-			&:hover{
-				background-color: $borderColor;
+			@media (hover:hover) and (pointer:fine){
+				&:hover{
+					background-color: $borderColor;
 
-				.tabulator-cell{
-					background-color: $table-hover-bg;
+					.tabulator-cell{
+						background-color: $table-hover-bg;
+					}
 				}
 			}
 
@@ -242,14 +246,16 @@ $table-cell-padding-sm: 5px;
 						background-color:$rowSelectedBackground;
 					}
 
-					&.tabulator-selectable:hover{
-						background-color:$rowHoverBackground;
-						cursor: pointer;
-					}
+					@media (hover:hover) and (pointer:fine){
+						&.tabulator-selectable:hover{
+							background-color:$rowHoverBackground;
+							cursor: pointer;
+						}
 
-					&.tabulator-selected:hover{
-						background-color:$rowSelectedBackgroundHover;
-						cursor: pointer;
+						&.tabulator-selected:hover{
+							background-color:$rowSelectedBackgroundHover;
+							cursor: pointer;
+						}
 					}
 				}
 			}
@@ -503,8 +509,10 @@ $table-cell-padding-sm: 5px;
 			}
 		}
 
-		&:hover{
-			color:$headerBackgroundColor;
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				color:$headerBackgroundColor;
+			}
 		}
 	}
 
@@ -568,8 +576,10 @@ $table-cell-padding-sm: 5px;
 			}
 		}
 
-		&:hover{
-			color:#fff;
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				color:#fff;
+			}
 		}
 	}
 }

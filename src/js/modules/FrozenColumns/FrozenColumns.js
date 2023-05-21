@@ -257,7 +257,7 @@ class FrozenColumns extends Module{
 	layoutElement(element, column){
 		var position;
 		
-		if(column.modules.frozen){
+		if(column.modules.frozen && element){
 			element.style.position = "sticky";
 
 			if(this.table.rtl){

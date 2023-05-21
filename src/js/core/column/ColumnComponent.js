@@ -99,8 +99,8 @@ export default class ColumnComponent {
 		return this._column;
 	}
 
-	scrollTo(){
-		return this._column.table.columnManager.scrollToColumn(this._column);
+	scrollTo(position, ifVisible){
+		return this._column.table.columnManager.scrollToColumn(this._column, position, ifVisible);
 	}
 
 	getTable(){

@@ -137,14 +137,16 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 					background-color:$rowSelectedBackground !important;
 				}
 
-				&.tabulator-selectable:hover{
-					background-color:$rowHoverBackground;
-					cursor: pointer;
-				}
+				@media (hover:hover) and (pointer:fine){
+					&.tabulator-selectable:hover{
+						background-color:$rowHoverBackground;
+						cursor: pointer;
+					}
 
-				&.tabulator-selected:hover{
-					background-color:$rowSelectedBackgroundHover !important;
-					cursor: pointer;
+					&.tabulator-selected:hover{
+						background-color:$rowSelectedBackgroundHover !important;
+						cursor: pointer;
+					}
 				}
 			}
 		}
@@ -211,8 +213,10 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 			}
 		}
 
-		&:hover{
-			color:$headerBackgroundColor;
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				color:$headerBackgroundColor;
+			}
 		}
 	}
 

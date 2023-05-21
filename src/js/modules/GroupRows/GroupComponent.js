@@ -55,6 +55,10 @@ class GroupComponent {
 		this._group.toggleVisibility();
 	}
 
+	scrollTo(position, ifVisible){
+		return this._group.groupManager.table.rowManager.scrollToRow(this._group, position, ifVisible);
+	}
+
 	_getSelf(){
 		return this._group;
 	}

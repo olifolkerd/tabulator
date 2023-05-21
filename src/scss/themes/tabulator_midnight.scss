@@ -113,9 +113,11 @@ $footerActiveColor:#fff !default; //footer bottom active text color
 
 		color:#333;
 
-		&:hover{
-			cursor:pointer;
-			background-color:rgba(0,0,0,.1);
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				cursor:pointer;
+				background-color:rgba(0,0,0,.1);
+			}
 		}
 
 		span{
@@ -143,9 +145,11 @@ $footerActiveColor:#fff !default; //footer bottom active text color
 			outline:1px solid $rowAltBackgroundColor;
 		}
 
-		&:hover{
-			color:$editBoxColor;
-			background:$rowBackgroundColor;
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				color:$editBoxColor;
+				background:$rowBackgroundColor;
+			}
 		}
 	}
 }

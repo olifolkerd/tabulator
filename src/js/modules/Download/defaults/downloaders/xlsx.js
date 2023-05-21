@@ -6,7 +6,10 @@ export default function(list, options, setFileContents){
 	workbook = XLSX.utils.book_new(),
 	tableFeatures = new CoreFeature(this),
 	compression =  'compress' in options ? options.compress : true,
+	writeOptions = options.writeOptions || {bookType:'xlsx', bookSST:true, compression},
 	output;
+
+	writeOptions.type = 'binary';
 
 	workbook.SheetNames = [];
 	workbook.Sheets = {};
@@ -91,9 +94,9 @@ export default function(list, options, setFileContents){
 		var view = new Uint8Array(buf);
 		for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
 		return buf;
-	}
+	};
 
-	output = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary', compression });
+	output = XLSX.write(workbook, writeOptions);
 
 	setFileContents(s2ab(output), "application/octet-stream");
 }

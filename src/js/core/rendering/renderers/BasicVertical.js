@@ -29,19 +29,22 @@ export default class BasicVertical extends Renderer{
 		element.style.visibility = "";
 	}
 
-	renderRows(){
+	renderRows() {
 		var element = this.tableElement,
-		onlyGroupHeaders = true;
+		onlyGroupHeaders = true,
+		tableFrag = document.createDocumentFragment();
 
 		this.rows().forEach((row, index) => {
 			this.styleRow(row, index);
-			element.appendChild(row.getElement());
 			row.initialize(true);
 
-			if(row.type !== "group"){
+			if (row.type !== "group") {
 				onlyGroupHeaders = false;
 			}
+
+			tableFrag.appendChild(row.getElement());
 		});
+		element.appendChild(tableFrag);
 
 		if(onlyGroupHeaders){
 			element.style.minWidth = this.table.columnManager.getWidth() + "px";

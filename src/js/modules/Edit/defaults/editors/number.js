@@ -43,7 +43,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	};
 
 	onRendered(function () {
-		if(cell._getSelf){
+		if(cell.getType() === "cell"){
 			//submit new value on blur
 			input.removeEventListener("blur", blurFunc);
 

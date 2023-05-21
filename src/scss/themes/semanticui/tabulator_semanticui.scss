@@ -125,9 +125,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					background: $positiveBackgroundColor !important;
 					color: $positiveColor !important;
 
-					&:hover{
-						background: $positiveBackgroundHover !important;
-						color: $positiveColorHover !important;
+					@media (hover:hover) and (pointer:fine){
+						&:hover{
+							background: $positiveBackgroundHover !important;
+							color: $positiveColorHover !important;
+						}
 					}
 				}
 
@@ -136,9 +138,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					background: $negativeBackgroundColor !important;
 					color: $negativeColor !important;
 
-					&:hover{
-						background: $negativeBackgroundHover !important;
-						color: $negativeColorHover !important;
+					@media (hover:hover) and (pointer:fine){
+						&:hover{
+							background: $negativeBackgroundHover !important;
+							color: $negativeColorHover !important;
+						}
 					}
 				}
 
@@ -147,9 +151,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					background: $errorBackgroundColor !important;
 					color: $errorColor !important;
 
-					&:hover{
-						background: $errorBackgroundHover !important;
-						color: $errorColorHover !important;
+					@media (hover:hover) and (pointer:fine){
+						&:hover{
+							background: $errorBackgroundHover !important;
+							color: $errorColorHover !important;
+						}
 					}
 				}
 
@@ -158,9 +164,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					background: $warningBackgroundColor !important;
 					color: $warningColor !important;
 
-					&:hover{
-						background: $warningBackgroundHover !important;
-						color: $warningColorHover !important;
+					@media (hover:hover) and (pointer:fine){
+						&:hover{
+							background: $warningBackgroundHover !important;
+							color: $warningColorHover !important;
+						}
 					}
 				}
 
@@ -169,15 +177,24 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					background: $activeBackgroundColor !important;
 					color: $activeColor !important;
 
-					&:hover{
-						background: $positiveBackgroundHover !important;
-						color: $positiveColorHover !important;
+					@media (hover:hover) and (pointer:fine){
+						&:hover{
+							background: $positiveBackgroundHover !important;
+							color: $positiveColorHover !important;
+						}
 					}
 				}
 
-				&.active, &.disabled:hover, .tabulator-cell.active{
+				&.active, .tabulator-cell.active{
 					pointer-events: none;
 					color: $disabledTextColor;
+				}
+
+				@media (hover:hover) and (pointer:fine){
+					&.disabled:hover{
+						pointer-events: none;
+						color: $disabledTextColor;
+					}
 				}
 			}
 		}
@@ -478,19 +495,23 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		background-color: transparent;
 	}
 
-	&.tabulator-selectable:hover{
-		box-shadow: $activeBoxShadow;
-		background: $activeBackgroundColor !important;
-		color: $activeColor !important;
+	@media (hover:hover) and (pointer:fine){
+		&.tabulator-selectable:hover{
+			box-shadow: $activeBoxShadow;
+			background: $activeBackgroundColor !important;
+			color: $activeColor !important;
+		}
 	}
 
 	&.tabulator-selected{
 		background-color:$rowSelectedBackground !important;
 	}
 
-	&.tabulator-selected:hover{
-		background-color:$rowSelectedBackgroundHover !important;
-		cursor: pointer;
+	@media (hover:hover) and (pointer:fine){
+		&.tabulator-selected:hover{
+			background-color:$rowSelectedBackgroundHover !important;
+			cursor: pointer;
+		}
 	}
 
 	&.tabulator-moving{
@@ -523,8 +544,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	background:$backgroundColor;
 
 	.tabulator-menu-item{
-		&:not(.tabulator-menu-item-disabled):hover{
-			background: $headerBackgroundColor;
+		@media (hover:hover) and (pointer:fine){
+			&:not(.tabulator-menu-item-disabled):hover{
+				background: $headerBackgroundColor;
+			}
 		}
 	}
 }
@@ -541,8 +564,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 
-		&:hover{
-			color:$backgroundColor;
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				color:$backgroundColor;
+			}
 		}
 	}
 
