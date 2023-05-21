@@ -69,7 +69,7 @@ export default class RowManager extends CoreFeature{
 		var placeholder = this.table.options.placeholder;
 		
 		if(typeof placeholder === "function"){
-			placeholder = placeholder.call(this);
+			placeholder = placeholder.call(this.table);
 		}
 		
 		placeholder = this.chain("placeholder", [placeholder], placeholder, placeholder) || placeholder;
