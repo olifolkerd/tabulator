@@ -3010,8 +3010,8 @@ class RowComponent {
 		return this._row.delete();
 	}
 
-	scrollTo(){
-		return this._row.table.rowManager.scrollToRow(this._row);
+	scrollTo(position, ifVisible){
+		return this._row.table.rowManager.scrollToRow(this._row, position, ifVisible);
 	}
 
 	move(to, after){
