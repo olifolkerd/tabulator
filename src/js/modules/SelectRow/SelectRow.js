@@ -248,7 +248,7 @@ class SelectRow extends Module{
 				this._rowSelectionChanged(false, changes);
 			}
 		}else{
-			if(rowMatch){
+			if(rowMatch !== null && typeof rowMatch !== "undefined"){
 				this._selectRow(rowMatch, false, true);
 			}
 		}	
