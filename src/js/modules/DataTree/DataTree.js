@@ -67,6 +67,9 @@ class DataTree extends Module{
 						this.branchEl = options.dataTreeBranchElement;
 					}
 				}
+			}else{
+				this.branchEl = document.createElement("div");
+				this.branchEl.classList.add("tabulator-data-tree-branch-empty");
 			}
 
 			if(options.dataTreeCollapseElement){

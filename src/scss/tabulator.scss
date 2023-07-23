@@ -831,6 +831,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				}
 			}
 		}
+
+		.tabulator-data-tree-branch-empty{
+			display:inline-block;
+			width:7px;
+		}
 		
 		.tabulator-data-tree-branch{
 			display:inline-block;

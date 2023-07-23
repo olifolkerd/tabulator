@@ -1004,6 +1004,11 @@
   background: #666;
 }
 
+.tabulator-row .tabulator-cell .tabulator-data-tree-branch-empty {
+  display: inline-block;
+  width: 7px;
+}
+
 .tabulator-row .tabulator-cell .tabulator-data-tree-branch {
   display: inline-block;
   vertical-align: middle;
