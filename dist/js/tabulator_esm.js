@@ -4734,7 +4734,7 @@ class DataTree extends Module{
 		var config = row.modules.dataTree,
 		output = [];
 
-		if(config.children){
+		if(config && config.children){
 
 			if(!Array.isArray(config.children)){
 				config.children = this.generateChildren(row);
