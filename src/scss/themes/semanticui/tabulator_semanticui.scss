@@ -492,7 +492,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	border-bottom: $rowBorder;
 
 	&.tabulator-row-even{
-		background-color: transparent;
+		background-color: $rowBackgroundColor;
 	}
 
 	@media (hover:hover) and (pointer:fine){

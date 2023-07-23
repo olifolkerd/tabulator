@@ -1747,7 +1747,7 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 }
 
 .tabulator.striped .tabulator-row:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: #f2f2f2;
 }
 
 .tabulator.celled {
@@ -1936,7 +1936,7 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 }
 
 .tabulator-row.tabulator-row-even {
-  background-color: transparent;
+  background-color: #fff;
 }
 
 @media (hover: hover) and (pointer: fine) {
