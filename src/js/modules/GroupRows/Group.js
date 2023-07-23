@@ -94,9 +94,15 @@ class Group{
 			toggleElement = this.groupManager.table.options.groupToggleElement == "arrow" ? this.arrowElement : this.element;
 			
 			toggleElement.addEventListener("click", (e) => {
-				e.stopPropagation();
-				e.stopImmediatePropagation();
-				this.toggleVisibility();
+				if(this.groupManager.table.options.groupToggleElement === "arrow"){
+					e.stopPropagation();
+					e.stopImmediatePropagation();
+				}
+
+				//allow click event to propagate before toggling visibility
+				setTimeout(() => {
+					this.toggleVisibility();
+				});
 			});
 		}
 	}
@@ -497,7 +503,7 @@ class Group{
 	
 	generateGroupHeaderContents(){
 		var data = [];
-
+		
 		var rows = this.getRows(false, true);
 		
 		rows.forEach(function(row){
