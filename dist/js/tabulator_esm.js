@@ -1,4 +1,4 @@
-/* Tabulator v5.5.0 (c) Oliver Folkerd 2023 */
+/* Tabulator v5.5.1 (c) Oliver Folkerd 2023 */
 class CoreFeature{
 
 	constructor(table){
@@ -11720,19 +11720,7 @@ class Group{
 		}
 		return count;
 	}
-	
-	getRowCount(){
-		var count = 0;
-		
-		if(this.groupList.length){
-			this.groupList.forEach((group) => {
-				count += group.getRowCount();
-			});
-		}else {
-			count = this.rows.length;
-		}
-		return count;
-	}
+
 	
 	toggleVisibility(){
 		if(this.visible){
@@ -11983,6 +11971,8 @@ class Group{
 	clearCellHeight(){}
 	
 	deinitializeHeight(){}
+
+	rendered(){}
 	
 	//////////////// Object Generation /////////////////
 	getComponent(){
@@ -24314,9 +24304,9 @@ class DataLoader extends CoreFeature{
 					this.clearAlert();
 				}, this.table.options.dataLoaderErrorTimeout);
 			})
-			.finally(() => {
-				this.loading = false;
-			});
+				.finally(() => {
+					this.loading = false;
+				});
 		}else {
 			this.dispatchExternal("dataLoaded", data);
 			

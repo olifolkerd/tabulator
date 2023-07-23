@@ -348,19 +348,7 @@ class Group{
 		}
 		return count;
 	}
-	
-	getRowCount(){
-		var count = 0;
-		
-		if(this.groupList.length){
-			this.groupList.forEach((group) => {
-				count += group.getRowCount();
-			});
-		}else{
-			count = this.rows.length;
-		}
-		return count;
-	}
+
 	
 	toggleVisibility(){
 		if(this.visible){
@@ -611,6 +599,8 @@ class Group{
 	clearCellHeight(){}
 	
 	deinitializeHeight(){}
+
+	rendered(){}
 	
 	//////////////// Object Generation /////////////////
 	getComponent(){
