@@ -12634,7 +12634,9 @@ var defaultUndoers = {
 	},
 
 	rowMove: function(action){
-		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.posFrom], !action.data.after);
+		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.posFrom-1], action.data.after);
+		
+		this.table.rowManager.regenerateRowPositions();
 		this.table.rowManager.reRenderInPosition();
 	},
 };
@@ -12694,7 +12696,10 @@ class History extends Module{
 	}
 
 	rowMoved(from, to, after){
-		this.action("rowMove", from, {posFrom:from.getPosition(), posTo:to.getPosition(), to:to, after:after});
+		var fromPos = from.getPosition(),
+		toPos = to.getPosition();
+
+		this.action("rowMove", from, {posFrom:fromPos, posTo:toPos, to:to, after:(fromPos - toPos) > 0});
 	}
 
 	rowAdded(row, data, pos, index){
