@@ -23603,6 +23603,8 @@ class RowManager extends CoreFeature{
 			
 			this.getElement().appendChild(this.placeholder);
 			this._positionPlaceholder();
+
+			this.adjustTableSize();
 		}
 	}
 	
