@@ -19,8 +19,10 @@ export default {
 	},
 
 	rowMove: function(action){
-		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.posFrom-1], action.data.after);
-		
+		var after = (action.data.posFrom  - action.data.posTo) > 0;
+
+		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.getRowFromPosition(action.data.posFrom), after);
+
 		this.table.rowManager.regenerateRowPositions();
 		this.table.rowManager.reRenderInPosition();
 	},

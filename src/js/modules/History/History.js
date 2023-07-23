@@ -34,10 +34,7 @@ class History extends Module{
 	}
 
 	rowMoved(from, to, after){
-		var fromPos = from.getPosition(),
-		toPos = to.getPosition();
-
-		this.action("rowMove", from, {posFrom:fromPos, posTo:toPos, to:to, after:(fromPos - toPos) > 0});
+		this.action("rowMove", from, {posFrom:from.getPosition(), posTo:to.getPosition(), to:to, after:after});
 	}
 
 	rowAdded(row, data, pos, index){
