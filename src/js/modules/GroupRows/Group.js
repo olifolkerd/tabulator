@@ -71,7 +71,7 @@ class Group{
 		this.arrowElement = document.createElement("div");
 		this.arrowElement.classList.add("tabulator-group-toggle");
 		this.arrowElement.appendChild(arrow);
-
+		
 		//setup movable rows
 		if(this.groupManager.table.options.movableRows !== false && this.groupManager.table.modExists("moveRow")){
 			this.groupManager.table.modules.moveRow.initializeGroupHeader(this);
@@ -217,7 +217,7 @@ class Group{
 			if(el.parentNode){
 				el.parentNode.removeChild(el);
 			}
-
+			
 			if(!this.groupManager.blockRedraw){
 				this.generateGroupHeaderContents();
 				
@@ -328,6 +328,19 @@ class Group{
 		}
 		
 		return output;
+	}
+	
+	getRowCount(){
+		var count = 0;
+		
+		if(this.groupList.length){
+			this.groupList.forEach((group) => {
+				count += group.getRowCount();
+			});
+		}else{
+			count = this.rows.length;
+		}
+		return count;
 	}
 	
 	getRowCount(){
@@ -466,20 +479,28 @@ class Group{
 		return output;
 	}
 	
-	getRows(component){
+	getRows(component, includeChildren){
 		var output = [];
 		
-		this.rows.forEach(function(row){
-			output.push(component ? row.getComponent() : row);
-		});
+		if(includeChildren && this.groupList.length){
+			this.groupList.forEach((group) => {
+				output = output.concat(group.getRows(component, includeChildren));
+			});
+		}else{
+			this.rows.forEach(function(row){
+				output.push(component ? row.getComponent() : row);
+			});
+		}
 		
 		return output;
 	}
 	
 	generateGroupHeaderContents(){
 		var data = [];
+
+		var rows = this.getRows(false, true);
 		
-		this.rows.forEach(function(row){
+		rows.forEach(function(row){
 			data.push(row.getData());
 		});
 		
