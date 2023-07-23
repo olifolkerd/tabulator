@@ -30,15 +30,23 @@
 	$.widget("ui.tabulator", {
 		_create:function(){
 			var options = Object.assign({}, this.options);
+			var props = [];
 
 			delete options.create;
 			delete options.disabled;
 
 			this.table = new Tabulator(this.element[0], options);
+			window.table = this.table;
+
+			//retrieve properties on prototype
+			props = Object.getOwnPropertyNames(Object.getPrototypeOf(Object.getPrototypeOf(this.table)));
+
+			//retrieve properties added by modules
+			props = props.concat(Object.getOwnPropertyNames(this.table));
 
 			//map tabulator functions to jquery wrapper
-			for(var key in Tabulator.prototype){
-				if(typeof Tabulator.prototype[key] === "function" && key.charAt(0) !== "_"){
+			for(let key of props){
+				if(typeof this.table[key] === "function" && key.charAt(0) !== "_"){
 					this[key] = this.table[key].bind(this.table);
 				}
 			}
