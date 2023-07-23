@@ -68,6 +68,10 @@ export default class Bundler{
 			this.bundleUMD(false);
 			break;
 			
+			case "wrappers":
+			this.buildWrappers();
+			break;
+			
 			default:
 			this.bundleCSS(false);
 			this.bundleESM(false);
@@ -80,9 +84,9 @@ export default class Bundler{
 		
 		this.clearDist();
 		
-		console.log("Copying Standalong Builds");
+		console.log("Building Wrappers");
 		
-		this.copyStandaloneBuilds();
+		this.buildWrappers();
 		
 		console.log("Building Production Package Bundles");
 		
@@ -100,7 +104,7 @@ export default class Bundler{
 		fs.emptyDirSync("./dist");
 	}
 	
-	copyStandaloneBuilds(){
+	buildWrappers(){
 		var builds = ["jquery_wrapper.js"];
 		
 		builds.forEach((build) => {

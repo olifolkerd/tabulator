@@ -16,7 +16,8 @@
     "dev": "rollup -c build/rollup.js -w --environment TARGET:dev",
     "dev:css": "rollup -c build/rollup.js -w --environment TARGET:css",
     "dev:esm": "rollup -c build/rollup.js -w --environment TARGET:esm",
-    "dev:umd": "rollup -c build/rollup.js -w --environment TARGET:umd"
+    "dev:umd": "rollup -c build/rollup.js -w --environment TARGET:umd",
+    "dev:wrappers": "rollup -c build/rollup.js -w --environment TARGET:wrappers"
   },
   "repository": {
     "type": "git",
