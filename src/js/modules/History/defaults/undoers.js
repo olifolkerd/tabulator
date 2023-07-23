@@ -20,6 +20,6 @@ export default {
 
 	rowMove: function(action){
 		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.posFrom], !action.data.after);
-		this.table.rowManager.redraw();
+		this.table.rowManager.reRenderInPosition();
 	},
 };
