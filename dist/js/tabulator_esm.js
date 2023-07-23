@@ -3112,7 +3112,7 @@ class Row extends CoreFeature{
 	}
 	
 	//functions to setup on first render
-	initialize(force){
+	initialize(force, inFragment){
 		this.create();
 		
 		if(!this.initialized || force){
@@ -3127,7 +3127,7 @@ class Row extends CoreFeature{
 			
 			this.initialized = true;
 			
-			this.table.columnManager.renderer.renderRowCells(this);
+			this.table.columnManager.renderer.renderRowCells(this, inFragment);
 			
 			if(force){
 				this.normalizeHeight();
@@ -3141,8 +3141,14 @@ class Row extends CoreFeature{
 			
 			this.dispatch("row-layout-after", this);
 		}else {
-			this.table.columnManager.renderer.rerenderRowCells(this);
+			this.table.columnManager.renderer.rerenderRowCells(this, inFragment);
 		}
+	}
+
+	rendered(){
+		this.cells.forEach((cell) => {
+			cell.cellRendered();
+		});
 	}
 	
 	reinitializeHeight(){
@@ -20583,19 +20589,21 @@ class BasicHorizontal extends Renderer{
 	constructor(table){
 		super(table);
 	}
-
-	renderRowCells(row) {
+	
+	renderRowCells(row, inFragment) {
 		const rowFrag = document.createDocumentFragment();
 		row.cells.forEach((cell) => {
 			rowFrag.appendChild(cell.getElement());
 		});
 		row.element.appendChild(rowFrag);
-
-		row.cells.forEach((cell) => {
-			cell.cellRendered();
-		});
+		
+		if(!inFragment){
+			row.cells.forEach((cell) => {
+				cell.cellRendered();
+			});
+		}
 	}
-
+	
 	reinitializeColumnWidths(columns){
 		columns.forEach(function(column){
 			column.reinitializeWidth();
@@ -22288,13 +22296,14 @@ class VirtualDomVertical extends Renderer{
 				rowFragment = document.createDocumentFragment();
 
 				i = 0;
+
 				while ((i < rowsToRender) && this.vDomBottom < rowsCount -1) {	
 					index = this.vDomBottom + 1,
 					row = rows[index];
 
 					this.styleRow(row, index);
 
-					row.initialize();
+					row.initialize(false, true);
 					if(!row.heightInitialized && !this.table.options.rowHeight){
 						row.clearCellHeight();
 					}
@@ -22308,21 +22317,23 @@ class VirtualDomVertical extends Renderer{
 				if(!renderedRows.length){
 					break;
 				}
+
 				element.appendChild(rowFragment);
 				
 				// NOTE: The next 3 loops are separate on purpose
 				// This is to batch up the dom writes and reads which drastically improves performance 
+
 				renderedRows.forEach((row) => {
+					row.rendered();
+
 					if(!row.heightInitialized) {
 						row.calcHeight(true);
-						
 					}
 				});
 
 				renderedRows.forEach((row) => {
 					if(!row.heightInitialized) {
 						row.setCellHeight();
-						
 					}
 				});
 

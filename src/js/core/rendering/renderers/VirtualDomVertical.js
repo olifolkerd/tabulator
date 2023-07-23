@@ -287,13 +287,14 @@ export default class VirtualDomVertical extends Renderer{
 				rowFragment = document.createDocumentFragment();
 
 				i = 0;
+
 				while ((i < rowsToRender) && this.vDomBottom < rowsCount -1) {	
 					index = this.vDomBottom + 1,
 					row = rows[index];
 
 					this.styleRow(row, index);
 
-					row.initialize();
+					row.initialize(false, true);
 					if(!row.heightInitialized && !this.table.options.rowHeight){
 						row.clearCellHeight();
 					}
@@ -307,21 +308,23 @@ export default class VirtualDomVertical extends Renderer{
 				if(!renderedRows.length){
 					break;
 				}
+
 				element.appendChild(rowFragment);
 				
 				// NOTE: The next 3 loops are separate on purpose
 				// This is to batch up the dom writes and reads which drastically improves performance 
+
 				renderedRows.forEach((row) => {
+					row.rendered();
+
 					if(!row.heightInitialized) {
 						row.calcHeight(true);
-						
 					}
 				});
 
 				renderedRows.forEach((row) => {
 					if(!row.heightInitialized) {
 						row.setCellHeight();
-						
 					}
 				});
 
