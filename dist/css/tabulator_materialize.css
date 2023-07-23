@@ -325,7 +325,7 @@
 .tabulator .tabulator-tableholder .tabulator-table {
   position: relative;
   display: inline-block;
-  background-color: transparent;
+  background-color: #fff;
   white-space: nowrap;
   overflow: visible;
   color: #333;
@@ -333,7 +333,7 @@
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs {
   font-weight: bold;
-  background: rgba(229, 229, 229, 0.5) !important;
+  background: #ebebeb !important;
 }
 
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
@@ -505,16 +505,16 @@
   position: relative;
   box-sizing: border-box;
   min-height: 24px;
-  background-color: transparent;
+  background-color: #fff;
 }
 
 .tabulator-row.tabulator-row-even {
-  background-color: rgba(242, 242, 242, 0.5);
+  background-color: #f8f8f8;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .tabulator-row.tabulator-selectable:hover {
-    background-color: rgba(242, 242, 242, 0.5);
+    background-color: #f8f8f8;
     cursor: pointer;
   }
 }
@@ -739,7 +739,7 @@
   width: 15px;
   border-radius: 20px;
   background: #666;
-  color: transparent;
+  color: #fff;
   font-weight: bold;
   font-size: 1.1em;
 }
@@ -760,7 +760,7 @@
 }
 
 .tabulator-row .tabulator-cell .tabulator-responsive-collapse-toggle svg {
-  stroke: transparent;
+  stroke: #fff;
 }
 
 .tabulator-row .tabulator-cell .tabulator-responsive-collapse-toggle .tabulator-responsive-collapse-toggle-close {
@@ -846,7 +846,7 @@
   position: absolute;
   display: inline-block;
   box-sizing: border-box;
-  background: transparent;
+  background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.12);
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
   font-size: 16px;
@@ -883,7 +883,7 @@
 @media (hover: hover) and (pointer: fine) {
   .tabulator-menu .tabulator-menu-item:not(.tabulator-menu-item-disabled):hover {
     cursor: pointer;
-    background: rgba(242, 242, 242, 0.5);
+    background: #f8f8f8;
   }
 }
 
@@ -924,12 +924,12 @@
 }
 
 .tabulator-edit-list .tabulator-edit-list-item.active {
-  color: transparent;
+  color: #fff;
   background: #ee6e73;
 }
 
 .tabulator-edit-list .tabulator-edit-list-item.active.focused {
-  outline: 1px solid rgba(0, 0, 0, 0.5);
+  outline: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .tabulator-edit-list .tabulator-edit-list-item.focused {
@@ -939,7 +939,7 @@
 @media (hover: hover) and (pointer: fine) {
   .tabulator-edit-list .tabulator-edit-list-item:hover {
     cursor: pointer;
-    color: transparent;
+    color: #fff;
     background: #ee6e73;
   }
 }
@@ -1283,7 +1283,7 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 }
 
 .tabulator.striped .tabulator-row:nth-child(even) {
-  background-color: rgba(242, 242, 242, 0.5);
+  background-color: #f8f8f8;
 }
 
 .tabulator.striped .tabulator-row:nth-child(even).tabulator-selected {
@@ -1292,7 +1292,7 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 
 @media (hover: hover) and (pointer: fine) {
   .tabulator.striped .tabulator-row:nth-child(even).tabulator-selectable:hover {
-    background-color: rgba(242, 242, 242, 0.5);
+    background-color: #f8f8f8;
     cursor: pointer;
   }
   .tabulator.striped .tabulator-row:nth-child(even).tabulator-selected:hover {
@@ -1307,7 +1307,7 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 }
 
 .tabulator-row.tabulator-row-even {
-  background-color: transparent;
+  background-color: #fff;
 }
 
 .tabulator-row .tabulator-cell {

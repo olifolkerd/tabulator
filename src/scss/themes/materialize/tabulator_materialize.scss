@@ -18,7 +18,7 @@ $sortArrowActive: #666 !default;
 $sortArrowInactive: #bbb !default;
 
 //row theming
-$rowBackgroundColor:transparent !default; //table row background color
+$rowBackgroundColor:#fff !default; //table row background color
 $rowAltBackgroundColor: $table-striped-color !default; //table row background color
 $rowBorderColor:$table-border-color !default; //table border color
 $rowHoverBackground:$table-striped-color !default; //row background color on hover
@@ -159,7 +159,7 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 	border-bottom:1px solid $rowBorderColor;
 
 	&.tabulator-row-even{
-		background-color: transparent;
+		background-color: $rowBackgroundColor;
 	}
 
 	.tabulator-cell{
