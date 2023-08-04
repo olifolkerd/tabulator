@@ -15349,7 +15349,7 @@
 									type = column.definition.headerFilterFunc;
 									filterFunc = function(data){
 										var params = column.definition.headerFilterFuncParams || {};
-										var fieldVal = column.getFieldValue(data);
+										var fieldVal = String(column.getFieldValue(data));
 
 										params = typeof params === "function" ? params(value, fieldVal, data) : params;
 
@@ -15363,7 +15363,7 @@
 							case "function":
 								filterFunc = function(data){
 									var params = column.definition.headerFilterFuncParams || {};
-									var fieldVal = column.getFieldValue(data);
+									var fieldVal = String(column.getFieldValue(data));
 
 									params = typeof params === "function" ? params(value, fieldVal, data) : params;
 
