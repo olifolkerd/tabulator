@@ -132,6 +132,7 @@ class FrozenColumns extends Module{
 	//calculate column positions and layout headers
 	layoutColumnPosition(allCells){
 		var leftParents = [];
+		var rightParents = [];
 		
 		var leftMargin = 0;
 		var rightMargin = 0;
@@ -187,7 +188,15 @@ class FrozenColumns extends Module{
 			}
 			
 			if(column.parent.isGroup){
-				this.layoutElement(this.getColGroupParentElement(column), column);
+				var parentEl = this.getColGroupParentElement(column);
+				if(!rightParents.includes(parentEl)){
+					this.layoutElement(parentEl, column);
+					rightParents.push(parentEl);
+				}
+
+				if(column.modules.frozen.edge){
+					parentEl.classList.add("tabulator-frozen-" + column.modules.frozen.position);
+				}
 			}else{
 				this.layoutElement(column.getElement(), column);
 			}
