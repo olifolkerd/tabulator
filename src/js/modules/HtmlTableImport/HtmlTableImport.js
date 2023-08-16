@@ -133,7 +133,7 @@ class HtmlTableImport extends Module{
 			}
 
 			if(!col.field) {
-				col.field = header.textContent.trim().toLowerCase().replace(" ", "_");
+				col.field = header.textContent.trim().toLowerCase().replaceAll(" ", "_");
 			}
 
 			width = header.getAttribute("width");
