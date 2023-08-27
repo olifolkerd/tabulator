@@ -1,4 +1,4 @@
-/* Tabulator v5.5.1 (c) Oliver Folkerd 2023 */
+/* Tabulator v5.5.2 (c) Oliver Folkerd 2023 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -7414,6 +7414,16 @@
 			}
 
 			this.table.element.setAttribute("tabulator-layout", this.mode);
+			this.subscribe("column-init", this.initializeColumn.bind(this));
+		}
+
+		initializeColumn(column){
+			if(column.definition.widthGrow){
+				column.definition.widthGrow = Number(column.definition.widthGrow);
+			}
+			if(column.definition.widthShrink){
+				column.definition.widthShrink = Number(column.definition.widthShrink);
+			}
 		}
 
 		getMode(){
@@ -19043,7 +19053,7 @@
 				}
 
 				if(!col.field) {
-					col.field = header.textContent.trim().toLowerCase().replace(" ", "_");
+					col.field = header.textContent.trim().toLowerCase().replaceAll(" ", "_");
 				}
 
 				width = header.getAttribute("width");
@@ -19701,7 +19711,7 @@
 		scrollToEnd:35,
 		undo:["ctrl + 90", "meta + 90"],
 		redo:["ctrl + 89", "meta + 89"],
-		copyToClipboard:["ctrl + 67", "meta + 89"],
+		copyToClipboard:["ctrl + 67", "meta + 67"],
 	};
 
 	var defaultActions = {
@@ -23713,6 +23723,7 @@
 				if(cell.modules.resize && cell.modules.resize.handleEl){
 					if(frozenOffset){
 						cell.modules.resize.handleEl.style[column.modules.frozen.position] = frozenOffset;
+						cell.modules.resize.handleEl.style["z-index"] = 11;
 					}
 					
 					cell.element.after(cell.modules.resize.handleEl);
