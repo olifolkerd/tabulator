@@ -13631,7 +13631,7 @@ var defaultBindings = {
 	scrollToEnd:35,
 	undo:["ctrl + 90", "meta + 90"],
 	redo:["ctrl + 89", "meta + 89"],
-	copyToClipboard:["ctrl + 67", "meta + 89"],
+	copyToClipboard:["ctrl + 67", "meta + 67"],
 };
 
 var defaultActions = {
