@@ -362,7 +362,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			
 			// background-color: inherit;
 			
-			z-index: 10;
+			z-index: 11;
 			
 			&.tabulator-frozen-left{
 				border-right:2px solid $rowBorderColor;
@@ -772,7 +772,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			
 			background-color: inherit;
 			
-			z-index: 10;
+			z-index: 11;
 			
 			&.tabulator-frozen-left{
 				border-right:2px solid $rowBorderColor;

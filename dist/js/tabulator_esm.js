@@ -12973,7 +12973,7 @@ class HtmlTableImport extends Module{
 			}
 
 			if(!col.field) {
-				col.field = header.textContent.trim().toLowerCase().replace(" ", "_");
+				col.field = header.textContent.trim().toLowerCase().replaceAll(" ", "_");
 			}
 
 			width = header.getAttribute("width");
@@ -17643,6 +17643,7 @@ class ResizeColumns extends Module{
 			if(cell.modules.resize && cell.modules.resize.handleEl){
 				if(frozenOffset){
 					cell.modules.resize.handleEl.style[column.modules.frozen.position] = frozenOffset;
+					cell.modules.resize.handleEl.style["z-index"] = 11;
 				}
 				
 				cell.element.after(cell.modules.resize.handleEl);
