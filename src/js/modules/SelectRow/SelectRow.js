@@ -354,7 +354,7 @@ class SelectRow extends Module{
 		
 		if(row){
 			index = self.selectedRows.findIndex(function(selectedRow){
-				return selectedRow == row;
+				return selectedRow.position == row.position;
 			});
 			
 			if(index > -1){
