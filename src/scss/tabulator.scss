@@ -1509,13 +1509,23 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		user-select: none;
 		position: relative;
 
-		&.tabulator-select-range-start.tabulator-select-range-end::after{
+		&.tabulator-select-start::before{
 			content: '';
 			position: absolute;
 			inset: 0;
 			border: 2px solid $cellSelectedBorderColor;
 		}
-		&.tabulator-cell-selected:not(.tabulator-select-range-start.tabulator-select-range-end):not(.tabulator-row-header){
+		&.tabulator-select-end::after{
+			content: '';
+			position: absolute;
+			right: -4px;
+			bottom: -4px;
+			width: 8px;
+			height: 8px;
+			border-radius: 999px;
+			background-color: $cellSelectedBorderColor;
+		}
+		&.tabulator-cell-selected:not(.tabulator-select-start.tabulator-select-end):not(.tabulator-row-header){
 			background-color: $cellSelectedBackground;
 		}
 	}

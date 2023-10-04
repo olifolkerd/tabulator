@@ -3,11 +3,11 @@ import {default as Tabulator} from './Tabulator.js';
 import * as _modules from '../core/modules/optional.js';
 import ModuleBinder from './tools/ModuleBinder.js';
 
-class TabulatorFull extends Tabulator {}
+var { SelectRowModule, ...modules } = _modules;
 
-var { SpreadsheetModule, ...modules } = _modules;
+class SpreadsheetTabulator extends Tabulator {}
 
 //bind modules and static functionality
-new ModuleBinder(TabulatorFull, modules);
+new ModuleBinder(SpreadsheetTabulator, modules);
 
-export default TabulatorFull;
+export default SpreadsheetTabulator;
