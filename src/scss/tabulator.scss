@@ -25,9 +25,10 @@ $rowHoverBackground:#bbb !default; //row background color on hover
 
 $rowSelectedBackground: #9ABCEA !default; //row background color when selected
 $rowSelectedBackgroundHover: #769BCC !default;//row background color when selected and hovered
-$rowHeaderSelectedBackground: #4990F1 !default; //row header background color when selected (spreadsheet module)
-$cellSelectedBackground: #C2D5EF !default; //cell background color when selected (spreadsheet module)
-$cellSelectedBorderColor: #2975DD !default; //cell border color when selected (spreadsheet module)
+$headerSelectedBackground: #4990F1 !default; //header background color when selected
+$headerTextSelectedBackground: #FFFFFF !default; //header text color when selected
+$cellSelectedBackground: #C2D5EF !default; //cell background color when selected
+$cellSelectedBorderColor: #2975DD !default; //cell border color when selected
 
 $editBoxColor:#1D68CD !default; //border color for edit boxes
 $errorColor:#dd0000 !default; //error indication
@@ -1509,23 +1510,7 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		user-select: none;
 		position: relative;
 
-		&.tabulator-select-start::before{
-			content: '';
-			position: absolute;
-			inset: 0;
-			border: 2px solid $cellSelectedBorderColor;
-		}
-		&.tabulator-select-end::after{
-			content: '';
-			position: absolute;
-			right: -4px;
-			bottom: -4px;
-			width: 8px;
-			height: 8px;
-			border-radius: 999px;
-			background-color: $cellSelectedBorderColor;
-		}
-		&.tabulator-cell-selected:not(.tabulator-select-start.tabulator-select-end):not(.tabulator-row-header){
+		&.tabulator-cell-selected:not(.tabulator-only-cell-selected):not(.tabulator-row-header){
 			background-color: $cellSelectedBackground;
 		}
 	}
@@ -1534,7 +1519,41 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 			background-color: $rowSelectedBackground;
 		}
 		&.tabulator-row-selected .tabulator-row-header{
-			background-color: $rowHeaderSelectedBackground;
+			background-color: $headerSelectedBackground;
+			color: $headerTextSelectedBackground;
+		}
+	}
+	& .tabulator-header .tabulator-col.tabulator-col-selected{
+		background-color: $headerSelectedBackground;
+		color: $headerTextSelectedBackground;
+	}
+	& .tabulator-selection-overlay {
+		position: absolute;
+		overflow: hidden;
+		z-index: 10;
+		pointer-events: none;
+
+		& .tabulator-selection-range {
+			position: absolute;
+			box-sizing: border-box;
+			border: 1px solid $cellSelectedBorderColor;
+
+			&.tabulator-selection-range-active::after {
+				content: '';
+				position: absolute;
+				right: -3px;
+				bottom: -3px;
+				width: 6px;
+				height: 6px;
+				background-color: $cellSelectedBorderColor;
+				border-radius: 999px;
+			}
+		}
+
+		& .tabulator-selection-active-cell {
+			position: absolute;
+			box-sizing: border-box;
+			border: 2px solid $cellSelectedBorderColor;
 		}
 	}
 }
