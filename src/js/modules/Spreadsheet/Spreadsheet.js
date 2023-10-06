@@ -71,14 +71,6 @@ class Spreadsheet extends Module {
 	}
 
 	initialize() {
-		// Avoid clashing with SelectRow module
-		if (this.table.modules.selectRow) {
-			console.error(
-				"Spreadsheet Error - Cannot use both SelectRow and Spreadsheet modules at the same time.",
-			);
-			return;
-		}
-
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
