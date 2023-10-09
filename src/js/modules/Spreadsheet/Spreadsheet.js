@@ -1,7 +1,8 @@
 import Module from "../../core/Module.js";
 
 class Range {
-	constructor(row, col) {
+	constructor(spreadsheet, row, col) {
+		this.spreadsheet = spreadsheet;
 		this.start = { row, col };
 		this.end = { row, col };
 		this._updateMinMax();
@@ -26,33 +27,34 @@ class Range {
 		this.maxCol = Math.max(this.start.col, this.end.col);
 	}
 
-	atTopLeft(row, col) {
-		return row === this.minRow && col === this.minCol;
-	}
-
-	atBottomRight(row, col) {
-		return row === this.maxRow && col === this.maxCol;
-	}
-
-	occupies(row, col) {
+	atTopLeft(cell) {
 		return (
-			this.minRow <= row &&
-			row <= this.maxRow &&
-			this.minCol <= col &&
-			col <= this.maxCol
+			cell.row.position - 1 === this.minRow &&
+			cell.column.position - 2 === this.minCol
 		);
 	}
 
-	isStartingAt(row, col) {
-		return this.start.row === row && this.start.col === col;
+	atBottomRight(cell) {
+		return (
+			cell.row.position - 1 === this.maxRow &&
+			cell.column.position - 2 === this.maxCol
+		);
 	}
 
-	withinRow(row) {
-		return row >= this.minRow && row <= this.maxRow;
+	occupies(cell) {
+		return this.occupiesRow(cell.row) && this.occupiesColumn(cell.column);
 	}
 
-	withinColumn(col) {
-		return col >= this.minCol && col <= this.maxCol;
+	occupiesRow(row) {
+		return this.minRow <= row.position - 1 && row.position - 1 <= this.maxRow;
+	}
+
+	occupiesColumn(col) {
+		return this.minCol <= col.position - 2 && col.position - 2 <= this.maxCol;
+	}
+
+	getData() {
+		return this.spreadsheet.getDataByRange(this);
 	}
 }
 
@@ -60,14 +62,16 @@ class Spreadsheet extends Module {
 	constructor(table) {
 		super(table);
 
-		this.ranges = [new Range(0, 0)];
 		this.selecting = false;
+		this.resetRanges();
+
+		this.registerTableOption("spreadsheet", false); //enable spreadsheet
+		this.registerTableOption("rowHeaderField", "--row-position"); //field name for row header
 	}
 
 	initialize() {
 		if (!this.table.options.spreadsheet) return;
 
-		this.registerTableOption("rowHeaderField", "--row-position");
 		this.registerTableFunction(
 			"getSelectedData",
 			this.getSelectedData.bind(this),
@@ -80,6 +84,7 @@ class Spreadsheet extends Module {
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
 		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
+		this.subscribe("cell-contextmenu", this.handleCellContextMenu.bind(this));
 		this.subscribe("cell-rendered", this.renderCell.bind(this));
 		this.subscribe("page-changed", this.handlePageChanged.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
@@ -147,20 +152,18 @@ class Spreadsheet extends Module {
 	}
 
 	renderCell(cell) {
-		var el = cell.getElement();
-		var row = cell.row.position - 1;
-		var col = cell.column.position - 2;
+		var element = cell.getElement();
 
-		el.classList.toggle(
+		element.classList.toggle(
 			"tabulator-cell-selected",
-			this.ranges.some((range) => range.occupies(row, col)),
+			this.ranges.some((range) => range.occupies(cell)),
 		);
 
-		el.classList.toggle(
+		element.classList.toggle(
 			"tabulator-only-cell-selected",
 			this.ranges.length === 1 &&
-				this.ranges[0].atTopLeft(row, col) &&
-				this.ranges[0].atBottomRight(row, col),
+				this.ranges[0].atTopLeft(cell) &&
+				this.ranges[0].atBottomRight(cell),
 		);
 
 		if (cell.column.field === this.options("rowHeaderField")) {
@@ -168,37 +171,13 @@ class Spreadsheet extends Module {
 			if (this.table.initialized && this.table.getPage) {
 				n += (this.table.getPage() - 1) * this.table.getPageSize();
 			}
-			el.innerText = n;
+			element.innerText = n;
 		}
-	}
-
-	selectingAllColumnsOfRow(row) {
-		if (this.selecting === "all") return true;
-
-		return this.ranges.some(
-			(range) =>
-				this.selecting === "row" &&
-				range.start.col === 0 &&
-				range.end.col === this.table.columnManager.columns.length - 2 &&
-				range.withinRow(row),
-		);
-	}
-
-	selectingAllRowsOfColumn(col) {
-		if (this.selecting === "all") return true;
-
-		return this.ranges.some(
-			(range) =>
-				this.selecting === "column" &&
-				range.start.row === 0 &&
-				range.end.row === this.rowsPerPage - 1 &&
-				range.withinColumn(col),
-		);
 	}
 
 	handleColumnMouseDown(event, column) {
 		if (column.field === this.options("rowHeaderField")) {
-			this.ranges = [new Range(0, 0)];
+			this.resetRanges();
 			this.selecting = "all";
 
 			const topLeftCell = this.table.rowManager
@@ -227,8 +206,17 @@ class Spreadsheet extends Module {
 	}
 
 	handleCellMouseDown(event, cell) {
+		if (event.button === 2 && this.getActiveRange().occupies(cell)) return;
+
 		this._select(event, cell);
 		this.layoutElement();
+	}
+
+	handleCellContextMenu(event, cell) {
+		var range = this.getActiveRange();
+		if (event.button === 2 && range.occupies(cell)) {
+			this.dispatchExternal("rangeContextMenu", event, range, cell);
+		}
 	}
 
 	_select(event, element) {
@@ -247,12 +235,12 @@ class Spreadsheet extends Module {
 
 			this.endSelection(element);
 		} else if (event.ctrlKey) {
-			this.ranges.push(new Range(0, 0));
+			this.ranges.push(new Range(this, 0, 0));
 
 			this.beginSelection(element);
 			this.endSelection(element);
 		} else {
-			this.ranges = [new Range(0, 0)];
+			this.resetRanges();
 
 			this.beginSelection(element);
 			this.endSelection(element);
@@ -328,6 +316,7 @@ class Spreadsheet extends Module {
 		this.table.rowManager.getVisibleRows(true).forEach((row) => {
 			if (row.type === "row") {
 				this.layoutRow(row);
+				row.cells.forEach((cell) => this.renderCell(cell));
 			}
 		});
 
@@ -339,33 +328,35 @@ class Spreadsheet extends Module {
 	}
 
 	layoutRow(row) {
-		row
-			.getElement()
-			.classList.toggle(
-				"tabulator-row-selected",
-				this.selectingAllColumnsOfRow(row.position - 1),
+		var selected =
+			this.selecting === "all" ||
+			this.ranges.some(
+				(range) =>
+					this.selecting === "row" &&
+					range.start.col === 0 &&
+					range.end.col === this.table.columnManager.columns.length - 2 &&
+					range.occupiesRow(row),
 			);
+		var highlight = this.ranges.some((range) => range.occupiesRow(row));
 
-		row.getElement().classList.toggle(
-			"tabulator-row-highlight",
-			this.ranges.some((range) => range.withinRow(row.position - 1)),
-		);
-
-		row.cells.forEach((cell) => this.renderCell(cell));
+		row.getElement().classList.toggle("tabulator-row-selected", selected);
+		row.getElement().classList.toggle("tabulator-row-highlight", highlight);
 	}
 
 	layoutColumn(column) {
-		column
-			.getElement()
-			.classList.toggle(
-				"tabulator-col-selected",
-				this.selectingAllRowsOfColumn(column.position - 2),
+		var selected =
+			this.selecting === "all" ||
+			this.ranges.some(
+				(range) =>
+					this.selecting === "column" &&
+					range.start.row === 0 &&
+					range.end.row === this.rowsPerPage - 1 &&
+					range.occupiesColumn(column),
 			);
+		var highlight = this.ranges.some((range) => range.occupiesColumn(column));
 
-		column.getElement().classList.toggle(
-			"tabulator-col-highlight",
-			this.ranges.some((range) => range.withinColumn(column.position - 2)),
-		);
+		column.getElement().classList.toggle("tabulator-col-selected", selected);
+		column.getElement().classList.toggle("tabulator-col-highlight", highlight);
 	}
 
 	handleColumnUpdating() {
@@ -433,12 +424,8 @@ class Spreadsheet extends Module {
 		});
 	}
 
-	tableBuilt() {
-		this.layoutElement();
-	}
-
 	handlePageChanged() {
-		this.ranges = [new Range(0, 0)];
+		this.resetRanges();
 		this.layoutElement();
 	}
 
@@ -465,11 +452,11 @@ class Spreadsheet extends Module {
 	}
 
 	getColumnsByRange(range) {
-		return this.table.getColumns().slice(
-			// skip row header
-			range.minCol + 1,
-			range.maxCol + 2,
-		);
+		return this.table.getColumns().slice(range.minCol + 1, range.maxCol + 2);
+	}
+
+	resetRanges() {
+		this.ranges = [new Range(this, 0, 0)];
 	}
 
 	get rowsPerPage() {
