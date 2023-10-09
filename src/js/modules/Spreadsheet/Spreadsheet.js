@@ -68,24 +68,18 @@ class Spreadsheet extends Module {
 		if (!this.table.options.spreadsheet) return;
 
 		this.registerTableOption("rowHeaderField", "--row-position");
-
-		this.ranges = [new Range(0, 0)];
-		this.selecting = false;
-	}
-
-	initialize() {
-		if (!this.table.options.spreadsheet) return;
-
 		this.registerTableFunction(
 			"getSelectedData",
 			this.getSelectedData.bind(this),
 		);
-		this.registerTableFunction("getRanges", this.getSelectedData.bind(this));
 
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
+		this.subscribe("column-width", this.handleColumnUpdating.bind(this));
+		this.subscribe("column-resized", this.renderSelection.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
+		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
 		this.subscribe("cell-rendered", this.renderCell.bind(this));
 		this.subscribe("page-changed", this.handlePageChanged.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
@@ -96,8 +90,6 @@ class Spreadsheet extends Module {
 			document.removeEventListener(mouseUpHandler),
 		);
 
-		this.table.options.clipboardCopyRowRange = "spreadsheet";
-
 		this.initializeTable();
 	}
 
@@ -105,6 +97,8 @@ class Spreadsheet extends Module {
 		for (var column of this.table.options.columns) {
 			// Disable sorting by clicking header
 			column.headerSort = false;
+			// Edit on double click
+			if (column.editor) column.editable = false;
 		}
 		this.table.options.columns = [
 			{
@@ -119,6 +113,8 @@ class Spreadsheet extends Module {
 			...this.table.options.columns,
 		];
 
+		this.table.options.clipboardCopyRowRange = "spreadsheet";
+
 		this.table.element.classList.add("tabulator-spreadsheet");
 
 		this.overlay = document.createElement("div");
@@ -127,12 +123,16 @@ class Spreadsheet extends Module {
 		this.table.rowManager.element.appendChild(this.overlay);
 	}
 
-	getSelectedData(range) {
-		if (!range) range = this.getActiveRange();
+	getSelectedData() {
+		return this.getDataByRange(this.getActiveRange());
+	}
 
+	getDataByRange(range) {
 		var data = [];
-		var rows = this.selectedRows;
-		var columns = this.selectedColumns.map((component) => component._column);
+		var rows = this.getRowsByRange(range);
+		var columns = this.getColumnsByRange(range).map(
+			(component) => component._column,
+		);
 
 		rows.forEach((row) => {
 			var rowData = row.getData();
@@ -270,6 +270,15 @@ class Spreadsheet extends Module {
 		this.selecting = false;
 	}
 
+	handleCellDblClick(_, cell) {
+		if (
+			cell.column.field !== this.options("rowHeaderField") &&
+			cell.column.definition.editor
+		) {
+			cell.getComponent().edit(true);
+		}
+	}
+
 	beginSelection(element) {
 		var range = this.getActiveRange();
 
@@ -359,7 +368,13 @@ class Spreadsheet extends Module {
 		);
 	}
 
+	handleColumnUpdating() {
+		this.overlay.classList.add("tabulator-column-updating");
+	}
+
 	renderSelection() {
+		this.overlay.classList.remove("tabulator-column-updating");
+
 		var tableElement = this.table.rowManager.tableElement;
 
 		this.overlay.style.left = tableElement.scrollLeft + "px";
@@ -442,25 +457,31 @@ class Spreadsheet extends Module {
 		return this.getCell(activeRange.start.row, activeRange.start.col);
 	}
 
-	get rowsPerPage() {
-		return this.table.rowManager.getVisibleRows().length;
-	}
-
-	get selectedRows() {
-		var range = this.getActiveRange();
+	getRowsByRange(range) {
 		return this.table.rowManager.activeRows.slice(
 			range.minRow,
 			range.maxRow + 1,
 		);
 	}
 
-	get selectedColumns() {
-		var range = this.getActiveRange();
+	getColumnsByRange(range) {
 		return this.table.getColumns().slice(
 			// skip row header
 			range.minCol + 1,
 			range.maxCol + 2,
 		);
+	}
+
+	get rowsPerPage() {
+		return this.table.rowManager.getVisibleRows().length;
+	}
+
+	get selectedRows() {
+		return this.getRowsByRange(this.getActiveRange());
+	}
+
+	get selectedColumns() {
+		return this.getColumnsByRange(this.getActiveRange());
 	}
 }
 

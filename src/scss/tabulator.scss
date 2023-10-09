@@ -1565,5 +1565,9 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 			box-sizing: border-box;
 			border: 2px solid $cellSelectedBorderColor;
 		}
+
+		&.tabulator-column-updating {
+			display: none;
+		}
 	}
 }
