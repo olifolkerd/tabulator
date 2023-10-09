@@ -25,6 +25,8 @@ $rowHoverBackground:#bbb !default; //row background color on hover
 
 $rowSelectedBackground: #9ABCEA !default; //row background color when selected
 $rowSelectedBackgroundHover: #769BCC !default;//row background color when selected and hovered
+$headerHighlightBackground: #9ABCEA !default; //row background color when selected
+$headerTextHighlightBackground: #000000 !default; //row background color when selected
 $headerSelectedBackground: #4990F1 !default; //header background color when selected
 $headerTextSelectedBackground: #FFFFFF !default; //header text color when selected
 $cellSelectedBackground: #C2D5EF !default; //cell background color when selected
@@ -1513,19 +1515,27 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		&.tabulator-cell-selected:not(.tabulator-only-cell-selected):not(.tabulator-row-header){
 			background-color: $cellSelectedBackground;
 		}
+
 	}
 	& .tabulator-row{
-		&:has(.tabulator-cell-selected) .tabulator-row-header{
-			background-color: $rowSelectedBackground;
+		&.tabulator-row-highlight .tabulator-row-header{
+			background-color: $headerHighlightBackground;
+			color: $headerTextHighlightBackground;
 		}
 		&.tabulator-row-selected .tabulator-row-header{
 			background-color: $headerSelectedBackground;
 			color: $headerTextSelectedBackground;
 		}
 	}
-	& .tabulator-header .tabulator-col.tabulator-col-selected{
-		background-color: $headerSelectedBackground;
-		color: $headerTextSelectedBackground;
+	& .tabulator-col {
+		&.tabulator-col-highlight {
+			background-color: $headerHighlightBackground;
+			color: $headerTextHighlightBackground;
+		}
+		&.tabulator-col-selected{
+			background-color: $headerSelectedBackground;
+			color: $headerTextSelectedBackground;
+		}
 	}
 	& .tabulator-selection-overlay {
 		position: absolute;

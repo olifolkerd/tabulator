@@ -301,6 +301,7 @@ export default class ColumnManager extends CoreFeature {
 	
 	registerColumnPosition(col){
 		this.columnsByIndex.push(col);
+		return this.columnsByIndex.length;
 	}
 	
 	_reIndexColumns(){

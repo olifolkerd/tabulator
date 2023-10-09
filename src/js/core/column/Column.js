@@ -22,6 +22,7 @@ class Column extends CoreFeature{
 		this.isGroup = false;
 		this.hozAlign = ""; //horizontal text alignment
 		this.vertAlign = ""; //vert text alignment
+		this.position = 0;
 
 		//multi dimensional filed handling
 		this.field ="";
@@ -128,7 +129,7 @@ class Column extends CoreFeature{
 
 	//register column position with column manager
 	registerColumnPosition(column){
-		this.parent.registerColumnPosition(column);
+		this.position = this.parent.registerColumnPosition(column);
 	}
 
 	//register column position with column manager
