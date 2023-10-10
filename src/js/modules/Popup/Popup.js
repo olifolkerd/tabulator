@@ -13,6 +13,7 @@ class Popup extends Module{
 		this.registerTableOption("groupContextPopup", false);
 		this.registerTableOption("groupClickPopup", false);
 		this.registerTableOption("groupDblClickPopup", false);
+		this.registerTableOption("rangeContextPopup", false);
 		
 		this.registerColumnOption("headerContextPopup");
 		this.registerColumnOption("headerClickPopup");
@@ -27,12 +28,14 @@ class Popup extends Module{
 		this.registerComponentFunction("column", "popup", this._componentPopupCall.bind(this));
 		this.registerComponentFunction("row", "popup", this._componentPopupCall.bind(this));
 		this.registerComponentFunction("group", "popup", this._componentPopupCall.bind(this));
+		this.registerComponentFunction("range", "popup", this._componentPopupCall.bind(this));
 		
 	}
 	
 	initialize(){
 		this.initializeRowWatchers();
 		this.initializeGroupWatchers();
+		this.initializeRangeWatchers();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
@@ -68,6 +71,13 @@ class Popup extends Module{
 
 		if(this.table.options.groupDblClickPopup){
 			this.subscribe("group-dblclick", this.loadPopupEvent.bind(this, this.table.options.groupDblClickPopup));
+		}
+	}
+
+	initializeRangeWatchers(){
+		if(this.table.options.rangeContextPopup){
+			this.subscribe("range-contextmenu", this.loadPopupEvent.bind(this, this.table.options.rangeContextPopup));
+			this.table.on("rangeTapHold", this.loadPopupEvent.bind(this, this.table.options.rangeContextPopup));
 		}
 	}
 	

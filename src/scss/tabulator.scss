@@ -25,12 +25,16 @@ $rowHoverBackground:#bbb !default; //row background color on hover
 
 $rowSelectedBackground: #9ABCEA !default; //row background color when selected
 $rowSelectedBackgroundHover: #769BCC !default;//row background color when selected and hovered
-$headerHighlightBackground: #9ABCEA !default; //row background color when selected
-$headerTextHighlightBackground: #000000 !default; //row background color when selected
 $headerSelectedBackground: #4990F1 !default; //header background color when selected
 $headerTextSelectedBackground: #FFFFFF !default; //header text color when selected
 $cellSelectedBackground: #C2D5EF !default; //cell background color when selected
-$cellSelectedBorderColor: #2975DD !default; //cell border color when selected
+
+$headerHighlightBackground: #D6D6D6 !default; //header background color when highlighted
+$headerTextHighlightBackground: #000000 !default; //header text color when highlighted
+$headerBorderHighlightColor:#777 !default; //header border color when highlighted
+
+$rangeBorderColor: #2975DD !default; //range border color
+$rangeHandleColor: #2975DD !default; //range handle color
 
 $editBoxColor:#1D68CD !default; //border color for edit boxes
 $errorColor:#dd0000 !default; //error indication
@@ -1507,17 +1511,20 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 
 // Spreadsheet module styling
 
-.tabulator-spreadsheet{
-	& .tabulator-cell{
-		user-select: none;
-		position: relative;
-
-		&.tabulator-cell-selected:not(.tabulator-only-cell-selected):not(.tabulator-row-header){
-			background-color: $cellSelectedBackground;
-		}
-
+.tabulator-headers .tabulator-spreadsheet.tabulator-col{
+	&.tabulator-col-highlight {
+		background-color: $headerHighlightBackground;
+		color: $headerTextHighlightBackground;
+		border-color: $headerBorderHighlightColor;
 	}
-	& .tabulator-row{
+	&.tabulator-col-selected{
+		background-color: $headerSelectedBackground;
+		color: $headerTextSelectedBackground;
+	}
+}
+
+.tabulator-table .tabulator-spreadsheet{
+	&.tabulator-row{
 		&.tabulator-row-highlight .tabulator-row-header{
 			background-color: $headerHighlightBackground;
 			color: $headerTextHighlightBackground;
@@ -1527,47 +1534,52 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 			color: $headerTextSelectedBackground;
 		}
 	}
-	& .tabulator-col {
-		&.tabulator-col-highlight {
-			background-color: $headerHighlightBackground;
-			color: $headerTextHighlightBackground;
+	&.tabulator-cell{
+		user-select: none;
+		position: relative;
+
+		&.tabulator-range-cell:not(.tabulator-range-single-cell):not(.tabulator-row-header){
+			background-color: $cellSelectedBackground;
 		}
-		&.tabulator-col-selected{
-			background-color: $headerSelectedBackground;
-			color: $headerTextSelectedBackground;
+
+		&.tabulator-row-header {
+			text-align: center;
 		}
 	}
-	& .tabulator-selection-overlay {
+}
+
+.tabulator-range-overlay {
+	position: absolute;
+	left: 0;
+	top: 0;
+	overflow: hidden;
+	z-index: 10;
+	pointer-events: none;
+
+	& .tabulator-range {
 		position: absolute;
-		overflow: hidden;
-		z-index: 10;
-		pointer-events: none;
+		box-sizing: border-box;
+		border: 1px solid $rangeBorderColor;
 
-		& .tabulator-selection-range {
+		&.tabulator-range-active::after {
+			content: '';
 			position: absolute;
-			box-sizing: border-box;
-			border: 1px solid $cellSelectedBorderColor;
-
-			&.tabulator-selection-range-active::after {
-				content: '';
-				position: absolute;
-				right: -3px;
-				bottom: -3px;
-				width: 6px;
-				height: 6px;
-				background-color: $cellSelectedBorderColor;
-				border-radius: 999px;
-			}
+			right: -3px;
+			bottom: -3px;
+			width: 6px;
+			height: 6px;
+			background-color: $rangeHandleColor;
+			border-radius: 999px;
 		}
+	}
 
-		& .tabulator-selection-active-cell {
-			position: absolute;
-			box-sizing: border-box;
-			border: 2px solid $cellSelectedBorderColor;
-		}
+	& .tabulator-range-cell-active {
+		position: absolute;
+		box-sizing: border-box;
+		border: 2px solid $rangeBorderColor;
+	}
 
-		&.tabulator-column-updating {
-			display: none;
-		}
+	&.tabulator-column-updating {
+		display: none;
 	}
 }

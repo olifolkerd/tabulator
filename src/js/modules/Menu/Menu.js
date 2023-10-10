@@ -21,6 +21,7 @@ class Menu extends Module{
 		this.registerTableOption("groupContextMenu", false);
 		this.registerTableOption("groupClickMenu", false);
 		this.registerTableOption("groupDblClickMenu", false);
+		this.registerTableOption("rangeContextMenu", false);
 		
 		this.registerColumnOption("headerContextMenu");
 		this.registerColumnOption("headerClickMenu");
@@ -37,6 +38,7 @@ class Menu extends Module{
 		this.deprecatedOptionsCheck();
 		this.initializeRowWatchers();
 		this.initializeGroupWatchers();
+		this.initializeRangeWatchers();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
@@ -74,6 +76,13 @@ class Menu extends Module{
 		
 		if(this.table.options.groupDblClickMenu){
 			this.subscribe("group-dblclick", this.loadMenuEvent.bind(this, this.table.options.groupDblClickMenu));
+		}
+	}
+
+	initializeRangeWatchers() {
+		if (this.table.options.rangeContextMenu) {
+			this.subscribe("range-contextmenu", this.loadMenuEvent.bind(this, this.table.options.rangeContextMenu));
+			this.table.on("rangeTapHold", this.loadMenuEvent.bind(this, this.table.options.rangeContextMenu));
 		}
 	}
 	
@@ -175,6 +184,8 @@ class Menu extends Module{
 			component = component._group;
 		}else if(component._row){
 			component = component._row;
+		}else if(component._range) {
+			component = component._range;
 		}
 		
 		menu = typeof menu == "function" ? menu.call(this.table, e, component.getComponent()) : menu;

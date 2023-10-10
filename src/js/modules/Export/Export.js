@@ -39,7 +39,7 @@ class Export extends Module{
 		var headers, body;
 		
 		if (range === 'spreadsheet') {
-			var columns = this.table.modules.spreadsheet.selectedColumns
+			var columns = this.table.modules.spreadsheet.selectedColumns;
 			headers = this.config.columnHeaders !== false
 				? this.headersToExportRows(this.generateColumnGroupHeaders(columns.map((component) => component._column)))
 				: [];

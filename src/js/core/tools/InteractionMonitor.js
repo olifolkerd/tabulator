@@ -32,6 +32,7 @@ export default class InteractionManager extends CoreFeature {
 			"tabulator-row":"row",
 			"tabulator-group":"group",
 			"tabulator-col":"column",
+			"tabulator-range-cell":"range",
 		};
 		
 		this.pseudoTrackers = {
@@ -48,6 +49,10 @@ export default class InteractionManager extends CoreFeature {
 				target:null,
 			},
 			"column":{
+				subscriber:null,
+				target:null,
+			},
+			"range":{
 				subscriber:null,
 				target:null,
 			},
@@ -280,6 +285,11 @@ export default class InteractionManager extends CoreFeature {
 									console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?");
 								}
 							}
+						}
+						break;
+					case "range":
+						if(listener.components.includes("range")){
+							component = this.table.modules.spreadsheet.findRange(target);
 						}
 						break;
 				}
