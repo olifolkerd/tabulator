@@ -17,8 +17,20 @@ class RangeComponent {
 		});
 	}
 
+	getElement() {
+		return this._range.element;
+	}
+
 	getData() {
 		return this._range.getData();
+	}
+
+	getCells() {
+		return this._range.getCells();
+	}
+
+	getStructuredCells() {
+		return this._range.getStructuredCells();
 	}
 }
 

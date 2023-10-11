@@ -301,7 +301,6 @@ export default class ColumnManager extends CoreFeature {
 	
 	registerColumnPosition(col){
 		this.columnsByIndex.push(col);
-		return this.columnsByIndex.length;
 	}
 	
 	_reIndexColumns(){
@@ -407,6 +406,10 @@ export default class ColumnManager extends CoreFeature {
 		});
 		
 		return index > -1 ? this.columnsByIndex[index] : false;
+	}
+
+	getVisibleColumnsByIndex() {
+		return this.columnsByIndex.filter((col) => col.visible);
 	}
 	
 	getColumns(){

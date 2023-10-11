@@ -5,8 +5,9 @@ class Spreadsheet extends Module {
 	constructor(table) {
 		super(table);
 
+		this.prevSelection = false;
 		this.selecting = false;
-		this.resetRanges();
+		this.ranges = [];
 
 		this.registerTableOption("spreadsheet", false); //enable spreadsheet
 		this.registerTableOption("spreadsheetRowHeader", {}); //row header definition
@@ -28,8 +29,8 @@ class Spreadsheet extends Module {
 	initializeWatchers() {
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
-		this.subscribe("column-width", this.handleColumnUpdating.bind(this));
-		this.subscribe("column-resized", this.renderSelection.bind(this));
+		this.subscribe("column-width", this.handleColumnWidth.bind(this));
+		this.subscribe("column-resized", this.layoutSelection.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
 		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
@@ -94,6 +95,8 @@ class Spreadsheet extends Module {
 			this.resizeObserver.disconnect();
 		});
 
+		this.resetRanges();
+
 		this.table.rowManager.element.appendChild(this.overlay);
 	}
 
@@ -110,12 +113,40 @@ class Spreadsheet extends Module {
 			var rowData = row.getData();
 			var result = {};
 			columns.forEach((column) => {
-				result[column._column.field] = rowData[column._column.field];
+				result[column.field] = rowData[column.field];
 			});
 			data.push(result);
 		});
 
 		return data;
+	}
+
+	getCellsByRange(range, structured) {
+		var cells = [];
+		var rows = this.getRowsByRange(range);
+		var columns = this.getColumnsByRange(range);
+
+		if (structured) {
+			cells = rows.map((row) => {
+				var arr = [];
+				row.getCells().forEach((cell) => {
+					if (columns.includes(cell.column)) {
+						arr.push(cell.getComponent());
+					}
+				});
+				return arr;
+			});
+		} else {
+			rows.forEach((row) => {
+				row.getCells().forEach((cell) => {
+					if (columns.includes(cell.column)) {
+						cells.push(cell.getComponent());
+					}
+				});
+			});
+		}
+
+		return cells;
 	}
 
 	renderCell(cell) {
@@ -125,7 +156,7 @@ class Spreadsheet extends Module {
 
 		var rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
 
-		el.classList.toggle("tabulator-range-cell", rangeIdx !== -1);
+		el.classList.toggle("tabulator-range", rangeIdx !== -1);
 
 		el.classList.toggle(
 			"tabulator-range-single-cell",
@@ -138,17 +169,20 @@ class Spreadsheet extends Module {
 	}
 
 	handleColumnMouseDown(event, column) {
+		if (
+			event.button === 2 &&
+			(this.prevSelection === "column" || this.prevSelection === "all") &&
+			this.getActiveRange().occupiesColumn(column)
+		) {
+			return;
+		}
+
 		if (column.field === this.options("rowHeaderField")) {
 			this.resetRanges();
 			this.selecting = "all";
 
-			const topLeftCell = this.table.rowManager
-				.getRowFromPosition(1)
-				.getCells()[1];
-			const bottomRightCell = this.table.columnManager.columns
-				.slice(-1)[0]
-				.getCells()
-				.slice(-1)[0];
+			const topLeftCell = this.getCell(0, 0);
+			const bottomRightCell = this.getCell(-1, -1);
 
 			this.beginSelection(topLeftCell);
 			this.endSelection(bottomRightCell);
@@ -168,7 +202,14 @@ class Spreadsheet extends Module {
 	}
 
 	handleCellMouseDown(event, cell) {
-		if (event.button === 2 && this.getActiveRange().occupies(cell)) return;
+		if (
+			event.button === 2 &&
+			(this.getActiveRange().occupies(cell) ||
+				((this.prevSelection === "row" || this.prevSelection === "all") &&
+					this.getActiveRange().occupiesRow(cell.row)))
+		) {
+			return;
+		}
 
 		this._select(event, cell);
 		this.layoutElement();
@@ -197,7 +238,7 @@ class Spreadsheet extends Module {
 
 			this.endSelection(element);
 		} else if (event.ctrlKey) {
-			this.ranges.push(new Range(this.table, 0, 0));
+			this.addRange();
 
 			this.beginSelection(element);
 			this.endSelection(element);
@@ -217,6 +258,9 @@ class Spreadsheet extends Module {
 	}
 
 	handleMouseUp() {
+		if (this.selecting !== false) {
+			this.prevSelection = this.selecting;
+		}
 		this.selecting = false;
 	}
 
@@ -255,7 +299,7 @@ class Spreadsheet extends Module {
 			if (this.selecting === "column") {
 				range.setEnd(rowsCount - 1, element.position - 2);
 			} else if (this.selecting === "cell") {
-				range.setEnd(0, element.position - 1);
+				range.setEnd(0, element.position - 2);
 			}
 			return;
 		}
@@ -265,7 +309,10 @@ class Spreadsheet extends Module {
 		var isRowHeader = element.column.field === this.options("rowHeaderField");
 
 		if (this.selecting === "row") {
-			range.setEnd(row, this.table.columnManager.getColumns().length - 2);
+			range.setEnd(
+				row,
+				this.table.columnManager.getVisibleColumnsByIndex().length - 2,
+			);
 		} else if (this.selecting !== "row" && isRowHeader) {
 			range.setEnd(row, 0);
 		} else if (this.selecting === "column") {
@@ -283,11 +330,11 @@ class Spreadsheet extends Module {
 			}
 		});
 
-		this.table.columnManager.columns.forEach((column) => {
+		this.table.columnManager.getVisibleColumnsByIndex().forEach((column) => {
 			this.layoutColumn(column);
 		});
 
-		this.renderSelection();
+		this.layoutSelection();
 	}
 
 	layoutRow(row) {
@@ -295,19 +342,29 @@ class Spreadsheet extends Module {
 
 		el.classList.add("tabulator-spreadsheet");
 
-		var selected =
-			this.selecting === "all" ||
-			this.ranges.some(
+		var colCount = this.table.columnManager.getVisibleColumnsByIndex().length;
+
+		var rangeIdx = -1;
+
+		if (this.selecting === "row") {
+			rangeIdx = this.ranges.findIndex(
 				(range) =>
-					this.selecting === "row" &&
 					range.start.col === 0 &&
-					range.end.col === this.table.columnManager.columns.length - 2 &&
+					range.end.col === colCount - 2 &&
 					range.occupiesRow(row),
 			);
+		} else if (this.selecting === "all") {
+			rangeIdx = this.ranges.length - 1;
+		}
+
+		var selected = rangeIdx !== -1;
 		var highlight = this.ranges.some((range) => range.occupiesRow(row));
 
+		el.classList.toggle("tabulator-range", selected);
 		el.classList.toggle("tabulator-row-selected", selected);
 		el.classList.toggle("tabulator-row-highlight", highlight);
+
+		el.dataset.range = rangeIdx;
 	}
 
 	layoutColumn(column) {
@@ -315,33 +372,38 @@ class Spreadsheet extends Module {
 
 		el.classList.add("tabulator-spreadsheet");
 
-		var rowsCount = this.table.rowManager.getDisplayRows().length;
-		var selected =
-			this.selecting === "all" ||
-			this.ranges.some(
+		var rowCount = this.table.rowManager.getDisplayRows().length;
+
+		var rangeIdx = -1;
+
+		if (this.selecting === "column") {
+			rangeIdx = this.ranges.findIndex(
 				(range) =>
-					this.selecting === "column" &&
 					range.start.row === 0 &&
-					range.end.row === rowsCount - 1 &&
+					range.end.row === rowCount - 1 &&
 					range.occupiesColumn(column),
 			);
-		var highlight = this.ranges.some((range) => range.occupiesColumn(column));
-
-		el.classList.toggle("tabulator-col-selected", selected);
-		el.classList.toggle("tabulator-col-highlight", highlight);
-	}
-
-	handleColumnUpdating() {
-		this.overlay.classList.add("tabulator-column-updating");
-	}
-
-	renderSelection() {
-		this.overlay.classList.remove("tabulator-column-updating");
-
-		while (this.rangeContainer.firstChild) {
-			this.rangeContainer.removeChild(this.rangeContainer.firstChild);
+		} else if (this.selecting === "all") {
+			rangeIdx = this.ranges.length - 1;
 		}
 
+		var selected = rangeIdx !== -1;
+
+		var highlight = this.ranges.some((range) => range.occupiesColumn(column));
+
+		el.classList.toggle("tabulator-range", selected);
+		el.classList.toggle("tabulator-col-selected", selected);
+		el.classList.toggle("tabulator-col-highlight", highlight);
+
+		el.dataset.range = rangeIdx;
+	}
+
+	handleColumnWidth() {
+		if (!this.table.initialized) return;
+		this.layoutSelection();
+	}
+
+	layoutSelection() {
 		var activeCell = this.getActiveCell();
 
 		this.activeRangeCellElement.style.left =
@@ -359,33 +421,30 @@ class Spreadsheet extends Module {
 			activeCell.row.getElement().offsetTop +
 			"px";
 
-		var activeRange = this.getActiveRange();
+		this.ranges.forEach((range) => this.layoutRange(range));
+	}
 
-		this.ranges.forEach((range) => {
-			var topLeftCell = this.getCell(range.minRow, range.minCol);
-			var bottomRightCell = this.getCell(range.maxRow, range.maxCol);
+	layoutRange(range) {
+		var topLeftCell = this.getCell(range.minRow, range.minCol);
+		var bottomRightCell = this.getCell(range.maxRow, range.maxCol);
 
-			var rangeEl = document.createElement("div");
-			rangeEl.classList.add("tabulator-range");
-			if (range === activeRange) {
-				rangeEl.classList.add("tabulator-range-active");
-			}
+		range.element.classList.toggle(
+			"tabulator-range-active",
+			range === this.getActiveRange(),
+		);
 
-			rangeEl.style.left = topLeftCell.getElement().offsetLeft + "px";
-			rangeEl.style.top = topLeftCell.row.getElement().offsetTop + "px";
-			rangeEl.style.width =
-				bottomRightCell.getElement().offsetLeft +
-				bottomRightCell.getElement().offsetWidth -
-				topLeftCell.getElement().offsetLeft +
-				"px";
-			rangeEl.style.height =
-				bottomRightCell.row.getElement().offsetTop +
-				bottomRightCell.row.getElement().offsetHeight -
-				topLeftCell.row.getElement().offsetTop +
-				"px";
-
-			this.rangeContainer.appendChild(rangeEl);
-		});
+		range.element.style.left = topLeftCell.getElement().offsetLeft + "px";
+		range.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
+		range.element.style.width =
+			bottomRightCell.getElement().offsetLeft +
+			bottomRightCell.getElement().offsetWidth -
+			topLeftCell.getElement().offsetLeft +
+			"px";
+		range.element.style.height =
+			bottomRightCell.row.getElement().offsetTop +
+			bottomRightCell.row.getElement().offsetHeight -
+			topLeftCell.row.getElement().offsetTop +
+			"px";
 	}
 
 	handlePageChanged() {
@@ -399,10 +458,19 @@ class Spreadsheet extends Module {
 		return this.ranges[rangeIdx].getComponent();
 	}
 
-	getCell(row, col) {
-		return this.table.rowManager.getRowFromPosition(row + 1).getCells()[
-			col + 1
-		];
+	getCell(rowIdx, colIdx) {
+		if (rowIdx < 0) {
+			rowIdx = this.table.rowManager.getDisplayRows().length + rowIdx;
+		}
+
+		var row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
+
+		if (colIdx < 0) {
+			colIdx =
+				this.table.columnManager.getVisibleColumnsByIndex().length + colIdx - 1;
+		}
+
+		return row.getCells().filter((cell) => cell.column.visible)[colIdx + 1];
 	}
 
 	getActiveRange() {
@@ -415,18 +483,31 @@ class Spreadsheet extends Module {
 	}
 
 	getRowsByRange(range) {
-		return this.table.rowManager.activeRows.slice(
-			range.minRow,
-			range.maxRow + 1,
-		);
+		return this.table.rowManager
+			.getDisplayRows()
+			.slice(range.minRow, range.maxRow + 1);
 	}
 
 	getColumnsByRange(range) {
-		return this.table.getColumns().slice(range.minCol + 1, range.maxCol + 2);
+		return this.table.columnManager
+			.getVisibleColumnsByIndex()
+			.slice(range.minCol + 1, range.maxCol + 2);
+	}
+
+	addRange() {
+		var element = document.createElement("div");
+		element.classList.add("tabulator-range");
+
+		var range = new Range(this.table, 0, 0, element);
+
+		this.ranges.push(range);
+		this.rangeContainer.appendChild(element);
 	}
 
 	resetRanges() {
-		this.ranges = [new Range(this.table, 0, 0)];
+		this.ranges.forEach((range) => range.destroy());
+		this.ranges = [];
+		this.addRange(0, 0);
 	}
 
 	get selectedRows() {
@@ -434,7 +515,9 @@ class Spreadsheet extends Module {
 	}
 
 	get selectedColumns() {
-		return this.getColumnsByRange(this.getActiveRange());
+		return this.getColumnsByRange(this.getActiveRange()).map((col) =>
+			col.getComponent(),
+		);
 	}
 }
 

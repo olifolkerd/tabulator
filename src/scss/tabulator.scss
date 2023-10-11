@@ -1538,7 +1538,7 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		user-select: none;
 		position: relative;
 
-		&.tabulator-range-cell:not(.tabulator-range-single-cell):not(.tabulator-row-header){
+		&.tabulator-range:not(.tabulator-range-single-cell):not(.tabulator-row-header){
 			background-color: $cellSelectedBackground;
 		}
 
@@ -1577,9 +1577,5 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		position: absolute;
 		box-sizing: border-box;
 		border: 2px solid $rangeBorderColor;
-	}
-
-	&.tabulator-column-updating {
-		display: none;
 	}
 }

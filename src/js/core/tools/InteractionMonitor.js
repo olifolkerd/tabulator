@@ -32,7 +32,7 @@ export default class InteractionManager extends CoreFeature {
 			"tabulator-row":"row",
 			"tabulator-group":"group",
 			"tabulator-col":"column",
-			"tabulator-range-cell":"range",
+			"tabulator-range":"range",
 		};
 		
 		this.pseudoTrackers = {

@@ -1,11 +1,12 @@
 import RangeComponent from "./RangeComponent";
 
 class Range {
-	constructor(table, row, col) {
+	constructor(table, row, col, element) {
 		this.table = table;
 		this.start = { row, col };
 		this.end = { row, col };
 		this._updateMinMax();
+		this.element = element;
 	}
 
 	setStart(row, col) {
@@ -57,11 +58,23 @@ class Range {
 		return this.table.modules.spreadsheet.getDataByRange(this);
 	}
 
+	getCells() {
+		return this.table.modules.spreadsheet.getCellsByRange(this);
+	}
+
+	getStructuredCells() {
+		return this.table.modules.spreadsheet.getCellsByRange(this, true);
+	}
+
 	getComponent() {
 		if (!this.component) {
 			this.component = new RangeComponent(this);
 		}
 		return this.component;
+	}
+
+	destroy() {
+		this.element.remove();
 	}
 }
 
