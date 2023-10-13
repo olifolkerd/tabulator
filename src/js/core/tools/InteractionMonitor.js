@@ -32,7 +32,9 @@ export default class InteractionManager extends CoreFeature {
 			"tabulator-row":"row",
 			"tabulator-group":"group",
 			"tabulator-col":"column",
-			"tabulator-range":"range",
+			"tabulator-range": "range",
+			"tabulator-range-row":"range-row",
+			"tabulator-range-col":"range-col",
 		};
 		
 		this.pseudoTrackers = {
@@ -53,6 +55,14 @@ export default class InteractionManager extends CoreFeature {
 				target:null,
 			},
 			"range":{
+				subscriber:null,
+				target:null,
+			},
+			"range-row":{
+				subscriber:null,
+				target:null,
+			},
+			"range-col":{
 				subscriber:null,
 				target:null,
 			},
@@ -288,6 +298,8 @@ export default class InteractionManager extends CoreFeature {
 						}
 						break;
 					case "range":
+					case "range-row":
+					case "range-col":
 						if(listener.components.includes("range")){
 							component = this.table.modules.spreadsheet.findRange(target);
 						}

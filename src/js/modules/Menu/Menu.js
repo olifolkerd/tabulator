@@ -31,7 +31,8 @@ class Menu extends Module{
 		this.registerColumnOption("contextMenu");
 		this.registerColumnOption("clickMenu");
 		this.registerColumnOption("dblClickMenu");
-		
+		this.registerColumnOption("rangeRowContextMenu");
+		this.registerColumnOption("rangeColumnContextMenu");
 	}
 	
 	initialize(){
@@ -80,7 +81,7 @@ class Menu extends Module{
 	}
 
 	initializeRangeWatchers() {
-		if (this.table.options.rangeContextMenu) {
+		if(this.table.options.rangeContextMenu) {
 			this.subscribe("range-contextmenu", this.loadMenuEvent.bind(this, this.table.options.rangeContextMenu));
 			this.table.on("rangeTapHold", this.loadMenuEvent.bind(this, this.table.options.rangeContextMenu));
 		}
@@ -125,6 +126,17 @@ class Menu extends Module{
 		if(def.dblClickMenu && !this.columnSubscribers.dblClickMenu){
 			this.columnSubscribers.dblClickMenu = this.loadMenuTableCellEvent.bind(this, "dblClickMenu");
 			this.subscribe("cell-dblclick", this.columnSubscribers.dblClickMenu);
+		}
+
+		//handle range events
+		if(def.rangeColumnContextMenu) {
+			this.subscribe("range-col-contextmenu", this.loadMenuEvent.bind(this, def.rangeColumnContextMenu));
+			this.table.on("rangeColTapHold", this.loadMenuEvent.bind(this, def.rangeColumnContextMenu));
+		}
+
+		if(def.rangeRowContextMenu) {
+			this.subscribe("range-row-contextmenu", this.loadMenuEvent.bind(this, def.rangeRowContextMenu));
+			this.table.on("rangeRowTapHold", this.loadMenuEvent.bind(this, def.rangeRowContextMenu));
 		}
 	}
 	

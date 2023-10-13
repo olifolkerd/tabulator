@@ -35,6 +35,8 @@ class Spreadsheet extends Module {
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
 		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
 		this.subscribe("cell-rendered", this.renderCell.bind(this));
+		this.subscribe("edit-success", this.unbindEditable.bind(this));
+		this.subscribe("edit-cancelled", this.unbindEditable.bind(this));
 		this.subscribe("page-changed", this.handlePageChanged.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 	}
@@ -43,8 +45,11 @@ class Spreadsheet extends Module {
 		for (var column of this.table.options.columns) {
 			// Disable sorting by clicking header
 			column.headerSort = false;
+
 			// Edit on double click
-			if (column.editor) column.editable = false;
+			var editable = column.editable !== undefined ? column.editable : true;
+			column.__spreadsheet_editable = editable;
+			column.editable = false;
 		}
 
 		this.table.options.columns = [
@@ -158,6 +163,8 @@ class Spreadsheet extends Module {
 
 		el.classList.toggle("tabulator-range", rangeIdx !== -1);
 
+		el.classList.toggle("tabulator-range-cell", rangeIdx !== -1);
+
 		el.classList.toggle(
 			"tabulator-range-single-cell",
 			this.ranges.length === 1 &&
@@ -265,12 +272,18 @@ class Spreadsheet extends Module {
 	}
 
 	handleCellDblClick(_, cell) {
-		if (
-			cell.column.field !== this.options("rowHeaderField") &&
-			cell.column.definition.editor
-		) {
-			cell.getComponent().edit(true);
-		}
+		if (cell.column.field === this.options("rowHeaderField")) return;
+
+		cell.column.definition.editable =
+			cell.column.definition.__spreadsheet_editable;
+		this.table.modules.edit.initializeColumnCheck(cell.column);
+
+		cell.getComponent().edit();
+	}
+
+	unbindEditable(cell) {
+		cell.column.definition.editable = false;
+		this.table.modules.edit.initializeColumnCheck(cell.column);
 	}
 
 	beginSelection(element) {
@@ -361,6 +374,7 @@ class Spreadsheet extends Module {
 		var highlight = this.ranges.some((range) => range.occupiesRow(row));
 
 		el.classList.toggle("tabulator-range", selected);
+		el.classList.toggle("tabulator-range-row", selected);
 		el.classList.toggle("tabulator-row-selected", selected);
 		el.classList.toggle("tabulator-row-highlight", highlight);
 
@@ -392,6 +406,7 @@ class Spreadsheet extends Module {
 		var highlight = this.ranges.some((range) => range.occupiesColumn(column));
 
 		el.classList.toggle("tabulator-range", selected);
+		el.classList.toggle("tabulator-range-col", selected);
 		el.classList.toggle("tabulator-col-selected", selected);
 		el.classList.toggle("tabulator-col-highlight", highlight);
 
@@ -405,6 +420,8 @@ class Spreadsheet extends Module {
 
 	layoutSelection() {
 		var activeCell = this.getActiveCell();
+
+		if (!activeCell) return;
 
 		this.activeRangeCellElement.style.left =
 			activeCell.getElement().offsetLeft + "px";
@@ -465,10 +482,14 @@ class Spreadsheet extends Module {
 
 		var row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
 
+		if (!row) return;
+
 		if (colIdx < 0) {
 			colIdx =
 				this.table.columnManager.getVisibleColumnsByIndex().length + colIdx - 1;
 		}
+
+		if (colIdx < 0) return;
 
 		return row.getCells().filter((cell) => cell.column.visible)[colIdx + 1];
 	}
