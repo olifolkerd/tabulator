@@ -12,6 +12,12 @@ class Spreadsheet extends Module {
 		this.registerTableOption("spreadsheet", false); //enable spreadsheet
 		this.registerTableOption("spreadsheetRowHeader", {}); //row header definition
 		this.registerTableOption("rowHeaderField", "--row-header"); //field name for row header
+
+		this.registerColumnOption("__spreadsheet_editable");
+
+		this.registerTableFunction("findRangeByCell", this.findRangeByCell.bind(this));
+		this.registerTableFunction("findRangeByRow", this.findRangeByRow.bind(this));
+		this.registerTableFunction("findRangeByColumn", this.findRangeByColumn.bind(this));
 	}
 
 	initialize() {
@@ -162,8 +168,6 @@ class Spreadsheet extends Module {
 		var rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
 
 		el.classList.toggle("tabulator-range", rangeIdx !== -1);
-
-		el.classList.toggle("tabulator-range-cell", rangeIdx !== -1);
 
 		el.classList.toggle(
 			"tabulator-range-single-cell",
@@ -374,7 +378,6 @@ class Spreadsheet extends Module {
 		var highlight = this.ranges.some((range) => range.occupiesRow(row));
 
 		el.classList.toggle("tabulator-range", selected);
-		el.classList.toggle("tabulator-range-row", selected);
 		el.classList.toggle("tabulator-row-selected", selected);
 		el.classList.toggle("tabulator-row-highlight", highlight);
 
@@ -406,7 +409,6 @@ class Spreadsheet extends Module {
 		var highlight = this.ranges.some((range) => range.occupiesColumn(column));
 
 		el.classList.toggle("tabulator-range", selected);
-		el.classList.toggle("tabulator-range-col", selected);
 		el.classList.toggle("tabulator-col-selected", selected);
 		el.classList.toggle("tabulator-col-highlight", highlight);
 
@@ -469,7 +471,19 @@ class Spreadsheet extends Module {
 		this.layoutElement();
 	}
 
-	findRange(cell) {
+	findRangeByColumn(column) {
+		return this.ranges.find((range) => range.occupiesColumn(column._column));
+	}
+
+	findRangeByRow(row) {
+		return this.ranges.find((range) => range.occupiesRow(row._row));
+	}
+
+	findRangeByCell(cell) {
+		return this.ranges.find((range) => range.occupies(cell._cell));
+	}
+
+	findRangeByCellElement(cell) {
 		var rangeIdx = cell.dataset.range;
 		if (rangeIdx < 0) return;
 		return this.ranges[rangeIdx].getComponent();
