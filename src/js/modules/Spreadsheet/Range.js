@@ -22,23 +22,23 @@ class Range {
 	}
 
 	_updateMinMax() {
-		this.minRow = Math.min(this.start.row, this.end.row);
-		this.maxRow = Math.max(this.start.row, this.end.row);
-		this.minCol = Math.min(this.start.col, this.end.col);
-		this.maxCol = Math.max(this.start.col, this.end.col);
+		this.top = Math.min(this.start.row, this.end.row);
+		this.bottom = Math.max(this.start.row, this.end.row);
+		this.left = Math.min(this.start.col, this.end.col);
+		this.right = Math.max(this.start.col, this.end.col);
 	}
 
 	atTopLeft(cell) {
 		return (
-			cell.row.position - 1 === this.minRow &&
-			cell.column.position - 2 === this.minCol
+			cell.row.position - 1 === this.top &&
+			cell.column.position - 2 === this.left
 		);
 	}
 
 	atBottomRight(cell) {
 		return (
-			cell.row.position - 1 === this.maxRow &&
-			cell.column.position - 2 === this.maxCol
+			cell.row.position - 1 === this.bottom &&
+			cell.column.position - 2 === this.right
 		);
 	}
 
@@ -47,11 +47,11 @@ class Range {
 	}
 
 	occupiesRow(row) {
-		return this.minRow <= row.position - 1 && row.position - 1 <= this.maxRow;
+		return this.top <= row.position - 1 && row.position - 1 <= this.bottom;
 	}
 
 	occupiesColumn(col) {
-		return this.minCol <= col.position - 2 && col.position - 2 <= this.maxCol;
+		return this.left <= col.position - 2 && col.position - 2 <= this.right;
 	}
 
 	getData() {

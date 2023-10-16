@@ -1538,7 +1538,7 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		user-select: none;
 		position: relative;
 
-		&.tabulator-range:not(.tabulator-range-single-cell):not(.tabulator-row-header){
+		&.tabulator-cell-selected:not(.tabulator-only-cell-selected):not(.tabulator-row-header){
 			background-color: $cellSelectedBackground;
 		}
 
