@@ -32,7 +32,6 @@ export default class InteractionManager extends CoreFeature {
 			"tabulator-row":"row",
 			"tabulator-group":"group",
 			"tabulator-col":"column",
-			"tabulator-range":"range",
 		};
 		
 		this.pseudoTrackers = {
@@ -49,10 +48,6 @@ export default class InteractionManager extends CoreFeature {
 				target:null,
 			},
 			"column":{
-				subscriber:null,
-				target:null,
-			},
-			"range":{
 				subscriber:null,
 				target:null,
 			},
@@ -231,20 +226,11 @@ export default class InteractionManager extends CoreFeature {
 				}
 			}
 		}
-		
+
 		if(targets.group && targets.group === targets.row){
 			delete targets.row;
 		}
 
-		if(targets.range && targets.range === targets.column) {
-			delete targets.range;
-		}
-
-		if(targets.range) {
-			if (targets.range === targets.row) delete targets.range;
-			else delete targets.row;
-		}
-		
 		return targets;
 	}
 	
@@ -294,11 +280,6 @@ export default class InteractionManager extends CoreFeature {
 									console.warn("Event Target Lookup Error - The row this cell is attached to cannot be found, has the table been reinitialized without being destroyed first?");
 								}
 							}
-						}
-						break;
-					case "range":
-						if(listener.components.includes("range")){
-							component = this.table.modules.spreadsheet.findRangeByCellElement(target);
 						}
 						break;
 				}

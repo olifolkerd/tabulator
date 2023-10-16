@@ -35,7 +35,6 @@ class Popup extends Module{
 	initialize(){
 		this.initializeRowWatchers();
 		this.initializeGroupWatchers();
-		this.initializeRangeWatchers();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
@@ -74,13 +73,6 @@ class Popup extends Module{
 		}
 	}
 
-	initializeRangeWatchers(){
-		if(this.table.options.rangeContextPopup){
-			this.subscribe("range-contextmenu", this.loadPopupEvent.bind(this, this.table.options.rangeContextPopup));
-			this.table.on("rangeTapHold", this.loadPopupEvent.bind(this, this.table.options.rangeContextPopup));
-		}
-	}
-	
 	initializeColumn(column){
 		var def = column.definition;
 		

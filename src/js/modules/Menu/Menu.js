@@ -38,7 +38,6 @@ class Menu extends Module{
 		this.deprecatedOptionsCheck();
 		this.initializeRowWatchers();
 		this.initializeGroupWatchers();
-		this.initializeRangeWatchers();
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
@@ -79,13 +78,6 @@ class Menu extends Module{
 		}
 	}
 
-	initializeRangeWatchers() {
-		if (this.table.options.rangeContextMenu) {
-			this.subscribe("range-contextmenu", this.loadMenuEvent.bind(this, this.table.options.rangeContextMenu));
-			this.table.on("rangeTapHold", this.loadMenuEvent.bind(this, this.table.options.rangeContextMenu));
-		}
-	}
-	
 	initializeColumn(column){
 		var	def = column.definition;
 		

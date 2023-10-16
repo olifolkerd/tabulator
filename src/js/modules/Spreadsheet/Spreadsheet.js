@@ -8,16 +8,16 @@ class Spreadsheet extends Module {
 		this.prevSelection = false;
 		this.selecting = false;
 		this.ranges = [];
+		this.rowHeaderField = "--row-header";
 
 		this.registerTableOption("spreadsheet", false); //enable spreadsheet
-		this.registerTableOption("spreadsheetRowHeader", {}); //row header definition
-		this.registerTableOption("rowHeaderField", "--row-header"); //field name for row header
-
-		this.registerColumnOption("__spreadsheet_editable");
+		this.registerTableOption("rowHeader", {}); //row header definition
 
 		this.registerTableFunction("findRangeByCell", this.findRangeByCell.bind(this));
 		this.registerTableFunction("findRangeByRow", this.findRangeByRow.bind(this));
 		this.registerTableFunction("findRangeByColumn", this.findRangeByColumn.bind(this));
+
+		this.registerColumnOption("__spreadsheet_editable");
 	}
 
 	initialize() {
@@ -58,19 +58,23 @@ class Spreadsheet extends Module {
 			column.editable = false;
 		}
 
+		var rowHeaderDef = {
+			title: "",
+			field: this.rowHeaderField,
+			headerSort: false,
+			resizable: false,
+			frozen: true,
+			editable: false,
+			cssClass: "tabulator-row-header",
+			formatter: "rownum",
+			formatterParams: { relativeToPage: true },
+			...this.options("rowHeader"),
+		};
+
+		this.rowHeaderField = rowHeaderDef.field;
+
 		this.table.options.columns = [
-			{
-				title: "",
-				field: this.options("rowHeaderField"),
-				headerSort: false,
-				resizable: false,
-				frozen: true,
-				editable: false,
-				cssClass: "tabulator-row-header",
-				formatter: "rownum",
-				formatterParams: { relativeToPage: true },
-				...this.table.options.spreadsheetRowHeader,
-			},
+			rowHeaderDef,
 			...this.table.options.columns,
 		];
 
@@ -188,7 +192,7 @@ class Spreadsheet extends Module {
 			return;
 		}
 
-		if (column.field === this.options("rowHeaderField")) {
+		if (column.field === this.rowHeaderField) {
 			this.resetRanges();
 			this.selecting = "all";
 
@@ -205,7 +209,7 @@ class Spreadsheet extends Module {
 	}
 
 	handleColumnMouseMove(_, column) {
-		if (column.field === this.options("rowHeaderField")) return;
+		if (column.field === this.rowHeaderField) return;
 		if (!this.selecting || this.selecting === "all") return;
 
 		this.endSelection(column);
@@ -226,17 +230,10 @@ class Spreadsheet extends Module {
 		this.layoutElement();
 	}
 
-	handleCellContextMenu(event, cell) {
-		var range = this.getActiveRange();
-		if (event.button === 2 && range.occupies(cell)) {
-			this.dispatchExternal("rangeContextMenu", event, range, cell);
-		}
-	}
-
 	_select(event, element) {
 		if (element.type === "column") {
 			this.selecting = "column";
-		} else if (element.column.field === this.options("rowHeaderField")) {
+		} else if (element.column.field === this.rowHeaderField) {
 			this.selecting = "row";
 		} else {
 			this.selecting = "cell";
@@ -276,7 +273,7 @@ class Spreadsheet extends Module {
 	}
 
 	handleCellDblClick(_, cell) {
-		if (cell.column.field === this.options("rowHeaderField")) return;
+		if (cell.column.field === this.rowHeaderField) return;
 
 		cell.column.definition.editable =
 			cell.column.definition.__spreadsheet_editable;
@@ -301,7 +298,7 @@ class Spreadsheet extends Module {
 		var row = element.row.position - 1;
 		var col = element.column.position - 2;
 
-		if (element.column.field === this.options("rowHeaderField")) {
+		if (element.column.field === this.rowHeaderField) {
 			range.setStart(row, 0);
 		} else {
 			range.setStart(row, col);
@@ -323,7 +320,7 @@ class Spreadsheet extends Module {
 
 		var row = element.row.position - 1;
 		var col = element.column.position - 2;
-		var isRowHeader = element.column.field === this.options("rowHeaderField");
+		var isRowHeader = element.column.field === this.rowHeaderField);
 
 		if (this.selecting === "row") {
 			range.setEnd(
