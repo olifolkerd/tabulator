@@ -16,6 +16,7 @@ class Spreadsheet extends Module {
 		this.registerTableFunction("findRangeByCell", this.findRangeByCell.bind(this));
 		this.registerTableFunction("findRangeByRow", this.findRangeByRow.bind(this));
 		this.registerTableFunction("findRangeByColumn", this.findRangeByColumn.bind(this));
+		this.registerTableFunction("getActiveRange", this.getActiveRange.bind(this, true));
 
 		this.registerColumnOption("__spreadsheet_editable");
 	}
@@ -320,7 +321,7 @@ class Spreadsheet extends Module {
 
 		var row = element.row.position - 1;
 		var col = element.column.position - 2;
-		var isRowHeader = element.column.field === this.rowHeaderField);
+		var isRowHeader = element.column.field === this.rowHeaderField;
 
 		if (this.selecting === "row") {
 			range.setEnd(
@@ -505,8 +506,10 @@ class Spreadsheet extends Module {
 		return row.getCells().filter((cell) => cell.column.visible)[colIdx + 1];
 	}
 
-	getActiveRange() {
-		return this.ranges[this.ranges.length - 1];
+	getActiveRange(component) {
+		const range = this.ranges[this.ranges.length - 1];
+		if (component) return range?.getComponent();
+		return range
 	}
 
 	getActiveCell() {
