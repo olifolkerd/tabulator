@@ -54,6 +54,12 @@ class Range {
 		return this.left <= col.position - 2 && col.position - 2 <= this.right;
 	}
 
+	overlaps(left, top, right, bottom) {
+		if (this.left > right || left > this.right) return false;
+		if (this.top > bottom || top > this.bottom) return false;
+		return true;
+	}
+
 	getData() {
 		return this.table.modules.spreadsheet.getDataByRange(this);
 	}

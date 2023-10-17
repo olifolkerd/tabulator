@@ -49,12 +49,9 @@ class Spreadsheet extends Module {
 		this.subscribe("page-changed", this.handlePageChanged.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 
-		var debouncedLayoutElement = Helpers.debounce(this.layoutElement.bind(this), 200);
-
-		this.subscribe("render-virtual-dom", () => {
-			this.overlay.style.display = 'none';
-			debouncedLayoutElement();
-		})
+		// Wait after dom rendering to finish
+		var debouncedLayoutSelection = Helpers.debounce(this.layoutSelection.bind(this), 50);
+		this.subscribe("render-virtual-dom", debouncedLayoutSelection);
 	}
 
 	initializeTable() {
@@ -101,12 +98,13 @@ class Spreadsheet extends Module {
 
 		this.overlay.appendChild(this.rangeContainer);
 		this.overlay.appendChild(this.activeRangeCellElement);
-
+		
 		var resizeObserver = new ResizeObserver((entries) => {
 			for (const entry of entries) {
-				this.overlay.style.width = entry.contentRect.width + "px";
-				this.overlay.style.height = entry.contentRect.height + "px";
-				this.overlay.style.padding = entry.target.style.padding;
+				this.overlay.style.left = entry.target.offsetLeft + "px";
+				this.overlay.style.top = entry.target.offsetTop + "px";
+				this.overlay.style.width = entry.target.offsetWidth + "px";
+				this.overlay.style.height = entry.target.offsetHeight + "px";
 			}
 		});
 
@@ -215,7 +213,7 @@ class Spreadsheet extends Module {
 		if (this.selecting === 'all') return;
 
 		this.endSelection(column);
-		this.layoutElement();
+		this.layoutElement(true);
 	}
 
 	handleCellMouseDown(event, cell) {
@@ -280,7 +278,7 @@ class Spreadsheet extends Module {
 		if (this.selecting === "all") return;
 
 		this.endSelection(cell);
-		this.layoutElement();
+		this.layoutElement(true);
 	}
 
 	handleMouseUp() {
@@ -351,8 +349,12 @@ class Spreadsheet extends Module {
 		}
 	}
 
-	layoutElement() {
-		this.table.rowManager.getVisibleRows(true).forEach((row) => {
+	layoutElement(visibleRows) {
+		var rows = visibleRows
+			? this.table.rowManager.getVisibleRows(true)
+			: this.table.rowManager.getRows()
+
+		rows.forEach((row) => {
 			if (row.type === "row") {
 				this.layoutRow(row);
 				row.cells.forEach((cell) => this.renderCell(cell));
@@ -406,14 +408,14 @@ class Spreadsheet extends Module {
 	}
 
 	layoutSelection() {
-		this.overlay.style.display = null;
-
 		var activeCell = this.getActiveCell();
 
 		if (!activeCell) return;
 
 		this.activeRangeCellElement.style.left =
-			activeCell.getElement().offsetLeft + "px";
+			activeCell.row.getElement().offsetLeft +
+			activeCell.getElement().offsetLeft +
+			"px";
 		this.activeRangeCellElement.style.top =
 			activeCell.row.getElement().offsetTop + "px";
 		this.activeRangeCellElement.style.width =
@@ -431,15 +433,22 @@ class Spreadsheet extends Module {
 	}
 
 	layoutRange(range) {
-		var _vDomTop = this.table.rowManager.renderer.vDomTop ?? 0;
-		var _vDomBottom = this.table.rowManager.renderer.vDomBottom ?? Infinity;
-		var _vDomLeft = this.table.columnManager.renderer.leftCol ?? 0;
-		var _vDomRight = this.table.columnManager.renderer.rightCol ?? Infinity;
+		var _vDomTop = this.table.rowManager.renderer.vDomTop;
+		var _vDomBottom = this.table.rowManager.renderer.vDomBottom;
+		var _vDomLeft = this.table.columnManager.renderer.leftCol;
+		var _vDomRight = this.table.columnManager.renderer.rightCol;
 
-		var top = range.top < _vDomTop ? _vDomTop : range.top;
-		var bottom = range.bottom > _vDomBottom ? _vDomBottom : range.bottom;
-		var left = range.left < _vDomLeft ? _vDomLeft : range.left;
-		var right = range.right > _vDomRight ? _vDomRight : range.right;
+		if (_vDomTop == null) _vDomTop = 0;
+		if (_vDomBottom == null) _vDomBottom = Infinity;
+		if (_vDomLeft == null) _vDomLeft = 0;
+		if (_vDomRight == null) _vDomRight = Infinity;
+		
+		if (!range.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) return;
+
+		var top = Math.max(range.top, _vDomTop);
+		var bottom = Math.min(range.bottom, _vDomBottom);
+		var left = Math.max(range.left, _vDomLeft);
+		var right = Math.min(range.right, _vDomRight);
 
 		var topLeftCell = this.getCell(top, left);
 		var bottomRightCell = this.getCell(bottom, right);
@@ -449,7 +458,10 @@ class Spreadsheet extends Module {
 			range === this.getActiveRange(),
 		);
 
-		range.element.style.left = topLeftCell.getElement().offsetLeft + "px";
+		range.element.style.left = 
+			topLeftCell.row.getElement().offsetLeft +
+			topLeftCell.getElement().offsetLeft +
+			"px";
 		range.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
 		range.element.style.width =
 			bottomRightCell.getElement().offsetLeft +
@@ -507,8 +519,9 @@ class Spreadsheet extends Module {
 
 	getActiveRange(component) {
 		const range = this.ranges[this.ranges.length - 1];
-		if (component) return range?.getComponent();
-		return range
+		if (!range) return null; 
+		if (component) return range.getComponent();
+		return range;
 	}
 
 	getActiveCell() {

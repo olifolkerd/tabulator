@@ -465,7 +465,7 @@ export default class VirtualDomVertical extends Renderer{
 		}
 
 		if (addedRows.length) {
-			this.dispatch("render-virtual-dom")
+			this.dispatch("render-virtual-dom");
 		}
 	}
 
@@ -513,7 +513,7 @@ export default class VirtualDomVertical extends Renderer{
 		}
 
 		if (removableRows.length) {
-			this.dispatch("render-virtual-dom")
+			this.dispatch("render-virtual-dom");
 		}
 	}
 
@@ -584,7 +584,7 @@ export default class VirtualDomVertical extends Renderer{
 		}
 
 		if (addedRows.length) {
-			this.dispatch("render-virtual-dom")
+			this.dispatch("render-virtual-dom");
 		}
 	}
 
@@ -637,7 +637,7 @@ export default class VirtualDomVertical extends Renderer{
 		}
 
 		if (removableRows.length) {
-			this.dispatch("render-virtual-dom")
+			this.dispatch("render-virtual-dom");
 		}
 	}
 
