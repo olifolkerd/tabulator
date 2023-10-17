@@ -21,7 +21,6 @@ class Menu extends Module{
 		this.registerTableOption("groupContextMenu", false);
 		this.registerTableOption("groupClickMenu", false);
 		this.registerTableOption("groupDblClickMenu", false);
-		this.registerTableOption("rangeContextMenu", false);
 		
 		this.registerColumnOption("headerContextMenu");
 		this.registerColumnOption("headerClickMenu");
@@ -176,8 +175,6 @@ class Menu extends Module{
 			component = component._group;
 		}else if(component._row){
 			component = component._row;
-		}else if(component._range) {
-			component = component._range;
 		}
 		
 		menu = typeof menu == "function" ? menu.call(this.table, e, component.getComponent()) : menu;

@@ -13,7 +13,6 @@ class Popup extends Module{
 		this.registerTableOption("groupContextPopup", false);
 		this.registerTableOption("groupClickPopup", false);
 		this.registerTableOption("groupDblClickPopup", false);
-		this.registerTableOption("rangeContextPopup", false);
 		
 		this.registerColumnOption("headerContextPopup");
 		this.registerColumnOption("headerClickPopup");
@@ -28,7 +27,6 @@ class Popup extends Module{
 		this.registerComponentFunction("column", "popup", this._componentPopupCall.bind(this));
 		this.registerComponentFunction("row", "popup", this._componentPopupCall.bind(this));
 		this.registerComponentFunction("group", "popup", this._componentPopupCall.bind(this));
-		this.registerComponentFunction("range", "popup", this._componentPopupCall.bind(this));
 		
 	}
 	
