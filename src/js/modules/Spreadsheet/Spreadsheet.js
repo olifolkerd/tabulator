@@ -21,6 +21,7 @@ class Spreadsheet extends Module {
 		this.registerTableFunction("getActiveRange", this.getActiveRange.bind(this, true));
 
 		this.registerColumnOption("__spreadsheet_editable");
+		this.registerColumnOption("__spreadsheet_editor");
 	}
 
 	initialize() {
@@ -44,8 +45,8 @@ class Spreadsheet extends Module {
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
 		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
 		this.subscribe("cell-rendered", this.renderCell.bind(this));
-		this.subscribe("edit-success", this.unbindEditable.bind(this));
-		this.subscribe("edit-cancelled", this.unbindEditable.bind(this));
+		this.subscribe("edit-success", this.finishEditingCell.bind(this));
+		this.subscribe("edit-cancelled", this.finishEditingCell.bind(this));
 		this.subscribe("page-changed", this.handlePageChanged.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 
@@ -59,10 +60,16 @@ class Spreadsheet extends Module {
 			// Disable sorting by clicking header
 			column.headerSort = false;
 
+			// FIXME: tableholder is not focusable if we have a column that's 
+			// `editable: false` and `editor: 'input' or something`.
+
 			// Edit on double click
 			var editable = column.editable !== undefined ? column.editable : true;
 			column.__spreadsheet_editable = editable;
 			column.editable = false;
+
+			column.__spreadsheet_editor = column.editor;
+			column.editor = false;
 		}
 
 		var rowHeaderDef = {
@@ -176,11 +183,9 @@ class Spreadsheet extends Module {
 	renderCell(cell) {
 		var el = cell.getElement();
 
-		el.classList.add("tabulator-spreadsheet");
-
 		var rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
 
-		el.classList.toggle("tabulator-cell-selected", rangeIdx !== -1);
+		el.classList.toggle("tabulator-selected", rangeIdx !== -1);
 
 		el.classList.toggle(
 			"tabulator-only-cell-selected",
@@ -287,17 +292,24 @@ class Spreadsheet extends Module {
 
 	handleCellDblClick(_, cell) {
 		if (cell.column.field === this.rowHeaderField) return;
-
-		cell.column.definition.editable =
-			cell.column.definition.__spreadsheet_editable;
-		this.table.modules.edit.initializeColumnCheck(cell.column);
-
-		cell.getComponent().edit();
+		this.editCell(cell);
 	}
 
-	unbindEditable(cell) {
-		cell.column.definition.editable = false;
+	editCell(cell) {
+		cell.column.definition.editable =
+			cell.column.definition.__spreadsheet_editable;
+		cell.column.definition.editor =
+			cell.column.definition.__spreadsheet_editor;
 		this.table.modules.edit.initializeColumnCheck(cell.column);
+
+		if (this.table.modules.edit.allowEdit(cell)) {
+			cell.getComponent().edit();
+		}
+	}
+
+	finishEditingCell(cell) {
+		cell.column.definition.editable = false;
+		cell.column.definition.editor = false;
 	}
 
 	beginSelection(element) {
@@ -352,7 +364,7 @@ class Spreadsheet extends Module {
 	layoutElement(visibleRows) {
 		var rows = visibleRows
 			? this.table.rowManager.getVisibleRows(true)
-			: this.table.rowManager.getRows()
+			: this.table.rowManager.getRows();
 
 		rows.forEach((row) => {
 			if (row.type === "row") {
@@ -380,9 +392,8 @@ class Spreadsheet extends Module {
 			selected = true;
 		}
 
-		el.classList.add("tabulator-spreadsheet");
-		el.classList.toggle("tabulator-row-selected", selected);
-		el.classList.toggle("tabulator-row-highlight", occupied);
+		el.classList.toggle("tabulator-selected", selected);
+		el.classList.toggle("tabulator-highlight", occupied);
 	}
 
 	layoutColumn(column) {
@@ -397,9 +408,8 @@ class Spreadsheet extends Module {
 			selected = true;
 		}
 
-		el.classList.add("tabulator-spreadsheet");
-		el.classList.toggle("tabulator-col-selected", selected);
-		el.classList.toggle("tabulator-col-highlight", occupied);
+		el.classList.toggle("tabulator-selected", selected);
+		el.classList.toggle("tabulator-highlight", occupied);
 	}
 
 	handleColumnWidth() {
@@ -481,15 +491,15 @@ class Spreadsheet extends Module {
 	}
 
 	findRangeFromColumn(column) {
-		return this.ranges.find((range) => range.occupiesColumn(column._column));
+		return this.ranges.find((range) => range.occupiesColumn(column._column)).getComponent();
 	}
 
 	findRangeFromRow(row) {
-		return this.ranges.find((range) => range.occupiesRow(row._row));
+		return this.ranges.find((range) => range.occupiesRow(row._row)).getComponent();
 	}
 
 	findRangeFromCell(cell) {
-		return this.ranges.find((range) => range.occupies(cell._cell));
+		return this.ranges.find((range) => range.occupies(cell._cell)).getComponent();
 	}
 
 	findRangeByCellElement(cell) {

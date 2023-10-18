@@ -10,6 +10,8 @@ $headerTextColor:#555 !default; //header text color
 $headerBorderColor:#aaa !default;  //header border color
 $headerSeparatorColor:#999 !default; //header bottom separator color
 $headerMargin:4px !default; //padding round header
+$headerSelectedBackground: #4990F1 !default; //header background color when selected
+$headerSelectedTextColor: #FFFFFF !default; //header text color when selected
 
 //column header arrows
 $sortArrowHover: #555 !default;
@@ -25,13 +27,10 @@ $rowHoverBackground:#bbb !default; //row background color on hover
 
 $rowSelectedBackground: #9ABCEA !default; //row background color when selected
 $rowSelectedBackgroundHover: #769BCC !default;//row background color when selected and hovered
-$headerSelectedBackground: #4990F1 !default; //header background color when selected
-$headerTextSelectedBackground: #FFFFFF !default; //header text color when selected
 $cellSelectedBackground: #C2D5EF !default; //cell background color when selected
 
 $headerHighlightBackground: #D6D6D6 !default; //header background color when highlighted
 $headerTextHighlightBackground: #000000 !default; //header text color when highlighted
-$headerBorderHighlightColor:#777 !default; //header border color when highlighted
 
 $rangeBorderColor: #2975DD !default; //range border color
 $rangeHandleColor: #2975DD !default; //range handle color
@@ -1511,40 +1510,38 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 
 // Spreadsheet module styling
 
-.tabulator-headers .tabulator-spreadsheet.tabulator-col{
-	&.tabulator-col-highlight {
+.tabulator-header .tabulator-col{
+	&.tabulator-highlight {
 		background-color: $headerHighlightBackground;
 		color: $headerTextHighlightBackground;
-		border-color: $headerBorderHighlightColor;
 	}
-	&.tabulator-col-selected{
+	&.tabulator-selected{
 		background-color: $headerSelectedBackground;
-		color: $headerTextSelectedBackground;
+		color: $headerSelectedTextColor;
 	}
 }
 
-.tabulator-table .tabulator-spreadsheet{
-	&.tabulator-row{
-		&.tabulator-row-highlight .tabulator-row-header{
-			background-color: $headerHighlightBackground;
-			color: $headerTextHighlightBackground;
-		}
-		&.tabulator-row-selected .tabulator-row-header{
-			background-color: $headerSelectedBackground;
-			color: $headerTextSelectedBackground;
-		}
+.tabulator-row{
+	&.tabulator-highlight .tabulator-row-header{
+		background-color: $headerHighlightBackground;
+		color: $headerTextHighlightBackground;
 	}
-	&.tabulator-cell{
-		user-select: none;
-		position: relative;
+	&.tabulator-selected .tabulator-row-header{
+		background-color: $headerSelectedBackground;
+		color: $headerSelectedTextColor;
+	}
+}
 
-		&.tabulator-cell-selected:not(.tabulator-only-cell-selected):not(.tabulator-row-header){
-			background-color: $cellSelectedBackground;
-		}
+.tabulator-cell{
+	user-select: none;
+	position: relative;
 
-		&.tabulator-row-header {
-			text-align: center;
-		}
+	&.tabulator-selected:not(.tabulator-only-cell-selected):not(.tabulator-row-header){
+		background-color: $rowSelectedBackground;
+	}
+
+	&.tabulator-row-header {
+		text-align: center;
 	}
 }
 
