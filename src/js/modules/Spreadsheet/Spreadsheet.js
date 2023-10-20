@@ -15,11 +15,6 @@ class Spreadsheet extends Module {
 		this.registerTableOption("spreadsheet", false); //enable spreadsheet
 		this.registerTableOption("rowHeader", {}); //row header definition
 
-		this.registerTableFunction("findRangeFromCell", this.findRangeFromCell.bind(this));
-		this.registerTableFunction("findRangeFromRow", this.findRangeFromRow.bind(this));
-		this.registerTableFunction("findRangeFromColumn", this.findRangeFromColumn.bind(this));
-		this.registerTableFunction("getActiveRange", this.getActiveRange.bind(this, true));
-
 		this.registerColumnOption("__spreadsheet_editable");
 		this.registerColumnOption("__spreadsheet_editor");
 	}
@@ -27,13 +22,9 @@ class Spreadsheet extends Module {
 	initialize() {
 		if (!this.table.options.spreadsheet) return;
 
-		this.registerTableFunction(
-			"getSelectedData",
-			this.getSelectedData.bind(this),
-		);
-
 		this.initializeWatchers();
 		this.initializeTable();
+		this.initializeFunctions();
 	}
 
 	initializeWatchers() {
@@ -129,6 +120,35 @@ class Spreadsheet extends Module {
 		this.resetRanges();
 
 		this.table.rowManager.element.appendChild(this.overlay);
+	}
+
+	initializeFunctions() {
+		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
+		this.registerTableFunction("getActiveRange", this.getActiveRange.bind(this, true));
+
+		this.registerComponentFunction("cell", "getRange", (cell) => {
+			var range;
+
+			if (cell.column.field === this.rowHeaderField) range = this.ranges.find((range) => range.occupiesRow(cell.row));
+			else range = this.ranges.find((range) => range.occupies(cell));
+
+			if (!range) return null;
+			return range.getComponent();
+		});
+
+		this.registerComponentFunction("row", "getRange", (row) => {
+			var range = this.ranges.find((range) => range.occupiesRow(row));
+
+			if (!range) return null;
+			return range.getComponent();
+		});
+
+		this.registerComponentFunction("column", "getRange", (col) => {
+			var range = this.ranges.find((range) => range.occupiesColumn(col));
+
+			if (!range) return null;
+			return range.getComponent();
+		});
 	}
 
 	getSelectedData() {
@@ -488,18 +508,6 @@ class Spreadsheet extends Module {
 	handlePageChanged() {
 		this.resetRanges();
 		this.layoutElement();
-	}
-
-	findRangeFromColumn(column) {
-		return this.ranges.find((range) => range.occupiesColumn(column._column)).getComponent();
-	}
-
-	findRangeFromRow(row) {
-		return this.ranges.find((range) => range.occupiesRow(row._row)).getComponent();
-	}
-
-	findRangeFromCell(cell) {
-		return this.ranges.find((range) => range.occupies(cell._cell)).getComponent();
 	}
 
 	findRangeByCellElement(cell) {

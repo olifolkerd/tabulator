@@ -32,6 +32,14 @@ class RangeComponent {
 	getStructuredCells() {
 		return this._range.getStructuredCells();
 	}
+
+	getTop() {
+		return this._range.top;
+	}
+
+	getBottom() {
+		return this._range.bottom;
+	}
 }
 
 export default RangeComponent;
