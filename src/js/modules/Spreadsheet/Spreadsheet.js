@@ -115,8 +115,8 @@ class Spreadsheet extends Module {
 		document.addEventListener("mouseup", mouseUpHandler);
 
 		this.subscribe("table-destroy", () => {
-			document.removeEventListener(mouseUpHandler);
-			this.resizeObserver.disconnect();
+			document.removeEventListener("mouseup", mouseUpHandler);
+			resizeObserver.disconnect();
 		});
 
 		this.resetRanges();
