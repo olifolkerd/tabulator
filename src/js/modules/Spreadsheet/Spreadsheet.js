@@ -30,8 +30,10 @@ class Spreadsheet extends Module {
 	initializeWatchers() {
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
-		this.subscribe("column-width", this.handleColumnWidth.bind(this));
+		this.subscribe("column-width", this.handleColumnSize.bind(this));
+		this.subscribe("column-height", this.handleColumnSize.bind(this));
 		this.subscribe("column-resized", this.layoutSelection.bind(this));
+		this.subscribe("cell-height", this.layoutSelection.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
 		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
@@ -432,7 +434,7 @@ class Spreadsheet extends Module {
 		el.classList.toggle("tabulator-highlight", occupied);
 	}
 
-	handleColumnWidth() {
+	handleColumnSize() {
 		if (!this.table.initialized) return;
 		this.layoutSelection();
 	}

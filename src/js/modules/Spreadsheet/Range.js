@@ -72,6 +72,14 @@ class Range {
 		return this.table.modules.spreadsheet.getCellsByRange(this, true);
 	}
 
+	getRows() {
+		return this.table.modules.spreadsheet.getRowsByRange(this).map((row) => row.getComponent());
+	}
+
+	getColumns() {
+		return this.table.modules.spreadsheet.getColumnsByRange(this).map((col) => col.getComponent());
+	}
+
 	getComponent() {
 		if (!this.component) {
 			this.component = new RangeComponent(this);

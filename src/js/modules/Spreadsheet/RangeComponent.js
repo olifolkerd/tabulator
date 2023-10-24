@@ -33,6 +33,14 @@ class RangeComponent {
 		return this._range.getStructuredCells();
 	}
 
+	getRows() {
+		return this._range.getRows();
+	}
+
+	getColumns() {
+		return this._range.getColumns();
+	}
+
 	getTop() {
 		return this._range.top;
 	}
