@@ -50,6 +50,38 @@ class Spreadsheet extends Module {
 		this.subscribe("column-height", layoutRanges.bind(this));
 		this.subscribe("column-resized", layoutRanges.bind(this));
 		this.subscribe("cell-height", layoutRanges.bind(this));
+
+		var self = this;
+
+		function navigate(mode, dir) {
+			return function (e) {
+				e.preventDefault();
+				self.navigate(mode, dir);
+			}
+		}
+
+		this.subscribe("keybinding-nav-prev", navigate("normal", "left"));
+		this.subscribe("keybinding-nav-next", navigate("normal", "right"));
+		this.subscribe("keybinding-nav-left", navigate("normal", "left"));
+		this.subscribe("keybinding-nav-right", navigate("normal", "right"));
+		this.subscribe("keybinding-nav-up", navigate("normal", "up"));
+		this.subscribe("keybinding-nav-down", navigate("normal", "down"));
+
+
+		this.subscribe("keybinding-nav-left-alt", navigate("non-empty", "left"));
+		this.subscribe("keybinding-nav-right-alt", navigate("non-empty", "right"));
+		this.subscribe("keybinding-nav-up-alt", navigate("non-empty", "up"));
+		this.subscribe("keybinding-nav-down-alt", navigate("non-empty", "down"));
+
+		this.subscribe("keybinding-expand-left", navigate("expand", "left"));
+		this.subscribe("keybinding-expand-right", navigate("expand", "right"));
+		this.subscribe("keybinding-expand-up", navigate("expand", "up"));
+		this.subscribe("keybinding-expand-down", navigate("expand", "down"));
+
+		this.subscribe("keybinding-expand-left-alt", navigate("expand-non-empty", "left"));
+		this.subscribe("keybinding-expand-right-alt", navigate("expand-non-empty", "right"));
+		this.subscribe("keybinding-expand-up-alt", navigate("expand-non-empty", "up"));
+		this.subscribe("keybinding-expand-down-alt", navigate("expand-non-empty", "down"));
 	}
 
 	initializeTable() {
@@ -337,6 +369,199 @@ class Spreadsheet extends Module {
 		cell.column.definition.editable = false;
 		cell.column.definition.editor = false;
 	}
+	navigate(mode, dir) {
+		if (this.ranges.length > 1) {
+			this.ranges = this.ranges.filter((range) => {
+				if (range === this.getActiveRange()) {
+					range.setEnd(range.start.row, range.start.col);
+					return true;
+				}
+				range.destroy();
+				return false;
+			})
+		}
+
+		var range = this.getActiveRange();
+
+		switch (mode) {
+			case "normal": {
+				var nextRow = range.start.row;
+				var nextCol = range.start.col;
+
+				if (dir === "left") nextCol -= 1;
+				else if (dir === "right") nextCol += 1;
+				else if (dir === "up") nextRow -= 1;
+				else if (dir === "down") nextRow += 1;
+
+				range.setStart(nextRow, nextCol);
+				range.setEnd(nextRow, nextCol);
+
+				this.scrollIfNeeded(range, dir);
+
+				break;
+			}
+			case "expand": {
+				var nextRow = range.end.row;
+				var nextCol = range.end.col;
+
+				if (dir === "left") nextCol -= 1;
+				else if (dir === "right") nextCol += 1;
+				else if (dir === "up") nextRow -= 1;
+				else if (dir === "down") nextRow += 1;
+
+				range.setEnd(nextRow, nextCol);
+
+				this.scrollIfNeeded(range, dir);
+
+				break;
+			}
+			case "non-empty": {
+				var nextRow = range.start.row;
+				var nextCol = range.start.col;
+
+				if (dir === "left") nextCol = this.findPrevNonEmptyCellHoz(range);
+				else if (dir === "right") nextCol = this.findNextNonEmptyCellHoz(range);
+	 			else if (dir === "up") nextRow = this.findPrevNonEmptyCellVert(range);
+				else if (dir === "down") nextRow = this.findNextNonEmptyCellVert(range);
+
+				range.setStart(nextRow, nextCol);
+				range.setEnd(nextRow, nextCol);
+
+				this.scrollIfNeeded(range, dir);
+
+				break;
+			}
+			case "expand-non-empty": {
+				var nextRow = range.end.row;
+				var nextCol = range.end.col;
+
+				if (dir === "left") nextCol = this.findPrevNonEmptyCellHoz(range);
+				else if (dir === "right") nextCol = this.findNextNonEmptyCellHoz(range);
+				else if (dir === "up") nextRow = this.findPrevNonEmptyCellVert(range);
+				else if (dir === "down") nextRow = this.findNextNonEmptyCellVert(range);
+
+				range.setEnd(nextRow, nextCol);
+
+				this.scrollIfNeeded(range, dir);
+
+				break;
+			}
+		}
+
+		this.layoutElement();
+	}
+
+	scrollIfNeeded(range, dir) {
+		if (dir === "right") {
+			var column = this.getColumnByRangePos(range.end.col).getElement();
+			var tableHolder = this.table.rowManager.element;
+			var columnOffsetRight = column.offsetLeft + column.offsetWidth;
+			var tableOffsetRight = tableHolder.scrollLeft + tableHolder.offsetWidth - this.table.rowManager.scrollbarWidth
+
+			if (columnOffsetRight - tableOffsetRight > 0) {
+				this.table.rowManager.scrollHorizontal(
+					Math.min(
+						column.offsetLeft - this.rowHeaderColumn.getElement().offsetWidth,
+						this.table.rowManager.element.scrollLeft + column.offsetWidth
+					)
+				);
+			}
+		}
+		else if (dir === "left") {
+			var column = this.getColumnByRangePos(range.end.col).getElement();
+			var tableHolder = this.table.rowManager.element
+			var columnOffsetLeft = column.offsetLeft;
+			var tableOffsetLeft = tableHolder.scrollLeft + this.rowHeaderColumn.getElement().offsetWidth;
+
+			if (columnOffsetLeft < tableOffsetLeft) {
+				this.table.rowManager.scrollHorizontal(this.table.rowManager.element.scrollLeft - column.offsetWidth);
+			}
+		}
+		else if (dir === "down") {
+			var row = this.getRowByRangePos(range.end.row);
+			var tableHolder = this.table.rowManager.element;
+			var rowOffsetBottom = row.getElement().offsetTop + row.getElement().offsetHeight;
+			var tableOffsetBottom = tableHolder.scrollTop + tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth;
+
+			if (rowOffsetBottom - tableOffsetBottom > 0) {
+				this.table.scrollToRow(row, 'bottom');
+			}
+		}
+		else if (dir === "up") {
+			var row = this.getRowByRangePos(range.end.row);
+			var tableHolder = this.table.rowManager.element;
+			var rowOffsetTop = row.getElement().offsetTop;
+			var tableOffsetTop = tableHolder.scrollTop;
+
+			if (rowOffsetTop < tableOffsetTop) {
+				this.table.scrollToRow(row, 'top')
+			}
+		}
+	}
+
+	findNextNonEmptyCellHoz(range){
+		var row = this.getRowByRangePos(range.start.row);
+		var cells = row.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
+		var nextCol = 0;
+
+		for (var i = range.end.col + 2; i < cells.length; i++){
+			var cell = cells[i];
+			if (Helpers.elVisible(cell.getElement())) {
+				nextCol = cell.column.position - 2;
+				if (cell.getValue()) break;
+			}
+		}
+
+		return nextCol;
+	}
+
+	findPrevNonEmptyCellHoz(range){
+		var row = this.getRowByRangePos(range.start.row);
+		var cells = row.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
+		var prevCol = 0;
+
+		for(var i = range.end.col; i >= 0; i--){
+			var cell = cells[i];
+			if (Helpers.elVisible(cell.getElement())) {
+				prevCol = cell.column.position - 2;
+				if (cell.getValue()) break
+			}
+		}
+
+		return prevCol;
+	}
+
+	findNextNonEmptyCellVert(range) {
+		var column = this.getColumnByRangePos(range.start.col);
+		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()))
+		var nextRow = -1;
+
+		for (var i = range.end.row + 1; i < cells.length; i++){
+			var cell = cells[i];
+			if (Helpers.elVisible(cell.getElement())) {
+				nextRow = cell.row.position - 1;
+				if (cell.getValue()) break;
+			}
+		}
+
+		return nextRow;
+	}
+
+	findPrevNonEmptyCellVert(range) {
+		var column = this.getColumnByRangePos(range.start.col);
+		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
+		var prevRow = 0;
+
+		for(var i = range.end.row - 1; i >= 0; i--){
+			var cell = cells[i];
+			if (Helpers.elVisible(cell.getElement())) {
+				prevRow = cell.row.position - 1;
+				if (cell.getValue()) break;
+			}
+		}
+
+		return prevRow;
+	}
 
 	beginSelection(element) {
 		var range = this.getActiveRange();
@@ -528,14 +753,14 @@ class Spreadsheet extends Module {
 
 		var row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
 
-		if (!row) return;
+		if (!row) return null;
 
 		if (colIdx < 0) {
 			colIdx =
 				this.table.columnManager.getVisibleColumnsByIndex().length + colIdx - 1;
 		}
 
-		if (colIdx < 0) return;
+		if (colIdx < 0) return null;
 
 		return row.getCells().filter((cell) => cell.column.visible)[colIdx + 1];
 	}
@@ -550,6 +775,14 @@ class Spreadsheet extends Module {
 	getActiveCell() {
 		var activeRange = this.getActiveRange();
 		return this.getCell(activeRange.start.row, activeRange.start.col);
+	}
+
+	getRowByRangePos(pos) {
+		return this.table.rowManager.getDisplayRows()[pos];
+	}
+
+	getColumnByRangePos(pos) {
+		return this.table.columnManager.getVisibleColumnsByIndex()[pos + 1];
 	}
 
 	getRowsByRange(range) {
@@ -588,6 +821,10 @@ class Spreadsheet extends Module {
 		return this.getColumnsByRange(this.getActiveRange()).map((col) =>
 			col.getComponent(),
 		);
+	}
+
+	get rowHeaderColumn() {
+		return this.table.columnManager.columnsByField[this.rowHeaderField];
 	}
 }
 

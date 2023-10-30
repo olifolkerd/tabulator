@@ -55,13 +55,16 @@ class Edit extends Module{
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 		this.subscribe("row-layout", this.rowEditableCheck.bind(this));
 		this.subscribe("data-refreshing", this.cancelEdit.bind(this));
-		
-		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
-		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
-		this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
-		this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
-		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
-		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
+
+		if (!this.table.options.spreadsheet) {
+			this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
+			this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
+			// FIXME this doesn't respect input navigations when editing
+			// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
+			// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
+			this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
+			this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
+		}
 	}
 	
 	
