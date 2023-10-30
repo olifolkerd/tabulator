@@ -22,18 +22,14 @@ class Spreadsheet extends Module {
 	initialize() {
 		if (!this.table.options.spreadsheet) return;
 
-		this.initializeWatchers();
 		this.initializeTable();
+		this.initializeWatchers();
 		this.initializeFunctions();
 	}
 
 	initializeWatchers() {
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
-		this.subscribe("column-width", this.handleColumnSize.bind(this));
-		this.subscribe("column-height", this.handleColumnSize.bind(this));
-		this.subscribe("column-resized", this.layoutSelection.bind(this));
-		this.subscribe("cell-height", this.layoutSelection.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
 		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
@@ -43,9 +39,17 @@ class Spreadsheet extends Module {
 		this.subscribe("page-changed", this.handlePageChanged.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 
-		// Wait after dom rendering to finish
-		var debouncedLayoutSelection = Helpers.debounce(this.layoutSelection.bind(this), 50);
-		this.subscribe("render-virtual-dom", debouncedLayoutSelection);
+		var debouncedLayoutRanges = Helpers.debounce(this.layoutRanges.bind(this), 200);
+		function layoutRanges () {
+			this.overlay.style.visibility = "hidden";
+			debouncedLayoutRanges();
+		}
+
+		this.subscribe("render-virtual-dom", layoutRanges.bind(this));
+		this.subscribe("column-width", layoutRanges.bind(this));
+		this.subscribe("column-height", layoutRanges.bind(this));
+		this.subscribe("column-resized", layoutRanges.bind(this));
+		this.subscribe("cell-height", layoutRanges.bind(this));
 	}
 
 	initializeTable() {
@@ -399,7 +403,7 @@ class Spreadsheet extends Module {
 			this.layoutColumn(column);
 		});
 
-		this.layoutSelection();
+		this.layoutRanges();
 	}
 
 	layoutRow(row) {
@@ -434,12 +438,9 @@ class Spreadsheet extends Module {
 		el.classList.toggle("tabulator-highlight", occupied);
 	}
 
-	handleColumnSize() {
+	layoutRanges() {
 		if (!this.table.initialized) return;
-		this.layoutSelection();
-	}
 
-	layoutSelection() {
 		var activeCell = this.getActiveCell();
 
 		if (!activeCell) return;
@@ -462,6 +463,8 @@ class Spreadsheet extends Module {
 			"px";
 
 		this.ranges.forEach((range) => this.layoutRange(range));
+
+		this.overlay.style.visibility = "visible";
 	}
 
 	layoutRange(range) {
