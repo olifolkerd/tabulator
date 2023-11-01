@@ -463,10 +463,6 @@ export default class VirtualDomVertical extends Renderer{
 			table.style.paddingTop = this.vDomTopPad + "px";
 			this.vDomScrollPosTop -= paddingAdjust;
 		}
-
-		if (addedRows.length) {
-			this.dispatch("render-virtual-dom");
-		}
 	}
 
 	_removeTopRow(rows, fillableSpace){
@@ -510,10 +506,6 @@ export default class VirtualDomVertical extends Renderer{
 			this.vDomTopPad += paddingAdjust;
 			this.tableElement.style.paddingTop = this.vDomTopPad + "px";
 			this.vDomScrollPosTop += this.vDomTop ? paddingAdjust : paddingAdjust + this.vDomWindowBuffer;
-		}
-
-		if (removableRows.length) {
-			this.dispatch("render-virtual-dom");
 		}
 	}
 
@@ -582,10 +574,6 @@ export default class VirtualDomVertical extends Renderer{
 			table.style.paddingBottom = this.vDomBottomPad + "px";
 			this.vDomScrollPosBottom += paddingAdjust;
 		}
-
-		if (addedRows.length) {
-			this.dispatch("render-virtual-dom");
-		}
 	}
 
 	_removeBottomRow(rows, fillableSpace){
@@ -634,10 +622,6 @@ export default class VirtualDomVertical extends Renderer{
 
 			this.tableElement.style.paddingBottom = this.vDomBottomPad + "px";
 			this.vDomScrollPosBottom -= paddingAdjust;
-		}
-
-		if (removableRows.length) {
-			this.dispatch("render-virtual-dom");
 		}
 	}
 

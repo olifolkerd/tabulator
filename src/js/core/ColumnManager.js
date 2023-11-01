@@ -102,7 +102,6 @@ export default class ColumnManager extends CoreFeature {
 		
 		el.classList.add("tabulator-header");
 		el.setAttribute("role", "rowgroup");
-		el.setAttribute("tabindex", 0);
 		
 		if(!this.table.options.headerVisible){
 			el.classList.add("tabulator-header-hidden");

@@ -1511,22 +1511,22 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 // Spreadsheet module styling
 
 .tabulator-header .tabulator-col{
-	&.tabulator-highlight {
+	&.tabulator-spreadsheet-highlight{
 		background-color: $headerHighlightBackground;
 		color: $headerTextHighlightBackground;
 	}
-	&.tabulator-selected{
+	&.tabulator-spreadsheet-selected{
 		background-color: $headerSelectedBackground;
 		color: $headerSelectedTextColor;
 	}
 }
 
 .tabulator-row{
-	&.tabulator-highlight .tabulator-row-header{
+	&.tabulator-spreadsheet-highlight .tabulator-spreadsheet-row-header{
 		background-color: $headerHighlightBackground;
 		color: $headerTextHighlightBackground;
 	}
-	&.tabulator-selected .tabulator-row-header{
+	&.tabulator-spreadsheet-selected .tabulator-spreadsheet-row-header{
 		background-color: $headerSelectedBackground;
 		color: $headerSelectedTextColor;
 	}
@@ -1536,20 +1536,18 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 	user-select: none;
 	position: relative;
 
-	&.tabulator-selected:not(.tabulator-only-cell-selected):not(.tabulator-row-header){
+	&.tabulator-spreadsheet-selected:not(.tabulator-spreadsheet-only-cell-selected):not(.tabulator-spreadsheet-row-header){
 		background-color: $rowSelectedBackground;
 	}
 
-	&.tabulator-row-header {
+	&.tabulator-spreadsheet-row-header {
 		text-align: center;
 	}
 }
 
 .tabulator-range-overlay {
 	position: absolute;
-	left: 0;
-	top: 0;
-	overflow: hidden;
+	inset: 0;
 	z-index: 10;
 	pointer-events: none;
 

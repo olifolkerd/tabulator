@@ -13,14 +13,16 @@ class Spreadsheet extends Module {
 		this.overlay = null;
 
 		this.registerTableOption("spreadsheet", false); //enable spreadsheet
-		this.registerTableOption("rowHeader", {}); //row header definition
+		this.registerTableOption("spreadsheetRowHeader", {}); //row header definition
 
 		this.registerColumnOption("__spreadsheet_editable");
 		this.registerColumnOption("__spreadsheet_editor");
 	}
 
 	initialize() {
-		if (!this.table.options.spreadsheet) return;
+		if (!this.table.options.spreadsheet) {
+			return;
+		}
 
 		this.initializeTable();
 		this.initializeWatchers();
@@ -45,19 +47,19 @@ class Spreadsheet extends Module {
 			debouncedLayoutRanges();
 		}
 
-		this.subscribe("render-virtual-dom", layoutRanges.bind(this));
+		this.subscribe("scroll-vertical", layoutRanges.bind(this));
+		this.subscribe("scroll-horizontal", layoutRanges.bind(this));
 		this.subscribe("column-width", layoutRanges.bind(this));
 		this.subscribe("column-height", layoutRanges.bind(this));
 		this.subscribe("column-resized", layoutRanges.bind(this));
 		this.subscribe("cell-height", layoutRanges.bind(this));
 
-		var self = this;
-
-		function navigate(mode, dir) {
+		var navigate = (mode, dir) => {
+			var self = this;
 			return function (e) {
 				e.preventDefault();
 				self.navigate(mode, dir);
-			}
+			};
 		}
 
 		this.subscribe("keybinding-nav-prev", navigate("normal", "left"));
@@ -66,22 +68,6 @@ class Spreadsheet extends Module {
 		this.subscribe("keybinding-nav-right", navigate("normal", "right"));
 		this.subscribe("keybinding-nav-up", navigate("normal", "up"));
 		this.subscribe("keybinding-nav-down", navigate("normal", "down"));
-
-
-		this.subscribe("keybinding-nav-left-alt", navigate("non-empty", "left"));
-		this.subscribe("keybinding-nav-right-alt", navigate("non-empty", "right"));
-		this.subscribe("keybinding-nav-up-alt", navigate("non-empty", "up"));
-		this.subscribe("keybinding-nav-down-alt", navigate("non-empty", "down"));
-
-		this.subscribe("keybinding-expand-left", navigate("expand", "left"));
-		this.subscribe("keybinding-expand-right", navigate("expand", "right"));
-		this.subscribe("keybinding-expand-up", navigate("expand", "up"));
-		this.subscribe("keybinding-expand-down", navigate("expand", "down"));
-
-		this.subscribe("keybinding-expand-left-alt", navigate("expand-non-empty", "left"));
-		this.subscribe("keybinding-expand-right-alt", navigate("expand-non-empty", "right"));
-		this.subscribe("keybinding-expand-up-alt", navigate("expand-non-empty", "up"));
-		this.subscribe("keybinding-expand-down-alt", navigate("expand-non-empty", "down"));
 	}
 
 	initializeTable() {
@@ -101,6 +87,8 @@ class Spreadsheet extends Module {
 			column.editor = false;
 		}
 
+		var customRowHeader = this.options("spreadsheetRowHeader");
+
 		var rowHeaderDef = {
 			title: "",
 			field: this.rowHeaderField,
@@ -108,10 +96,14 @@ class Spreadsheet extends Module {
 			resizable: false,
 			frozen: true,
 			editable: false,
-			cssClass: "tabulator-row-header",
 			formatter: "rownum",
 			formatterParams: { relativeToPage: true },
-			...this.options("rowHeader"),
+
+			...customRowHeader,
+
+			cssClass: customRowHeader.cssClass
+				? `tabulator-spreadsheet-row-header ${customRowHeader.cssClass}`
+				: "tabulator-spreadsheet-row-header",
 		};
 
 		this.rowHeaderField = rowHeaderDef.field;
@@ -134,30 +126,22 @@ class Spreadsheet extends Module {
 
 		this.overlay.appendChild(this.rangeContainer);
 		this.overlay.appendChild(this.activeRangeCellElement);
-		
-		var resizeObserver = new ResizeObserver((entries) => {
-			for (const entry of entries) {
-				this.overlay.style.left = entry.target.offsetLeft + "px";
-				this.overlay.style.top = entry.target.offsetTop + "px";
-				this.overlay.style.width = entry.target.offsetWidth + "px";
-				this.overlay.style.height = entry.target.offsetHeight + "px";
-			}
-		});
 
-		resizeObserver.observe(this.table.rowManager.tableElement);
+		var self = this;
 
-		var mouseUpHandler = this.handleMouseUp.bind(this);
+		this.mouseUpHandler = function () {
+			self.mousedown = false;
+			document.removeEventListener("mouseup", self.mouseUpHandler);
+		};
 
-		document.addEventListener("mouseup", mouseUpHandler);
-
-		this.subscribe("table-destroy", () => {
-			document.removeEventListener("mouseup", mouseUpHandler);
-			resizeObserver.disconnect();
+		this.subscribe("table-destroy", function () {
+			document.removeEventListener("mouseup", self.mouseUpHandler);
 		});
 
 		this.resetRanges();
 
 		this.table.rowManager.element.appendChild(this.overlay);
+		this.table.columnManager.element.setAttribute("tabindex", 0);
 	}
 
 	initializeFunctions() {
@@ -167,24 +151,36 @@ class Spreadsheet extends Module {
 		this.registerComponentFunction("cell", "getRange", (cell) => {
 			var range;
 
-			if (cell.column.field === this.rowHeaderField) range = this.ranges.find((range) => range.occupiesRow(cell.row));
-			else range = this.ranges.find((range) => range.occupies(cell));
+			if (cell.column.field === this.rowHeaderField) {
+				range = this.ranges.find((range) => range.occupiesRow(cell.row));
+			} else {
+				range = this.ranges.find((range) => range.occupies(cell));
+			}
 
-			if (!range) return null;
+			if (!range) { 
+				return null;
+			}
+
 			return range.getComponent();
 		});
 
 		this.registerComponentFunction("row", "getRange", (row) => {
 			var range = this.ranges.find((range) => range.occupiesRow(row));
 
-			if (!range) return null;
+			if (!range) {
+				return null;
+			}
+
 			return range.getComponent();
 		});
 
 		this.registerComponentFunction("column", "getRange", (col) => {
 			var range = this.ranges.find((range) => range.occupiesColumn(col));
 
-			if (!range) return null;
+			if (!range) {
+				return null;
+			}
+
 			return range.getComponent();
 		});
 	}
@@ -243,10 +239,10 @@ class Spreadsheet extends Module {
 
 		var rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
 
-		el.classList.toggle("tabulator-selected", rangeIdx !== -1);
+		el.classList.toggle("tabulator-spreadsheet-selected", rangeIdx !== -1);
 
 		el.classList.toggle(
-			"tabulator-only-cell-selected",
+			"tabulator-spreadsheet-only-cell-selected",
 			this.ranges.length === 1 &&
 				this.ranges[0].atTopLeft(cell) &&
 				this.ranges[0].atBottomRight(cell),
@@ -266,14 +262,16 @@ class Spreadsheet extends Module {
 
 		this.mousedown = true;
 
+		document.addEventListener("mouseup", this.mouseUpHandler);
+
 		this._select(event, column);
 		this.layoutElement();
 	}
 
 	handleColumnMouseMove(_, column) {
-		if (column.field === this.rowHeaderField) return;
-		if (!this.mousedown) return;
-		if (this.selecting === 'all') return;
+		if (column.field === this.rowHeaderField || !this.mousedown || this.selecting === 'all') {
+			return;
+		}
 
 		this.endSelection(column);
 		this.layoutElement(true);
@@ -290,6 +288,8 @@ class Spreadsheet extends Module {
 		}
 
 		this.mousedown = true;
+
+		document.addEventListener("mouseup", this.mouseUpHandler);
 
 		this._select(event, cell);
 		this.layoutElement();
@@ -337,19 +337,19 @@ class Spreadsheet extends Module {
 	}
 
 	handleCellMouseMove(_, cell) {
-		if (!this.mousedown) return;
-		if (this.selecting === "all") return;
+		if (!this.mousedown || this.selecting === "all") {
+			return;
+		}
 
 		this.endSelection(cell);
 		this.layoutElement(true);
 	}
 
-	handleMouseUp() {
-		this.mousedown = false;
-	}
-
 	handleCellDblClick(_, cell) {
-		if (cell.column.field === this.rowHeaderField) return;
+		if (cell.column.field === this.rowHeaderField) {
+			return;
+		}
+
 		this.editCell(cell);
 	}
 
@@ -369,6 +369,7 @@ class Spreadsheet extends Module {
 		cell.column.definition.editable = false;
 		cell.column.definition.editor = false;
 	}
+
 	navigate(mode, dir) {
 		if (this.ranges.length > 1) {
 			this.ranges = this.ranges.filter((range) => {
@@ -378,87 +379,128 @@ class Spreadsheet extends Module {
 				}
 				range.destroy();
 				return false;
-			})
+			});
 		}
 
 		var range = this.getActiveRange();
 
 		switch (mode) {
 			case "normal": {
-				var nextRow = range.start.row;
-				var nextCol = range.start.col;
+				let nextRow = range.start.row;
+				let nextCol = range.start.col;
 
-				if (dir === "left") nextCol -= 1;
-				else if (dir === "right") nextCol += 1;
-				else if (dir === "up") nextRow -= 1;
-				else if (dir === "down") nextRow += 1;
+				if (dir === "left") {
+					nextCol = Math.max(nextCol - 1, 0);
+				} else if (dir === "right") {
+					nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
+				} else if (dir === "up") { 
+					nextRow = Math.max(nextRow - 1, 0);
+				} else if (dir === "down") {
+					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+				}
 
 				range.setStart(nextRow, nextCol);
 				range.setEnd(nextRow, nextCol);
 
-				this.scrollIfNeeded(range, dir);
+				this.selecting = "cell";
 
 				break;
 			}
 			case "expand": {
-				var nextRow = range.end.row;
-				var nextCol = range.end.col;
+				if ((dir === 'left' || dir === 'right') && this.selecting === 'row') {
+					break;
+				}
 
-				if (dir === "left") nextCol -= 1;
-				else if (dir === "right") nextCol += 1;
-				else if (dir === "up") nextRow -= 1;
-				else if (dir === "down") nextRow += 1;
+				if ((dir === 'up' || dir === 'down') && this.selecting === 'column') {
+					break;
+				}
+
+				let nextRow = range.end.row;
+				let nextCol = range.end.col;
+
+				if (dir === "left") {
+					nextCol = Math.max(nextCol - 1, 0);
+				} else if (dir === "right") {
+					nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
+				} else if (dir === "up") { 
+					nextRow = Math.max(nextRow - 1, 0);
+				} else if (dir === "down") {
+					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+				}
 
 				range.setEnd(nextRow, nextCol);
 
-				this.scrollIfNeeded(range, dir);
-
 				break;
 			}
-			case "non-empty": {
-				var nextRow = range.start.row;
-				var nextCol = range.start.col;
+			case "jump": {
+				let nextRow = range.start.row;
+				let nextCol = range.start.col;
 
-				if (dir === "left") nextCol = this.findPrevNonEmptyCellHoz(range);
-				else if (dir === "right") nextCol = this.findNextNonEmptyCellHoz(range);
-	 			else if (dir === "up") nextRow = this.findPrevNonEmptyCellVert(range);
-				else if (dir === "down") nextRow = this.findNextNonEmptyCellVert(range);
+				if (dir === "left") {
+					nextCol = this.findJumpCellLeft(range.start.row, range.start.col);
+				} else if (dir === "right") {
+					nextCol = this.findJumpCellRight(range.start.row, range.start.col);
+				} else if (dir === "up") {
+					nextRow = this.findJumpCellUp(range.start.row, range.start.col);
+				} else if (dir === "down") {
+					nextRow = this.findJumpCellDown(range.start.row, range.start.col);
+				}
 
 				range.setStart(nextRow, nextCol);
 				range.setEnd(nextRow, nextCol);
 
-				this.scrollIfNeeded(range, dir);
+				this.selecting = "cell";
 
 				break;
 			}
-			case "expand-non-empty": {
-				var nextRow = range.end.row;
-				var nextCol = range.end.col;
+			case "expand-jump": {
+				let nextRow = range.end.row;
+				let nextCol = range.end.col;
 
-				if (dir === "left") nextCol = this.findPrevNonEmptyCellHoz(range);
-				else if (dir === "right") nextCol = this.findNextNonEmptyCellHoz(range);
-				else if (dir === "up") nextRow = this.findPrevNonEmptyCellVert(range);
-				else if (dir === "down") nextRow = this.findNextNonEmptyCellVert(range);
+				if (dir === "left") {
+					nextCol = this.findJumpCellLeft(range.start.row, range.end.col);
+				} else if (dir === "right") {
+					nextCol = this.findJumpCellRight(range.start.row, range.end.col);
+				} else if (dir === "up") {
+					nextRow = this.findJumpCellUp(range.end.row, range.start.col);
+				} else if (dir === "down") {
+					nextRow = this.findJumpCellDown(range.end.row, range.start.col);
+				}
 
 				range.setEnd(nextRow, nextCol);
-
-				this.scrollIfNeeded(range, dir);
 
 				break;
 			}
 		}
 
+		this.autoScroll(range);
+
 		this.layoutElement();
 	}
 
-	scrollIfNeeded(range, dir) {
-		if (dir === "right") {
-			var column = this.getColumnByRangePos(range.end.col).getElement();
-			var tableHolder = this.table.rowManager.element;
-			var columnOffsetRight = column.offsetLeft + column.offsetWidth;
-			var tableOffsetRight = tableHolder.scrollLeft + tableHolder.offsetWidth - this.table.rowManager.scrollbarWidth
+	autoScroll(range) {
+		var row = this.getRowByRangePos(range.end.row);
+		var column = this.getColumnByRangePos(range.end.col).getElement();
+		var currentLeft = column.offsetLeft;
+		var currentRight = column.offsetLeft + column.offsetWidth;
+		var currentTop = row.getElement().offsetTop;
+		var currentBottom = currentTop + row.getElement().offsetHeight;
+		var viewBounds = this.getTableViewBounds();
 
-			if (columnOffsetRight - tableOffsetRight > 0) {
+		var fullyVisibleHorizontal = viewBounds.left < currentLeft 
+			&& currentLeft < viewBounds.right
+			&& viewBounds.left < currentRight
+			&& currentRight < viewBounds.right;
+
+		var fullyVisibileVertical = viewBounds.top < currentTop 
+			&& currentTop < viewBounds.bottom
+			&& viewBounds.top < currentBottom
+			&& currentBottom < viewBounds.bottom;
+
+		if (!fullyVisibleHorizontal) {
+			if (currentLeft < viewBounds.left) {
+				this.table.rowManager.scrollHorizontal(this.table.rowManager.element.scrollLeft - column.offsetWidth);
+			} else if (currentRight > viewBounds.right) {
 				this.table.rowManager.scrollHorizontal(
 					Math.min(
 						column.offsetLeft - this.rowHeaderColumn.getElement().offsetWidth,
@@ -467,100 +509,78 @@ class Spreadsheet extends Module {
 				);
 			}
 		}
-		else if (dir === "left") {
-			var column = this.getColumnByRangePos(range.end.col).getElement();
-			var tableHolder = this.table.rowManager.element
-			var columnOffsetLeft = column.offsetLeft;
-			var tableOffsetLeft = tableHolder.scrollLeft + this.rowHeaderColumn.getElement().offsetWidth;
 
-			if (columnOffsetLeft < tableOffsetLeft) {
-				this.table.rowManager.scrollHorizontal(this.table.rowManager.element.scrollLeft - column.offsetWidth);
-			}
-		}
-		else if (dir === "down") {
-			var row = this.getRowByRangePos(range.end.row);
-			var tableHolder = this.table.rowManager.element;
-			var rowOffsetBottom = row.getElement().offsetTop + row.getElement().offsetHeight;
-			var tableOffsetBottom = tableHolder.scrollTop + tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth;
-
-			if (rowOffsetBottom - tableOffsetBottom > 0) {
+		if (!fullyVisibileVertical) {
+			if (currentTop < viewBounds.top) {
+				this.table.scrollToRow(row, 'top');
+			} else if (currentBottom > viewBounds.bottom) {
 				this.table.scrollToRow(row, 'bottom');
 			}
 		}
-		else if (dir === "up") {
-			var row = this.getRowByRangePos(range.end.row);
-			var tableHolder = this.table.rowManager.element;
-			var rowOffsetTop = row.getElement().offsetTop;
-			var tableOffsetTop = tableHolder.scrollTop;
-
-			if (rowOffsetTop < tableOffsetTop) {
-				this.table.scrollToRow(row, 'top')
-			}
-		}
 	}
 
-	findNextNonEmptyCellHoz(range){
-		var row = this.getRowByRangePos(range.start.row);
+	findJumpCellLeft(rowPos, colPos){
+		var row = this.getRowByRangePos(rowPos);
 		var cells = row.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
-		var nextCol = 0;
+		var jumpCol = 0;
+	
+		for (var i = colPos; i >= 0; i--){
+			var cell = cells[i];
+			if (Helpers.elVisible(cell.getElement()) && cell.column.field !== this.rowHeaderField) {
+				jumpCol = cell.column.position - 2;
+				if (cell.getValue()) break;
+			}
+		}
+	
+		return jumpCol;
+	}
 
-		for (var i = range.end.col + 2; i < cells.length; i++){
+	findJumpCellRight(rowPos, colPos){
+		var row = this.getRowByRangePos(rowPos);
+		var cells = row.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
+		var jumpCol = 0;
+
+		for (var i = colPos + 2; i < cells.length; i++){
 			var cell = cells[i];
 			if (Helpers.elVisible(cell.getElement())) {
-				nextCol = cell.column.position - 2;
+				jumpCol = cell.column.position - 2;
 				if (cell.getValue()) break;
 			}
 		}
 
-		return nextCol;
+		return jumpCol;
 	}
 
-	findPrevNonEmptyCellHoz(range){
-		var row = this.getRowByRangePos(range.start.row);
-		var cells = row.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
-		var prevCol = 0;
-
-		for(var i = range.end.col; i >= 0; i--){
-			var cell = cells[i];
-			if (Helpers.elVisible(cell.getElement())) {
-				prevCol = cell.column.position - 2;
-				if (cell.getValue()) break
-			}
-		}
-
-		return prevCol;
-	}
-
-	findNextNonEmptyCellVert(range) {
-		var column = this.getColumnByRangePos(range.start.col);
-		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()))
-		var nextRow = -1;
-
-		for (var i = range.end.row + 1; i < cells.length; i++){
-			var cell = cells[i];
-			if (Helpers.elVisible(cell.getElement())) {
-				nextRow = cell.row.position - 1;
-				if (cell.getValue()) break;
-			}
-		}
-
-		return nextRow;
-	}
-
-	findPrevNonEmptyCellVert(range) {
-		var column = this.getColumnByRangePos(range.start.col);
+	findJumpCellUp(rowPos, colPos) {
+		var column = this.getColumnByRangePos(colPos);
 		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
-		var prevRow = 0;
+		var jumpRow = 0;
 
-		for(var i = range.end.row - 1; i >= 0; i--){
+		for (var i = rowPos - 1; i >= 0; i--){
 			var cell = cells[i];
 			if (Helpers.elVisible(cell.getElement())) {
-				prevRow = cell.row.position - 1;
+				jumpRow = cell.row.position - 1;
 				if (cell.getValue()) break;
 			}
 		}
 
-		return prevRow;
+		return jumpRow;
+	}
+
+	findJumpCellDown(rowPos, colPos) {
+		var column = this.getColumnByRangePos(colPos);
+		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
+		var jumpRow = -1;
+
+		for (var i = rowPos + 1; i < cells.length; i++){
+			var cell = cells[i];
+			if (Helpers.elVisible(cell.getElement())) {
+				jumpRow = cell.row.position - 1;
+				if (cell.getValue()) break;
+			}
+		}
+
+		return jumpRow;
 	}
 
 	beginSelection(element) {
@@ -583,7 +603,7 @@ class Spreadsheet extends Module {
 
 	endSelection(element) {
 		var range = this.getActiveRange();
-		var rowsCount = this.table.rowManager.getDisplayRows().length;
+		var rowsCount = this.getRows().length;
 
 		if (element.type === "column") {
 			if (this.selecting === "column") {
@@ -599,10 +619,7 @@ class Spreadsheet extends Module {
 		var isRowHeader = element.column.field === this.rowHeaderField;
 
 		if (this.selecting === "row") {
-			range.setEnd(
-				row,
-				this.table.columnManager.getVisibleColumnsByIndex().length - 2,
-			);
+			range.setEnd(row, this.getColumns().length - 2);
 		} else if (this.selecting !== "row" && isRowHeader) {
 			range.setEnd(row, 0);
 		} else if (this.selecting === "column") {
@@ -613,9 +630,13 @@ class Spreadsheet extends Module {
 	}
 
 	layoutElement(visibleRows) {
-		var rows = visibleRows
-			? this.table.rowManager.getVisibleRows(true)
-			: this.table.rowManager.getRows();
+		var rows;
+
+		if (visibleRows) {
+			rows = this.table.rowManager.getVisibleRows(true)
+		} else {
+			rows = this.table.rowManager.getRows();
+		}
 
 		rows.forEach((row) => {
 			if (row.type === "row") {
@@ -624,7 +645,7 @@ class Spreadsheet extends Module {
 			}
 		});
 
-		this.table.columnManager.getVisibleColumnsByIndex().forEach((column) => {
+		this.getColumns().forEach((column) => {
 			this.layoutColumn(column);
 		});
 
@@ -643,8 +664,8 @@ class Spreadsheet extends Module {
 			selected = true;
 		}
 
-		el.classList.toggle("tabulator-selected", selected);
-		el.classList.toggle("tabulator-highlight", occupied);
+		el.classList.toggle("tabulator-spreadsheet-selected", selected);
+		el.classList.toggle("tabulator-spreadsheet-highlight", occupied);
 	}
 
 	layoutColumn(column) {
@@ -659,16 +680,20 @@ class Spreadsheet extends Module {
 			selected = true;
 		}
 
-		el.classList.toggle("tabulator-selected", selected);
-		el.classList.toggle("tabulator-highlight", occupied);
+		el.classList.toggle("tabulator-spreadsheet-selected", selected);
+		el.classList.toggle("tabulator-spreadsheet-highlight", occupied);
 	}
 
 	layoutRanges() {
-		if (!this.table.initialized) return;
+		if (!this.table.initialized) {
+			return;
+		}
 
 		var activeCell = this.getActiveCell();
 
-		if (!activeCell) return;
+		if (!activeCell) {
+			return;
+		}
 
 		this.activeRangeCellElement.style.left =
 			activeCell.row.getElement().offsetLeft +
@@ -698,12 +723,25 @@ class Spreadsheet extends Module {
 		var _vDomLeft = this.table.columnManager.renderer.leftCol;
 		var _vDomRight = this.table.columnManager.renderer.rightCol;
 
-		if (_vDomTop == null) _vDomTop = 0;
-		if (_vDomBottom == null) _vDomBottom = Infinity;
-		if (_vDomLeft == null) _vDomLeft = 0;
-		if (_vDomRight == null) _vDomRight = Infinity;
+		if (_vDomTop == null) {
+			_vDomTop = 0;
+		}
+
+		if (_vDomBottom == null) {
+			_vDomBottom = Infinity;
+		}
+
+		if (_vDomLeft == null) {
+			_vDomLeft = 0;
+		}
+
+		if (_vDomRight == null) {
+			_vDomRight = Infinity;
+		}
 		
-		if (!range.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) return;
+		if (!range.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) {
+			return;
+		}
 
 		var top = Math.max(range.top, _vDomTop);
 		var bottom = Math.min(range.bottom, _vDomBottom);
@@ -742,33 +780,42 @@ class Spreadsheet extends Module {
 
 	findRangeByCellElement(cell) {
 		var rangeIdx = cell.dataset.range;
-		if (rangeIdx < 0) return;
+		if (rangeIdx < 0) {
+			return;
+		}
 		return this.ranges[rangeIdx].getComponent();
 	}
 
 	getCell(rowIdx, colIdx) {
 		if (rowIdx < 0) {
-			rowIdx = this.table.rowManager.getDisplayRows().length + rowIdx;
+			rowIdx = this.getRows().length + rowIdx;
 		}
 
 		var row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
 
-		if (!row) return null;
-
-		if (colIdx < 0) {
-			colIdx =
-				this.table.columnManager.getVisibleColumnsByIndex().length + colIdx - 1;
+		if (!row) {
+			return null;
 		}
 
-		if (colIdx < 0) return null;
+		if (colIdx < 0) {
+			colIdx = this.getColumns().length + colIdx - 1;
+		}
+
+		if (colIdx < 0) {
+			return null;
+		}
 
 		return row.getCells().filter((cell) => cell.column.visible)[colIdx + 1];
 	}
 
 	getActiveRange(component) {
 		const range = this.ranges[this.ranges.length - 1];
-		if (!range) return null; 
-		if (component) return range.getComponent();
+		if (!range) {
+			return null;
+		}
+		if (component) {
+			return range.getComponent();
+		}
 		return range;
 	}
 
@@ -778,23 +825,38 @@ class Spreadsheet extends Module {
 	}
 
 	getRowByRangePos(pos) {
-		return this.table.rowManager.getDisplayRows()[pos];
+		return this.getRows()[pos];
 	}
 
 	getColumnByRangePos(pos) {
-		return this.table.columnManager.getVisibleColumnsByIndex()[pos + 1];
+		return this.getColumns()[pos + 1];
 	}
 
 	getRowsByRange(range) {
-		return this.table.rowManager
-			.getDisplayRows()
-			.slice(range.top, range.bottom + 1);
+		return this.getRows() .slice(range.top, range.bottom + 1);
 	}
 
 	getColumnsByRange(range) {
-		return this.table.columnManager
-			.getVisibleColumnsByIndex()
-			.slice(range.left + 1, range.right + 2);
+		return this.getColumns() .slice(range.left + 1, range.right + 2);
+	}
+
+	getRows() {
+		return this.table.rowManager.getDisplayRows();
+	}
+
+	getColumns() {
+		return this.table.columnManager.getVisibleColumnsByIndex();
+	}
+
+	getTableViewBounds() {
+		var tableHolder = this.table.rowManager.element;
+		var rowHeader = this.rowHeaderColumn.getElement();
+		return {
+			left: tableHolder.scrollLeft + rowHeader.offsetWidth,
+			right: tableHolder.scrollLeft + tableHolder.offsetWidth - rowHeader.offsetWidth - this.table.rowManager.scrollbarWidth,
+			top: tableHolder.scrollTop,
+			bottom: tableHolder.scrollTop + tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth,
+		};
 	}
 
 	addRange() {

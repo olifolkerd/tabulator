@@ -370,7 +370,6 @@ export default class VirtualDomHorizontal extends Renderer{
 		
 		if(changes){
 			this.tableElement.style.paddingRight = this.vDomPadRight + "px";
-			this.dispatch("render-virtual-dom");
 		}
 	}
 	
@@ -424,7 +423,6 @@ export default class VirtualDomHorizontal extends Renderer{
 		
 		if(changes){
 			this.tableElement.style.paddingLeft = this.vDomPadLeft + "px";
-			this.dispatch("render-virtual-dom");
 		}
 	}
 	
@@ -469,7 +467,6 @@ export default class VirtualDomHorizontal extends Renderer{
 		
 		if(changes){
 			this.tableElement.style.paddingRight = this.vDomPadRight + "px";
-			this.dispatch("render-virtual-dom");
 		}
 	}
 	
@@ -514,7 +511,6 @@ export default class VirtualDomHorizontal extends Renderer{
 		
 		if(changes){
 			this.tableElement.style.paddingLeft = this.vDomPadLeft + "px";
-			this.dispatch("render-virtual-dom");
 		}
 	}
 	

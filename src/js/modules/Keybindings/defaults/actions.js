@@ -83,53 +83,110 @@ export default {
 		this.dispatch("keybinding-nav-down", e);
 	},
 
-	navLeftAlt: function(e){
-		this.dispatch("keybinding-nav-left-alt", e);
+	spreadsheetJumpLeft: function(e){
+		if (!this.table.options.spreadsheet) return;
+		e.preventDefault();
+		this.table.modules.spreadsheet.navigate("jump", "left");
+	},
+	spreadsheetJumpRight: function(e){
+		if (!this.table.options.spreadsheet) return;
+		e.preventDefault();
+		this.table.modules.spreadsheet.navigate("jump", "right");
+	},
+	spreadsheetJumpUp: function(e){
+		if (!this.table.options.spreadsheet) return;
+		e.preventDefault();
+		this.table.modules.spreadsheet.navigate("jump", "up");
+	},
+	spreadsheetJumpDown: function(e){
+		if (!this.table.options.spreadsheet) return;
+		e.preventDefault();
+		this.table.modules.spreadsheet.navigate("jump", "down");
+	},
+	spreadsheetExpandLeft: function(e){
+		if (!this.table.options.spreadsheet) return;
+		e.preventDefault();
+		this.table.modules.spreadsheet.navigate("expand", "left");
+	},
+	spreadsheetExpandRight: function(e){
+		if (!this.table.options.spreadsheet) return;
+		e.preventDefault();
+		this.table.modules.spreadsheet.navigate("expand", "right");
+	},
+	spreadsheetExpandUp: function(e){
+		if (!this.table.options.spreadsheet) return;
+		e.preventDefault();
+		this.table.modules.spreadsheet.navigate("expand", "up");
+	},
+	spreadsheetExpandDown: function(e){
+		if (!this.table.options.spreadsheet) return;
+		e.preventDefault();
+		this.table.modules.spreadsheet.navigate("expand", "down");
+	},
+	spreadsheetExpandJumpLeft: function(e){
+		if (!this.table.options.spreadsheet) return;
+		e.preventDefault();
+		this.table.modules.spreadsheet.navigate("expand-jump", "left");
+	},
+	spreadsheetExpandJumpRight: function(e){
+		if (!this.table.options.spreadsheet) return;
+		e.preventDefault();
+		this.table.modules.spreadsheet.navigate("expand-jump", "right");
+	},
+	spreadsheetExpandJumpUp: function(e){
+		if (!this.table.options.spreadsheet) return;
+		e.preventDefault();
+		this.table.modules.spreadsheet.navigate("expand-jump", "up");
+	},
+	spreadsheetExpandJumpDown: function(e){
+		if (!this.table.options.spreadsheet) return;
+		e.preventDefault();
+		this.table.modules.spreadsheet.navigate("expand-jump", "down");
 	},
 
-	navRightAlt: function(e){
-		this.dispatch("keybinding-nav-right-alt", e);
-	},
+	// navRightAlt: function(e){
+	// 	this.dispatch("keybinding-nav-right-alt", e);
+	// },
+	//
+	// navUpAlt: function(e){
+	// 	this.dispatch("keybinding-nav-up-alt", e);
+	// },
+	//
+	// navDownAlt: function(e){
+	// 	this.dispatch("keybinding-nav-down-alt", e);
+	// },
 
-	navUpAlt: function(e){
-		this.dispatch("keybinding-nav-up-alt", e);
-	},
-
-	navDownAlt: function(e){
-		this.dispatch("keybinding-nav-down-alt", e);
-	},
-
-	expandLeft:function(e){
-		this.dispatch("keybinding-expand-left", e);
-	},
-
-	expandRight:function(e){
-		this.dispatch("keybinding-expand-right", e);
-	},
-
-	expandUp:function(e){
-		this.dispatch("keybinding-expand-up", e);
-	},
-
-	expandDown:function(e){
-		this.dispatch("keybinding-expand-down", e);
-	},
-
-	expandLeftAlt: function(e){
-		this.dispatch("keybinding-expand-left-alt", e);
-	},
-
-	expandRightAlt: function(e){
-		this.dispatch("keybinding-expand-right-alt", e);
-	},
-
-	expandUpAlt: function(e){
-		this.dispatch("keybinding-expand-up-alt", e);
-	},
-
-	expandDownAlt: function(e){
-		this.dispatch("keybinding-expand-down-alt", e);
-	},
+	// expandLeft:function(e){
+	// 	this.dispatch("keybinding-expand-left", e);
+	// },
+	//
+	// expandRight:function(e){
+	// 	this.dispatch("keybinding-expand-right", e);
+	// },
+	//
+	// expandUp:function(e){
+	// 	this.dispatch("keybinding-expand-up", e);
+	// },
+	//
+	// expandDown:function(e){
+	// 	this.dispatch("keybinding-expand-down", e);
+	// },
+	//
+	// expandLeftAlt: function(e){
+	// 	this.dispatch("keybinding-expand-left-alt", e);
+	// },
+	//
+	// expandRightAlt: function(e){
+	// 	this.dispatch("keybinding-expand-right-alt", e);
+	// },
+	//
+	// expandUpAlt: function(e){
+	// 	this.dispatch("keybinding-expand-up-alt", e);
+	// },
+	//
+	// expandDownAlt: function(e){
+	// 	this.dispatch("keybinding-expand-down-alt", e);
+	// },
 
 	undo:function(e){
 		var cell = false;
