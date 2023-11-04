@@ -603,7 +603,7 @@
 .tabulator .tabulator-header .tabulator-frozen {
   position: sticky;
   left: 0;
-  z-index: 10;
+  z-index: 11;
 }
 
 .tabulator .tabulator-header .tabulator-frozen.tabulator-frozen-left {
@@ -948,7 +948,7 @@
   position: sticky;
   left: 0;
   background-color: inherit;
-  z-index: 10;
+  z-index: 11;
 }
 
 .tabulator-row .tabulator-cell.tabulator-frozen.tabulator-frozen-left {
