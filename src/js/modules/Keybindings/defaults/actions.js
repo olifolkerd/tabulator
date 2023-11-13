@@ -144,50 +144,6 @@ export default {
 		this.table.modules.spreadsheet.navigate("expand-jump", "down");
 	},
 
-	// navRightAlt: function(e){
-	// 	this.dispatch("keybinding-nav-right-alt", e);
-	// },
-	//
-	// navUpAlt: function(e){
-	// 	this.dispatch("keybinding-nav-up-alt", e);
-	// },
-	//
-	// navDownAlt: function(e){
-	// 	this.dispatch("keybinding-nav-down-alt", e);
-	// },
-
-	// expandLeft:function(e){
-	// 	this.dispatch("keybinding-expand-left", e);
-	// },
-	//
-	// expandRight:function(e){
-	// 	this.dispatch("keybinding-expand-right", e);
-	// },
-	//
-	// expandUp:function(e){
-	// 	this.dispatch("keybinding-expand-up", e);
-	// },
-	//
-	// expandDown:function(e){
-	// 	this.dispatch("keybinding-expand-down", e);
-	// },
-	//
-	// expandLeftAlt: function(e){
-	// 	this.dispatch("keybinding-expand-left-alt", e);
-	// },
-	//
-	// expandRightAlt: function(e){
-	// 	this.dispatch("keybinding-expand-right-alt", e);
-	// },
-	//
-	// expandUpAlt: function(e){
-	// 	this.dispatch("keybinding-expand-up-alt", e);
-	// },
-	//
-	// expandDownAlt: function(e){
-	// 	this.dispatch("keybinding-expand-down-alt", e);
-	// },
-
 	undo:function(e){
 		var cell = false;
 		if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){

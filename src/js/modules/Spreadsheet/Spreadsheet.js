@@ -42,13 +42,25 @@ class Spreadsheet extends Module {
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 
 		var debouncedLayoutRanges = Helpers.debounce(this.layoutRanges.bind(this), 200);
-		function layoutRanges () {
+		function layoutRanges (debounced = true) {
 			this.overlay.style.visibility = "hidden";
-			debouncedLayoutRanges();
+			if (debounced) {
+				debouncedLayoutRanges();
+			}
 		}
 
-		this.subscribe("scroll-vertical", layoutRanges.bind(this));
-		this.subscribe("scroll-horizontal", layoutRanges.bind(this));
+		if ("onscrollend" in window) {
+			this.subscribe("scroll-vertical", layoutRanges.bind(this, false));
+			this.subscribe("scroll-horizontal", layoutRanges.bind(this, false));
+			this.table.rowManager.element.addEventListener("scrollend", this.layoutRanges.bind(this));
+			this.subscribe("table-destroy", () => {
+				this.table.rowManager.element.removeEventListener("scrollend", this.layoutRanges.bind(this));
+			})
+		} else {
+			this.subscribe("scroll-vertical", layoutRanges.bind(this));
+			this.subscribe("scroll-horizontal", layoutRanges.bind(this));
+		}
+
 		this.subscribe("column-width", layoutRanges.bind(this));
 		this.subscribe("column-height", layoutRanges.bind(this));
 		this.subscribe("column-resized", layoutRanges.bind(this));
@@ -555,8 +567,9 @@ class Spreadsheet extends Module {
 		var column = this.getColumnByRangePos(colPos);
 		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
 		var jumpRow = 0;
+		var jumpRowIdx = cells.findIndex((cell) => cell.row.position - 1 === rowPos) - 1;
 
-		for (var i = rowPos - 1; i >= 0; i--){
+		for (var i = jumpRowIdx; i >= 0; i--){
 			var cell = cells[i];
 			if (Helpers.elVisible(cell.getElement())) {
 				jumpRow = cell.row.position - 1;
@@ -570,9 +583,10 @@ class Spreadsheet extends Module {
 	findJumpCellDown(rowPos, colPos) {
 		var column = this.getColumnByRangePos(colPos);
 		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
-		var jumpRow = -1;
+		var jumpRow = 0;
+		var jumpRowIdx = cells.findIndex((cell) => cell.row.position - 1 === rowPos) + 1;
 
-		for (var i = rowPos + 1; i < cells.length; i++){
+		for (var i = jumpRowIdx; i < cells.length; i++){
 			var cell = cells[i];
 			if (Helpers.elVisible(cell.getElement())) {
 				jumpRow = cell.row.position - 1;
