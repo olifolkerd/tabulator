@@ -55,16 +55,16 @@ class Spreadsheet extends Module {
 			this.table.rowManager.element.addEventListener("scrollend", this.layoutRanges.bind(this));
 			this.subscribe("table-destroy", () => {
 				this.table.rowManager.element.removeEventListener("scrollend", this.layoutRanges.bind(this));
-			})
+			});
 		} else {
-			this.subscribe("scroll-vertical", layoutRanges.bind(this));
-			this.subscribe("scroll-horizontal", layoutRanges.bind(this));
+			this.subscribe("scroll-vertical", layoutRanges.bind(this, true));
+			this.subscribe("scroll-horizontal", layoutRanges.bind(this, true));
 		}
 
-		this.subscribe("column-width", layoutRanges.bind(this));
-		this.subscribe("column-height", layoutRanges.bind(this));
-		this.subscribe("column-resized", layoutRanges.bind(this));
-		this.subscribe("cell-height", layoutRanges.bind(this));
+		this.subscribe("column-width", layoutRanges.bind(this, true));
+		this.subscribe("column-height", layoutRanges.bind(this, true));
+		this.subscribe("column-resized", layoutRanges.bind(this, true));
+		this.subscribe("cell-height", layoutRanges.bind(this, true));
 
 		var navigate = (mode, dir) => {
 			var self = this;
@@ -72,7 +72,7 @@ class Spreadsheet extends Module {
 				e.preventDefault();
 				self.navigate(mode, dir);
 			};
-		}
+		};
 
 		this.subscribe("keybinding-nav-prev", navigate("normal", "left"));
 		this.subscribe("keybinding-nav-next", navigate("normal", "right"));
@@ -396,6 +396,8 @@ class Spreadsheet extends Module {
 
 		var range = this.getActiveRange();
 
+		var moved = false;
+
 		switch (mode) {
 			case "normal": {
 				let nextRow = range.start.row;
@@ -409,6 +411,10 @@ class Spreadsheet extends Module {
 					nextRow = Math.max(nextRow - 1, 0);
 				} else if (dir === "down") {
 					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+				}
+
+				if (nextCol !== range.start.col || nextRow !== range.start.row) {
+					moved = true;
 				}
 
 				range.setStart(nextRow, nextCol);
@@ -440,6 +446,10 @@ class Spreadsheet extends Module {
 					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
 				}
 
+				if (nextCol !== range.end.col || nextRow !== range.end.row) {
+					moved = true;
+				}
+
 				range.setEnd(nextRow, nextCol);
 
 				break;
@@ -456,6 +466,10 @@ class Spreadsheet extends Module {
 					nextRow = this.findJumpCellUp(range.start.row, range.start.col);
 				} else if (dir === "down") {
 					nextRow = this.findJumpCellDown(range.start.row, range.start.col);
+				}
+
+				if (nextCol !== range.start.col || nextRow !== range.start.row) {
+					moved = true;
 				}
 
 				range.setStart(nextRow, nextCol);
@@ -479,10 +493,18 @@ class Spreadsheet extends Module {
 					nextRow = this.findJumpCellDown(range.end.row, range.start.col);
 				}
 
+				if (nextCol !== range.end.col || nextRow !== range.end.row) {
+					moved = true;
+				}
+
 				range.setEnd(nextRow, nextCol);
 
 				break;
 			}
+		}
+
+		if (!moved) {
+			return;
 		}
 
 		this.autoScroll(range);
@@ -523,10 +545,11 @@ class Spreadsheet extends Module {
 		}
 
 		if (!fullyVisibileVertical) {
+			var tableHolder = this.table.rowManager.element;
 			if (currentTop < viewBounds.top) {
-				this.table.scrollToRow(row, 'top');
+				tableHolder.scrollTop = row.getElement().offsetTop;
 			} else if (currentBottom > viewBounds.bottom) {
-				this.table.scrollToRow(row, 'bottom');
+				tableHolder.scrollTop = row.getElement().offsetTop + row.getElement().offsetHeight - tableHolder.clientHeight;
 			}
 		}
 	}
@@ -647,7 +670,7 @@ class Spreadsheet extends Module {
 		var rows;
 
 		if (visibleRows) {
-			rows = this.table.rowManager.getVisibleRows(true)
+			rows = this.table.rowManager.getVisibleRows(true);
 		} else {
 			rows = this.table.rowManager.getRows();
 		}
@@ -867,7 +890,7 @@ class Spreadsheet extends Module {
 		var rowHeader = this.rowHeaderColumn.getElement();
 		return {
 			left: tableHolder.scrollLeft + rowHeader.offsetWidth,
-			right: tableHolder.scrollLeft + tableHolder.offsetWidth - rowHeader.offsetWidth - this.table.rowManager.scrollbarWidth,
+			right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
 			top: tableHolder.scrollTop,
 			bottom: tableHolder.scrollTop + tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth,
 		};
