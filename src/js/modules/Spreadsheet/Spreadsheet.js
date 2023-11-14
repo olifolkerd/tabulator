@@ -42,21 +42,28 @@ class Spreadsheet extends Module {
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 
 		var debouncedLayoutRanges = Helpers.debounce(this.layoutRanges.bind(this), 200);
-		var hideRanges = () => {
-			this.overlay.style.visibility = "hidden";
-		}
 		var layoutRanges = () => {
-			hideRanges();
+			this.overlay.style.visibility = "hidden";
 			debouncedLayoutRanges();
 		}
 
 		if ("onscrollend" in window) {
-			this.subscribe("scroll-vertical", hideRanges);
-			this.subscribe("scroll-horizontal", hideRanges);
-			this.table.rowManager.element.addEventListener("scrollend", this.layoutRanges.bind(this));
-			this.subscribe("table-destroy", () => {
-				this.table.rowManager.element.removeEventListener("scrollend", this.layoutRanges.bind(this));
-			});
+			var scrolling = false;
+			var handleScrollEnd = () => {
+				this.layoutRanges();
+				this.table.rowManager.element.removeEventListener("scrollend", handleScrollEnd);
+				scrolling = false;
+			}
+			var handleScroll = () => {
+				this.overlay.style.visibility = "hidden";
+				if (scrolling) {
+					return;
+				}
+				scrolling = true;
+				this.table.rowManager.element.addEventListener("scrollend", handleScrollEnd);
+			}
+			this.subscribe("scroll-vertical", handleScroll);
+			this.subscribe("scroll-horizontal", handleScroll);
 		} else {
 			this.subscribe("scroll-vertical", layoutRanges);
 			this.subscribe("scroll-horizontal", layoutRanges);
