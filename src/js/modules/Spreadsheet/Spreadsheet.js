@@ -42,29 +42,30 @@ class Spreadsheet extends Module {
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 
 		var debouncedLayoutRanges = Helpers.debounce(this.layoutRanges.bind(this), 200);
-		function layoutRanges (debounced = true) {
+		var hideRanges = () => {
 			this.overlay.style.visibility = "hidden";
-			if (debounced) {
-				debouncedLayoutRanges();
-			}
+		}
+		var layoutRanges = () => {
+			hideRanges();
+			debouncedLayoutRanges();
 		}
 
 		if ("onscrollend" in window) {
-			this.subscribe("scroll-vertical", layoutRanges.bind(this, false));
-			this.subscribe("scroll-horizontal", layoutRanges.bind(this, false));
+			this.subscribe("scroll-vertical", hideRanges);
+			this.subscribe("scroll-horizontal", hideRanges);
 			this.table.rowManager.element.addEventListener("scrollend", this.layoutRanges.bind(this));
 			this.subscribe("table-destroy", () => {
 				this.table.rowManager.element.removeEventListener("scrollend", this.layoutRanges.bind(this));
 			});
 		} else {
-			this.subscribe("scroll-vertical", layoutRanges.bind(this, true));
-			this.subscribe("scroll-horizontal", layoutRanges.bind(this, true));
+			this.subscribe("scroll-vertical", layoutRanges);
+			this.subscribe("scroll-horizontal", layoutRanges);
 		}
 
-		this.subscribe("column-width", layoutRanges.bind(this, true));
-		this.subscribe("column-height", layoutRanges.bind(this, true));
-		this.subscribe("column-resized", layoutRanges.bind(this, true));
-		this.subscribe("cell-height", layoutRanges.bind(this, true));
+		this.subscribe("column-width", layoutRanges);
+		this.subscribe("column-height", layoutRanges);
+		this.subscribe("column-resized", layoutRanges);
+		this.subscribe("cell-height", layoutRanges);
 
 		var navigate = (mode, dir) => {
 			var self = this;
