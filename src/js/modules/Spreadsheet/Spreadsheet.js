@@ -829,6 +829,7 @@ class Spreadsheet extends Module {
 	}
 
 	handlePageChanged() {
+		this.selecting = 'cell';
 		this.resetRanges();
 		this.layoutElement();
 	}
