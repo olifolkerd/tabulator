@@ -521,43 +521,53 @@ class Spreadsheet extends Module {
 	}
 
 	autoScroll(range) {
-		var row = this.getRowByRangePos(range.end.row);
+		var tableHolder = this.table.rowManager.element;
+		var rowHeader = this.rowHeaderColumn.getElement();
+		var row = this.getRowByRangePos(range.end.row).getElement();
 		var column = this.getColumnByRangePos(range.end.col).getElement();
-		var currentLeft = column.offsetLeft;
-		var currentRight = column.offsetLeft + column.offsetWidth;
-		var currentTop = row.getElement().offsetTop;
-		var currentBottom = currentTop + row.getElement().offsetHeight;
-		var viewBounds = this.getTableViewBounds();
 
-		var fullyVisibleHorizontal = viewBounds.left < currentLeft 
-			&& currentLeft < viewBounds.right
-			&& viewBounds.left < currentRight
-			&& currentRight < viewBounds.right;
+		var rect = {
+			left: column.offsetLeft,
+			right: column.offsetLeft + column.offsetWidth,
+			top: row.offsetTop,
+			bottom: row.offsetTop + row.offsetHeight,
+		};
 
-		var fullyVisibileVertical = viewBounds.top < currentTop 
-			&& currentTop < viewBounds.bottom
-			&& viewBounds.top < currentBottom
-			&& currentBottom < viewBounds.bottom;
+		var view = {
+			left: tableHolder.scrollLeft + rowHeader.offsetWidth,
+			right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
+			top: tableHolder.scrollTop,
+			bottom:
+				tableHolder.scrollTop +
+				tableHolder.offsetHeight -
+				this.table.rowManager.scrollbarWidth,
+		};
 
-		if (!fullyVisibleHorizontal) {
-			if (currentLeft < viewBounds.left) {
-				this.table.rowManager.scrollHorizontal(this.table.rowManager.element.scrollLeft - column.offsetWidth);
-			} else if (currentRight > viewBounds.right) {
-				this.table.rowManager.scrollHorizontal(
-					Math.min(
-						column.offsetLeft - this.rowHeaderColumn.getElement().offsetWidth,
-						this.table.rowManager.element.scrollLeft + column.offsetWidth
-					)
-				);
+		var withinHorizontalView =
+			view.left < rect.left &&
+			rect.left < view.right &&
+			view.left < rect.right &&
+			rect.right < view.right;
+
+		var withinVerticalView =
+			view.top < rect.top &&
+			rect.top < view.bottom &&
+			view.top < rect.bottom &&
+			rect.bottom < view.bottom;
+
+		if (!withinHorizontalView) {
+			if (rect.left < view.left) {
+				tableHolder.scrollLeft = rect.left - rowHeader.offsetWidth;
+			} else if (rect.right > view.right) {
+				tableHolder.scrollLeft = rect.right - tableHolder.clientWidth;
 			}
 		}
 
-		if (!fullyVisibileVertical) {
-			var tableHolder = this.table.rowManager.element;
-			if (currentTop < viewBounds.top) {
-				tableHolder.scrollTop = row.getElement().offsetTop;
-			} else if (currentBottom > viewBounds.bottom) {
-				tableHolder.scrollTop = row.getElement().offsetTop + row.getElement().offsetHeight - tableHolder.clientHeight;
+		if (!withinVerticalView) {
+			if (rect.top < view.top) {
+				tableHolder.scrollTop = rect.top;
+			} else if (rect.bottom > view.bottom) {
+				tableHolder.scrollTop = rect.bottom - tableHolder.clientHeight;
 			}
 		}
 	}
@@ -891,17 +901,6 @@ class Spreadsheet extends Module {
 
 	getColumns() {
 		return this.table.columnManager.getVisibleColumnsByIndex();
-	}
-
-	getTableViewBounds() {
-		var tableHolder = this.table.rowManager.element;
-		var rowHeader = this.rowHeaderColumn.getElement();
-		return {
-			left: tableHolder.scrollLeft + rowHeader.offsetWidth,
-			right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
-			top: tableHolder.scrollTop,
-			bottom: tableHolder.scrollTop + tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth,
-		};
 	}
 
 	addRange() {
