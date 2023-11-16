@@ -45,7 +45,7 @@ class Spreadsheet extends Module {
 		var layoutRanges = () => {
 			this.overlay.style.visibility = "hidden";
 			debouncedLayoutRanges();
-		}
+		};
 
 		if ("onscrollend" in window) {
 			var scrolling = false;
@@ -53,7 +53,7 @@ class Spreadsheet extends Module {
 				this.layoutRanges();
 				this.table.rowManager.element.removeEventListener("scrollend", handleScrollEnd);
 				scrolling = false;
-			}
+			};
 			var handleScroll = () => {
 				this.overlay.style.visibility = "hidden";
 				if (scrolling) {
@@ -61,7 +61,7 @@ class Spreadsheet extends Module {
 				}
 				scrolling = true;
 				this.table.rowManager.element.addEventListener("scrollend", handleScrollEnd);
-			}
+			};
 			this.subscribe("scroll-vertical", handleScroll);
 			this.subscribe("scroll-horizontal", handleScroll);
 		} else {
@@ -77,8 +77,9 @@ class Spreadsheet extends Module {
 		var navigate = (mode, dir) => {
 			var self = this;
 			return function (e) {
-				e.preventDefault();
-				self.navigate(mode, dir);
+				if(self.navigate(mode, dir)) {
+					e.preventDefault();
+				}
 			};
 		};
 
@@ -100,6 +101,7 @@ class Spreadsheet extends Module {
 
 			// Edit on double click
 			var editable = column.editable !== undefined ? column.editable : true;
+			// TODO: use column init event, and then assign column.modules
 			column.__spreadsheet_editable = editable;
 			column.editable = false;
 
@@ -162,6 +164,29 @@ class Spreadsheet extends Module {
 
 		this.table.rowManager.element.appendChild(this.overlay);
 		this.table.columnManager.element.setAttribute("tabindex", 0);
+
+		var pressingContextMenu = false;
+
+		this.table.rowManager.element.addEventListener("keyup", (e) => {
+			if (e.key === 'ContextMenu') {
+				pressingContextMenu = true;
+			}
+		});
+
+		this.table.rowManager.element.addEventListener("contextmenu", (e) => {
+			if (!pressingContextMenu) return;
+
+			var activeCell = this.getActiveCell();
+			var menuDef = activeCell.column.definition.contextMenu;
+			var menu = typeof menuDef === "function" ? menuDef.call(this.table, e, activeCell.getComponent()) : menuDef;
+
+			if (this.table.modules.menu && menu) {
+				this.table.modules.menu.loadMenu(e, activeCell, menu, activeCell.element);
+			}
+
+			pressingContextMenu = false;
+			e.preventDefault();
+		});
 	}
 
 	initializeFunctions() {
@@ -373,6 +398,10 @@ class Spreadsheet extends Module {
 		this.editCell(cell);
 	}
 
+	editActiveCell() {
+		this.editCell(this.getActiveCell());
+	}
+
 	editCell(cell) {
 		cell.column.definition.editable =
 			cell.column.definition.__spreadsheet_editable;
@@ -388,9 +417,15 @@ class Spreadsheet extends Module {
 	finishEditingCell(cell) {
 		cell.column.definition.editable = false;
 		cell.column.definition.editor = false;
+		this.table.rowManager.element.focus();
 	}
 
 	navigate(mode, dir) {
+		// Don't navigate while editing
+		if (this.table.modules.edit && this.table.modules.edit.currentCell) {
+			return false;
+		}
+
 		if (this.ranges.length > 1) {
 			this.ranges = this.ranges.filter((range) => {
 				if (range === this.getActiveRange()) {
@@ -518,6 +553,8 @@ class Spreadsheet extends Module {
 		this.autoScroll(range);
 
 		this.layoutElement();
+
+		return true;
 	}
 
 	autoScroll(range) {

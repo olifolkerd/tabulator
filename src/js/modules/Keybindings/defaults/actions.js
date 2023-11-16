@@ -85,63 +85,80 @@ export default {
 
 	spreadsheetJumpLeft: function(e){
 		if (!this.table.options.spreadsheet) return;
-		e.preventDefault();
-		this.table.modules.spreadsheet.navigate("jump", "left");
+		if (this.table.modules.spreadsheet.navigate("jump", "left")) {
+			e.preventDefault();
+		}
 	},
 	spreadsheetJumpRight: function(e){
 		if (!this.table.options.spreadsheet) return;
-		e.preventDefault();
-		this.table.modules.spreadsheet.navigate("jump", "right");
+		if (this.table.modules.spreadsheet.navigate("jump", "right")) {
+			e.preventDefault();
+		}
 	},
 	spreadsheetJumpUp: function(e){
 		if (!this.table.options.spreadsheet) return;
-		e.preventDefault();
-		this.table.modules.spreadsheet.navigate("jump", "up");
+		if (this.table.modules.spreadsheet.navigate("jump", "up")) {
+			e.preventDefault();
+		}
 	},
 	spreadsheetJumpDown: function(e){
 		if (!this.table.options.spreadsheet) return;
-		e.preventDefault();
-		this.table.modules.spreadsheet.navigate("jump", "down");
+		if (this.table.modules.spreadsheet.navigate("jump", "down")) {
+			e.preventDefault();
+		}
 	},
 	spreadsheetExpandLeft: function(e){
 		if (!this.table.options.spreadsheet) return;
-		e.preventDefault();
-		this.table.modules.spreadsheet.navigate("expand", "left");
+		if (this.table.modules.spreadsheet.navigate("expand", "left")) {
+			e.preventDefault();
+		}
 	},
 	spreadsheetExpandRight: function(e){
 		if (!this.table.options.spreadsheet) return;
-		e.preventDefault();
-		this.table.modules.spreadsheet.navigate("expand", "right");
+		if (this.table.modules.spreadsheet.navigate("expand", "right")) {
+			e.preventDefault();
+		}
 	},
 	spreadsheetExpandUp: function(e){
 		if (!this.table.options.spreadsheet) return;
-		e.preventDefault();
-		this.table.modules.spreadsheet.navigate("expand", "up");
+		if (this.table.modules.spreadsheet.navigate("expand", "up")) {
+			e.preventDefault();
+		}
 	},
 	spreadsheetExpandDown: function(e){
 		if (!this.table.options.spreadsheet) return;
-		e.preventDefault();
-		this.table.modules.spreadsheet.navigate("expand", "down");
+		if (this.table.modules.spreadsheet.navigate("expand", "down")) {
+			e.preventDefault();
+		}
 	},
 	spreadsheetExpandJumpLeft: function(e){
 		if (!this.table.options.spreadsheet) return;
-		e.preventDefault();
-		this.table.modules.spreadsheet.navigate("expand-jump", "left");
+		if (this.table.modules.spreadsheet.navigate("expand-jump", "left")) {
+			e.preventDefault();
+		}
 	},
 	spreadsheetExpandJumpRight: function(e){
 		if (!this.table.options.spreadsheet) return;
-		e.preventDefault();
-		this.table.modules.spreadsheet.navigate("expand-jump", "right");
+		if (this.table.modules.spreadsheet.navigate("expand-jump", "right")) {
+			e.preventDefault();
+		}
 	},
 	spreadsheetExpandJumpUp: function(e){
 		if (!this.table.options.spreadsheet) return;
-		e.preventDefault();
-		this.table.modules.spreadsheet.navigate("expand-jump", "up");
+		if (this.table.modules.spreadsheet.navigate("expand-jump", "up")) {
+			e.preventDefault();
+		}
 	},
 	spreadsheetExpandJumpDown: function(e){
 		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("expand-jump", "down")) {
+			e.preventDefault();
+		}
+	},
+	spreadsheetEditCell: function(e){
+		if (!this.table.options.spreadsheet) return;
+		this.table.modules.spreadsheet.editActiveCell();
 		e.preventDefault();
-		this.table.modules.spreadsheet.navigate("expand-jump", "down");
 	},
 
 	undo:function(e){
