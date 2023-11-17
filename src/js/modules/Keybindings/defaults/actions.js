@@ -157,6 +157,9 @@ export default {
 	},
 	spreadsheetEditCell: function(e){
 		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.menu && this.table.modules.menu.currentComponent) {
+			return;
+		}
 		this.table.modules.spreadsheet.editActiveCell();
 		e.preventDefault();
 	},

@@ -386,6 +386,7 @@ class Spreadsheet extends Module {
 			}
 
 			function unsubscribeListeners() {
+				self.unsubscribe("menu-closed", unsubscribeListeners);
 				self.unsubscribe("keybinding-nav-up", handleUp);
 				self.unsubscribe("keybinding-nav-down", handleDown);
 				self.unsubscribe("keybinding-nav-left", handleLeft);
