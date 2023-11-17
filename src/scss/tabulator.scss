@@ -1574,3 +1574,7 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		border: 2px solid $rangeBorderColor;
 	}
 }
+
+.tabulator-spreadsheet-menu-item-focused {
+	background-color: $rowAltBackgroundColor;
+}
