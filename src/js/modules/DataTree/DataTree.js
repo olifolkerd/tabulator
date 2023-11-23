@@ -584,7 +584,9 @@ class DataTree extends Module{
 					output.push(component ? childRow.getComponent() : childRow);
 
 					if(recurse){
-						output = output.concat(this.getTreeChildren(childRow, component, recurse));
+						this.getTreeChildren(childRow, component, recurse).forEach(child => {
+							output.push(child);
+						});
 					}
 				}
 			});
