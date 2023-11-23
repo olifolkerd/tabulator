@@ -456,7 +456,7 @@ class SelectRow extends Module{
 	}
 	
 	childRowSelection(row, select){
-		var children = this.table.modules.dataTree.getChildren(row, true);
+		var children = this.table.modules.dataTree.getChildren(row, true, true);
 		
 		if(select){
 			for(let child of children){

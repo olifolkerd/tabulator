@@ -327,7 +327,7 @@ class Sort extends Module{
 	}
 
 	//work through sort list sorting data
-	sort(data){
+	sort(data, sortOnly){
 		var self = this,
 		sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
 		sortListActual = [],
@@ -337,7 +337,9 @@ class Sort extends Module{
 			this.dispatchExternal("dataSorting", self.getSort());
 		}
 
-		self.clearColumnHeaders();
+		if(!sortOnly) {
+			self.clearColumnHeaders();
+		}
 
 		if(this.table.options.sortMode !== "remote"){
 
@@ -360,7 +362,9 @@ class Sort extends Module{
 						sortListActual.push(item);
 					}
 
-					self.setColumnHeader(item.column, item.dir);
+					if(!sortOnly) {
+						self.setColumnHeader(item.column, item.dir);
+					}
 				}
 			});
 
@@ -369,7 +373,7 @@ class Sort extends Module{
 				self._sortItems(data, sortListActual);
 			}
 
-		}else{
+		}else if(!sortOnly) {
 			sortList.forEach(function(item, i){
 				self.setColumnHeader(item.column, item.dir);
 			});
