@@ -726,18 +726,32 @@ class Spreadsheet extends Module {
 			return;
 		}
 
-		this.autoScroll(range);
+		var row = this.getRowByRangePos(range.end.row);
+		var column = this.getColumnByRangePos(range.end.col);
+
+		if ((dir === 'left' || dir === 'right') && column.getElement().parentNode === null) {
+			column.getComponent().scrollTo(undefined, false);
+		} else if ((dir === 'up' || dir === 'down') && row.getElement().parentNode === null) {
+			row.getComponent().scrollTo(undefined, false);
+		} else {
+			// Use faster autoScroll when the elements are on the DOM
+			this.autoScroll(range, row.getElement(), column.getElement());
+		}
 
 		this.layoutElement();
 
 		return true;
 	}
 
-	autoScroll(range) {
+	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element;
 		var rowHeader = this.rowHeaderColumn.getElement();
-		var row = this.getRowByRangePos(range.end.row).getElement();
-		var column = this.getColumnByRangePos(range.end.col).getElement();
+		if (typeof row === 'undefined') {
+			row = this.getRowByRangePos(range.end.row).getElement();
+		}
+		if (typeof column === 'undefined') {
+			column = this.getColumnByRangePos(range.end.col).getElement();
+		}
 
 		var rect = {
 			left: column.offsetLeft,
@@ -787,7 +801,7 @@ class Spreadsheet extends Module {
 
 	findJumpCellLeft(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos);
-		var cells = row.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
+		var cells = row.cells.filter((cell) => cell.column.visible);
 		var isStartingCellEmpty = !cells[colPos + 1].getValue();
 		var isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false;
 		var jumpCol = colPos;
@@ -832,7 +846,7 @@ class Spreadsheet extends Module {
 
 	findJumpCellRight(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos);
-		var cells = row.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
+		var cells = row.cells.filter((cell) => cell.column.visible);
 		var isStartingCellEmpty = !cells[colPos + 1].getValue();
 		var isRightOfStartingCellEmpty = cells[colPos + 2] ? !cells[colPos + 2].getValue() : false;
 		var jumpCol = colPos;
@@ -875,7 +889,7 @@ class Spreadsheet extends Module {
 
 	findJumpCellUp(rowPos, colPos) {
 		var column = this.getColumnByRangePos(colPos);
-		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
+		var cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row));
 		var isStartingCellEmpty = !cells[rowPos].getValue();
 		var isTopOfStartingCellEmpty = cells[rowPos - 1] ? !cells[rowPos - 1].getValue() : false;
 		var jumpRow = rowPos;
@@ -919,7 +933,7 @@ class Spreadsheet extends Module {
 
 	findJumpCellDown(rowPos, colPos) {
 		var column = this.getColumnByRangePos(colPos);
-		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
+		var cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row));
 		var isStartingCellEmpty = !cells[rowPos].getValue();
 		var isBottomOfStartingCellEmpty = cells[rowPos + 1] ? !cells[rowPos + 1].getValue() : false;
 		var jumpRow = rowPos;
