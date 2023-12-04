@@ -601,6 +601,7 @@ class Spreadsheet extends Module {
 			return false;
 		}
 
+		// If there are more than 1 range, use the active range and destroy the others
 		if (this.ranges.length > 1) {
 			this.ranges = this.ranges.filter((range) => {
 				if (range === this.getActiveRange()) {
@@ -787,13 +788,42 @@ class Spreadsheet extends Module {
 	findJumpCellLeft(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos);
 		var cells = row.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
-		var jumpCol = 0;
+		var isStartingCellEmpty = !cells[colPos + 1].getValue();
+		var isLeftOfStartingCellEmpty = !cells[colPos]?.getValue();
+		var jumpCol = colPos;
 	
-		for (var i = colPos; i >= 0; i--){
-			var cell = cells[i];
-			if (Helpers.elVisible(cell.getElement()) && cell.column.field !== this.rowHeaderField) {
-				jumpCol = cell.column.position - 2;
-				if (cell.getValue()) break;
+		// Go until we find an empty / non-empty cell.
+		for (var i = colPos; i > 0; i--){
+			var currentCell = cells[i];
+			if (isStartingCellEmpty) {
+				if (!currentCell.getValue()) {
+					continue;
+				}
+
+				if (currentCell.getValue()) {
+					jumpCol = currentCell.column.position - 2;
+					break;
+				}
+			} else {
+				if (!isLeftOfStartingCellEmpty && !currentCell.getValue()) {
+					break;
+				}
+
+				jumpCol = currentCell.column.position - 2;
+
+				if (isLeftOfStartingCellEmpty) {
+					if (!currentCell.getValue()) {
+						continue;
+					}
+					if (currentCell.getValue()) {
+						break;
+					}
+				}
+
+				jumpCol = currentCell.column.position - 2;
+				if (currentCell.getValue()) {
+					continue;
+				}
 			}
 		}
 	
@@ -803,13 +833,40 @@ class Spreadsheet extends Module {
 	findJumpCellRight(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos);
 		var cells = row.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
-		var jumpCol = 0;
+		var isStartingCellEmpty = !cells[colPos + 1].getValue();
+		var isRightOfStartingCellEmpty = !cells[colPos + 2]?.getValue();
+		var jumpCol = colPos;
 
 		for (var i = colPos + 2; i < cells.length; i++){
-			var cell = cells[i];
-			if (Helpers.elVisible(cell.getElement())) {
-				jumpCol = cell.column.position - 2;
-				if (cell.getValue()) break;
+			var currentCell = cells[i];
+			if (isStartingCellEmpty) {
+				if (!currentCell.getValue()) {
+					continue;
+				}
+
+				if (currentCell.getValue()) {
+					jumpCol = currentCell.column.position - 2;
+					break;
+				}
+			} else {
+				if (!isRightOfStartingCellEmpty && !currentCell.getValue()) {
+					break;
+				}
+
+				jumpCol = currentCell.column.position - 2;
+
+				if (isRightOfStartingCellEmpty) {
+					if (!currentCell.getValue()) {
+						continue;
+					}
+					if (currentCell.getValue()) {
+						break;
+					}
+				}
+
+				if (currentCell.getValue()) {
+					continue;
+				}
 			}
 		}
 
@@ -819,14 +876,41 @@ class Spreadsheet extends Module {
 	findJumpCellUp(rowPos, colPos) {
 		var column = this.getColumnByRangePos(colPos);
 		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
-		var jumpRow = 0;
-		var jumpRowIdx = cells.findIndex((cell) => cell.row.position - 1 === rowPos) - 1;
+		var isStartingCellEmpty = !cells[rowPos].getValue();
+		var isTopOfStartingCellEmpty = !cells[rowPos - 1]?.getValue();
+		var jumpRow = rowPos;
 
-		for (var i = jumpRowIdx; i >= 0; i--){
-			var cell = cells[i];
-			if (Helpers.elVisible(cell.getElement())) {
-				jumpRow = cell.row.position - 1;
-				if (cell.getValue()) break;
+		for (var i = jumpRow - 1; i >= 0; i--){
+			var currentCell = cells[i];
+			if (isStartingCellEmpty) {
+				jumpRow = currentCell.row.position - 1;
+
+				if (currentCell.getValue()) {
+					break;
+				}
+
+				if (!currentCell.getValue()) {
+					continue;
+				}
+			} else {
+				if (!isTopOfStartingCellEmpty && !currentCell.getValue()) {
+					break;
+				}
+
+				jumpRow = currentCell.row.position - 1;
+
+				if (isTopOfStartingCellEmpty) {
+					if (!currentCell.getValue()) {
+						continue;
+					}
+					if (currentCell.getValue()) {
+						break;
+					}
+				}
+
+				if (currentCell.getValue()) {
+					continue;
+				}
 			}
 		}
 
@@ -836,14 +920,41 @@ class Spreadsheet extends Module {
 	findJumpCellDown(rowPos, colPos) {
 		var column = this.getColumnByRangePos(colPos);
 		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
-		var jumpRow = 0;
-		var jumpRowIdx = cells.findIndex((cell) => cell.row.position - 1 === rowPos) + 1;
+		var isStartingCellEmpty = !cells[rowPos].getValue();
+		var isBottomOfStartingCellEmpty = !cells[rowPos + 1]?.getValue();
+		var jumpRow = rowPos;
 
-		for (var i = jumpRowIdx; i < cells.length; i++){
-			var cell = cells[i];
-			if (Helpers.elVisible(cell.getElement())) {
-				jumpRow = cell.row.position - 1;
-				if (cell.getValue()) break;
+		for (var i = jumpRow + 1; i < cells.length; i++){
+			var currentCell = cells[i];
+			if (isStartingCellEmpty) {
+				jumpRow = currentCell.row.position - 1;
+
+				if (currentCell.getValue()) {
+					break;
+				}
+
+				if (!currentCell.getValue()) {
+					continue;
+				}
+			} else {
+				if (!isBottomOfStartingCellEmpty && !currentCell.getValue()) {
+					break;
+				}
+
+				jumpRow = currentCell.row.position - 1;
+
+				if (isBottomOfStartingCellEmpty) {
+					if (!currentCell.getValue()) {
+						continue;
+					}
+					if (currentCell.getValue()) {
+						break;
+					}
+				}
+
+				if (currentCell.getValue()) {
+					continue;
+				}
 			}
 		}
 
