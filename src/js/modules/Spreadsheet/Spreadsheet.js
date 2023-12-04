@@ -789,7 +789,7 @@ class Spreadsheet extends Module {
 		var row = this.getRowByRangePos(rowPos);
 		var cells = row.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
 		var isStartingCellEmpty = !cells[colPos + 1].getValue();
-		var isLeftOfStartingCellEmpty = !cells[colPos]?.getValue();
+		var isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false;
 		var jumpCol = colPos;
 	
 		// Go until we find an empty / non-empty cell.
@@ -834,7 +834,7 @@ class Spreadsheet extends Module {
 		var row = this.getRowByRangePos(rowPos);
 		var cells = row.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
 		var isStartingCellEmpty = !cells[colPos + 1].getValue();
-		var isRightOfStartingCellEmpty = !cells[colPos + 2]?.getValue();
+		var isRightOfStartingCellEmpty = cells[colPos + 2] ? !cells[colPos + 2].getValue() : false;
 		var jumpCol = colPos;
 
 		for (var i = colPos + 2; i < cells.length; i++){
@@ -877,7 +877,7 @@ class Spreadsheet extends Module {
 		var column = this.getColumnByRangePos(colPos);
 		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
 		var isStartingCellEmpty = !cells[rowPos].getValue();
-		var isTopOfStartingCellEmpty = !cells[rowPos - 1]?.getValue();
+		var isTopOfStartingCellEmpty = cells[rowPos - 1] ? !cells[rowPos - 1].getValue() : false;
 		var jumpRow = rowPos;
 
 		for (var i = jumpRow - 1; i >= 0; i--){
@@ -921,7 +921,7 @@ class Spreadsheet extends Module {
 		var column = this.getColumnByRangePos(colPos);
 		var cells = column.cells.filter((cell) => Helpers.elVisible(cell.getElement()));
 		var isStartingCellEmpty = !cells[rowPos].getValue();
-		var isBottomOfStartingCellEmpty = !cells[rowPos + 1]?.getValue();
+		var isBottomOfStartingCellEmpty = cells[rowPos + 1] ? !cells[rowPos + 1].getValue() : false;
 		var jumpRow = rowPos;
 
 		for (var i = jumpRow + 1; i < cells.length; i++){
