@@ -33,12 +33,14 @@ class Spreadsheet extends Module {
 	}
 
 	initializeWatchers() {
+		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
 		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
 		this.subscribe("cell-rendered", this.renderCell.bind(this));
+		this.subscribe("cell-editing", this.handleEditingCell.bind(this));
 		this.subscribe("edit-success", this.finishEditingCell.bind(this));
 		this.subscribe("edit-cancelled", this.finishEditingCell.bind(this));
 		this.subscribe("page-changed", this.handlePageChanged.bind(this));
@@ -98,18 +100,6 @@ class Spreadsheet extends Module {
 		for (var column of this.table.options.columns) {
 			// Disable sorting by clicking header
 			column.headerSort = false;
-
-			// FIXME: tableholder is not focusable if we have a column that's 
-			// `editable: false` and `editor: 'input' or something`.
-
-			// Edit on double click
-			var editable = column.editable !== undefined ? column.editable : true;
-			// TODO: use column init event, and then assign column.modules
-			column.__spreadsheet_editable = editable;
-			column.editable = false;
-
-			column.__spreadsheet_editor = column.editor;
-			column.editor = false;
 		}
 
 		var customRowHeader = this.options("spreadsheetRowHeader");
@@ -154,6 +144,30 @@ class Spreadsheet extends Module {
 
 		var self = this;
 
+		this.handleKeyDown = function (e) {
+			if (e.key === "Enter") {
+				// prevent action when pressing enter from editor
+				if (!e.target.classList.contains("tabulator-tableholder")) {
+					return;
+				}
+
+				// is menu open?
+				if (self.table.modules.menu && self.table.modules.menu.currentComponent) {
+					return;
+				}
+
+				// is editing a cell?
+				if (self.table.modules.edit && self.table.modules.edit.currentCell) {
+					return;
+				}
+
+				self.editCell(self.getActiveCell());
+				e.preventDefault();
+			}
+		}
+
+		this.table.rowManager.element.addEventListener("keydown", this.handleKeyDown);
+
 		this.mouseUpHandler = function () {
 			self.mousedown = false;
 			document.removeEventListener("mouseup", self.mouseUpHandler);
@@ -161,6 +175,7 @@ class Spreadsheet extends Module {
 
 		this.subscribe("table-destroy", function () {
 			document.removeEventListener("mouseup", self.mouseUpHandler);
+			self.table.rowManager.element.removeEventListener("keydown", self.handleKeyDown);
 		});
 
 		this.resetRanges();
@@ -168,6 +183,9 @@ class Spreadsheet extends Module {
 		this.table.rowManager.element.appendChild(this.overlay);
 		this.table.columnManager.element.setAttribute("tabindex", 0);
 
+		if (this.table.modules.edit) {
+			this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
+		}
 	}
 
 	initializeFunctions() {
@@ -209,6 +227,14 @@ class Spreadsheet extends Module {
 
 			return range.getComponent();
 		});
+	}
+
+	initializeColumn(column) {
+		if (column.modules.edit) {
+			// Block editor from taking action so we can trigger edit by
+			// double clicking.
+			column.modules.edit.blocked = true;
+		}
 	}
 	
 	initializeMenuNavigation() {
@@ -567,27 +593,20 @@ class Spreadsheet extends Module {
 
 		this.editCell(cell);
 	}
-
-	editActiveCell() {
-		this.editCell(this.getActiveCell());
-	}
-
+	
 	editCell(cell) {
-		cell.column.definition.editable =
-			cell.column.definition.__spreadsheet_editable;
-		cell.column.definition.editor =
-			cell.column.definition.__spreadsheet_editor;
-		this.table.modules.edit.initializeColumnCheck(cell.column);
-
-		if (this.table.modules.edit.allowEdit(cell)) {
-			cell.getComponent().edit();
-		}
+		cell.column.modules.edit.blocked = false;
+		cell.element.focus({ preventScroll: true });
+		cell.column.modules.edit.blocked = true;
 	}
 
-	finishEditingCell(cell) {
-		cell.column.definition.editable = false;
-		cell.column.definition.editor = false;
-		this.table.rowManager.element.focus();
+	handleEditingCell() {
+		this.table.rowManager.element.removeEventListener("keydown", this.handleKeyDown);
+	}
+
+	finishEditingCell() {
+		self.table.rowManager.element.focus();
+		this.table.rowManager.element.addEventListener("keydown", this.handleKeyDown);
 	}
 
 	navigate(mode, dir) {

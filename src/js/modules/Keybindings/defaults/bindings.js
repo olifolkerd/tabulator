@@ -25,5 +25,4 @@ export default {
 	spreadsheetExpandJumpDown:["ctrl + shift + 40", "meta + shift + 40"],
 	spreadsheetExpandJumpLeft:["ctrl + shift + 37", "meta + shift + 37"],
 	spreadsheetExpandJumpRight:["ctrl + shift + 39", "meta + shift + 39"],
-	spreadsheetEditCell:13,
 };

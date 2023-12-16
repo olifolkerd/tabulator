@@ -13,6 +13,7 @@ class Edit extends Module{
 		this.recursionBlock = false; //prevent focus recursion
 		this.invalidEdit = false;
 		this.editedCells = [];
+		this.elementToFocusOnBlur = false;
 		
 		this.editors = Edit.editors;
 		
@@ -680,24 +681,32 @@ class Edit extends Module{
 						}
 					}else{
 						console.warn("Edit Error - Editor should return an instance of Node, the editor returned:", cellEditor);
-						element.blur();
+						this.blur(cell);
 						return false;
 					}
 				}else{
-					element.blur();
+					this.blur(cell);
 					return false;
 				}
 				
 				return true;
 			}else{
 				this.mouseClick = false;
-				element.blur();
+				this.blur(cell);
 				return false;
 			}
 		}else{
 			this.mouseClick = false;
-			element.blur();
+			this.blur(cell);
 			return false;
+		}
+	}
+
+	blur(cell) {
+		if (this.elementToFocusOnBlur) {
+			this.elementToFocusOnBlur.focus();
+		} else {
+			cell.getElement().blur();
 		}
 	}
 	
