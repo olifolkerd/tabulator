@@ -605,7 +605,7 @@ class Spreadsheet extends Module {
 	}
 
 	finishEditingCell() {
-		self.table.rowManager.element.focus();
+		this.table.rowManager.element.focus();
 		this.table.rowManager.element.addEventListener("keydown", this.handleKeyDown);
 	}
 
