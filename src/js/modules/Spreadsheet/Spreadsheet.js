@@ -36,6 +36,7 @@ class Spreadsheet extends Module {
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
+		this.subscribe("columns-loaded", this.handleColumnsLoaded.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
 		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
@@ -45,6 +46,7 @@ class Spreadsheet extends Module {
 		this.subscribe("edit-cancelled", this.finishEditingCell.bind(this));
 		this.subscribe("page-changed", this.handlePageChanged.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
+		this.subscribe("table-redraw", this.resetRanges.bind(this));
 
 		var debouncedLayoutRanges = Helpers.debounce(this.layoutRanges.bind(this), 200);
 		var layoutRanges = () => {
@@ -101,32 +103,6 @@ class Spreadsheet extends Module {
 			// Disable sorting by clicking header
 			column.headerSort = false;
 		}
-
-		var customRowHeader = this.options("spreadsheetRowHeader");
-
-		var rowHeaderDef = {
-			title: "",
-			field: this.rowHeaderField,
-			headerSort: false,
-			resizable: false,
-			frozen: true,
-			editable: false,
-			formatter: "rownum",
-			formatterParams: { relativeToPage: true },
-
-			...customRowHeader,
-
-			cssClass: customRowHeader.cssClass
-				? `tabulator-spreadsheet-row-header ${customRowHeader.cssClass}`
-				: "tabulator-spreadsheet-row-header",
-		};
-
-		this.rowHeaderField = rowHeaderDef.field;
-
-		this.table.options.columns = [
-			rowHeaderDef,
-			...this.table.options.columns,
-		];
 
 		this.table.options.clipboardCopyRowRange = "spreadsheet";
 
@@ -490,6 +466,28 @@ class Spreadsheet extends Module {
 		);
 
 		el.dataset.range = rangeIdx;
+	}
+
+	handleColumnsLoaded() {
+		var customRowHeader = this.options("spreadsheetRowHeader");
+		var rowHeaderDef = {
+			title: "",
+			field: this.rowHeaderField,
+			headerSort: false,
+			resizable: false,
+			frozen: true,
+			editable: false,
+			formatter: "rownum",
+			formatterParams: { relativeToPage: true },
+
+			...customRowHeader,
+
+			cssClass: customRowHeader.cssClass
+				? `tabulator-spreadsheet-row-header ${customRowHeader.cssClass}`
+				: "tabulator-spreadsheet-row-header",
+		};
+		this.rowHeaderField = rowHeaderDef.field;
+		this.table.columnManager.addColumn(rowHeaderDef, true);
 	}
 
 	handleColumnMouseDown(event, column) {
