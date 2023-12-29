@@ -33,7 +33,7 @@ class Spreadsheet extends Module {
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
-		this.subscribe("columns-loaded", this.handleColumnsLoaded.bind(this));
+		this.subscribe("columns-loading", this.handleColumnsLoading.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
 		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
@@ -465,7 +465,7 @@ class Spreadsheet extends Module {
 		el.dataset.range = rangeIdx;
 	}
 
-	handleColumnsLoaded() {
+	handleColumnsLoading() {
 		var customRowHeader = this.options("spreadsheetRowHeader");
 		var rowHeaderDef = {
 			title: "",
@@ -484,7 +484,8 @@ class Spreadsheet extends Module {
 				: "tabulator-spreadsheet-row-header",
 		};
 		this.rowHeaderField = rowHeaderDef.field;
-		this.table.columnManager.addColumn(rowHeaderDef, true);
+		// Add this column before everything else
+		this.table.columnManager._addColumn(rowHeaderDef);
 	}
 
 	handleColumnMouseDown(event, column) {
