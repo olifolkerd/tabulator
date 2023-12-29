@@ -48,6 +48,14 @@ class RangeComponent {
 	getBottom() {
 		return this._range.bottom;
 	}
+
+	getLeft() {
+		return this._range.left;
+	}
+
+	getRight() {
+		return this._range.right;
+	}
 }
 
 export default RangeComponent;
