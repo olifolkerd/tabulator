@@ -14,9 +14,6 @@ class Spreadsheet extends Module {
 
 		this.registerTableOption("spreadsheet", false); //enable spreadsheet
 		this.registerTableOption("spreadsheetRowHeader", {}); //row header definition
-
-		this.registerColumnOption("__spreadsheet_editable");
-		this.registerColumnOption("__spreadsheet_editor");
 	}
 
 	initialize() {
