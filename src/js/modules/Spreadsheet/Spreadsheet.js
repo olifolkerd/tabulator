@@ -41,9 +41,9 @@ class Spreadsheet extends Module {
 		this.subscribe("cell-editing", this.handleEditingCell.bind(this));
 		this.subscribe("edit-success", this.finishEditingCell.bind(this));
 		this.subscribe("edit-cancelled", this.finishEditingCell.bind(this));
-		this.subscribe("page-changed", this.handlePageChanged.bind(this));
+		this.subscribe("page-changed", this.redraw.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
-		this.subscribe("table-redraw", this.resetRanges.bind(this));
+		this.subscribe("table-redraw", this.redraw.bind(this));
 
 		var debouncedLayoutRanges = Helpers.debounce(this.layoutRanges.bind(this), 200);
 		var layoutRanges = () => {
@@ -397,6 +397,12 @@ class Spreadsheet extends Module {
 			subscribeListeners();
 			draw();
 		});
+	}
+
+	redraw() {
+		this.selecting = 'cell';
+		this.resetRanges();
+		this.layoutElement();
 	}
 
 	getSelectedData() {
@@ -1178,12 +1184,6 @@ class Spreadsheet extends Module {
 			bottomRightCell.row.getElement().offsetHeight -
 			topLeftCell.row.getElement().offsetTop +
 			"px";
-	}
-
-	handlePageChanged() {
-		this.selecting = 'cell';
-		this.resetRanges();
-		this.layoutElement();
 	}
 
 	findRangeByCellElement(cell) {
