@@ -96,11 +96,6 @@ class Spreadsheet extends Module {
 	}
 
 	initializeTable() {
-		for (var column of this.table.options.columns) {
-			// Disable sorting by clicking header
-			column.headerSort = false;
-		}
-
 		this.table.options.clipboardCopyRowRange = "spreadsheet";
 
 		this.overlay = document.createElement("div");

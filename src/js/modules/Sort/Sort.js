@@ -108,7 +108,7 @@ class Sort extends Module{
 			tristate: column.definition.headerSortTristate,
 		};
 
-		if(column.definition.headerSort !== false){
+		if(column.definition.headerSort !== false && !this.table.modules.spreadsheet){
 
 			colEl = column.getElement();
 
