@@ -34,11 +34,11 @@ class RangeComponent {
 	}
 
 	getRows() {
-		return this._range.getRows();
+		return this._range.getRows().map((row) => row.getComponent());
 	}
 
 	getColumns() {
-		return this._range.getColumns();
+		return this._range.getColumns().map((column) => column.getComponent());
 	}
 
 	getTop() {

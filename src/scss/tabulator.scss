@@ -100,6 +100,8 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		-khtml-user-select: none;
 		-webkit-user-select: none;
 		-o-user-select: none;
+
+		outline: none;
 		
 		&.tabulator-header-hidden{
 			display:none;
@@ -1577,4 +1579,14 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 
 .tabulator-spreadsheet-menu-item-focused {
 	background-color: $rowAltBackgroundColor;
+}
+
+.tabulator-col-resize-guide {
+	position: absolute;
+	width: 4px;
+	margin-left: -2px;
+	height: 100%;
+	top: 0;
+	background-color: $rowTextColor;
+	opacity: .5;
 }

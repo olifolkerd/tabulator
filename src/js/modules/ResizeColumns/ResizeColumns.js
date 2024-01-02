@@ -16,6 +16,8 @@ class ResizeColumns extends Module{
 		this.initialized = false;
 		this.registerColumnOption("resizable", true);
 		this.registerTableOption("resizableColumnFit", false);
+		this.registerTableOption("resizeColumnsHandles", "all"); //where are handles located (all, header-only)
+		this.registerTableOption("resizeColumnsMode", "live"); // (ive, guide
 	}
 	
 	initialize(){
@@ -44,7 +46,7 @@ class ResizeColumns extends Module{
 	
 	
 	layoutCellHandles(cell){
-		if(cell.row.type === "row"){
+		if(cell.row.type === "row" && this.table.options.resizeColumnsHandles !== "header-only"){
 			this.deInitializeComponent(cell);
 			this.initializeColumn("cell", cell, cell.column, cell.element);
 		}
@@ -213,12 +215,21 @@ class ResizeColumns extends Module{
 	}
 	
 	_mouseDown(e, column, handle){
-		var self = this;
+		var self = this,
+		resizeGuideEl,
+		handleX = handle.getBoundingClientRect().x - self.table.element.getBoundingClientRect().x,
+		tableX = self.table.element.getBoundingClientRect().x;
+
+		if (self.table.options.resizeColumnsMode === 'guide') {
+			resizeGuideEl = document.createElement("span");
+			resizeGuideEl.classList.add('tabulator-col-resize-guide');
+			self.table.element.appendChild(resizeGuideEl);
+		}
 		
 		self.table.element.classList.add("tabulator-block-select");
-		
-		function mouseMove(e){
-			var x = typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX,
+
+		function resize(e) {
+			var x = typeof e.clientX === "undefined" ? e.touches[0].clientX : e.clientX,
 			startDiff = x - self.startX,
 			moveDiff = x - self.latestX,
 			blockedBefore, blockedAfter;
@@ -261,7 +272,28 @@ class ResizeColumns extends Module{
 			}
 		}
 		
+		function mouseMove(e){
+			if (self.table.options.resizeColumnsMode === 'live') {
+				resize(e);
+			} else {
+				var mouseX = typeof e.clientX === "undefined" ? e.touches[0].clientX : e.clientX,
+				diff = mouseX - self.startX,
+				columnX = column.element.getBoundingClientRect().left - tableX,
+				guideX = Math.max(handleX + diff, columnX + column.minWidth);
+
+				if (column.maxWidth) {
+					guideX = Math.min(guideX, columnX + column.maxWidth);
+				}
+
+				resizeGuideEl.style.left = guideX + "px";
+			}
+		}
+		
 		function mouseUp(e){
+			if (self.table.options.resizeColumnsMode === 'guide') {
+				resize(e);
+				resizeGuideEl.remove();
+			}
 			
 			//block editor from taking action while resizing is taking place
 			if(self.startColumn.modules.edit){
@@ -294,8 +326,8 @@ class ResizeColumns extends Module{
 		if(self.startColumn.modules.edit){
 			self.startColumn.modules.edit.blocked = true;
 		}
-		
-		self.startX = typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX;
+
+		self.startX = typeof e.clientX === "undefined" ? e.touches[0].clientX : e.clientX;
 		self.latestX = self.startX;
 		self.startWidth = column.getWidth();
 		

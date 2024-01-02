@@ -33,6 +33,7 @@ class Spreadsheet extends Module {
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
+		this.subscribe("column-resized", this.handleColumnResized.bind(this));
 		this.subscribe("columns-loading", this.handleColumnsLoading.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
@@ -394,10 +395,12 @@ class Spreadsheet extends Module {
 		});
 	}
 
-	redraw() {
-		this.selecting = 'cell';
-		this.resetRanges();
-		this.layoutElement();
+	redraw(force) {
+		if (force) {
+			this.selecting = 'cell';
+			this.resetRanges();
+			this.layoutElement();
+		}
 	}
 
 	getSelectedData() {
@@ -487,6 +490,27 @@ class Spreadsheet extends Module {
 		this.rowHeaderField = rowHeaderDef.field;
 		// Add this column before everything else
 		this.table.columnManager._addColumn(rowHeaderDef);
+	}
+
+	handleColumnResized(column) {
+		if (this.selecting !== "column" && this.selecting !== "all") {
+			return;
+		}
+
+		var selected = this.ranges.some((range) => range.occupiesColumn(column));
+
+		if (!selected) {
+			return;
+		}
+
+		this.ranges.forEach((range) => {
+			var selectedColumns = range.getColumns();
+			selectedColumns.forEach((selectedColumn) => {
+				if (selectedColumn !== column) {
+					selectedColumn.setWidth(column.width);
+				}
+			})
+		})
 	}
 
 	handleColumnMouseDown(event, column) {

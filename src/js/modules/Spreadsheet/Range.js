@@ -73,11 +73,11 @@ class Range {
 	}
 
 	getRows() {
-		return this.table.modules.spreadsheet.getRowsByRange(this).map((row) => row.getComponent());
+		return this.table.modules.spreadsheet.getRowsByRange(this);
 	}
 
 	getColumns() {
-		return this.table.modules.spreadsheet.getColumnsByRange(this).map((col) => col.getComponent());
+		return this.table.modules.spreadsheet.getColumnsByRange(this);
 	}
 
 	getComponent() {
