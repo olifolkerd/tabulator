@@ -330,6 +330,10 @@ class ResizeColumns extends Module{
 		self.startX = typeof e.clientX === "undefined" ? e.touches[0].clientX : e.clientX;
 		self.latestX = self.startX;
 		self.startWidth = column.getWidth();
+
+		if (self.table.options.resizeColumnsMode === "guide") {
+			resizeGuideEl.style.left = handleX + "px";
+		}
 		
 		document.body.addEventListener("mousemove", mouseMove);
 		document.body.addEventListener("mouseup", mouseUp);

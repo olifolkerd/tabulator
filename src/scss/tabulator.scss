@@ -32,6 +32,8 @@ $cellSelectedBackground: #C2D5EF !default; //cell background color when selected
 $headerHighlightBackground: #D6D6D6 !default; //header background color when highlighted
 $headerTextHighlightBackground: #000000 !default; //header text color when highlighted
 
+$columnResizeGuideColor: #999 !default; //column resize guide
+
 $rangeBorderColor: #2975DD !default; //range border color
 $rangeHandleColor: #2975DD !default; //range handle color
 
@@ -1584,9 +1586,8 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 .tabulator-col-resize-guide {
 	position: absolute;
 	width: 4px;
-	margin-left: -2px;
+	margin-left: -0.5px;
 	height: 100%;
 	top: 0;
-	background-color: $rowTextColor;
-	opacity: .5;
+	background-color: $columnResizeGuideColor;
 }
