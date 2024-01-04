@@ -616,6 +616,9 @@ class Spreadsheet extends Module {
 	}
 	
 	editCell(cell) {
+		if (!cell.column.modules.edit) {
+			cell.column.modules.edit = {}
+		}
 		cell.column.modules.edit.blocked = false;
 		cell.element.focus({ preventScroll: true });
 		cell.column.modules.edit.blocked = true;

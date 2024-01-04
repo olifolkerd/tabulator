@@ -296,7 +296,7 @@ class ResizeColumns extends Module{
 			}
 			
 			//block editor from taking action while resizing is taking place
-			if(self.startColumn.modules.edit){
+			if(self.startColumn.modules.edit && !self.table.modules.spreadsheet){
 				self.startColumn.modules.edit.blocked = false;
 			}
 			
