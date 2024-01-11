@@ -732,7 +732,7 @@ class Column extends CoreFeature{
 	}
 
 	getHeight(){
-		return Math.ceil(this.element.getBoundingClientRect().height);
+		return this.element.offsetHeight;
 	}
 
 	setMinWidth(minWidth){

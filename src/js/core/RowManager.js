@@ -1035,7 +1035,7 @@ export default class RowManager extends CoreFeature{
 		let resized = false;
 		
 		if(this.renderer.verticalFillMode === "fill"){
-			let otherHeight =  Math.floor(this.table.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
+			let otherHeight =  this.table.columnManager.getElement().offsetHeight + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0);
 			
 			if(this.fixedHeight){
 				minHeight = isNaN(this.table.options.minHeight) ? this.table.options.minHeight : this.table.options.minHeight + "px";
