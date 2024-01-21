@@ -54,7 +54,7 @@ class Edit extends Module{
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 		this.subscribe("row-layout", this.rowEditableCheck.bind(this));
-		this.subscribe("data-refreshing", this.dataRefresh.bind(this));
+		this.subscribe("data-refreshing", this.cancelEdit.bind(this));
 		
 		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
@@ -78,21 +78,24 @@ class Edit extends Module{
 				if(newRow){
 					cell.getElement().firstChild.blur();
 					
-					if(newRow === true){
-						newRow = this.table.addRow({});
-					}else{
-						if(typeof newRow == "function"){
-							newRow = this.table.addRow(newRow(cell.row.getComponent()));
+					if(!this.invalidEdit){
+						
+						if(newRow === true){
+							newRow = this.table.addRow({});
 						}else{
-							newRow = this.table.addRow(Object.assign({}, newRow));
+							if(typeof newRow == "function"){
+								newRow = this.table.addRow(newRow(cell.row.getComponent()));
+							}else{
+								newRow = this.table.addRow(Object.assign({}, newRow));
+							}
 						}
-					}
-
-					newRow.then(() => {
-						setTimeout(() => {
-							cell.getComponent().navigateNext();
+						
+						newRow.then(() => {
+							setTimeout(() => {
+								cell.getComponent().navigateNext();
+							});
 						});
-					});
+					}
 				}
 			}
 		}
@@ -348,7 +351,7 @@ class Edit extends Module{
 			this.cancelEdit();
 		}
 	}
-
+	
 	rowEditableCheck(row){
 		row.getCells().forEach((cell) => {
 			if(cell.column.modules.edit && typeof cell.column.modules.edit.check === "function"){
@@ -369,30 +372,30 @@ class Edit extends Module{
 		//set column editor
 		switch(typeof column.definition.editor){
 			case "string":
-				if(this.editors[column.definition.editor]){
-					config.editor = this.editors[column.definition.editor];
-				}else{
-					console.warn("Editor Error - No such editor found: ", column.definition.editor);
-				}
-				break;
+			if(this.editors[column.definition.editor]){
+				config.editor = this.editors[column.definition.editor];
+			}else{
+				console.warn("Editor Error - No such editor found: ", column.definition.editor);
+			}
+			break;
 			
 			case "function":
-				config.editor = column.definition.editor;
-				break;
+			config.editor = column.definition.editor;
+			break;
 			
 			case "boolean":
-				if(column.definition.editor === true){
-					if(typeof column.definition.formatter !== "function"){
-						if(this.editors[column.definition.formatter]){
-							config.editor = this.editors[column.definition.formatter];
-						}else{
-							config.editor = this.editors["input"];
-						}
+			if(column.definition.editor === true){
+				if(typeof column.definition.formatter !== "function"){
+					if(this.editors[column.definition.formatter]){
+						config.editor = this.editors[column.definition.formatter];
 					}else{
-						console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
+						config.editor = this.editors["input"];
 					}
+				}else{
+					console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 				}
-				break;
+			}
+			break;
 		}
 		
 		if(config.editor){
@@ -424,12 +427,6 @@ class Edit extends Module{
 			cell.row.getElement().classList.remove("tabulator-editing");
 			
 			cell.table.element.classList.remove("tabulator-editing");
-		}
-	}
-
-	dataRefresh(){
-		if(!this.invalidEdit){
-			this.cancelEdit();
 		}
 	}
 	
@@ -541,25 +538,25 @@ class Edit extends Module{
 	
 	allowEdit(cell) {
 		var check = cell.column.modules.edit ? true : false;
-
+		
 		if(cell.column.modules.edit){
 			switch(typeof cell.column.modules.edit.check){
 				case "function":
-					if(cell.row.initialized){
-						check = cell.column.modules.edit.check(cell.getComponent());
-					}
-					break;
-
+				if(cell.row.initialized){
+					check = cell.column.modules.edit.check(cell.getComponent());
+				}
+				break;
+				
 				case "string":
-					check = !!cell.row.data[cell.column.modules.edit.check];
-					break;
-
+				check = !!cell.row.data[cell.column.modules.edit.check];
+				break;
+				
 				case "boolean":
-					check = cell.column.modules.edit.check;
-					break;
+				check = cell.column.modules.edit.check;
+				break;
 			}
 		}
-
+		
 		return check;
 	}
 	
@@ -571,7 +568,7 @@ class Edit extends Module{
 		cellEditor, component, params;
 		
 		//prevent editing if another cell is refusing to leave focus (eg. validation fail)
-
+		
 		if(this.currentCell){
 			if(!this.invalidEdit && this.currentCell !== cell){
 				this.cancelEdit();
@@ -602,7 +599,6 @@ class Edit extends Module{
 					
 					return valid === true;
 				}else{
-					console.log("fail")
 					self.invalidEdit = true;
 					self.focusCellNoEvent(cell, true);
 					rendered();
