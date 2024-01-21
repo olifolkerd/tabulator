@@ -994,7 +994,7 @@ class Ajax extends Module{
 				ajaxParams = ajaxParams.call(this.table);
 			}
 			
-			params = Object.assign(params, ajaxParams);
+			params = Object.assign(Object.assign({}, ajaxParams), params);
 		}		
 		
 		return params;
