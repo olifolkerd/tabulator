@@ -7661,7 +7661,7 @@ class Edit$1 extends Module{
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 		this.subscribe("row-layout", this.rowEditableCheck.bind(this));
-		this.subscribe("data-refreshing", this.cancelEdit.bind(this));
+		this.subscribe("data-refreshing", this.dataRefresh.bind(this));
 		
 		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
@@ -7694,7 +7694,7 @@ class Edit$1 extends Module{
 							newRow = this.table.addRow(Object.assign({}, newRow));
 						}
 					}
-					
+
 					newRow.then(() => {
 						setTimeout(() => {
 							cell.getComponent().navigateNext();
@@ -8033,6 +8033,12 @@ class Edit$1 extends Module{
 			cell.table.element.classList.remove("tabulator-editing");
 		}
 	}
+
+	dataRefresh(){
+		if(!this.invalidEdit){
+			this.cancelEdit();
+		}
+	}
 	
 	cancelEdit(){
 		if(this.currentCell){
@@ -8203,6 +8209,7 @@ class Edit$1 extends Module{
 					
 					return valid === true;
 				}else {
+					console.log("fail");
 					self.invalidEdit = true;
 					self.focusCellNoEvent(cell, true);
 					rendered();
