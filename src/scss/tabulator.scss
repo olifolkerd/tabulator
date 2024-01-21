@@ -578,7 +578,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				opacity:.5;
 			}
 			
-			&:not(.disabled){
+			&:not(disabled){
 				@media (hover:hover) and (pointer:fine){
 					&:hover{
 						cursor:pointer;

@@ -440,7 +440,7 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .tabulator .tabulator-footer .tabulator-page:not(.disabled):hover {
+  .tabulator .tabulator-footer .tabulator-page:not(disabled):hover {
     cursor: pointer;
     background: rgba(0, 0, 0, 0.2);
     color: #fff;
