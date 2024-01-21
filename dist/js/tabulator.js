@@ -1,4 +1,4 @@
-/* Tabulator v5.5.2 (c) Oliver Folkerd 2023 */
+/* Tabulator v5.5.3 (c) Oliver Folkerd 2024 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -1712,6 +1712,25 @@
 			};
 		}
 
+		static retrieveNestedData(separator, field, data){
+			var structure = separator ? field.split(separator) : [field],
+			length = structure.length,
+			output;
+
+			for(let i = 0; i < length; i++){
+
+				data = data[structure[i]];
+
+				output = data;
+
+				if(!data){
+					break;
+				}
+			}
+
+			return output;
+		}
+
 		static deepClone(obj, clone, list = []){
 			var objectProto = {}.__proto__,
 			arrayProto = [].__proto__;
@@ -2979,7 +2998,7 @@
 			var matches = [];
 			
 			Object.keys(this.columnsByField).forEach((field) => {
-				var fieldRoot = field.split(".")[0];
+				var fieldRoot = this.table.options.nestedFieldSeparator ? field.split(this.table.options.nestedFieldSeparator)[0] : field;
 				if(fieldRoot === root){
 					matches.push(this.columnsByField[field]);
 				}
@@ -5334,7 +5353,7 @@
 		refreshPipelines(handler, stage, index, renderInPosition){
 			this.dispatch("data-refreshing");
 			
-			if(!handler){
+			if(!handler || !this.activeRowsPipeline[0]){
 				this.activeRowsPipeline[0] = this.rows.slice(0);
 			}
 			
@@ -5344,7 +5363,6 @@
 				//handle case where all data needs refreshing
 				
 				case "dataPipeline":
-				
 					for(let i = index; i < this.dataPipeline.length; i++){
 						let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
 					
@@ -9096,7 +9114,7 @@
 					ajaxParams = ajaxParams.call(this.table);
 				}
 				
-				params = Object.assign(params, ajaxParams);
+				params = Object.assign(Object.assign({}, ajaxParams), params);
 			}		
 			
 			return params;
@@ -13746,21 +13764,24 @@
 					if(newRow){
 						cell.getElement().firstChild.blur();
 						
-						if(newRow === true){
-							newRow = this.table.addRow({});
-						}else {
-							if(typeof newRow == "function"){
-								newRow = this.table.addRow(newRow(cell.row.getComponent()));
+						if(!this.invalidEdit){
+							
+							if(newRow === true){
+								newRow = this.table.addRow({});
 							}else {
-								newRow = this.table.addRow(Object.assign({}, newRow));
+								if(typeof newRow == "function"){
+									newRow = this.table.addRow(newRow(cell.row.getComponent()));
+								}else {
+									newRow = this.table.addRow(Object.assign({}, newRow));
+								}
 							}
-						}
-						
-						newRow.then(() => {
-							setTimeout(() => {
-								cell.getComponent().navigateNext();
+							
+							newRow.then(() => {
+								setTimeout(() => {
+									cell.getComponent().navigateNext();
+								});
 							});
-						});
+						}
 					}
 				}
 			}
@@ -14016,7 +14037,7 @@
 				this.cancelEdit();
 			}
 		}
-
+		
 		rowEditableCheck(row){
 			row.getCells().forEach((cell) => {
 				if(cell.column.modules.edit && typeof cell.column.modules.edit.check === "function"){
@@ -14203,7 +14224,7 @@
 		
 		allowEdit(cell) {
 			var check = cell.column.modules.edit ? true : false;
-
+			
 			if(cell.column.modules.edit){
 				switch(typeof cell.column.modules.edit.check){
 					case "function":
@@ -14211,17 +14232,17 @@
 							check = cell.column.modules.edit.check(cell.getComponent());
 						}
 						break;
-
+					
 					case "string":
 						check = !!cell.row.data[cell.column.modules.edit.check];
 						break;
-
+					
 					case "boolean":
 						check = cell.column.modules.edit.check;
 						break;
 				}
 			}
-
+			
 			return check;
 		}
 		
@@ -14233,7 +14254,7 @@
 			cellEditor, component, params;
 			
 			//prevent editing if another cell is refusing to leave focus (eg. validation fail)
-
+			
 			if(this.currentCell){
 				if(!this.invalidEdit && this.currentCell !== cell){
 					this.cancelEdit();
@@ -16138,7 +16159,8 @@
 		if(label){
 			if(formatterParams.urlField){
 				data = cell.getData();
-				value = data[formatterParams.urlField];
+
+				value = Helpers.retrieveNestedData(this.table.options.nestedFieldSeparator, formatterParams.urlField, data);
 			}
 
 			if(formatterParams.url){
@@ -21642,7 +21664,7 @@
 		
 		userSetPageToRow(row){
 			if(this.table.options.pagination){
-				row = this.rowManager.findRow(row);
+				row = this.table.rowManager.findRow(row);
 				
 				if(row){
 					return this.setPageToRow(row);
@@ -22582,7 +22604,7 @@
 		}
 
 		setColumnLayout(layout){
-			this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout));
+			this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout, true));
 			return true;
 		}
 
@@ -22648,7 +22670,7 @@
 		}
 
 		//merge old and new column definitions
-		mergeDefinition(oldCols, newCols){
+		mergeDefinition(oldCols, newCols, mergeAllNew){
 			var output = [];
 
 			newCols = newCols || [];
@@ -22658,7 +22680,9 @@
 				keys;
 
 				if(from){
-					if(this.config.columns === true || this.config.columns == undefined){
+					if(mergeAllNew){
+						keys = Object.keys(column);
+					}else if(this.config.columns === true || this.config.columns == undefined){
 						keys =  Object.keys(from);
 						keys.push("width");
 					}else {

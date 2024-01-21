@@ -1,4 +1,4 @@
-/* Tabulator v5.5.2 (c) Oliver Folkerd 2024 */
+/* Tabulator v5.5.3 (c) Oliver Folkerd 2024 */
 class CoreFeature{
 
 	constructor(table){
@@ -7979,30 +7979,30 @@ class Edit$1 extends Module{
 		//set column editor
 		switch(typeof column.definition.editor){
 			case "string":
-			if(this.editors[column.definition.editor]){
-				config.editor = this.editors[column.definition.editor];
-			}else {
-				console.warn("Editor Error - No such editor found: ", column.definition.editor);
-			}
-			break;
+				if(this.editors[column.definition.editor]){
+					config.editor = this.editors[column.definition.editor];
+				}else {
+					console.warn("Editor Error - No such editor found: ", column.definition.editor);
+				}
+				break;
 			
 			case "function":
-			config.editor = column.definition.editor;
-			break;
+				config.editor = column.definition.editor;
+				break;
 			
 			case "boolean":
-			if(column.definition.editor === true){
-				if(typeof column.definition.formatter !== "function"){
-					if(this.editors[column.definition.formatter]){
-						config.editor = this.editors[column.definition.formatter];
+				if(column.definition.editor === true){
+					if(typeof column.definition.formatter !== "function"){
+						if(this.editors[column.definition.formatter]){
+							config.editor = this.editors[column.definition.formatter];
+						}else {
+							config.editor = this.editors["input"];
+						}
 					}else {
-						config.editor = this.editors["input"];
+						console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 					}
-				}else {
-					console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 				}
-			}
-			break;
+				break;
 		}
 		
 		if(config.editor){
@@ -8149,18 +8149,18 @@ class Edit$1 extends Module{
 		if(cell.column.modules.edit){
 			switch(typeof cell.column.modules.edit.check){
 				case "function":
-				if(cell.row.initialized){
-					check = cell.column.modules.edit.check(cell.getComponent());
-				}
-				break;
+					if(cell.row.initialized){
+						check = cell.column.modules.edit.check(cell.getComponent());
+					}
+					break;
 				
 				case "string":
-				check = !!cell.row.data[cell.column.modules.edit.check];
-				break;
+					check = !!cell.row.data[cell.column.modules.edit.check];
+					break;
 				
 				case "boolean":
-				check = cell.column.modules.edit.check;
-				break;
+					check = cell.column.modules.edit.check;
+					break;
 			}
 		}
 		
