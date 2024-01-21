@@ -387,7 +387,7 @@ export default class ColumnManager extends CoreFeature {
 		var matches = [];
 		
 		Object.keys(this.columnsByField).forEach((field) => {
-			var fieldRoot = field.split(".")[0];
+			var fieldRoot = this.table.options.nestedFieldSeparator ? field.split(this.table.options.nestedFieldSeparator)[0] : field;
 			if(fieldRoot === root){
 				matches.push(this.columnsByField[field]);
 			}
