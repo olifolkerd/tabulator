@@ -714,7 +714,7 @@ export default class RowManager extends CoreFeature{
 	refreshPipelines(handler, stage, index, renderInPosition){
 		this.dispatch("data-refreshing");
 		
-		if(!handler){
+		if(!handler || !this.activeRowsPipeline[0]){
 			this.activeRowsPipeline[0] = this.rows.slice(0);
 		}
 		
@@ -724,7 +724,6 @@ export default class RowManager extends CoreFeature{
 			//handle case where all data needs refreshing
 			
 			case "dataPipeline":
-			
 				for(let i = index; i < this.dataPipeline.length; i++){
 					let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
 				
