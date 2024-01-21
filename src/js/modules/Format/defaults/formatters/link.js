@@ -1,3 +1,6 @@
+import Helpers from '../../../../core/tools/Helpers.js';
+
+
 export default function(cell, formatterParams, onRendered){
 	var value = cell.getValue(),
 	urlPrefix = formatterParams.urlPrefix || "",
@@ -37,7 +40,8 @@ export default function(cell, formatterParams, onRendered){
 	if(label){
 		if(formatterParams.urlField){
 			data = cell.getData();
-			value = data[formatterParams.urlField];
+
+			value = Helpers.retrieveNestedData(this.table.options.nestedFieldSeparator, formatterParams.urlField, data);
 		}
 
 		if(formatterParams.url){

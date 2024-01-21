@@ -1,4 +1,4 @@
-/* Tabulator v5.5.2 (c) Oliver Folkerd 2023 */
+/* Tabulator v5.5.2 (c) Oliver Folkerd 2024 */
 class CoreFeature{
 
 	constructor(table){
@@ -152,6 +152,25 @@ class Helpers{
 			top: box.top + window.pageYOffset - document.documentElement.clientTop,
 			left: box.left + window.pageXOffset - document.documentElement.clientLeft
 		};
+	}
+
+	static retrieveNestedData(separator, field, data){
+		var structure = separator ? field.split(separator) : [field],
+		length = structure.length,
+		output;
+
+		for(let i = 0; i < length; i++){
+
+			data = data[structure[i]];
+
+			output = data;
+
+			if(!data){
+				break;
+			}
+		}
+
+		return output;
 	}
 
 	static deepClone(obj, clone, list = []){
@@ -10058,7 +10077,8 @@ function link(cell, formatterParams, onRendered){
 	if(label){
 		if(formatterParams.urlField){
 			data = cell.getData();
-			value = data[formatterParams.urlField];
+
+			value = Helpers.retrieveNestedData(this.table.options.nestedFieldSeparator, formatterParams.urlField, data);
 		}
 
 		if(formatterParams.url){
