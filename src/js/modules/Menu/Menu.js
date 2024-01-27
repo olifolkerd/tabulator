@@ -76,7 +76,7 @@ class Menu extends Module{
 			this.subscribe("group-dblclick", this.loadMenuEvent.bind(this, this.table.options.groupDblClickMenu));
 		}
 	}
-	
+
 	initializeColumn(column){
 		var	def = column.definition;
 		
@@ -217,7 +217,11 @@ class Menu extends Module{
 			this.rootPopup = popup = this.popup(menuEl);
 			
 		}else{
-			popup = parentPopup.child(menuEl);
+			if (parentPopup) {
+				popup = parentPopup.child(menuEl);
+			} else {
+				this.rootPopup = popup = this.popup(menuEl);
+			}
 		}
 		
 		menu.forEach((item) => {
@@ -285,6 +289,7 @@ class Menu extends Module{
 				this.rootPopup = null;
 				
 				if(this.currentComponent){
+					this.dispatch("menu-closed");
 					this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
 					this.currentComponent = null;
 				}
@@ -292,6 +297,7 @@ class Menu extends Module{
 			
 			this.currentComponent = component;
 			
+			this.dispatch("menu-opened", menu, popup);
 			this.dispatchExternal("menuOpened", component.getComponent());
 		}
 	}

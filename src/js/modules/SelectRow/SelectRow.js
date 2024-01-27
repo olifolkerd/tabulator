@@ -16,7 +16,11 @@ class SelectRow extends Module{
 		this.registerTableOption("selectableRollingSelection", true); //roll selection once maximum number of selectable rows is reached
 		this.registerTableOption("selectablePersistence", true); // maintain selection when table view is updated
 		this.registerTableOption("selectableCheck", function(data, row){return true;}); //check whether row is selectable
-		
+	}
+	
+	initialize(){
+		if(this.table.options.spreadsheet) return;
+
 		this.registerTableFunction("selectRow", this.selectRows.bind(this));
 		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
 		this.registerTableFunction("toggleSelectRow", this.toggleRow.bind(this));
@@ -28,9 +32,7 @@ class SelectRow extends Module{
 		this.registerComponentFunction("row", "deselect", this.deselectRows.bind(this));
 		this.registerComponentFunction("row", "toggleSelect", this.toggleRow.bind(this));
 		this.registerComponentFunction("row", "isSelected", this.isRowSelected.bind(this));
-	}
-	
-	initialize(){
+
 		if(this.table.options.selectable !== false){
 			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));

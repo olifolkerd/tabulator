@@ -83,6 +83,79 @@ export default {
 		this.dispatch("keybinding-nav-down", e);
 	},
 
+	spreadsheetJumpLeft: function(e){
+		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("jump", "left")) {
+			e.preventDefault();
+		}
+	},
+	spreadsheetJumpRight: function(e){
+		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("jump", "right")) {
+			e.preventDefault();
+		}
+	},
+	spreadsheetJumpUp: function(e){
+		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("jump", "up")) {
+			e.preventDefault();
+		}
+	},
+	spreadsheetJumpDown: function(e){
+		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("jump", "down")) {
+			e.preventDefault();
+		}
+	},
+	spreadsheetExpandLeft: function(e){
+		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("expand", "left")) {
+			e.preventDefault();
+		}
+	},
+	spreadsheetExpandRight: function(e){
+		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("expand", "right")) {
+			e.preventDefault();
+		}
+	},
+	spreadsheetExpandUp: function(e){
+		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("expand", "up")) {
+			e.preventDefault();
+		}
+	},
+	spreadsheetExpandDown: function(e){
+		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("expand", "down")) {
+			e.preventDefault();
+		}
+	},
+	spreadsheetExpandJumpLeft: function(e){
+		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("expand-jump", "left")) {
+			e.preventDefault();
+		}
+	},
+	spreadsheetExpandJumpRight: function(e){
+		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("expand-jump", "right")) {
+			e.preventDefault();
+		}
+	},
+	spreadsheetExpandJumpUp: function(e){
+		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("expand-jump", "up")) {
+			e.preventDefault();
+		}
+	},
+	spreadsheetExpandJumpDown: function(e){
+		if (!this.table.options.spreadsheet) return;
+		if (this.table.modules.spreadsheet.navigate("expand-jump", "down")) {
+			e.preventDefault();
+		}
+	},
+
 	undo:function(e){
 		var cell = false;
 		if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){

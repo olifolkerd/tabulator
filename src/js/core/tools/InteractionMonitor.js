@@ -226,11 +226,11 @@ export default class InteractionManager extends CoreFeature {
 				}
 			}
 		}
-		
+
 		if(targets.group && targets.group === targets.row){
 			delete targets.row;
 		}
-		
+
 		return targets;
 	}
 	

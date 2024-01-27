@@ -70,7 +70,7 @@ class Popup extends Module{
 			this.subscribe("group-dblclick", this.loadPopupEvent.bind(this, this.table.options.groupDblClickPopup));
 		}
 	}
-	
+
 	initializeColumn(column){
 		var def = column.definition;
 		

@@ -13,6 +13,7 @@ class Edit extends Module{
 		this.recursionBlock = false; //prevent focus recursion
 		this.invalidEdit = false;
 		this.editedCells = [];
+		this.elementToFocusOnBlur = false;
 		
 		this.editors = Edit.editors;
 		
@@ -55,13 +56,16 @@ class Edit extends Module{
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 		this.subscribe("row-layout", this.rowEditableCheck.bind(this));
 		this.subscribe("data-refreshing", this.cancelEdit.bind(this));
-		
-		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
-		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
-		this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
-		this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
-		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
-		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
+
+		if (!this.table.options.spreadsheet) {
+			this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
+			this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
+			// FIXME this doesn't respect input navigations when editing
+			// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
+			// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
+			this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
+			this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
+		}
 	}
 	
 	
@@ -680,24 +684,32 @@ class Edit extends Module{
 						}
 					}else{
 						console.warn("Edit Error - Editor should return an instance of Node, the editor returned:", cellEditor);
-						element.blur();
+						this.blur(cell);
 						return false;
 					}
 				}else{
-					element.blur();
+					this.blur(cell);
 					return false;
 				}
 				
 				return true;
 			}else{
 				this.mouseClick = false;
-				element.blur();
+				this.blur(cell);
 				return false;
 			}
 		}else{
 			this.mouseClick = false;
-			element.blur();
+			this.blur(cell);
 			return false;
+		}
+	}
+
+	blur(cell) {
+		if (this.elementToFocusOnBlur) {
+			this.elementToFocusOnBlur.focus();
+		} else {
+			cell.getElement().blur();
 		}
 	}
 	
