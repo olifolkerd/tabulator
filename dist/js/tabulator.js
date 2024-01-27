@@ -1,4 +1,4 @@
-/* Tabulator v5.5.3 (c) Oliver Folkerd 2024 */
+/* Tabulator v5.5.4 (c) Oliver Folkerd 2024 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
