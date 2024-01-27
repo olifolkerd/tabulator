@@ -19979,9 +19979,6 @@ class SelectRange extends Module {
 			if(!this.table.options.selectable){
 				this.initializeTable();
 				this.initializeWatchers();
-				if (this.table.modules.menu) {
-					this.initializeMenuNavigation();
-				}
 			}else {
 				console.warn("SelectRange functionality cannot be used in conjunction with row selection");
 			}
@@ -20096,12 +20093,7 @@ class SelectRange extends Module {
 			if (!e.target.classList.contains("tabulator-tableholder")) {
 				return;
 			}
-			
-			// is menu open?
-			if (this.table.modules.menu && this.table.modules.menu.currentComponent) {
-				return;
-			}
-			
+					
 			// is editing a cell?
 			if (this.table.modules.edit && this.table.modules.edit.currentCell) {
 				return;
@@ -20124,174 +20116,6 @@ class SelectRange extends Module {
 			// double clicking.
 			column.modules.edit.blocked = true;
 		}
-	}
-	
-	initializeMenuNavigation() {
-		var self = this;
-		var pressingContextMenu = false;
-		
-		function contextMenuKeyCheck(e) {
-			if (e.key === "ContextMenu") {
-				pressingContextMenu = true;
-			}
-		}
-		
-		function handleContextMenu(e) {
-			if (!pressingContextMenu) return;
-			
-			var activeCell = self.getActiveCell();
-			var menuDef = activeCell.column.definition.contextMenu;
-			var menu = typeof menuDef === "function" ? menuDef.call(self.table, e, activeCell.getComponent()) : menuDef;
-			
-			self.table.modules.menu.loadMenu(e, activeCell, menu, activeCell.element);
-			
-			pressingContextMenu = false;
-			e.preventDefault();
-		}
-		
-		this.table.rowManager.element.addEventListener("keyup",	contextMenuKeyCheck);
-		this.table.rowManager.element.addEventListener("contextmenu", handleContextMenu);
-		
-		this.subscribe("table-destroy", () => {
-			this.table.rowManager.element.removeEventListener("keyup", contextMenuKeyCheck);
-			this.table.rowManager.element.removeEventListener("contextmenu", handleContextMenu);
-		});
-		
-		this.subscribe("menu-opened", (menu, popup) => {
-			var stack = [createState(menu, popup)];
-			
-			function createState(menu, popup) {
-				var elements = popup.element.querySelectorAll(".tabulator-menu-item");
-				var focusIdx = 0;
-				
-				function handleMouseOver(e) {
-					focusIdx = Array.prototype.indexOf.call(elements, e.target);
-					draw();
-				}
-				
-				// We do this because the menu items use user-select: none;
-				function preventLosingFocus(e) {
-					e.preventDefault();
-				}
-				
-				elements.forEach((element) => {
-					element.addEventListener("mouseover", handleMouseOver);
-					element.addEventListener("mousedown", preventLosingFocus);
-				});
-				
-				return {
-					menu,
-					popup,
-					elements,
-					get focusIdx() {
-						return focusIdx;
-					},
-					set focusIdx(value) {
-						if (value < 0) {
-							value = 0;
-						} else if (value >= elements.length) {
-							value = elements.length - 1;
-						}
-						focusIdx = value;
-					},
-					get focusedMenu() {
-						return this.menu[focusIdx];
-					},
-					get focusedElement() {
-						return this.elements[focusIdx];
-					},
-					destroy() {
-						this.popup.hide(true);
-						this.elements.forEach((element) => {
-							element.removeEventListener("mouseover", handleMouseOver);
-							element.removeEventListener("mousedown", preventLosingFocus);
-						});
-					},
-				};
-			}
-			
-			function navigate(nav) {
-				var state = stack[stack.length - 1];
-				switch (nav) {
-					case "up":
-					state.focusIdx--;
-					break;
-					case "down":
-					state.focusIdx++;
-					break;
-					case "left":
-					if (stack.length > 1) {
-						stack.pop().destroy();
-					}
-					break;
-					case "right":
-					if (state.focusedMenu.menu && state.focusedMenu.menu.length) {
-						state.focusedElement.click();
-						var nextState = createState(state.focusedMenu.menu, state.popup.childPopup);
-						stack.push(nextState);
-					}
-					break;
-				}
-				draw();
-			}
-			
-			function draw() {
-				var state = stack[stack.length - 1];
-				state.elements.forEach((element) => {
-					var selected = element === state.focusedElement;
-					element.classList.toggle("tabulator-range-menu-item-focused", selected);
-				});
-			}
-			
-			function handleUp(e) {
-				e.preventDefault();
-				navigate("up");
-			}
-			
-			function handleDown(e) {
-				e.preventDefault();
-				navigate("down");
-			}
-			
-			function handleLeft(e) {
-				e.preventDefault();
-				navigate("left");
-			}
-			
-			function handleRight(e) {
-				e.preventDefault();
-				navigate("right");
-			}
-			
-			function handleKeyUp(e) {
-				if (e.key === "Enter") {
-					var state = stack[stack.length - 1];
-					state.focusedElement.click();
-				}
-			}
-			
-			function subscribeListeners() {
-				self.subscribe("keybinding-nav-up", handleUp);
-				self.subscribe("keybinding-nav-down", handleDown);
-				self.subscribe("keybinding-nav-left", handleLeft);
-				self.subscribe("keybinding-nav-right", handleRight);
-				// TODO use keybinding module
-				self.table.element.addEventListener("keyup", handleKeyUp);
-			}
-			
-			function unsubscribeListeners() {
-				self.unsubscribe("menu-closed", unsubscribeListeners);
-				self.unsubscribe("keybinding-nav-up", handleUp);
-				self.unsubscribe("keybinding-nav-down", handleDown);
-				self.unsubscribe("keybinding-nav-left", handleLeft);
-				self.unsubscribe("keybinding-nav-right", handleRight);
-				self.table.element.removeEventListener("keyup", handleKeyUp);
-			}
-			
-			this.subscribe("menu-closed", unsubscribeListeners);
-			subscribeListeners();
-			draw();
-		});
 	}
 	
 	redraw(force) {
@@ -20526,11 +20350,6 @@ class SelectRange extends Module {
 	navigate(mode, dir) {
 		// Don't navigate while editing
 		if (this.table.modules.edit && this.table.modules.edit.currentCell) {
-			return false;
-		}
-		
-		// Don't navigate while a menu is open
-		if (this.table.modules.menu && this.table.modules.menu.currentComponent) {
 			return false;
 		}
 		
