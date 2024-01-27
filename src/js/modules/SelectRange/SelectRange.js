@@ -10,11 +10,16 @@ class SelectRange extends Module {
 		this.ranges = [];
 		this.rowHeaderField = "--row-header";
 		this.overlay = null;
-
+		
 		this.keyDownEvent = this._handleKeyDown.bind(this);
 		
 		this.registerTableOption("selectableRange", false); //enable selectable range
 		this.registerTableOption("selectableRangeRowHeader", {}); //row header definition
+		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
+		this.registerTableFunction("getActiveRange", this.getActiveRange.bind(this, true));
+		this.registerComponentFunction("cell", "getRange", this.cellGetRange.bind(this));
+		this.registerComponentFunction("row", "getRange", this.rowGetRange.bind(this));
+		this.registerComponentFunction("column", "getRange", this.collGetRange.bind(this));
 	}
 	
 	initialize() {
@@ -22,7 +27,6 @@ class SelectRange extends Module {
 			if(!this.table.options.selectable){
 				this.initializeTable();
 				this.initializeWatchers();
-				this.initializeFunctions();
 				if (this.table.modules.menu) {
 					this.initializeMenuNavigation();
 				}
@@ -34,7 +38,7 @@ class SelectRange extends Module {
 	
 	initializeWatchers() {
 		var debouncedLayoutRangesTimeout;
-
+		
 		var debouncedLayoutRanges = () => {
 			clearTimeout(debouncedLayoutRangesTimeout);
 			debouncedLayoutRangesTimeout = setTimeout(this.layoutRanges.bind(this), 200);
@@ -66,7 +70,7 @@ class SelectRange extends Module {
 		this.subscribe("column-height", layoutRanges);
 		this.subscribe("column-resized", layoutRanges);
 		this.subscribe("cell-height", layoutRanges);
-				
+		
 		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "left"));
 		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "right"));
 		this.subscribe("keybinding-nav-left", this.keyNavigate.bind(this, "left"));
@@ -87,7 +91,7 @@ class SelectRange extends Module {
 		
 		this.overlay.appendChild(this.rangeContainer);
 		this.overlay.appendChild(this.activeRangeCellElement);
-				
+		
 		
 		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
 		
@@ -109,6 +113,46 @@ class SelectRange extends Module {
 		if (this.table.modules.edit) {
 			this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
 		}
+	}
+
+	///////////////////////////////////
+	/////// Component Functions ///////
+	///////////////////////////////////
+
+	cellGetRange(cell){
+		var range;
+			
+		if (cell.column.field === this.rowHeaderField) {
+			range = this.ranges.find((range) => range.occupiesRow(cell.row));
+		} else {
+			range = this.ranges.find((range) => range.occupies(cell));
+		}
+		
+		if (!range) { 
+			return null;
+		}
+		
+		return range.getComponent();
+	}
+
+	rowGetRange(row){
+		var range = this.ranges.find((range) => range.occupiesRow(row));
+			
+		if (!range) {
+			return null;
+		}
+		
+		return range.getComponent();
+	}
+
+	collGetRange(col){
+		var range = this.ranges.find((range) => range.occupiesColumn(col));
+			
+		if (!range) {
+			return null;
+		}
+		
+		return range.getComponent();
 	}
 	
 	_handleKeyDown(e) {
@@ -133,47 +177,6 @@ class SelectRange extends Module {
 		}
 	}
 	
-	
-	initializeFunctions() {
-		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
-		this.registerTableFunction("getActiveRange", this.getActiveRange.bind(this, true));
-		
-		this.registerComponentFunction("cell", "getRange", (cell) => {
-			var range;
-			
-			if (cell.column.field === this.rowHeaderField) {
-				range = this.ranges.find((range) => range.occupiesRow(cell.row));
-			} else {
-				range = this.ranges.find((range) => range.occupies(cell));
-			}
-			
-			if (!range) { 
-				return null;
-			}
-			
-			return range.getComponent();
-		});
-		
-		this.registerComponentFunction("row", "getRange", (row) => {
-			var range = this.ranges.find((range) => range.occupiesRow(row));
-			
-			if (!range) {
-				return null;
-			}
-			
-			return range.getComponent();
-		});
-		
-		this.registerComponentFunction("column", "getRange", (col) => {
-			var range = this.ranges.find((range) => range.occupiesColumn(col));
-			
-			if (!range) {
-				return null;
-			}
-			
-			return range.getComponent();
-		});
-	}
 	
 	initializeColumn(column) {
 		if (column.modules.edit) {
@@ -208,34 +211,34 @@ class SelectRange extends Module {
 		
 		this.table.rowManager.element.addEventListener("keyup",	contextMenuKeyCheck);
 		this.table.rowManager.element.addEventListener("contextmenu", handleContextMenu);
-				
+		
 		this.subscribe("table-destroy", () => {
 			this.table.rowManager.element.removeEventListener("keyup", contextMenuKeyCheck);
 			this.table.rowManager.element.removeEventListener("contextmenu", handleContextMenu);
 		});
-						
+		
 		this.subscribe("menu-opened", (menu, popup) => {
 			var stack = [createState(menu, popup)];
-							
+			
 			function createState(menu, popup) {
 				var elements = popup.element.querySelectorAll(".tabulator-menu-item");
 				var focusIdx = 0;
-								
+				
 				function handleMouseOver(e) {
 					focusIdx = Array.prototype.indexOf.call(elements, e.target);
 					draw();
 				}
-								
+				
 				// We do this because the menu items use user-select: none;
 				function preventLosingFocus(e) {
 					e.preventDefault();
 				}
-								
+				
 				elements.forEach((element) => {
 					element.addEventListener("mouseover", handleMouseOver);
 					element.addEventListener("mousedown", preventLosingFocus);
 				});
-								
+				
 				return {
 					menu,
 					popup,
@@ -266,32 +269,32 @@ class SelectRange extends Module {
 					},
 				};
 			}
-							
+			
 			function navigate(nav) {
 				var state = stack[stack.length - 1];
 				switch (nav) {
 					case "up":
-						state.focusIdx--;
-						break;
+					state.focusIdx--;
+					break;
 					case "down":
-						state.focusIdx++;
-						break;
+					state.focusIdx++;
+					break;
 					case "left":
-						if (stack.length > 1) {
-							stack.pop().destroy();
-						}
-						break;
+					if (stack.length > 1) {
+						stack.pop().destroy();
+					}
+					break;
 					case "right":
-						if (state.focusedMenu.menu && state.focusedMenu.menu.length) {
-							state.focusedElement.click();
-							var nextState = createState(state.focusedMenu.menu, state.popup.childPopup);
-							stack.push(nextState);
-						}
-						break;
+					if (state.focusedMenu.menu && state.focusedMenu.menu.length) {
+						state.focusedElement.click();
+						var nextState = createState(state.focusedMenu.menu, state.popup.childPopup);
+						stack.push(nextState);
+					}
+					break;
 				}
 				draw();
 			}
-								
+			
 			function draw() {
 				var state = stack[stack.length - 1];
 				state.elements.forEach((element) => {
@@ -299,34 +302,34 @@ class SelectRange extends Module {
 					element.classList.toggle("tabulator-range-menu-item-focused", selected);
 				});
 			}
-									
+			
 			function handleUp(e) {
 				e.preventDefault();
 				navigate("up");
 			}
-									
+			
 			function handleDown(e) {
 				e.preventDefault();
 				navigate("down");
 			}
-									
+			
 			function handleLeft(e) {
 				e.preventDefault();
 				navigate("left");
 			}
-									
+			
 			function handleRight(e) {
 				e.preventDefault();
 				navigate("right");
 			}
-									
+			
 			function handleKeyUp(e) {
 				if (e.key === "Enter") {
 					var state = stack[stack.length - 1];
 					state.focusedElement.click();
 				}
 			}
-									
+			
 			function subscribeListeners() {
 				self.subscribe("keybinding-nav-up", handleUp);
 				self.subscribe("keybinding-nav-down", handleDown);
@@ -335,7 +338,7 @@ class SelectRange extends Module {
 				// TODO use keybinding module
 				self.table.element.addEventListener("keyup", handleKeyUp);
 			}
-									
+			
 			function unsubscribeListeners() {
 				self.unsubscribe("menu-closed", unsubscribeListeners);
 				self.unsubscribe("keybinding-nav-up", handleUp);
@@ -344,13 +347,13 @@ class SelectRange extends Module {
 				self.unsubscribe("keybinding-nav-right", handleRight);
 				self.table.element.removeEventListener("keyup", handleKeyUp);
 			}
-									
+			
 			this.subscribe("menu-closed", unsubscribeListeners);
 			subscribeListeners();
 			draw();
 		});
 	}
-							
+	
 	redraw(force) {
 		if (force) {
 			this.selecting = 'cell';
@@ -358,16 +361,16 @@ class SelectRange extends Module {
 			this.layoutElement();
 		}
 	}
-							
+	
 	getSelectedData() {
 		return this.getDataByRange(this.getActiveRange());
 	}
-							
+	
 	getDataByRange(range) {
 		var data = [];
 		var rows = this.getRowsByRange(range);
 		var columns = this.getColumnsByRange(range);
-								
+		
 		rows.forEach((row) => {
 			var rowData = row.getData();
 			var result = {};
@@ -376,15 +379,15 @@ class SelectRange extends Module {
 			});
 			data.push(result);
 		});
-								
+		
 		return data;
 	}
-							
+	
 	getCellsByRange(range, structured) {
 		var cells = [];
 		var rows = this.getRowsByRange(range);
 		var columns = this.getColumnsByRange(range);
-								
+		
 		if (structured) {
 			cells = rows.map((row) => {
 				var arr = [];
@@ -404,22 +407,22 @@ class SelectRange extends Module {
 				});
 			});
 		}
-								
+		
 		return cells;
 	}
-							
+	
 	renderCell(cell) {
 		var el = cell.getElement();
-								
+		
 		var rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
-								
+		
 		el.classList.toggle("tabulator-range-selected", rangeIdx !== -1);
-								
+		
 		el.classList.toggle("tabulator-range-only-cell-selected", this.ranges.length === 1 && this.ranges[0].atTopLeft(cell) &&	this.ranges[0].atBottomRight(cell));
-									
+		
 		el.dataset.range = rangeIdx;
 	}
-								
+	
 	handleColumnsLoading() {
 		var customRowHeader = this.options("selectableRangeRowHeader");
 		
@@ -432,27 +435,27 @@ class SelectRange extends Module {
 			editable: false,
 			formatter: "rownum",
 			formatterParams: { relativeToPage: true },
-										
+			
 			...customRowHeader,
-										
+			
 			cssClass: customRowHeader.cssClass ? `tabulator-range-row-header ${customRowHeader.cssClass}` : "tabulator-range-row-header",
 		};
 		this.rowHeaderField = rowHeaderDef.field;
 		// Add this column before everything else
 		this.table.columnManager._addColumn(rowHeaderDef);
 	}
-								
+	
 	handleColumnResized(column) {
 		if (this.selecting !== "column" && this.selecting !== "all") {
 			return;
 		}
-									
+		
 		var selected = this.ranges.some((range) => range.occupiesColumn(column));
-									
+		
 		if (!selected) {
 			return;
 		}
-									
+		
 		this.ranges.forEach((range) => {
 			var selectedColumns = range.getColumns();
 			selectedColumns.forEach((selectedColumn) => {
@@ -462,54 +465,54 @@ class SelectRange extends Module {
 			});
 		});
 	}
-								
+	
 	handleColumnMouseDown(event, column) {
 		if (event.button === 2 && (this.selecting === "column" || this.selecting === "all") && this.getActiveRange().occupiesColumn(column)) {
 			return;
 		}
-										
+		
 		this.mousedown = true;
-										
+		
 		document.addEventListener("mouseup", this.mouseUpHandler);
-										
+		
 		this._select(event, column);
 		this.layoutElement();
 	}
-									
+	
 	handleColumnMouseMove(_, column) {
 		if (column.field === this.rowHeaderField || !this.mousedown || this.selecting === 'all') {
 			return;
 		}
-										
+		
 		this.endSelection(column);
 		this.layoutElement(true);
 	}
-									
+	
 	handleCellMouseDown(event, cell) {
 		if (event.button === 2 && (this.getActiveRange().occupies(cell) || ((this.selecting === "row" || this.selecting === "all") && this.getActiveRange().occupiesRow(cell.row)))) {
 			return;
 		}
-											
+		
 		this.mousedown = true;
-											
+		
 		document.addEventListener("mouseup", this.mouseUpHandler);
-											
+		
 		this._select(event, cell);
 		this.layoutElement();
 	}
-										
+	
 	_select(event, element) {
 		if (element.type === "column") {
 			if (element.field === this.rowHeaderField) {
 				this.resetRanges();
 				this.selecting = "all";
-													
+				
 				const topLeftCell = this.getCell(0, 0);
 				const bottomRightCell = this.getCell(-1, -1);
-													
+				
 				this.beginSelection(topLeftCell);
 				this.endSelection(bottomRightCell);
-													
+				
 				return;
 			} else {
 				this.selecting = "column";
@@ -519,43 +522,43 @@ class SelectRange extends Module {
 		} else {
 			this.selecting = "cell";
 		}
-											
+		
 		if (event.shiftKey) {
 			if (this.ranges.length > 1) {
 				this.ranges = this.ranges.slice(-1);
 			}
-												
+			
 			this.endSelection(element);
 		} else if (event.ctrlKey) {
 			this.addRange();
-												
+			
 			this.beginSelection(element);
 			this.endSelection(element);
 		} else {
 			this.resetRanges();
-												
+			
 			this.beginSelection(element);
 			this.endSelection(element);
 		}
 	}
-										
+	
 	handleCellMouseMove(_, cell) {
 		if (!this.mousedown || this.selecting === "all") {
 			return;
 		}
-											
+		
 		this.endSelection(cell);
 		this.layoutElement(true);
 	}
-										
+	
 	handleCellDblClick(_, cell) {
 		if (cell.column.field === this.rowHeaderField) {
 			return;
 		}
-											
+		
 		this.editCell(cell);
 	}
-										
+	
 	editCell(cell) {
 		if (!cell.column.modules.edit) {
 			cell.column.modules.edit = {};
@@ -564,33 +567,33 @@ class SelectRange extends Module {
 		cell.element.focus({ preventScroll: true });
 		cell.column.modules.edit.blocked = true;
 	}
-										
+	
 	handleEditingCell() {
 		this.table.rowManager.element.removeEventListener("keydown", this.keyDownEvent);
 	}
-										
+	
 	finishEditingCell() {
 		this.table.rowManager.element.focus();
 		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
 	}
-
+	
 	keyNavigate(dir, e){
 		if(this.navigate("normal", dir)){
 			e.preventDefault();
 		}
 	}
-										
+	
 	navigate(mode, dir) {
 		// Don't navigate while editing
 		if (this.table.modules.edit && this.table.modules.edit.currentCell) {
 			return false;
 		}
-											
+		
 		// Don't navigate while a menu is open
 		if (this.table.modules.menu && this.table.modules.menu.currentComponent) {
 			return false;
 		}
-											
+		
 		// If there are more than 1 range, use the active range and destroy the others
 		if (this.ranges.length > 1) {
 			this.ranges = this.ranges.filter((range) => {
@@ -602,16 +605,16 @@ class SelectRange extends Module {
 				return false;
 			});
 		}
-											
+		
 		var range = this.getActiveRange();
-											
+		
 		var moved = false;
-											
+		
 		switch (mode) {
 			case "normal": {
 				let nextRow = range.start.row;
 				let nextCol = range.start.col;
-													
+				
 				if (dir === "left") {
 					nextCol = Math.max(nextCol - 1, 0);
 				} else if (dir === "right") {
@@ -621,30 +624,30 @@ class SelectRange extends Module {
 				} else if (dir === "down") {
 					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
 				}
-													
+				
 				if (nextCol !== range.start.col || nextRow !== range.start.row) {
 					moved = true;
 				}
-													
+				
 				range.setStart(nextRow, nextCol);
 				range.setEnd(nextRow, nextCol);
-													
+				
 				this.selecting = "cell";
-													
+				
 				break;
 			}
 			case "expand": {
 				if ((dir === 'left' || dir === 'right') && this.selecting === 'row') {
 					break;
 				}
-													
+				
 				if ((dir === 'up' || dir === 'down') && this.selecting === 'column') {
 					break;
 				}
-													
+				
 				let nextRow = range.end.row;
 				let nextCol = range.end.col;
-													
+				
 				if (dir === "left") {
 					nextCol = Math.max(nextCol - 1, 0);
 				} else if (dir === "right") {
@@ -654,19 +657,19 @@ class SelectRange extends Module {
 				} else if (dir === "down") {
 					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
 				}
-													
+				
 				if (nextCol !== range.end.col || nextRow !== range.end.row) {
 					moved = true;
 				}
-													
+				
 				range.setEnd(nextRow, nextCol);
-													
+				
 				break;
 			}
 			case "jump": {
 				let nextRow = range.start.row;
 				let nextCol = range.start.col;
-													
+				
 				if (dir === "left") {
 					nextCol = this.findJumpCellLeft(range.start.row, range.start.col);
 				} else if (dir === "right") {
@@ -676,22 +679,22 @@ class SelectRange extends Module {
 				} else if (dir === "down") {
 					nextRow = this.findJumpCellDown(range.start.row, range.start.col);
 				}
-													
+				
 				if (nextCol !== range.start.col || nextRow !== range.start.row) {
 					moved = true;
 				}
-													
+				
 				range.setStart(nextRow, nextCol);
 				range.setEnd(nextRow, nextCol);
-													
+				
 				this.selecting = "cell";
-													
+				
 				break;
 			}
 			case "expand-jump": {
 				let nextRow = range.end.row;
 				let nextCol = range.end.col;
-													
+				
 				if (dir === "left") {
 					nextCol = this.findJumpCellLeft(range.start.row, range.end.col);
 				} else if (dir === "right") {
@@ -701,24 +704,24 @@ class SelectRange extends Module {
 				} else if (dir === "down") {
 					nextRow = this.findJumpCellDown(range.end.row, range.start.col);
 				}
-													
+				
 				if (nextCol !== range.end.col || nextRow !== range.end.row) {
 					moved = true;
 				}
-													
+				
 				range.setEnd(nextRow, nextCol);
-													
+				
 				break;
 			}
 		}
-											
+		
 		if (!moved) {
 			return;
 		}
-											
+		
 		var row = this.getRowByRangePos(range.end.row);
 		var column = this.getColumnByRangePos(range.end.col);
-											
+		
 		if ((dir === 'left' || dir === 'right') && column.getElement().parentNode === null) {
 			column.getComponent().scrollTo(undefined, false);
 		} else if ((dir === 'up' || dir === 'down') && row.getElement().parentNode === null) {
@@ -727,12 +730,12 @@ class SelectRange extends Module {
 			// Use faster autoScroll when the elements are on the DOM
 			this.autoScroll(range, row.getElement(), column.getElement());
 		}
-											
+		
 		this.layoutElement();
-											
+		
 		return true;
 	}
-										
+	
 	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element;
 		var rowHeader = this.rowHeaderColumn.getElement();
@@ -742,36 +745,36 @@ class SelectRange extends Module {
 		if (typeof column === 'undefined') {
 			column = this.getColumnByRangePos(range.end.col).getElement();
 		}
-											
+		
 		var rect = {
 			left: column.offsetLeft,
 			right: column.offsetLeft + column.offsetWidth,
 			top: row.offsetTop,
 			bottom: row.offsetTop + row.offsetHeight,
 		};
-											
+		
 		var view = {
 			left: tableHolder.scrollLeft + rowHeader.offsetWidth,
 			right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
 			top: tableHolder.scrollTop,
 			bottom:
-												tableHolder.scrollTop +
-												tableHolder.offsetHeight -
-												this.table.rowManager.scrollbarWidth,
+			tableHolder.scrollTop +
+			tableHolder.offsetHeight -
+			this.table.rowManager.scrollbarWidth,
 		};
-											
+		
 		var withinHorizontalView =
-											view.left < rect.left &&
-											rect.left < view.right &&
-											view.left < rect.right &&
-											rect.right < view.right;
-											
+		view.left < rect.left &&
+		rect.left < view.right &&
+		view.left < rect.right &&
+		rect.right < view.right;
+		
 		var withinVerticalView =
-											view.top < rect.top &&
-											rect.top < view.bottom &&
-											view.top < rect.bottom &&
-											rect.bottom < view.bottom;
-											
+		view.top < rect.top &&
+		rect.top < view.bottom &&
+		view.top < rect.bottom &&
+		rect.bottom < view.bottom;
+		
 		if (!withinHorizontalView) {
 			if (rect.left < view.left) {
 				tableHolder.scrollLeft = rect.left - rowHeader.offsetWidth;
@@ -779,7 +782,7 @@ class SelectRange extends Module {
 				tableHolder.scrollLeft = rect.right - tableHolder.clientWidth;
 			}
 		}
-											
+		
 		if (!withinVerticalView) {
 			if (rect.top < view.top) {
 				tableHolder.scrollTop = rect.top;
@@ -788,14 +791,14 @@ class SelectRange extends Module {
 			}
 		}
 	}
-										
+	
 	findJumpCellLeft(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos);
 		var cells = row.cells.filter((cell) => cell.column.visible);
 		var isStartingCellEmpty = !cells[colPos + 1].getValue();
 		var isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false;
 		var jumpCol = colPos;
-											
+		
 		// Go until we find an empty / non-empty cell.
 		for (var i = colPos; i > 0; i--){
 			var currentCell = cells[i];
@@ -803,7 +806,7 @@ class SelectRange extends Module {
 				if (!currentCell.getValue()) {
 					continue;
 				}
-													
+				
 				if (currentCell.getValue()) {
 					jumpCol = currentCell.column.getPosition() - 2;
 					break;
@@ -812,9 +815,9 @@ class SelectRange extends Module {
 				if (!isLeftOfStartingCellEmpty && !currentCell.getValue()) {
 					break;
 				}
-													
+				
 				jumpCol = currentCell.column.getPosition() - 2;
-													
+				
 				if (isLeftOfStartingCellEmpty) {
 					if (!currentCell.getValue()) {
 						continue;
@@ -823,31 +826,31 @@ class SelectRange extends Module {
 						break;
 					}
 				}
-													
+				
 				jumpCol = currentCell.column.getPosition() - 2;
 				if (currentCell.getValue()) {
 					continue;
 				}
 			}
 		}
-											
+		
 		return jumpCol;
 	}
-										
+	
 	findJumpCellRight(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos);
 		var cells = row.cells.filter((cell) => cell.column.visible);
 		var isStartingCellEmpty = !cells[colPos + 1].getValue();
 		var isRightOfStartingCellEmpty = cells[colPos + 2] ? !cells[colPos + 2].getValue() : false;
 		var jumpCol = colPos;
-											
+		
 		for (var i = colPos + 2; i < cells.length; i++){
 			var currentCell = cells[i];
 			if (isStartingCellEmpty) {
 				if (!currentCell.getValue()) {
 					continue;
 				}
-													
+				
 				if (currentCell.getValue()) {
 					jumpCol = currentCell.column.getPosition() - 2;
 					break;
@@ -856,9 +859,9 @@ class SelectRange extends Module {
 				if (!isRightOfStartingCellEmpty && !currentCell.getValue()) {
 					break;
 				}
-													
+				
 				jumpCol = currentCell.column.getPosition() - 2;
-													
+				
 				if (isRightOfStartingCellEmpty) {
 					if (!currentCell.getValue()) {
 						continue;
@@ -867,32 +870,32 @@ class SelectRange extends Module {
 						break;
 					}
 				}
-													
+				
 				if (currentCell.getValue()) {
 					continue;
 				}
 			}
 		}
-											
+		
 		return jumpCol;
 	}
-										
+	
 	findJumpCellUp(rowPos, colPos) {
 		var column = this.getColumnByRangePos(colPos);
 		var cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row));
 		var isStartingCellEmpty = !cells[rowPos].getValue();
 		var isTopOfStartingCellEmpty = cells[rowPos - 1] ? !cells[rowPos - 1].getValue() : false;
 		var jumpRow = rowPos;
-											
+		
 		for (var i = jumpRow - 1; i >= 0; i--){
 			var currentCell = cells[i];
 			if (isStartingCellEmpty) {
 				jumpRow = currentCell.row.position - 1;
-													
+				
 				if (currentCell.getValue()) {
 					break;
 				}
-													
+				
 				if (!currentCell.getValue()) {
 					continue;
 				}
@@ -900,9 +903,9 @@ class SelectRange extends Module {
 				if (!isTopOfStartingCellEmpty && !currentCell.getValue()) {
 					break;
 				}
-													
+				
 				jumpRow = currentCell.row.position - 1;
-													
+				
 				if (isTopOfStartingCellEmpty) {
 					if (!currentCell.getValue()) {
 						continue;
@@ -911,32 +914,32 @@ class SelectRange extends Module {
 						break;
 					}
 				}
-													
+				
 				if (currentCell.getValue()) {
 					continue;
 				}
 			}
 		}
-											
+		
 		return jumpRow;
 	}
-										
+	
 	findJumpCellDown(rowPos, colPos) {
 		var column = this.getColumnByRangePos(colPos);
 		var cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row));
 		var isStartingCellEmpty = !cells[rowPos].getValue();
 		var isBottomOfStartingCellEmpty = cells[rowPos + 1] ? !cells[rowPos + 1].getValue() : false;
 		var jumpRow = rowPos;
-											
+		
 		for (var i = jumpRow + 1; i < cells.length; i++){
 			var currentCell = cells[i];
 			if (isStartingCellEmpty) {
 				jumpRow = currentCell.row.position - 1;
-													
+				
 				if (currentCell.getValue()) {
 					break;
 				}
-													
+				
 				if (!currentCell.getValue()) {
 					continue;
 				}
@@ -944,9 +947,9 @@ class SelectRange extends Module {
 				if (!isBottomOfStartingCellEmpty && !currentCell.getValue()) {
 					break;
 				}
-													
+				
 				jumpRow = currentCell.row.position - 1;
-													
+				
 				if (isBottomOfStartingCellEmpty) {
 					if (!currentCell.getValue()) {
 						continue;
@@ -955,38 +958,38 @@ class SelectRange extends Module {
 						break;
 					}
 				}
-													
+				
 				if (currentCell.getValue()) {
 					continue;
 				}
 			}
 		}
-											
+		
 		return jumpRow;
 	}
-										
+	
 	beginSelection(element) {
 		var range = this.getActiveRange();
-											
+		
 		if (element.type === "column") {
 			range.setStart(0, element.getPosition() - 2);
 			return;
 		}
-											
+		
 		var row = element.row.position - 1;
 		var col = element.column.getPosition() - 2;
-											
+		
 		if (element.column.field === this.rowHeaderField) {
 			range.setStart(row, 0);
 		} else {
 			range.setStart(row, col);
 		}
 	}
-										
+	
 	endSelection(element) {
 		var range = this.getActiveRange();
 		var rowsCount = this.getRows().length;
-											
+		
 		if (element.type === "column") {
 			if (this.selecting === "column") {
 				range.setEnd(rowsCount - 1, element.getPosition() - 2);
@@ -995,11 +998,11 @@ class SelectRange extends Module {
 			}
 			return;
 		}
-											
+		
 		var row = element.row.position - 1;
 		var col = element.column.getPosition() - 2;
 		var isRowHeader = element.column.field === this.rowHeaderField;
-											
+		
 		if (this.selecting === "row") {
 			range.setEnd(row, this.getColumns().length - 2);
 		} else if (this.selecting !== "row" && isRowHeader) {
@@ -1010,137 +1013,137 @@ class SelectRange extends Module {
 			range.setEnd(row, col);
 		}
 	}
-										
+	
 	layoutElement(visibleRows) {
 		var rows;
-											
+		
 		if (visibleRows) {
 			rows = this.table.rowManager.getVisibleRows(true);
 		} else {
 			rows = this.table.rowManager.getRows();
 		}
-											
+		
 		rows.forEach((row) => {
 			if (row.type === "row") {
 				this.layoutRow(row);
 				row.cells.forEach((cell) => this.renderCell(cell));
 			}
 		});
-											
+		
 		this.getColumns().forEach((column) => {
 			this.layoutColumn(column);
 		});
-											
+		
 		this.layoutRanges();
 	}
-										
+	
 	layoutRow(row) {
 		var el = row.getElement();
-											
+		
 		var selected = false;
 		var occupied = this.ranges.some((range) => range.occupiesRow(row));
-											
+		
 		if (this.selecting === "row") {
 			selected = occupied;
 		} else if (this.selecting === "all") {
 			selected = true;
 		}
-											
+		
 		el.classList.toggle("tabulator-range-selected", selected);
 		el.classList.toggle("tabulator-range-highlight", occupied);
 	}
-										
+	
 	layoutColumn(column) {
 		var el = column.getElement();
-											
+		
 		var selected = false;
 		var occupied = this.ranges.some((range) => range.occupiesColumn(column));
-											
+		
 		if (this.selecting === "column") {
 			selected = occupied;
 		} else if (this.selecting === "all") {
 			selected = true;
 		}
-											
+		
 		el.classList.toggle("tabulator-range-selected", selected);
 		el.classList.toggle("tabulator-range-highlight", occupied);
 	}
-										
+	
 	layoutRanges() {
 		if (!this.table.initialized) {
 			return;
 		}
-											
+		
 		var activeCell = this.getActiveCell();
-											
+		
 		if (!activeCell) {
 			return;
 		}
-											
+		
 		this.activeRangeCellElement.style.left =
-											activeCell.row.getElement().offsetLeft +
-											activeCell.getElement().offsetLeft +
-											"px";
+		activeCell.row.getElement().offsetLeft +
+		activeCell.getElement().offsetLeft +
+		"px";
 		this.activeRangeCellElement.style.top =
-											activeCell.row.getElement().offsetTop + "px";
+		activeCell.row.getElement().offsetTop + "px";
 		this.activeRangeCellElement.style.width =
-											activeCell.getElement().offsetLeft +
-											activeCell.getElement().offsetWidth -
-											activeCell.getElement().offsetLeft +
-											"px";
+		activeCell.getElement().offsetLeft +
+		activeCell.getElement().offsetWidth -
+		activeCell.getElement().offsetLeft +
+		"px";
 		this.activeRangeCellElement.style.height =
-											activeCell.row.getElement().offsetTop +
-											activeCell.row.getElement().offsetHeight -
-											activeCell.row.getElement().offsetTop +
-											"px";
-											
+		activeCell.row.getElement().offsetTop +
+		activeCell.row.getElement().offsetHeight -
+		activeCell.row.getElement().offsetTop +
+		"px";
+		
 		this.ranges.forEach((range) => this.layoutRange(range));
-											
+		
 		this.overlay.style.visibility = "visible";
 	}
-										
+	
 	layoutRange(range) {
 		var _vDomTop = this.table.rowManager.renderer.vDomTop;
 		var _vDomBottom = this.table.rowManager.renderer.vDomBottom;
 		var _vDomLeft = this.table.columnManager.renderer.leftCol;
 		var _vDomRight = this.table.columnManager.renderer.rightCol;
-											
+		
 		if (_vDomTop == null) {
 			_vDomTop = 0;
 		}
-											
+		
 		if (_vDomBottom == null) {
 			_vDomBottom = Infinity;
 		}
-											
+		
 		if (_vDomLeft == null) {
 			_vDomLeft = 0;
 		}
-											
+		
 		if (_vDomRight == null) {
 			_vDomRight = Infinity;
 		}
-											
+		
 		if (!range.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) {
 			return;
 		}
-											
+		
 		var top = Math.max(range.top, _vDomTop);
 		var bottom = Math.min(range.bottom, _vDomBottom);
 		var left = Math.max(range.left, _vDomLeft);
 		var right = Math.min(range.right, _vDomRight);
-											
+		
 		var topLeftCell = this.getCell(top, left);
 		var bottomRightCell = this.getCell(bottom, right);
-											
+		
 		range.element.classList.toggle("tabulator-range-active", range === this.getActiveRange());
-												
+		
 		range.element.style.left = topLeftCell.row.getElement().offsetLeft + topLeftCell.getElement().offsetLeft + "px";
 		range.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
 		range.element.style.width = bottomRightCell.getElement().offsetLeft + bottomRightCell.getElement().offsetWidth - topLeftCell.getElement().offsetLeft + "px";
 		range.element.style.height = bottomRightCell.row.getElement().offsetTop + bottomRightCell.row.getElement().offsetHeight - topLeftCell.row.getElement().offsetTop + "px";
 	}
-											
+	
 	findRangeByCellElement(cell) {
 		var rangeIdx = cell.dataset.range;
 		if (rangeIdx < 0) {
@@ -1148,29 +1151,29 @@ class SelectRange extends Module {
 		}
 		return this.ranges[rangeIdx].getComponent();
 	}
-											
+	
 	getCell(rowIdx, colIdx) {
 		if (rowIdx < 0) {
 			rowIdx = this.getRows().length + rowIdx;
 		}
-												
+		
 		var row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
-												
+		
 		if (!row) {
 			return null;
 		}
-												
+		
 		if (colIdx < 0) {
 			colIdx = this.getColumns().length + colIdx - 1;
 		}
-												
+		
 		if (colIdx < 0) {
 			return null;
 		}
-												
+		
 		return row.getCells().filter((cell) => cell.column.visible)[colIdx + 1];
 	}
-											
+	
 	getActiveRange(component) {
 		const range = this.ranges[this.ranges.length - 1];
 		if (!range) {
@@ -1181,66 +1184,65 @@ class SelectRange extends Module {
 		}
 		return range;
 	}
-											
+	
 	getActiveCell() {
 		var activeRange = this.getActiveRange();
 		return this.getCell(activeRange.start.row, activeRange.start.col);
 	}
-											
+	
 	getRowByRangePos(pos) {
 		return this.getRows()[pos];
 	}
-											
+	
 	getColumnByRangePos(pos) {
 		return this.getColumns()[pos + 1];
 	}
-											
+	
 	getRowsByRange(range) {
 		return this.getRows() .slice(range.top, range.bottom + 1);
 	}
-											
+	
 	getColumnsByRange(range) {
 		return this.getColumns() .slice(range.left + 1, range.right + 2);
 	}
-											
+	
 	getRows() {
 		return this.table.rowManager.getDisplayRows();
 	}
-											
+	
 	getColumns() {
 		return this.table.columnManager.getVisibleColumnsByIndex();
 	}
-											
+	
 	addRange() {
 		var element = document.createElement("div");
 		element.classList.add("tabulator-range");
-												
+		
 		var range = new Range(this.table, 0, 0, element);
-												
+		
 		this.ranges.push(range);
 		this.rangeContainer.appendChild(element);
 	}
-											
+	
 	resetRanges() {
 		this.ranges.forEach((range) => range.destroy());
 		this.ranges = [];
 		this.addRange(0, 0);
 	}
-											
+	
 	get selectedRows() {
 		return this.getRowsByRange(this.getActiveRange());
 	}
-											
+	
 	get selectedColumns() {
 		return this.getColumnsByRange(this.getActiveRange()).map((col) => col.getComponent());
 	}
-											
+	
 	get rowHeaderColumn() {
 		return this.table.columnManager.columnsByField[this.rowHeaderField];
 	}
 }
-										
+
 SelectRange.moduleName = "selectRange";
-										
+
 export default SelectRange;
-										
