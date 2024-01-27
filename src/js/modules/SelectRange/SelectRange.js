@@ -66,22 +66,13 @@ class SelectRange extends Module {
 		this.subscribe("column-height", layoutRanges);
 		this.subscribe("column-resized", layoutRanges);
 		this.subscribe("cell-height", layoutRanges);
-		
-		var navigate = (mode, dir) => {
-			var self = this;
-			return function (e) {
-				if(self.navigate(mode, dir)) {
-					e.preventDefault();
-				}
-			};
-		};
-		
-		this.subscribe("keybinding-nav-prev", navigate("normal", "left"));
-		this.subscribe("keybinding-nav-next", navigate("normal", "right"));
-		this.subscribe("keybinding-nav-left", navigate("normal", "left"));
-		this.subscribe("keybinding-nav-right", navigate("normal", "right"));
-		this.subscribe("keybinding-nav-up", navigate("normal", "up"));
-		this.subscribe("keybinding-nav-down", navigate("normal", "down"));
+				
+		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "left"));
+		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "right"));
+		this.subscribe("keybinding-nav-left", this.keyNavigate.bind(this, "left"));
+		this.subscribe("keybinding-nav-right", this.keyNavigate.bind(this, "right"));
+		this.subscribe("keybinding-nav-up", this.keyNavigate.bind(this, "up"));
+		this.subscribe("keybinding-nav-down", this.keyNavigate.bind(this, "down"));
 	}
 	
 	initializeTable() {
@@ -583,6 +574,12 @@ class SelectRange extends Module {
 	finishEditingCell() {
 		this.table.rowManager.element.focus();
 		this.table.rowManager.element.addEventListener("keydown", this.handleKeyDown);
+	}
+
+	keyNavigate(dir, e){
+		if(this.navigate("normal", dir)){
+			e.preventDefault();
+		}
 	}
 										
 	navigate(mode, dir) {
