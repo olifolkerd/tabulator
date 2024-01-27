@@ -19962,6 +19962,7 @@ class SelectRange extends Module {
 		this.overlay = null;
 		
 		this.keyDownEvent = this._handleKeyDown.bind(this);
+		this.mouseUpEvent = this._handleMouseUp.bind(this);
 		
 		this.registerTableOption("selectableRange", false); //enable selectable range
 		this.registerTableOption("selectableRangeRowHeader", {}); //row header definition
@@ -20020,6 +20021,7 @@ class SelectRange extends Module {
 		this.subscribe("column-height", layoutRanges);
 		this.subscribe("column-resized", layoutRanges);
 		this.subscribe("cell-height", layoutRanges);
+		this.subscribe("table-destroy", this.tableDestroyed.bind(this));
 		
 		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "left"));
 		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "right"));
@@ -20042,19 +20044,8 @@ class SelectRange extends Module {
 		this.overlay.appendChild(this.rangeContainer);
 		this.overlay.appendChild(this.activeRangeCellElement);
 		
-		
 		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
-		
-		this.mouseUpHandler = function () {
-			self.mousedown = false;
-			document.removeEventListener("mouseup", self.mouseUpHandler);
-		};
-		
-		this.subscribe("table-destroy", function () {
-			document.removeEventListener("mouseup", self.mouseUpHandler);
-			self.table.rowManager.element.removeEventListener("keydown", self.handleKeyDown);
-		});
-		
+
 		this.resetRanges();
 		
 		this.table.rowManager.element.appendChild(this.overlay);
@@ -20064,14 +20055,14 @@ class SelectRange extends Module {
 			this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
 		}
 	}
-
+	
 	///////////////////////////////////
 	/////// Component Functions ///////
 	///////////////////////////////////
-
+	
 	cellGetRange(cell){
 		var range;
-			
+		
 		if (cell.column.field === this.rowHeaderField) {
 			range = this.ranges.find((range) => range.occupiesRow(cell.row));
 		} else {
@@ -20084,25 +20075,30 @@ class SelectRange extends Module {
 		
 		return range.getComponent();
 	}
-
+	
 	rowGetRange(row){
 		var range = this.ranges.find((range) => range.occupiesRow(row));
-			
+		
 		if (!range) {
 			return null;
 		}
 		
 		return range.getComponent();
 	}
-
+	
 	collGetRange(col){
 		var range = this.ranges.find((range) => range.occupiesColumn(col));
-			
+		
 		if (!range) {
 			return null;
 		}
 		
 		return range.getComponent();
+	}
+	
+	_handleMouseUp(e){
+		this.mousedown = false;
+		document.removeEventListener("mouseup", this.mouseUpEvent);
 	}
 	
 	_handleKeyDown(e) {
@@ -20423,7 +20419,7 @@ class SelectRange extends Module {
 		
 		this.mousedown = true;
 		
-		document.addEventListener("mouseup", this.mouseUpHandler);
+		document.addEventListener("mouseup", this.mouseUpEvent);
 		
 		this._select(event, column);
 		this.layoutElement();
@@ -20445,7 +20441,7 @@ class SelectRange extends Module {
 		
 		this.mousedown = true;
 		
-		document.addEventListener("mouseup", this.mouseUpHandler);
+		document.addEventListener("mouseup", this.mouseUpEvent);
 		
 		this._select(event, cell);
 		this.layoutElement();
@@ -21178,6 +21174,11 @@ class SelectRange extends Module {
 		this.ranges.forEach((range) => range.destroy());
 		this.ranges = [];
 		this.addRange(0, 0);
+	}
+
+	tableDestroyed(){
+		document.removeEventListener("mouseup", this.mouseUpEvent);
+		this.table.rowManager.element.removeEventListener("keydown", this.keyDownEvent);
 	}
 	
 	get selectedRows() {
