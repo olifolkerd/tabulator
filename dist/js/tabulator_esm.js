@@ -20183,10 +20183,7 @@ class SelectRange extends Module {
 			
 			var activeCell = self.getActiveCell();
 			var menuDef = activeCell.column.definition.contextMenu;
-			var menu =
-			typeof menuDef === "function"
-				? menuDef.call(self.table, e, activeCell.getComponent())
-				: menuDef;
+			var menu = typeof menuDef === "function" ? menuDef.call(self.table, e, activeCell.getComponent()) : menuDef;
 			
 			self.table.modules.menu.loadMenu(e, activeCell, menu, activeCell.element);
 			
@@ -20194,24 +20191,12 @@ class SelectRange extends Module {
 			e.preventDefault();
 		}
 		
-		this.table.rowManager.element.addEventListener(
-			"keyup",
-			contextMenuKeyCheck,
-		);
-		this.table.rowManager.element.addEventListener(
-			"contextmenu",
-			handleContextMenu,
-		);
+		this.table.rowManager.element.addEventListener("keyup",	contextMenuKeyCheck);
+		this.table.rowManager.element.addEventListener("contextmenu", handleContextMenu);
 				
 		this.subscribe("table-destroy", () => {
-			this.table.rowManager.element.removeEventListener(
-				"keyup",
-				contextMenuKeyCheck,
-			);
-			this.table.rowManager.element.removeEventListener(
-				"contextmenu",
-				handleContextMenu,
-			);
+			this.table.rowManager.element.removeEventListener("keyup", contextMenuKeyCheck);
+			this.table.rowManager.element.removeEventListener("contextmenu", handleContextMenu);
 		});
 						
 		this.subscribe("menu-opened", (menu, popup) => {
@@ -20284,10 +20269,7 @@ class SelectRange extends Module {
 					case "right":
 						if (state.focusedMenu.menu && state.focusedMenu.menu.length) {
 							state.focusedElement.click();
-							var nextState = createState(
-								state.focusedMenu.menu,
-								state.popup.childPopup,
-							);
+							var nextState = createState(state.focusedMenu.menu, state.popup.childPopup);
 							stack.push(nextState);
 						}
 						break;
@@ -20299,10 +20281,7 @@ class SelectRange extends Module {
 				var state = stack[stack.length - 1];
 				state.elements.forEach((element) => {
 					var selected = element === state.focusedElement;
-					element.classList.toggle(
-						"tabulator-range-menu-item-focused",
-						selected,
-					);
+					element.classList.toggle("tabulator-range-menu-item-focused", selected);
 				});
 			}
 									
@@ -20421,18 +20400,14 @@ class SelectRange extends Module {
 								
 		el.classList.toggle("tabulator-range-selected", rangeIdx !== -1);
 								
-		el.classList.toggle(
-			"tabulator-range-only-cell-selected",
-			this.ranges.length === 1 &&
-									this.ranges[0].atTopLeft(cell) &&
-									this.ranges[0].atBottomRight(cell),
-		);
+		el.classList.toggle("tabulator-range-only-cell-selected", this.ranges.length === 1 && this.ranges[0].atTopLeft(cell) &&	this.ranges[0].atBottomRight(cell));
 									
 		el.dataset.range = rangeIdx;
 	}
 								
 	handleColumnsLoading() {
 		var customRowHeader = this.options("selectableRangeRowHeader");
+		
 		var rowHeaderDef = {
 			title: "",
 			field: this.rowHeaderField,
@@ -20445,9 +20420,7 @@ class SelectRange extends Module {
 										
 			...customRowHeader,
 										
-			cssClass: customRowHeader.cssClass
-				? `tabulator-range-row-header ${customRowHeader.cssClass}`
-				: "tabulator-range-row-header",
+			cssClass: customRowHeader.cssClass ? `tabulator-range-row-header ${customRowHeader.cssClass}` : "tabulator-range-row-header",
 		};
 		this.rowHeaderField = rowHeaderDef.field;
 		// Add this column before everything else
@@ -20476,11 +20449,7 @@ class SelectRange extends Module {
 	}
 								
 	handleColumnMouseDown(event, column) {
-		if (
-			event.button === 2 &&
-										(this.selecting === "column" || this.selecting === "all") &&
-										this.getActiveRange().occupiesColumn(column)
-		) {
+		if (event.button === 2 && (this.selecting === "column" || this.selecting === "all") && this.getActiveRange().occupiesColumn(column)) {
 			return;
 		}
 										
@@ -20502,12 +20471,7 @@ class SelectRange extends Module {
 	}
 									
 	handleCellMouseDown(event, cell) {
-		if (
-			event.button === 2 &&
-											(this.getActiveRange().occupies(cell) ||
-											((this.selecting === "row" || this.selecting === "all") &&
-											this.getActiveRange().occupiesRow(cell.row)))
-		) {
+		if (event.button === 2 && (this.getActiveRange().occupies(cell) || ((this.selecting === "row" || this.selecting === "all") && this.getActiveRange().occupiesRow(cell.row)))) {
 			return;
 		}
 											
@@ -21148,26 +21112,12 @@ class SelectRange extends Module {
 		var topLeftCell = this.getCell(top, left);
 		var bottomRightCell = this.getCell(bottom, right);
 											
-		range.element.classList.toggle(
-			"tabulator-range-active",
-			range === this.getActiveRange(),
-		);
+		range.element.classList.toggle("tabulator-range-active", range === this.getActiveRange());
 												
-		range.element.style.left = 
-												topLeftCell.row.getElement().offsetLeft +
-												topLeftCell.getElement().offsetLeft +
-												"px";
+		range.element.style.left = topLeftCell.row.getElement().offsetLeft + topLeftCell.getElement().offsetLeft + "px";
 		range.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
-		range.element.style.width =
-												bottomRightCell.getElement().offsetLeft +
-												bottomRightCell.getElement().offsetWidth -
-												topLeftCell.getElement().offsetLeft +
-												"px";
-		range.element.style.height =
-												bottomRightCell.row.getElement().offsetTop +
-												bottomRightCell.row.getElement().offsetHeight -
-												topLeftCell.row.getElement().offsetTop +
-												"px";
+		range.element.style.width = bottomRightCell.getElement().offsetLeft + bottomRightCell.getElement().offsetWidth - topLeftCell.getElement().offsetLeft + "px";
+		range.element.style.height = bottomRightCell.row.getElement().offsetTop + bottomRightCell.row.getElement().offsetHeight - topLeftCell.row.getElement().offsetTop + "px";
 	}
 											
 	findRangeByCellElement(cell) {
@@ -21261,9 +21211,7 @@ class SelectRange extends Module {
 	}
 											
 	get selectedColumns() {
-		return this.getColumnsByRange(this.getActiveRange()).map((col) =>
-			col.getComponent(),
-		);
+		return this.getColumnsByRange(this.getActiveRange()).map((col) => col.getComponent());
 	}
 											
 	get rowHeaderColumn() {
