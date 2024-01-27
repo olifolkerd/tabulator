@@ -19890,14 +19890,14 @@ class Range {
 	atTopLeft(cell) {
 		return (
 			cell.row.position - 1 === this.top &&
-			cell.column.position - 2 === this.left
+			cell.column.getPosition() - 2 === this.left
 		);
 	}
 
 	atBottomRight(cell) {
 		return (
 			cell.row.position - 1 === this.bottom &&
-			cell.column.position - 2 === this.right
+			cell.column.getPosition() - 2 === this.right
 		);
 	}
 
@@ -19910,7 +19910,7 @@ class Range {
 	}
 
 	occupiesColumn(col) {
-		return this.left <= col.position - 2 && col.position - 2 <= this.right;
+		return this.left <= col.getPosition() - 2 && col.getPosition() - 2 <= this.right;
 	}
 
 	overlaps(left, top, right, bottom) {
@@ -20984,7 +20984,7 @@ class Spreadsheet extends Module {
 		var range = this.getActiveRange();
 											
 		if (element.type === "column") {
-			range.setStart(0, element.position - 2);
+			range.setStart(0, element.getPosition() - 2);
 			return;
 		}
 											
@@ -21004,9 +21004,9 @@ class Spreadsheet extends Module {
 											
 		if (element.type === "column") {
 			if (this.selecting === "column") {
-				range.setEnd(rowsCount - 1, element.position - 2);
+				range.setEnd(rowsCount - 1, element.getPosition() - 2);
 			} else if (this.selecting === "cell") {
-				range.setEnd(0, element.position - 2);
+				range.setEnd(0, element.getPosition() - 2);
 			}
 			return;
 		}

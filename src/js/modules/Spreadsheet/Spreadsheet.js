@@ -1035,7 +1035,7 @@ class Spreadsheet extends Module {
 		var range = this.getActiveRange();
 											
 		if (element.type === "column") {
-			range.setStart(0, element.position - 2);
+			range.setStart(0, element.getPosition() - 2);
 			return;
 		}
 											
@@ -1055,9 +1055,9 @@ class Spreadsheet extends Module {
 											
 		if (element.type === "column") {
 			if (this.selecting === "column") {
-				range.setEnd(rowsCount - 1, element.position - 2);
+				range.setEnd(rowsCount - 1, element.getPosition() - 2);
 			} else if (this.selecting === "cell") {
-				range.setEnd(0, element.position - 2);
+				range.setEnd(0, element.getPosition() - 2);
 			}
 			return;
 		}
