@@ -30,8 +30,6 @@ class SelectRange extends Module {
 		}
 	}
 	
-	
-	
 	initializeWatchers() {
 		var debouncedLayoutRangesTimeout;
 
@@ -75,9 +73,7 @@ class SelectRange extends Module {
 		this.subscribe("keybinding-nav-down", this.keyNavigate.bind(this, "down"));
 	}
 	
-	initializeTable() {
-		this.table.options.clipboardCopyRowRange = "range";
-		
+	initializeTable() {		
 		this.overlay = document.createElement("div");
 		this.overlay.classList.add("tabulator-range-overlay");
 		
@@ -135,6 +131,8 @@ class SelectRange extends Module {
 			this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
 		}
 	}
+
+	
 	
 	initializeFunctions() {
 		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
