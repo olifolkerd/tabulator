@@ -63,18 +63,4 @@ export default class Helpers{
 
 		return clone;
 	}
-
-	static debounce(func, delay = 0) {
-		var timeoutId;
-
-		return function (...args) {
-			const context = this;
-
-			clearTimeout(timeoutId);
-
-			timeoutId = setTimeout(() => {
-				func.apply(context, args);
-			}, delay);
-		};
-	}
 }

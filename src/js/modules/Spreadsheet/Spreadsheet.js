@@ -34,6 +34,8 @@ class Spreadsheet extends Module {
 	
 	
 	initializeWatchers() {
+		var debouncedLayoutRanges, debouncedLayoutRangesTimeout, layoutRanges;
+		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
@@ -49,9 +51,15 @@ class Spreadsheet extends Module {
 		this.subscribe("page-changed", this.redraw.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 		this.subscribe("table-redraw", this.redraw.bind(this));
+
 		
-		var debouncedLayoutRanges = Helpers.debounce(this.layoutRanges.bind(this), 200);
-		var layoutRanges = () => {
+		debouncedLayoutRanges = () => {
+			clearTimeout(debouncedLayoutRangesTimeout);
+			debouncedLayoutRangesTimeout = setTimeout(this.layoutRanges.bind(this), 200);
+		};		
+		
+		
+		layoutRanges = () => {
 			this.overlay.style.visibility = "hidden";
 			debouncedLayoutRanges();
 		};
