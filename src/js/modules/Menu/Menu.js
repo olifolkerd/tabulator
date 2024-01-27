@@ -217,11 +217,7 @@ class Menu extends Module{
 			this.rootPopup = popup = this.popup(menuEl);
 			
 		}else{
-			if (parentPopup) {
-				popup = parentPopup.child(menuEl);
-			} else {
-				this.rootPopup = popup = this.popup(menuEl);
-			}
+			popup = parentPopup.child(menuEl);
 		}
 		
 		menu.forEach((item) => {
