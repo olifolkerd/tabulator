@@ -19960,6 +19960,7 @@ class SelectRange extends Module {
 		this.ranges = [];
 		this.rowHeaderField = "--row-header";
 		this.overlay = null;
+		this.layoutChangeTimeout = null;
 		
 		this.keyDownEvent = this._handleKeyDown.bind(this);
 		this.mouseUpEvent = this._handleMouseUp.bind(this);
@@ -19988,18 +19989,6 @@ class SelectRange extends Module {
 	}
 	
 	initializeWatchers() {
-		var debouncedLayoutRangesTimeout;
-		
-		var debouncedLayoutRanges = () => {
-			clearTimeout(debouncedLayoutRangesTimeout);
-			debouncedLayoutRangesTimeout = setTimeout(this.layoutRanges.bind(this), 200);
-		};		
-		
-		var layoutRanges = () => {
-			this.overlay.style.visibility = "hidden";
-			debouncedLayoutRanges();
-		};
-		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
@@ -20015,12 +20004,12 @@ class SelectRange extends Module {
 		this.subscribe("page-changed", this.redraw.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 		this.subscribe("table-redraw", this.redraw.bind(this));
-		this.subscribe("scroll-vertical", layoutRanges);
-		this.subscribe("scroll-horizontal", layoutRanges);
-		this.subscribe("column-width", layoutRanges);
-		this.subscribe("column-height", layoutRanges);
-		this.subscribe("column-resized", layoutRanges);
-		this.subscribe("cell-height", layoutRanges);
+		this.subscribe("scroll-vertical", this.layoutChange.bind(this));
+		this.subscribe("scroll-horizontal", this.layoutChange.bind(this));
+		this.subscribe("column-width", this.layoutChange.bind(this));
+		this.subscribe("column-height", this.layoutChange.bind(this));
+		this.subscribe("column-resized", this.layoutChange.bind(this));
+		this.subscribe("cell-height", this.layoutChange.bind(this));
 		this.subscribe("table-destroy", this.tableDestroyed.bind(this));
 		
 		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "left"));
@@ -20123,6 +20112,11 @@ class SelectRange extends Module {
 		}
 	}
 	
+	layoutChange(){
+		this.overlay.style.visibility = "hidden";
+		clearTimeout(this.layoutChangeTimeout);
+		this.layoutChangeTimeout = setTimeout(this.layoutRanges.bind(this), 200);
+	}
 	
 	initializeColumn(column) {
 		if (column.modules.edit) {
