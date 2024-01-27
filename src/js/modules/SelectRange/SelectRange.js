@@ -33,7 +33,17 @@ class SelectRange extends Module {
 	
 	
 	initializeWatchers() {
-		var debouncedLayoutRanges, debouncedLayoutRangesTimeout, layoutRanges;
+		var debouncedLayoutRangesTimeout;
+
+		var debouncedLayoutRanges = () => {
+			clearTimeout(debouncedLayoutRangesTimeout);
+			debouncedLayoutRangesTimeout = setTimeout(this.layoutRanges.bind(this), 200);
+		};		
+		
+		var layoutRanges = () => {
+			this.overlay.style.visibility = "hidden";
+			debouncedLayoutRanges();
+		};
 		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
@@ -50,42 +60,8 @@ class SelectRange extends Module {
 		this.subscribe("page-changed", this.redraw.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 		this.subscribe("table-redraw", this.redraw.bind(this));
-		
-		
-		debouncedLayoutRanges = () => {
-			clearTimeout(debouncedLayoutRangesTimeout);
-			
-			debouncedLayoutRangesTimeout = setTimeout(this.layoutRanges.bind(this), 200);
-		};		
-		
-		
-		layoutRanges = () => {
-			this.overlay.style.visibility = "hidden";
-			debouncedLayoutRanges();
-		};
-		
-		if ("onscrollend" in window) {
-			var scrolling = false;
-			var handleScrollEnd = () => {
-				this.layoutRanges();
-				this.table.rowManager.element.removeEventListener("scrollend", handleScrollEnd);
-				scrolling = false;
-			};
-			var handleScroll = () => {
-				this.overlay.style.visibility = "hidden";
-				if (scrolling) {
-					return;
-				}
-				scrolling = true;
-				this.table.rowManager.element.addEventListener("scrollend", handleScrollEnd);
-			};
-			this.subscribe("scroll-vertical", handleScroll);
-			this.subscribe("scroll-horizontal", handleScroll);
-		} else {
-			this.subscribe("scroll-vertical", layoutRanges);
-			this.subscribe("scroll-horizontal", layoutRanges);
-		}
-		
+		this.subscribe("scroll-vertical", layoutRanges);
+		this.subscribe("scroll-horizontal", layoutRanges);
 		this.subscribe("column-width", layoutRanges);
 		this.subscribe("column-height", layoutRanges);
 		this.subscribe("column-resized", layoutRanges);
