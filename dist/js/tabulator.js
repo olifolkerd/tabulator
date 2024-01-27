@@ -1693,6 +1693,10 @@
 
 			return this.component;
 		}
+
+		getPosition(){
+			return this.table.columnManager.getVisibleColumnsByIndex().indexOf(this) + 1;
+		}
 	}
 
 	Column.defaultOptionList = defaultColumnOptions;
@@ -3017,6 +3021,10 @@
 			});
 			
 			return index > -1 ? this.columnsByIndex[index] : false;
+		}
+
+		getVisibleColumnsByIndex() {
+			return this.columnsByIndex.filter((col) => col.visible);
 		}
 		
 		getColumns(){
@@ -6093,11 +6101,11 @@
 					}
 				}
 			}
-			
+
 			if(targets.group && targets.group === targets.row){
 				delete targets.row;
 			}
-			
+
 			return targets;
 		}
 		
@@ -14466,10 +14474,20 @@
 			this.cloneTableStyle = style;
 			this.config = config || {};
 			this.colVisProp = colVisProp;
+
+			var headers, body;
 			
-			var headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders()) : [];
-			var body = this.bodyToExportRows(this.rowLookup(range));
-			
+			if (range === 'spreadsheet') {
+				var columns = this.table.modules.spreadsheet.selectedColumns;
+				headers = this.config.columnHeaders !== false
+					? this.headersToExportRows(this.generateColumnGroupHeaders(columns.map((component) => component._column)))
+					: [];
+				body = this.bodyToExportRows(this.rowLookup(range), columns);
+			} else {
+				headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders()) : [];
+				body = this.bodyToExportRows(this.rowLookup(range));
+			}
+
 			return headers.concat(body);
 		}
 		
@@ -14504,7 +14522,11 @@
 					case "selected":
 						rows = this.table.modules.selectRow.selectedRows;
 						break;
-					
+
+					case "spreadsheet":
+						rows = this.table.modules.spreadsheet.selectedRows;
+						break;
+
 					case "active":
 					default:
 						if(this.table.options.pagination){
@@ -14518,10 +14540,12 @@
 			return Object.assign([], rows);
 		}
 		
-		generateColumnGroupHeaders(){
+		generateColumnGroupHeaders(columns){
 			var output = [];
 			
-			var columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
+			if (!columns) {
+				columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
+			}
 			
 			columns.forEach((column) => {
 				var colData = this.processColumnGroup(column);
@@ -14530,7 +14554,7 @@
 					output.push(colData);
 				}
 			});
-			
+
 			return output;
 		}
 		
@@ -14658,16 +14682,16 @@
 			return exportRows;
 		}
 		
-		bodyToExportRows(rows){
-			
-			var columns = [];
+		bodyToExportRows(rows, columns = []){
 			var exportRows = [];
 			
-			this.table.columnManager.columnsByIndex.forEach((column) => {
-				if (this.columnVisCheck(column)) {
-					columns.push(column.getComponent());
-				}
-			});
+			if (columns.length === 0) {
+				this.table.columnManager.columnsByIndex.forEach((column) => {
+					if (this.columnVisCheck(column)) {
+						columns.push(column.getComponent());
+					}
+				});
+			}
 			
 			if(this.config.columnCalcs !== false && this.table.modExists("columnCalcs")){
 				if(this.table.modules.columnCalcs.topInitialized){
@@ -16590,8 +16614,12 @@
 	function rownum(cell, formatterParams, onRendered){
 		var content = document.createElement("span");
 		var row = cell.getRow();
+		var table = cell.getTable();
 
 		row.watchPosition((position) => {
+			if (formatterParams.relativeToPage) {
+				position += table.modules.page.getPageSize() * (table.modules.page.getPage() - 1);
+			}
 			content.innerText = position;
 		});
 		
@@ -19727,6 +19755,8 @@
 		navNext:9,
 		navUp:38,
 		navDown:40,
+		navLeft:37,
+		navRight:39,
 		scrollPageUp:33,
 		scrollPageDown:34,
 		scrollToStart:36,
@@ -19734,6 +19764,19 @@
 		undo:["ctrl + 90", "meta + 90"],
 		redo:["ctrl + 89", "meta + 89"],
 		copyToClipboard:["ctrl + 67", "meta + 67"],
+
+		spreadsheetJumpUp:["ctrl + 38", "meta + 38"],
+		spreadsheetJumpDown:["ctrl + 40", "meta + 40"],
+		spreadsheetJumpLeft:["ctrl + 37", "meta + 37"],
+		spreadsheetJumpRight:["ctrl + 39", "meta + 39"],
+		spreadsheetExpandUp:"shift + 38",
+		spreadsheetExpandDown:"shift + 40",
+		spreadsheetExpandLeft:"shift + 37",
+		spreadsheetExpandRight:"shift + 39",
+		spreadsheetExpandJumpUp:["ctrl + shift + 38", "meta + shift + 38"],
+		spreadsheetExpandJumpDown:["ctrl + shift + 40", "meta + shift + 40"],
+		spreadsheetExpandJumpLeft:["ctrl + shift + 37", "meta + shift + 37"],
+		spreadsheetExpandJumpRight:["ctrl + shift + 39", "meta + shift + 39"],
 	};
 
 	var defaultActions = {
@@ -19819,6 +19862,79 @@
 
 		navDown:function(e){
 			this.dispatch("keybinding-nav-down", e);
+		},
+
+		spreadsheetJumpLeft: function(e){
+			if (!this.table.options.spreadsheet) return;
+			if (this.table.modules.spreadsheet.navigate("jump", "left")) {
+				e.preventDefault();
+			}
+		},
+		spreadsheetJumpRight: function(e){
+			if (!this.table.options.spreadsheet) return;
+			if (this.table.modules.spreadsheet.navigate("jump", "right")) {
+				e.preventDefault();
+			}
+		},
+		spreadsheetJumpUp: function(e){
+			if (!this.table.options.spreadsheet) return;
+			if (this.table.modules.spreadsheet.navigate("jump", "up")) {
+				e.preventDefault();
+			}
+		},
+		spreadsheetJumpDown: function(e){
+			if (!this.table.options.spreadsheet) return;
+			if (this.table.modules.spreadsheet.navigate("jump", "down")) {
+				e.preventDefault();
+			}
+		},
+		spreadsheetExpandLeft: function(e){
+			if (!this.table.options.spreadsheet) return;
+			if (this.table.modules.spreadsheet.navigate("expand", "left")) {
+				e.preventDefault();
+			}
+		},
+		spreadsheetExpandRight: function(e){
+			if (!this.table.options.spreadsheet) return;
+			if (this.table.modules.spreadsheet.navigate("expand", "right")) {
+				e.preventDefault();
+			}
+		},
+		spreadsheetExpandUp: function(e){
+			if (!this.table.options.spreadsheet) return;
+			if (this.table.modules.spreadsheet.navigate("expand", "up")) {
+				e.preventDefault();
+			}
+		},
+		spreadsheetExpandDown: function(e){
+			if (!this.table.options.spreadsheet) return;
+			if (this.table.modules.spreadsheet.navigate("expand", "down")) {
+				e.preventDefault();
+			}
+		},
+		spreadsheetExpandJumpLeft: function(e){
+			if (!this.table.options.spreadsheet) return;
+			if (this.table.modules.spreadsheet.navigate("expand-jump", "left")) {
+				e.preventDefault();
+			}
+		},
+		spreadsheetExpandJumpRight: function(e){
+			if (!this.table.options.spreadsheet) return;
+			if (this.table.modules.spreadsheet.navigate("expand-jump", "right")) {
+				e.preventDefault();
+			}
+		},
+		spreadsheetExpandJumpUp: function(e){
+			if (!this.table.options.spreadsheet) return;
+			if (this.table.modules.spreadsheet.navigate("expand-jump", "up")) {
+				e.preventDefault();
+			}
+		},
+		spreadsheetExpandJumpDown: function(e){
+			if (!this.table.options.spreadsheet) return;
+			if (this.table.modules.spreadsheet.navigate("expand-jump", "down")) {
+				e.preventDefault();
+			}
 		},
 
 		undo:function(e){
@@ -20099,7 +20215,7 @@
 				this.subscribe("group-dblclick", this.loadMenuEvent.bind(this, this.table.options.groupDblClickMenu));
 			}
 		}
-		
+
 		initializeColumn(column){
 			var	def = column.definition;
 			
@@ -20308,6 +20424,7 @@
 					this.rootPopup = null;
 					
 					if(this.currentComponent){
+						this.dispatch("menu-closed");
 						this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
 						this.currentComponent = null;
 					}
@@ -20315,6 +20432,7 @@
 				
 				this.currentComponent = component;
 				
+				this.dispatch("menu-opened", menu, popup);
 				this.dispatchExternal("menuOpened", component.getComponent());
 			}
 		}
@@ -22945,7 +23063,7 @@
 				this.subscribe("group-dblclick", this.loadPopupEvent.bind(this, this.table.options.groupDblClickPopup));
 			}
 		}
-		
+
 		initializeColumn(column){
 			var def = column.definition;
 			
@@ -25764,6 +25882,1480 @@
 	//load defaults
 	Sort.sorters = defaultSorters;
 
+	class RangeComponent {
+		constructor(range) {
+			this._range = range;
+
+			return new Proxy(this, {
+				get: function (target, name, receiver) {
+					if (typeof target[name] !== "undefined") {
+						return target[name];
+					} else {
+						return target._range.table.componentFunctionBinder.handle(
+							"range",
+							target._range,
+							name,
+						);
+					}
+				},
+			});
+		}
+
+		getElement() {
+			return this._range.element;
+		}
+
+		getData() {
+			return this._range.getData();
+		}
+
+		getCells() {
+			return this._range.getCells();
+		}
+
+		getStructuredCells() {
+			return this._range.getStructuredCells();
+		}
+
+		getRows() {
+			return this._range.getRows().map((row) => row.getComponent());
+		}
+
+		getColumns() {
+			return this._range.getColumns().map((column) => column.getComponent());
+		}
+
+		getTop() {
+			return this._range.top;
+		}
+
+		getBottom() {
+			return this._range.bottom;
+		}
+
+		getLeft() {
+			return this._range.left;
+		}
+
+		getRight() {
+			return this._range.right;
+		}
+	}
+
+	class Range {
+		constructor(table, row, col, element) {
+			this.table = table;
+			this.start = { row, col };
+			this.end = { row, col };
+			this._updateMinMax();
+			this.element = element;
+		}
+
+		setStart(row, col) {
+			this.start.row = row;
+			this.start.col = col;
+			this._updateMinMax();
+		}
+
+		setEnd(row, col) {
+			this.end.row = row;
+			this.end.col = col;
+			this._updateMinMax();
+		}
+
+		_updateMinMax() {
+			this.top = Math.min(this.start.row, this.end.row);
+			this.bottom = Math.max(this.start.row, this.end.row);
+			this.left = Math.min(this.start.col, this.end.col);
+			this.right = Math.max(this.start.col, this.end.col);
+		}
+
+		atTopLeft(cell) {
+			return (
+				cell.row.position - 1 === this.top &&
+				cell.column.position - 2 === this.left
+			);
+		}
+
+		atBottomRight(cell) {
+			return (
+				cell.row.position - 1 === this.bottom &&
+				cell.column.position - 2 === this.right
+			);
+		}
+
+		occupies(cell) {
+			return this.occupiesRow(cell.row) && this.occupiesColumn(cell.column);
+		}
+
+		occupiesRow(row) {
+			return this.top <= row.position - 1 && row.position - 1 <= this.bottom;
+		}
+
+		occupiesColumn(col) {
+			return this.left <= col.position - 2 && col.position - 2 <= this.right;
+		}
+
+		overlaps(left, top, right, bottom) {
+			if (this.left > right || left > this.right) return false;
+			if (this.top > bottom || top > this.bottom) return false;
+			return true;
+		}
+
+		getData() {
+			return this.table.modules.spreadsheet.getDataByRange(this);
+		}
+
+		getCells() {
+			return this.table.modules.spreadsheet.getCellsByRange(this);
+		}
+
+		getStructuredCells() {
+			return this.table.modules.spreadsheet.getCellsByRange(this, true);
+		}
+
+		getRows() {
+			return this.table.modules.spreadsheet.getRowsByRange(this);
+		}
+
+		getColumns() {
+			return this.table.modules.spreadsheet.getColumnsByRange(this);
+		}
+
+		getComponent() {
+			if (!this.component) {
+				this.component = new RangeComponent(this);
+			}
+			return this.component;
+		}
+
+		destroy() {
+			this.element.remove();
+		}
+	}
+
+	class Spreadsheet extends Module {
+		constructor(table) {
+			super(table);
+			
+			this.selecting = "cell";
+			this.mousedown = false;
+			this.ranges = [];
+			this.rowHeaderField = "--row-header";
+			this.overlay = null;
+			
+			this.registerTableOption("spreadsheet", false); //enable spreadsheet
+			this.registerTableOption("spreadsheetRowHeader", {}); //row header definition
+		}
+		
+		initialize() {
+			if (this.table.options.spreadsheet) {		
+				if(!this.table.options.selectable){
+					this.initializeTable();
+					this.initializeWatchers();
+					this.initializeFunctions();
+					if (this.table.modules.menu) {
+						this.initializeMenuNavigation();
+					}
+				}else {
+					console.warn("Spreadsheet functionality cannot be used in conjunction with row selection");
+				}
+			}
+		}
+		
+		
+		
+		initializeWatchers() {
+			var debouncedLayoutRanges, debouncedLayoutRangesTimeout, layoutRanges;
+			
+			this.subscribe("column-init", this.initializeColumn.bind(this));
+			this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
+			this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
+			this.subscribe("column-resized", this.handleColumnResized.bind(this));
+			this.subscribe("columns-loading", this.handleColumnsLoading.bind(this));
+			this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
+			this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
+			this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
+			this.subscribe("cell-rendered", this.renderCell.bind(this));
+			this.subscribe("cell-editing", this.handleEditingCell.bind(this));
+			this.subscribe("edit-success", this.finishEditingCell.bind(this));
+			this.subscribe("edit-cancelled", this.finishEditingCell.bind(this));
+			this.subscribe("page-changed", this.redraw.bind(this));
+			this.subscribe("table-layout", this.layoutElement.bind(this));
+			this.subscribe("table-redraw", this.redraw.bind(this));
+			
+			
+			debouncedLayoutRanges = () => {
+				clearTimeout(debouncedLayoutRangesTimeout);
+				
+				debouncedLayoutRangesTimeout = setTimeout(this.layoutRanges.bind(this), 200);
+			};		
+			
+			
+			layoutRanges = () => {
+				this.overlay.style.visibility = "hidden";
+				debouncedLayoutRanges();
+			};
+			
+			if ("onscrollend" in window) {
+				var scrolling = false;
+				var handleScrollEnd = () => {
+					this.layoutRanges();
+					this.table.rowManager.element.removeEventListener("scrollend", handleScrollEnd);
+					scrolling = false;
+				};
+				var handleScroll = () => {
+					this.overlay.style.visibility = "hidden";
+					if (scrolling) {
+						return;
+					}
+					scrolling = true;
+					this.table.rowManager.element.addEventListener("scrollend", handleScrollEnd);
+				};
+				this.subscribe("scroll-vertical", handleScroll);
+				this.subscribe("scroll-horizontal", handleScroll);
+			} else {
+				this.subscribe("scroll-vertical", layoutRanges);
+				this.subscribe("scroll-horizontal", layoutRanges);
+			}
+			
+			this.subscribe("column-width", layoutRanges);
+			this.subscribe("column-height", layoutRanges);
+			this.subscribe("column-resized", layoutRanges);
+			this.subscribe("cell-height", layoutRanges);
+			
+			var navigate = (mode, dir) => {
+				var self = this;
+				return function (e) {
+					if(self.navigate(mode, dir)) {
+						e.preventDefault();
+					}
+				};
+			};
+			
+			this.subscribe("keybinding-nav-prev", navigate("normal", "left"));
+			this.subscribe("keybinding-nav-next", navigate("normal", "right"));
+			this.subscribe("keybinding-nav-left", navigate("normal", "left"));
+			this.subscribe("keybinding-nav-right", navigate("normal", "right"));
+			this.subscribe("keybinding-nav-up", navigate("normal", "up"));
+			this.subscribe("keybinding-nav-down", navigate("normal", "down"));
+		}
+		
+		initializeTable() {
+			this.table.options.clipboardCopyRowRange = "spreadsheet";
+			
+			this.overlay = document.createElement("div");
+			this.overlay.classList.add("tabulator-range-overlay");
+			
+			this.rangeContainer = document.createElement("div");
+			this.rangeContainer.classList.add("tabulator-range-container");
+			
+			this.activeRangeCellElement = document.createElement("div");
+			this.activeRangeCellElement.classList.add("tabulator-range-cell-active");
+			
+			this.overlay.appendChild(this.rangeContainer);
+			this.overlay.appendChild(this.activeRangeCellElement);
+			
+			var self = this;
+			
+			this.handleKeyDown = function (e) {
+				if (e.key === "Enter") {
+					// prevent action when pressing enter from editor
+					if (!e.target.classList.contains("tabulator-tableholder")) {
+						return;
+					}
+					
+					// is menu open?
+					if (self.table.modules.menu && self.table.modules.menu.currentComponent) {
+						return;
+					}
+					
+					// is editing a cell?
+					if (self.table.modules.edit && self.table.modules.edit.currentCell) {
+						return;
+					}
+					
+					self.editCell(self.getActiveCell());
+					e.preventDefault();
+				}
+			};
+			
+			this.table.rowManager.element.addEventListener("keydown", this.handleKeyDown);
+			
+			this.mouseUpHandler = function () {
+				self.mousedown = false;
+				document.removeEventListener("mouseup", self.mouseUpHandler);
+			};
+			
+			this.subscribe("table-destroy", function () {
+				document.removeEventListener("mouseup", self.mouseUpHandler);
+				self.table.rowManager.element.removeEventListener("keydown", self.handleKeyDown);
+			});
+			
+			this.resetRanges();
+			
+			this.table.rowManager.element.appendChild(this.overlay);
+			this.table.columnManager.element.setAttribute("tabindex", 0);
+			
+			if (this.table.modules.edit) {
+				this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
+			}
+		}
+		
+		initializeFunctions() {
+			this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
+			this.registerTableFunction("getActiveRange", this.getActiveRange.bind(this, true));
+			
+			this.registerComponentFunction("cell", "getRange", (cell) => {
+				var range;
+				
+				if (cell.column.field === this.rowHeaderField) {
+					range = this.ranges.find((range) => range.occupiesRow(cell.row));
+				} else {
+					range = this.ranges.find((range) => range.occupies(cell));
+				}
+				
+				if (!range) { 
+					return null;
+				}
+				
+				return range.getComponent();
+			});
+			
+			this.registerComponentFunction("row", "getRange", (row) => {
+				var range = this.ranges.find((range) => range.occupiesRow(row));
+				
+				if (!range) {
+					return null;
+				}
+				
+				return range.getComponent();
+			});
+			
+			this.registerComponentFunction("column", "getRange", (col) => {
+				var range = this.ranges.find((range) => range.occupiesColumn(col));
+				
+				if (!range) {
+					return null;
+				}
+				
+				return range.getComponent();
+			});
+		}
+		
+		initializeColumn(column) {
+			if (column.modules.edit) {
+				// Block editor from taking action so we can trigger edit by
+				// double clicking.
+				column.modules.edit.blocked = true;
+			}
+		}
+		
+		initializeMenuNavigation() {
+			var self = this;
+			var pressingContextMenu = false;
+			
+			function contextMenuKeyCheck(e) {
+				if (e.key === "ContextMenu") {
+					pressingContextMenu = true;
+				}
+			}
+			
+			function handleContextMenu(e) {
+				if (!pressingContextMenu) return;
+				
+				var activeCell = self.getActiveCell();
+				var menuDef = activeCell.column.definition.contextMenu;
+				var menu =
+				typeof menuDef === "function"
+					? menuDef.call(self.table, e, activeCell.getComponent())
+					: menuDef;
+				
+				self.table.modules.menu.loadMenu(e, activeCell, menu, activeCell.element);
+				
+				pressingContextMenu = false;
+				e.preventDefault();
+			}
+			
+			this.table.rowManager.element.addEventListener(
+				"keyup",
+				contextMenuKeyCheck,
+			);
+			this.table.rowManager.element.addEventListener(
+				"contextmenu",
+				handleContextMenu,
+			);
+					
+			this.subscribe("table-destroy", () => {
+				this.table.rowManager.element.removeEventListener(
+					"keyup",
+					contextMenuKeyCheck,
+				);
+				this.table.rowManager.element.removeEventListener(
+					"contextmenu",
+					handleContextMenu,
+				);
+			});
+							
+			this.subscribe("menu-opened", (menu, popup) => {
+				var stack = [createState(menu, popup)];
+								
+				function createState(menu, popup) {
+					var elements = popup.element.querySelectorAll(".tabulator-menu-item");
+					var focusIdx = 0;
+									
+					function handleMouseOver(e) {
+						focusIdx = Array.prototype.indexOf.call(elements, e.target);
+						draw();
+					}
+									
+					// We do this because the menu items use user-select: none;
+					function preventLosingFocus(e) {
+						e.preventDefault();
+					}
+									
+					elements.forEach((element) => {
+						element.addEventListener("mouseover", handleMouseOver);
+						element.addEventListener("mousedown", preventLosingFocus);
+					});
+									
+					return {
+						menu,
+						popup,
+						elements,
+						get focusIdx() {
+							return focusIdx;
+						},
+						set focusIdx(value) {
+							if (value < 0) {
+								value = 0;
+							} else if (value >= elements.length) {
+								value = elements.length - 1;
+							}
+							focusIdx = value;
+						},
+						get focusedMenu() {
+							return this.menu[focusIdx];
+						},
+						get focusedElement() {
+							return this.elements[focusIdx];
+						},
+						destroy() {
+							this.popup.hide(true);
+							this.elements.forEach((element) => {
+								element.removeEventListener("mouseover", handleMouseOver);
+								element.removeEventListener("mousedown", preventLosingFocus);
+							});
+						},
+					};
+				}
+								
+				function navigate(nav) {
+					var state = stack[stack.length - 1];
+					switch (nav) {
+						case "up":
+							state.focusIdx--;
+							break;
+						case "down":
+							state.focusIdx++;
+							break;
+						case "left":
+							if (stack.length > 1) {
+								stack.pop().destroy();
+							}
+							break;
+						case "right":
+							if (state.focusedMenu.menu && state.focusedMenu.menu.length) {
+								state.focusedElement.click();
+								var nextState = createState(
+									state.focusedMenu.menu,
+									state.popup.childPopup,
+								);
+								stack.push(nextState);
+							}
+							break;
+					}
+					draw();
+				}
+									
+				function draw() {
+					var state = stack[stack.length - 1];
+					state.elements.forEach((element) => {
+						var selected = element === state.focusedElement;
+						element.classList.toggle(
+							"tabulator-spreadsheet-menu-item-focused",
+							selected,
+						);
+					});
+				}
+										
+				function handleUp(e) {
+					e.preventDefault();
+					navigate("up");
+				}
+										
+				function handleDown(e) {
+					e.preventDefault();
+					navigate("down");
+				}
+										
+				function handleLeft(e) {
+					e.preventDefault();
+					navigate("left");
+				}
+										
+				function handleRight(e) {
+					e.preventDefault();
+					navigate("right");
+				}
+										
+				function handleKeyUp(e) {
+					if (e.key === "Enter") {
+						var state = stack[stack.length - 1];
+						state.focusedElement.click();
+					}
+				}
+										
+				function subscribeListeners() {
+					self.subscribe("keybinding-nav-up", handleUp);
+					self.subscribe("keybinding-nav-down", handleDown);
+					self.subscribe("keybinding-nav-left", handleLeft);
+					self.subscribe("keybinding-nav-right", handleRight);
+					// TODO use keybinding module
+					self.table.element.addEventListener("keyup", handleKeyUp);
+				}
+										
+				function unsubscribeListeners() {
+					self.unsubscribe("menu-closed", unsubscribeListeners);
+					self.unsubscribe("keybinding-nav-up", handleUp);
+					self.unsubscribe("keybinding-nav-down", handleDown);
+					self.unsubscribe("keybinding-nav-left", handleLeft);
+					self.unsubscribe("keybinding-nav-right", handleRight);
+					self.table.element.removeEventListener("keyup", handleKeyUp);
+				}
+										
+				this.subscribe("menu-closed", unsubscribeListeners);
+				subscribeListeners();
+				draw();
+			});
+		}
+								
+		redraw(force) {
+			if (force) {
+				this.selecting = 'cell';
+				this.resetRanges();
+				this.layoutElement();
+			}
+		}
+								
+		getSelectedData() {
+			return this.getDataByRange(this.getActiveRange());
+		}
+								
+		getDataByRange(range) {
+			var data = [];
+			var rows = this.getRowsByRange(range);
+			var columns = this.getColumnsByRange(range);
+									
+			rows.forEach((row) => {
+				var rowData = row.getData();
+				var result = {};
+				columns.forEach((column) => {
+					result[column.field] = rowData[column.field];
+				});
+				data.push(result);
+			});
+									
+			return data;
+		}
+								
+		getCellsByRange(range, structured) {
+			var cells = [];
+			var rows = this.getRowsByRange(range);
+			var columns = this.getColumnsByRange(range);
+									
+			if (structured) {
+				cells = rows.map((row) => {
+					var arr = [];
+					row.getCells().forEach((cell) => {
+						if (columns.includes(cell.column)) {
+							arr.push(cell.getComponent());
+						}
+					});
+					return arr;
+				});
+			} else {
+				rows.forEach((row) => {
+					row.getCells().forEach((cell) => {
+						if (columns.includes(cell.column)) {
+							cells.push(cell.getComponent());
+						}
+					});
+				});
+			}
+									
+			return cells;
+		}
+								
+		renderCell(cell) {
+			var el = cell.getElement();
+									
+			var rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
+									
+			el.classList.toggle("tabulator-spreadsheet-selected", rangeIdx !== -1);
+									
+			el.classList.toggle(
+				"tabulator-spreadsheet-only-cell-selected",
+				this.ranges.length === 1 &&
+										this.ranges[0].atTopLeft(cell) &&
+										this.ranges[0].atBottomRight(cell),
+			);
+										
+			el.dataset.range = rangeIdx;
+		}
+									
+		handleColumnsLoading() {
+			var customRowHeader = this.options("spreadsheetRowHeader");
+			var rowHeaderDef = {
+				title: "",
+				field: this.rowHeaderField,
+				headerSort: false,
+				resizable: false,
+				frozen: true,
+				editable: false,
+				formatter: "rownum",
+				formatterParams: { relativeToPage: true },
+											
+				...customRowHeader,
+											
+				cssClass: customRowHeader.cssClass
+					? `tabulator-spreadsheet-row-header ${customRowHeader.cssClass}`
+					: "tabulator-spreadsheet-row-header",
+			};
+			this.rowHeaderField = rowHeaderDef.field;
+			// Add this column before everything else
+			this.table.columnManager._addColumn(rowHeaderDef);
+		}
+									
+		handleColumnResized(column) {
+			if (this.selecting !== "column" && this.selecting !== "all") {
+				return;
+			}
+										
+			var selected = this.ranges.some((range) => range.occupiesColumn(column));
+										
+			if (!selected) {
+				return;
+			}
+										
+			this.ranges.forEach((range) => {
+				var selectedColumns = range.getColumns();
+				selectedColumns.forEach((selectedColumn) => {
+					if (selectedColumn !== column) {
+						selectedColumn.setWidth(column.width);
+					}
+				});
+			});
+		}
+									
+		handleColumnMouseDown(event, column) {
+			if (
+				event.button === 2 &&
+											(this.selecting === "column" || this.selecting === "all") &&
+											this.getActiveRange().occupiesColumn(column)
+			) {
+				return;
+			}
+											
+			this.mousedown = true;
+											
+			document.addEventListener("mouseup", this.mouseUpHandler);
+											
+			this._select(event, column);
+			this.layoutElement();
+		}
+										
+		handleColumnMouseMove(_, column) {
+			if (column.field === this.rowHeaderField || !this.mousedown || this.selecting === 'all') {
+				return;
+			}
+											
+			this.endSelection(column);
+			this.layoutElement(true);
+		}
+										
+		handleCellMouseDown(event, cell) {
+			if (
+				event.button === 2 &&
+												(this.getActiveRange().occupies(cell) ||
+												((this.selecting === "row" || this.selecting === "all") &&
+												this.getActiveRange().occupiesRow(cell.row)))
+			) {
+				return;
+			}
+												
+			this.mousedown = true;
+												
+			document.addEventListener("mouseup", this.mouseUpHandler);
+												
+			this._select(event, cell);
+			this.layoutElement();
+		}
+											
+		_select(event, element) {
+			if (element.type === "column") {
+				if (element.field === this.rowHeaderField) {
+					this.resetRanges();
+					this.selecting = "all";
+														
+					const topLeftCell = this.getCell(0, 0);
+					const bottomRightCell = this.getCell(-1, -1);
+														
+					this.beginSelection(topLeftCell);
+					this.endSelection(bottomRightCell);
+														
+					return;
+				} else {
+					this.selecting = "column";
+				}
+			} else if (element.column.field === this.rowHeaderField) {
+				this.selecting = "row";
+			} else {
+				this.selecting = "cell";
+			}
+												
+			if (event.shiftKey) {
+				if (this.ranges.length > 1) {
+					this.ranges = this.ranges.slice(-1);
+				}
+													
+				this.endSelection(element);
+			} else if (event.ctrlKey) {
+				this.addRange();
+													
+				this.beginSelection(element);
+				this.endSelection(element);
+			} else {
+				this.resetRanges();
+													
+				this.beginSelection(element);
+				this.endSelection(element);
+			}
+		}
+											
+		handleCellMouseMove(_, cell) {
+			if (!this.mousedown || this.selecting === "all") {
+				return;
+			}
+												
+			this.endSelection(cell);
+			this.layoutElement(true);
+		}
+											
+		handleCellDblClick(_, cell) {
+			if (cell.column.field === this.rowHeaderField) {
+				return;
+			}
+												
+			this.editCell(cell);
+		}
+											
+		editCell(cell) {
+			if (!cell.column.modules.edit) {
+				cell.column.modules.edit = {};
+			}
+			cell.column.modules.edit.blocked = false;
+			cell.element.focus({ preventScroll: true });
+			cell.column.modules.edit.blocked = true;
+		}
+											
+		handleEditingCell() {
+			this.table.rowManager.element.removeEventListener("keydown", this.handleKeyDown);
+		}
+											
+		finishEditingCell() {
+			this.table.rowManager.element.focus();
+			this.table.rowManager.element.addEventListener("keydown", this.handleKeyDown);
+		}
+											
+		navigate(mode, dir) {
+			// Don't navigate while editing
+			if (this.table.modules.edit && this.table.modules.edit.currentCell) {
+				return false;
+			}
+												
+			// Don't navigate while a menu is open
+			if (this.table.modules.menu && this.table.modules.menu.currentComponent) {
+				return false;
+			}
+												
+			// If there are more than 1 range, use the active range and destroy the others
+			if (this.ranges.length > 1) {
+				this.ranges = this.ranges.filter((range) => {
+					if (range === this.getActiveRange()) {
+						range.setEnd(range.start.row, range.start.col);
+						return true;
+					}
+					range.destroy();
+					return false;
+				});
+			}
+												
+			var range = this.getActiveRange();
+												
+			var moved = false;
+												
+			switch (mode) {
+				case "normal": {
+					let nextRow = range.start.row;
+					let nextCol = range.start.col;
+														
+					if (dir === "left") {
+						nextCol = Math.max(nextCol - 1, 0);
+					} else if (dir === "right") {
+						nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
+					} else if (dir === "up") { 
+						nextRow = Math.max(nextRow - 1, 0);
+					} else if (dir === "down") {
+						nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+					}
+														
+					if (nextCol !== range.start.col || nextRow !== range.start.row) {
+						moved = true;
+					}
+														
+					range.setStart(nextRow, nextCol);
+					range.setEnd(nextRow, nextCol);
+														
+					this.selecting = "cell";
+														
+					break;
+				}
+				case "expand": {
+					if ((dir === 'left' || dir === 'right') && this.selecting === 'row') {
+						break;
+					}
+														
+					if ((dir === 'up' || dir === 'down') && this.selecting === 'column') {
+						break;
+					}
+														
+					let nextRow = range.end.row;
+					let nextCol = range.end.col;
+														
+					if (dir === "left") {
+						nextCol = Math.max(nextCol - 1, 0);
+					} else if (dir === "right") {
+						nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
+					} else if (dir === "up") { 
+						nextRow = Math.max(nextRow - 1, 0);
+					} else if (dir === "down") {
+						nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+					}
+														
+					if (nextCol !== range.end.col || nextRow !== range.end.row) {
+						moved = true;
+					}
+														
+					range.setEnd(nextRow, nextCol);
+														
+					break;
+				}
+				case "jump": {
+					let nextRow = range.start.row;
+					let nextCol = range.start.col;
+														
+					if (dir === "left") {
+						nextCol = this.findJumpCellLeft(range.start.row, range.start.col);
+					} else if (dir === "right") {
+						nextCol = this.findJumpCellRight(range.start.row, range.start.col);
+					} else if (dir === "up") {
+						nextRow = this.findJumpCellUp(range.start.row, range.start.col);
+					} else if (dir === "down") {
+						nextRow = this.findJumpCellDown(range.start.row, range.start.col);
+					}
+														
+					if (nextCol !== range.start.col || nextRow !== range.start.row) {
+						moved = true;
+					}
+														
+					range.setStart(nextRow, nextCol);
+					range.setEnd(nextRow, nextCol);
+														
+					this.selecting = "cell";
+														
+					break;
+				}
+				case "expand-jump": {
+					let nextRow = range.end.row;
+					let nextCol = range.end.col;
+														
+					if (dir === "left") {
+						nextCol = this.findJumpCellLeft(range.start.row, range.end.col);
+					} else if (dir === "right") {
+						nextCol = this.findJumpCellRight(range.start.row, range.end.col);
+					} else if (dir === "up") {
+						nextRow = this.findJumpCellUp(range.end.row, range.start.col);
+					} else if (dir === "down") {
+						nextRow = this.findJumpCellDown(range.end.row, range.start.col);
+					}
+														
+					if (nextCol !== range.end.col || nextRow !== range.end.row) {
+						moved = true;
+					}
+														
+					range.setEnd(nextRow, nextCol);
+														
+					break;
+				}
+			}
+												
+			if (!moved) {
+				return;
+			}
+												
+			var row = this.getRowByRangePos(range.end.row);
+			var column = this.getColumnByRangePos(range.end.col);
+												
+			if ((dir === 'left' || dir === 'right') && column.getElement().parentNode === null) {
+				column.getComponent().scrollTo(undefined, false);
+			} else if ((dir === 'up' || dir === 'down') && row.getElement().parentNode === null) {
+				row.getComponent().scrollTo(undefined, false);
+			} else {
+				// Use faster autoScroll when the elements are on the DOM
+				this.autoScroll(range, row.getElement(), column.getElement());
+			}
+												
+			this.layoutElement();
+												
+			return true;
+		}
+											
+		autoScroll(range, row, column) {
+			var tableHolder = this.table.rowManager.element;
+			var rowHeader = this.rowHeaderColumn.getElement();
+			if (typeof row === 'undefined') {
+				row = this.getRowByRangePos(range.end.row).getElement();
+			}
+			if (typeof column === 'undefined') {
+				column = this.getColumnByRangePos(range.end.col).getElement();
+			}
+												
+			var rect = {
+				left: column.offsetLeft,
+				right: column.offsetLeft + column.offsetWidth,
+				top: row.offsetTop,
+				bottom: row.offsetTop + row.offsetHeight,
+			};
+												
+			var view = {
+				left: tableHolder.scrollLeft + rowHeader.offsetWidth,
+				right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
+				top: tableHolder.scrollTop,
+				bottom:
+													tableHolder.scrollTop +
+													tableHolder.offsetHeight -
+													this.table.rowManager.scrollbarWidth,
+			};
+												
+			var withinHorizontalView =
+												view.left < rect.left &&
+												rect.left < view.right &&
+												view.left < rect.right &&
+												rect.right < view.right;
+												
+			var withinVerticalView =
+												view.top < rect.top &&
+												rect.top < view.bottom &&
+												view.top < rect.bottom &&
+												rect.bottom < view.bottom;
+												
+			if (!withinHorizontalView) {
+				if (rect.left < view.left) {
+					tableHolder.scrollLeft = rect.left - rowHeader.offsetWidth;
+				} else if (rect.right > view.right) {
+					tableHolder.scrollLeft = rect.right - tableHolder.clientWidth;
+				}
+			}
+												
+			if (!withinVerticalView) {
+				if (rect.top < view.top) {
+					tableHolder.scrollTop = rect.top;
+				} else if (rect.bottom > view.bottom) {
+					tableHolder.scrollTop = rect.bottom - tableHolder.clientHeight;
+				}
+			}
+		}
+											
+		findJumpCellLeft(rowPos, colPos){
+			var row = this.getRowByRangePos(rowPos);
+			var cells = row.cells.filter((cell) => cell.column.visible);
+			var isStartingCellEmpty = !cells[colPos + 1].getValue();
+			var isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false;
+			var jumpCol = colPos;
+												
+			// Go until we find an empty / non-empty cell.
+			for (var i = colPos; i > 0; i--){
+				var currentCell = cells[i];
+				if (isStartingCellEmpty) {
+					if (!currentCell.getValue()) {
+						continue;
+					}
+														
+					if (currentCell.getValue()) {
+						jumpCol = currentCell.column.position - 2;
+						break;
+					}
+				} else {
+					if (!isLeftOfStartingCellEmpty && !currentCell.getValue()) {
+						break;
+					}
+														
+					jumpCol = currentCell.column.position - 2;
+														
+					if (isLeftOfStartingCellEmpty) {
+						if (!currentCell.getValue()) {
+							continue;
+						}
+						if (currentCell.getValue()) {
+							break;
+						}
+					}
+														
+					jumpCol = currentCell.column.position - 2;
+					if (currentCell.getValue()) {
+						continue;
+					}
+				}
+			}
+												
+			return jumpCol;
+		}
+											
+		findJumpCellRight(rowPos, colPos){
+			var row = this.getRowByRangePos(rowPos);
+			var cells = row.cells.filter((cell) => cell.column.visible);
+			var isStartingCellEmpty = !cells[colPos + 1].getValue();
+			var isRightOfStartingCellEmpty = cells[colPos + 2] ? !cells[colPos + 2].getValue() : false;
+			var jumpCol = colPos;
+												
+			for (var i = colPos + 2; i < cells.length; i++){
+				var currentCell = cells[i];
+				if (isStartingCellEmpty) {
+					if (!currentCell.getValue()) {
+						continue;
+					}
+														
+					if (currentCell.getValue()) {
+						jumpCol = currentCell.column.position - 2;
+						break;
+					}
+				} else {
+					if (!isRightOfStartingCellEmpty && !currentCell.getValue()) {
+						break;
+					}
+														
+					jumpCol = currentCell.column.position - 2;
+														
+					if (isRightOfStartingCellEmpty) {
+						if (!currentCell.getValue()) {
+							continue;
+						}
+						if (currentCell.getValue()) {
+							break;
+						}
+					}
+														
+					if (currentCell.getValue()) {
+						continue;
+					}
+				}
+			}
+												
+			return jumpCol;
+		}
+											
+		findJumpCellUp(rowPos, colPos) {
+			var column = this.getColumnByRangePos(colPos);
+			var cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row));
+			var isStartingCellEmpty = !cells[rowPos].getValue();
+			var isTopOfStartingCellEmpty = cells[rowPos - 1] ? !cells[rowPos - 1].getValue() : false;
+			var jumpRow = rowPos;
+												
+			for (var i = jumpRow - 1; i >= 0; i--){
+				var currentCell = cells[i];
+				if (isStartingCellEmpty) {
+					jumpRow = currentCell.row.position - 1;
+														
+					if (currentCell.getValue()) {
+						break;
+					}
+														
+					if (!currentCell.getValue()) {
+						continue;
+					}
+				} else {
+					if (!isTopOfStartingCellEmpty && !currentCell.getValue()) {
+						break;
+					}
+														
+					jumpRow = currentCell.row.position - 1;
+														
+					if (isTopOfStartingCellEmpty) {
+						if (!currentCell.getValue()) {
+							continue;
+						}
+						if (currentCell.getValue()) {
+							break;
+						}
+					}
+														
+					if (currentCell.getValue()) {
+						continue;
+					}
+				}
+			}
+												
+			return jumpRow;
+		}
+											
+		findJumpCellDown(rowPos, colPos) {
+			var column = this.getColumnByRangePos(colPos);
+			var cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row));
+			var isStartingCellEmpty = !cells[rowPos].getValue();
+			var isBottomOfStartingCellEmpty = cells[rowPos + 1] ? !cells[rowPos + 1].getValue() : false;
+			var jumpRow = rowPos;
+												
+			for (var i = jumpRow + 1; i < cells.length; i++){
+				var currentCell = cells[i];
+				if (isStartingCellEmpty) {
+					jumpRow = currentCell.row.position - 1;
+														
+					if (currentCell.getValue()) {
+						break;
+					}
+														
+					if (!currentCell.getValue()) {
+						continue;
+					}
+				} else {
+					if (!isBottomOfStartingCellEmpty && !currentCell.getValue()) {
+						break;
+					}
+														
+					jumpRow = currentCell.row.position - 1;
+														
+					if (isBottomOfStartingCellEmpty) {
+						if (!currentCell.getValue()) {
+							continue;
+						}
+						if (currentCell.getValue()) {
+							break;
+						}
+					}
+														
+					if (currentCell.getValue()) {
+						continue;
+					}
+				}
+			}
+												
+			return jumpRow;
+		}
+											
+		beginSelection(element) {
+			var range = this.getActiveRange();
+												
+			if (element.type === "column") {
+				range.setStart(0, element.position - 2);
+				return;
+			}
+												
+			var row = element.row.position - 1;
+			var col = element.column.position - 2;
+												
+			if (element.column.field === this.rowHeaderField) {
+				range.setStart(row, 0);
+			} else {
+				range.setStart(row, col);
+			}
+		}
+											
+		endSelection(element) {
+			var range = this.getActiveRange();
+			var rowsCount = this.getRows().length;
+												
+			if (element.type === "column") {
+				if (this.selecting === "column") {
+					range.setEnd(rowsCount - 1, element.position - 2);
+				} else if (this.selecting === "cell") {
+					range.setEnd(0, element.position - 2);
+				}
+				return;
+			}
+												
+			var row = element.row.position - 1;
+			var col = element.column.position - 2;
+			var isRowHeader = element.column.field === this.rowHeaderField;
+												
+			if (this.selecting === "row") {
+				range.setEnd(row, this.getColumns().length - 2);
+			} else if (this.selecting !== "row" && isRowHeader) {
+				range.setEnd(row, 0);
+			} else if (this.selecting === "column") {
+				range.setEnd(rowsCount - 1, col);
+			} else {
+				range.setEnd(row, col);
+			}
+		}
+											
+		layoutElement(visibleRows) {
+			var rows;
+												
+			if (visibleRows) {
+				rows = this.table.rowManager.getVisibleRows(true);
+			} else {
+				rows = this.table.rowManager.getRows();
+			}
+												
+			rows.forEach((row) => {
+				if (row.type === "row") {
+					this.layoutRow(row);
+					row.cells.forEach((cell) => this.renderCell(cell));
+				}
+			});
+												
+			this.getColumns().forEach((column) => {
+				this.layoutColumn(column);
+			});
+												
+			this.layoutRanges();
+		}
+											
+		layoutRow(row) {
+			var el = row.getElement();
+												
+			var selected = false;
+			var occupied = this.ranges.some((range) => range.occupiesRow(row));
+												
+			if (this.selecting === "row") {
+				selected = occupied;
+			} else if (this.selecting === "all") {
+				selected = true;
+			}
+												
+			el.classList.toggle("tabulator-spreadsheet-selected", selected);
+			el.classList.toggle("tabulator-spreadsheet-highlight", occupied);
+		}
+											
+		layoutColumn(column) {
+			var el = column.getElement();
+												
+			var selected = false;
+			var occupied = this.ranges.some((range) => range.occupiesColumn(column));
+												
+			if (this.selecting === "column") {
+				selected = occupied;
+			} else if (this.selecting === "all") {
+				selected = true;
+			}
+												
+			el.classList.toggle("tabulator-spreadsheet-selected", selected);
+			el.classList.toggle("tabulator-spreadsheet-highlight", occupied);
+		}
+											
+		layoutRanges() {
+			if (!this.table.initialized) {
+				return;
+			}
+												
+			var activeCell = this.getActiveCell();
+												
+			if (!activeCell) {
+				return;
+			}
+												
+			this.activeRangeCellElement.style.left =
+												activeCell.row.getElement().offsetLeft +
+												activeCell.getElement().offsetLeft +
+												"px";
+			this.activeRangeCellElement.style.top =
+												activeCell.row.getElement().offsetTop + "px";
+			this.activeRangeCellElement.style.width =
+												activeCell.getElement().offsetLeft +
+												activeCell.getElement().offsetWidth -
+												activeCell.getElement().offsetLeft +
+												"px";
+			this.activeRangeCellElement.style.height =
+												activeCell.row.getElement().offsetTop +
+												activeCell.row.getElement().offsetHeight -
+												activeCell.row.getElement().offsetTop +
+												"px";
+												
+			this.ranges.forEach((range) => this.layoutRange(range));
+												
+			this.overlay.style.visibility = "visible";
+		}
+											
+		layoutRange(range) {
+			var _vDomTop = this.table.rowManager.renderer.vDomTop;
+			var _vDomBottom = this.table.rowManager.renderer.vDomBottom;
+			var _vDomLeft = this.table.columnManager.renderer.leftCol;
+			var _vDomRight = this.table.columnManager.renderer.rightCol;
+												
+			if (_vDomTop == null) {
+				_vDomTop = 0;
+			}
+												
+			if (_vDomBottom == null) {
+				_vDomBottom = Infinity;
+			}
+												
+			if (_vDomLeft == null) {
+				_vDomLeft = 0;
+			}
+												
+			if (_vDomRight == null) {
+				_vDomRight = Infinity;
+			}
+												
+			if (!range.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) {
+				return;
+			}
+												
+			var top = Math.max(range.top, _vDomTop);
+			var bottom = Math.min(range.bottom, _vDomBottom);
+			var left = Math.max(range.left, _vDomLeft);
+			var right = Math.min(range.right, _vDomRight);
+												
+			var topLeftCell = this.getCell(top, left);
+			var bottomRightCell = this.getCell(bottom, right);
+												
+			range.element.classList.toggle(
+				"tabulator-range-active",
+				range === this.getActiveRange(),
+			);
+													
+			range.element.style.left = 
+													topLeftCell.row.getElement().offsetLeft +
+													topLeftCell.getElement().offsetLeft +
+													"px";
+			range.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
+			range.element.style.width =
+													bottomRightCell.getElement().offsetLeft +
+													bottomRightCell.getElement().offsetWidth -
+													topLeftCell.getElement().offsetLeft +
+													"px";
+			range.element.style.height =
+													bottomRightCell.row.getElement().offsetTop +
+													bottomRightCell.row.getElement().offsetHeight -
+													topLeftCell.row.getElement().offsetTop +
+													"px";
+		}
+												
+		findRangeByCellElement(cell) {
+			var rangeIdx = cell.dataset.range;
+			if (rangeIdx < 0) {
+				return;
+			}
+			return this.ranges[rangeIdx].getComponent();
+		}
+												
+		getCell(rowIdx, colIdx) {
+			if (rowIdx < 0) {
+				rowIdx = this.getRows().length + rowIdx;
+			}
+													
+			var row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
+													
+			if (!row) {
+				return null;
+			}
+													
+			if (colIdx < 0) {
+				colIdx = this.getColumns().length + colIdx - 1;
+			}
+													
+			if (colIdx < 0) {
+				return null;
+			}
+													
+			return row.getCells().filter((cell) => cell.column.visible)[colIdx + 1];
+		}
+												
+		getActiveRange(component) {
+			const range = this.ranges[this.ranges.length - 1];
+			if (!range) {
+				return null;
+			}
+			if (component) {
+				return range.getComponent();
+			}
+			return range;
+		}
+												
+		getActiveCell() {
+			var activeRange = this.getActiveRange();
+			return this.getCell(activeRange.start.row, activeRange.start.col);
+		}
+												
+		getRowByRangePos(pos) {
+			return this.getRows()[pos];
+		}
+												
+		getColumnByRangePos(pos) {
+			return this.getColumns()[pos + 1];
+		}
+												
+		getRowsByRange(range) {
+			return this.getRows() .slice(range.top, range.bottom + 1);
+		}
+												
+		getColumnsByRange(range) {
+			return this.getColumns() .slice(range.left + 1, range.right + 2);
+		}
+												
+		getRows() {
+			return this.table.rowManager.getDisplayRows();
+		}
+												
+		getColumns() {
+			return this.table.columnManager.getVisibleColumnsByIndex();
+		}
+												
+		addRange() {
+			var element = document.createElement("div");
+			element.classList.add("tabulator-range");
+													
+			var range = new Range(this.table, 0, 0, element);
+													
+			this.ranges.push(range);
+			this.rangeContainer.appendChild(element);
+		}
+												
+		resetRanges() {
+			this.ranges.forEach((range) => range.destroy());
+			this.ranges = [];
+			this.addRange(0, 0);
+		}
+												
+		get selectedRows() {
+			return this.getRowsByRange(this.getActiveRange());
+		}
+												
+		get selectedColumns() {
+			return this.getColumnsByRange(this.getActiveRange()).map((col) =>
+				col.getComponent(),
+			);
+		}
+												
+		get rowHeaderColumn() {
+			return this.table.columnManager.columnsByField[this.rowHeaderField];
+		}
+	}
+											
+	Spreadsheet.moduleName = "spreadsheet";
+
 	class Tooltip extends Module{
 		
 		constructor(table){
@@ -26365,6 +27957,7 @@
 		ResponsiveLayoutModule: ResponsiveLayout,
 		SelectRowModule: SelectRow,
 		SortModule: Sort,
+		SpreadsheetModule: Spreadsheet,
 		TooltipModule: Tooltip,
 		ValidateModule: Validate
 	});

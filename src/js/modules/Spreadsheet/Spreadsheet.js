@@ -51,10 +51,11 @@ class Spreadsheet extends Module {
 		this.subscribe("page-changed", this.redraw.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 		this.subscribe("table-redraw", this.redraw.bind(this));
-
+		
 		
 		debouncedLayoutRanges = () => {
 			clearTimeout(debouncedLayoutRangesTimeout);
+			
 			debouncedLayoutRangesTimeout = setTimeout(this.layoutRanges.bind(this), 200);
 		};		
 		
@@ -145,7 +146,7 @@ class Spreadsheet extends Module {
 				self.editCell(self.getActiveCell());
 				e.preventDefault();
 			}
-		}
+		};
 		
 		this.table.rowManager.element.addEventListener("keydown", this.handleKeyDown);
 		
@@ -235,8 +236,8 @@ class Spreadsheet extends Module {
 			var menuDef = activeCell.column.definition.contextMenu;
 			var menu =
 			typeof menuDef === "function"
-			? menuDef.call(self.table, e, activeCell.getComponent())
-			: menuDef;
+				? menuDef.call(self.table, e, activeCell.getComponent())
+				: menuDef;
 			
 			self.table.modules.menu.loadMenu(e, activeCell, menu, activeCell.element);
 			
@@ -247,1081 +248,1081 @@ class Spreadsheet extends Module {
 		this.table.rowManager.element.addEventListener(
 			"keyup",
 			contextMenuKeyCheck,
+		);
+		this.table.rowManager.element.addEventListener(
+			"contextmenu",
+			handleContextMenu,
+		);
+				
+		this.subscribe("table-destroy", () => {
+			this.table.rowManager.element.removeEventListener(
+				"keyup",
+				contextMenuKeyCheck,
 			);
-			this.table.rowManager.element.addEventListener(
+			this.table.rowManager.element.removeEventListener(
 				"contextmenu",
 				handleContextMenu,
-				);
-				
-				this.subscribe("table-destroy", () => {
-					this.table.rowManager.element.removeEventListener(
-						"keyup",
-						contextMenuKeyCheck,
-						);
-						this.table.rowManager.element.removeEventListener(
-							"contextmenu",
-							handleContextMenu,
-							);
-						});
+			);
+		});
 						
-						this.subscribe("menu-opened", (menu, popup) => {
-							var stack = [createState(menu, popup)];
+		this.subscribe("menu-opened", (menu, popup) => {
+			var stack = [createState(menu, popup)];
 							
-							function createState(menu, popup) {
-								var elements = popup.element.querySelectorAll(".tabulator-menu-item");
-								var focusIdx = 0;
+			function createState(menu, popup) {
+				var elements = popup.element.querySelectorAll(".tabulator-menu-item");
+				var focusIdx = 0;
 								
-								function handleMouseOver(e) {
-									focusIdx = Array.prototype.indexOf.call(elements, e.target);
-									draw();
-								}
+				function handleMouseOver(e) {
+					focusIdx = Array.prototype.indexOf.call(elements, e.target);
+					draw();
+				}
 								
-								// We do this because the menu items use user-select: none;
-								function preventLosingFocus(e) {
-									e.preventDefault();
-								}
+				// We do this because the menu items use user-select: none;
+				function preventLosingFocus(e) {
+					e.preventDefault();
+				}
 								
-								elements.forEach((element) => {
-									element.addEventListener("mouseover", handleMouseOver);
-									element.addEventListener("mousedown", preventLosingFocus);
-								});
+				elements.forEach((element) => {
+					element.addEventListener("mouseover", handleMouseOver);
+					element.addEventListener("mousedown", preventLosingFocus);
+				});
 								
-								return {
-									menu,
-									popup,
-									elements,
-									get focusIdx() {
-										return focusIdx;
-									},
-									set focusIdx(value) {
-										if (value < 0) {
-											value = 0;
-										} else if (value >= elements.length) {
-											value = elements.length - 1;
-										}
-										focusIdx = value;
-									},
-									get focusedMenu() {
-										return this.menu[focusIdx];
-									},
-									get focusedElement() {
-										return this.elements[focusIdx];
-									},
-									destroy() {
-										this.popup.hide(true);
-										this.elements.forEach((element) => {
-											element.removeEventListener("mouseover", handleMouseOver);
-											element.removeEventListener("mousedown", preventLosingFocus);
-										});
-									},
-								};
-							}
+				return {
+					menu,
+					popup,
+					elements,
+					get focusIdx() {
+						return focusIdx;
+					},
+					set focusIdx(value) {
+						if (value < 0) {
+							value = 0;
+						} else if (value >= elements.length) {
+							value = elements.length - 1;
+						}
+						focusIdx = value;
+					},
+					get focusedMenu() {
+						return this.menu[focusIdx];
+					},
+					get focusedElement() {
+						return this.elements[focusIdx];
+					},
+					destroy() {
+						this.popup.hide(true);
+						this.elements.forEach((element) => {
+							element.removeEventListener("mouseover", handleMouseOver);
+							element.removeEventListener("mousedown", preventLosingFocus);
+						});
+					},
+				};
+			}
 							
-							function navigate(nav) {
-								var state = stack[stack.length - 1];
-								switch (nav) {
-									case "up":
-									state.focusIdx--;
-									break;
-									case "down":
-									state.focusIdx++;
-									break;
-									case "left":
-									if (stack.length > 1) {
-										stack.pop().destroy();
-									}
-									break;
-									case "right":
-									if (state.focusedMenu.menu && state.focusedMenu.menu.length) {
-										state.focusedElement.click();
-										var nextState = createState(
-											state.focusedMenu.menu,
-											state.popup.childPopup,
-											);
-											stack.push(nextState);
-										}
-										break;
-									}
-									draw();
-								}
+			function navigate(nav) {
+				var state = stack[stack.length - 1];
+				switch (nav) {
+					case "up":
+						state.focusIdx--;
+						break;
+					case "down":
+						state.focusIdx++;
+						break;
+					case "left":
+						if (stack.length > 1) {
+							stack.pop().destroy();
+						}
+						break;
+					case "right":
+						if (state.focusedMenu.menu && state.focusedMenu.menu.length) {
+							state.focusedElement.click();
+							var nextState = createState(
+								state.focusedMenu.menu,
+								state.popup.childPopup,
+							);
+							stack.push(nextState);
+						}
+						break;
+				}
+				draw();
+			}
 								
-								function draw() {
-									var state = stack[stack.length - 1];
-									state.elements.forEach((element) => {
-										var selected = element === state.focusedElement;
-										element.classList.toggle(
-											"tabulator-spreadsheet-menu-item-focused",
-											selected,
-											);
-										});
-									}
+			function draw() {
+				var state = stack[stack.length - 1];
+				state.elements.forEach((element) => {
+					var selected = element === state.focusedElement;
+					element.classList.toggle(
+						"tabulator-spreadsheet-menu-item-focused",
+						selected,
+					);
+				});
+			}
 									
-									function handleUp(e) {
-										e.preventDefault();
-										navigate("up");
-									}
+			function handleUp(e) {
+				e.preventDefault();
+				navigate("up");
+			}
 									
-									function handleDown(e) {
-										e.preventDefault();
-										navigate("down");
-									}
+			function handleDown(e) {
+				e.preventDefault();
+				navigate("down");
+			}
 									
-									function handleLeft(e) {
-										e.preventDefault();
-										navigate("left");
-									}
+			function handleLeft(e) {
+				e.preventDefault();
+				navigate("left");
+			}
 									
-									function handleRight(e) {
-										e.preventDefault();
-										navigate("right");
-									}
+			function handleRight(e) {
+				e.preventDefault();
+				navigate("right");
+			}
 									
-									function handleKeyUp(e) {
-										if (e.key === "Enter") {
-											var state = stack[stack.length - 1];
-											state.focusedElement.click();
-										}
-									}
+			function handleKeyUp(e) {
+				if (e.key === "Enter") {
+					var state = stack[stack.length - 1];
+					state.focusedElement.click();
+				}
+			}
 									
-									function subscribeListeners() {
-										self.subscribe("keybinding-nav-up", handleUp);
-										self.subscribe("keybinding-nav-down", handleDown);
-										self.subscribe("keybinding-nav-left", handleLeft);
-										self.subscribe("keybinding-nav-right", handleRight);
-										// TODO use keybinding module
-										self.table.element.addEventListener("keyup", handleKeyUp);
-									}
+			function subscribeListeners() {
+				self.subscribe("keybinding-nav-up", handleUp);
+				self.subscribe("keybinding-nav-down", handleDown);
+				self.subscribe("keybinding-nav-left", handleLeft);
+				self.subscribe("keybinding-nav-right", handleRight);
+				// TODO use keybinding module
+				self.table.element.addEventListener("keyup", handleKeyUp);
+			}
 									
-									function unsubscribeListeners() {
-										self.unsubscribe("menu-closed", unsubscribeListeners);
-										self.unsubscribe("keybinding-nav-up", handleUp);
-										self.unsubscribe("keybinding-nav-down", handleDown);
-										self.unsubscribe("keybinding-nav-left", handleLeft);
-										self.unsubscribe("keybinding-nav-right", handleRight);
-										self.table.element.removeEventListener("keyup", handleKeyUp);
-									}
+			function unsubscribeListeners() {
+				self.unsubscribe("menu-closed", unsubscribeListeners);
+				self.unsubscribe("keybinding-nav-up", handleUp);
+				self.unsubscribe("keybinding-nav-down", handleDown);
+				self.unsubscribe("keybinding-nav-left", handleLeft);
+				self.unsubscribe("keybinding-nav-right", handleRight);
+				self.table.element.removeEventListener("keyup", handleKeyUp);
+			}
 									
-									this.subscribe("menu-closed", unsubscribeListeners);
-									subscribeListeners();
-									draw();
-								});
-							}
+			this.subscribe("menu-closed", unsubscribeListeners);
+			subscribeListeners();
+			draw();
+		});
+	}
 							
-							redraw(force) {
-								if (force) {
-									this.selecting = 'cell';
-									this.resetRanges();
-									this.layoutElement();
-								}
-							}
+	redraw(force) {
+		if (force) {
+			this.selecting = 'cell';
+			this.resetRanges();
+			this.layoutElement();
+		}
+	}
 							
-							getSelectedData() {
-								return this.getDataByRange(this.getActiveRange());
-							}
+	getSelectedData() {
+		return this.getDataByRange(this.getActiveRange());
+	}
 							
-							getDataByRange(range) {
-								var data = [];
-								var rows = this.getRowsByRange(range);
-								var columns = this.getColumnsByRange(range);
+	getDataByRange(range) {
+		var data = [];
+		var rows = this.getRowsByRange(range);
+		var columns = this.getColumnsByRange(range);
 								
-								rows.forEach((row) => {
-									var rowData = row.getData();
-									var result = {};
-									columns.forEach((column) => {
-										result[column.field] = rowData[column.field];
-									});
-									data.push(result);
-								});
+		rows.forEach((row) => {
+			var rowData = row.getData();
+			var result = {};
+			columns.forEach((column) => {
+				result[column.field] = rowData[column.field];
+			});
+			data.push(result);
+		});
 								
-								return data;
-							}
+		return data;
+	}
 							
-							getCellsByRange(range, structured) {
-								var cells = [];
-								var rows = this.getRowsByRange(range);
-								var columns = this.getColumnsByRange(range);
+	getCellsByRange(range, structured) {
+		var cells = [];
+		var rows = this.getRowsByRange(range);
+		var columns = this.getColumnsByRange(range);
 								
-								if (structured) {
-									cells = rows.map((row) => {
-										var arr = [];
-										row.getCells().forEach((cell) => {
-											if (columns.includes(cell.column)) {
-												arr.push(cell.getComponent());
-											}
-										});
-										return arr;
-									});
-								} else {
-									rows.forEach((row) => {
-										row.getCells().forEach((cell) => {
-											if (columns.includes(cell.column)) {
-												cells.push(cell.getComponent());
-											}
-										});
-									});
-								}
+		if (structured) {
+			cells = rows.map((row) => {
+				var arr = [];
+				row.getCells().forEach((cell) => {
+					if (columns.includes(cell.column)) {
+						arr.push(cell.getComponent());
+					}
+				});
+				return arr;
+			});
+		} else {
+			rows.forEach((row) => {
+				row.getCells().forEach((cell) => {
+					if (columns.includes(cell.column)) {
+						cells.push(cell.getComponent());
+					}
+				});
+			});
+		}
 								
-								return cells;
-							}
+		return cells;
+	}
 							
-							renderCell(cell) {
-								var el = cell.getElement();
+	renderCell(cell) {
+		var el = cell.getElement();
 								
-								var rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
+		var rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
 								
-								el.classList.toggle("tabulator-spreadsheet-selected", rangeIdx !== -1);
+		el.classList.toggle("tabulator-spreadsheet-selected", rangeIdx !== -1);
 								
-								el.classList.toggle(
-									"tabulator-spreadsheet-only-cell-selected",
-									this.ranges.length === 1 &&
+		el.classList.toggle(
+			"tabulator-spreadsheet-only-cell-selected",
+			this.ranges.length === 1 &&
 									this.ranges[0].atTopLeft(cell) &&
 									this.ranges[0].atBottomRight(cell),
-									);
+		);
 									
-									el.dataset.range = rangeIdx;
-								}
+		el.dataset.range = rangeIdx;
+	}
 								
-								handleColumnsLoading() {
-									var customRowHeader = this.options("spreadsheetRowHeader");
-									var rowHeaderDef = {
-										title: "",
-										field: this.rowHeaderField,
-										headerSort: false,
-										resizable: false,
-										frozen: true,
-										editable: false,
-										formatter: "rownum",
-										formatterParams: { relativeToPage: true },
+	handleColumnsLoading() {
+		var customRowHeader = this.options("spreadsheetRowHeader");
+		var rowHeaderDef = {
+			title: "",
+			field: this.rowHeaderField,
+			headerSort: false,
+			resizable: false,
+			frozen: true,
+			editable: false,
+			formatter: "rownum",
+			formatterParams: { relativeToPage: true },
 										
-										...customRowHeader,
+			...customRowHeader,
 										
-										cssClass: customRowHeader.cssClass
-										? `tabulator-spreadsheet-row-header ${customRowHeader.cssClass}`
-										: "tabulator-spreadsheet-row-header",
-									};
-									this.rowHeaderField = rowHeaderDef.field;
-									// Add this column before everything else
-									this.table.columnManager._addColumn(rowHeaderDef);
-								}
+			cssClass: customRowHeader.cssClass
+				? `tabulator-spreadsheet-row-header ${customRowHeader.cssClass}`
+				: "tabulator-spreadsheet-row-header",
+		};
+		this.rowHeaderField = rowHeaderDef.field;
+		// Add this column before everything else
+		this.table.columnManager._addColumn(rowHeaderDef);
+	}
 								
-								handleColumnResized(column) {
-									if (this.selecting !== "column" && this.selecting !== "all") {
-										return;
-									}
+	handleColumnResized(column) {
+		if (this.selecting !== "column" && this.selecting !== "all") {
+			return;
+		}
 									
-									var selected = this.ranges.some((range) => range.occupiesColumn(column));
+		var selected = this.ranges.some((range) => range.occupiesColumn(column));
 									
-									if (!selected) {
-										return;
-									}
+		if (!selected) {
+			return;
+		}
 									
-									this.ranges.forEach((range) => {
-										var selectedColumns = range.getColumns();
-										selectedColumns.forEach((selectedColumn) => {
-											if (selectedColumn !== column) {
-												selectedColumn.setWidth(column.width);
-											}
-										})
-									})
-								}
+		this.ranges.forEach((range) => {
+			var selectedColumns = range.getColumns();
+			selectedColumns.forEach((selectedColumn) => {
+				if (selectedColumn !== column) {
+					selectedColumn.setWidth(column.width);
+				}
+			});
+		});
+	}
 								
-								handleColumnMouseDown(event, column) {
-									if (
-										event.button === 2 &&
+	handleColumnMouseDown(event, column) {
+		if (
+			event.button === 2 &&
 										(this.selecting === "column" || this.selecting === "all") &&
 										this.getActiveRange().occupiesColumn(column)
-										) {
-											return;
-										}
+		) {
+			return;
+		}
 										
-										this.mousedown = true;
+		this.mousedown = true;
 										
-										document.addEventListener("mouseup", this.mouseUpHandler);
+		document.addEventListener("mouseup", this.mouseUpHandler);
 										
-										this._select(event, column);
-										this.layoutElement();
-									}
+		this._select(event, column);
+		this.layoutElement();
+	}
 									
-									handleColumnMouseMove(_, column) {
-										if (column.field === this.rowHeaderField || !this.mousedown || this.selecting === 'all') {
-											return;
-										}
+	handleColumnMouseMove(_, column) {
+		if (column.field === this.rowHeaderField || !this.mousedown || this.selecting === 'all') {
+			return;
+		}
 										
-										this.endSelection(column);
-										this.layoutElement(true);
-									}
+		this.endSelection(column);
+		this.layoutElement(true);
+	}
 									
-									handleCellMouseDown(event, cell) {
-										if (
-											event.button === 2 &&
+	handleCellMouseDown(event, cell) {
+		if (
+			event.button === 2 &&
 											(this.getActiveRange().occupies(cell) ||
 											((this.selecting === "row" || this.selecting === "all") &&
 											this.getActiveRange().occupiesRow(cell.row)))
-											) {
-												return;
-											}
+		) {
+			return;
+		}
 											
-											this.mousedown = true;
+		this.mousedown = true;
 											
-											document.addEventListener("mouseup", this.mouseUpHandler);
+		document.addEventListener("mouseup", this.mouseUpHandler);
 											
-											this._select(event, cell);
-											this.layoutElement();
-										}
+		this._select(event, cell);
+		this.layoutElement();
+	}
 										
-										_select(event, element) {
-											if (element.type === "column") {
-												if (element.field === this.rowHeaderField) {
-													this.resetRanges();
-													this.selecting = "all";
+	_select(event, element) {
+		if (element.type === "column") {
+			if (element.field === this.rowHeaderField) {
+				this.resetRanges();
+				this.selecting = "all";
 													
-													const topLeftCell = this.getCell(0, 0);
-													const bottomRightCell = this.getCell(-1, -1);
+				const topLeftCell = this.getCell(0, 0);
+				const bottomRightCell = this.getCell(-1, -1);
 													
-													this.beginSelection(topLeftCell);
-													this.endSelection(bottomRightCell);
+				this.beginSelection(topLeftCell);
+				this.endSelection(bottomRightCell);
 													
-													return;
-												} else {
-													this.selecting = "column";
-												}
-											} else if (element.column.field === this.rowHeaderField) {
-												this.selecting = "row";
-											} else {
-												this.selecting = "cell";
-											}
+				return;
+			} else {
+				this.selecting = "column";
+			}
+		} else if (element.column.field === this.rowHeaderField) {
+			this.selecting = "row";
+		} else {
+			this.selecting = "cell";
+		}
 											
-											if (event.shiftKey) {
-												if (this.ranges.length > 1) {
-													this.ranges = this.ranges.slice(-1);
-												}
+		if (event.shiftKey) {
+			if (this.ranges.length > 1) {
+				this.ranges = this.ranges.slice(-1);
+			}
 												
-												this.endSelection(element);
-											} else if (event.ctrlKey) {
-												this.addRange();
+			this.endSelection(element);
+		} else if (event.ctrlKey) {
+			this.addRange();
 												
-												this.beginSelection(element);
-												this.endSelection(element);
-											} else {
-												this.resetRanges();
+			this.beginSelection(element);
+			this.endSelection(element);
+		} else {
+			this.resetRanges();
 												
-												this.beginSelection(element);
-												this.endSelection(element);
-											}
-										}
+			this.beginSelection(element);
+			this.endSelection(element);
+		}
+	}
 										
-										handleCellMouseMove(_, cell) {
-											if (!this.mousedown || this.selecting === "all") {
-												return;
-											}
+	handleCellMouseMove(_, cell) {
+		if (!this.mousedown || this.selecting === "all") {
+			return;
+		}
 											
-											this.endSelection(cell);
-											this.layoutElement(true);
-										}
+		this.endSelection(cell);
+		this.layoutElement(true);
+	}
 										
-										handleCellDblClick(_, cell) {
-											if (cell.column.field === this.rowHeaderField) {
-												return;
-											}
+	handleCellDblClick(_, cell) {
+		if (cell.column.field === this.rowHeaderField) {
+			return;
+		}
 											
-											this.editCell(cell);
-										}
+		this.editCell(cell);
+	}
 										
-										editCell(cell) {
-											if (!cell.column.modules.edit) {
-												cell.column.modules.edit = {}
-											}
-											cell.column.modules.edit.blocked = false;
-											cell.element.focus({ preventScroll: true });
-											cell.column.modules.edit.blocked = true;
-										}
+	editCell(cell) {
+		if (!cell.column.modules.edit) {
+			cell.column.modules.edit = {};
+		}
+		cell.column.modules.edit.blocked = false;
+		cell.element.focus({ preventScroll: true });
+		cell.column.modules.edit.blocked = true;
+	}
 										
-										handleEditingCell() {
-											this.table.rowManager.element.removeEventListener("keydown", this.handleKeyDown);
-										}
+	handleEditingCell() {
+		this.table.rowManager.element.removeEventListener("keydown", this.handleKeyDown);
+	}
 										
-										finishEditingCell() {
-											this.table.rowManager.element.focus();
-											this.table.rowManager.element.addEventListener("keydown", this.handleKeyDown);
-										}
+	finishEditingCell() {
+		this.table.rowManager.element.focus();
+		this.table.rowManager.element.addEventListener("keydown", this.handleKeyDown);
+	}
 										
-										navigate(mode, dir) {
-											// Don't navigate while editing
-											if (this.table.modules.edit && this.table.modules.edit.currentCell) {
-												return false;
-											}
+	navigate(mode, dir) {
+		// Don't navigate while editing
+		if (this.table.modules.edit && this.table.modules.edit.currentCell) {
+			return false;
+		}
 											
-											// Don't navigate while a menu is open
-											if (this.table.modules.menu && this.table.modules.menu.currentComponent) {
-												return false;
-											}
+		// Don't navigate while a menu is open
+		if (this.table.modules.menu && this.table.modules.menu.currentComponent) {
+			return false;
+		}
 											
-											// If there are more than 1 range, use the active range and destroy the others
-											if (this.ranges.length > 1) {
-												this.ranges = this.ranges.filter((range) => {
-													if (range === this.getActiveRange()) {
-														range.setEnd(range.start.row, range.start.col);
-														return true;
-													}
-													range.destroy();
-													return false;
-												});
-											}
+		// If there are more than 1 range, use the active range and destroy the others
+		if (this.ranges.length > 1) {
+			this.ranges = this.ranges.filter((range) => {
+				if (range === this.getActiveRange()) {
+					range.setEnd(range.start.row, range.start.col);
+					return true;
+				}
+				range.destroy();
+				return false;
+			});
+		}
 											
-											var range = this.getActiveRange();
+		var range = this.getActiveRange();
 											
-											var moved = false;
+		var moved = false;
 											
-											switch (mode) {
-												case "normal": {
-													let nextRow = range.start.row;
-													let nextCol = range.start.col;
+		switch (mode) {
+			case "normal": {
+				let nextRow = range.start.row;
+				let nextCol = range.start.col;
 													
-													if (dir === "left") {
-														nextCol = Math.max(nextCol - 1, 0);
-													} else if (dir === "right") {
-														nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
-													} else if (dir === "up") { 
-														nextRow = Math.max(nextRow - 1, 0);
-													} else if (dir === "down") {
-														nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
-													}
+				if (dir === "left") {
+					nextCol = Math.max(nextCol - 1, 0);
+				} else if (dir === "right") {
+					nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
+				} else if (dir === "up") { 
+					nextRow = Math.max(nextRow - 1, 0);
+				} else if (dir === "down") {
+					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+				}
 													
-													if (nextCol !== range.start.col || nextRow !== range.start.row) {
-														moved = true;
-													}
+				if (nextCol !== range.start.col || nextRow !== range.start.row) {
+					moved = true;
+				}
 													
-													range.setStart(nextRow, nextCol);
-													range.setEnd(nextRow, nextCol);
+				range.setStart(nextRow, nextCol);
+				range.setEnd(nextRow, nextCol);
 													
-													this.selecting = "cell";
+				this.selecting = "cell";
 													
-													break;
-												}
-												case "expand": {
-													if ((dir === 'left' || dir === 'right') && this.selecting === 'row') {
-														break;
-													}
+				break;
+			}
+			case "expand": {
+				if ((dir === 'left' || dir === 'right') && this.selecting === 'row') {
+					break;
+				}
 													
-													if ((dir === 'up' || dir === 'down') && this.selecting === 'column') {
-														break;
-													}
+				if ((dir === 'up' || dir === 'down') && this.selecting === 'column') {
+					break;
+				}
 													
-													let nextRow = range.end.row;
-													let nextCol = range.end.col;
+				let nextRow = range.end.row;
+				let nextCol = range.end.col;
 													
-													if (dir === "left") {
-														nextCol = Math.max(nextCol - 1, 0);
-													} else if (dir === "right") {
-														nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
-													} else if (dir === "up") { 
-														nextRow = Math.max(nextRow - 1, 0);
-													} else if (dir === "down") {
-														nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
-													}
+				if (dir === "left") {
+					nextCol = Math.max(nextCol - 1, 0);
+				} else if (dir === "right") {
+					nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
+				} else if (dir === "up") { 
+					nextRow = Math.max(nextRow - 1, 0);
+				} else if (dir === "down") {
+					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+				}
 													
-													if (nextCol !== range.end.col || nextRow !== range.end.row) {
-														moved = true;
-													}
+				if (nextCol !== range.end.col || nextRow !== range.end.row) {
+					moved = true;
+				}
 													
-													range.setEnd(nextRow, nextCol);
+				range.setEnd(nextRow, nextCol);
 													
-													break;
-												}
-												case "jump": {
-													let nextRow = range.start.row;
-													let nextCol = range.start.col;
+				break;
+			}
+			case "jump": {
+				let nextRow = range.start.row;
+				let nextCol = range.start.col;
 													
-													if (dir === "left") {
-														nextCol = this.findJumpCellLeft(range.start.row, range.start.col);
-													} else if (dir === "right") {
-														nextCol = this.findJumpCellRight(range.start.row, range.start.col);
-													} else if (dir === "up") {
-														nextRow = this.findJumpCellUp(range.start.row, range.start.col);
-													} else if (dir === "down") {
-														nextRow = this.findJumpCellDown(range.start.row, range.start.col);
-													}
+				if (dir === "left") {
+					nextCol = this.findJumpCellLeft(range.start.row, range.start.col);
+				} else if (dir === "right") {
+					nextCol = this.findJumpCellRight(range.start.row, range.start.col);
+				} else if (dir === "up") {
+					nextRow = this.findJumpCellUp(range.start.row, range.start.col);
+				} else if (dir === "down") {
+					nextRow = this.findJumpCellDown(range.start.row, range.start.col);
+				}
 													
-													if (nextCol !== range.start.col || nextRow !== range.start.row) {
-														moved = true;
-													}
+				if (nextCol !== range.start.col || nextRow !== range.start.row) {
+					moved = true;
+				}
 													
-													range.setStart(nextRow, nextCol);
-													range.setEnd(nextRow, nextCol);
+				range.setStart(nextRow, nextCol);
+				range.setEnd(nextRow, nextCol);
 													
-													this.selecting = "cell";
+				this.selecting = "cell";
 													
-													break;
-												}
-												case "expand-jump": {
-													let nextRow = range.end.row;
-													let nextCol = range.end.col;
+				break;
+			}
+			case "expand-jump": {
+				let nextRow = range.end.row;
+				let nextCol = range.end.col;
 													
-													if (dir === "left") {
-														nextCol = this.findJumpCellLeft(range.start.row, range.end.col);
-													} else if (dir === "right") {
-														nextCol = this.findJumpCellRight(range.start.row, range.end.col);
-													} else if (dir === "up") {
-														nextRow = this.findJumpCellUp(range.end.row, range.start.col);
-													} else if (dir === "down") {
-														nextRow = this.findJumpCellDown(range.end.row, range.start.col);
-													}
+				if (dir === "left") {
+					nextCol = this.findJumpCellLeft(range.start.row, range.end.col);
+				} else if (dir === "right") {
+					nextCol = this.findJumpCellRight(range.start.row, range.end.col);
+				} else if (dir === "up") {
+					nextRow = this.findJumpCellUp(range.end.row, range.start.col);
+				} else if (dir === "down") {
+					nextRow = this.findJumpCellDown(range.end.row, range.start.col);
+				}
 													
-													if (nextCol !== range.end.col || nextRow !== range.end.row) {
-														moved = true;
-													}
+				if (nextCol !== range.end.col || nextRow !== range.end.row) {
+					moved = true;
+				}
 													
-													range.setEnd(nextRow, nextCol);
+				range.setEnd(nextRow, nextCol);
 													
-													break;
-												}
-											}
+				break;
+			}
+		}
 											
-											if (!moved) {
-												return;
-											}
+		if (!moved) {
+			return;
+		}
 											
-											var row = this.getRowByRangePos(range.end.row);
-											var column = this.getColumnByRangePos(range.end.col);
+		var row = this.getRowByRangePos(range.end.row);
+		var column = this.getColumnByRangePos(range.end.col);
 											
-											if ((dir === 'left' || dir === 'right') && column.getElement().parentNode === null) {
-												column.getComponent().scrollTo(undefined, false);
-											} else if ((dir === 'up' || dir === 'down') && row.getElement().parentNode === null) {
-												row.getComponent().scrollTo(undefined, false);
-											} else {
-												// Use faster autoScroll when the elements are on the DOM
-												this.autoScroll(range, row.getElement(), column.getElement());
-											}
+		if ((dir === 'left' || dir === 'right') && column.getElement().parentNode === null) {
+			column.getComponent().scrollTo(undefined, false);
+		} else if ((dir === 'up' || dir === 'down') && row.getElement().parentNode === null) {
+			row.getComponent().scrollTo(undefined, false);
+		} else {
+			// Use faster autoScroll when the elements are on the DOM
+			this.autoScroll(range, row.getElement(), column.getElement());
+		}
 											
-											this.layoutElement();
+		this.layoutElement();
 											
-											return true;
-										}
+		return true;
+	}
 										
-										autoScroll(range, row, column) {
-											var tableHolder = this.table.rowManager.element;
-											var rowHeader = this.rowHeaderColumn.getElement();
-											if (typeof row === 'undefined') {
-												row = this.getRowByRangePos(range.end.row).getElement();
-											}
-											if (typeof column === 'undefined') {
-												column = this.getColumnByRangePos(range.end.col).getElement();
-											}
+	autoScroll(range, row, column) {
+		var tableHolder = this.table.rowManager.element;
+		var rowHeader = this.rowHeaderColumn.getElement();
+		if (typeof row === 'undefined') {
+			row = this.getRowByRangePos(range.end.row).getElement();
+		}
+		if (typeof column === 'undefined') {
+			column = this.getColumnByRangePos(range.end.col).getElement();
+		}
 											
-											var rect = {
-												left: column.offsetLeft,
-												right: column.offsetLeft + column.offsetWidth,
-												top: row.offsetTop,
-												bottom: row.offsetTop + row.offsetHeight,
-											};
+		var rect = {
+			left: column.offsetLeft,
+			right: column.offsetLeft + column.offsetWidth,
+			top: row.offsetTop,
+			bottom: row.offsetTop + row.offsetHeight,
+		};
 											
-											var view = {
-												left: tableHolder.scrollLeft + rowHeader.offsetWidth,
-												right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
-												top: tableHolder.scrollTop,
-												bottom:
+		var view = {
+			left: tableHolder.scrollLeft + rowHeader.offsetWidth,
+			right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
+			top: tableHolder.scrollTop,
+			bottom:
 												tableHolder.scrollTop +
 												tableHolder.offsetHeight -
 												this.table.rowManager.scrollbarWidth,
-											};
+		};
 											
-											var withinHorizontalView =
+		var withinHorizontalView =
 											view.left < rect.left &&
 											rect.left < view.right &&
 											view.left < rect.right &&
 											rect.right < view.right;
 											
-											var withinVerticalView =
+		var withinVerticalView =
 											view.top < rect.top &&
 											rect.top < view.bottom &&
 											view.top < rect.bottom &&
 											rect.bottom < view.bottom;
 											
-											if (!withinHorizontalView) {
-												if (rect.left < view.left) {
-													tableHolder.scrollLeft = rect.left - rowHeader.offsetWidth;
-												} else if (rect.right > view.right) {
-													tableHolder.scrollLeft = rect.right - tableHolder.clientWidth;
-												}
-											}
+		if (!withinHorizontalView) {
+			if (rect.left < view.left) {
+				tableHolder.scrollLeft = rect.left - rowHeader.offsetWidth;
+			} else if (rect.right > view.right) {
+				tableHolder.scrollLeft = rect.right - tableHolder.clientWidth;
+			}
+		}
 											
-											if (!withinVerticalView) {
-												if (rect.top < view.top) {
-													tableHolder.scrollTop = rect.top;
-												} else if (rect.bottom > view.bottom) {
-													tableHolder.scrollTop = rect.bottom - tableHolder.clientHeight;
-												}
-											}
-										}
+		if (!withinVerticalView) {
+			if (rect.top < view.top) {
+				tableHolder.scrollTop = rect.top;
+			} else if (rect.bottom > view.bottom) {
+				tableHolder.scrollTop = rect.bottom - tableHolder.clientHeight;
+			}
+		}
+	}
 										
-										findJumpCellLeft(rowPos, colPos){
-											var row = this.getRowByRangePos(rowPos);
-											var cells = row.cells.filter((cell) => cell.column.visible);
-											var isStartingCellEmpty = !cells[colPos + 1].getValue();
-											var isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false;
-											var jumpCol = colPos;
+	findJumpCellLeft(rowPos, colPos){
+		var row = this.getRowByRangePos(rowPos);
+		var cells = row.cells.filter((cell) => cell.column.visible);
+		var isStartingCellEmpty = !cells[colPos + 1].getValue();
+		var isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false;
+		var jumpCol = colPos;
 											
-											// Go until we find an empty / non-empty cell.
-											for (var i = colPos; i > 0; i--){
-												var currentCell = cells[i];
-												if (isStartingCellEmpty) {
-													if (!currentCell.getValue()) {
-														continue;
-													}
+		// Go until we find an empty / non-empty cell.
+		for (var i = colPos; i > 0; i--){
+			var currentCell = cells[i];
+			if (isStartingCellEmpty) {
+				if (!currentCell.getValue()) {
+					continue;
+				}
 													
-													if (currentCell.getValue()) {
-														jumpCol = currentCell.column. - 2;
-														break;
-													}
-												} else {
-													if (!isLeftOfStartingCellEmpty && !currentCell.getValue()) {
-														break;
-													}
+				if (currentCell.getValue()) {
+					jumpCol = currentCell.column.position - 2;
+					break;
+				}
+			} else {
+				if (!isLeftOfStartingCellEmpty && !currentCell.getValue()) {
+					break;
+				}
 													
-													jumpCol = currentCell.column. - 2;
+				jumpCol = currentCell.column.position - 2;
 													
-													if (isLeftOfStartingCellEmpty) {
-														if (!currentCell.getValue()) {
-															continue;
-														}
-														if (currentCell.getValue()) {
-															break;
-														}
-													}
+				if (isLeftOfStartingCellEmpty) {
+					if (!currentCell.getValue()) {
+						continue;
+					}
+					if (currentCell.getValue()) {
+						break;
+					}
+				}
 													
-													jumpCol = currentCell.column. - 2;
-													if (currentCell.getValue()) {
-														continue;
-													}
-												}
-											}
+				jumpCol = currentCell.column.position - 2;
+				if (currentCell.getValue()) {
+					continue;
+				}
+			}
+		}
 											
-											return jumpCol;
-										}
+		return jumpCol;
+	}
 										
-										findJumpCellRight(rowPos, colPos){
-											var row = this.getRowByRangePos(rowPos);
-											var cells = row.cells.filter((cell) => cell.column.visible);
-											var isStartingCellEmpty = !cells[colPos + 1].getValue();
-											var isRightOfStartingCellEmpty = cells[colPos + 2] ? !cells[colPos + 2].getValue() : false;
-											var jumpCol = colPos;
+	findJumpCellRight(rowPos, colPos){
+		var row = this.getRowByRangePos(rowPos);
+		var cells = row.cells.filter((cell) => cell.column.visible);
+		var isStartingCellEmpty = !cells[colPos + 1].getValue();
+		var isRightOfStartingCellEmpty = cells[colPos + 2] ? !cells[colPos + 2].getValue() : false;
+		var jumpCol = colPos;
 											
-											for (var i = colPos + 2; i < cells.length; i++){
-												var currentCell = cells[i];
-												if (isStartingCellEmpty) {
-													if (!currentCell.getValue()) {
-														continue;
-													}
+		for (var i = colPos + 2; i < cells.length; i++){
+			var currentCell = cells[i];
+			if (isStartingCellEmpty) {
+				if (!currentCell.getValue()) {
+					continue;
+				}
 													
-													if (currentCell.getValue()) {
-														jumpCol = currentCell.column. - 2;
-														break;
-													}
-												} else {
-													if (!isRightOfStartingCellEmpty && !currentCell.getValue()) {
-														break;
-													}
+				if (currentCell.getValue()) {
+					jumpCol = currentCell.column.position - 2;
+					break;
+				}
+			} else {
+				if (!isRightOfStartingCellEmpty && !currentCell.getValue()) {
+					break;
+				}
 													
-													jumpCol = currentCell.column. - 2;
+				jumpCol = currentCell.column.position - 2;
 													
-													if (isRightOfStartingCellEmpty) {
-														if (!currentCell.getValue()) {
-															continue;
-														}
-														if (currentCell.getValue()) {
-															break;
-														}
-													}
+				if (isRightOfStartingCellEmpty) {
+					if (!currentCell.getValue()) {
+						continue;
+					}
+					if (currentCell.getValue()) {
+						break;
+					}
+				}
 													
-													if (currentCell.getValue()) {
-														continue;
-													}
-												}
-											}
+				if (currentCell.getValue()) {
+					continue;
+				}
+			}
+		}
 											
-											return jumpCol;
-										}
+		return jumpCol;
+	}
 										
-										findJumpCellUp(rowPos, colPos) {
-											var column = this.getColumnByRangePos(colPos);
-											var cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row));
-											var isStartingCellEmpty = !cells[rowPos].getValue();
-											var isTopOfStartingCellEmpty = cells[rowPos - 1] ? !cells[rowPos - 1].getValue() : false;
-											var jumpRow = rowPos;
+	findJumpCellUp(rowPos, colPos) {
+		var column = this.getColumnByRangePos(colPos);
+		var cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row));
+		var isStartingCellEmpty = !cells[rowPos].getValue();
+		var isTopOfStartingCellEmpty = cells[rowPos - 1] ? !cells[rowPos - 1].getValue() : false;
+		var jumpRow = rowPos;
 											
-											for (var i = jumpRow - 1; i >= 0; i--){
-												var currentCell = cells[i];
-												if (isStartingCellEmpty) {
-													jumpRow = currentCell.row.position - 1;
+		for (var i = jumpRow - 1; i >= 0; i--){
+			var currentCell = cells[i];
+			if (isStartingCellEmpty) {
+				jumpRow = currentCell.row.position - 1;
 													
-													if (currentCell.getValue()) {
-														break;
-													}
+				if (currentCell.getValue()) {
+					break;
+				}
 													
-													if (!currentCell.getValue()) {
-														continue;
-													}
-												} else {
-													if (!isTopOfStartingCellEmpty && !currentCell.getValue()) {
-														break;
-													}
+				if (!currentCell.getValue()) {
+					continue;
+				}
+			} else {
+				if (!isTopOfStartingCellEmpty && !currentCell.getValue()) {
+					break;
+				}
 													
-													jumpRow = currentCell.row.position - 1;
+				jumpRow = currentCell.row.position - 1;
 													
-													if (isTopOfStartingCellEmpty) {
-														if (!currentCell.getValue()) {
-															continue;
-														}
-														if (currentCell.getValue()) {
-															break;
-														}
-													}
+				if (isTopOfStartingCellEmpty) {
+					if (!currentCell.getValue()) {
+						continue;
+					}
+					if (currentCell.getValue()) {
+						break;
+					}
+				}
 													
-													if (currentCell.getValue()) {
-														continue;
-													}
-												}
-											}
+				if (currentCell.getValue()) {
+					continue;
+				}
+			}
+		}
 											
-											return jumpRow;
-										}
+		return jumpRow;
+	}
 										
-										findJumpCellDown(rowPos, colPos) {
-											var column = this.getColumnByRangePos(colPos);
-											var cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row));
-											var isStartingCellEmpty = !cells[rowPos].getValue();
-											var isBottomOfStartingCellEmpty = cells[rowPos + 1] ? !cells[rowPos + 1].getValue() : false;
-											var jumpRow = rowPos;
+	findJumpCellDown(rowPos, colPos) {
+		var column = this.getColumnByRangePos(colPos);
+		var cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row));
+		var isStartingCellEmpty = !cells[rowPos].getValue();
+		var isBottomOfStartingCellEmpty = cells[rowPos + 1] ? !cells[rowPos + 1].getValue() : false;
+		var jumpRow = rowPos;
 											
-											for (var i = jumpRow + 1; i < cells.length; i++){
-												var currentCell = cells[i];
-												if (isStartingCellEmpty) {
-													jumpRow = currentCell.row.position - 1;
+		for (var i = jumpRow + 1; i < cells.length; i++){
+			var currentCell = cells[i];
+			if (isStartingCellEmpty) {
+				jumpRow = currentCell.row.position - 1;
 													
-													if (currentCell.getValue()) {
-														break;
-													}
+				if (currentCell.getValue()) {
+					break;
+				}
 													
-													if (!currentCell.getValue()) {
-														continue;
-													}
-												} else {
-													if (!isBottomOfStartingCellEmpty && !currentCell.getValue()) {
-														break;
-													}
+				if (!currentCell.getValue()) {
+					continue;
+				}
+			} else {
+				if (!isBottomOfStartingCellEmpty && !currentCell.getValue()) {
+					break;
+				}
 													
-													jumpRow = currentCell.row.position - 1;
+				jumpRow = currentCell.row.position - 1;
 													
-													if (isBottomOfStartingCellEmpty) {
-														if (!currentCell.getValue()) {
-															continue;
-														}
-														if (currentCell.getValue()) {
-															break;
-														}
-													}
+				if (isBottomOfStartingCellEmpty) {
+					if (!currentCell.getValue()) {
+						continue;
+					}
+					if (currentCell.getValue()) {
+						break;
+					}
+				}
 													
-													if (currentCell.getValue()) {
-														continue;
-													}
-												}
-											}
+				if (currentCell.getValue()) {
+					continue;
+				}
+			}
+		}
 											
-											return jumpRow;
-										}
+		return jumpRow;
+	}
 										
-										beginSelection(element) {
-											var range = this.getActiveRange();
+	beginSelection(element) {
+		var range = this.getActiveRange();
 											
-											if (element.type === "column") {
-												range.setStart(0, element.position - 2);
-												return;
-											}
+		if (element.type === "column") {
+			range.setStart(0, element.position - 2);
+			return;
+		}
 											
-											var row = element.row.position - 1;
-											var col = element.column. - 2;
+		var row = element.row.position - 1;
+		var col = element.column.position - 2;
 											
-											if (element.column.field === this.rowHeaderField) {
-												range.setStart(row, 0);
-											} else {
-												range.setStart(row, col);
-											}
-										}
+		if (element.column.field === this.rowHeaderField) {
+			range.setStart(row, 0);
+		} else {
+			range.setStart(row, col);
+		}
+	}
 										
-										endSelection(element) {
-											var range = this.getActiveRange();
-											var rowsCount = this.getRows().length;
+	endSelection(element) {
+		var range = this.getActiveRange();
+		var rowsCount = this.getRows().length;
 											
-											if (element.type === "column") {
-												if (this.selecting === "column") {
-													range.setEnd(rowsCount - 1, element.position - 2);
-												} else if (this.selecting === "cell") {
-													range.setEnd(0, element.position - 2);
-												}
-												return;
-											}
+		if (element.type === "column") {
+			if (this.selecting === "column") {
+				range.setEnd(rowsCount - 1, element.position - 2);
+			} else if (this.selecting === "cell") {
+				range.setEnd(0, element.position - 2);
+			}
+			return;
+		}
 											
-											var row = element.row.position - 1;
-											var col = element.column. - 2;
-											var isRowHeader = element.column.field === this.rowHeaderField;
+		var row = element.row.position - 1;
+		var col = element.column.position - 2;
+		var isRowHeader = element.column.field === this.rowHeaderField;
 											
-											if (this.selecting === "row") {
-												range.setEnd(row, this.getColumns().length - 2);
-											} else if (this.selecting !== "row" && isRowHeader) {
-												range.setEnd(row, 0);
-											} else if (this.selecting === "column") {
-												range.setEnd(rowsCount - 1, col);
-											} else {
-												range.setEnd(row, col);
-											}
-										}
+		if (this.selecting === "row") {
+			range.setEnd(row, this.getColumns().length - 2);
+		} else if (this.selecting !== "row" && isRowHeader) {
+			range.setEnd(row, 0);
+		} else if (this.selecting === "column") {
+			range.setEnd(rowsCount - 1, col);
+		} else {
+			range.setEnd(row, col);
+		}
+	}
 										
-										layoutElement(visibleRows) {
-											var rows;
+	layoutElement(visibleRows) {
+		var rows;
 											
-											if (visibleRows) {
-												rows = this.table.rowManager.getVisibleRows(true);
-											} else {
-												rows = this.table.rowManager.getRows();
-											}
+		if (visibleRows) {
+			rows = this.table.rowManager.getVisibleRows(true);
+		} else {
+			rows = this.table.rowManager.getRows();
+		}
 											
-											rows.forEach((row) => {
-												if (row.type === "row") {
-													this.layoutRow(row);
-													row.cells.forEach((cell) => this.renderCell(cell));
-												}
-											});
+		rows.forEach((row) => {
+			if (row.type === "row") {
+				this.layoutRow(row);
+				row.cells.forEach((cell) => this.renderCell(cell));
+			}
+		});
 											
-											this.getColumns().forEach((column) => {
-												this.layoutColumn(column);
-											});
+		this.getColumns().forEach((column) => {
+			this.layoutColumn(column);
+		});
 											
-											this.layoutRanges();
-										}
+		this.layoutRanges();
+	}
 										
-										layoutRow(row) {
-											var el = row.getElement();
+	layoutRow(row) {
+		var el = row.getElement();
 											
-											var selected = false;
-											var occupied = this.ranges.some((range) => range.occupiesRow(row));
+		var selected = false;
+		var occupied = this.ranges.some((range) => range.occupiesRow(row));
 											
-											if (this.selecting === "row") {
-												selected = occupied;
-											} else if (this.selecting === "all") {
-												selected = true;
-											}
+		if (this.selecting === "row") {
+			selected = occupied;
+		} else if (this.selecting === "all") {
+			selected = true;
+		}
 											
-											el.classList.toggle("tabulator-spreadsheet-selected", selected);
-											el.classList.toggle("tabulator-spreadsheet-highlight", occupied);
-										}
+		el.classList.toggle("tabulator-spreadsheet-selected", selected);
+		el.classList.toggle("tabulator-spreadsheet-highlight", occupied);
+	}
 										
-										layoutColumn(column) {
-											var el = column.getElement();
+	layoutColumn(column) {
+		var el = column.getElement();
 											
-											var selected = false;
-											var occupied = this.ranges.some((range) => range.occupiesColumn(column));
+		var selected = false;
+		var occupied = this.ranges.some((range) => range.occupiesColumn(column));
 											
-											if (this.selecting === "column") {
-												selected = occupied;
-											} else if (this.selecting === "all") {
-												selected = true;
-											}
+		if (this.selecting === "column") {
+			selected = occupied;
+		} else if (this.selecting === "all") {
+			selected = true;
+		}
 											
-											el.classList.toggle("tabulator-spreadsheet-selected", selected);
-											el.classList.toggle("tabulator-spreadsheet-highlight", occupied);
-										}
+		el.classList.toggle("tabulator-spreadsheet-selected", selected);
+		el.classList.toggle("tabulator-spreadsheet-highlight", occupied);
+	}
 										
-										layoutRanges() {
-											if (!this.table.initialized) {
-												return;
-											}
+	layoutRanges() {
+		if (!this.table.initialized) {
+			return;
+		}
 											
-											var activeCell = this.getActiveCell();
+		var activeCell = this.getActiveCell();
 											
-											if (!activeCell) {
-												return;
-											}
+		if (!activeCell) {
+			return;
+		}
 											
-											this.activeRangeCellElement.style.left =
+		this.activeRangeCellElement.style.left =
 											activeCell.row.getElement().offsetLeft +
 											activeCell.getElement().offsetLeft +
 											"px";
-											this.activeRangeCellElement.style.top =
+		this.activeRangeCellElement.style.top =
 											activeCell.row.getElement().offsetTop + "px";
-											this.activeRangeCellElement.style.width =
+		this.activeRangeCellElement.style.width =
 											activeCell.getElement().offsetLeft +
 											activeCell.getElement().offsetWidth -
 											activeCell.getElement().offsetLeft +
 											"px";
-											this.activeRangeCellElement.style.height =
+		this.activeRangeCellElement.style.height =
 											activeCell.row.getElement().offsetTop +
 											activeCell.row.getElement().offsetHeight -
 											activeCell.row.getElement().offsetTop +
 											"px";
 											
-											this.ranges.forEach((range) => this.layoutRange(range));
+		this.ranges.forEach((range) => this.layoutRange(range));
 											
-											this.overlay.style.visibility = "visible";
-										}
+		this.overlay.style.visibility = "visible";
+	}
 										
-										layoutRange(range) {
-											var _vDomTop = this.table.rowManager.renderer.vDomTop;
-											var _vDomBottom = this.table.rowManager.renderer.vDomBottom;
-											var _vDomLeft = this.table.columnManager.renderer.leftCol;
-											var _vDomRight = this.table.columnManager.renderer.rightCol;
+	layoutRange(range) {
+		var _vDomTop = this.table.rowManager.renderer.vDomTop;
+		var _vDomBottom = this.table.rowManager.renderer.vDomBottom;
+		var _vDomLeft = this.table.columnManager.renderer.leftCol;
+		var _vDomRight = this.table.columnManager.renderer.rightCol;
 											
-											if (_vDomTop == null) {
-												_vDomTop = 0;
-											}
+		if (_vDomTop == null) {
+			_vDomTop = 0;
+		}
 											
-											if (_vDomBottom == null) {
-												_vDomBottom = Infinity;
-											}
+		if (_vDomBottom == null) {
+			_vDomBottom = Infinity;
+		}
 											
-											if (_vDomLeft == null) {
-												_vDomLeft = 0;
-											}
+		if (_vDomLeft == null) {
+			_vDomLeft = 0;
+		}
 											
-											if (_vDomRight == null) {
-												_vDomRight = Infinity;
-											}
+		if (_vDomRight == null) {
+			_vDomRight = Infinity;
+		}
 											
-											if (!range.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) {
-												return;
-											}
+		if (!range.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) {
+			return;
+		}
 											
-											var top = Math.max(range.top, _vDomTop);
-											var bottom = Math.min(range.bottom, _vDomBottom);
-											var left = Math.max(range.left, _vDomLeft);
-											var right = Math.min(range.right, _vDomRight);
+		var top = Math.max(range.top, _vDomTop);
+		var bottom = Math.min(range.bottom, _vDomBottom);
+		var left = Math.max(range.left, _vDomLeft);
+		var right = Math.min(range.right, _vDomRight);
 											
-											var topLeftCell = this.getCell(top, left);
-											var bottomRightCell = this.getCell(bottom, right);
+		var topLeftCell = this.getCell(top, left);
+		var bottomRightCell = this.getCell(bottom, right);
 											
-											range.element.classList.toggle(
-												"tabulator-range-active",
-												range === this.getActiveRange(),
-												);
+		range.element.classList.toggle(
+			"tabulator-range-active",
+			range === this.getActiveRange(),
+		);
 												
-												range.element.style.left = 
+		range.element.style.left = 
 												topLeftCell.row.getElement().offsetLeft +
 												topLeftCell.getElement().offsetLeft +
 												"px";
-												range.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
-												range.element.style.width =
+		range.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
+		range.element.style.width =
 												bottomRightCell.getElement().offsetLeft +
 												bottomRightCell.getElement().offsetWidth -
 												topLeftCell.getElement().offsetLeft +
 												"px";
-												range.element.style.height =
+		range.element.style.height =
 												bottomRightCell.row.getElement().offsetTop +
 												bottomRightCell.row.getElement().offsetHeight -
 												topLeftCell.row.getElement().offsetTop +
 												"px";
-											}
+	}
 											
-											findRangeByCellElement(cell) {
-												var rangeIdx = cell.dataset.range;
-												if (rangeIdx < 0) {
-													return;
-												}
-												return this.ranges[rangeIdx].getComponent();
-											}
+	findRangeByCellElement(cell) {
+		var rangeIdx = cell.dataset.range;
+		if (rangeIdx < 0) {
+			return;
+		}
+		return this.ranges[rangeIdx].getComponent();
+	}
 											
-											getCell(rowIdx, colIdx) {
-												if (rowIdx < 0) {
-													rowIdx = this.getRows().length + rowIdx;
-												}
+	getCell(rowIdx, colIdx) {
+		if (rowIdx < 0) {
+			rowIdx = this.getRows().length + rowIdx;
+		}
 												
-												var row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
+		var row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
 												
-												if (!row) {
-													return null;
-												}
+		if (!row) {
+			return null;
+		}
 												
-												if (colIdx < 0) {
-													colIdx = this.getColumns().length + colIdx - 1;
-												}
+		if (colIdx < 0) {
+			colIdx = this.getColumns().length + colIdx - 1;
+		}
 												
-												if (colIdx < 0) {
-													return null;
-												}
+		if (colIdx < 0) {
+			return null;
+		}
 												
-												return row.getCells().filter((cell) => cell.column.visible)[colIdx + 1];
-											}
+		return row.getCells().filter((cell) => cell.column.visible)[colIdx + 1];
+	}
 											
-											getActiveRange(component) {
-												const range = this.ranges[this.ranges.length - 1];
-												if (!range) {
-													return null;
-												}
-												if (component) {
-													return range.getComponent();
-												}
-												return range;
-											}
+	getActiveRange(component) {
+		const range = this.ranges[this.ranges.length - 1];
+		if (!range) {
+			return null;
+		}
+		if (component) {
+			return range.getComponent();
+		}
+		return range;
+	}
 											
-											getActiveCell() {
-												var activeRange = this.getActiveRange();
-												return this.getCell(activeRange.start.row, activeRange.start.col);
-											}
+	getActiveCell() {
+		var activeRange = this.getActiveRange();
+		return this.getCell(activeRange.start.row, activeRange.start.col);
+	}
 											
-											getRowByRangePos(pos) {
-												return this.getRows()[pos];
-											}
+	getRowByRangePos(pos) {
+		return this.getRows()[pos];
+	}
 											
-											getColumnByRangePos(pos) {
-												return this.getColumns()[pos + 1];
-											}
+	getColumnByRangePos(pos) {
+		return this.getColumns()[pos + 1];
+	}
 											
-											getRowsByRange(range) {
-												return this.getRows() .slice(range.top, range.bottom + 1);
-											}
+	getRowsByRange(range) {
+		return this.getRows() .slice(range.top, range.bottom + 1);
+	}
 											
-											getColumnsByRange(range) {
-												return this.getColumns() .slice(range.left + 1, range.right + 2);
-											}
+	getColumnsByRange(range) {
+		return this.getColumns() .slice(range.left + 1, range.right + 2);
+	}
 											
-											getRows() {
-												return this.table.rowManager.getDisplayRows();
-											}
+	getRows() {
+		return this.table.rowManager.getDisplayRows();
+	}
 											
-											getColumns() {
-												return this.table.columnManager.getVisibleColumnsByIndex();
-											}
+	getColumns() {
+		return this.table.columnManager.getVisibleColumnsByIndex();
+	}
 											
-											addRange() {
-												var element = document.createElement("div");
-												element.classList.add("tabulator-range");
+	addRange() {
+		var element = document.createElement("div");
+		element.classList.add("tabulator-range");
 												
-												var range = new Range(this.table, 0, 0, element);
+		var range = new Range(this.table, 0, 0, element);
 												
-												this.ranges.push(range);
-												this.rangeContainer.appendChild(element);
-											}
+		this.ranges.push(range);
+		this.rangeContainer.appendChild(element);
+	}
 											
-											resetRanges() {
-												this.ranges.forEach((range) => range.destroy());
-												this.ranges = [];
-												this.addRange(0, 0);
-											}
+	resetRanges() {
+		this.ranges.forEach((range) => range.destroy());
+		this.ranges = [];
+		this.addRange(0, 0);
+	}
 											
-											get selectedRows() {
-												return this.getRowsByRange(this.getActiveRange());
-											}
+	get selectedRows() {
+		return this.getRowsByRange(this.getActiveRange());
+	}
 											
-											get selectedColumns() {
-												return this.getColumnsByRange(this.getActiveRange()).map((col) =>
-												col.getComponent(),
-												);
-											}
+	get selectedColumns() {
+		return this.getColumnsByRange(this.getActiveRange()).map((col) =>
+			col.getComponent(),
+		);
+	}
 											
-											get rowHeaderColumn() {
-												return this.table.columnManager.columnsByField[this.rowHeaderField];
-											}
-										}
+	get rowHeaderColumn() {
+		return this.table.columnManager.columnsByField[this.rowHeaderField];
+	}
+}
 										
-										Spreadsheet.moduleName = "spreadsheet";
+Spreadsheet.moduleName = "spreadsheet";
 										
-										export default Spreadsheet;
+export default Spreadsheet;
 										
