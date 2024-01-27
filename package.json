@@ -47,7 +47,7 @@
   "bugs": {
     "url": "https://github.com/olifolkerd/tabulator/issues"
   },
-  "homepage": "http://tabulator.info/",
+  "homepage": "https://tabulator.info/",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^11.0.1",
     "eslint": "^8.10.0",
