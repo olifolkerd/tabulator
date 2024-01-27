@@ -20820,7 +20820,7 @@ class Spreadsheet extends Module {
 				}
 													
 				if (currentCell.getValue()) {
-					jumpCol = currentCell.column.position - 2;
+					jumpCol = currentCell.column.getPosition() - 2;
 					break;
 				}
 			} else {
@@ -20828,7 +20828,7 @@ class Spreadsheet extends Module {
 					break;
 				}
 													
-				jumpCol = currentCell.column.position - 2;
+				jumpCol = currentCell.column.getPosition() - 2;
 													
 				if (isLeftOfStartingCellEmpty) {
 					if (!currentCell.getValue()) {
@@ -20839,7 +20839,7 @@ class Spreadsheet extends Module {
 					}
 				}
 													
-				jumpCol = currentCell.column.position - 2;
+				jumpCol = currentCell.column.getPosition() - 2;
 				if (currentCell.getValue()) {
 					continue;
 				}
@@ -20864,7 +20864,7 @@ class Spreadsheet extends Module {
 				}
 													
 				if (currentCell.getValue()) {
-					jumpCol = currentCell.column.position - 2;
+					jumpCol = currentCell.column.getPosition() - 2;
 					break;
 				}
 			} else {
@@ -20872,7 +20872,7 @@ class Spreadsheet extends Module {
 					break;
 				}
 													
-				jumpCol = currentCell.column.position - 2;
+				jumpCol = currentCell.column.getPosition() - 2;
 													
 				if (isRightOfStartingCellEmpty) {
 					if (!currentCell.getValue()) {
@@ -20989,7 +20989,7 @@ class Spreadsheet extends Module {
 		}
 											
 		var row = element.row.position - 1;
-		var col = element.column.position - 2;
+		var col = element.column.getPosition() - 2;
 											
 		if (element.column.field === this.rowHeaderField) {
 			range.setStart(row, 0);
@@ -21012,7 +21012,7 @@ class Spreadsheet extends Module {
 		}
 											
 		var row = element.row.position - 1;
-		var col = element.column.position - 2;
+		var col = element.column.getPosition() - 2;
 		var isRowHeader = element.column.field === this.rowHeaderField;
 											
 		if (this.selecting === "row") {
