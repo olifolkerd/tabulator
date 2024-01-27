@@ -943,7 +943,7 @@ class Column extends CoreFeature{
 		return this.component;
 	}
 
-	get position() {
+	getPosition(){
 		return this.table.columnManager.getVisibleColumnsByIndex().indexOf(this) + 1;
 	}
 }
