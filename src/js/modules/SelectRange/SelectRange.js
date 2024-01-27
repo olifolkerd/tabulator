@@ -10,6 +10,8 @@ class SelectRange extends Module {
 		this.ranges = [];
 		this.rowHeaderField = "--row-header";
 		this.overlay = null;
+
+		this.keyDownEvent = this._handleKeyDown.bind(this);
 		
 		this.registerTableOption("selectableRange", false); //enable selectable range
 		this.registerTableOption("selectableRangeRowHeader", {}); //row header definition
@@ -85,32 +87,9 @@ class SelectRange extends Module {
 		
 		this.overlay.appendChild(this.rangeContainer);
 		this.overlay.appendChild(this.activeRangeCellElement);
-		
-		var self = this;
-		
-		this.handleKeyDown = function (e) {
-			if (e.key === "Enter") {
-				// prevent action when pressing enter from editor
-				if (!e.target.classList.contains("tabulator-tableholder")) {
-					return;
-				}
 				
-				// is menu open?
-				if (self.table.modules.menu && self.table.modules.menu.currentComponent) {
-					return;
-				}
-				
-				// is editing a cell?
-				if (self.table.modules.edit && self.table.modules.edit.currentCell) {
-					return;
-				}
-				
-				self.editCell(self.getActiveCell());
-				e.preventDefault();
-			}
-		};
 		
-		this.table.rowManager.element.addEventListener("keydown", this.handleKeyDown);
+		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
 		
 		this.mouseUpHandler = function () {
 			self.mousedown = false;
@@ -131,7 +110,28 @@ class SelectRange extends Module {
 			this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
 		}
 	}
-
+	
+	_handleKeyDown(e) {
+		if (e.key === "Enter") {
+			// prevent action when pressing enter from editor
+			if (!e.target.classList.contains("tabulator-tableholder")) {
+				return;
+			}
+			
+			// is menu open?
+			if (this.table.modules.menu && this.table.modules.menu.currentComponent) {
+				return;
+			}
+			
+			// is editing a cell?
+			if (this.table.modules.edit && this.table.modules.edit.currentCell) {
+				return;
+			}
+			
+			this.editCell(this.getActiveCell());
+			e.preventDefault();
+		}
+	}
 	
 	
 	initializeFunctions() {
@@ -566,12 +566,12 @@ class SelectRange extends Module {
 	}
 										
 	handleEditingCell() {
-		this.table.rowManager.element.removeEventListener("keydown", this.handleKeyDown);
+		this.table.rowManager.element.removeEventListener("keydown", this.keyDownEvent);
 	}
 										
 	finishEditingCell() {
 		this.table.rowManager.element.focus();
-		this.table.rowManager.element.addEventListener("keydown", this.handleKeyDown);
+		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
 	}
 
 	keyNavigate(dir, e){
