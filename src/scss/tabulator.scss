@@ -1515,22 +1515,22 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 // Spreadsheet module styling
 
 .tabulator-header .tabulator-col{
-	&.tabulator-spreadsheet-highlight{
+	&.tabulator-range-highlight{
 		background-color: $headerHighlightBackground;
 		color: $headerTextHighlightBackground;
 	}
-	&.tabulator-spreadsheet-selected{
+	&.tabulator-range-selected{
 		background-color: $headerSelectedBackground;
 		color: $headerSelectedTextColor;
 	}
 }
 
 .tabulator-row{
-	&.tabulator-spreadsheet-highlight .tabulator-spreadsheet-row-header{
+	&.tabulator-range-highlight .tabulator-range-row-header{
 		background-color: $headerHighlightBackground;
 		color: $headerTextHighlightBackground;
 	}
-	&.tabulator-spreadsheet-selected .tabulator-spreadsheet-row-header{
+	&.tabulator-range-selected .tabulator-range-row-header{
 		background-color: $headerSelectedBackground;
 		color: $headerSelectedTextColor;
 	}
@@ -1540,11 +1540,11 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 	user-select: none;
 	position: relative;
 
-	&.tabulator-spreadsheet-selected:not(.tabulator-spreadsheet-only-cell-selected):not(.tabulator-spreadsheet-row-header){
+	&.tabulator-range-selected:not(.tabulator-range-only-cell-selected):not(.tabulator-range-row-header){
 		background-color: $rowSelectedBackground;
 	}
 
-	&.tabulator-spreadsheet-row-header {
+	&.tabulator-range-row-header {
 		text-align: center;
 	}
 }
@@ -1579,7 +1579,7 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 	}
 }
 
-.tabulator-spreadsheet-menu-item-focused {
+.tabulator-range-menu-item-focused {
 	background-color: $rowAltBackgroundColor;
 }
 

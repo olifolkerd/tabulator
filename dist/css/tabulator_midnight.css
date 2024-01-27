@@ -1205,22 +1205,22 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   background: #fff;
 }
 
-.tabulator-header .tabulator-col.tabulator-spreadsheet-highlight {
+.tabulator-header .tabulator-col.tabulator-range-highlight {
   background-color: #777;
   color: #fff;
 }
 
-.tabulator-header .tabulator-col.tabulator-spreadsheet-selected {
+.tabulator-header .tabulator-col.tabulator-range-selected {
   background-color: #4990F1;
   color: #FFFFFF;
 }
 
-.tabulator-row.tabulator-spreadsheet-highlight .tabulator-spreadsheet-row-header {
+.tabulator-row.tabulator-range-highlight .tabulator-range-row-header {
   background-color: #777;
   color: #fff;
 }
 
-.tabulator-row.tabulator-spreadsheet-selected .tabulator-spreadsheet-row-header {
+.tabulator-row.tabulator-range-selected .tabulator-range-row-header {
   background-color: #4990F1;
   color: #FFFFFF;
 }
@@ -1230,11 +1230,11 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   position: relative;
 }
 
-.tabulator-cell.tabulator-spreadsheet-selected:not(.tabulator-spreadsheet-only-cell-selected):not(.tabulator-spreadsheet-row-header) {
+.tabulator-cell.tabulator-range-selected:not(.tabulator-range-only-cell-selected):not(.tabulator-range-row-header) {
   background-color: #000;
 }
 
-.tabulator-cell.tabulator-spreadsheet-row-header {
+.tabulator-cell.tabulator-range-row-header {
   text-align: center;
 }
 
@@ -1268,7 +1268,7 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   border: 2px solid #2975DD;
 }
 
-.tabulator-spreadsheet-menu-item-focused {
+.tabulator-range-menu-item-focused {
   background-color: #444;
 }
 

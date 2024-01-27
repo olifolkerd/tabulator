@@ -26383,7 +26383,7 @@
 					state.elements.forEach((element) => {
 						var selected = element === state.focusedElement;
 						element.classList.toggle(
-							"tabulator-spreadsheet-menu-item-focused",
+							"tabulator-range-menu-item-focused",
 							selected,
 						);
 					});
@@ -26502,10 +26502,10 @@
 									
 			var rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
 									
-			el.classList.toggle("tabulator-spreadsheet-selected", rangeIdx !== -1);
+			el.classList.toggle("tabulator-range-selected", rangeIdx !== -1);
 									
 			el.classList.toggle(
-				"tabulator-spreadsheet-only-cell-selected",
+				"tabulator-range-only-cell-selected",
 				this.ranges.length === 1 &&
 										this.ranges[0].atTopLeft(cell) &&
 										this.ranges[0].atBottomRight(cell),
@@ -26529,8 +26529,8 @@
 				...customRowHeader,
 											
 				cssClass: customRowHeader.cssClass
-					? `tabulator-spreadsheet-row-header ${customRowHeader.cssClass}`
-					: "tabulator-spreadsheet-row-header",
+					? `tabulator-range-row-header ${customRowHeader.cssClass}`
+					: "tabulator-range-row-header",
 			};
 			this.rowHeaderField = rowHeaderDef.field;
 			// Add this column before everything else
@@ -27144,8 +27144,8 @@
 				selected = true;
 			}
 												
-			el.classList.toggle("tabulator-spreadsheet-selected", selected);
-			el.classList.toggle("tabulator-spreadsheet-highlight", occupied);
+			el.classList.toggle("tabulator-range-selected", selected);
+			el.classList.toggle("tabulator-range-highlight", occupied);
 		}
 											
 		layoutColumn(column) {
@@ -27160,8 +27160,8 @@
 				selected = true;
 			}
 												
-			el.classList.toggle("tabulator-spreadsheet-selected", selected);
-			el.classList.toggle("tabulator-spreadsheet-highlight", occupied);
+			el.classList.toggle("tabulator-range-selected", selected);
+			el.classList.toggle("tabulator-range-highlight", occupied);
 		}
 											
 		layoutRanges() {
