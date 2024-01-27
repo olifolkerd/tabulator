@@ -102,7 +102,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		-khtml-user-select: none;
 		-webkit-user-select: none;
 		-o-user-select: none;
-
+		
 		outline: none;
 		
 		&.tabulator-header-hidden{
@@ -171,7 +171,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					overflow: hidden;
 					text-overflow: ellipsis;
 					vertical-align:bottom;
-
+					
 					&.tabulator-col-title-wrap{
 						white-space: normal;
 						text-overflow: initial;
@@ -308,7 +308,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				&[aria-sort="descending"]{
 					.tabulator-col-content .tabulator-col-sorter{
 						color: $sortArrowActive;
-
+						
 						@media (hover:hover) and (pointer:fine){
 							&.tabulator-col-sorter-element .tabulator-arrow:hover{
 								cursor:pointer;
@@ -452,6 +452,37 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				white-space: normal;
 			}
 		}
+		
+		.tabulator-range-overlay {
+			position: absolute;
+			inset: 0;
+			z-index: 10;
+			pointer-events: none;
+			
+			& .tabulator-range {
+				position: absolute;
+				box-sizing: border-box;
+				border: 1px solid $rangeBorderColor;
+				
+				&.tabulator-range-active::after {
+					content: '';
+					position: absolute;
+					right: -3px;
+					bottom: -3px;
+					width: 6px;
+					height: 6px;
+					background-color: $rangeHandleColor;
+					border-radius: 999px;
+				}
+			}
+			
+			& .tabulator-range-cell-active {
+				position: absolute;
+				box-sizing: border-box;
+				border: 2px solid $rangeBorderColor;
+			}
+		}
+		
 		
 		//element to hold table rows
 		.tabulator-table{
@@ -716,6 +747,16 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		z-index:15;
 	}
 	
+	&.tabulator-spreadsheet-highlight .tabulator-spreadsheet-row-header{
+		background-color: $headerHighlightBackground;
+		color: $headerTextHighlightBackground;
+	}
+	
+	&.tabulator-spreadsheet-selected .tabulator-spreadsheet-row-header{
+		background-color: $headerSelectedBackground;
+		color: $headerSelectedTextColor;
+	}
+	
 	//row resize handles
 	.tabulator-row-resize-handle{
 		position:absolute;
@@ -844,7 +885,19 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				}
 			}
 		}
-
+		
+		&.tabulator-spreadsheet-selected:not(.tabulator-spreadsheet-only-cell-selected):not(.tabulator-spreadsheet-row-header){
+			background-color: $rowSelectedBackground;
+		}
+		
+		&.tabulator-spreadsheet-row-header {
+			text-align: center;
+		}
+		
+		&.tabulator-spreadsheet-menu-item-focused {
+			background-color: $rowAltBackgroundColor;
+		}
+		
 		.tabulator-data-tree-branch-empty{
 			display:inline-block;
 			width:7px;
@@ -973,7 +1026,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					display:none;
 				}
 			}
-
+			
 			svg{
 				stroke:$rowBackgroundColor;
 			}
@@ -1259,6 +1312,16 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				}
 			}
 			
+			&.tabulator-spreadsheet-highlight{
+				background-color: $headerHighlightBackground;
+				color: $headerTextHighlightBackground;
+			}
+			
+			&.tabulator-spreadsheet-selected{
+				background-color: $headerSelectedBackground;
+				color: $headerSelectedTextColor;
+			}
+			
 			.tabulator-col-content{
 				.tabulator-col-sorter{
 					left:8px;
@@ -1510,84 +1573,4 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 			}
 		}
 	}
-}
-
-// Spreadsheet module styling
-
-.tabulator-header .tabulator-col{
-	&.tabulator-spreadsheet-highlight{
-		background-color: $headerHighlightBackground;
-		color: $headerTextHighlightBackground;
-	}
-	&.tabulator-spreadsheet-selected{
-		background-color: $headerSelectedBackground;
-		color: $headerSelectedTextColor;
-	}
-}
-
-.tabulator-row{
-	&.tabulator-spreadsheet-highlight .tabulator-spreadsheet-row-header{
-		background-color: $headerHighlightBackground;
-		color: $headerTextHighlightBackground;
-	}
-	&.tabulator-spreadsheet-selected .tabulator-spreadsheet-row-header{
-		background-color: $headerSelectedBackground;
-		color: $headerSelectedTextColor;
-	}
-}
-
-.tabulator-cell{
-	user-select: none;
-	position: relative;
-
-	&.tabulator-spreadsheet-selected:not(.tabulator-spreadsheet-only-cell-selected):not(.tabulator-spreadsheet-row-header){
-		background-color: $rowSelectedBackground;
-	}
-
-	&.tabulator-spreadsheet-row-header {
-		text-align: center;
-	}
-}
-
-.tabulator-range-overlay {
-	position: absolute;
-	inset: 0;
-	z-index: 10;
-	pointer-events: none;
-
-	& .tabulator-range {
-		position: absolute;
-		box-sizing: border-box;
-		border: 1px solid $rangeBorderColor;
-
-		&.tabulator-range-active::after {
-			content: '';
-			position: absolute;
-			right: -3px;
-			bottom: -3px;
-			width: 6px;
-			height: 6px;
-			background-color: $rangeHandleColor;
-			border-radius: 999px;
-		}
-	}
-
-	& .tabulator-range-cell-active {
-		position: absolute;
-		box-sizing: border-box;
-		border: 2px solid $rangeBorderColor;
-	}
-}
-
-.tabulator-spreadsheet-menu-item-focused {
-	background-color: $rowAltBackgroundColor;
-}
-
-.tabulator-col-resize-guide {
-	position: absolute;
-	width: 4px;
-	margin-left: -0.5px;
-	height: 100%;
-	top: 0;
-	background-color: $columnResizeGuideColor;
 }
