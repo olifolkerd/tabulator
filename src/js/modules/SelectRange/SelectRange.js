@@ -1,8 +1,7 @@
 import Module from "../../core/Module.js";
-import Helpers from "../../core/tools/Helpers.js";
 import Range from "./Range.js";
 
-class Spreadsheet extends Module {
+class SelectRange extends Module {
 	constructor(table) {
 		super(table);
 		
@@ -12,12 +11,12 @@ class Spreadsheet extends Module {
 		this.rowHeaderField = "--row-header";
 		this.overlay = null;
 		
-		this.registerTableOption("spreadsheet", false); //enable spreadsheet
-		this.registerTableOption("spreadsheetRowHeader", {}); //row header definition
+		this.registerTableOption("selectableRange", false); //enable selectable range
+		this.registerTableOption("selectableRangeRowHeader", {}); //row header definition
 	}
 	
 	initialize() {
-		if (this.table.options.spreadsheet) {		
+		if (this.table.options.selectableRange) {		
 			if(!this.table.options.selectable){
 				this.initializeTable();
 				this.initializeWatchers();
@@ -26,7 +25,7 @@ class Spreadsheet extends Module {
 					this.initializeMenuNavigation();
 				}
 			}else{
-				console.warn("Spreadsheet functionality cannot be used in conjunction with row selection");
+				console.warn("SelectRange functionality cannot be used in conjunction with row selection");
 			}
 		}
 	}
@@ -110,7 +109,7 @@ class Spreadsheet extends Module {
 	}
 	
 	initializeTable() {
-		this.table.options.clipboardCopyRowRange = "spreadsheet";
+		this.table.options.clipboardCopyRowRange = "range";
 		
 		this.overlay = document.createElement("div");
 		this.overlay.classList.add("tabulator-range-overlay");
@@ -483,7 +482,7 @@ class Spreadsheet extends Module {
 	}
 								
 	handleColumnsLoading() {
-		var customRowHeader = this.options("spreadsheetRowHeader");
+		var customRowHeader = this.options("selectableRangeRowHeader");
 		var rowHeaderDef = {
 			title: "",
 			field: this.rowHeaderField,
@@ -1322,7 +1321,7 @@ class Spreadsheet extends Module {
 	}
 }
 										
-Spreadsheet.moduleName = "spreadsheet";
+SelectRange.moduleName = "selectRange";
 										
-export default Spreadsheet;
+export default SelectRange;
 										

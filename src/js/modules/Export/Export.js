@@ -38,8 +38,8 @@ class Export extends Module{
 
 		var headers, body;
 		
-		if (range === 'spreadsheet') {
-			var columns = this.table.modules.spreadsheet.selectedColumns;
+		if (range === 'range') {
+			var columns = this.table.modules.selectRange.selectedColumns;
 			headers = this.config.columnHeaders !== false
 				? this.headersToExportRows(this.generateColumnGroupHeaders(columns.map((component) => component._column)))
 				: [];
@@ -84,8 +84,8 @@ class Export extends Module{
 					rows = this.table.modules.selectRow.selectedRows;
 					break;
 
-				case "spreadsheet":
-					rows = this.table.modules.spreadsheet.selectedRows;
+				case "range":
+					rows = this.table.modules.selectRange.selectedRows;
 					break;
 
 				case "active":

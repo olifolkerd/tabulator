@@ -8394,8 +8394,8 @@ class Export extends Module{
 
 		var headers, body;
 		
-		if (range === 'spreadsheet') {
-			var columns = this.table.modules.spreadsheet.selectedColumns;
+		if (range === 'range') {
+			var columns = this.table.modules.selectRange.selectedColumns;
 			headers = this.config.columnHeaders !== false
 				? this.headersToExportRows(this.generateColumnGroupHeaders(columns.map((component) => component._column)))
 				: [];
@@ -8440,8 +8440,8 @@ class Export extends Module{
 					rows = this.table.modules.selectRow.selectedRows;
 					break;
 
-				case "spreadsheet":
-					rows = this.table.modules.spreadsheet.selectedRows;
+				case "range":
+					rows = this.table.modules.selectRange.selectedRows;
 					break;
 
 				case "active":
@@ -13682,18 +13682,18 @@ var defaultBindings = {
 	redo:["ctrl + 89", "meta + 89"],
 	copyToClipboard:["ctrl + 67", "meta + 67"],
 
-	spreadsheetJumpUp:["ctrl + 38", "meta + 38"],
-	spreadsheetJumpDown:["ctrl + 40", "meta + 40"],
-	spreadsheetJumpLeft:["ctrl + 37", "meta + 37"],
-	spreadsheetJumpRight:["ctrl + 39", "meta + 39"],
-	spreadsheetExpandUp:"shift + 38",
-	spreadsheetExpandDown:"shift + 40",
-	spreadsheetExpandLeft:"shift + 37",
-	spreadsheetExpandRight:"shift + 39",
-	spreadsheetExpandJumpUp:["ctrl + shift + 38", "meta + shift + 38"],
-	spreadsheetExpandJumpDown:["ctrl + shift + 40", "meta + shift + 40"],
-	spreadsheetExpandJumpLeft:["ctrl + shift + 37", "meta + shift + 37"],
-	spreadsheetExpandJumpRight:["ctrl + shift + 39", "meta + shift + 39"],
+	rangeJumpUp:["ctrl + 38", "meta + 38"],
+	rangeJumpDown:["ctrl + 40", "meta + 40"],
+	rangeJumpLeft:["ctrl + 37", "meta + 37"],
+	rangeJumpRight:["ctrl + 39", "meta + 39"],
+	rangeExpandUp:"shift + 38",
+	rangeExpandDown:"shift + 40",
+	rangeExpandLeft:"shift + 37",
+	rangeExpandRight:"shift + 39",
+	rangeExpandJumpUp:["ctrl + shift + 38", "meta + shift + 38"],
+	rangeExpandJumpDown:["ctrl + shift + 40", "meta + shift + 40"],
+	rangeExpandJumpLeft:["ctrl + shift + 37", "meta + shift + 37"],
+	rangeExpandJumpRight:["ctrl + shift + 39", "meta + shift + 39"],
 };
 
 var defaultActions = {
@@ -13781,75 +13781,75 @@ var defaultActions = {
 		this.dispatch("keybinding-nav-down", e);
 	},
 
-	spreadsheetJumpLeft: function(e){
-		if (!this.table.options.spreadsheet) return;
-		if (this.table.modules.spreadsheet.navigate("jump", "left")) {
+	rangeJumpLeft: function(e){
+		if (!this.table.options.selectableRange) return;
+		if (this.table.modules.selectRange.navigate("jump", "left")) {
 			e.preventDefault();
 		}
 	},
-	spreadsheetJumpRight: function(e){
-		if (!this.table.options.spreadsheet) return;
-		if (this.table.modules.spreadsheet.navigate("jump", "right")) {
+	rangeJumpRight: function(e){
+		if (!this.table.options.selectableRange) return;
+		if (this.table.modules.selectRange.navigate("jump", "right")) {
 			e.preventDefault();
 		}
 	},
-	spreadsheetJumpUp: function(e){
-		if (!this.table.options.spreadsheet) return;
-		if (this.table.modules.spreadsheet.navigate("jump", "up")) {
+	rangeJumpUp: function(e){
+		if (!this.table.options.selectableRange) return;
+		if (this.table.modules.selectRange.navigate("jump", "up")) {
 			e.preventDefault();
 		}
 	},
-	spreadsheetJumpDown: function(e){
-		if (!this.table.options.spreadsheet) return;
-		if (this.table.modules.spreadsheet.navigate("jump", "down")) {
+	rangeJumpDown: function(e){
+		if (!this.table.options.selectableRange) return;
+		if (this.table.modules.selectRange.navigate("jump", "down")) {
 			e.preventDefault();
 		}
 	},
-	spreadsheetExpandLeft: function(e){
-		if (!this.table.options.spreadsheet) return;
-		if (this.table.modules.spreadsheet.navigate("expand", "left")) {
+	rangeExpandLeft: function(e){
+		if (!this.table.options.selectableRange) return;
+		if (this.table.modules.selectRange.navigate("expand", "left")) {
 			e.preventDefault();
 		}
 	},
-	spreadsheetExpandRight: function(e){
-		if (!this.table.options.spreadsheet) return;
-		if (this.table.modules.spreadsheet.navigate("expand", "right")) {
+	rangeExpandRight: function(e){
+		if (!this.table.options.selectableRange) return;
+		if (this.table.modules.selectRange.navigate("expand", "right")) {
 			e.preventDefault();
 		}
 	},
-	spreadsheetExpandUp: function(e){
-		if (!this.table.options.spreadsheet) return;
-		if (this.table.modules.spreadsheet.navigate("expand", "up")) {
+	rangeExpandUp: function(e){
+		if (!this.table.options.selectableRange) return;
+		if (this.table.modules.selectRange.navigate("expand", "up")) {
 			e.preventDefault();
 		}
 	},
-	spreadsheetExpandDown: function(e){
-		if (!this.table.options.spreadsheet) return;
-		if (this.table.modules.spreadsheet.navigate("expand", "down")) {
+	rangeExpandDown: function(e){
+		if (!this.table.options.selectableRange) return;
+		if (this.table.modules.selectRange.navigate("expand", "down")) {
 			e.preventDefault();
 		}
 	},
-	spreadsheetExpandJumpLeft: function(e){
-		if (!this.table.options.spreadsheet) return;
-		if (this.table.modules.spreadsheet.navigate("expand-jump", "left")) {
+	rangeExpandJumpLeft: function(e){
+		if (!this.table.options.selectableRange) return;
+		if (this.table.modules.selectRange.navigate("expand-jump", "left")) {
 			e.preventDefault();
 		}
 	},
-	spreadsheetExpandJumpRight: function(e){
-		if (!this.table.options.spreadsheet) return;
-		if (this.table.modules.spreadsheet.navigate("expand-jump", "right")) {
+	rangeExpandJumpRight: function(e){
+		if (!this.table.options.selectableRange) return;
+		if (this.table.modules.selectRange.navigate("expand-jump", "right")) {
 			e.preventDefault();
 		}
 	},
-	spreadsheetExpandJumpUp: function(e){
-		if (!this.table.options.spreadsheet) return;
-		if (this.table.modules.spreadsheet.navigate("expand-jump", "up")) {
+	rangeExpandJumpUp: function(e){
+		if (!this.table.options.selectableRange) return;
+		if (this.table.modules.selectRange.navigate("expand-jump", "up")) {
 			e.preventDefault();
 		}
 	},
-	spreadsheetExpandJumpDown: function(e){
-		if (!this.table.options.spreadsheet) return;
-		if (this.table.modules.spreadsheet.navigate("expand-jump", "down")) {
+	rangeExpandJumpDown: function(e){
+		if (!this.table.options.selectableRange) return;
+		if (this.table.modules.selectRange.navigate("expand-jump", "down")) {
 			e.preventDefault();
 		}
 	},
@@ -19951,7 +19951,7 @@ class Range {
 	}
 }
 
-class Spreadsheet extends Module {
+class SelectRange extends Module {
 	constructor(table) {
 		super(table);
 		
@@ -19961,12 +19961,12 @@ class Spreadsheet extends Module {
 		this.rowHeaderField = "--row-header";
 		this.overlay = null;
 		
-		this.registerTableOption("spreadsheet", false); //enable spreadsheet
-		this.registerTableOption("spreadsheetRowHeader", {}); //row header definition
+		this.registerTableOption("selectableRange", false); //enable selectable range
+		this.registerTableOption("selectableRangeRowHeader", {}); //row header definition
 	}
 	
 	initialize() {
-		if (this.table.options.spreadsheet) {		
+		if (this.table.options.selectableRange) {		
 			if(!this.table.options.selectable){
 				this.initializeTable();
 				this.initializeWatchers();
@@ -19975,7 +19975,7 @@ class Spreadsheet extends Module {
 					this.initializeMenuNavigation();
 				}
 			}else {
-				console.warn("Spreadsheet functionality cannot be used in conjunction with row selection");
+				console.warn("SelectRange functionality cannot be used in conjunction with row selection");
 			}
 		}
 	}
@@ -20059,7 +20059,7 @@ class Spreadsheet extends Module {
 	}
 	
 	initializeTable() {
-		this.table.options.clipboardCopyRowRange = "spreadsheet";
+		this.table.options.clipboardCopyRowRange = "range";
 		
 		this.overlay = document.createElement("div");
 		this.overlay.classList.add("tabulator-range-overlay");
@@ -20432,7 +20432,7 @@ class Spreadsheet extends Module {
 	}
 								
 	handleColumnsLoading() {
-		var customRowHeader = this.options("spreadsheetRowHeader");
+		var customRowHeader = this.options("selectableRangeRowHeader");
 		var rowHeaderDef = {
 			title: "",
 			field: this.rowHeaderField,
@@ -21271,7 +21271,7 @@ class Spreadsheet extends Module {
 	}
 }
 										
-Spreadsheet.moduleName = "spreadsheet";
+SelectRange.moduleName = "selectRange";
 
 class Tooltip extends Module{
 	
@@ -21874,7 +21874,7 @@ var modules = /*#__PURE__*/Object.freeze({
 	ResponsiveLayoutModule: ResponsiveLayout,
 	SelectRowModule: SelectRow,
 	SortModule: Sort,
-	SpreadsheetModule: Spreadsheet,
+	SelectRangeModule: SelectRange,
 	TooltipModule: Tooltip,
 	ValidateModule: Validate
 });
@@ -28009,5 +28009,5 @@ class PseudoRow {
 	clearCellHeight(){}
 }
 
-export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit$1 as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup$1 as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent, SelectRow as SelectRowModule, Sort as SortModule, Spreadsheet as SpreadsheetModule, Tabulator, TabulatorFull, Tooltip as TooltipModule, Validate as ValidateModule };
+export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit$1 as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup$1 as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent, SelectRange as SelectRangeModule, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Tooltip as TooltipModule, Validate as ValidateModule };
 //# sourceMappingURL=tabulator_esm.js.map
