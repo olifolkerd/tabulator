@@ -11,11 +11,14 @@ class SelectRange extends Module {
 		this.rowHeaderField = "--row-header";
 		this.overlay = null;
 		this.layoutChangeTimeout = null;
+		this.columnSelection = false;
+		this.rowSelection = false;
 		
 		this.keyDownEvent = this._handleKeyDown.bind(this);
 		this.mouseUpEvent = this._handleMouseUp.bind(this);
 		
 		this.registerTableOption("selectableRange", false); //enable selectable range
+		this.registerTableOption("selectableRangeColumns", false); //enable selectable range
 		this.registerTableOption("selectableRangeRowHeader", {}); //row header definition
 		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
 		this.registerTableFunction("getActiveRange", this.getActiveRange.bind(this, true));
@@ -40,6 +43,8 @@ class SelectRange extends Module {
 	}
 	
 	initializeWatchers() {
+		this.columnSelection = this.options("selectableRangeColumns");
+
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
@@ -99,6 +104,10 @@ class SelectRange extends Module {
 	}
 	
 	initializeColumn(column) {
+		if(this.columnSelection && column.definition.headerSort){
+			console.warn("Using column headerSort with selectableRangeColumns option may result in unpredictable behavior");
+		}
+
 		if (column.modules.edit) {
 			// Block editor from taking action so we can trigger edit by
 			// double clicking.
@@ -506,6 +515,10 @@ class SelectRange extends Module {
 	
 	_select(event, element) {
 		if (element.type === "column") {
+			if(!this.columnSelection){
+				return;
+			}
+
 			if (element.field === this.rowHeaderField) {
 				this.resetRanges();
 				this.selecting = "all";
@@ -549,7 +562,9 @@ class SelectRange extends Module {
 		var range = this.getActiveRange();
 		
 		if (element.type === "column") {
-			range.setStart(0, element.getPosition() - 2);
+			if(this.columnSelection){
+				range.setStart(0, element.getPosition() - 2);
+			}
 			return;
 		}
 		
@@ -573,6 +588,7 @@ class SelectRange extends Module {
 			} else if (this.selecting === "cell") {
 				range.setEnd(0, element.getPosition() - 2);
 			}
+			
 			return;
 		}
 		
