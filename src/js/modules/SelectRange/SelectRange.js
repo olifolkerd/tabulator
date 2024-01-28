@@ -255,8 +255,6 @@ class SelectRange extends Module {
 		el.dataset.range = rangeIdx;
 	}
 	
-	
-	
 	handleCellMouseDown(event, cell) {
 		if (event.button === 2 && (this.getActiveRange().occupies(cell) || ((this.selecting === "row" || this.selecting === "all") && this.getActiveRange().occupiesRow(cell.row)))) {
 			return;
@@ -772,23 +770,12 @@ class SelectRange extends Module {
 			left: tableHolder.scrollLeft + rowHeader.offsetWidth,
 			right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
 			top: tableHolder.scrollTop,
-			bottom:
-			tableHolder.scrollTop +
-			tableHolder.offsetHeight -
-			this.table.rowManager.scrollbarWidth,
+			bottom:	tableHolder.scrollTop +	tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth,
 		};
 		
-		var withinHorizontalView =
-		view.left < rect.left &&
-		rect.left < view.right &&
-		view.left < rect.right &&
-		rect.right < view.right;
+		var withinHorizontalView = view.left < rect.left &&	rect.left < view.right && view.left < rect.right &&	rect.right < view.right;
 		
-		var withinVerticalView =
-		view.top < rect.top &&
-		rect.top < view.bottom &&
-		view.top < rect.bottom &&
-		rect.bottom < view.bottom;
+		var withinVerticalView = view.top < rect.top &&	rect.top < view.bottom && view.top < rect.bottom &&	rect.bottom < view.bottom;
 		
 		if (!withinHorizontalView) {
 			if (rect.left < view.left) {
@@ -938,7 +925,7 @@ class SelectRange extends Module {
 		return this.ranges[rangeIdx].getComponent();
 	}
 	
-	getCell( colIdx) {
+	getCell(rowIdx, colIdx) {
 		if (rowIdx < 0) {
 			rowIdx = this.getRows().length + rowIdx;
 		}
