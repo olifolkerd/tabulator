@@ -24,7 +24,7 @@ class SelectRange extends Module {
 		this.registerTableOption("selectableRangeRows", false); //enable selectable range
 		this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
 		this.registerTableFunction("getRanges", this.getRanges.bind(this));
-		this.registerTableFunction("addRange", this.addRange.bind(this));
+		this.registerTableFunction("addRange", this.addRangeFromComponent.bind(this));
 		this.registerComponentFunction("cell", "getRange", this.cellGetRange.bind(this));
 		this.registerComponentFunction("row", "getRange", this.rowGetRange.bind(this));
 		this.registerComponentFunction("column", "getRange", this.collGetRange.bind(this));
@@ -154,6 +154,13 @@ class SelectRange extends Module {
 	getRangesData() {
 		var output = this.ranges.map((range) => range.getData());
 		return output;
+	}
+
+	addRangeFromComponent(start, end){
+		start = start ? start._cell : null;
+		end = end ? end._cell : null;
+
+		return this.addRange(start, end);
 	}
 	
 	///////////////////////////////////
@@ -753,7 +760,7 @@ class SelectRange extends Module {
 	
 	addRange(start, end) {
 		var  range;
-		
+
 		if(this.maxRanges !== true && this.ranges.length >= this.maxRanges){
 			this.ranges.shift().destroy();
 		}

@@ -18,7 +18,10 @@ class Range extends CoreFeature{
 		this.end = {row:0, col:0};
 		
 		this.initElement();
-		this.initBounds(start, end);
+
+		setTimeout(() => {
+			this.initBounds(start, end);
+		});
 	}
 
 	initElement(){
@@ -30,7 +33,7 @@ class Range extends CoreFeature{
 		this._updateMinMax();
 
 		if(start){
-			this.setBounds(start._cell, end ? end._cell : start._cell);
+			this.setBounds(start, end || start);
 		}
 	}
 	
@@ -64,7 +67,7 @@ class Range extends CoreFeature{
 		}
 		
 		this._setEndBound(end || start);
-		this.rangeManager.layoutElement(true);
+		this.rangeManager.layoutElement(visibleRows);
 	}
 	
 	_setStartBound(element){
