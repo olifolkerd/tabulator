@@ -82,6 +82,13 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	&.tabulator-block-select{
 		user-select: none;
 	}
+
+	&.tabulator-ranges{
+		.tabulator-cell:not(.tabulator-editing){
+			user-select: none;
+		}
+	}
+	
 	
 	//column header containing element
 	.tabulator-header{
@@ -1537,15 +1544,8 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 }
 
 .tabulator-cell{
-	user-select: none;
-	position: relative;
-
 	&.tabulator-range-selected:not(.tabulator-range-only-cell-selected):not(.tabulator-range-row-header){
 		background-color: $rowSelectedBackground;
-	}
-
-	&.tabulator-range-row-header {
-		text-align: center;
 	}
 }
 
@@ -1583,11 +1583,3 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 	background-color: $rowAltBackgroundColor;
 }
 
-.tabulator-col-resize-guide {
-	position: absolute;
-	width: 4px;
-	margin-left: -0.5px;
-	height: 100%;
-	top: 0;
-	background-color: $columnResizeGuideColor;
-}
