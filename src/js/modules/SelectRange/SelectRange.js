@@ -69,7 +69,7 @@ class SelectRange extends Module {
 		this.subscribe("keybinding-nav-right", this.keyNavigate.bind(this, "right"));
 		this.subscribe("keybinding-nav-up", this.keyNavigate.bind(this, "up"));
 		this.subscribe("keybinding-nav-down", this.keyNavigate.bind(this, "down"));
-
+		
 		this.subscribe("keybinding-nav-range", this.keyNavigateRange.bind(this));
 	}
 	
@@ -302,7 +302,7 @@ class SelectRange extends Module {
 			e.preventDefault();
 		}
 	}
-
+	
 	keyNavigateRange(e, dir, jump, expand){
 		if(this.navigate(jump, expand, dir)){
 			e.preventDefault();
@@ -311,8 +311,8 @@ class SelectRange extends Module {
 	
 	navigate(jump, expand, dir) {
 		var moved = false,
-		range, rangeEdge, nextRow, nextCol;
-
+		range, rangeEdge, nextRow, nextCol, row, column;
+		
 		// Don't navigate while editing
 		if (this.table.modules.edit && this.table.modules.edit.currentCell) {
 			return false;
@@ -357,7 +357,7 @@ class SelectRange extends Module {
 					return;
 				}
 			}
-
+			
 			switch(dir){
 				case "left":
 					nextCol = Math.max(nextCol - 1, 0);
@@ -373,22 +373,22 @@ class SelectRange extends Module {
 					break;
 			}
 		}
-
+		
 		moved = nextCol !== rangeEdge.col || nextRow !== rangeEdge.row;
 		
 		if(!expand){
 			range.setStart(nextRow, nextCol);
 		}
-
+		
 		range.setEnd(nextRow, nextCol);
-
+		
 		if(!expand){
 			this.selecting = "cell";
 		}
-
+		
 		if (moved) {
-			var row = this.getRowByRangePos(range.end.row);
-			var column = this.getColumnByRangePos(range.end.col);
+			row = this.getRowByRangePos(range.end.row);
+			column = this.getColumnByRangePos(range.end.col);
 			
 			if ((dir === 'left' || dir === 'right') && column.getElement().parentNode === null) {
 				column.getComponent().scrollTo(undefined, false);
@@ -398,184 +398,103 @@ class SelectRange extends Module {
 				// Use faster autoScroll when the elements are on the DOM
 				this.autoScroll(range, row.getElement(), column.getElement());
 			}
-		
+			
 			this.layoutElement();
 			
 			return true;
 		}
 	}
 	
-	findJumpCellLeft(rowPos, colPos){
-		var row = this.getRowByRangePos(rowPos);
-		var cells = row.cells.filter((cell) => cell.column.visible);
-		var isStartingCellEmpty = !cells[colPos + 1].getValue();
-		var isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false;
-		var jumpCol = colPos;
+	findJumpCell(cells, reverse, emptyStart, emptySide){
+		var nextCell;
 		
-		// Go until we find an empty / non-empty cell.
-		for (var i = colPos; i > 0; i--){
-			var currentCell = cells[i];
-			if (isStartingCellEmpty) {
-				if (!currentCell.getValue()) {
-					continue;
-				}
-				
-				if (currentCell.getValue()) {
-					jumpCol = currentCell.column.getPosition() - 2;
+		if(reverse){
+			cells = cells.reverse();
+		}
+		
+		for(let currentCell of cells){
+			let currentValue = currentCell.getValue();
+			
+			if(emptyStart){
+				nextCell = currentCell;
+				if(currentValue){
 					break;
 				}
-			} else {
-				if (!isLeftOfStartingCellEmpty && !currentCell.getValue()) {
-					break;
-				}
-				
-				jumpCol = currentCell.column.getPosition() - 2;
-				
-				if (isLeftOfStartingCellEmpty) {
-					if (!currentCell.getValue()) {
-						continue;
+			}else{
+				if(emptySide){
+					nextCell = currentCell;
+					
+					if(currentValue){
+						break;
 					}
-					if (currentCell.getValue()) {
+				}else{
+					if(currentValue){
+						nextCell = currentCell;
+					}else{
 						break;
 					}
 				}
-				
-				jumpCol = currentCell.column.getPosition() - 2;
-				if (currentCell.getValue()) {
-					continue;
-				}
 			}
+		}
+
+		return nextCell;
+	}
+	
+	findJumpCellLeft(rowPos, colPos){
+		var row = this.getRowByRangePos(rowPos),
+		cells = row.cells.filter((cell) => cell.column.visible),
+		isStartingCellEmpty = !cells[colPos + 1].getValue(),
+		isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false,
+		jumpCol = colPos,
+		nextCell = this.findJumpCell(cells.slice(0, colPos), true, isStartingCellEmpty, isLeftOfStartingCellEmpty);
+		
+		if(nextCell){
+			jumpCol = nextCell.column.getPosition() - 2;
 		}
 		
 		return jumpCol;
 	}
 	
 	findJumpCellRight(rowPos, colPos){
-		var row = this.getRowByRangePos(rowPos);
-		var cells = row.cells.filter((cell) => cell.column.visible);
-		var isStartingCellEmpty = !cells[colPos + 1].getValue();
-		var isRightOfStartingCellEmpty = cells[colPos + 2] ? !cells[colPos + 2].getValue() : false;
-		var jumpCol = colPos;
+		var row = this.getRowByRangePos(rowPos),
+		cells = row.cells.filter((cell) => cell.column.visible),
+		isStartingCellEmpty = !cells[colPos + 1].getValue(),
+		isRightOfStartingCellEmpty = cells[colPos + 2] ? !cells[colPos + 2].getValue() : false,
+		jumpCol = colPos,
+		nextCell = this.findJumpCell(cells.slice(colPos + 2, cells.length), false, isStartingCellEmpty, isRightOfStartingCellEmpty);
 		
-		for (var i = colPos + 2; i < cells.length; i++){
-			var currentCell = cells[i];
-			if (isStartingCellEmpty) {
-				if (!currentCell.getValue()) {
-					continue;
-				}
-				
-				if (currentCell.getValue()) {
-					jumpCol = currentCell.column.getPosition() - 2;
-					break;
-				}
-			} else {
-				if (!isRightOfStartingCellEmpty && !currentCell.getValue()) {
-					break;
-				}
-				
-				jumpCol = currentCell.column.getPosition() - 2;
-				
-				if (isRightOfStartingCellEmpty) {
-					if (!currentCell.getValue()) {
-						continue;
-					}
-					if (currentCell.getValue()) {
-						break;
-					}
-				}
-				
-				if (currentCell.getValue()) {
-					continue;
-				}
-			}
+		if(nextCell){
+			jumpCol = nextCell.column.getPosition() - 2;
 		}
 		
 		return jumpCol;
 	}
 	
 	findJumpCellUp(rowPos, colPos) {
-		var column = this.getColumnByRangePos(colPos);
-		var cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row));
-		var isStartingCellEmpty = !cells[rowPos].getValue();
-		var isTopOfStartingCellEmpty = cells[rowPos - 1] ? !cells[rowPos - 1].getValue() : false;
-		var jumpRow = rowPos;
+		var column = this.getColumnByRangePos(colPos),
+		cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row)),
+		isStartingCellEmpty = !cells[rowPos].getValue(),
+		isTopOfStartingCellEmpty = cells[rowPos - 1] ? !cells[rowPos - 1].getValue() : false,
+		jumpRow = rowPos,
+		nextCell = this.findJumpCell(cells.slice(0, jumpRow), true, isStartingCellEmpty, isTopOfStartingCellEmpty);
 		
-		for (var i = jumpRow - 1; i >= 0; i--){
-			var currentCell = cells[i];
-			if (isStartingCellEmpty) {
-				jumpRow = currentCell.row.position - 1;
-				
-				if (currentCell.getValue()) {
-					break;
-				}
-				
-				if (!currentCell.getValue()) {
-					continue;
-				}
-			} else {
-				if (!isTopOfStartingCellEmpty && !currentCell.getValue()) {
-					break;
-				}
-				
-				jumpRow = currentCell.row.position - 1;
-				
-				if (isTopOfStartingCellEmpty) {
-					if (!currentCell.getValue()) {
-						continue;
-					}
-					if (currentCell.getValue()) {
-						break;
-					}
-				}
-				
-				if (currentCell.getValue()) {
-					continue;
-				}
-			}
+		if(nextCell){
+			jumpRow = nextCell.row.position - 1;
 		}
 		
 		return jumpRow;
 	}
 	
 	findJumpCellDown(rowPos, colPos) {
-		var column = this.getColumnByRangePos(colPos);
-		var cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row));
-		var isStartingCellEmpty = !cells[rowPos].getValue();
-		var isBottomOfStartingCellEmpty = cells[rowPos + 1] ? !cells[rowPos + 1].getValue() : false;
-		var jumpRow = rowPos;
+		var column = this.getColumnByRangePos(colPos),
+		cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row)),
+		isStartingCellEmpty = !cells[rowPos].getValue(),
+		isBottomOfStartingCellEmpty = cells[rowPos + 1] ? !cells[rowPos + 1].getValue() : false,
+		jumpRow = rowPos,
+		nextCell = this.findJumpCell(cells.slice(jumpRow + 1, cells.length), false, isStartingCellEmpty, isBottomOfStartingCellEmpty);
 		
-		for (var i = jumpRow + 1; i < cells.length; i++){
-			var currentCell = cells[i];
-			if (isStartingCellEmpty) {
-				jumpRow = currentCell.row.position - 1;
-				
-				if (currentCell.getValue()) {
-					break;
-				}
-				
-				if (!currentCell.getValue()) {
-					continue;
-				}
-			} else {
-				if (!isBottomOfStartingCellEmpty && !currentCell.getValue()) {
-					break;
-				}
-				
-				jumpRow = currentCell.row.position - 1;
-				
-				if (isBottomOfStartingCellEmpty) {
-					if (!currentCell.getValue()) {
-						continue;
-					}
-					if (currentCell.getValue()) {
-						break;
-					}
-				}
-				
-				if (currentCell.getValue()) {
-					continue;
-				}
-			}
+		if(nextCell){
+			jumpRow = nextCell.row.position - 1;
 		}
 		
 		return jumpRow;
