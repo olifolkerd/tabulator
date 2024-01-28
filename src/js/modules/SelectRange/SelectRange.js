@@ -141,6 +141,20 @@ class SelectRange extends Module {
 			}
 		}
 	}
+
+	///////////////////////////////////
+	///////   Table Functions   ///////
+	///////////////////////////////////
+	
+	getRanges(){
+		var output = this.ranges.map((range) => range.getComponent());
+		return output;
+	}
+	
+	getRangesData() {
+		var output = this.ranges.map((range) => range.getData());
+		return output;
+	}
 	
 	///////////////////////////////////
 	/////// Component Functions ///////
@@ -513,7 +527,6 @@ class SelectRange extends Module {
 	///////////////////////////////////
 	///////      Selection      ///////
 	///////////////////////////////////
-	
 	newSelection(event, element) {
 		var range;
 
@@ -552,32 +565,7 @@ class SelectRange extends Module {
 			this.resetRanges().setBounds(element);
 		}
 	}
-	
-	endSelection(element) {
-		var range = this.activeRange;
-		//DELETE ME
-	}
-	
-	
-	///////////////////////////////////
-	///////       Layout        ///////
-	///////////////////////////////////
-	
-	layoutChange(){
-		this.overlay.style.visibility = "hidden";
-		clearTimeout(this.layoutChangeTimeout);
-		this.layoutChangeTimeout = setTimeout(this.layoutRanges.bind(this), 200);
-	}
-	
-	
-	redraw(force) {
-		if (force) {
-			this.selecting = 'cell';
-			this.resetRanges();
-			this.layoutElement();
-		}
-	}
-	
+
 	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element;
 		var rowHeader = this.rowHeader.getElement();
@@ -620,6 +608,25 @@ class SelectRange extends Module {
 			} else if (rect.bottom > view.bottom) {
 				tableHolder.scrollTop = rect.bottom - tableHolder.clientHeight;
 			}
+		}
+	}
+	
+	
+	///////////////////////////////////
+	///////       Layout        ///////
+	///////////////////////////////////
+	
+	layoutChange(){
+		this.overlay.style.visibility = "hidden";
+		clearTimeout(this.layoutChangeTimeout);
+		this.layoutChangeTimeout = setTimeout(this.layoutRanges.bind(this), 200);
+	}
+	
+	redraw(force) {
+		if (force) {
+			this.selecting = 'cell';
+			this.resetRanges();
+			this.layoutElement();
 		}
 	}
 	
@@ -699,10 +706,11 @@ class SelectRange extends Module {
 		this.overlay.style.visibility = "visible";
 	}
 	
-	
+
 	///////////////////////////////////
 	///////  Helper Functions   ///////
 	///////////////////////////////////	
+
 	getCell(rowIdx, colIdx) {
 		var row;
 		
@@ -776,16 +784,6 @@ class SelectRange extends Module {
 	
 	selectedColumns() {
 		return this.activeRange.getColumns().map((col) => col.getComponent());
-	}
-	
-	getRanges(){
-		var output = this.ranges.map((range) => range.getComponent());
-		return output;
-	}
-	
-	getRangesData() {
-		var output = this.ranges.map((range) => range.getData());
-		return output;
 	}
 }
 
