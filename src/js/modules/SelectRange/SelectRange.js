@@ -68,10 +68,6 @@ class SelectRange extends Module {
 		this.table.rowManager.element.appendChild(this.overlay);
 		this.table.columnManager.element.setAttribute("tabindex", 0);
 		this.table.element.classList.add("tabulator-ranges");
-		
-		if (this.table.modules.edit) {
-			this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
-		}
 	}
 	
 	initializeWatchers() {
@@ -100,6 +96,10 @@ class SelectRange extends Module {
 		this.subscribe("column-resized", this.layoutChange.bind(this));
 		this.subscribe("cell-height", this.layoutChange.bind(this));
 		this.subscribe("table-destroy", this.tableDestroyed.bind(this));
+
+
+		this.subscribe("edit-blur", this.restoreFocus.bind(this));
+		
 		
 		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "left"));
 		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "right"));
@@ -216,6 +216,12 @@ class SelectRange extends Module {
 			e.preventDefault();
 		}
 	}
+
+	restoreFocus(element){
+		this.table.rowManager.element.focus();
+		
+		return true;
+	}
 	
 	///////////////////////////////////
 	////// Column Functionality ///////
@@ -233,7 +239,7 @@ class SelectRange extends Module {
 		}
 		
 		this.ranges.forEach((range) => {
-			var selectedColumns = range.getColumns();
+			var selectedColumns = range.getColumns(true);
 			selectedColumns.forEach((selectedColumn) => {
 				if (selectedColumn !== column) {
 					selectedColumn.setWidth(column.width);
@@ -785,12 +791,12 @@ class SelectRange extends Module {
 		this.table.rowManager.element.removeEventListener("keydown", this.keyDownEvent);
 	}
 	
-	selectedRows() {
-		return this.activeRange.getRows().map((col) => col.getComponent());
+	selectedRows(component) {
+		return component ? this.activeRange.getRows().map((row) => row.getComponent()) : this.activeRange.getRows();
 	}
 	
-	selectedColumns() {
-		return this.activeRange.getColumns().map((col) => col.getComponent());
+	selectedColumns(component) {
+		return component ? this.activeRange.getColumns().map((col) => col.getComponent()) : this.activeRange.getColumns();
 	}
 }
 

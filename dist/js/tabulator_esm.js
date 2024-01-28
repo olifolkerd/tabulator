@@ -1305,6 +1305,7 @@ class Clipboard extends Module{
 		var sel, textRange;
 		this.blocked = false;
 		this.customSelection = false;
+	
 
 		if (this.mode === true || this.mode === "copy") {
 
@@ -8287,24 +8288,30 @@ class Edit$1 extends Module{
 						}
 					}else {
 						console.warn("Edit Error - Editor should return an instance of Node, the editor returned:", cellEditor);
-						element.blur();
+						this.blur(element);
 						return false;
 					}
 				}else {
-					element.blur();
+					this.blur(element);
 					return false;
 				}
 				
 				return true;
 			}else {
 				this.mouseClick = false;
-				element.blur();
+				this.blur(element);
 				return false;
 			}
 		}else {
 			this.mouseClick = false;
-			element.blur();
+			this.blur(element);
 			return false;
+		}
+	}
+
+	blur(element){
+		if(!this.confirm("edit-blur", [element]) ){
+			element.blur();
 		}
 	}
 	
@@ -8397,9 +8404,9 @@ class Export extends Module{
 		if (range === 'range') {
 			var columns = this.table.modules.selectRange.selectedColumns();
 			headers = this.config.columnHeaders !== false
-				? this.headersToExportRows(this.generateColumnGroupHeaders(columns.map((component) => component._column)))
+				? this.headersToExportRows(this.generateColumnGroupHeaders(columns))
 				: [];
-			body = this.bodyToExportRows(this.rowLookup(range), columns);
+			body = this.bodyToExportRows(this.rowLookup(range), this.table.modules.selectRange.selectedColumns(true));
 		} else {
 			headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders()) : [];
 			body = this.bodyToExportRows(this.rowLookup(range));
@@ -8619,7 +8626,7 @@ class Export extends Module{
 				rows.push(this.table.modules.columnCalcs.botRow);
 			}
 		}
-		
+
 		rows = rows.filter((row) => {
 			switch(row.type){
 				case "group":
@@ -20184,10 +20191,6 @@ class SelectRange extends Module {
 		this.table.rowManager.element.appendChild(this.overlay);
 		this.table.columnManager.element.setAttribute("tabindex", 0);
 		this.table.element.classList.add("tabulator-ranges");
-		
-		if (this.table.modules.edit) {
-			this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
-		}
 	}
 	
 	initializeWatchers() {
@@ -20216,6 +20219,10 @@ class SelectRange extends Module {
 		this.subscribe("column-resized", this.layoutChange.bind(this));
 		this.subscribe("cell-height", this.layoutChange.bind(this));
 		this.subscribe("table-destroy", this.tableDestroyed.bind(this));
+
+
+		this.subscribe("edit-blur", this.restoreFocus.bind(this));
+		
 		
 		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "left"));
 		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "right"));
@@ -20332,6 +20339,12 @@ class SelectRange extends Module {
 			e.preventDefault();
 		}
 	}
+
+	restoreFocus(element){
+		this.table.rowManager.element.focus();
+		
+		return true;
+	}
 	
 	///////////////////////////////////
 	////// Column Functionality ///////
@@ -20349,7 +20362,7 @@ class SelectRange extends Module {
 		}
 		
 		this.ranges.forEach((range) => {
-			var selectedColumns = range.getColumns();
+			var selectedColumns = range.getColumns(true);
 			selectedColumns.forEach((selectedColumn) => {
 				if (selectedColumn !== column) {
 					selectedColumn.setWidth(column.width);
@@ -20901,12 +20914,12 @@ class SelectRange extends Module {
 		this.table.rowManager.element.removeEventListener("keydown", this.keyDownEvent);
 	}
 	
-	selectedRows() {
-		return this.activeRange.getRows().map((col) => col.getComponent());
+	selectedRows(component) {
+		return component ? this.activeRange.getRows().map((row) => row.getComponent()) : this.activeRange.getRows();
 	}
 	
-	selectedColumns() {
-		return this.activeRange.getColumns().map((col) => col.getComponent());
+	selectedColumns(component) {
+		return component ? this.activeRange.getColumns().map((col) => col.getComponent()) : this.activeRange.getColumns();
 	}
 }
 

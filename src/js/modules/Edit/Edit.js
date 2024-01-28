@@ -680,24 +680,30 @@ class Edit extends Module{
 						}
 					}else{
 						console.warn("Edit Error - Editor should return an instance of Node, the editor returned:", cellEditor);
-						element.blur();
+						this.blur(element);
 						return false;
 					}
 				}else{
-					element.blur();
+					this.blur(element);
 					return false;
 				}
 				
 				return true;
 			}else{
 				this.mouseClick = false;
-				element.blur();
+				this.blur(element);
 				return false;
 			}
 		}else{
 			this.mouseClick = false;
-			element.blur();
+			this.blur(element);
 			return false;
+		}
+	}
+
+	blur(element){
+		if(!this.confirm("edit-blur", [element]) ){
+			element.blur();
 		}
 	}
 	
