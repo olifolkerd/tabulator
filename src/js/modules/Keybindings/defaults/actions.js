@@ -84,76 +84,40 @@ export default {
 	},
 
 	rangeJumpLeft: function(e){
-		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate(true, false, "left")) {
-			e.preventDefault();
-		}
+		this.dispatch("keybinding-nav-range", e, "left", true, false);
 	},
 	rangeJumpRight: function(e){
-		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate(true, false, "right")) {
-			e.preventDefault();
-		}
+		this.dispatch("keybinding-nav-range", e, "right", true, false);
 	},
 	rangeJumpUp: function(e){
-		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate(true, false, "up")) {
-			e.preventDefault();
-		}
+		this.dispatch("keybinding-nav-range", e, "up", true, false);
 	},
 	rangeJumpDown: function(e){
-		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate(true, false, "down")) {
-			e.preventDefault();
-		}
+		this.dispatch("keybinding-nav-range", e, "down", true, false);
 	},
 	rangeExpandLeft: function(e){
-		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate(false, true, "left")) {
-			e.preventDefault();
-		}
+		this.dispatch("keybinding-nav-range", e, "left", false, true);
 	},
 	rangeExpandRight: function(e){
-		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate(false, true, "right")) {
-			e.preventDefault();
-		}
+		this.dispatch("keybinding-nav-range", e, "right", false, true);
 	},
 	rangeExpandUp: function(e){
-		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate(false, true, "up")) {
-			e.preventDefault();
-		}
+		this.dispatch("keybinding-nav-range", e, "up", false, true);
 	},
 	rangeExpandDown: function(e){
-		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate(false, true, "down")) {
-			e.preventDefault();
-		}
+		this.dispatch("keybinding-nav-range", e, "down", false, true);
 	},
 	rangeExpandJumpLeft: function(e){
-		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate(true, true, "left")) {
-			e.preventDefault();
-		}
+		this.dispatch("keybinding-nav-range", e, "left", true, true);
 	},
 	rangeExpandJumpRight: function(e){
-		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate(true, true, "right")) {
-			e.preventDefault();
-		}
+		this.dispatch("keybinding-nav-range", e, "right", true, true);
 	},
 	rangeExpandJumpUp: function(e){
-		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate(true, true, "up")) {
-			e.preventDefault();
-		}
+		this.dispatch("keybinding-nav-range", e, "up", true, true);
 	},
 	rangeExpandJumpDown: function(e){
-		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate(true, true, "down")) {
-			e.preventDefault();
-		}
+		this.dispatch("keybinding-nav-range", e, "down", true, true);
 	},
 
 	undo:function(e){

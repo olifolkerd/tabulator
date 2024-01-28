@@ -69,6 +69,8 @@ class SelectRange extends Module {
 		this.subscribe("keybinding-nav-right", this.keyNavigate.bind(this, "right"));
 		this.subscribe("keybinding-nav-up", this.keyNavigate.bind(this, "up"));
 		this.subscribe("keybinding-nav-down", this.keyNavigate.bind(this, "down"));
+
+		this.subscribe("keybinding-nav-range", this.keyNavigateRange.bind(this));
 	}
 	
 	initializeTable() {		
@@ -297,6 +299,12 @@ class SelectRange extends Module {
 	
 	keyNavigate(dir, e){
 		if(this.navigate(false, false, dir)){
+			e.preventDefault();
+		}
+	}
+
+	keyNavigateRange(e, dir, jump, expand){
+		if(this.navigate(jump, expand, dir)){
 			e.preventDefault();
 		}
 	}
