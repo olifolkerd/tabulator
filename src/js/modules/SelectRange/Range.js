@@ -2,11 +2,11 @@ import CoreFeature from '../../core/CoreFeature.js';
 import RangeComponent from "./RangeComponent";
 
 class Range extends CoreFeature{
-	constructor(table, rangeManager, row, col, element) {
+	constructor(table, rangeManager, start, end) {
 		super(table);
 		
 		this.rangeManager = rangeManager;
-		
+		this.element = null;
 		this.initialized = false;
 		this.initializing = {
 			start:false,
@@ -14,10 +14,24 @@ class Range extends CoreFeature{
 		};
 		
 		this.table = table;
-		this.start = { row, col };
-		this.end = { row, col };
+		this.start = {row:0, col:0};
+		this.end = {row:0, col:0};
+		
+		this.initElement();
+		this.initBounds(start, end);
+	}
+
+	initElement(){
+		this.element = document.createElement("div");
+		this.element.classList.add("tabulator-range");
+	}
+
+	initBounds(start, end){
 		this._updateMinMax();
-		this.element = element;
+
+		if(start){
+			this.setBounds(start._cell, end ? end._cell : start._cell);
+		}
 	}
 	
 	///////////////////////////////////
@@ -89,7 +103,7 @@ class Range extends CoreFeature{
 		var isRowHeader = element.column === this.rowHeader;
 		
 		if (this.selecting === "row") {
-			this.setEnd(row, this.getColumns().length - 2);
+			this.setEnd(row, this._getTableColumns().length - 2);
 		} else if (this.selecting !== "row" && isRowHeader) {
 			this.setEnd(row, 0);
 		} else if (this.selecting === "column") {
@@ -115,8 +129,12 @@ class Range extends CoreFeature{
 		}
 	}
 	
-	getColumns() {
+	_getTableColumns() {
 		return this.table.columnManager.getVisibleColumnsByIndex();
+	}
+
+	_getTableRows() {
+		return this.table.rowManager.getDisplayRows();
 	}
 	
 	///////////////////////////////////
@@ -157,15 +175,14 @@ class Range extends CoreFeature{
 		var topLeftCell = this.rangeManager.getCell(top, left);
 		var bottomRightCell = this.rangeManager.getCell(bottom, right);
 		
-		this.element.classList.toggle("tabulator-range-active", this === this.rangeManager.getActiveRange());
+		this.element.classList.add("tabulator-range-active");
+		// this.element.classList.toggle("tabulator-range-active", this === this.rangeManager.getActiveRange());
 		
 		this.element.style.left = topLeftCell.row.getElement().offsetLeft + topLeftCell.getElement().offsetLeft + "px";
 		this.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
 		this.element.style.width = bottomRightCell.getElement().offsetLeft + bottomRightCell.getElement().offsetWidth - topLeftCell.getElement().offsetLeft + "px";
 		this.element.style.height = bottomRightCell.row.getElement().offsetTop + bottomRightCell.row.getElement().offsetHeight - topLeftCell.row.getElement().offsetTop + "px";
 	}
-	
-	
 	
 	atTopLeft(cell) {
 		return cell.row.position - 1 === this.top && cell.column.getPosition() - 2 === this.left;
@@ -194,23 +211,60 @@ class Range extends CoreFeature{
 	}
 	
 	getData() {
-		return this.rangeManager.getDataByRange(this);
+		var data = [];
+		var rows = this.getRows();
+		var columns = this.getColumns();
+		
+		rows.forEach((row) => {
+			var rowData = row.getData();
+			var result = {};
+			columns.forEach((column) => {
+				result[column.field] = rowData[column.field];
+			});
+			data.push(result);
+		});
+		
+		return data;
 	}
 	
-	getCells() {
-		return this.rangeManager.getCellsByRange(this);
+	getCells(structured) {
+		var cells = [];
+		var rows = this.getRowsByRange(this);
+		var columns = this.getColumnsByRange(this);
+		
+		if (structured) {
+			cells = rows.map((row) => {
+				var arr = [];
+				row.getCells().forEach((cell) => {
+					if (columns.includes(cell.column)) {
+						arr.push(cell.getComponent());
+					}
+				});
+				return arr;
+			});
+		} else {
+			rows.forEach((row) => {
+				row.getCells().forEach((cell) => {
+					if (columns.includes(cell.column)) {
+						cells.push(cell.getComponent());
+					}
+				});
+			});
+		}
+		
+		return cells;
 	}
 	
 	getStructuredCells() {
-		return this.rangeManager.getCellsByRange(this, true);
+		return this.getCells(true);
 	}
 	
 	getRows() {
-		return this.rangeManager.getRowsByRange(this);
+		return this._getTableRows().slice(this.top, this.bottom + 1);
 	}
 	
 	getColumns() {
-		return this.rangeManager.getColumnsByRange(this);
+		return this._getTableColumns().slice(this.left + 1, this.right + 2);
 	}
 	
 	getComponent() {

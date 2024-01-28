@@ -372,13 +372,13 @@ class SelectRange extends Module {
 				nextCol = Math.max(nextCol - 1, 0);
 				break;
 				case "right":
-				nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
+				nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 2);
 				break;
 				case "up":
 				nextRow = Math.max(nextRow - 1, 0);
 				break;
 				case "down":
-				nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+				nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
 				break;
 			}
 		}
@@ -638,7 +638,7 @@ class SelectRange extends Module {
 			}
 		});
 		
-		this.getColumns().forEach((column) => {
+		this.getTableColumns().forEach((column) => {
 			this.layoutColumn(column);
 		});
 		
@@ -706,14 +706,14 @@ class SelectRange extends Module {
 		var row;
 		
 		if (colIdx < 0) {
-			colIdx = this.getColumns().length + colIdx - 1;
+			colIdx = this.getTableColumns().length + colIdx - 1;
 			if (colIdx < 0) {
 				return null;
 			}
 		}
 		
 		if (rowIdx < 0) {
-			rowIdx = this.getRows().length + rowIdx;
+			rowIdx = this.getTableRows().length + rowIdx;
 		}
 		
 		row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
@@ -737,47 +737,40 @@ class SelectRange extends Module {
 	}
 	
 	getRowByRangePos(pos) {
-		return this.getRows()[pos];
+		return this.getTableRows()[pos];
 	}
 	
 	getColumnByRangePos(pos) {
-		return this.getColumns()[pos + 1];
+		return this.getTableColumns()[pos + 1];
 	}
 	
 	getRowsByRange(range) {
-		return this.getRows().slice(range.top, range.bottom + 1);
+		return this.getTableRows().slice(range.top, range.bottom + 1);
 	}
 	
 	getColumnsByRange(range) {
-		return this.getColumns().slice(range.left + 1, range.right + 2);
+		return this.getTableColumns().slice(range.left + 1, range.right + 2);
 	}
 	
-	getRows() {
+	getTableRows() {
 		return this.table.rowManager.getDisplayRows();
 	}
 	
-	getColumns() {
+	getTableColumns() {
 		return this.table.columnManager.getVisibleColumnsByIndex();
 	}
 	
 	addRange(start, end) {
-		var element, range;
+		var  range;
 		
 		if(this.maxRanges !== true && this.ranges.length >= this.maxRanges){
 			this.ranges.shift().destroy();
 		}
 		
-		element = document.createElement("div");
-		element.classList.add("tabulator-range");
-		
-		range = new Range(this.table, this, 0, 0, element);
+		range = new Range(this.table, this, start, end);
 		
 		this.ranges.push(range);
-		this.rangeContainer.appendChild(element);
-		
-		if(start){		
-			range.setBounds(start._cell, end ? end._cell : start._cell);
-		}
+		this.rangeContainer.appendChild(range.element);
 		
 		return range;
 	}
@@ -793,57 +786,12 @@ class SelectRange extends Module {
 		this.table.rowManager.element.removeEventListener("keydown", this.keyDownEvent);
 	}
 	
-	getDataByRange(range) {
-		var data = [];
-		var rows = this.getRowsByRange(range);
-		var columns = this.getColumnsByRange(range);
-		
-		rows.forEach((row) => {
-			var rowData = row.getData();
-			var result = {};
-			columns.forEach((column) => {
-				result[column.field] = rowData[column.field];
-			});
-			data.push(result);
-		});
-		
-		return data;
-	}
-	
-	getCellsByRange(range, structured) {
-		var cells = [];
-		var rows = this.getRowsByRange(range);
-		var columns = this.getColumnsByRange(range);
-		
-		if (structured) {
-			cells = rows.map((row) => {
-				var arr = [];
-				row.getCells().forEach((cell) => {
-					if (columns.includes(cell.column)) {
-						arr.push(cell.getComponent());
-					}
-				});
-				return arr;
-			});
-		} else {
-			rows.forEach((row) => {
-				row.getCells().forEach((cell) => {
-					if (columns.includes(cell.column)) {
-						cells.push(cell.getComponent());
-					}
-				});
-			});
-		}
-		
-		return cells;
-	}
-	
 	selectedRows() {
-		return this.getRowsByRange(this.getActiveRange());
+		return this.getActiveRange().getRows();
 	}
 	
 	selectedColumns() {
-		return this.getColumnsByRange(this.getActiveRange()).map((col) => col.getComponent());
+		return this.getTableColumnsByRange(this.getActiveRange()).map((col) => col.getComponent());
 	}
 	
 	getRanges(){
@@ -852,7 +800,7 @@ class SelectRange extends Module {
 	}
 	
 	getRangesData() {
-		var output = this.ranges.map((range) => this.getDataByRange(range));
+		var output = this.ranges.map((range) => range.getData());
 		return output;
 	}
 }
