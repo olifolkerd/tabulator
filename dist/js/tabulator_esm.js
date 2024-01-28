@@ -19966,8 +19966,8 @@ class SelectRange extends Module {
 		this.registerTableOption("selectableRange", false); //enable selectable range
 		this.registerTableOption("selectableRangeColumns", false); //enable selectable range
 		this.registerTableOption("selectableRangeRows", false); //enable selectable range
-		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
-		this.registerTableFunction("getActiveRange", this.getActiveRange.bind(this, true));
+		this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
+		this.registerTableFunction("getRanges", this.getRanges.bind(this, true));
 		this.registerComponentFunction("cell", "getRange", this.cellGetRange.bind(this));
 		this.registerComponentFunction("row", "getRange", this.rowGetRange.bind(this));
 		this.registerComponentFunction("column", "getRange", this.collGetRange.bind(this));
@@ -19981,7 +19981,7 @@ class SelectRange extends Module {
 		if (this.options("selectableRange")) {		
 			if(!this.options("selectable")){
 				this.maxRanges = this.options("selectableRange");
-
+				
 				this.initializeTable();
 				this.initializeWatchers();
 			}else {
@@ -19989,7 +19989,7 @@ class SelectRange extends Module {
 			}
 		}
 	}
-
+	
 	
 	initializeTable() {		
 		this.overlay = document.createElement("div");
@@ -20077,7 +20077,7 @@ class SelectRange extends Module {
 				if(this.rowHeader.definition.headerSort){
 					console.warn("Using column headerSort with selectableRangeRows option may result in unpredictable behavior");
 				}
-
+				
 				if(this.rowHeader.definition.editor){
 					console.warn("Using column editor with selectableRangeRows option may result in unpredictable behavior");
 				}
@@ -20297,17 +20297,17 @@ class SelectRange extends Module {
 		if(jump){
 			switch(dir){
 				case "left":
-					nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
-					break;
+				nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
+				break;
 				case "right":
-					nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
-					break;
+				nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
+				break;
 				case "up":
-					nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
-					break;
+				nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
+				break;
 				case "down":
-					nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
-					break;
+				nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
+				break;
 			}
 		}else {
 			if(expand){
@@ -20318,17 +20318,17 @@ class SelectRange extends Module {
 			
 			switch(dir){
 				case "left":
-					nextCol = Math.max(nextCol - 1, 0);
-					break;
+				nextCol = Math.max(nextCol - 1, 0);
+				break;
 				case "right":
-					nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
-					break;
+				nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
+				break;
 				case "up":
-					nextRow = Math.max(nextRow - 1, 0);
-					break;
+				nextRow = Math.max(nextRow - 1, 0);
+				break;
 				case "down":
-					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
-					break;
+				nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+				break;
 			}
 		}
 		
@@ -20803,11 +20803,11 @@ class SelectRange extends Module {
 	
 	addRange() {
 		var element, range;
-
+		
 		if(this.maxRanges !== true && this.ranges.length >= this.maxRanges){
 			this.ranges.shift().destroy();
 		}
-
+		
 		element = document.createElement("div");
 		element.classList.add("tabulator-range");
 		
@@ -20826,11 +20826,6 @@ class SelectRange extends Module {
 	tableDestroyed(){
 		document.removeEventListener("mouseup", this.mouseUpEvent);
 		this.table.rowManager.element.removeEventListener("keydown", this.keyDownEvent);
-	}
-	
-	
-	getSelectedData() {
-		return this.getDataByRange(this.getActiveRange());
 	}
 	
 	getDataByRange(range) {
@@ -20884,6 +20879,16 @@ class SelectRange extends Module {
 	
 	selectedColumns() {
 		return this.getColumnsByRange(this.getActiveRange()).map((col) => col.getComponent());
+	}
+	
+	getRanges(){
+		var output = this.ranges.map((range) => range.getComponent());
+		return output;
+	}
+
+	getRangesData() {
+		var output = this.ranges.map((range) => this.getDataByRange(range));
+		return output;
 	}
 }
 
