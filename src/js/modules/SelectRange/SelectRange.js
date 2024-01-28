@@ -549,7 +549,7 @@ class SelectRange extends Module {
 				const topLeftCell = this.getCell(0, 0);
 				const bottomRightCell = this.getCell(-1, -1);
 				
-				range.setBounds(topLeftCell, bottomRightCell)	;		
+				range.setBounds(topLeftCell, bottomRightCell);		
 				return;
 			} else {
 				this.selecting = "column";

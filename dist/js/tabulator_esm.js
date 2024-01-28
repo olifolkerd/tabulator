@@ -19835,25 +19835,30 @@ class Range extends CoreFeature{
 			end:false,
 		};
 		
+		this.top = 0;
+		this.bottom = 0;
+		this.left = 0;
+		this.right = 0;
+		
 		this.table = table;
 		this.start = {row:0, col:0};
 		this.end = {row:0, col:0};
 		
 		this.initElement();
-
+		
 		setTimeout(() => {
 			this.initBounds(start, end);
 		});
 	}
-
+	
 	initElement(){
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-range");
 	}
-
+	
 	initBounds(start, end){
 		this._updateMinMax();
-
+		
 		if(start){
 			this.setBounds(start, end || start);
 		}
@@ -19894,7 +19899,7 @@ class Range extends CoreFeature{
 	
 	_setStartBound(element){
 		if (element.type === "column") {
-			if(this.columnSelection){
+			if(this.rangeManager.columnSelection){
 				this.setStart(0, element.getPosition() - 2);
 			}
 			return;
@@ -19911,13 +19916,15 @@ class Range extends CoreFeature{
 	}
 	
 	_setEndBound(element){
-		var rowsCount = this.getRows().length;
+		var rowsCount = this._getTableRows().length;
 		
 		if (element.type === "column") {
-			if (this.selecting === "column") {
-				this.setEnd(rowsCount - 1, element.getPosition() - 2);
-			} else if (this.selecting === "cell") {
-				this.setEnd(0, element.getPosition() - 2);
+			if(this.rangeManager.columnSelection){
+				if (this.rangeManager.selecting === "column") {
+					this.setEnd(rowsCount - 1, element.getPosition() - 2);
+				} else if (this.rangeManager.selecting === "cell") {
+					this.setEnd(0, element.getPosition() - 2);
+				}
 			}
 			
 			return;
@@ -19927,11 +19934,11 @@ class Range extends CoreFeature{
 		var col = element.column.getPosition() - 2;
 		var isRowHeader = element.column === this.rowHeader;
 		
-		if (this.selecting === "row") {
+		if (this.rangeManager.selecting === "row") {
 			this.setEnd(row, this._getTableColumns().length - 2);
-		} else if (this.selecting !== "row" && isRowHeader) {
+		} else if (this.rangeManager.selecting !== "row" && isRowHeader) {
 			this.setEnd(row, 0);
-		} else if (this.selecting === "column") {
+		} else if (this.rangeManager.selecting === "column") {
 			this.setEnd(rowsCount - 1, col);
 		} else {
 			this.setEnd(row, col);
@@ -19957,7 +19964,7 @@ class Range extends CoreFeature{
 	_getTableColumns() {
 		return this.table.columnManager.getVisibleColumnsByIndex();
 	}
-
+	
 	_getTableRows() {
 		return this.table.rowManager.getDisplayRows();
 	}
@@ -19996,6 +20003,8 @@ class Range extends CoreFeature{
 		var bottom = Math.min(this.bottom, _vDomBottom);
 		var left = Math.max(this.left, _vDomLeft);
 		var right = Math.min(this.right, _vDomRight);
+		
+		
 		
 		var topLeftCell = this.rangeManager.getCell(top, left);
 		var bottomRightCell = this.rangeManager.getCell(bottom, right);
@@ -20656,7 +20665,7 @@ class SelectRange extends Module {
 				const topLeftCell = this.getCell(0, 0);
 				const bottomRightCell = this.getCell(-1, -1);
 				
-				range.setBounds(topLeftCell, bottomRightCell)	;		
+				range.setBounds(topLeftCell, bottomRightCell);		
 				return;
 			} else {
 				this.selecting = "column";
