@@ -777,47 +777,32 @@ class SelectRange extends Module {
 	
 	///////////////////////////////////
 	///////  Helper Functions   ///////
-	///////////////////////////////////
-	
-	findRangeByCellElement(cell) {
-		var rangeIdx = cell.dataset.range;
-		if (rangeIdx < 0) {
-			return;
-		}
-		return this.ranges[rangeIdx].getComponent();
-	}
-	
+	///////////////////////////////////	
 	getCell(rowIdx, colIdx) {
+		var row;
+
+		if (colIdx < 0) {
+			colIdx = this.getColumns().length + colIdx - 1;
+			return null;
+		}
+
 		if (rowIdx < 0) {
 			rowIdx = this.getRows().length + rowIdx;
 		}
 		
-		var row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
+		row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
 		
-		if (!row) {
-			return null;
-		}
-		
-		if (colIdx < 0) {
-			colIdx = this.getColumns().length + colIdx - 1;
-		}
-		
-		if (colIdx < 0) {
-			return null;
-		}
-		
-		return row.getCells().filter((cell) => cell.column.visible)[colIdx + 1];
+		return row ? row.getCells().filter((cell) => cell.column.visible)[colIdx + 1] : null;
 	}
 	
 	getActiveRange(component) {
-		const range = this.ranges[this.ranges.length - 1];
+		var range = this.ranges[this.ranges.length - 1];
+
 		if (!range) {
 			return null;
 		}
-		if (component) {
-			return range.getComponent();
-		}
-		return range;
+
+		return component ? range.getComponent() : range;
 	}
 	
 	getActiveCell() {
@@ -834,11 +819,11 @@ class SelectRange extends Module {
 	}
 	
 	getRowsByRange(range) {
-		return this.getRows() .slice(range.top, range.bottom + 1);
+		return this.getRows().slice(range.top, range.bottom + 1);
 	}
 	
 	getColumnsByRange(range) {
-		return this.getColumns() .slice(range.left + 1, range.right + 2);
+		return this.getColumns().slice(range.left + 1, range.right + 2);
 	}
 	
 	getRows() {
