@@ -20067,31 +20067,19 @@ class SelectRange extends Module {
 			range = this.ranges.find((range) => range.occupies(cell));
 		}
 		
-		if (!range) { 
-			return null;
-		}
-		
-		return range.getComponent();
+		return range ? range.getComponent() : null;
 	}
 	
 	rowGetRange(row){
 		var range = this.ranges.find((range) => range.occupiesRow(row));
-		
-		if (!range) {
-			return null;
-		}
-		
-		return range.getComponent();
+
+		return range ? range.getComponent() : null;
 	}
 	
 	collGetRange(col){
 		var range = this.ranges.find((range) => range.occupiesColumn(col));
-		
-		if (!range) {
-			return null;
-		}
-		
-		return range.getComponent();
+			
+		return range ? range.getComponent() : null;
 	}
 
 	///////////////////////////////////
@@ -20204,8 +20192,6 @@ class SelectRange extends Module {
 		
 		el.dataset.range = rangeIdx;
 	}
-	
-	
 	
 	handleCellMouseDown(event, cell) {
 		if (event.button === 2 && (this.getActiveRange().occupies(cell) || ((this.selecting === "row" || this.selecting === "all") && this.getActiveRange().occupiesRow(cell.row)))) {
