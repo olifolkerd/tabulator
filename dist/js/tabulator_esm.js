@@ -19842,6 +19842,10 @@ class Range extends CoreFeature{
 		this.element = element;
 	}
 
+	///////////////////////////////////
+	///////   Boundary Setup    ///////
+	///////////////////////////////////
+
 	setStart(row, col) {
 		if(this.start.row !== row || this.start.col !== col){
 			this.start.row = row;
@@ -19876,6 +19880,52 @@ class Range extends CoreFeature{
 				this.dispatchExternal("rangeAdded", this.getComponent());
 			}
 		}
+	}
+
+	///////////////////////////////////
+	///////      Rendering      ///////
+	///////////////////////////////////
+
+	layout() {
+		var _vDomTop = this.table.rowManager.renderer.vDomTop;
+		var _vDomBottom = this.table.rowManager.renderer.vDomBottom;
+		var _vDomLeft = this.table.columnManager.renderer.leftCol;
+		var _vDomRight = this.table.columnManager.renderer.rightCol;
+		
+		if (_vDomTop == null) {
+			_vDomTop = 0;
+		}
+		
+		if (_vDomBottom == null) {
+			_vDomBottom = Infinity;
+		}
+		
+		if (_vDomLeft == null) {
+			_vDomLeft = 0;
+		}
+		
+		if (_vDomRight == null) {
+			_vDomRight = Infinity;
+		}
+		
+		if (!this.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) {
+			return;
+		}
+		
+		var top = Math.max(this.top, _vDomTop);
+		var bottom = Math.min(this.bottom, _vDomBottom);
+		var left = Math.max(this.left, _vDomLeft);
+		var right = Math.min(this.right, _vDomRight);
+		
+		var topLeftCell = this.rangeManager.getCell(top, left);
+		var bottomRightCell = this.rangeManager.getCell(bottom, right);
+		
+		this.element.classList.toggle("tabulator-range-active", this === this.rangeManager.getActiveRange());
+		
+		this.element.style.left = topLeftCell.row.getElement().offsetLeft + topLeftCell.getElement().offsetLeft + "px";
+		this.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
+		this.element.style.width = bottomRightCell.getElement().offsetLeft + bottomRightCell.getElement().offsetWidth - topLeftCell.getElement().offsetLeft + "px";
+		this.element.style.height = bottomRightCell.row.getElement().offsetTop + bottomRightCell.row.getElement().offsetHeight - topLeftCell.row.getElement().offsetTop + "px";
 	}
 
 	atTopLeft(cell) {
@@ -20692,51 +20742,9 @@ class SelectRange extends Module {
 		this.activeRangeCellElement.style.width = activeCell.getElement().offsetLeft + activeCell.getElement().offsetWidth - activeCell.getElement().offsetLeft + "px";
 		this.activeRangeCellElement.style.height = activeCell.row.getElement().offsetTop + activeCell.row.getElement().offsetHeight - activeCell.row.getElement().offsetTop + "px";
 		
-		this.ranges.forEach((range) => this.layoutRange(range));
+		this.ranges.forEach((range) => range.layout());
 		
 		this.overlay.style.visibility = "visible";
-	}
-	
-	layoutRange(range) {
-		var _vDomTop = this.table.rowManager.renderer.vDomTop;
-		var _vDomBottom = this.table.rowManager.renderer.vDomBottom;
-		var _vDomLeft = this.table.columnManager.renderer.leftCol;
-		var _vDomRight = this.table.columnManager.renderer.rightCol;
-		
-		if (_vDomTop == null) {
-			_vDomTop = 0;
-		}
-		
-		if (_vDomBottom == null) {
-			_vDomBottom = Infinity;
-		}
-		
-		if (_vDomLeft == null) {
-			_vDomLeft = 0;
-		}
-		
-		if (_vDomRight == null) {
-			_vDomRight = Infinity;
-		}
-		
-		if (!range.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) {
-			return;
-		}
-		
-		var top = Math.max(range.top, _vDomTop);
-		var bottom = Math.min(range.bottom, _vDomBottom);
-		var left = Math.max(range.left, _vDomLeft);
-		var right = Math.min(range.right, _vDomRight);
-		
-		var topLeftCell = this.getCell(top, left);
-		var bottomRightCell = this.getCell(bottom, right);
-		
-		range.element.classList.toggle("tabulator-range-active", range === this.getActiveRange());
-		
-		range.element.style.left = topLeftCell.row.getElement().offsetLeft + topLeftCell.getElement().offsetLeft + "px";
-		range.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
-		range.element.style.width = bottomRightCell.getElement().offsetLeft + bottomRightCell.getElement().offsetWidth - topLeftCell.getElement().offsetLeft + "px";
-		range.element.style.height = bottomRightCell.row.getElement().offsetTop + bottomRightCell.row.getElement().offsetHeight - topLeftCell.row.getElement().offsetTop + "px";
 	}
 	
 	
