@@ -19922,8 +19922,8 @@ class SelectRange extends Module {
 		this.selecting = "cell";
 		this.mousedown = false;
 		this.ranges = [];
-		this.rowHeaderField = "--row-header";
 		this.overlay = null;
+		this.rowHeader = null;
 		this.layoutChangeTimeout = null;
 		this.columnSelection = false;
 		this.rowSelection = false;
@@ -19933,7 +19933,7 @@ class SelectRange extends Module {
 		
 		this.registerTableOption("selectableRange", false); //enable selectable range
 		this.registerTableOption("selectableRangeColumns", false); //enable selectable range
-		this.registerTableOption("selectableRangeRowHeader", {}); //row header definition
+		this.registerTableOption("selectableRangeRows", false); //enable selectable range
 		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
 		this.registerTableFunction("getActiveRange", this.getActiveRange.bind(this, true));
 		this.registerComponentFunction("cell", "getRange", this.cellGetRange.bind(this));
@@ -19958,12 +19958,13 @@ class SelectRange extends Module {
 	
 	initializeWatchers() {
 		this.columnSelection = this.options("selectableRangeColumns");
-
+		this.rowSelection = this.options("selectableRangeRows");
+		
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
 		this.subscribe("column-resized", this.handleColumnResized.bind(this));
-		this.subscribe("columns-loading", this.handleColumnsLoading.bind(this));
+		this.subscribe("columns-loaded", this.updateHeaderColumn.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
 		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
@@ -20021,11 +20022,29 @@ class SelectRange extends Module {
 		if(this.columnSelection && column.definition.headerSort){
 			console.warn("Using column headerSort with selectableRangeColumns option may result in unpredictable behavior");
 		}
-
+		
 		if (column.modules.edit) {
 			// Block editor from taking action so we can trigger edit by
 			// double clicking.
 			column.modules.edit.blocked = true;
+		}
+	}
+	
+	updateHeaderColumn(){
+		if(this.rowSelection){
+			this.rowHeader = this.table.columnManager.getVisibleColumnsByIndex()[0];
+			
+			if(this.rowHeader){
+				this.rowHeader.definition.cssClass = this.rowHeader.definition.cssClass + " tabulator-range-row-header";
+				
+				if(this.rowHeader.definition.headerSort){
+					console.warn("Using column headerSort with selectableRangeRows option may result in unpredictable behavior");
+				}
+
+				if(this.rowHeader.definition.editor){
+					console.warn("Using column editor with selectableRangeRows option may result in unpredictable behavior");
+				}
+			}
 		}
 	}
 	
@@ -20036,7 +20055,7 @@ class SelectRange extends Module {
 	cellGetRange(cell){
 		var range;
 		
-		if (cell.column.field === this.rowHeaderField) {
+		if (cell.column === this.rowHeader) {
 			range = this.ranges.find((range) => range.occupiesRow(cell.row));
 		} else {
 			range = this.ranges.find((range) => range.occupies(cell));
@@ -20087,28 +20106,6 @@ class SelectRange extends Module {
 	////// Column Functionality ///////
 	///////////////////////////////////
 	
-	handleColumnsLoading() {
-		var customRowHeader = this.options("selectableRangeRowHeader");
-		
-		var rowHeaderDef = {
-			title: "",
-			field: this.rowHeaderField,
-			headerSort: false,
-			resizable: false,
-			frozen: true,
-			editable: false,
-			formatter: "rownum",
-			formatterParams: { relativeToPage: true },
-			
-			...customRowHeader,
-			
-			cssClass: customRowHeader.cssClass ? `tabulator-range-row-header ${customRowHeader.cssClass}` : "tabulator-range-row-header",
-		};
-		this.rowHeaderField = rowHeaderDef.field;
-		// Add this column before everything else
-		this.table.columnManager._addColumn(rowHeaderDef);
-	}
-	
 	handleColumnResized(column) {
 		if (this.selecting !== "column" && this.selecting !== "all") {
 			return;
@@ -20144,7 +20141,7 @@ class SelectRange extends Module {
 	}
 	
 	handleColumnMouseMove(e, column) {
-		if (column.field === this.rowHeaderField || !this.mousedown || this.selecting === 'all') {
+		if (column === this.rowHeader || !this.mousedown || this.selecting === 'all') {
 			return;
 		}
 		
@@ -20191,7 +20188,7 @@ class SelectRange extends Module {
 	}
 	
 	handleCellDblClick(e, cell) {
-		if (cell.column.field === this.rowHeaderField) {
+		if (cell.column === this.rowHeader) {
 			return;
 		}
 		
@@ -20262,17 +20259,17 @@ class SelectRange extends Module {
 		if(jump){
 			switch(dir){
 				case "left":
-					nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
-					break;
+				nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
+				break;
 				case "right":
-					nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
-					break;
+				nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
+				break;
 				case "up":
-					nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
-					break;
+				nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
+				break;
 				case "down":
-					nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
-					break;
+				nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
+				break;
 			}
 		}else {
 			if(expand){
@@ -20283,17 +20280,17 @@ class SelectRange extends Module {
 			
 			switch(dir){
 				case "left":
-					nextCol = Math.max(nextCol - 1, 0);
-					break;
+				nextCol = Math.max(nextCol - 1, 0);
+				break;
 				case "right":
-					nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
-					break;
+				nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
+				break;
 				case "up":
-					nextRow = Math.max(nextRow - 1, 0);
-					break;
+				nextRow = Math.max(nextRow - 1, 0);
+				break;
 				case "down":
-					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
-					break;
+				nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+				break;
 			}
 		}
 		
@@ -20359,7 +20356,7 @@ class SelectRange extends Module {
 				}
 			}
 		}
-
+		
 		return nextCell;
 	}
 	
@@ -20432,8 +20429,8 @@ class SelectRange extends Module {
 			if(!this.columnSelection){
 				return;
 			}
-
-			if (element.field === this.rowHeaderField) {
+			
+			if (element === this.rowHeader) {
 				this.resetRanges();
 				this.selecting = "all";
 				
@@ -20447,7 +20444,7 @@ class SelectRange extends Module {
 			} else {
 				this.selecting = "column";
 			}
-		} else if (element.column.field === this.rowHeaderField) {
+		} else if (element.column === this.rowHeader) {
 			this.selecting = "row";
 		} else {
 			this.selecting = "cell";
@@ -20485,7 +20482,7 @@ class SelectRange extends Module {
 		var row = element.row.position - 1;
 		var col = element.column.getPosition() - 2;
 		
-		if (element.column.field === this.rowHeaderField) {
+		if (element.column === this.rowHeader) {
 			range.setStart(row, 0);
 		} else {
 			range.setStart(row, col);
@@ -20508,7 +20505,7 @@ class SelectRange extends Module {
 		
 		var row = element.row.position - 1;
 		var col = element.column.getPosition() - 2;
-		var isRowHeader = element.column.field === this.rowHeaderField;
+		var isRowHeader = element.column === this.rowHeader;
 		
 		if (this.selecting === "row") {
 			range.setEnd(row, this.getColumns().length - 2);
@@ -20543,7 +20540,7 @@ class SelectRange extends Module {
 	
 	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element;
-		var rowHeader = this.rowHeaderColumn().getElement();
+		var rowHeader = this.rowHeader.getElement();
 		if (typeof row === 'undefined') {
 			row = this.getRowByRangePos(range.end.row).getElement();
 		}
@@ -20710,12 +20707,12 @@ class SelectRange extends Module {
 	///////////////////////////////////	
 	getCell(rowIdx, colIdx) {
 		var row;
-
+		
 		if (colIdx < 0) {
 			colIdx = this.getColumns().length + colIdx - 1;
 			return null;
 		}
-
+		
 		if (rowIdx < 0) {
 			rowIdx = this.getRows().length + rowIdx;
 		}
@@ -20727,11 +20724,11 @@ class SelectRange extends Module {
 	
 	getActiveRange(component) {
 		var range = this.ranges[this.ranges.length - 1];
-
+		
 		if (!range) {
 			return null;
 		}
-
+		
 		return component ? range.getComponent() : range;
 	}
 	
@@ -20841,10 +20838,6 @@ class SelectRange extends Module {
 	
 	selectedColumns() {
 		return this.getColumnsByRange(this.getActiveRange()).map((col) => col.getComponent());
-	}
-	
-	rowHeaderColumn() {
-		return this.table.columnManager.columnsByField[this.rowHeaderField];
 	}
 }
 
