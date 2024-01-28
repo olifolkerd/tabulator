@@ -56,6 +56,26 @@ class RangeComponent {
 	getRight() {
 		return this._range.right;
 	}
+
+	setBounds(start, end){
+		if(this._range.destroyedGuard("setBounds")){
+			this._range.setBounds(start ? start._cell : start, end ? end._cell : end);
+		}
+	}
+
+	setStartBound(start){
+		if(this._range.destroyedGuard("setStartBound")){
+			this._range.setEndBound(start ? start._cell : start);
+			this._range.rangeManager.layoutElement();
+		}
+	}
+
+	setEndBound(end){
+		if(this._range.destroyedGuard("setEndBound")){
+			this._range.setEndBound(end ? end._cell : end);
+			this._range.rangeManager.layoutElement();
+		}
+	}
 }
 
 export default RangeComponent;

@@ -12,6 +12,7 @@ class Range extends CoreFeature{
 			start:false,
 			end:false,
 		};
+		this.destroyed = false;
 		
 		this.top = 0;
 		this.bottom = 0;
@@ -68,14 +69,14 @@ class Range extends CoreFeature{
 	
 	setBounds(start, end, visibleRows){
 		if(start){
-			this._setStartBound(start);
+			this.setStartBound(start);
 		}
 		
-		this._setEndBound(end || start);
+		this.setEndBound(end || start);
 		this.rangeManager.layoutElement(visibleRows);
 	}
 	
-	_setStartBound(element){
+	setStartBound(element){
 		if (element.type === "column") {
 			if(this.rangeManager.columnSelection){
 				this.setStart(0, element.getPosition() - 2);
@@ -93,7 +94,7 @@ class Range extends CoreFeature{
 		}
 	}
 	
-	_setEndBound(element){
+	setEndBound(element){
 		var rowsCount = this._getTableRows().length;
 		
 		if (element.type === "column") {
@@ -287,11 +288,21 @@ class Range extends CoreFeature{
 	}
 	
 	destroy() {
+		this.destroyed = true;
+		
 		this.element.remove();
 		
 		if(this.initialized){
 			this.dispatchExternal("rangeRemoved", this.getComponent());
 		}
+	}
+
+	destroyedGuard(func){
+		if(this.destroyed){
+			console.warn("You cannot call the "  + func + " function on a destroyed range");
+		}
+
+		return !this.destroyed;
 	}
 }
 
