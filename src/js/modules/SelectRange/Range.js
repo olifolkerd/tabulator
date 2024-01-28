@@ -1,7 +1,18 @@
+import CoreFeature from '../../core/CoreFeature.js';
 import RangeComponent from "./RangeComponent";
 
-class Range {
-	constructor(table, row, col, element) {
+class Range extends CoreFeature{
+	constructor(table, rangeManager, row, col, element) {
+		super(table);
+
+		this.rangeManager = rangeManager;
+
+		this.initialized = false;
+		this.initializing = {
+			start:false,
+			end:false,
+		};
+
 		this.table = table;
 		this.start = { row, col };
 		this.end = { row, col };
@@ -10,15 +21,23 @@ class Range {
 	}
 
 	setStart(row, col) {
-		this.start.row = row;
-		this.start.col = col;
-		this._updateMinMax();
+		if(this.start.row !== row || this.start.col !== col){
+			this.start.row = row;
+			this.start.col = col;
+			
+			this.initializing.start = true;
+			this._updateMinMax();
+		}
 	}
 
 	setEnd(row, col) {
-		this.end.row = row;
-		this.end.col = col;
-		this._updateMinMax();
+		if(this.end.row !== row || this.end.col !== col){
+			this.end.row = row;
+			this.end.col = col;
+
+			this.initializing.end = true;
+			this._updateMinMax();
+		}
 	}
 
 	_updateMinMax() {
@@ -26,6 +45,17 @@ class Range {
 		this.bottom = Math.max(this.start.row, this.end.row);
 		this.left = Math.min(this.start.col, this.end.col);
 		this.right = Math.max(this.start.col, this.end.col);
+
+		// console.log("update", this.initialized, this.initializing.start, this.initializing.end)
+
+		if(this.initialized){
+			this.dispatchExternal("rangeChanged", this.getComponent());
+		}else{
+			if(this.initializing.start && this.initializing.end){
+				this.initialized = true;
+				this.dispatchExternal("rangeAdded", this.getComponent());
+			}
+		}
 	}
 
 	atTopLeft(cell) {
@@ -61,23 +91,23 @@ class Range {
 	}
 
 	getData() {
-		return this.table.modules.spreadsheet.getDataByRange(this);
+		return this.rangeManager.getDataByRange(this);
 	}
 
 	getCells() {
-		return this.table.modules.spreadsheet.getCellsByRange(this);
+		return this.rangeManager.getCellsByRange(this);
 	}
 
 	getStructuredCells() {
-		return this.table.modules.spreadsheet.getCellsByRange(this, true);
+		return this.rangeManager.getCellsByRange(this, true);
 	}
 
 	getRows() {
-		return this.table.modules.spreadsheet.getRowsByRange(this);
+		return this.rangeManager.getRowsByRange(this);
 	}
 
 	getColumns() {
-		return this.table.modules.spreadsheet.getColumnsByRange(this);
+		return this.rangeManager.getColumnsByRange(this);
 	}
 
 	getComponent() {
@@ -89,6 +119,10 @@ class Range {
 
 	destroy() {
 		this.element.remove();
+
+		if(this.initialized){
+			this.dispatchExternal("rangeRemoved", this.getComponent());
+		}
 	}
 }
 

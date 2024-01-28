@@ -551,7 +551,7 @@ class SelectRange extends Module {
 			this.addRange();
 			
 			this.beginSelection(element);
-			this.endSelection(element);
+			this.endSelection(element)
 		} else {
 			this.resetRanges();
 			
@@ -864,7 +864,7 @@ class SelectRange extends Module {
 		element = document.createElement("div");
 		element.classList.add("tabulator-range");
 		
-		range = new Range(this.table, 0, 0, element);
+		range = new Range(this.table, this, 0, 0, element);
 		
 		this.ranges.push(range);
 		this.rangeContainer.appendChild(element);
