@@ -13,6 +13,7 @@ class SelectRange extends Module {
 		this.layoutChangeTimeout = null;
 		this.columnSelection = false;
 		this.rowSelection = false;
+		this.maxRanges = 0;
 		
 		this.keyDownEvent = this._handleKeyDown.bind(this);
 		this.mouseUpEvent = this._handleMouseUp.bind(this);
@@ -32,13 +33,41 @@ class SelectRange extends Module {
 	///////////////////////////////////
 	
 	initialize() {
-		if (this.table.options.selectableRange) {		
-			if(!this.table.options.selectable){
+		if (this.options("selectableRange")) {		
+			if(!this.options("selectable")){
+				this.maxRanges = this.options("selectableRange");
+
 				this.initializeTable();
 				this.initializeWatchers();
 			}else{
 				console.warn("SelectRange functionality cannot be used in conjunction with row selection");
 			}
+		}
+	}
+
+	
+	initializeTable() {		
+		this.overlay = document.createElement("div");
+		this.overlay.classList.add("tabulator-range-overlay");
+		
+		this.rangeContainer = document.createElement("div");
+		this.rangeContainer.classList.add("tabulator-range-container");
+		
+		this.activeRangeCellElement = document.createElement("div");
+		this.activeRangeCellElement.classList.add("tabulator-range-cell-active");
+		
+		this.overlay.appendChild(this.rangeContainer);
+		this.overlay.appendChild(this.activeRangeCellElement);
+		
+		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
+		
+		this.resetRanges();
+		
+		this.table.rowManager.element.appendChild(this.overlay);
+		this.table.columnManager.element.setAttribute("tabindex", 0);
+		
+		if (this.table.modules.edit) {
+			this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
 		}
 	}
 	
@@ -79,30 +108,6 @@ class SelectRange extends Module {
 		this.subscribe("keybinding-nav-range", this.keyNavigateRange.bind(this));
 	}
 	
-	initializeTable() {		
-		this.overlay = document.createElement("div");
-		this.overlay.classList.add("tabulator-range-overlay");
-		
-		this.rangeContainer = document.createElement("div");
-		this.rangeContainer.classList.add("tabulator-range-container");
-		
-		this.activeRangeCellElement = document.createElement("div");
-		this.activeRangeCellElement.classList.add("tabulator-range-cell-active");
-		
-		this.overlay.appendChild(this.rangeContainer);
-		this.overlay.appendChild(this.activeRangeCellElement);
-		
-		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
-		
-		this.resetRanges();
-		
-		this.table.rowManager.element.appendChild(this.overlay);
-		this.table.columnManager.element.setAttribute("tabindex", 0);
-		
-		if (this.table.modules.edit) {
-			this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
-		}
-	}
 	
 	initializeColumn(column) {
 		if(this.columnSelection && column.definition.headerSort){
@@ -853,10 +858,16 @@ class SelectRange extends Module {
 	}
 	
 	addRange() {
-		var element = document.createElement("div");
+		var element, range;
+
+		if(this.maxRanges !== true && this.ranges.length >= this.maxRanges){
+			this.ranges.shift().destroy();
+		}
+
+		element = document.createElement("div");
 		element.classList.add("tabulator-range");
 		
-		var range = new Range(this.table, 0, 0, element);
+		range = new Range(this.table, 0, 0, element);
 		
 		this.ranges.push(range);
 		this.rangeContainer.appendChild(element);
