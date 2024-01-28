@@ -218,7 +218,7 @@ class SelectRange extends Module {
 		this.layoutElement();
 	}
 	
-	handleColumnMouseMove(_, column) {
+	handleColumnMouseMove(e, column) {
 		if (column.field === this.rowHeaderField || !this.mousedown || this.selecting === 'all') {
 			return;
 		}
@@ -256,7 +256,7 @@ class SelectRange extends Module {
 		this.layoutElement();
 	}
 
-	handleCellMouseMove(_, cell) {
+	handleCellMouseMove(e, cell) {
 		if (!this.mousedown || this.selecting === "all") {
 			return;
 		}
@@ -265,7 +265,7 @@ class SelectRange extends Module {
 		this.layoutElement(true);
 	}
 	
-	handleCellDblClick(_, cell) {
+	handleCellDblClick(e, cell) {
 		if (cell.column.field === this.rowHeaderField) {
 			return;
 		}
