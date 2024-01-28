@@ -19868,8 +19868,6 @@ class Range extends CoreFeature{
 		this.left = Math.min(this.start.col, this.end.col);
 		this.right = Math.max(this.start.col, this.end.col);
 
-		// console.log("update", this.initialized, this.initializing.start, this.initializing.end)
-
 		if(this.initialized){
 			this.dispatchExternal("rangeChanged", this.getComponent());
 		}else {
