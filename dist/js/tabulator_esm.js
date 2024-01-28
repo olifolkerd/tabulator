@@ -13783,73 +13783,73 @@ var defaultActions = {
 
 	rangeJumpLeft: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("jump", "left")) {
+		if (this.table.modules.selectRange.navigate(true, false, "left")) {
 			e.preventDefault();
 		}
 	},
 	rangeJumpRight: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("jump", "right")) {
+		if (this.table.modules.selectRange.navigate(true, false, "right")) {
 			e.preventDefault();
 		}
 	},
 	rangeJumpUp: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("jump", "up")) {
+		if (this.table.modules.selectRange.navigate(true, false, "up")) {
 			e.preventDefault();
 		}
 	},
 	rangeJumpDown: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("jump", "down")) {
+		if (this.table.modules.selectRange.navigate(true, false, "down")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandLeft: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand", "left")) {
+		if (this.table.modules.selectRange.navigate(false, true, "left")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandRight: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand", "right")) {
+		if (this.table.modules.selectRange.navigate(false, true, "right")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandUp: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand", "up")) {
+		if (this.table.modules.selectRange.navigate(false, true, "up")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandDown: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand", "down")) {
+		if (this.table.modules.selectRange.navigate(false, true, "down")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandJumpLeft: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand-jump", "left")) {
+		if (this.table.modules.selectRange.navigate(true, true, "left")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandJumpRight: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand-jump", "right")) {
+		if (this.table.modules.selectRange.navigate(true, true, "right")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandJumpUp: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand-jump", "up")) {
+		if (this.table.modules.selectRange.navigate(true, true, "up")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandJumpDown: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand-jump", "down")) {
+		if (this.table.modules.selectRange.navigate(true, true, "down")) {
 			e.preventDefault();
 		}
 	},
@@ -19973,7 +19973,7 @@ class SelectRange extends Module {
 		this.registerComponentFunction("row", "getRange", this.rowGetRange.bind(this));
 		this.registerComponentFunction("column", "getRange", this.collGetRange.bind(this));
 	}
-
+	
 	///////////////////////////////////
 	///////    Initialization   ///////
 	///////////////////////////////////
@@ -20035,7 +20035,7 @@ class SelectRange extends Module {
 		this.overlay.appendChild(this.activeRangeCellElement);
 		
 		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
-
+		
 		this.resetRanges();
 		
 		this.table.rowManager.element.appendChild(this.overlay);
@@ -20045,7 +20045,7 @@ class SelectRange extends Module {
 			this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
 		}
 	}
-
+	
 	initializeColumn(column) {
 		if (column.modules.edit) {
 			// Block editor from taking action so we can trigger edit by
@@ -20072,16 +20072,16 @@ class SelectRange extends Module {
 	
 	rowGetRange(row){
 		var range = this.ranges.find((range) => range.occupiesRow(row));
-
+		
 		return range ? range.getComponent() : null;
 	}
 	
 	collGetRange(col){
 		var range = this.ranges.find((range) => range.occupiesColumn(col));
-			
+		
 		return range ? range.getComponent() : null;
 	}
-
+	
 	///////////////////////////////////
 	////////// Event Handlers /////////
 	///////////////////////////////////
@@ -20097,7 +20097,7 @@ class SelectRange extends Module {
 			if (!e.target.classList.contains("tabulator-tableholder")) {
 				return;
 			}
-					
+			
 			// is editing a cell?
 			if (this.table.modules.edit && this.table.modules.edit.currentCell) {
 				return;
@@ -20107,11 +20107,11 @@ class SelectRange extends Module {
 			e.preventDefault();
 		}
 	}
-
+	
 	///////////////////////////////////
 	////// Column Functionality ///////
 	///////////////////////////////////
-
+	
 	handleColumnsLoading() {
 		var customRowHeader = this.options("selectableRangeRowHeader");
 		
@@ -20176,11 +20176,11 @@ class SelectRange extends Module {
 		this.endSelection(column);
 		this.layoutElement(true);
 	}
-
+	
 	///////////////////////////////////
 	//////// Cell Functionality ///////
 	///////////////////////////////////
-
+	
 	renderCell(cell) {
 		var el = cell.getElement();
 		
@@ -20205,7 +20205,7 @@ class SelectRange extends Module {
 		this._select(event, cell);
 		this.layoutElement();
 	}
-
+	
 	handleCellMouseMove(e, cell) {
 		if (!this.mousedown || this.selecting === "all") {
 			return;
@@ -20240,24 +20240,26 @@ class SelectRange extends Module {
 		this.table.rowManager.element.focus();
 		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
 	}
-
+	
 	///////////////////////////////////
 	///////     Navigation      ///////
 	///////////////////////////////////
-
+	
 	keyNavigate(dir, e){
-		if(this.navigate("normal", dir)){
+		if(this.navigate(false, false, dir)){
 			e.preventDefault();
 		}
 	}
 	
-	navigate(mode, dir) {
+	navigate(jump, expand, dir) {
+		var moved = false,
+		range, rangeEdge, nextRow, nextCol;
+
 		// Don't navigate while editing
 		if (this.table.modules.edit && this.table.modules.edit.currentCell) {
 			return false;
 		}
 		
-
 		// If there are more than 1 range, use the active range and destroy the others
 		if (this.ranges.length > 1) {
 			this.ranges = this.ranges.filter((range) => {
@@ -20270,136 +20272,81 @@ class SelectRange extends Module {
 			});
 		}
 		
-		var range = this.getActiveRange();
+		range = this.getActiveRange();
 		
-		var moved = false;
+		rangeEdge = expand ? range.end : range.start;
+		nextRow = rangeEdge.row;
+		nextCol = rangeEdge.col;
 		
-		switch (mode) {
-			case "normal": {
-				let nextRow = range.start.row;
-				let nextCol = range.start.col;
-				
-				if (dir === "left") {
-					nextCol = Math.max(nextCol - 1, 0);
-				} else if (dir === "right") {
-					nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
-				} else if (dir === "up") { 
-					nextRow = Math.max(nextRow - 1, 0);
-				} else if (dir === "down") {
-					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
-				}
-				
-				if (nextCol !== range.start.col || nextRow !== range.start.row) {
-					moved = true;
-				}
-				
-				range.setStart(nextRow, nextCol);
-				range.setEnd(nextRow, nextCol);
-				
-				this.selecting = "cell";
-				
-				break;
-			}
-			case "expand": {
-				if ((dir === 'left' || dir === 'right') && this.selecting === 'row') {
+		if(jump){
+			switch(dir){
+				case "left":
+					nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
 					break;
-				}
-				
-				if ((dir === 'up' || dir === 'down') && this.selecting === 'column') {
+				case "right":
+					nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
 					break;
-				}
-				
-				let nextRow = range.end.row;
-				let nextCol = range.end.col;
-				
-				if (dir === "left") {
-					nextCol = Math.max(nextCol - 1, 0);
-				} else if (dir === "right") {
-					nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
-				} else if (dir === "up") { 
-					nextRow = Math.max(nextRow - 1, 0);
-				} else if (dir === "down") {
-					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
-				}
-				
-				if (nextCol !== range.end.col || nextRow !== range.end.row) {
-					moved = true;
-				}
-				
-				range.setEnd(nextRow, nextCol);
-				
-				break;
+				case "up":
+					nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
+					break;
+				case "down":
+					nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
+					break;
 			}
-			case "jump": {
-				let nextRow = range.start.row;
-				let nextCol = range.start.col;
-				
-				if (dir === "left") {
-					nextCol = this.findJumpCellLeft(range.start.row, range.start.col);
-				} else if (dir === "right") {
-					nextCol = this.findJumpCellRight(range.start.row, range.start.col);
-				} else if (dir === "up") {
-					nextRow = this.findJumpCellUp(range.start.row, range.start.col);
-				} else if (dir === "down") {
-					nextRow = this.findJumpCellDown(range.start.row, range.start.col);
+		}else {
+			if(expand){
+				if ((this.selecting === 'row' && (dir === 'left' || dir === 'right')) || (this.selecting === 'column' && (dir === 'up' || dir === 'down'))) {
+					return;
 				}
-				
-				if (nextCol !== range.start.col || nextRow !== range.start.row) {
-					moved = true;
-				}
-				
-				range.setStart(nextRow, nextCol);
-				range.setEnd(nextRow, nextCol);
-				
-				this.selecting = "cell";
-				
-				break;
 			}
-			case "expand-jump": {
-				let nextRow = range.end.row;
-				let nextCol = range.end.col;
-				
-				if (dir === "left") {
-					nextCol = this.findJumpCellLeft(range.start.row, range.end.col);
-				} else if (dir === "right") {
-					nextCol = this.findJumpCellRight(range.start.row, range.end.col);
-				} else if (dir === "up") {
-					nextRow = this.findJumpCellUp(range.end.row, range.start.col);
-				} else if (dir === "down") {
-					nextRow = this.findJumpCellDown(range.end.row, range.start.col);
-				}
-				
-				if (nextCol !== range.end.col || nextRow !== range.end.row) {
-					moved = true;
-				}
-				
-				range.setEnd(nextRow, nextCol);
-				
-				break;
-			}
-		}
-		
-		if (!moved) {
-			return;
-		}
-		
-		var row = this.getRowByRangePos(range.end.row);
-		var column = this.getColumnByRangePos(range.end.col);
-		
-		if ((dir === 'left' || dir === 'right') && column.getElement().parentNode === null) {
-			column.getComponent().scrollTo(undefined, false);
-		} else if ((dir === 'up' || dir === 'down') && row.getElement().parentNode === null) {
-			row.getComponent().scrollTo(undefined, false);
-		} else {
-			// Use faster autoScroll when the elements are on the DOM
-			this.autoScroll(range, row.getElement(), column.getElement());
-		}
-		
-		this.layoutElement();
-		
-		return true;
-	}
 
+			switch(dir){
+				case "left":
+					nextCol = Math.max(nextCol - 1, 0);
+					break;
+				case "right":
+					nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
+					break;
+				case "up":
+					nextRow = Math.max(nextRow - 1, 0);
+					break;
+				case "down":
+					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+					break;
+			}
+		}
+
+		moved = nextCol !== rangeEdge.col || nextRow !== rangeEdge.row;
+		
+		if(!expand){
+			range.setStart(nextRow, nextCol);
+		}
+
+		range.setEnd(nextRow, nextCol);
+
+		if(!expand){
+			this.selecting = "cell";
+		}
+
+		if (moved) {
+			var row = this.getRowByRangePos(range.end.row);
+			var column = this.getColumnByRangePos(range.end.col);
+			
+			if ((dir === 'left' || dir === 'right') && column.getElement().parentNode === null) {
+				column.getComponent().scrollTo(undefined, false);
+			} else if ((dir === 'up' || dir === 'down') && row.getElement().parentNode === null) {
+				row.getComponent().scrollTo(undefined, false);
+			} else {
+				// Use faster autoScroll when the elements are on the DOM
+				this.autoScroll(range, row.getElement(), column.getElement());
+			}
+		
+			this.layoutElement();
+			
+			return true;
+		}
+	}
+	
 	findJumpCellLeft(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos);
 		var cells = row.cells.filter((cell) => cell.column.visible);
@@ -20575,11 +20522,11 @@ class SelectRange extends Module {
 		
 		return jumpRow;
 	}
-
+	
 	///////////////////////////////////
 	///////      Selection      ///////
 	///////////////////////////////////
-
+	
 	_select(event, element) {
 		if (element.type === "column") {
 			if (element.field === this.rowHeaderField) {
@@ -20620,7 +20567,7 @@ class SelectRange extends Module {
 			this.endSelection(element);
 		}
 	}
-
+	
 	beginSelection(element) {
 		var range = this.getActiveRange();
 		
@@ -20666,8 +20613,8 @@ class SelectRange extends Module {
 			range.setEnd(row, col);
 		}
 	}
-
-
+	
+	
 	///////////////////////////////////
 	///////       Layout        ///////
 	///////////////////////////////////
@@ -20678,7 +20625,7 @@ class SelectRange extends Module {
 		this.layoutChangeTimeout = setTimeout(this.layoutRanges.bind(this), 200);
 	}
 	
-
+	
 	redraw(force) {
 		if (force) {
 			this.selecting = 'cell';
@@ -20731,7 +20678,7 @@ class SelectRange extends Module {
 			}
 		}
 	}
-		
+	
 	layoutElement(visibleRows) {
 		var rows;
 		
@@ -20849,8 +20796,8 @@ class SelectRange extends Module {
 		range.element.style.width = bottomRightCell.getElement().offsetLeft + bottomRightCell.getElement().offsetWidth - topLeftCell.getElement().offsetLeft + "px";
 		range.element.style.height = bottomRightCell.row.getElement().offsetTop + bottomRightCell.row.getElement().offsetHeight - topLeftCell.row.getElement().offsetTop + "px";
 	}
-
-
+	
+	
 	///////////////////////////////////
 	///////  Helper Functions   ///////
 	///////////////////////////////////
@@ -20940,13 +20887,13 @@ class SelectRange extends Module {
 		this.ranges = [];
 		this.addRange(0, 0);
 	}
-
+	
 	tableDestroyed(){
 		document.removeEventListener("mouseup", this.mouseUpEvent);
 		this.table.rowManager.element.removeEventListener("keydown", this.keyDownEvent);
 	}
-
-
+	
+	
 	getSelectedData() {
 		return this.getDataByRange(this.getActiveRange());
 	}

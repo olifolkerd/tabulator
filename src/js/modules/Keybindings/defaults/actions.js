@@ -85,73 +85,73 @@ export default {
 
 	rangeJumpLeft: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("jump", "left")) {
+		if (this.table.modules.selectRange.navigate(true, false, "left")) {
 			e.preventDefault();
 		}
 	},
 	rangeJumpRight: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("jump", "right")) {
+		if (this.table.modules.selectRange.navigate(true, false, "right")) {
 			e.preventDefault();
 		}
 	},
 	rangeJumpUp: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("jump", "up")) {
+		if (this.table.modules.selectRange.navigate(true, false, "up")) {
 			e.preventDefault();
 		}
 	},
 	rangeJumpDown: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("jump", "down")) {
+		if (this.table.modules.selectRange.navigate(true, false, "down")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandLeft: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand", "left")) {
+		if (this.table.modules.selectRange.navigate(false, true, "left")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandRight: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand", "right")) {
+		if (this.table.modules.selectRange.navigate(false, true, "right")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandUp: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand", "up")) {
+		if (this.table.modules.selectRange.navigate(false, true, "up")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandDown: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand", "down")) {
+		if (this.table.modules.selectRange.navigate(false, true, "down")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandJumpLeft: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand-jump", "left")) {
+		if (this.table.modules.selectRange.navigate(true, true, "left")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandJumpRight: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand-jump", "right")) {
+		if (this.table.modules.selectRange.navigate(true, true, "right")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandJumpUp: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand-jump", "up")) {
+		if (this.table.modules.selectRange.navigate(true, true, "up")) {
 			e.preventDefault();
 		}
 	},
 	rangeExpandJumpDown: function(e){
 		if (!this.table.options.selectableRange) return;
-		if (this.table.modules.selectRange.navigate("expand-jump", "down")) {
+		if (this.table.modules.selectRange.navigate(true, true, "down")) {
 			e.preventDefault();
 		}
 	},
