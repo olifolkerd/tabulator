@@ -7669,8 +7669,8 @@ class Edit$1 extends Module{
 		
 		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
-		this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
-		this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
+		// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
+		// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
 		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
 		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
 	}
@@ -20010,6 +20010,7 @@ class SelectRange extends Module {
 		
 		this.table.rowManager.element.appendChild(this.overlay);
 		this.table.columnManager.element.setAttribute("tabindex", 0);
+		this.table.element.classList.add("tabulator-ranges");
 		
 		if (this.table.modules.edit) {
 			this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
@@ -20254,6 +20255,7 @@ class SelectRange extends Module {
 	///////////////////////////////////
 	
 	keyNavigate(dir, e){
+		console.log("nav");
 		if(this.navigate(false, false, dir)){
 			e.preventDefault();
 		}
@@ -20295,17 +20297,17 @@ class SelectRange extends Module {
 		if(jump){
 			switch(dir){
 				case "left":
-				nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
-				break;
+					nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
+					break;
 				case "right":
-				nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
-				break;
+					nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
+					break;
 				case "up":
-				nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
-				break;
+					nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
+					break;
 				case "down":
-				nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
-				break;
+					nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
+					break;
 			}
 		}else {
 			if(expand){
@@ -20316,17 +20318,17 @@ class SelectRange extends Module {
 			
 			switch(dir){
 				case "left":
-				nextCol = Math.max(nextCol - 1, 0);
-				break;
+					nextCol = Math.max(nextCol - 1, 0);
+					break;
 				case "right":
-				nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
-				break;
+					nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
+					break;
 				case "up":
-				nextRow = Math.max(nextRow - 1, 0);
-				break;
+					nextRow = Math.max(nextRow - 1, 0);
+					break;
 				case "down":
-				nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
-				break;
+					nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+					break;
 			}
 		}
 		
