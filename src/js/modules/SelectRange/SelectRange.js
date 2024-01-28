@@ -873,22 +873,10 @@ class SelectRange extends Module {
 			return;
 		}
 		
-		this.activeRangeCellElement.style.left =
-		activeCell.row.getElement().offsetLeft +
-		activeCell.getElement().offsetLeft +
-		"px";
-		this.activeRangeCellElement.style.top =
-		activeCell.row.getElement().offsetTop + "px";
-		this.activeRangeCellElement.style.width =
-		activeCell.getElement().offsetLeft +
-		activeCell.getElement().offsetWidth -
-		activeCell.getElement().offsetLeft +
-		"px";
-		this.activeRangeCellElement.style.height =
-		activeCell.row.getElement().offsetTop +
-		activeCell.row.getElement().offsetHeight -
-		activeCell.row.getElement().offsetTop +
-		"px";
+		this.activeRangeCellElement.style.left = activeCell.row.getElement().offsetLeft + activeCell.getElement().offsetLeft + "px";
+		this.activeRangeCellElement.style.top =	activeCell.row.getElement().offsetTop + "px";
+		this.activeRangeCellElement.style.width = activeCell.getElement().offsetLeft + activeCell.getElement().offsetWidth - activeCell.getElement().offsetLeft + "px";
+		this.activeRangeCellElement.style.height = activeCell.row.getElement().offsetTop + activeCell.row.getElement().offsetHeight - activeCell.row.getElement().offsetTop + "px";
 		
 		this.ranges.forEach((range) => this.layoutRange(range));
 		
@@ -950,7 +938,7 @@ class SelectRange extends Module {
 		return this.ranges[rangeIdx].getComponent();
 	}
 	
-	getCell(rowIdx, colIdx) {
+	getCell( colIdx) {
 		if (rowIdx < 0) {
 			rowIdx = this.getRows().length + rowIdx;
 		}
