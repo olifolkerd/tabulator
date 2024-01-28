@@ -517,11 +517,14 @@ class SelectRange extends Module {
 			}
 			
 			if (element === this.rowHeader) {
+				console.log("all")
 				this.resetRanges();
 				this.selecting = "all";
 				
 				const topLeftCell = this.getCell(0, 0);
 				const bottomRightCell = this.getCell(-1, -1);
+
+				console.log("all", topLeftCell, bottomRightCell)
 				
 				this.beginSelection(topLeftCell);
 				this.endSelection(bottomRightCell);
@@ -796,7 +799,9 @@ class SelectRange extends Module {
 		
 		if (colIdx < 0) {
 			colIdx = this.getColumns().length + colIdx - 1;
-			return null;
+			if (colIdx < 0) {
+				return null;
+			}
 		}
 		
 		if (rowIdx < 0) {
