@@ -613,7 +613,7 @@ class SelectRange extends Module {
 	
 	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element;
-		var rowHeader = this.rowHeaderColumn.getElement();
+		var rowHeader = this.rowHeaderColumn().getElement();
 		if (typeof row === 'undefined') {
 			row = this.getRowByRangePos(range.end.row).getElement();
 		}
@@ -905,15 +905,15 @@ class SelectRange extends Module {
 		return cells;
 	}
 	
-	get selectedRows() {
+	selectedRows() {
 		return this.getRowsByRange(this.getActiveRange());
 	}
 	
-	get selectedColumns() {
+	selectedColumns() {
 		return this.getColumnsByRange(this.getActiveRange()).map((col) => col.getComponent());
 	}
 	
-	get rowHeaderColumn() {
+	rowHeaderColumn() {
 		return this.table.columnManager.columnsByField[this.rowHeaderField];
 	}
 }

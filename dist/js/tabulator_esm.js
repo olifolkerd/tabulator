@@ -8395,7 +8395,7 @@ class Export extends Module{
 		var headers, body;
 		
 		if (range === 'range') {
-			var columns = this.table.modules.selectRange.selectedColumns;
+			var columns = this.table.modules.selectRange.selectedColumns();
 			headers = this.config.columnHeaders !== false
 				? this.headersToExportRows(this.generateColumnGroupHeaders(columns.map((component) => component._column)))
 				: [];
@@ -8441,7 +8441,7 @@ class Export extends Module{
 					break;
 
 				case "range":
-					rows = this.table.modules.selectRange.selectedRows;
+					rows = this.table.modules.selectRange.selectedRows();
 					break;
 
 				case "active":
@@ -20527,7 +20527,7 @@ class SelectRange extends Module {
 	
 	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element;
-		var rowHeader = this.rowHeaderColumn.getElement();
+		var rowHeader = this.rowHeaderColumn().getElement();
 		if (typeof row === 'undefined') {
 			row = this.getRowByRangePos(range.end.row).getElement();
 		}
@@ -20710,7 +20710,7 @@ class SelectRange extends Module {
 	}
 	
 	getActiveRange(component) {
-		const range = this.ranges[this.ranges.length - 1];
+		var range = this.ranges[this.ranges.length - 1];
 
 		if (!range) {
 			return null;
@@ -20819,15 +20819,15 @@ class SelectRange extends Module {
 		return cells;
 	}
 	
-	get selectedRows() {
+	selectedRows() {
 		return this.getRowsByRange(this.getActiveRange());
 	}
 	
-	get selectedColumns() {
+	selectedColumns() {
 		return this.getColumnsByRange(this.getActiveRange()).map((col) => col.getComponent());
 	}
 	
-	get rowHeaderColumn() {
+	rowHeaderColumn() {
 		return this.table.columnManager.columnsByField[this.rowHeaderField];
 	}
 }
