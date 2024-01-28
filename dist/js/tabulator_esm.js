@@ -19967,7 +19967,8 @@ class SelectRange extends Module {
 		this.registerTableOption("selectableRangeColumns", false); //enable selectable range
 		this.registerTableOption("selectableRangeRows", false); //enable selectable range
 		this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
-		this.registerTableFunction("getRanges", this.getRanges.bind(this, true));
+		this.registerTableFunction("getRanges", this.getRanges.bind(this));
+		this.registerTableFunction("addRange", this.addRange.bind(this));
 		this.registerComponentFunction("cell", "getRange", this.cellGetRange.bind(this));
 		this.registerComponentFunction("row", "getRange", this.rowGetRange.bind(this));
 		this.registerComponentFunction("column", "getRange", this.collGetRange.bind(this));
@@ -20255,7 +20256,6 @@ class SelectRange extends Module {
 	///////////////////////////////////
 	
 	keyNavigate(dir, e){
-		console.log("nav");
 		if(this.navigate(false, false, dir)){
 			e.preventDefault();
 		}
@@ -20801,7 +20801,7 @@ class SelectRange extends Module {
 		return this.table.columnManager.getVisibleColumnsByIndex();
 	}
 	
-	addRange() {
+	addRange(start, end) {
 		var element, range;
 		
 		if(this.maxRanges !== true && this.ranges.length >= this.maxRanges){
@@ -20815,12 +20815,20 @@ class SelectRange extends Module {
 		
 		this.ranges.push(range);
 		this.rangeContainer.appendChild(element);
+		
+		if(start){		
+			this.beginSelection(start._cell);
+			this.endSelection(end ? end._cell : start._cell);
+			this.layoutElement();
+		}
+		
+		return range;
 	}
 	
 	resetRanges() {
 		this.ranges.forEach((range) => range.destroy());
 		this.ranges = [];
-		this.addRange(0, 0);
+		this.addRange();
 	}
 	
 	tableDestroyed(){
@@ -20885,7 +20893,7 @@ class SelectRange extends Module {
 		var output = this.ranges.map((range) => range.getComponent());
 		return output;
 	}
-
+	
 	getRangesData() {
 		var output = this.ranges.map((range) => this.getDataByRange(range));
 		return output;
