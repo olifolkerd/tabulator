@@ -229,8 +229,7 @@ class SelectRange extends Module {
 		
 		document.addEventListener("mouseup", this.mouseUpEvent);
 		
-		this._select(event, column);
-		this.layoutElement();
+		this.newSelection(event, column);
 	}
 	
 	handleColumnMouseMove(e, column) {
@@ -238,8 +237,7 @@ class SelectRange extends Module {
 			return;
 		}
 		
-		this.endSelection(column);
-		this.layoutElement(true);
+		this.getActiveRange().setBounds(false, column, true);
 	}
 	
 	///////////////////////////////////
@@ -267,8 +265,7 @@ class SelectRange extends Module {
 		
 		document.addEventListener("mouseup", this.mouseUpEvent);
 		
-		this._select(event, cell);
-		this.layoutElement();
+		this.newSelection(event, cell);
 	}
 	
 	handleCellMouseMove(e, cell) {
@@ -276,8 +273,7 @@ class SelectRange extends Module {
 			return;
 		}
 		
-		this.endSelection(cell);
-		this.layoutElement(true);
+		this.getActiveRange().setBounds(false, cell, true);
 	}
 	
 	handleCellDblClick(e, cell) {
@@ -517,22 +513,22 @@ class SelectRange extends Module {
 	///////      Selection      ///////
 	///////////////////////////////////
 	
-	_select(event, element) {
+	newSelection(event, element) {
+		var range;
+
 		if (element.type === "column") {
 			if(!this.columnSelection){
 				return;
 			}
 			
 			if (element === this.rowHeader) {
-				this.resetRanges();
+				range = this.resetRanges();
 				this.selecting = "all";
 				
 				const topLeftCell = this.getCell(0, 0);
 				const bottomRightCell = this.getCell(-1, -1);
 				
-				this.beginSelection(topLeftCell);
-				this.endSelection(bottomRightCell);
-				
+				range.setBounds(topLeftCell, bottomRightCell)	;		
 				return;
 			} else {
 				this.selecting = "column";
@@ -548,67 +544,17 @@ class SelectRange extends Module {
 				this.ranges = this.ranges.slice(-1);
 			}
 			
-			this.endSelection(element);
+			this.getActiveRange().setBounds(false, element);
 		} else if (event.ctrlKey) {
-			this.addRange();
-			
-			this.beginSelection(element);
-			this.endSelection(element);
+			this.addRange().setBounds(element);
 		} else {
-			this.resetRanges();
-			
-			this.beginSelection(element);
-			this.endSelection(element);
-		}
-	}
-	
-	beginSelection(element) {
-		var range = this.getActiveRange();
-		
-		if (element.type === "column") {
-			if(this.columnSelection){
-				range.setStart(0, element.getPosition() - 2);
-			}
-			return;
-		}
-		
-		var row = element.row.position - 1;
-		var col = element.column.getPosition() - 2;
-		
-		if (element.column === this.rowHeader) {
-			range.setStart(row, 0);
-		} else {
-			range.setStart(row, col);
+			this.resetRanges().setBounds(element);
 		}
 	}
 	
 	endSelection(element) {
 		var range = this.getActiveRange();
-		var rowsCount = this.getRows().length;
-		
-		if (element.type === "column") {
-			if (this.selecting === "column") {
-				range.setEnd(rowsCount - 1, element.getPosition() - 2);
-			} else if (this.selecting === "cell") {
-				range.setEnd(0, element.getPosition() - 2);
-			}
-			
-			return;
-		}
-		
-		var row = element.row.position - 1;
-		var col = element.column.getPosition() - 2;
-		var isRowHeader = element.column === this.rowHeader;
-		
-		if (this.selecting === "row") {
-			range.setEnd(row, this.getColumns().length - 2);
-		} else if (this.selecting !== "row" && isRowHeader) {
-			range.setEnd(row, 0);
-		} else if (this.selecting === "column") {
-			range.setEnd(rowsCount - 1, col);
-		} else {
-			range.setEnd(row, col);
-		}
+		//DELETE ME
 	}
 	
 	
@@ -830,9 +776,7 @@ class SelectRange extends Module {
 		this.rangeContainer.appendChild(element);
 		
 		if(start){		
-			this.beginSelection(start._cell);
-			this.endSelection(end ? end._cell : start._cell);
-			this.layoutElement();
+			range.setBounds(start._cell, end ? end._cell : start._cell);
 		}
 		
 		return range;
@@ -841,7 +785,7 @@ class SelectRange extends Module {
 	resetRanges() {
 		this.ranges.forEach((range) => range.destroy());
 		this.ranges = [];
-		this.addRange();
+		return this.addRange();
 	}
 	
 	tableDestroyed(){
