@@ -14,6 +14,7 @@ class SelectRange extends Module {
 		this.columnSelection = false;
 		this.rowSelection = false;
 		this.maxRanges = 0;
+		this.activeRange = false;
 		
 		this.keyDownEvent = this._handleKeyDown.bind(this);
 		this.mouseUpEvent = this._handleMouseUp.bind(this);
@@ -221,7 +222,7 @@ class SelectRange extends Module {
 	}
 	
 	handleColumnMouseDown(event, column) {
-		if (event.button === 2 && (this.selecting === "column" || this.selecting === "all") && this.getActiveRange().occupiesColumn(column)) {
+		if (event.button === 2 && (this.selecting === "column" || this.selecting === "all") && this.activeRange.occupiesColumn(column)) {
 			return;
 		}
 		
@@ -237,7 +238,7 @@ class SelectRange extends Module {
 			return;
 		}
 		
-		this.getActiveRange().setBounds(false, column, true);
+		this.activeRange.setBounds(false, column, true);
 	}
 	
 	///////////////////////////////////
@@ -257,7 +258,7 @@ class SelectRange extends Module {
 	}
 	
 	handleCellMouseDown(event, cell) {
-		if (event.button === 2 && (this.getActiveRange().occupies(cell) || ((this.selecting === "row" || this.selecting === "all") && this.getActiveRange().occupiesRow(cell.row)))) {
+		if (event.button === 2 && (this.activeRange.occupies(cell) || ((this.selecting === "row" || this.selecting === "all") && this.activeRange.occupiesRow(cell.row)))) {
 			return;
 		}
 		
@@ -273,7 +274,7 @@ class SelectRange extends Module {
 			return;
 		}
 		
-		this.getActiveRange().setBounds(false, cell, true);
+		this.activeRange.setBounds(false, cell, true);
 	}
 	
 	handleCellDblClick(e, cell) {
@@ -330,7 +331,7 @@ class SelectRange extends Module {
 		// If there are more than 1 range, use the active range and destroy the others
 		if (this.ranges.length > 1) {
 			this.ranges = this.ranges.filter((range) => {
-				if (range === this.getActiveRange()) {
+				if (range === this.activeRange) {
 					range.setEnd(range.start.row, range.start.col);
 					return true;
 				}
@@ -339,7 +340,7 @@ class SelectRange extends Module {
 			});
 		}
 		
-		range = this.getActiveRange();
+		range = this.activeRange;
 		
 		rangeEdge = expand ? range.end : range.start;
 		nextRow = rangeEdge.row;
@@ -544,7 +545,7 @@ class SelectRange extends Module {
 				this.ranges = this.ranges.slice(-1);
 			}
 			
-			this.getActiveRange().setBounds(false, element);
+			this.activeRange.setBounds(false, element);
 		} else if (event.ctrlKey) {
 			this.addRange().setBounds(element);
 		} else {
@@ -553,7 +554,7 @@ class SelectRange extends Module {
 	}
 	
 	endSelection(element) {
-		var range = this.getActiveRange();
+		var range = this.activeRange;
 		//DELETE ME
 	}
 	
@@ -721,19 +722,9 @@ class SelectRange extends Module {
 		return row ? row.getCells().filter((cell) => cell.column.visible)[colIdx + 1] : null;
 	}
 	
-	getActiveRange(component) {
-		var range = this.ranges[this.ranges.length - 1];
-		
-		if (!range) {
-			return null;
-		}
-		
-		return component ? range.getComponent() : range;
-	}
 	
 	getActiveCell() {
-		var activeRange = this.getActiveRange();
-		return this.getCell(activeRange.start.row, activeRange.start.col);
+		return this.getCell(this.activeRange.start.row, this.activeRange.start.col);
 	}
 	
 	getRowByRangePos(pos) {
@@ -742,14 +733,6 @@ class SelectRange extends Module {
 	
 	getColumnByRangePos(pos) {
 		return this.getTableColumns()[pos + 1];
-	}
-	
-	getRowsByRange(range) {
-		return this.getTableRows().slice(range.top, range.bottom + 1);
-	}
-	
-	getColumnsByRange(range) {
-		return this.getTableColumns().slice(range.left + 1, range.right + 2);
 	}
 	
 	getTableRows() {
@@ -769,6 +752,7 @@ class SelectRange extends Module {
 		
 		range = new Range(this.table, this, start, end);
 		
+		this.activeRange = range;
 		this.ranges.push(range);
 		this.rangeContainer.appendChild(range.element);
 		
@@ -787,11 +771,11 @@ class SelectRange extends Module {
 	}
 	
 	selectedRows() {
-		return this.getActiveRange().getRows();
+		return this.activeRange.getRows().map((col) => col.getComponent());
 	}
 	
 	selectedColumns() {
-		return this.getTableColumnsByRange(this.getActiveRange()).map((col) => col.getComponent());
+		return this.activeRange.getColumns().map((col) => col.getComponent());
 	}
 	
 	getRanges(){

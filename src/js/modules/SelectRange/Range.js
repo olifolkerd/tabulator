@@ -176,7 +176,7 @@ class Range extends CoreFeature{
 		var bottomRightCell = this.rangeManager.getCell(bottom, right);
 		
 		this.element.classList.add("tabulator-range-active");
-		// this.element.classList.toggle("tabulator-range-active", this === this.rangeManager.getActiveRange());
+		// this.element.classList.toggle("tabulator-range-active", this === this.rangeManager.activeRange);
 		
 		this.element.style.left = topLeftCell.row.getElement().offsetLeft + topLeftCell.getElement().offsetLeft + "px";
 		this.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
@@ -229,8 +229,8 @@ class Range extends CoreFeature{
 	
 	getCells(structured) {
 		var cells = [];
-		var rows = this.getRowsByRange(this);
-		var columns = this.getColumnsByRange(this);
+		var rows = this.getRows();
+		var columns = this.getColumns();
 		
 		if (structured) {
 			cells = rows.map((row) => {
