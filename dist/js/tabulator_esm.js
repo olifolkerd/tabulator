@@ -20436,14 +20436,11 @@ class SelectRange extends Module {
 			}
 			
 			if (element === this.rowHeader) {
-				console.log("all");
 				this.resetRanges();
 				this.selecting = "all";
 				
 				const topLeftCell = this.getCell(0, 0);
 				const bottomRightCell = this.getCell(-1, -1);
-
-				console.log("all", topLeftCell, bottomRightCell);
 				
 				this.beginSelection(topLeftCell);
 				this.endSelection(bottomRightCell);
