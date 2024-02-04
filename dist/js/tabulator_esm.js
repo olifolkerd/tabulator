@@ -20335,13 +20335,11 @@ class SelectRange extends Module {
 	///////////////////////////////////
 	
 	getRanges(){
-		var output = this.ranges.map((range) => range.getComponent());
-		return output;
+		return this.ranges.map((range) => range.getComponent());
 	}
 	
 	getRangesData() {
-		var output = this.ranges.map((range) => range.getData());
-		return output;
+		return this.ranges.map((range) => range.getData());
 	}
 
 	addRangeFromComponent(start, end){
@@ -20416,11 +20414,13 @@ class SelectRange extends Module {
 	///////////////////////////////////
 	
 	handleColumnResized(column) {
+		var selected;
+
 		if (this.selecting !== "column" && this.selecting !== "all") {
 			return;
 		}
 		
-		var selected = this.ranges.some((range) => range.occupiesColumn(column));
+		selected = this.ranges.some((range) => range.occupiesColumn(column));
 		
 		if (!selected) {
 			return;
@@ -20428,6 +20428,7 @@ class SelectRange extends Module {
 		
 		this.ranges.forEach((range) => {
 			var selectedColumns = range.getColumns(true);
+
 			selectedColumns.forEach((selectedColumn) => {
 				if (selectedColumn !== column) {
 					selectedColumn.setWidth(column.width);
@@ -20461,12 +20462,10 @@ class SelectRange extends Module {
 	///////////////////////////////////
 	
 	renderCell(cell) {
-		var el = cell.getElement();
-		
-		var rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
+		var el = cell.getElement(),
+		rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
 		
 		el.classList.toggle("tabulator-range-selected", rangeIdx !== -1);
-		
 		el.classList.toggle("tabulator-range-only-cell-selected", this.ranges.length === 1 && this.ranges[0].atTopLeft(cell) &&	this.ranges[0].atBottomRight(cell));
 		
 		el.dataset.range = rangeIdx;
@@ -20769,10 +20768,6 @@ class SelectRange extends Module {
 		}
 		
 		if (event.shiftKey) {
-			if (this.ranges.length > 1) {
-				this.ranges = this.ranges.slice(-1);
-			}
-			
 			this.activeRange.setBounds(false, element);
 		} else if (event.ctrlKey) {
 			this.addRange().setBounds(element);
@@ -20782,32 +20777,35 @@ class SelectRange extends Module {
 	}
 
 	autoScroll(range, row, column) {
-		var tableHolder = this.table.rowManager.element;
-		var rowHeader = this.rowHeader.getElement();
+		var tableHolder = this.table.rowManager.element,
+		rowHeader = this.rowHeader.getElement(),
+		rect, view, withinHorizontalView, withinVerticalView;
+
 		if (typeof row === 'undefined') {
 			row = this.getRowByRangePos(range.end.row).getElement();
 		}
+
 		if (typeof column === 'undefined') {
 			column = this.getColumnByRangePos(range.end.col).getElement();
 		}
 		
-		var rect = {
+		rect = {
 			left: column.offsetLeft,
 			right: column.offsetLeft + column.offsetWidth,
 			top: row.offsetTop,
 			bottom: row.offsetTop + row.offsetHeight,
 		};
 		
-		var view = {
+		view = {
 			left: tableHolder.scrollLeft + rowHeader.offsetWidth,
 			right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
 			top: tableHolder.scrollTop,
 			bottom:	tableHolder.scrollTop +	tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth,
 		};
 		
-		var withinHorizontalView = view.left < rect.left &&	rect.left < view.right && view.left < rect.right &&	rect.right < view.right;
+		withinHorizontalView = view.left < rect.left &&	rect.left < view.right && view.left < rect.right &&	rect.right < view.right;
 		
-		var withinVerticalView = view.top < rect.top &&	rect.top < view.bottom && view.top < rect.bottom &&	rect.bottom < view.bottom;
+		withinVerticalView = view.top < rect.top &&	rect.top < view.bottom && view.top < rect.bottom &&	rect.bottom < view.bottom;
 		
 		if (!withinHorizontalView) {
 			if (rect.left < view.left) {
@@ -20826,7 +20824,7 @@ class SelectRange extends Module {
 		}
 	}
 	
-	
+
 	///////////////////////////////////
 	///////       Layout        ///////
 	///////////////////////////////////
@@ -20869,10 +20867,9 @@ class SelectRange extends Module {
 	}
 	
 	layoutRow(row) {
-		var el = row.getElement();
-		
-		var selected = false;
-		var occupied = this.ranges.some((range) => range.occupiesRow(row));
+		var el = row.getElement(),
+		selected = false,
+		occupied = this.ranges.some((range) => range.occupiesRow(row));
 		
 		if (this.selecting === "row") {
 			selected = occupied;
@@ -20885,10 +20882,9 @@ class SelectRange extends Module {
 	}
 	
 	layoutColumn(column) {
-		var el = column.getElement();
-		
-		var selected = false;
-		var occupied = this.ranges.some((range) => range.occupiesColumn(column));
+		var el = column.getElement(),		
+		selected = false,
+		occupied = this.ranges.some((range) => range.occupiesColumn(column));
 		
 		if (this.selecting === "column") {
 			selected = occupied;
@@ -20901,11 +20897,13 @@ class SelectRange extends Module {
 	}
 	
 	layoutRanges() {
+		var activeCell;
+
 		if (!this.table.initialized) {
 			return;
 		}
 		
-		var activeCell = this.getActiveCell();
+		activeCell = this.getActiveCell();
 		
 		if (!activeCell) {
 			return;
@@ -20931,6 +20929,7 @@ class SelectRange extends Module {
 		
 		if (colIdx < 0) {
 			colIdx = this.getTableColumns().length + colIdx - 1;
+
 			if (colIdx < 0) {
 				return null;
 			}
@@ -20985,6 +20984,7 @@ class SelectRange extends Module {
 	resetRanges() {
 		this.ranges.forEach((range) => range.destroy());
 		this.ranges = [];
+		
 		return this.addRange();
 	}
 	
