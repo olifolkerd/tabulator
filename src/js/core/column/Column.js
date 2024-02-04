@@ -942,6 +942,10 @@ class Column extends CoreFeature{
 
 		return this.component;
 	}
+
+	getPosition(){
+		return this.table.columnManager.getVisibleColumnsByIndex().indexOf(this) + 1;
+	}
 }
 
 Column.defaultOptionList = defaultOptions;

@@ -58,8 +58,8 @@ class Edit extends Module{
 		
 		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
-		this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
-		this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
+		// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
+		// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
 		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
 		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
 	}
@@ -680,24 +680,30 @@ class Edit extends Module{
 						}
 					}else{
 						console.warn("Edit Error - Editor should return an instance of Node, the editor returned:", cellEditor);
-						element.blur();
+						this.blur(element);
 						return false;
 					}
 				}else{
-					element.blur();
+					this.blur(element);
 					return false;
 				}
 				
 				return true;
 			}else{
 				this.mouseClick = false;
-				element.blur();
+				this.blur(element);
 				return false;
 			}
 		}else{
 			this.mouseClick = false;
-			element.blur();
+			this.blur(element);
 			return false;
+		}
+	}
+
+	blur(element){
+		if(!this.confirm("edit-blur", [element]) ){
+			element.blur();
 		}
 	}
 	

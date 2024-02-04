@@ -142,6 +142,7 @@ class Clipboard extends Module{
 		var sel, textRange;
 		this.blocked = false;
 		this.customSelection = false;
+	
 
 		if (this.mode === true || this.mode === "copy") {
 

@@ -24,6 +24,10 @@
   user-select: none;
 }
 
+.tabulator.tabulator-ranges .tabulator-cell:not(.tabulator-editing) {
+  user-select: none;
+}
+
 .tabulator .tabulator-header {
   position: relative;
   box-sizing: border-box;
@@ -38,6 +42,7 @@
   -khtml-user-select: none;
   -webkit-user-select: none;
   -o-user-select: none;
+  outline: none;
 }
 
 .tabulator .tabulator-header.tabulator-header-hidden {
@@ -71,6 +76,16 @@
   border: 1px solid #999;
   background: #1a1a1a;
   pointer-events: none;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-range-highlight {
+  background-color: #999;
+  color: #000000;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-range-selected {
+  background-color: #ccc;
+  color: #333;
 }
 
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content {
@@ -344,6 +359,36 @@
   border-top: 2px solid #888;
 }
 
+.tabulator .tabulator-tableholder .tabulator-range-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.tabulator .tabulator-tableholder .tabulator-range-overlay .tabulator-range {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+}
+
+.tabulator .tabulator-tableholder .tabulator-range-overlay .tabulator-range.tabulator-range-active::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 6px;
+  height: 6px;
+  background-color: #ccc;
+  border-radius: 999px;
+}
+
+.tabulator .tabulator-tableholder .tabulator-range-overlay .tabulator-range-cell-active {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+}
+
 .tabulator .tabulator-footer {
   border-top: 1px solid #999;
   background-color: #333;
@@ -543,6 +588,11 @@
   z-index: 15;
 }
 
+.tabulator-row.tabulator-range-highlight .tabulator-cell.tabulator-range-row-header {
+  background-color: #999;
+  color: #000000;
+}
+
 .tabulator-row .tabulator-row-resize-handle {
   position: absolute;
   right: 0;
@@ -656,6 +706,15 @@
   height: 3px;
   margin-top: 2px;
   background: #666;
+}
+
+.tabulator-row .tabulator-cell.tabulator-range-row-header.tabulator-range-selected {
+  background-color: #ccc;
+  color: #333;
+}
+
+.tabulator-row .tabulator-cell.tabulator-range-selected:not(.tabulator-range-only-cell-selected):not(.tabulator-range-row-header) {
+  background-color: #000;
 }
 
 .tabulator-row .tabulator-cell .tabulator-data-tree-branch-empty {

@@ -20,7 +20,7 @@ export default function(cell, formatterParams, onRendered){
 			if(row instanceof RowComponent){
 
 				checkbox.addEventListener("change", (e) => {
-					if(this.table.options.selectableRangeMode === "click"){
+					if(this.table.options.selectableRowsRangeMode === "click"){
 						if(!blocked){
 							row.toggleSelect();
 						}else{
@@ -31,7 +31,7 @@ export default function(cell, formatterParams, onRendered){
 					}
 				});
 
-				if(this.table.options.selectableRangeMode === "click"){
+				if(this.table.options.selectableRowsRangeMode === "click"){
 					checkbox.addEventListener("click", (e) => {
 						blocked = true;
 						this.table.modules.selectRow.handleComplexRowClick(row._row, e);

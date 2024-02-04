@@ -38,6 +38,13 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 // $footerSeparatorColor:#999 !default; //footer bottom separator color
 // $footerActiveColor:#d00 !default; //footer bottom active text color
 
+//range selection
+$rangeBorderColor: #{darken($rowSelectedBackground, 10%)} !default; //range border color
+$rangeHandleColor: $rangeBorderColor !default; //range handle color
+$rangeHeaderSelectedBackground: $rangeBorderColor !default; //header background color when selected
+$rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when selected
+
+
 @import "../../tabulator.scss";
 
 .tabulator{
