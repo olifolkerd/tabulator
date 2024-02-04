@@ -7,11 +7,7 @@ class RangeComponent {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
 				} else {
-					return target._range.table.componentFunctionBinder.handle(
-						"range",
-						target._range,
-						name,
-					);
+					return target._range.table.componentFunctionBinder.handle("range", target._range, name);
 				}
 			},
 		});
