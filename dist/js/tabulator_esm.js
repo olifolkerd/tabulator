@@ -20209,9 +20209,9 @@ class SelectRange extends Module {
 		this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
 		this.registerTableFunction("getRanges", this.getRanges.bind(this));
 		this.registerTableFunction("addRange", this.addRangeFromComponent.bind(this));
-		this.registerComponentFunction("cell", "getRange", this.cellGetRange.bind(this));
-		this.registerComponentFunction("row", "getRange", this.rowGetRange.bind(this));
-		this.registerComponentFunction("column", "getRange", this.collGetRange.bind(this));
+		this.registerComponentFunction("cell", "getRanges", this.cellGetRanges.bind(this));
+		this.registerComponentFunction("row", "getRanges", this.rowGetRanges.bind(this));
+		this.registerComponentFunction("column", "getRanges", this.colGetRanges.bind(this));
 	}
 	
 	///////////////////////////////////
@@ -20349,28 +20349,28 @@ class SelectRange extends Module {
 	/////// Component Functions ///////
 	///////////////////////////////////
 	
-	cellGetRange(cell){
-		var range;
+	cellGetRanges(cell){
+		var ranges = [];
 		
 		if (cell.column === this.rowHeader) {
-			range = this.ranges.find((range) => range.occupiesRow(cell.row));
+			ranges = this.ranges.filter((range) => range.occupiesRow(cell.row));
 		} else {
-			range = this.ranges.find((range) => range.occupies(cell));
+			ranges = this.ranges.filter((range) => range.occupies(cell));
 		}
 		
-		return range ? range.getComponent() : null;
+		return ranges.map((range) => range.getComponent());
 	}
 	
-	rowGetRange(row){
-		var range = this.ranges.find((range) => range.occupiesRow(row));
+	rowGetRanges(row){
+		var ranges = this.ranges.filter((range) => range.occupiesRow(row));
 		
-		return range ? range.getComponent() : null;
+		return ranges.map((range) => range.getComponent());
 	}
 	
-	collGetRange(col){
-		var range = this.ranges.find((range) => range.occupiesColumn(col));
+	colGetRanges(col){
+		var ranges = this.ranges.filter((range) => range.occupiesColumn(col));
 		
-		return range ? range.getComponent() : null;
+		return ranges.map((range) => range.getComponent());
 	}
 	
 	///////////////////////////////////
