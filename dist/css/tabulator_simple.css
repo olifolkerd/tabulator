@@ -588,14 +588,9 @@
   z-index: 15;
 }
 
-.tabulator-row.tabulator-range-highlight .tabulator-range-row-header {
+.tabulator-row.tabulator-range-highlight .tabulator-cell.tabulator-range-row-header {
   background-color: #D6D6D6;
   color: #000000;
-}
-
-.tabulator-row.tabulator-range-selected .tabulator-range-row-header {
-  background-color: #3876ca;
-  color: #FFFFFF;
 }
 
 .tabulator-row .tabulator-row-resize-handle {
@@ -711,6 +706,11 @@
   height: 3px;
   margin-top: 2px;
   background: #666;
+}
+
+.tabulator-row .tabulator-cell.tabulator-range-row-header.tabulator-range-selected {
+  background-color: #3876ca;
+  color: #FFFFFF;
 }
 
 .tabulator-row .tabulator-cell.tabulator-range-selected:not(.tabulator-range-only-cell-selected):not(.tabulator-range-row-header) {

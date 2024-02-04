@@ -760,13 +760,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		z-index:15;
 	}
 	
-	&.tabulator-range-highlight .tabulator-range-row-header{
-		background-color: $headerHighlightBackground;
-		color: $headerTextHighlightBackground;
-	}
-	&.tabulator-range-selected .tabulator-range-row-header{
-		background-color: $headerSelectedBackground;
-		color: $headerSelectedTextColor;
+	&.tabulator-range-highlight{
+		.tabulator-cell.tabulator-range-row-header{
+			background-color: $headerHighlightBackground;
+			color: $headerTextHighlightBackground;
+		}
 	}
 	
 	//row resize handles
@@ -788,8 +786,6 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 	}
-	
-	
 	
 	.tabulator-responsive-collapse{
 		box-sizing:border-box;
@@ -895,6 +891,13 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					margin-top:2px;
 					background:#666;
 				}
+			}
+		}
+		
+		&.tabulator-range-row-header{
+			&.tabulator-range-selected{
+				background-color: $headerSelectedBackground;
+				color: $headerSelectedTextColor;
 			}
 		}
 		
