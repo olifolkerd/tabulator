@@ -183,8 +183,6 @@ class Range extends CoreFeature{
 		var left = Math.max(this.left, _vDomLeft);
 		var right = Math.min(this.right, _vDomRight);
 		
-		
-		
 		var topLeftCell = this.rangeManager.getCell(top, left);
 		var bottomRightCell = this.rangeManager.getCell(bottom, right);
 		
@@ -279,6 +277,23 @@ class Range extends CoreFeature{
 	getColumns() {
 		return this._getTableColumns().slice(this.left + 1, this.right + 2);
 	}
+
+	getBounds(){
+		var cells = this.getCells();
+		var output = {
+			start:null,
+			end:null,
+		};
+
+		if(cells.length){
+			output.start = cells[0];
+			output.end = cells[cells.length - 1];
+		}else{
+			console.warn("No bounds defined on range");
+		}
+
+		return output;
+	}
 	
 	getComponent() {
 		if (!this.component) {
@@ -287,11 +302,15 @@ class Range extends CoreFeature{
 		return this.component;
 	}
 	
-	destroy() {
+	destroy(notify) {
 		this.destroyed = true;
 		
 		this.element.remove();
-		
+
+		if(notify){
+			this.rangeManager.rangeRemoved(this);
+		}
+
 		if(this.initialized){
 			this.dispatchExternal("rangeRemoved", this.getComponent());
 		}

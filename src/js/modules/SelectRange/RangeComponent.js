@@ -40,6 +40,10 @@ class RangeComponent {
 	getColumns() {
 		return this._range.getColumns().map((column) => column.getComponent());
 	}
+	
+	getBounds() {
+		return this._range.getBounds();
+	}
 
 	getTop() {
 		return this._range.top;
@@ -74,6 +78,12 @@ class RangeComponent {
 		if(this._range.destroyedGuard("setEndBound")){
 			this._range.setEndBound(end ? end._cell : end);
 			this._range.rangeManager.layoutElement();
+		}
+	}
+
+	remove(){
+		if(this._range.destroyedGuard("setEndBound")){
+			this._range.destroy(true);
 		}
 	}
 }

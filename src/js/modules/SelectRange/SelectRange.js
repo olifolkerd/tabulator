@@ -441,6 +441,20 @@ class SelectRange extends Module {
 			return true;
 		}
 	}
+
+	rangeRemoved(removed){
+		this.ranges = this.ranges.filter((range) => range !== removed);
+
+		if(this.activeRange === removed){
+			if(this.ranges.length){
+				this.activeRange = this.ranges[this.ranges.length - 1];
+			}else{
+				this.addRange();
+			}
+		}
+
+		this.layoutElement();
+	}
 	
 	findJumpCell(cells, reverse, emptyStart, emptySide){
 		var nextCell;
