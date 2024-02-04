@@ -10,8 +10,6 @@ $headerTextColor:#555 !default; //header text color
 $headerBorderColor:#aaa !default;  //header border color
 $headerSeparatorColor:#999 !default; //header bottom separator color
 $headerMargin:4px !default; //padding round header
-$headerSelectedBackground: #3876ca !default; //header background color when selected
-$headerSelectedTextColor: #FFFFFF !default; //header text color when selected
 
 //column header arrows
 $sortArrowHover: #555 !default;
@@ -27,13 +25,6 @@ $rowHoverBackground:#bbb !default; //row background color on hover
 
 $rowSelectedBackground: #9ABCEA !default; //row background color when selected
 $rowSelectedBackgroundHover: #769BCC !default;//row background color when selected and hovered
-$cellSelectedBackground: #C2D5EF !default; //cell background color when selected
-
-$headerHighlightBackground: #D6D6D6 !default; //header background color when highlighted
-$headerTextHighlightBackground: #000000 !default; //header text color when highlighted
-
-$rangeBorderColor: #2975DD !default; //range border color
-$rangeHandleColor: #2975DD !default; //range handle color
 
 $editBoxColor:#1D68CD !default; //border color for edit boxes
 $errorColor:#dd0000 !default; //error indication
@@ -46,6 +37,13 @@ $footerSeparatorColor:#999 !default; //footer bottom separator color
 $footerActiveColor:#d00 !default; //footer bottom active text color
 
 
+//range selection
+$rangeBorderColor: #2975DD !default; //range border color
+$rangeHandleColor: $rangeBorderColor !default; //range handle color
+$rangeHeaderSelectedBackground: #3876ca !default; //header background color when selected
+$rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when selected
+$rangeHeaderHighlightBackground: #D6D6D6 !default; //header background color when highlighted
+$rangeHeaderTextHighlightBackground: #000000 !default; //header text color when highlighted
 
 //Tabulator Containing Element
 .tabulator{
@@ -147,12 +145,13 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 			
 			&.tabulator-range-highlight{
-				background-color: $headerHighlightBackground;
-				color: $headerTextHighlightBackground;
+				background-color: $rangeHeaderHighlightBackground;
+				color: $rangeHeaderTextHighlightBackground;
 			}
+			
 			&.tabulator-range-selected{
-				background-color: $headerSelectedBackground;
-				color: $headerSelectedTextColor;
+				background-color: $rangeHeaderSelectedBackground;
+				color: $rangeHeaderSelectedTextColor;
 			}
 			
 			//hold content of column header
@@ -762,8 +761,8 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	
 	&.tabulator-range-highlight{
 		.tabulator-cell.tabulator-range-row-header{
-			background-color: $headerHighlightBackground;
-			color: $headerTextHighlightBackground;
+			background-color: $rangeHeaderHighlightBackground;
+			color: $rangeHeaderTextHighlightBackground;
 		}
 	}
 	
@@ -896,8 +895,8 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		
 		&.tabulator-range-row-header{
 			&.tabulator-range-selected{
-				background-color: $headerSelectedBackground;
-				color: $headerSelectedTextColor;
+				background-color: $rangeHeaderSelectedBackground;
+				color: $rangeHeaderSelectedTextColor;
 			}
 		}
 		

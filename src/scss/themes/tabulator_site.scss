@@ -22,10 +22,9 @@ $rowBorderColor:#aaa !default; //table border color
 $rowTextColor:#333 !default; //table text color
 $rowHoverBackground:#bbb !default; //row background color on hover
 
-$rowSelectedBackground: #9ABCEA !default; //row background color when selected
-$rowSelectedBackgroundHover: #769BCC !default;//row background color when selected and hovered
+$rowSelectedBackground: #70c28e !default; //row background color when selected
+$rowSelectedBackgroundHover: #269b51 !default;//row background color when selected and hovered
 
-$headerHighlightBackground: #CCC !default; //header background color when highlighted
 
 $editBoxColor:#1D68CD !default; //border color for edit boxes
 $errorColor:#dd0000 !default; //error indication
@@ -36,6 +35,14 @@ $footerTextColor:#222 !default; //footer text color
 $footerBorderColor:#aaa !default; //footer border color
 $footerSeparatorColor:#3FB449 !default; //footer bottom separator color
 $footerActiveColor:$footerSeparatorColor !default; //footer bottom active text color
+
+//range selection
+$rangeBorderColor: $rowSelectedBackgroundHover !default; //range border color
+$rangeHandleColor: $rangeBorderColor !default; //range handle color
+$rangeHeaderSelectedBackground: $rangeBorderColor !default; //header background color when selected
+$rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when selected
+$rangeHeaderHighlightBackground: $rowSelectedBackground !default; //header background color when highlighted
+$rangeHeaderTextHighlightBackground: #000000 !default; //header text color when highlighted
 
 @import "../tabulator.scss";
 
@@ -58,10 +65,12 @@ $footerActiveColor:$footerSeparatorColor !default; //footer bottom active text c
 
 		.tabulator-col{
 			background-color: $headerBackgroundColor;
+			
 
 			.tabulator-col-content{
 				padding:8px;
 			}
+			
 		}
 
 		.tabulator-calcs-holder{
