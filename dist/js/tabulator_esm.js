@@ -18596,6 +18596,11 @@ class SelectRow extends Module{
 	}
 	
 	initialize(){
+
+		if(this.table.options.selectable === "highlight" && this.table.options.selectableRange){
+			this.table.options.selectable = false;
+		}
+
 		if(this.table.options.selectable !== false){
 			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
@@ -20227,6 +20232,7 @@ class SelectRange extends Module {
 	initialize() {
 		if (this.options("selectableRange")) {		
 			if(!this.options("selectable")){
+
 				this.maxRanges = this.options("selectableRange");
 				
 				this.initializeTable();

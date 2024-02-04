@@ -37,6 +37,7 @@ class SelectRange extends Module {
 	initialize() {
 		if (this.options("selectableRange")) {		
 			if(!this.options("selectable")){
+
 				this.maxRanges = this.options("selectableRange");
 				
 				this.initializeTable();

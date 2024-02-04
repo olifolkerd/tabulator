@@ -31,6 +31,11 @@ class SelectRow extends Module{
 	}
 	
 	initialize(){
+
+		if(this.table.options.selectable === "highlight" && this.table.options.selectableRange){
+			this.table.options.selectable = false;
+		}
+
 		if(this.table.options.selectable !== false){
 			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
