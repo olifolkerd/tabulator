@@ -119,8 +119,8 @@ class CoreFeature{
 	/////////// Deprecation Checks ///////////
 	//////////////////////////////////////////
 
-	deprecationCheck(oldOption, newOption){
-		return this.table.deprecationAdvisor.check(oldOption, newOption);
+	deprecationCheck(oldOption, newOption,  convert){
+		return this.table.deprecationAdvisor.check(oldOption, newOption,  convert);
 	}
 
 	deprecationCheckMsg(oldOption, msg){
@@ -18597,6 +18597,8 @@ class SelectRow extends Module{
 	
 	initialize(){
 
+		this.deprecatedOptionsCheck();
+
 		if(this.table.options.selectableRows === "highlight" && this.table.options.selectableRange){
 			this.table.options.selectableRows = false;
 		}
@@ -18611,6 +18613,14 @@ class SelectRow extends Module{
 				this.subscribe("data-refreshing", this.deselectRows.bind(this));
 			}
 		}
+	}
+
+	deprecatedOptionsCheck(){
+		this.deprecationCheck("selectable", "selectableRows", true);
+		this.deprecationCheck("selectableRollingSelection", "selectableRowsRollingSelection", true);
+		this.deprecationCheck("selectableRangeMode", "selectableRowsRangeMode", true);
+		this.deprecationCheck("selectablePersistence", "selectableRowsPersistence", true);
+		this.deprecationCheck("selectableCheck", "selectableRowsCheck", true);
 	}
 	
 	rowRetrieve(type, prevValue){
@@ -25998,7 +26008,7 @@ class DeprecationAdvisor extends CoreFeature{
 		}
 	}
 	
-	check(oldOption, newOption){
+	check(oldOption, newOption, convert){
 		var msg = "";
 		
 		if(typeof this.options(oldOption) !== "undefined"){
@@ -26007,6 +26017,10 @@ class DeprecationAdvisor extends CoreFeature{
 			if(newOption){
 				msg = msg + ", Please use the %c" + newOption + "%c option instead";
 				this._warnUser(msg, 'font-weight: bold;', 'font-weight: normal;', 'font-weight: bold;', 'font-weight: normal;');
+
+				if(convert){
+					this.table.options[newOption] = this.table.options[oldOption];
+				}
 			}else {
 				this._warnUser(msg, 'font-weight: bold;', 'font-weight: normal;');
 			}

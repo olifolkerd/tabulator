@@ -32,6 +32,8 @@ class SelectRow extends Module{
 	
 	initialize(){
 
+		this.deprecatedOptionsCheck();
+
 		if(this.table.options.selectableRows === "highlight" && this.table.options.selectableRange){
 			this.table.options.selectableRows = false;
 		}
@@ -46,6 +48,14 @@ class SelectRow extends Module{
 				this.subscribe("data-refreshing", this.deselectRows.bind(this));
 			}
 		}
+	}
+
+	deprecatedOptionsCheck(){
+		this.deprecationCheck("selectable", "selectableRows", true);
+		this.deprecationCheck("selectableRollingSelection", "selectableRowsRollingSelection", true);
+		this.deprecationCheck("selectableRangeMode", "selectableRowsRangeMode", true);
+		this.deprecationCheck("selectablePersistence", "selectableRowsPersistence", true);
+		this.deprecationCheck("selectableCheck", "selectableRowsCheck", true);
 	}
 	
 	rowRetrieve(type, prevValue){
