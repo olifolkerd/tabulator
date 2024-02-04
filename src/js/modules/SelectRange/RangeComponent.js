@@ -41,19 +41,19 @@ class RangeComponent {
 		return this._range.getBounds();
 	}
 
-	getTop() {
+	getTopEdge() {
 		return this._range.top;
 	}
 
-	getBottom() {
+	getBottomEdge() {
 		return this._range.bottom;
 	}
 
-	getLeft() {
+	getLeftEdge() {
 		return this._range.left;
 	}
 
-	getRight() {
+	getRightEdge() {
 		return this._range.right;
 	}
 
