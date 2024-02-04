@@ -19936,25 +19936,27 @@ class Range extends CoreFeature{
 	}
 	
 	setStartBound(element){
+		var row, col;
+
 		if (element.type === "column") {
 			if(this.rangeManager.columnSelection){
 				this.setStart(0, element.getPosition() - 2);
 			}
-			return;
-		}
-		
-		var row = element.row.position - 1;
-		var col = element.column.getPosition() - 2;
-		
-		if (element.column === this.rowHeader) {
-			this.setStart(row, 0);
-		} else {
-			this.setStart(row, col);
+		}else {
+			row = element.row.position - 1;
+			col = element.column.getPosition() - 2;
+			
+			if (element.column === this.rowHeader) {
+				this.setStart(row, 0);
+			} else {
+				this.setStart(row, col);
+			}
 		}
 	}
 	
 	setEndBound(element){
-		var rowsCount = this._getTableRows().length;
+		var rowsCount = this._getTableRows().length,
+		row, col, isRowHeader;
 		
 		if (element.type === "column") {
 			if(this.rangeManager.columnSelection){
@@ -19964,22 +19966,20 @@ class Range extends CoreFeature{
 					this.setEnd(0, element.getPosition() - 2);
 				}
 			}
+		}else {
+			row = element.row.position - 1;
+			col = element.column.getPosition() - 2;
+			isRowHeader = element.column === this.rowHeader;
 			
-			return;
-		}
-		
-		var row = element.row.position - 1;
-		var col = element.column.getPosition() - 2;
-		var isRowHeader = element.column === this.rowHeader;
-		
-		if (this.rangeManager.selecting === "row") {
-			this.setEnd(row, this._getTableColumns().length - 2);
-		} else if (this.rangeManager.selecting !== "row" && isRowHeader) {
-			this.setEnd(row, 0);
-		} else if (this.rangeManager.selecting === "column") {
-			this.setEnd(rowsCount - 1, col);
-		} else {
-			this.setEnd(row, col);
+			if (this.rangeManager.selecting === "row") {
+				this.setEnd(row, this._getTableColumns().length - 2);
+			} else if (this.rangeManager.selecting !== "row" && isRowHeader) {
+				this.setEnd(row, 0);
+			} else if (this.rangeManager.selecting === "column") {
+				this.setEnd(rowsCount - 1, col);
+			} else {
+				this.setEnd(row, col);
+			}
 		}
 	}
 	
@@ -20012,10 +20012,11 @@ class Range extends CoreFeature{
 	///////////////////////////////////
 	
 	layout() {
-		var _vDomTop = this.table.rowManager.renderer.vDomTop;
-		var _vDomBottom = this.table.rowManager.renderer.vDomBottom;
-		var _vDomLeft = this.table.columnManager.renderer.leftCol;
-		var _vDomRight = this.table.columnManager.renderer.rightCol;
+		var _vDomTop = this.table.rowManager.renderer.vDomTop,
+		_vDomBottom = this.table.rowManager.renderer.vDomBottom,
+		_vDomLeft = this.table.columnManager.renderer.leftCol,
+		_vDomRight = this.table.columnManager.renderer.rightCol,		
+		top, bottom, left, right, topLeftCell, bottomRightCell;
 		
 		if (_vDomTop == null) {
 			_vDomTop = 0;
@@ -20033,25 +20034,23 @@ class Range extends CoreFeature{
 			_vDomRight = Infinity;
 		}
 		
-		if (!this.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) {
-			return;
+		if (this.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) {
+			top = Math.max(this.top, _vDomTop);
+			bottom = Math.min(this.bottom, _vDomBottom);
+			left = Math.max(this.left, _vDomLeft);
+			right = Math.min(this.right, _vDomRight);
+			
+			topLeftCell = this.rangeManager.getCell(top, left);
+			bottomRightCell = this.rangeManager.getCell(bottom, right);
+			
+			this.element.classList.add("tabulator-range-active");
+			// this.element.classList.toggle("tabulator-range-active", this === this.rangeManager.activeRange);
+			
+			this.element.style.left = topLeftCell.row.getElement().offsetLeft + topLeftCell.getElement().offsetLeft + "px";
+			this.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
+			this.element.style.width = bottomRightCell.getElement().offsetLeft + bottomRightCell.getElement().offsetWidth - topLeftCell.getElement().offsetLeft + "px";
+			this.element.style.height = bottomRightCell.row.getElement().offsetTop + bottomRightCell.row.getElement().offsetHeight - topLeftCell.row.getElement().offsetTop + "px";
 		}
-		
-		var top = Math.max(this.top, _vDomTop);
-		var bottom = Math.min(this.bottom, _vDomBottom);
-		var left = Math.max(this.left, _vDomLeft);
-		var right = Math.min(this.right, _vDomRight);
-		
-		var topLeftCell = this.rangeManager.getCell(top, left);
-		var bottomRightCell = this.rangeManager.getCell(bottom, right);
-		
-		this.element.classList.add("tabulator-range-active");
-		// this.element.classList.toggle("tabulator-range-active", this === this.rangeManager.activeRange);
-		
-		this.element.style.left = topLeftCell.row.getElement().offsetLeft + topLeftCell.getElement().offsetLeft + "px";
-		this.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
-		this.element.style.width = bottomRightCell.getElement().offsetLeft + bottomRightCell.getElement().offsetWidth - topLeftCell.getElement().offsetLeft + "px";
-		this.element.style.height = bottomRightCell.row.getElement().offsetTop + bottomRightCell.row.getElement().offsetHeight - topLeftCell.row.getElement().offsetTop + "px";
 	}
 	
 	atTopLeft(cell) {
@@ -20075,22 +20074,26 @@ class Range extends CoreFeature{
 	}
 	
 	overlaps(left, top, right, bottom) {
-		if (this.left > right || left > this.right) return false;
-		if (this.top > bottom || top > this.bottom) return false;
+		if ((this.left > right || left > this.right) || (this.top > bottom || top > this.bottom)){
+			return false;
+		}
+		
 		return true;
 	}
 	
 	getData() {
-		var data = [];
-		var rows = this.getRows();
-		var columns = this.getColumns();
+		var data = [],
+		rows = this.getRows(),
+		columns = this.getColumns();
 		
 		rows.forEach((row) => {
-			var rowData = row.getData();
-			var result = {};
+			var rowData = row.getData(),
+			result = {};
+
 			columns.forEach((column) => {
 				result[column.field] = rowData[column.field];
 			});
+
 			data.push(result);
 		});
 		
@@ -20098,18 +20101,20 @@ class Range extends CoreFeature{
 	}
 	
 	getCells(structured) {
-		var cells = [];
-		var rows = this.getRows();
-		var columns = this.getColumns();
+		var cells = [],
+		rows = this.getRows(),
+		columns = this.getColumns();
 		
 		if (structured) {
 			cells = rows.map((row) => {
 				var arr = [];
+
 				row.getCells().forEach((cell) => {
 					if (columns.includes(cell.column)) {
 						arr.push(cell.getComponent());
 					}
 				});
+
 				return arr;
 			});
 		} else {
@@ -20138,8 +20143,8 @@ class Range extends CoreFeature{
 	}
 
 	getBounds(){
-		var cells = this.getCells();
-		var output = {
+		var cells = this.getCells(),
+		output = {
 			start:null,
 			end:null,
 		};
