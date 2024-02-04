@@ -10,7 +10,7 @@ $headerTextColor:#555 !default; //header text color
 $headerBorderColor:#aaa !default;  //header border color
 $headerSeparatorColor:#999 !default; //header bottom separator color
 $headerMargin:4px !default; //padding round header
-$headerSelectedBackground: #4990F1 !default; //header background color when selected
+$headerSelectedBackground: #3876ca !default; //header background color when selected
 $headerSelectedTextColor: #FFFFFF !default; //header text color when selected
 
 //column header arrows
@@ -80,7 +80,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	&.tabulator-block-select{
 		user-select: none;
 	}
-
+	
 	&.tabulator-ranges{
 		.tabulator-cell:not(.tabulator-editing){
 			user-select: none;
@@ -107,7 +107,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		-khtml-user-select: none;
 		-webkit-user-select: none;
 		-o-user-select: none;
-
+		
 		outline: none;
 		
 		&.tabulator-header-hidden{
@@ -146,6 +146,15 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				pointer-events: none;
 			}
 			
+			&.tabulator-range-highlight{
+				background-color: $headerHighlightBackground;
+				color: $headerTextHighlightBackground;
+			}
+			&.tabulator-range-selected{
+				background-color: $headerSelectedBackground;
+				color: $headerSelectedTextColor;
+			}
+			
 			//hold content of column header
 			.tabulator-col-content{
 				box-sizing:border-box;
@@ -176,7 +185,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					overflow: hidden;
 					text-overflow: ellipsis;
 					vertical-align:bottom;
-
+					
 					&.tabulator-col-title-wrap{
 						white-space: normal;
 						text-overflow: initial;
@@ -313,7 +322,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				&[aria-sort="descending"]{
 					.tabulator-col-content .tabulator-col-sorter{
 						color: $sortArrowActive;
-
+						
 						@media (hover:hover) and (pointer:fine){
 							&.tabulator-col-sorter-element .tabulator-arrow:hover{
 								cursor:pointer;
@@ -483,6 +492,36 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				}
 			}
 			
+		}
+		
+		.tabulator-range-overlay {
+			position: absolute;
+			inset: 0;
+			z-index: 10;
+			pointer-events: none;
+			
+			& .tabulator-range {
+				position: absolute;
+				box-sizing: border-box;
+				border: 1px solid $rangeBorderColor;
+				
+				&.tabulator-range-active::after {
+					content: '';
+					position: absolute;
+					right: -3px;
+					bottom: -3px;
+					width: 6px;
+					height: 6px;
+					background-color: $rangeHandleColor;
+					border-radius: 999px;
+				}
+			}
+			
+			& .tabulator-range-cell-active {
+				position: absolute;
+				box-sizing: border-box;
+				border: 2px solid $rangeBorderColor;
+			}
 		}
 	}
 	
@@ -721,6 +760,15 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		z-index:15;
 	}
 	
+	&.tabulator-range-highlight .tabulator-range-row-header{
+		background-color: $headerHighlightBackground;
+		color: $headerTextHighlightBackground;
+	}
+	&.tabulator-range-selected .tabulator-range-row-header{
+		background-color: $headerSelectedBackground;
+		color: $headerSelectedTextColor;
+	}
+	
 	//row resize handles
 	.tabulator-row-resize-handle{
 		position:absolute;
@@ -849,7 +897,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				}
 			}
 		}
-
+		
+		&.tabulator-range-selected:not(.tabulator-range-only-cell-selected):not(.tabulator-range-row-header){
+			background-color: $rowSelectedBackground;
+		}
+		
 		.tabulator-data-tree-branch-empty{
 			display:inline-block;
 			width:7px;
@@ -978,7 +1030,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					display:none;
 				}
 			}
-
+			
 			svg{
 				stroke:$rowBackgroundColor;
 			}
@@ -1516,68 +1568,3 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		}
 	}
 }
-
-// select range module styling
-
-.tabulator-header .tabulator-col{
-	&.tabulator-range-highlight{
-		background-color: $headerHighlightBackground;
-		color: $headerTextHighlightBackground;
-	}
-	&.tabulator-range-selected{
-		background-color: $headerSelectedBackground;
-		color: $headerSelectedTextColor;
-	}
-}
-
-.tabulator-row{
-	&.tabulator-range-highlight .tabulator-range-row-header{
-		background-color: $headerHighlightBackground;
-		color: $headerTextHighlightBackground;
-	}
-	&.tabulator-range-selected .tabulator-range-row-header{
-		background-color: $headerSelectedBackground;
-		color: $headerSelectedTextColor;
-	}
-}
-
-.tabulator-cell{
-	&.tabulator-range-selected:not(.tabulator-range-only-cell-selected):not(.tabulator-range-row-header){
-		background-color: $rowSelectedBackground;
-	}
-}
-
-.tabulator-range-overlay {
-	position: absolute;
-	inset: 0;
-	z-index: 10;
-	pointer-events: none;
-
-	& .tabulator-range {
-		position: absolute;
-		box-sizing: border-box;
-		border: 1px solid $rangeBorderColor;
-
-		&.tabulator-range-active::after {
-			content: '';
-			position: absolute;
-			right: -3px;
-			bottom: -3px;
-			width: 6px;
-			height: 6px;
-			background-color: $rangeHandleColor;
-			border-radius: 999px;
-		}
-	}
-
-	& .tabulator-range-cell-active {
-		position: absolute;
-		box-sizing: border-box;
-		border: 2px solid $rangeBorderColor;
-	}
-}
-
-.tabulator-range-menu-item-focused {
-	background-color: $rowAltBackgroundColor;
-}
-

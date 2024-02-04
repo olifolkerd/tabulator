@@ -24,6 +24,10 @@
   user-select: none;
 }
 
+.tabulator.tabulator-ranges .tabulator-cell:not(.tabulator-editing) {
+  user-select: none;
+}
+
 .tabulator .tabulator-header {
   position: relative;
   box-sizing: border-box;
@@ -72,6 +76,16 @@
   border: 1px solid #ddd;
   background: #e6e6e6;
   pointer-events: none;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-range-highlight {
+  background-color: #D6D6D6;
+  color: #000000;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-range-selected {
+  background-color: #3876ca;
+  color: #FFFFFF;
 }
 
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content {
@@ -345,6 +359,36 @@
   border-top: 2px solid #ddd;
 }
 
+.tabulator .tabulator-tableholder .tabulator-range-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.tabulator .tabulator-tableholder .tabulator-range-overlay .tabulator-range {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid #2975DD;
+}
+
+.tabulator .tabulator-tableholder .tabulator-range-overlay .tabulator-range.tabulator-range-active::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 6px;
+  height: 6px;
+  background-color: #2975DD;
+  border-radius: 999px;
+}
+
+.tabulator .tabulator-tableholder .tabulator-range-overlay .tabulator-range-cell-active {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid #2975DD;
+}
+
 .tabulator .tabulator-footer {
   border-top: 1px solid #ddd;
   background-color: #e6e6e6;
@@ -544,6 +588,16 @@
   z-index: 15;
 }
 
+.tabulator-row.tabulator-range-highlight .tabulator-range-row-header {
+  background-color: #D6D6D6;
+  color: #000000;
+}
+
+.tabulator-row.tabulator-range-selected .tabulator-range-row-header {
+  background-color: #3876ca;
+  color: #FFFFFF;
+}
+
 .tabulator-row .tabulator-row-resize-handle {
   position: absolute;
   right: 0;
@@ -657,6 +711,10 @@
   height: 3px;
   margin-top: 2px;
   background: #666;
+}
+
+.tabulator-row .tabulator-cell.tabulator-range-selected:not(.tabulator-range-only-cell-selected):not(.tabulator-range-row-header) {
+  background-color: #9ABCEA;
 }
 
 .tabulator-row .tabulator-cell .tabulator-data-tree-branch-empty {
@@ -1203,82 +1261,6 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   height: 1px;
   width: 7px;
   background: #333;
-}
-
-.tabulator-header .tabulator-col.tabulator-range-highlight {
-  background-color: #D6D6D6;
-  color: #000000;
-}
-
-.tabulator-header .tabulator-col.tabulator-range-selected {
-  background-color: #4990F1;
-  color: #FFFFFF;
-}
-
-.tabulator-row.tabulator-range-highlight .tabulator-range-row-header {
-  background-color: #D6D6D6;
-  color: #000000;
-}
-
-.tabulator-row.tabulator-range-selected .tabulator-range-row-header {
-  background-color: #4990F1;
-  color: #FFFFFF;
-}
-
-.tabulator-cell {
-  user-select: none;
-  position: relative;
-}
-
-.tabulator-cell.tabulator-range-selected:not(.tabulator-range-only-cell-selected):not(.tabulator-range-row-header) {
-  background-color: #9ABCEA;
-}
-
-.tabulator-cell.tabulator-range-row-header {
-  text-align: center;
-}
-
-.tabulator-range-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  pointer-events: none;
-}
-
-.tabulator-range-overlay .tabulator-range {
-  position: absolute;
-  box-sizing: border-box;
-  border: 1px solid #2975DD;
-}
-
-.tabulator-range-overlay .tabulator-range.tabulator-range-active::after {
-  content: '';
-  position: absolute;
-  right: -3px;
-  bottom: -3px;
-  width: 6px;
-  height: 6px;
-  background-color: #2975DD;
-  border-radius: 999px;
-}
-
-.tabulator-range-overlay .tabulator-range-cell-active {
-  position: absolute;
-  box-sizing: border-box;
-  border: 2px solid #2975DD;
-}
-
-.tabulator-range-menu-item-focused {
-  background-color: #f9f9f9;
-}
-
-.tabulator-col-resize-guide {
-  position: absolute;
-  width: 4px;
-  margin-left: -0.5px;
-  height: 100%;
-  top: 0;
-  background-color: #999;
 }
 
 .tabulator {
