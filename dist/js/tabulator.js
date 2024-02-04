@@ -191,8 +191,8 @@
 		/////////// Deprecation Checks ///////////
 		//////////////////////////////////////////
 
-		deprecationCheck(oldOption, newOption){
-			return this.table.deprecationAdvisor.check(oldOption, newOption);
+		deprecationCheck(oldOption, newOption,  convert){
+			return this.table.deprecationAdvisor.check(oldOption, newOption,  convert);
 		}
 
 		deprecationCheckMsg(oldOption, msg){
@@ -6637,7 +6637,7 @@
 			}
 		}
 		
-		check(oldOption, newOption){
+		check(oldOption, newOption, convert){
 			var msg = "";
 			
 			if(typeof this.options(oldOption) !== "undefined"){
@@ -6646,6 +6646,10 @@
 				if(newOption){
 					msg = msg + ", Please use the %c" + newOption + "%c option instead";
 					this._warnUser(msg, 'font-weight: bold;', 'font-weight: normal;', 'font-weight: bold;', 'font-weight: normal;');
+
+					if(convert){
+						this.table.options[newOption] = this.table.options[oldOption];
+					}
 				}else {
 					this._warnUser(msg, 'font-weight: bold;', 'font-weight: normal;');
 				}
@@ -9433,6 +9437,7 @@
 			var sel, textRange;
 			this.blocked = false;
 			this.customSelection = false;
+		
 
 			if (this.mode === true || this.mode === "copy") {
 
@@ -13752,8 +13757,8 @@
 			
 			this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 			this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
-			this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
-			this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
+			// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
+			// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
 			this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
 			this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
 		}
@@ -14370,24 +14375,30 @@
 							}
 						}else {
 							console.warn("Edit Error - Editor should return an instance of Node, the editor returned:", cellEditor);
-							element.blur();
+							this.blur(element);
 							return false;
 						}
 					}else {
-						element.blur();
+						this.blur(element);
 						return false;
 					}
 					
 					return true;
 				}else {
 					this.mouseClick = false;
-					element.blur();
+					this.blur(element);
 					return false;
 				}
 			}else {
 				this.mouseClick = false;
-				element.blur();
+				this.blur(element);
 				return false;
+			}
+		}
+
+		blur(element){
+			if(!this.confirm("edit-blur", [element]) ){
+				element.blur();
 			}
 		}
 		
@@ -14480,9 +14491,9 @@
 			if (range === 'range') {
 				var columns = this.table.modules.selectRange.selectedColumns();
 				headers = this.config.columnHeaders !== false
-					? this.headersToExportRows(this.generateColumnGroupHeaders(columns.map((component) => component._column)))
+					? this.headersToExportRows(this.generateColumnGroupHeaders(columns))
 					: [];
-				body = this.bodyToExportRows(this.rowLookup(range), columns);
+				body = this.bodyToExportRows(this.rowLookup(range), this.table.modules.selectRange.selectedColumns(true));
 			} else {
 				headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders()) : [];
 				body = this.bodyToExportRows(this.rowLookup(range));
@@ -14702,7 +14713,7 @@
 					rows.push(this.table.modules.columnCalcs.botRow);
 				}
 			}
-			
+
 			rows = rows.filter((row) => {
 				switch(row.type){
 					case "group":
@@ -16696,7 +16707,7 @@
 				if(row instanceof RowComponent){
 
 					checkbox.addEventListener("change", (e) => {
-						if(this.table.options.selectableRangeMode === "click"){
+						if(this.table.options.selectableRowsRangeMode === "click"){
 							if(!blocked){
 								row.toggleSelect();
 							}else {
@@ -16707,7 +16718,7 @@
 						}
 					});
 
-					if(this.table.options.selectableRangeMode === "click"){
+					if(this.table.options.selectableRowsRangeMode === "click"){
 						checkbox.addEventListener("click", (e) => {
 							blocked = true;
 							this.table.modules.selectRow.handleComplexRowClick(row._row, e);
@@ -20388,7 +20399,7 @@
 					this.rootPopup = null;
 					
 					if(this.currentComponent){
-						this.dispatch("menu-closed");
+						this.dispatch("menu-closed", menu, popup);
 						this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
 						this.currentComponent = null;
 					}
@@ -24652,11 +24663,11 @@
 			this.selectedRows = []; //hold selected rows
 			this.headerCheckboxElement = null; // hold header select element
 			
-			this.registerTableOption("selectable", "highlight"); //highlight rows on hover
-			this.registerTableOption("selectableRangeMode", "drag");  //highlight rows on hover
-			this.registerTableOption("selectableRollingSelection", true); //roll selection once maximum number of selectable rows is reached
-			this.registerTableOption("selectablePersistence", true); // maintain selection when table view is updated
-			this.registerTableOption("selectableCheck", function(data, row){return true;}); //check whether row is selectable
+			this.registerTableOption("selectableRows", "highlight"); //highlight rows on hover
+			this.registerTableOption("selectableRowsRangeMode", "drag");  //highlight rows on hover
+			this.registerTableOption("selectableRowsRollingSelection", true); //roll selection once maximum number of selectable rows is reached
+			this.registerTableOption("selectableRowsPersistence", true); // maintain selection when table view is updated
+			this.registerTableOption("selectableRowsCheck", function(data, row){return true;}); //check whether row is selectable
 			
 			this.registerTableFunction("selectRow", this.selectRows.bind(this));
 			this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
@@ -24672,16 +24683,31 @@
 		}
 		
 		initialize(){
-			if(this.table.options.selectable !== false){
+
+			this.deprecatedOptionsCheck();
+
+			if(this.table.options.selectableRows === "highlight" && this.table.options.selectableRange){
+				this.table.options.selectableRows = false;
+			}
+
+			if(this.table.options.selectableRows !== false){
 				this.subscribe("row-init", this.initializeRow.bind(this));
 				this.subscribe("row-deleting", this.rowDeleted.bind(this));
 				this.subscribe("rows-wipe", this.clearSelectionData.bind(this));
 				this.subscribe("rows-retrieve", this.rowRetrieve.bind(this));
 				
-				if(this.table.options.selectable && !this.table.options.selectablePersistence){
+				if(this.table.options.selectableRows && !this.table.options.selectableRowsPersistence){
 					this.subscribe("data-refreshing", this.deselectRows.bind(this));
 				}
 			}
+		}
+
+		deprecatedOptionsCheck(){
+			this.deprecationCheck("selectable", "selectableRows", true);
+			this.deprecationCheck("selectableRollingSelection", "selectableRowsRollingSelection", true);
+			this.deprecationCheck("selectableRangeMode", "selectableRowsRangeMode", true);
+			this.deprecationCheck("selectablePersistence", "selectableRowsPersistence", true);
+			this.deprecationCheck("selectableCheck", "selectableRowsCheck", true);
 		}
 		
 		rowRetrieve(type, prevValue){
@@ -24726,8 +24752,8 @@
 				element.classList.add("tabulator-selectable");
 				element.classList.remove("tabulator-unselectable");
 				
-				if(self.table.options.selectable && self.table.options.selectable != "highlight"){
-					if(self.table.options.selectableRangeMode === "click"){
+				if(self.table.options.selectableRows && self.table.options.selectableRows != "highlight"){
+					if(self.table.options.selectableRowsRangeMode === "click"){
 						element.addEventListener("click", this.handleComplexRowClick.bind(this, row));
 					}else {
 						element.addEventListener("click", function(e){
@@ -24801,7 +24827,7 @@
 					toggledRows.forEach((toggledRow)=>{
 						if(toggledRow !== this.lastClickedRow){
 							
-							if(this.table.options.selectable !== true && !this.isRowSelected(row)){
+							if(this.table.options.selectableRows !== true && !this.isRowSelected(row)){
 								if(this.selectedRows.length < this.table.options.selectable){
 									this.toggleRow(toggledRow);
 								}
@@ -24814,7 +24840,7 @@
 				}else {
 					this.deselectRows(undefined, true);
 					
-					if(this.table.options.selectable !== true){
+					if(this.table.options.selectableRows !== true){
 						if(toggledRows.length > this.table.options.selectable){
 							toggledRows = toggledRows.slice(0, this.table.options.selectable);
 						}
@@ -24836,7 +24862,7 @@
 
 		checkRowSelectability(row){
 			if(row && row.type === "row"){
-				return this.table.options.selectableCheck.call(this.table, row.getComponent());
+				return this.table.options.selectableRowsCheck.call(this.table, row.getComponent());
 			}
 
 			return false;
@@ -24898,9 +24924,9 @@
 		//select an individual row
 		_selectRow(rowInfo, silent, force){
 			//handle max row count
-			if(!isNaN(this.table.options.selectable) && this.table.options.selectable !== true && !force){
+			if(!isNaN(this.table.options.selectable) && this.table.options.selectableRows !== true && !force){
 				if(this.selectedRows.length >= this.table.options.selectable){
-					if(this.table.options.selectableRollingSelection){
+					if(this.table.options.selectableRowsRollingSelection){
 						this._deselectRow(this.selectedRows[0]);
 					}else {
 						return false;
@@ -25381,90 +25407,90 @@
 	};
 
 	class Sort extends Module{
-
+		
 		constructor(table){
 			super(table);
-
+			
 			this.sortList = []; //holder current sort
 			this.changed = false; //has the sort changed since last render
-
+			
 			this.registerTableOption("sortMode", "local"); //local or remote sorting
-
+			
 			this.registerTableOption("initialSort", false); //initial sorting criteria
 			this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
 			this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
 			this.registerTableOption("headerSortElement", "<div class='tabulator-arrow'></div>"); //header sort element
 			this.registerTableOption("headerSortClickElement", "header"); //element which triggers sort when clicked
-
+			
 			this.registerColumnOption("sorter");
 			this.registerColumnOption("sorterParams");
-
+			
 			this.registerColumnOption("headerSort", true);
 			this.registerColumnOption("headerSortStartingDir");
 			this.registerColumnOption("headerSortTristate");
-
+			
 		}
-
+		
 		initialize(){
 			this.subscribe("column-layout", this.initializeColumn.bind(this));
 			this.subscribe("table-built", this.tableBuilt.bind(this));
 			this.registerDataHandler(this.sort.bind(this), 20);
-
+			
 			this.registerTableFunction("setSort", this.userSetSort.bind(this));
 			this.registerTableFunction("getSorters", this.getSort.bind(this));
 			this.registerTableFunction("clearSort", this.clearSort.bind(this));
-
+			
 			if(this.table.options.sortMode === "remote"){
 				this.subscribe("data-params", this.remoteSortParams.bind(this));
 			}
 		}
-
+		
 		tableBuilt(){
 			if(this.table.options.initialSort){
 				this.setSort(this.table.options.initialSort);
 			}
 		}
-
+		
 		remoteSortParams(data, config, silent, params){
 			var sorters = this.getSort();
-
+			
 			sorters.forEach((item) => {
 				delete item.column;
 			});
-
+			
 			params.sort = sorters;
-
+			
 			return params;
 		}
-
-
+		
+		
 		///////////////////////////////////
 		///////// Table Functions /////////
 		///////////////////////////////////
-
+		
 		userSetSort(sortList, dir){
 			this.setSort(sortList, dir);
 			// this.table.rowManager.sorterRefresh();
 			this.refreshSort();
 		}
-
+		
 		clearSort(){
 			this.clear();
 			// this.table.rowManager.sorterRefresh();
 			this.refreshSort();
 		}
-
-
+		
+		
 		///////////////////////////////////
 		///////// Internal Logic //////////
 		///////////////////////////////////
-
+		
 		//initialize column header for sorting
 		initializeColumn(column){
 			var sorter = false,
 			colEl,
 			arrowEl;
-
+			
 			switch(typeof column.definition.sorter){
 				case "string":
 					if(Sort.sorters[column.definition.sorter]){
@@ -25473,28 +25499,28 @@
 						console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
 					}
 					break;
-
+				
 				case "function":
 					sorter = column.definition.sorter;
 					break;
 			}
-
+			
 			column.modules.sort = {
 				sorter:sorter, dir:"none",
 				params:column.definition.sorterParams || {},
 				startingDir:column.definition.headerSortStartingDir || "asc",
 				tristate: column.definition.headerSortTristate,
 			};
-
+			
 			if(column.definition.headerSort !== false){
-
+				
 				colEl = column.getElement();
-
+				
 				colEl.classList.add("tabulator-sortable");
-
+				
 				arrowEl = document.createElement("div");
 				arrowEl.classList.add("tabulator-col-sorter");
-
+				
 				switch(this.table.options.headerSortClickElement){
 					case "icon":
 						arrowEl.classList.add("tabulator-col-sorter-element");
@@ -25506,33 +25532,39 @@
 						colEl.classList.add("tabulator-col-sorter-element");
 						break;
 				}
-
+				
 				switch(this.table.options.headerSortElement){
 					case "function":
-						//do nothing
+					//do nothing
 						break;
-
+					
 					case "object":
 						arrowEl.appendChild(this.table.options.headerSortElement);
 						break;
-						
+					
 					default:
 						arrowEl.innerHTML = this.table.options.headerSortElement;
 				}
-
+				
 				//create sorter arrow
 				column.titleHolderElement.appendChild(arrowEl);
-
+				
 				column.modules.sort.element = arrowEl;
-
+				
 				this.setColumnHeaderSortIcon(column, "none");
-
+				
+				if(this.table.options.headerSortClickElement === "icon"){
+					arrowEl.addEventListener("mousedown", (e) => {
+						e.stopPropagation();
+					});
+				}
+				
 				//sort on click
 				(this.table.options.headerSortClickElement === "icon" ? arrowEl : colEl).addEventListener("click", (e) => {
 					var dir = "",
 					sorters=[],
 					match = false;
-
+					
 					if(column.modules.sort){
 						if(column.modules.sort.tristate){
 							if(column.modules.sort.dir == "none"){
@@ -25549,26 +25581,26 @@
 								case "asc":
 									dir = "desc";
 									break;
-
+								
 								case "desc":
 									dir = "asc";
 									break;
-
+								
 								default:
 									dir = column.modules.sort.startingDir;
 							}
 						}
-
+						
 						if (this.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
 							sorters = this.getSort();
-
+							
 							match = sorters.findIndex((sorter) => {
 								return sorter.field === column.getField();
 							});
-
+							
 							if(match > -1){
 								sorters[match].dir = dir;
-
+								
 								match = sorters.splice(match, 1)[0];
 								if(dir != "none"){
 									sorters.push(match);
@@ -25578,7 +25610,7 @@
 									sorters.push({column:column, dir:dir});
 								}
 							}
-
+							
 							//add to existing sort
 							this.setSort(sorters);
 						}else {
@@ -25588,63 +25620,63 @@
 								//sort by column only
 								this.setSort(column, dir);
 							}
-
+							
 						}
-
+						
 						// this.table.rowManager.sorterRefresh(!this.sortList.length);
 						this.refreshSort();
 					}
 				});
 			}
 		}
-
+		
 		refreshSort(){
 			if(this.table.options.sortMode === "remote"){
 				this.reloadData(null, false, false);
 			}else {
 				this.refreshData(true);
 			}
-
+			
 			//TODO - Persist left position of row manager
 			// left = this.scrollLeft;
 			// this.scrollHorizontal(left);
 		}
-
+		
 		//check if the sorters have changed since last use
 		hasChanged(){
 			var changed = this.changed;
 			this.changed = false;
 			return changed;
 		}
-
+		
 		//return current sorters
 		getSort(){
 			var self = this,
 			sorters = [];
-
+			
 			self.sortList.forEach(function(item){
 				if(item.column){
 					sorters.push({column:item.column.getComponent(), field:item.column.getField(), dir:item.dir});
 				}
 			});
-
+			
 			return sorters;
 		}
-
+		
 		//change sort list and trigger sort
 		setSort(sortList, dir){
 			var self = this,
 			newSortList = [];
-
+			
 			if(!Array.isArray(sortList)){
 				sortList = [{column: sortList, dir:dir}];
 			}
-
+			
 			sortList.forEach(function(item){
 				var column;
-
+				
 				column = self.table.columnManager.findColumn(item.column);
-
+				
 				if(column){
 					item.column = column;
 					newSortList.push(item);
@@ -25652,42 +25684,42 @@
 				}else {
 					console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
 				}
-
+				
 			});
-
+			
 			self.sortList = newSortList;
-
+			
 			this.dispatch("sort-changed");
 		}
-
+		
 		//clear sorters
 		clear(){
 			this.setSort([]);
 		}
-
+		
 		//find appropriate sorter for column
 		findSorter(column){
 			var row = this.table.rowManager.activeRows[0],
 			sorter = "string",
 			field, value;
-
+			
 			if(row){
 				row = row.getData();
 				field = column.getField();
-
+				
 				if(field){
-
+					
 					value = column.getFieldValue(row);
-
+					
 					switch(typeof value){
 						case "undefined":
 							sorter = "string";
 							break;
-
+						
 						case "boolean":
 							sorter = "boolean";
 							break;
-
+						
 						default:
 							if(!isNaN(value) && value !== ""){
 								sorter = "number";
@@ -25700,70 +25732,70 @@
 					}
 				}
 			}
-
+			
 			return Sort.sorters[sorter];
 		}
-
+		
 		//work through sort list sorting data
 		sort(data){
 			var self = this,
 			sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
 			sortListActual = [],
 			rowComponents = [];
-
+			
 			if(this.subscribedExternal("dataSorting")){
 				this.dispatchExternal("dataSorting", self.getSort());
 			}
-
+			
 			self.clearColumnHeaders();
-
+			
 			if(this.table.options.sortMode !== "remote"){
-
+				
 				//build list of valid sorters and trigger column specific callbacks before sort begins
 				sortList.forEach(function(item, i){
 					var sortObj;
-
+					
 					if(item.column){
 						sortObj = item.column.modules.sort;
-
+						
 						if(sortObj){
-
+							
 							//if no sorter has been defined, take a guess
 							if(!sortObj.sorter){
 								sortObj.sorter = self.findSorter(item.column);
 							}
-
+							
 							item.params = typeof sortObj.params === "function" ? sortObj.params(item.column.getComponent(), item.dir) : sortObj.params;
-
+							
 							sortListActual.push(item);
 						}
-
+						
 						self.setColumnHeader(item.column, item.dir);
 					}
 				});
-
+				
 				//sort data
 				if (sortListActual.length) {
 					self._sortItems(data, sortListActual);
 				}
-
+				
 			}else {
 				sortList.forEach(function(item, i){
 					self.setColumnHeader(item.column, item.dir);
 				});
 			}
-
+			
 			if(this.subscribedExternal("dataSorted")){
 				data.forEach((row) => {
 					rowComponents.push(row.getComponent());
 				});
-
+				
 				this.dispatchExternal("dataSorted", self.getSort(), rowComponents);
 			}
-
+			
 			return data;
 		}
-
+		
 		//clear sort arrows on columns
 		clearColumnHeaders(){
 			this.table.columnManager.getRealColumns().forEach((column) => {
@@ -25774,21 +25806,21 @@
 				}
 			});
 		}
-
+		
 		//set the column header sort direction
 		setColumnHeader(column, dir){
 			column.modules.sort.dir = dir;
 			column.getElement().setAttribute("aria-sort", dir === "asc" ? "ascending" : "descending");
 			this.setColumnHeaderSortIcon(column, dir);
 		}
-
+		
 		setColumnHeaderSortIcon(column, dir){
 			var sortEl = column.modules.sort.element,
 			arrowEl;
-
+			
 			if(column.definition.headerSort && typeof this.table.options.headerSortElement === "function"){
 				while(sortEl.firstChild) sortEl.removeChild(sortEl.firstChild);
-
+				
 				arrowEl = this.table.options.headerSortElement.call(this.table, column.getComponent(), dir);
 				
 				if(typeof arrowEl === "object"){
@@ -25798,45 +25830,45 @@
 				}
 			}
 		}
-
+		
 		//sort each item in sort list
 		_sortItems(data, sortList){
 			var sorterCount = sortList.length - 1;
-
+			
 			data.sort((a, b) => {
 				var result;
-
+				
 				for(var i = sorterCount; i>= 0; i--){
 					let sortItem = sortList[i];
-
+					
 					result = this._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
-
+					
 					if(result !== 0){
 						break;
 					}
 				}
-
+				
 				return result;
 			});
 		}
-
+		
 		//process individual rows for a sort function on active data
 		_sortRow(a, b, column, dir, params){
 			var el1Comp, el2Comp;
-
+			
 			//switch elements depending on search direction
 			var el1 = dir == "asc" ? a : b;
 			var el2 = dir == "asc" ? b : a;
-
+			
 			a = column.getFieldValue(el1.getData());
 			b = column.getFieldValue(el2.getData());
-
+			
 			a = typeof a !== "undefined" ? a : "";
 			b = typeof b !== "undefined" ? b : "";
-
+			
 			el1Comp = el1.getComponent();
 			el2Comp = el2.getComponent();
-
+			
 			return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
 		}
 	}
@@ -25855,11 +25887,7 @@
 					if (typeof target[name] !== "undefined") {
 						return target[name];
 					} else {
-						return target._range.table.componentFunctionBinder.handle(
-							"range",
-							target._range,
-							name,
-						);
+						return target._range.table.componentFunctionBinder.handle("range", target._range, name);
 					}
 				},
 			});
@@ -25888,43 +25916,100 @@
 		getColumns() {
 			return this._range.getColumns().map((column) => column.getComponent());
 		}
+		
+		getBounds() {
+			return this._range.getBounds();
+		}
 
-		getTop() {
+		getTopEdge() {
 			return this._range.top;
 		}
 
-		getBottom() {
+		getBottomEdge() {
 			return this._range.bottom;
 		}
 
-		getLeft() {
+		getLeftEdge() {
 			return this._range.left;
 		}
 
-		getRight() {
+		getRightEdge() {
 			return this._range.right;
+		}
+
+		setBounds(start, end){
+			if(this._range.destroyedGuard("setBounds")){
+				this._range.setBounds(start ? start._cell : start, end ? end._cell : end);
+			}
+		}
+
+		setStartBound(start){
+			if(this._range.destroyedGuard("setStartBound")){
+				this._range.setEndBound(start ? start._cell : start);
+				this._range.rangeManager.layoutElement();
+			}
+		}
+
+		setEndBound(end){
+			if(this._range.destroyedGuard("setEndBound")){
+				this._range.setEndBound(end ? end._cell : end);
+				this._range.rangeManager.layoutElement();
+			}
+		}
+
+		remove(){
+			if(this._range.destroyedGuard("remove")){
+				this._range.destroy(true);
+			}
 		}
 	}
 
 	class Range extends CoreFeature{
-		constructor(table, rangeManager, row, col, element) {
+		constructor(table, rangeManager, start, end) {
 			super(table);
-
+			
 			this.rangeManager = rangeManager;
-
+			this.element = null;
 			this.initialized = false;
 			this.initializing = {
 				start:false,
 				end:false,
 			};
-
+			this.destroyed = false;
+			
+			this.top = 0;
+			this.bottom = 0;
+			this.left = 0;
+			this.right = 0;
+			
 			this.table = table;
-			this.start = { row, col };
-			this.end = { row, col };
-			this._updateMinMax();
-			this.element = element;
+			this.start = {row:0, col:0};
+			this.end = {row:0, col:0};
+			
+			this.initElement();
+			
+			setTimeout(() => {
+				this.initBounds(start, end);
+			});
 		}
-
+		
+		initElement(){
+			this.element = document.createElement("div");
+			this.element.classList.add("tabulator-range");
+		}
+		
+		initBounds(start, end){
+			this._updateMinMax();
+			
+			if(start){
+				this.setBounds(start, end || start);
+			}
+		}
+		
+		///////////////////////////////////
+		///////   Boundary Setup    ///////
+		///////////////////////////////////
+		
 		setStart(row, col) {
 			if(this.start.row !== row || this.start.col !== col){
 				this.start.row = row;
@@ -25934,23 +26019,80 @@
 				this._updateMinMax();
 			}
 		}
-
+		
 		setEnd(row, col) {
 			if(this.end.row !== row || this.end.col !== col){
 				this.end.row = row;
 				this.end.col = col;
-
+				
 				this.initializing.end = true;
 				this._updateMinMax();
 			}
 		}
+		
+		setBounds(start, end, visibleRows){
+			if(start){
+				this.setStartBound(start);
+			}
+			
+			this.setEndBound(end || start);
+			this.rangeManager.layoutElement(visibleRows);
+		}
+		
+		setStartBound(element){
+			var row, col;
 
+			if (element.type === "column") {
+				if(this.rangeManager.columnSelection){
+					this.setStart(0, element.getPosition() - 2);
+				}
+			}else {
+				row = element.row.position - 1;
+				col = element.column.getPosition() - 2;
+				
+				if (element.column === this.rowHeader) {
+					this.setStart(row, 0);
+				} else {
+					this.setStart(row, col);
+				}
+			}
+		}
+		
+		setEndBound(element){
+			var rowsCount = this._getTableRows().length,
+			row, col, isRowHeader;
+			
+			if (element.type === "column") {
+				if(this.rangeManager.columnSelection){
+					if (this.rangeManager.selecting === "column") {
+						this.setEnd(rowsCount - 1, element.getPosition() - 2);
+					} else if (this.rangeManager.selecting === "cell") {
+						this.setEnd(0, element.getPosition() - 2);
+					}
+				}
+			}else {
+				row = element.row.position - 1;
+				col = element.column.getPosition() - 2;
+				isRowHeader = element.column === this.rowHeader;
+				
+				if (this.rangeManager.selecting === "row") {
+					this.setEnd(row, this._getTableColumns().length - 2);
+				} else if (this.rangeManager.selecting !== "row" && isRowHeader) {
+					this.setEnd(row, 0);
+				} else if (this.rangeManager.selecting === "column") {
+					this.setEnd(rowsCount - 1, col);
+				} else {
+					this.setEnd(row, col);
+				}
+			}
+		}
+		
 		_updateMinMax() {
 			this.top = Math.min(this.start.row, this.end.row);
 			this.bottom = Math.max(this.start.row, this.end.row);
 			this.left = Math.min(this.start.col, this.end.col);
 			this.right = Math.max(this.start.col, this.end.col);
-
+			
 			if(this.initialized){
 				this.dispatchExternal("rangeChanged", this.getComponent());
 			}else {
@@ -25960,72 +26102,194 @@
 				}
 			}
 		}
-
+		
+		_getTableColumns() {
+			return this.table.columnManager.getVisibleColumnsByIndex();
+		}
+		
+		_getTableRows() {
+			return this.table.rowManager.getDisplayRows();
+		}
+		
+		///////////////////////////////////
+		///////      Rendering      ///////
+		///////////////////////////////////
+		
+		layout() {
+			var _vDomTop = this.table.rowManager.renderer.vDomTop,
+			_vDomBottom = this.table.rowManager.renderer.vDomBottom,
+			_vDomLeft = this.table.columnManager.renderer.leftCol,
+			_vDomRight = this.table.columnManager.renderer.rightCol,		
+			top, bottom, left, right, topLeftCell, bottomRightCell;
+			
+			if (_vDomTop == null) {
+				_vDomTop = 0;
+			}
+			
+			if (_vDomBottom == null) {
+				_vDomBottom = Infinity;
+			}
+			
+			if (_vDomLeft == null) {
+				_vDomLeft = 0;
+			}
+			
+			if (_vDomRight == null) {
+				_vDomRight = Infinity;
+			}
+			
+			if (this.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) {
+				top = Math.max(this.top, _vDomTop);
+				bottom = Math.min(this.bottom, _vDomBottom);
+				left = Math.max(this.left, _vDomLeft);
+				right = Math.min(this.right, _vDomRight);
+				
+				topLeftCell = this.rangeManager.getCell(top, left);
+				bottomRightCell = this.rangeManager.getCell(bottom, right);
+				
+				this.element.classList.add("tabulator-range-active");
+				// this.element.classList.toggle("tabulator-range-active", this === this.rangeManager.activeRange);
+				
+				this.element.style.left = topLeftCell.row.getElement().offsetLeft + topLeftCell.getElement().offsetLeft + "px";
+				this.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
+				this.element.style.width = bottomRightCell.getElement().offsetLeft + bottomRightCell.getElement().offsetWidth - topLeftCell.getElement().offsetLeft + "px";
+				this.element.style.height = bottomRightCell.row.getElement().offsetTop + bottomRightCell.row.getElement().offsetHeight - topLeftCell.row.getElement().offsetTop + "px";
+			}
+		}
+		
 		atTopLeft(cell) {
-			return (
-				cell.row.position - 1 === this.top &&
-				cell.column.getPosition() - 2 === this.left
-			);
+			return cell.row.position - 1 === this.top && cell.column.getPosition() - 2 === this.left;
 		}
-
+		
 		atBottomRight(cell) {
-			return (
-				cell.row.position - 1 === this.bottom &&
-				cell.column.getPosition() - 2 === this.right
-			);
+			return cell.row.position - 1 === this.bottom && cell.column.getPosition() - 2 === this.right;
 		}
-
+		
 		occupies(cell) {
 			return this.occupiesRow(cell.row) && this.occupiesColumn(cell.column);
 		}
-
+		
 		occupiesRow(row) {
 			return this.top <= row.position - 1 && row.position - 1 <= this.bottom;
 		}
-
+		
 		occupiesColumn(col) {
 			return this.left <= col.getPosition() - 2 && col.getPosition() - 2 <= this.right;
 		}
-
+		
 		overlaps(left, top, right, bottom) {
-			if (this.left > right || left > this.right) return false;
-			if (this.top > bottom || top > this.bottom) return false;
+			if ((this.left > right || left > this.right) || (this.top > bottom || top > this.bottom)){
+				return false;
+			}
+			
 			return true;
 		}
-
+		
 		getData() {
-			return this.rangeManager.getDataByRange(this);
-		}
+			var data = [],
+			rows = this.getRows(),
+			columns = this.getColumns();
+			
+			rows.forEach((row) => {
+				var rowData = row.getData(),
+				result = {};
 
-		getCells() {
-			return this.rangeManager.getCellsByRange(this);
-		}
+				columns.forEach((column) => {
+					result[column.field] = rowData[column.field];
+				});
 
+				data.push(result);
+			});
+			
+			return data;
+		}
+		
+		getCells(structured) {
+			var cells = [],
+			rows = this.getRows(),
+			columns = this.getColumns();
+			
+			if (structured) {
+				cells = rows.map((row) => {
+					var arr = [];
+
+					row.getCells().forEach((cell) => {
+						if (columns.includes(cell.column)) {
+							arr.push(cell.getComponent());
+						}
+					});
+
+					return arr;
+				});
+			} else {
+				rows.forEach((row) => {
+					row.getCells().forEach((cell) => {
+						if (columns.includes(cell.column)) {
+							cells.push(cell.getComponent());
+						}
+					});
+				});
+			}
+			
+			return cells;
+		}
+		
 		getStructuredCells() {
-			return this.rangeManager.getCellsByRange(this, true);
+			return this.getCells(true);
 		}
-
+		
 		getRows() {
-			return this.rangeManager.getRowsByRange(this);
+			return this._getTableRows().slice(this.top, this.bottom + 1);
 		}
-
+		
 		getColumns() {
-			return this.rangeManager.getColumnsByRange(this);
+			return this._getTableColumns().slice(this.left + 1, this.right + 2);
 		}
 
+		getBounds(){
+			var cells = this.getCells(),
+			output = {
+				start:null,
+				end:null,
+			};
+
+			if(cells.length){
+				output.start = cells[0];
+				output.end = cells[cells.length - 1];
+			}else {
+				console.warn("No bounds defined on range");
+			}
+
+			return output;
+		}
+		
 		getComponent() {
 			if (!this.component) {
 				this.component = new RangeComponent(this);
 			}
 			return this.component;
 		}
-
-		destroy() {
+		
+		destroy(notify) {
+			this.destroyed = true;
+			
 			this.element.remove();
+
+			if(notify){
+				this.rangeManager.rangeRemoved(this);
+			}
 
 			if(this.initialized){
 				this.dispatchExternal("rangeRemoved", this.getComponent());
 			}
+		}
+
+		destroyedGuard(func){
+			if(this.destroyed){
+				console.warn("You cannot call the "  + func + " function on a destroyed range");
+			}
+
+			return !this.destroyed;
 		}
 	}
 
@@ -26042,6 +26306,7 @@
 			this.columnSelection = false;
 			this.rowSelection = false;
 			this.maxRanges = 0;
+			this.activeRange = false;
 			
 			this.keyDownEvent = this._handleKeyDown.bind(this);
 			this.mouseUpEvent = this._handleMouseUp.bind(this);
@@ -26049,11 +26314,12 @@
 			this.registerTableOption("selectableRange", false); //enable selectable range
 			this.registerTableOption("selectableRangeColumns", false); //enable selectable range
 			this.registerTableOption("selectableRangeRows", false); //enable selectable range
-			this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
-			this.registerTableFunction("getActiveRange", this.getActiveRange.bind(this, true));
-			this.registerComponentFunction("cell", "getRange", this.cellGetRange.bind(this));
-			this.registerComponentFunction("row", "getRange", this.rowGetRange.bind(this));
-			this.registerComponentFunction("column", "getRange", this.collGetRange.bind(this));
+			this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
+			this.registerTableFunction("getRanges", this.getRanges.bind(this));
+			this.registerTableFunction("addRange", this.addRangeFromComponent.bind(this));
+			this.registerComponentFunction("cell", "getRanges", this.cellGetRanges.bind(this));
+			this.registerComponentFunction("row", "getRanges", this.rowGetRanges.bind(this));
+			this.registerComponentFunction("column", "getRanges", this.colGetRanges.bind(this));
 		}
 		
 		///////////////////////////////////
@@ -26062,9 +26328,10 @@
 		
 		initialize() {
 			if (this.options("selectableRange")) {		
-				if(!this.options("selectable")){
-					this.maxRanges = this.options("selectableRange");
+				if(!this.options("selectableRows")){
 
+					this.maxRanges = this.options("selectableRange");
+					
 					this.initializeTable();
 					this.initializeWatchers();
 				}else {
@@ -26072,7 +26339,7 @@
 				}
 			}
 		}
-
+		
 		
 		initializeTable() {		
 			this.overlay = document.createElement("div");
@@ -26094,10 +26361,6 @@
 			this.table.rowManager.element.appendChild(this.overlay);
 			this.table.columnManager.element.setAttribute("tabindex", 0);
 			this.table.element.classList.add("tabulator-ranges");
-			
-			if (this.table.modules.edit) {
-				this.table.modules.edit.elementToFocusOnBlur = this.table.rowManager.element;
-			}
 		}
 		
 		initializeWatchers() {
@@ -26126,6 +26389,10 @@
 			this.subscribe("column-resized", this.layoutChange.bind(this));
 			this.subscribe("cell-height", this.layoutChange.bind(this));
 			this.subscribe("table-destroy", this.tableDestroyed.bind(this));
+
+
+			this.subscribe("edit-blur", this.restoreFocus.bind(this));
+			
 			
 			this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "left"));
 			this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "right"));
@@ -26139,7 +26406,7 @@
 		
 		
 		initializeColumn(column) {
-			if(this.columnSelection && column.definition.headerSort){
+			if(this.columnSelection && column.definition.headerSort && this.options("headerSortClickElement") !== "icon"){
 				console.warn("Using column headerSort with selectableRangeColumns option may result in unpredictable behavior");
 			}
 			
@@ -26160,40 +26427,59 @@
 					if(this.rowHeader.definition.headerSort){
 						console.warn("Using column headerSort with selectableRangeRows option may result in unpredictable behavior");
 					}
-
+					
 					if(this.rowHeader.definition.editor){
 						console.warn("Using column editor with selectableRangeRows option may result in unpredictable behavior");
 					}
 				}
 			}
 		}
+
+		///////////////////////////////////
+		///////   Table Functions   ///////
+		///////////////////////////////////
+		
+		getRanges(){
+			return this.ranges.map((range) => range.getComponent());
+		}
+		
+		getRangesData() {
+			return this.ranges.map((range) => range.getData());
+		}
+
+		addRangeFromComponent(start, end){
+			start = start ? start._cell : null;
+			end = end ? end._cell : null;
+
+			return this.addRange(start, end);
+		}
 		
 		///////////////////////////////////
 		/////// Component Functions ///////
 		///////////////////////////////////
 		
-		cellGetRange(cell){
-			var range;
+		cellGetRanges(cell){
+			var ranges = [];
 			
 			if (cell.column === this.rowHeader) {
-				range = this.ranges.find((range) => range.occupiesRow(cell.row));
+				ranges = this.ranges.filter((range) => range.occupiesRow(cell.row));
 			} else {
-				range = this.ranges.find((range) => range.occupies(cell));
+				ranges = this.ranges.filter((range) => range.occupies(cell));
 			}
 			
-			return range ? range.getComponent() : null;
+			return ranges.map((range) => range.getComponent());
 		}
 		
-		rowGetRange(row){
-			var range = this.ranges.find((range) => range.occupiesRow(row));
+		rowGetRanges(row){
+			var ranges = this.ranges.filter((range) => range.occupiesRow(row));
 			
-			return range ? range.getComponent() : null;
+			return ranges.map((range) => range.getComponent());
 		}
 		
-		collGetRange(col){
-			var range = this.ranges.find((range) => range.occupiesColumn(col));
+		colGetRanges(col){
+			var ranges = this.ranges.filter((range) => range.occupiesColumn(col));
 			
-			return range ? range.getComponent() : null;
+			return ranges.map((range) => range.getComponent());
 		}
 		
 		///////////////////////////////////
@@ -26221,24 +26507,33 @@
 				e.preventDefault();
 			}
 		}
+
+		restoreFocus(element){
+			this.table.rowManager.element.focus();
+			
+			return true;
+		}
 		
 		///////////////////////////////////
 		////// Column Functionality ///////
 		///////////////////////////////////
 		
 		handleColumnResized(column) {
+			var selected;
+
 			if (this.selecting !== "column" && this.selecting !== "all") {
 				return;
 			}
 			
-			var selected = this.ranges.some((range) => range.occupiesColumn(column));
+			selected = this.ranges.some((range) => range.occupiesColumn(column));
 			
 			if (!selected) {
 				return;
 			}
 			
 			this.ranges.forEach((range) => {
-				var selectedColumns = range.getColumns();
+				var selectedColumns = range.getColumns(true);
+
 				selectedColumns.forEach((selectedColumn) => {
 					if (selectedColumn !== column) {
 						selectedColumn.setWidth(column.width);
@@ -26248,7 +26543,7 @@
 		}
 		
 		handleColumnMouseDown(event, column) {
-			if (event.button === 2 && (this.selecting === "column" || this.selecting === "all") && this.getActiveRange().occupiesColumn(column)) {
+			if (event.button === 2 && (this.selecting === "column" || this.selecting === "all") && this.activeRange.occupiesColumn(column)) {
 				return;
 			}
 			
@@ -26256,8 +26551,7 @@
 			
 			document.addEventListener("mouseup", this.mouseUpEvent);
 			
-			this._select(event, column);
-			this.layoutElement();
+			this.newSelection(event, column);
 		}
 		
 		handleColumnMouseMove(e, column) {
@@ -26265,8 +26559,7 @@
 				return;
 			}
 			
-			this.endSelection(column);
-			this.layoutElement(true);
+			this.activeRange.setBounds(false, column, true);
 		}
 		
 		///////////////////////////////////
@@ -26274,19 +26567,17 @@
 		///////////////////////////////////
 		
 		renderCell(cell) {
-			var el = cell.getElement();
-			
-			var rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
+			var el = cell.getElement(),
+			rangeIdx = this.ranges.findIndex((range) => range.occupies(cell));
 			
 			el.classList.toggle("tabulator-range-selected", rangeIdx !== -1);
-			
 			el.classList.toggle("tabulator-range-only-cell-selected", this.ranges.length === 1 && this.ranges[0].atTopLeft(cell) &&	this.ranges[0].atBottomRight(cell));
 			
 			el.dataset.range = rangeIdx;
 		}
 		
 		handleCellMouseDown(event, cell) {
-			if (event.button === 2 && (this.getActiveRange().occupies(cell) || ((this.selecting === "row" || this.selecting === "all") && this.getActiveRange().occupiesRow(cell.row)))) {
+			if (event.button === 2 && (this.activeRange.occupies(cell) || ((this.selecting === "row" || this.selecting === "all") && this.activeRange.occupiesRow(cell.row)))) {
 				return;
 			}
 			
@@ -26294,8 +26585,7 @@
 			
 			document.addEventListener("mouseup", this.mouseUpEvent);
 			
-			this._select(event, cell);
-			this.layoutElement();
+			this.newSelection(event, cell);
 		}
 		
 		handleCellMouseMove(e, cell) {
@@ -26303,8 +26593,7 @@
 				return;
 			}
 			
-			this.endSelection(cell);
-			this.layoutElement(true);
+			this.activeRange.setBounds(false, cell, true);
 		}
 		
 		handleCellDblClick(e, cell) {
@@ -26338,7 +26627,6 @@
 		///////////////////////////////////
 		
 		keyNavigate(dir, e){
-			console.log("nav");
 			if(this.navigate(false, false, dir)){
 				e.preventDefault();
 			}
@@ -26362,7 +26650,7 @@
 			// If there are more than 1 range, use the active range and destroy the others
 			if (this.ranges.length > 1) {
 				this.ranges = this.ranges.filter((range) => {
-					if (range === this.getActiveRange()) {
+					if (range === this.activeRange) {
 						range.setEnd(range.start.row, range.start.col);
 						return true;
 					}
@@ -26371,7 +26659,7 @@
 				});
 			}
 			
-			range = this.getActiveRange();
+			range = this.activeRange;
 			
 			rangeEdge = expand ? range.end : range.start;
 			nextRow = rangeEdge.row;
@@ -26404,13 +26692,13 @@
 						nextCol = Math.max(nextCol - 1, 0);
 						break;
 					case "right":
-						nextCol = Math.min(nextCol + 1, this.getColumns().length - 2);
+						nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 2);
 						break;
 					case "up":
 						nextRow = Math.max(nextRow - 1, 0);
 						break;
 					case "down":
-						nextRow = Math.min(nextRow + 1, this.getRows().length - 1);
+						nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
 						break;
 				}
 			}
@@ -26444,6 +26732,20 @@
 				
 				return true;
 			}
+		}
+
+		rangeRemoved(removed){
+			this.ranges = this.ranges.filter((range) => range !== removed);
+
+			if(this.activeRange === removed){
+				if(this.ranges.length){
+					this.activeRange = this.ranges[this.ranges.length - 1];
+				}else {
+					this.addRange();
+				}
+			}
+
+			this.layoutElement();
 		}
 		
 		findJumpCell(cells, reverse, emptyStart, emptySide){
@@ -26544,23 +26846,22 @@
 		///////////////////////////////////
 		///////      Selection      ///////
 		///////////////////////////////////
-		
-		_select(event, element) {
+		newSelection(event, element) {
+			var range;
+
 			if (element.type === "column") {
 				if(!this.columnSelection){
 					return;
 				}
 				
 				if (element === this.rowHeader) {
-					this.resetRanges();
+					range = this.resetRanges();
 					this.selecting = "all";
 					
 					const topLeftCell = this.getCell(0, 0);
 					const bottomRightCell = this.getCell(-1, -1);
 					
-					this.beginSelection(topLeftCell);
-					this.endSelection(bottomRightCell);
-					
+					range.setBounds(topLeftCell, bottomRightCell);		
 					return;
 				} else {
 					this.selecting = "column";
@@ -26572,120 +26873,44 @@
 			}
 			
 			if (event.shiftKey) {
-				if (this.ranges.length > 1) {
-					this.ranges = this.ranges.slice(-1);
-				}
-				
-				this.endSelection(element);
+				this.activeRange.setBounds(false, element);
 			} else if (event.ctrlKey) {
-				this.addRange();
-				
-				this.beginSelection(element);
-				this.endSelection(element);
+				this.addRange().setBounds(element);
 			} else {
-				this.resetRanges();
-				
-				this.beginSelection(element);
-				this.endSelection(element);
+				this.resetRanges().setBounds(element);
 			}
 		}
-		
-		beginSelection(element) {
-			var range = this.getActiveRange();
-			
-			if (element.type === "column") {
-				if(this.columnSelection){
-					range.setStart(0, element.getPosition() - 2);
-				}
-				return;
-			}
-			
-			var row = element.row.position - 1;
-			var col = element.column.getPosition() - 2;
-			
-			if (element.column === this.rowHeader) {
-				range.setStart(row, 0);
-			} else {
-				range.setStart(row, col);
-			}
-		}
-		
-		endSelection(element) {
-			var range = this.getActiveRange();
-			var rowsCount = this.getRows().length;
-			
-			if (element.type === "column") {
-				if (this.selecting === "column") {
-					range.setEnd(rowsCount - 1, element.getPosition() - 2);
-				} else if (this.selecting === "cell") {
-					range.setEnd(0, element.getPosition() - 2);
-				}
-				
-				return;
-			}
-			
-			var row = element.row.position - 1;
-			var col = element.column.getPosition() - 2;
-			var isRowHeader = element.column === this.rowHeader;
-			
-			if (this.selecting === "row") {
-				range.setEnd(row, this.getColumns().length - 2);
-			} else if (this.selecting !== "row" && isRowHeader) {
-				range.setEnd(row, 0);
-			} else if (this.selecting === "column") {
-				range.setEnd(rowsCount - 1, col);
-			} else {
-				range.setEnd(row, col);
-			}
-		}
-		
-		
-		///////////////////////////////////
-		///////       Layout        ///////
-		///////////////////////////////////
-		
-		layoutChange(){
-			this.overlay.style.visibility = "hidden";
-			clearTimeout(this.layoutChangeTimeout);
-			this.layoutChangeTimeout = setTimeout(this.layoutRanges.bind(this), 200);
-		}
-		
-		
-		redraw(force) {
-			if (force) {
-				this.selecting = 'cell';
-				this.resetRanges();
-				this.layoutElement();
-			}
-		}
-		
+
 		autoScroll(range, row, column) {
-			var tableHolder = this.table.rowManager.element;
-			var rowHeader = this.rowHeader.getElement();
+			var tableHolder = this.table.rowManager.element,
+			rowHeader = this.rowHeader.getElement(),
+			rect, view, withinHorizontalView, withinVerticalView;
+
 			if (typeof row === 'undefined') {
 				row = this.getRowByRangePos(range.end.row).getElement();
 			}
+
 			if (typeof column === 'undefined') {
 				column = this.getColumnByRangePos(range.end.col).getElement();
 			}
 			
-			var rect = {
+			rect = {
 				left: column.offsetLeft,
 				right: column.offsetLeft + column.offsetWidth,
 				top: row.offsetTop,
 				bottom: row.offsetTop + row.offsetHeight,
 			};
 			
-			var view = {
+			view = {
 				left: tableHolder.scrollLeft + rowHeader.offsetWidth,
 				right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
 				top: tableHolder.scrollTop,
 				bottom:	tableHolder.scrollTop +	tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth,
 			};
 			
-			var withinHorizontalView = view.left < rect.left &&	rect.left < view.right && view.left < rect.right &&	rect.right < view.right;
+			withinHorizontalView = view.left < rect.left &&	rect.left < view.right && view.left < rect.right &&	rect.right < view.right;
 			
-			var withinVerticalView = view.top < rect.top &&	rect.top < view.bottom && view.top < rect.bottom &&	rect.bottom < view.bottom;
+			withinVerticalView = view.top < rect.top &&	rect.top < view.bottom && view.top < rect.bottom &&	rect.bottom < view.bottom;
 			
 			if (!withinHorizontalView) {
 				if (rect.left < view.left) {
@@ -26701,6 +26926,25 @@
 				} else if (rect.bottom > view.bottom) {
 					tableHolder.scrollTop = rect.bottom - tableHolder.clientHeight;
 				}
+			}
+		}
+		
+
+		///////////////////////////////////
+		///////       Layout        ///////
+		///////////////////////////////////
+		
+		layoutChange(){
+			this.overlay.style.visibility = "hidden";
+			clearTimeout(this.layoutChangeTimeout);
+			this.layoutChangeTimeout = setTimeout(this.layoutRanges.bind(this), 200);
+		}
+		
+		redraw(force) {
+			if (force) {
+				this.selecting = 'cell';
+				this.resetRanges();
+				this.layoutElement();
 			}
 		}
 		
@@ -26720,7 +26964,7 @@
 				}
 			});
 			
-			this.getColumns().forEach((column) => {
+			this.getTableColumns().forEach((column) => {
 				this.layoutColumn(column);
 			});
 			
@@ -26728,10 +26972,9 @@
 		}
 		
 		layoutRow(row) {
-			var el = row.getElement();
-			
-			var selected = false;
-			var occupied = this.ranges.some((range) => range.occupiesRow(row));
+			var el = row.getElement(),
+			selected = false,
+			occupied = this.ranges.some((range) => range.occupiesRow(row));
 			
 			if (this.selecting === "row") {
 				selected = occupied;
@@ -26744,10 +26987,9 @@
 		}
 		
 		layoutColumn(column) {
-			var el = column.getElement();
-			
-			var selected = false;
-			var occupied = this.ranges.some((range) => range.occupiesColumn(column));
+			var el = column.getElement(),		
+			selected = false,
+			occupied = this.ranges.some((range) => range.occupiesColumn(column));
 			
 			if (this.selecting === "column") {
 				selected = occupied;
@@ -26760,11 +27002,13 @@
 		}
 		
 		layoutRanges() {
+			var activeCell;
+
 			if (!this.table.initialized) {
 				return;
 			}
 			
-			var activeCell = this.getActiveCell();
+			activeCell = this.getActiveCell();
 			
 			if (!activeCell) {
 				return;
@@ -26775,69 +27019,29 @@
 			this.activeRangeCellElement.style.width = activeCell.getElement().offsetLeft + activeCell.getElement().offsetWidth - activeCell.getElement().offsetLeft + "px";
 			this.activeRangeCellElement.style.height = activeCell.row.getElement().offsetTop + activeCell.row.getElement().offsetHeight - activeCell.row.getElement().offsetTop + "px";
 			
-			this.ranges.forEach((range) => this.layoutRange(range));
+			this.ranges.forEach((range) => range.layout());
 			
 			this.overlay.style.visibility = "visible";
 		}
 		
-		layoutRange(range) {
-			var _vDomTop = this.table.rowManager.renderer.vDomTop;
-			var _vDomBottom = this.table.rowManager.renderer.vDomBottom;
-			var _vDomLeft = this.table.columnManager.renderer.leftCol;
-			var _vDomRight = this.table.columnManager.renderer.rightCol;
-			
-			if (_vDomTop == null) {
-				_vDomTop = 0;
-			}
-			
-			if (_vDomBottom == null) {
-				_vDomBottom = Infinity;
-			}
-			
-			if (_vDomLeft == null) {
-				_vDomLeft = 0;
-			}
-			
-			if (_vDomRight == null) {
-				_vDomRight = Infinity;
-			}
-			
-			if (!range.overlaps(_vDomLeft, _vDomTop, _vDomRight, _vDomBottom)) {
-				return;
-			}
-			
-			var top = Math.max(range.top, _vDomTop);
-			var bottom = Math.min(range.bottom, _vDomBottom);
-			var left = Math.max(range.left, _vDomLeft);
-			var right = Math.min(range.right, _vDomRight);
-			
-			var topLeftCell = this.getCell(top, left);
-			var bottomRightCell = this.getCell(bottom, right);
-			
-			range.element.classList.toggle("tabulator-range-active", range === this.getActiveRange());
-			
-			range.element.style.left = topLeftCell.row.getElement().offsetLeft + topLeftCell.getElement().offsetLeft + "px";
-			range.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
-			range.element.style.width = bottomRightCell.getElement().offsetLeft + bottomRightCell.getElement().offsetWidth - topLeftCell.getElement().offsetLeft + "px";
-			range.element.style.height = bottomRightCell.row.getElement().offsetTop + bottomRightCell.row.getElement().offsetHeight - topLeftCell.row.getElement().offsetTop + "px";
-		}
-		
-		
+
 		///////////////////////////////////
 		///////  Helper Functions   ///////
 		///////////////////////////////////	
+
 		getCell(rowIdx, colIdx) {
 			var row;
 			
 			if (colIdx < 0) {
-				colIdx = this.getColumns().length + colIdx - 1;
+				colIdx = this.getTableColumns().length + colIdx - 1;
+
 				if (colIdx < 0) {
 					return null;
 				}
 			}
 			
 			if (rowIdx < 0) {
-				rowIdx = this.getRows().length + rowIdx;
+				rowIdx = this.getTableRows().length + rowIdx;
 			}
 			
 			row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
@@ -26845,65 +27049,48 @@
 			return row ? row.getCells().filter((cell) => cell.column.visible)[colIdx + 1] : null;
 		}
 		
-		getActiveRange(component) {
-			var range = this.ranges[this.ranges.length - 1];
-			
-			if (!range) {
-				return null;
-			}
-			
-			return component ? range.getComponent() : range;
-		}
 		
 		getActiveCell() {
-			var activeRange = this.getActiveRange();
-			return this.getCell(activeRange.start.row, activeRange.start.col);
+			return this.getCell(this.activeRange.start.row, this.activeRange.start.col);
 		}
 		
 		getRowByRangePos(pos) {
-			return this.getRows()[pos];
+			return this.getTableRows()[pos];
 		}
 		
 		getColumnByRangePos(pos) {
-			return this.getColumns()[pos + 1];
+			return this.getTableColumns()[pos + 1];
 		}
 		
-		getRowsByRange(range) {
-			return this.getRows().slice(range.top, range.bottom + 1);
-		}
-		
-		getColumnsByRange(range) {
-			return this.getColumns().slice(range.left + 1, range.right + 2);
-		}
-		
-		getRows() {
+		getTableRows() {
 			return this.table.rowManager.getDisplayRows();
 		}
 		
-		getColumns() {
+		getTableColumns() {
 			return this.table.columnManager.getVisibleColumnsByIndex();
 		}
 		
-		addRange() {
-			var element, range;
+		addRange(start, end) {
+			var  range;
 
 			if(this.maxRanges !== true && this.ranges.length >= this.maxRanges){
 				this.ranges.shift().destroy();
 			}
-
-			element = document.createElement("div");
-			element.classList.add("tabulator-range");
 			
-			range = new Range(this.table, this, 0, 0, element);
+			range = new Range(this.table, this, start, end);
 			
+			this.activeRange = range;
 			this.ranges.push(range);
-			this.rangeContainer.appendChild(element);
+			this.rangeContainer.appendChild(range.element);
+			
+			return range;
 		}
 		
 		resetRanges() {
 			this.ranges.forEach((range) => range.destroy());
 			this.ranges = [];
-			this.addRange(0, 0);
+			
+			return this.addRange();
 		}
 		
 		tableDestroyed(){
@@ -26911,62 +27098,12 @@
 			this.table.rowManager.element.removeEventListener("keydown", this.keyDownEvent);
 		}
 		
-		
-		getSelectedData() {
-			return this.getDataByRange(this.getActiveRange());
+		selectedRows(component) {
+			return component ? this.activeRange.getRows().map((row) => row.getComponent()) : this.activeRange.getRows();
 		}
 		
-		getDataByRange(range) {
-			var data = [];
-			var rows = this.getRowsByRange(range);
-			var columns = this.getColumnsByRange(range);
-			
-			rows.forEach((row) => {
-				var rowData = row.getData();
-				var result = {};
-				columns.forEach((column) => {
-					result[column.field] = rowData[column.field];
-				});
-				data.push(result);
-			});
-			
-			return data;
-		}
-		
-		getCellsByRange(range, structured) {
-			var cells = [];
-			var rows = this.getRowsByRange(range);
-			var columns = this.getColumnsByRange(range);
-			
-			if (structured) {
-				cells = rows.map((row) => {
-					var arr = [];
-					row.getCells().forEach((cell) => {
-						if (columns.includes(cell.column)) {
-							arr.push(cell.getComponent());
-						}
-					});
-					return arr;
-				});
-			} else {
-				rows.forEach((row) => {
-					row.getCells().forEach((cell) => {
-						if (columns.includes(cell.column)) {
-							cells.push(cell.getComponent());
-						}
-					});
-				});
-			}
-			
-			return cells;
-		}
-		
-		selectedRows() {
-			return this.getRowsByRange(this.getActiveRange());
-		}
-		
-		selectedColumns() {
-			return this.getColumnsByRange(this.getActiveRange()).map((col) => col.getComponent());
+		selectedColumns(component) {
+			return component ? this.activeRange.getColumns().map((col) => col.getComponent()) : this.activeRange.getColumns();
 		}
 	}
 

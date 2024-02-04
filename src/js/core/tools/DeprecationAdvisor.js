@@ -23,7 +23,7 @@ export default class DeprecationAdvisor extends CoreFeature{
 				this._warnUser(msg, 'font-weight: bold;', 'font-weight: normal;', 'font-weight: bold;', 'font-weight: normal;');
 
 				if(convert){
-					this.table.options[newOption] = this.table.options[oldOption]
+					this.table.options[newOption] = this.table.options[oldOption];
 				}
 			}else{
 				this._warnUser(msg, 'font-weight: bold;', 'font-weight: normal;');
