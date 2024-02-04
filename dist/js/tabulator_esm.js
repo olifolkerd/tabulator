@@ -19856,7 +19856,7 @@ class RangeComponent {
 	}
 
 	remove(){
-		if(this._range.destroyedGuard("setEndBound")){
+		if(this._range.destroyedGuard("remove")){
 			this._range.destroy(true);
 		}
 	}
