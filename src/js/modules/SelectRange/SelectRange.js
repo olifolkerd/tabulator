@@ -36,7 +36,7 @@ class SelectRange extends Module {
 	
 	initialize() {
 		if (this.options("selectableRange")) {		
-			if(!this.options("selectable")){
+			if(!this.options("selectableRows")){
 
 				this.maxRanges = this.options("selectableRange");
 				
@@ -376,17 +376,17 @@ class SelectRange extends Module {
 		if(jump){
 			switch(dir){
 				case "left":
-				nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
-				break;
+					nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
+					break;
 				case "right":
-				nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
-				break;
+					nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
+					break;
 				case "up":
-				nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
-				break;
+					nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
+					break;
 				case "down":
-				nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
-				break;
+					nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
+					break;
 			}
 		}else{
 			if(expand){
@@ -397,17 +397,17 @@ class SelectRange extends Module {
 			
 			switch(dir){
 				case "left":
-				nextCol = Math.max(nextCol - 1, 0);
-				break;
+					nextCol = Math.max(nextCol - 1, 0);
+					break;
 				case "right":
-				nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 2);
-				break;
+					nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 2);
+					break;
 				case "up":
-				nextRow = Math.max(nextRow - 1, 0);
-				break;
+					nextRow = Math.max(nextRow - 1, 0);
+					break;
 				case "down":
-				nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
-				break;
+					nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
+					break;
 			}
 		}
 		

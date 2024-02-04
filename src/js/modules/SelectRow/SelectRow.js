@@ -11,11 +11,11 @@ class SelectRow extends Module{
 		this.selectedRows = []; //hold selected rows
 		this.headerCheckboxElement = null; // hold header select element
 		
-		this.registerTableOption("selectable", "highlight"); //highlight rows on hover
-		this.registerTableOption("selectableRangeMode", "drag");  //highlight rows on hover
-		this.registerTableOption("selectableRollingSelection", true); //roll selection once maximum number of selectable rows is reached
-		this.registerTableOption("selectablePersistence", true); // maintain selection when table view is updated
-		this.registerTableOption("selectableCheck", function(data, row){return true;}); //check whether row is selectable
+		this.registerTableOption("selectableRows", "highlight"); //highlight rows on hover
+		this.registerTableOption("selectableRowsRangeMode", "drag");  //highlight rows on hover
+		this.registerTableOption("selectableRowsRollingSelection", true); //roll selection once maximum number of selectable rows is reached
+		this.registerTableOption("selectableRowsPersistence", true); // maintain selection when table view is updated
+		this.registerTableOption("selectableRowsCheck", function(data, row){return true;}); //check whether row is selectable
 		
 		this.registerTableFunction("selectRow", this.selectRows.bind(this));
 		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
@@ -32,17 +32,17 @@ class SelectRow extends Module{
 	
 	initialize(){
 
-		if(this.table.options.selectable === "highlight" && this.table.options.selectableRange){
-			this.table.options.selectable = false;
+		if(this.table.options.selectableRows === "highlight" && this.table.options.selectableRange){
+			this.table.options.selectableRows = false;
 		}
 
-		if(this.table.options.selectable !== false){
+		if(this.table.options.selectableRows !== false){
 			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
 			this.subscribe("rows-wipe", this.clearSelectionData.bind(this));
 			this.subscribe("rows-retrieve", this.rowRetrieve.bind(this));
 			
-			if(this.table.options.selectable && !this.table.options.selectablePersistence){
+			if(this.table.options.selectableRows && !this.table.options.selectableRowsPersistence){
 				this.subscribe("data-refreshing", this.deselectRows.bind(this));
 			}
 		}
@@ -90,8 +90,8 @@ class SelectRow extends Module{
 			element.classList.add("tabulator-selectable");
 			element.classList.remove("tabulator-unselectable");
 			
-			if(self.table.options.selectable && self.table.options.selectable != "highlight"){
-				if(self.table.options.selectableRangeMode === "click"){
+			if(self.table.options.selectableRows && self.table.options.selectableRows != "highlight"){
+				if(self.table.options.selectableRowsRangeMode === "click"){
 					element.addEventListener("click", this.handleComplexRowClick.bind(this, row));
 				}else{
 					element.addEventListener("click", function(e){
@@ -165,7 +165,7 @@ class SelectRow extends Module{
 				toggledRows.forEach((toggledRow)=>{
 					if(toggledRow !== this.lastClickedRow){
 						
-						if(this.table.options.selectable !== true && !this.isRowSelected(row)){
+						if(this.table.options.selectableRows !== true && !this.isRowSelected(row)){
 							if(this.selectedRows.length < this.table.options.selectable){
 								this.toggleRow(toggledRow);
 							}
@@ -178,7 +178,7 @@ class SelectRow extends Module{
 			}else{
 				this.deselectRows(undefined, true);
 				
-				if(this.table.options.selectable !== true){
+				if(this.table.options.selectableRows !== true){
 					if(toggledRows.length > this.table.options.selectable){
 						toggledRows = toggledRows.slice(0, this.table.options.selectable);
 					}
@@ -200,7 +200,7 @@ class SelectRow extends Module{
 
 	checkRowSelectability(row){
 		if(row && row.type === "row"){
-			return this.table.options.selectableCheck.call(this.table, row.getComponent());
+			return this.table.options.selectableRowsCheck.call(this.table, row.getComponent());
 		}
 
 		return false;
@@ -262,9 +262,9 @@ class SelectRow extends Module{
 	//select an individual row
 	_selectRow(rowInfo, silent, force){
 		//handle max row count
-		if(!isNaN(this.table.options.selectable) && this.table.options.selectable !== true && !force){
+		if(!isNaN(this.table.options.selectable) && this.table.options.selectableRows !== true && !force){
 			if(this.selectedRows.length >= this.table.options.selectable){
-				if(this.table.options.selectableRollingSelection){
+				if(this.table.options.selectableRowsRollingSelection){
 					this._deselectRow(this.selectedRows[0]);
 				}else{
 					return false;
