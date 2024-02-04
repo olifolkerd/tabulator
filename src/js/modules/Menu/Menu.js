@@ -285,7 +285,7 @@ class Menu extends Module{
 				this.rootPopup = null;
 				
 				if(this.currentComponent){
-					this.dispatch("menu-closed");
+					this.dispatch("menu-closed", menu, popup);
 					this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
 					this.currentComponent = null;
 				}
