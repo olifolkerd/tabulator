@@ -402,6 +402,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
+			display: inline-block;
 			
 			background:lighten($headerBackgroundColor, 5%) !important;
 			
@@ -419,7 +420,8 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			}
 		}
 		
-		.tabulator-frozen-rows-holder{		
+		.tabulator-frozen-rows-holder{	
+			display: inline-block;	
 			&:empty{
 				display: none;
 			}
