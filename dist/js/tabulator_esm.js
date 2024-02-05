@@ -18824,6 +18824,10 @@ class SelectRow extends Module{
 				rowMatch = this.table.rowManager.rows;
 				break;
 			
+			case "number":
+				rowMatch = this.table.rowManager.findRow(rows);
+				break;
+				
 			case "string":
 				rowMatch = this.table.rowManager.findRow(rows);
 			
@@ -18914,6 +18918,10 @@ class SelectRow extends Module{
 		switch(typeof rows){
 			case "undefined":
 				rowMatch = Object.assign([], this.selectedRows);
+				break;
+
+			case "number":
+				rowMatch = this.table.rowManager.findRow(rows);
 				break;
 			
 			case "string":
