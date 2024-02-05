@@ -802,6 +802,8 @@ class Column extends CoreFeature{
 
 			this.table.columnManager.rerenderColumns(true);
 
+			this.dispatch("column-deleted", this);
+
 			resolve();
 		});
 	}
