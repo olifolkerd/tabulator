@@ -18109,7 +18109,7 @@ class ResizeTable extends Module{
 				this.autoResize = true;
 				
 				this.resizeObserver = new ResizeObserver((entry) => {
-					if(!table.browserMobile || (table.browserMobile &&!table.modules.edit.currentCell)){
+					if(!table.browserMobile || (table.browserMobile && (!table.modules.edit || (table.modules.edit && !table.modules.edit.currentCell)))){
 						
 						var nodeHeight = Math.floor(entry[0].contentRect.height);
 						var nodeWidth = Math.floor(entry[0].contentRect.width);
@@ -18135,7 +18135,7 @@ class ResizeTable extends Module{
 				if(this.table.element.parentNode && !this.table.rowManager.fixedHeight && (tableStyle.getPropertyValue("max-height") || tableStyle.getPropertyValue("min-height"))){
 					
 					this.containerObserver = new ResizeObserver((entry) => {
-						if(!table.browserMobile || (table.browserMobile &&!table.modules.edit.currentCell)){
+						if(!table.browserMobile || (table.browserMobile && (!table.modules.edit || (table.modules.edit && !table.modules.edit.currentCell)))){
 							
 							var nodeHeight = Math.floor(entry[0].contentRect.height);
 							var nodeWidth = Math.floor(entry[0].contentRect.width);
@@ -18158,7 +18158,7 @@ class ResizeTable extends Module{
 				
 			}else {
 				this.binding = function(){
-					if(!table.browserMobile || (table.browserMobile && !table.modules.edit.currentCell)){
+					if(!table.browserMobile || (table.browserMobile && (!table.modules.edit || (table.modules.edit && !table.modules.edit.currentCell)))){
 						table.columnManager.rerenderColumns(true);
 						table.redraw();
 					}
@@ -27095,6 +27095,7 @@ class Tabulator {
 	
 	_loadInitialData(){
 		this.dataLoader.load(this.options.data);
+		this.columnManager.verticalAlignHeaders();
 	}
 	
 	//deconstructor
