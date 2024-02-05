@@ -32,6 +32,8 @@ class FrozenColumns extends Module{
 		
 		this.subscribe("column-add", this.reinitializeColumns.bind(this));
 		this.subscribe("column-deleted", this.reinitializeColumns.bind(this));
+		this.subscribe("column-hide", this.reinitializeColumns.bind(this));
+		this.subscribe("column-show", this.reinitializeColumns.bind(this));
 		
 		this.subscribe("table-redraw", this.layout.bind(this));
 		this.subscribe("layout-refreshing", this.blockLayout.bind(this));
