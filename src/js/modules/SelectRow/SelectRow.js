@@ -176,7 +176,7 @@ class SelectRow extends Module{
 					if(toggledRow !== this.lastClickedRow){
 						
 						if(this.table.options.selectableRows !== true && !this.isRowSelected(row)){
-							if(this.selectedRows.length < this.table.options.selectable){
+							if(this.selectedRows.length < this.table.options.selectableRows){
 								this.toggleRow(toggledRow);
 							}
 						}else{
@@ -189,8 +189,8 @@ class SelectRow extends Module{
 				this.deselectRows(undefined, true);
 				
 				if(this.table.options.selectableRows !== true){
-					if(toggledRows.length > this.table.options.selectable){
-						toggledRows = toggledRows.slice(0, this.table.options.selectable);
+					if(toggledRows.length > this.table.options.selectableRows){
+						toggledRows = toggledRows.slice(0, this.table.options.selectableRows);
 					}
 				}
 				
@@ -272,8 +272,8 @@ class SelectRow extends Module{
 	//select an individual row
 	_selectRow(rowInfo, silent, force){
 		//handle max row count
-		if(!isNaN(this.table.options.selectable) && this.table.options.selectableRows !== true && !force){
-			if(this.selectedRows.length >= this.table.options.selectable){
+		if(!isNaN(this.table.options.selectableRows) && this.table.options.selectableRows !== true && !force){
+			if(this.selectedRows.length >= this.table.options.selectableRows){
 				if(this.table.options.selectableRowsRollingSelection){
 					this._deselectRow(this.selectedRows[0]);
 				}else{
