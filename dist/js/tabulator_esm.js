@@ -14376,7 +14376,12 @@ class MoveColumns extends Module{
 	initialize(){
 		if(this.table.options.movableColumns){
 			this.subscribe("column-init", this.initializeColumn.bind(this));
+			this.subscribe("alert-show", this.abortMove.bind(this));
 		}
+	}
+
+	abortMove(){
+		clearTimeout(this.checkTimeout);
 	}
 	
 	initializeColumn(column){
@@ -26821,6 +26826,8 @@ class Alert extends CoreFeature{
 	alert(content, type = "msg"){
 		if(content){
 			this.clear();
+
+			this.dispatch("alert-show", type);
             
 			this.type = type;
             
@@ -26843,6 +26850,8 @@ class Alert extends CoreFeature{
 	}
     
 	clear(){
+		this.dispatch("alert-hide", this.type);
+
 		if(this.element.parentNode){
 			this.element.parentNode.removeChild(this.element);
 		}
