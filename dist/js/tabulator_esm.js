@@ -21212,6 +21212,17 @@ var defaultValidators = {
 		return isNaN(value);
 	},
 
+	//must be alphanumeric
+	alphanumeric: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
+
+		var reg = new RegExp(/^[a-z0-9]+$/i);
+
+		return reg.test(value);
+	},
+
 	//maximum value
 	max: function(cell, value, parameters){
 		if(value === "" || value === null || typeof value === "undefined"){
