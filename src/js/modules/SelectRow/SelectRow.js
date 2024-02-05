@@ -81,6 +81,7 @@ class SelectRow extends Module{
 	
 	initializeRow(row){
 		var self = this,
+		selectable = self.checkRowSelectability(row),
 		element = row.getElement();
 		
 		// trigger end of row selection
@@ -94,12 +95,12 @@ class SelectRow extends Module{
 		};
 		
 		row.modules.select = {selected:false};
+
+		element.classList.toggle("tabulator-selectable", selectable);
+		element.classList.toggle("tabulator-unselectable", !selectable);
 		
 		//set row selection class
-		if(self.checkRowSelectability(row)){
-			element.classList.add("tabulator-selectable");
-			element.classList.remove("tabulator-unselectable");
-			
+		if(self.checkRowSelectability(row)){			
 			if(self.table.options.selectableRows && self.table.options.selectableRows != "highlight"){
 				if(self.table.options.selectableRowsRangeMode === "click"){
 					element.addEventListener("click", this.handleComplexRowClick.bind(this, row));
@@ -150,10 +151,6 @@ class SelectRow extends Module{
 					});
 				}
 			}
-			
-		}else{
-			element.classList.add("tabulator-unselectable");
-			element.classList.remove("tabulator-selectable");
 		}
 	}
 	
