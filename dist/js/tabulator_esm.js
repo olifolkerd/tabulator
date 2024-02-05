@@ -12692,6 +12692,8 @@ var defaultUndoers = {
 
 	rowAdd: function(action){
 		action.component.deleteActual();
+
+		this.table.rowManager.checkPlaceholder();
 	},
 
 	rowDelete: function(action){
@@ -12702,6 +12704,8 @@ var defaultUndoers = {
 		}
 
 		this._rebindRow(action.component, newRow);
+
+		this.table.rowManager.checkPlaceholder();
 	},
 
 	rowMove: function(action){
@@ -12728,10 +12732,14 @@ var defaultRedoers = {
 		}
 
 		this._rebindRow(action.component, newRow);
+
+		this.table.rowManager.checkPlaceholder();
 	},
 
 	rowDelete:function(action){
 		action.component.deleteActual();
+
+		this.table.rowManager.checkPlaceholder();
 	},
 
 	rowMove: function(action){
@@ -12856,7 +12864,7 @@ class History extends Module{
 
 			return true;
 		}else {
-			console.warn("History Undo Error - No more history to undo");
+			console.warn(this.options("history") ? "History Undo Error - No more history to undo" : "History module not enabled");
 			return false;
 		}
 	}
@@ -12874,7 +12882,7 @@ class History extends Module{
 
 			return true;
 		}else {
-			console.warn("History Redo Error - No more history to redo");
+			console.warn(this.options("history") ? "History Redo Error - No more history to redo" : "History module not enabled");
 			return false;
 		}
 	}
@@ -24379,7 +24387,7 @@ class RowManager extends CoreFeature{
 			
 			this.regenerateRowPositions();
 			
-			if(rows.length){
+			if(this.displayRowsCount){
 				this._clearPlaceholder();
 			}
 			
@@ -25007,6 +25015,14 @@ class RowManager extends CoreFeature{
 	tableEmpty(){
 		this.renderEmptyScroll();
 		this._showPlaceholder();
+	}
+
+	checkPlaceholder(){
+		if(this.displayRowsCount){
+			this._clearPlaceholder();
+		}else {
+			this.tableEmpty();
+		}
 	}
 	
 	_showPlaceholder(){
