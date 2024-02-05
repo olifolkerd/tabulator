@@ -23387,8 +23387,6 @@ class BasicVertical extends Renderer{
 			}
 		});
 		
-		
-		
 		if(onlyGroupHeaders){
 			element.style.minWidth = this.table.columnManager.getWidth() + "px";
 		}else {
@@ -23405,6 +23403,10 @@ class BasicVertical extends Renderer{
 		}
 		
 		this.renderRows();
+
+		if(!this.rows().length){
+			this.table.rowManager.tableEmpty();
+		}
 	}
 	
 	scrollToRowNearestTop(row){
@@ -25037,6 +25039,7 @@ class RowManager extends CoreFeature{
 	}
 	
 	_showPlaceholder(){
+		console.trace("placeholder");
 		if(this.placeholder){
 			if(this.placeholder && this.placeholder.parentNode){
 				this.placeholder.parentNode.removeChild(this.placeholder);

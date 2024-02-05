@@ -983,6 +983,7 @@ export default class RowManager extends CoreFeature{
 	}
 	
 	_showPlaceholder(){
+		console.trace("placeholder")
 		if(this.placeholder){
 			if(this.placeholder && this.placeholder.parentNode){
 				this.placeholder.parentNode.removeChild(this.placeholder);

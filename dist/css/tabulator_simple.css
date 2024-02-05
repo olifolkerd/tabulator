@@ -324,12 +324,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 100%;
   width: 100%;
 }
 
 .tabulator .tabulator-tableholder .tabulator-placeholder[tabulator-render-mode="virtual"] {
   min-height: 100%;
-  min-width: 100%;
 }
 
 .tabulator .tabulator-tableholder .tabulator-placeholder .tabulator-placeholder-contents {

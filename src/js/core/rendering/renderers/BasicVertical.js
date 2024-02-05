@@ -62,8 +62,6 @@ export default class BasicVertical extends Renderer{
 			}
 		});
 		
-		
-		
 		if(onlyGroupHeaders){
 			element.style.minWidth = this.table.columnManager.getWidth() + "px";
 		}else{
@@ -80,6 +78,10 @@ export default class BasicVertical extends Renderer{
 		}
 		
 		this.renderRows();
+
+		if(!this.rows().length){
+			this.table.rowManager.tableEmpty();
+		}
 	}
 	
 	scrollToRowNearestTop(row){
