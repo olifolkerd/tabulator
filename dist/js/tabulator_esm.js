@@ -1091,24 +1091,39 @@ var defaultPasteActions = {
 	range:function(data){
 		var rows = [],
 		range = this.table.modules.selectRange.activeRange,
-		startCell, startRow;
+		singleCell = false,
+		bounds, startCell, startRow, rowWidth, dataLength;
+
+		dataLength = data.length;
 		
 		if(range){
-			startCell = range.getBounds().start;
-
+			bounds = range.getBounds();
+			startCell = bounds.start;
+			
+			if(bounds.start === bounds.end){
+				singleCell = true;
+			}
+			
 			if(startCell){
 				rows = this.table.rowManager.activeRows.slice();
 				startRow = rows.indexOf(startCell.row);
 
+				if(singleCell){
+					rowWidth = data.length;
+				}else {
+					rowWidth = (rows.indexOf(bounds.end.row) - startRow) + 1;
+				}
+				
+				
 				if(startRow >-1){
 					this.table.blockRedraw();
-
-					rows = rows.slice(startRow, startRow + data.length);
-
+					
+					rows = rows.slice(startRow, startRow + rowWidth);
+					
 					rows.forEach((row, i) => {
-						row.updateData(data[i]);
+						row.updateData(data[i % dataLength]);
 					});
-				
+					
 					this.table.restoreRedraw();
 				}
 			}
@@ -1196,10 +1211,16 @@ var defaultPasteParsers = {
 		var data = [],
 		rows = [],
 		range = this.table.modules.selectRange.activeRange,
-		startCell, columnMap, startCol;
+		singleCell = false,
+		bounds, startCell, colWidth, columnMap, startCol;
 		
 		if(range){
-			startCell = range.getBounds().start;
+			bounds = range.getBounds();
+			startCell = bounds.start;
+
+			if(bounds.start === bounds.end){
+				singleCell = true;
+			}
 			
 			if(startCell){
 				//get data from clipboard into array of columns and rows.
@@ -1214,15 +1235,20 @@ var defaultPasteParsers = {
 					startCol = columnMap.indexOf(startCell.column);
 
 					if(startCol > -1){
-						columnMap = columnMap.slice(startCol, startCol + data[0].length);
+						if(singleCell){
+							colWidth = data[0].length;
+						}else {
+							colWidth = (columnMap.indexOf(bounds.end.column) - startCol) + 1;
+						}
+
+						columnMap = columnMap.slice(startCol, startCol + colWidth);
 
 						data.forEach((item) => {
 							var row = {};
+							var itemLength = item.length;
 
-							item.forEach(function(value, i){
-								if(columnMap[i]){
-									row[columnMap[i].field] = value;
-								}
+							columnMap.forEach(function(col, i){
+								row[col.field] = item[i % itemLength];
 							});
 							
 							rows.push(row);	

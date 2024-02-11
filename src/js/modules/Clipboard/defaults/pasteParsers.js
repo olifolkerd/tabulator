@@ -76,10 +76,16 @@ export default {
 		var data = [],
 		rows = [],
 		range = this.table.modules.selectRange.activeRange,
-		startCell, columnMap, startCol;
+		singleCell = false,
+		bounds, startCell, colWidth, columnMap, startCol;
 		
 		if(range){
-			startCell = range.getBounds().start;
+			bounds = range.getBounds();
+			startCell = bounds.start;
+
+			if(bounds.start === bounds.end){
+				singleCell = true;
+			}
 			
 			if(startCell){
 				//get data from clipboard into array of columns and rows.
@@ -94,15 +100,20 @@ export default {
 					startCol = columnMap.indexOf(startCell.column);
 
 					if(startCol > -1){
-						columnMap = columnMap.slice(startCol, startCol + data[0].length);
+						if(singleCell){
+							colWidth = data[0].length;
+						}else{
+							colWidth = (columnMap.indexOf(bounds.end.column) - startCol) + 1;
+						}
+
+						columnMap = columnMap.slice(startCol, startCol + colWidth);
 
 						data.forEach((item) => {
 							var row = {};
+							var itemLength = item.length;
 
-							item.forEach(function(value, i){
-								if(columnMap[i]){
-									row[columnMap[i].field] = value;
-								}
+							columnMap.forEach(function(col, i){
+								row[col.field] = item[i % itemLength];
 							});
 							
 							rows.push(row);	
