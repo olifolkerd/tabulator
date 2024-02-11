@@ -996,6 +996,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  outline: none;
 }
 
 .tabulator-row .tabulator-cell.tabulator-frozen {
