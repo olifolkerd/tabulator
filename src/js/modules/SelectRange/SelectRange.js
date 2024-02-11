@@ -82,6 +82,7 @@ class SelectRange extends Module {
 		this.subscribe("columns-loaded", this.updateHeaderColumn.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
+		this.subscribe("cell-click", this.handleCellClick.bind(this));
 		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
 		this.subscribe("cell-rendered", this.renderCell.bind(this));
 		this.subscribe("cell-editing", this.handleEditingCell.bind(this));
@@ -218,7 +219,7 @@ class SelectRange extends Module {
 
 	restoreFocus(element){
 		this.table.rowManager.element.focus();
-		
+
 		return true;
 	}
 	
@@ -302,6 +303,23 @@ class SelectRange extends Module {
 		}
 		
 		this.activeRange.setBounds(false, cell, true);
+	}
+
+	handleCellClick(e, cell){
+		var range;
+
+		try{
+			if (document.selection) { // IE
+				range = document.body.createTextRange();
+				range.moveToElementText(cell.getElement());
+				range.select();
+			} else if (window.getSelection) {
+				range = document.createRange();
+				range.selectNode(cell.getElement());
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(range);
+			}
+		}catch(e){}
 	}
 	
 	handleCellDblClick(e, cell) {
