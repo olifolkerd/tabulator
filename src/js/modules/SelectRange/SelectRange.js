@@ -80,29 +80,32 @@ class SelectRange extends Module {
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
 		this.subscribe("column-resized", this.handleColumnResized.bind(this));
-		this.subscribe("columns-loaded", this.updateHeaderColumn.bind(this));
-		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
-		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
-		this.subscribe("cell-click", this.handleCellClick.bind(this));
-		this.subscribe("cell-rendered", this.renderCell.bind(this));
-		this.subscribe("cell-editing", this.handleEditingCell.bind(this));
-		this.subscribe("edit-editor-clear", this.finishEditingCell.bind(this));
-		this.subscribe("page-changed", this.redraw.bind(this));
-		this.subscribe("table-layout", this.layoutElement.bind(this));
-		this.subscribe("table-redraw", this.redraw.bind(this));
-		this.subscribe("data-processed", this.resetRanges.bind(this));
-		this.subscribe("scroll-vertical", this.layoutChange.bind(this));
-		this.subscribe("scroll-horizontal", this.layoutChange.bind(this));
 		this.subscribe("column-width", this.layoutChange.bind(this));
 		this.subscribe("column-height", this.layoutChange.bind(this));
 		this.subscribe("column-resized", this.layoutChange.bind(this));
+		this.subscribe("columns-loaded", this.updateHeaderColumn.bind(this));
+
 		this.subscribe("cell-height", this.layoutChange.bind(this));
-		this.subscribe("table-destroy", this.tableDestroyed.bind(this));
+		this.subscribe("cell-rendered", this.renderCell.bind(this));
+		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
+		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
+		this.subscribe("cell-click", this.handleCellClick.bind(this));
+		this.subscribe("cell-editing", this.handleEditingCell.bind(this));
+		
+		this.subscribe("page-changed", this.redraw.bind(this));
+
+		this.subscribe("scroll-vertical", this.layoutChange.bind(this));
+		this.subscribe("scroll-horizontal", this.layoutChange.bind(this));
+		
 		this.subscribe("data-destroy", this.tableDestroyed.bind(this));
+		this.subscribe("data-processed", this.resetRanges.bind(this));
 		
+		this.subscribe("table-layout", this.layoutElement.bind(this));
+		this.subscribe("table-redraw", this.redraw.bind(this));
+		this.subscribe("table-destroy", this.tableDestroyed.bind(this));
 		
+		this.subscribe("edit-editor-clear", this.finishEditingCell.bind(this));
 		this.subscribe("edit-blur", this.restoreFocus.bind(this));
-		
 		
 		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "left"));
 		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "right"));
@@ -110,7 +113,6 @@ class SelectRange extends Module {
 		this.subscribe("keybinding-nav-right", this.keyNavigate.bind(this, "right"));
 		this.subscribe("keybinding-nav-up", this.keyNavigate.bind(this, "up"));
 		this.subscribe("keybinding-nav-down", this.keyNavigate.bind(this, "down"));
-		
 		this.subscribe("keybinding-nav-range", this.keyNavigateRange.bind(this));
 	}
 	
