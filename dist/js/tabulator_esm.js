@@ -21142,7 +21142,6 @@ class SelectRange extends Module {
 			this.ranges.shift().destroy();
 		}
 		
-		console.log("add");
 		range = new Range(this.table, this, start, end);
 		
 		this.activeRange = range;
