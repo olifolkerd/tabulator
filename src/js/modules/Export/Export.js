@@ -490,7 +490,8 @@ class Export extends Module{
 			if(col){
 				var cellEl = document.createElement("td"),
 				column = col.component._column,
-				index = this.table.columnManager.findColumnIndex(column),
+				table =  this.table,
+				index = table.columnManager.findColumnIndex(column),
 				value = col.value,
 				cellStyle;
 				
@@ -516,6 +517,9 @@ class Export extends Module{
 					},
 					getRow:function(){
 						return row.component;
+					},
+					getTable:function(){
+						return table;
 					},
 					getComponent:function(){
 						return cellWrapper;
