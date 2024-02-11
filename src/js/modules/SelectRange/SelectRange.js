@@ -23,9 +23,13 @@ class SelectRange extends Module {
 		this.registerTableOption("selectableRange", false); //enable selectable range
 		this.registerTableOption("selectableRangeColumns", false); //enable selectable range
 		this.registerTableOption("selectableRangeRows", false); //enable selectable range
+		this.registerTableOption("selectableRangeClearCells", false); //allow clearing of active range
+		this.registerTableOption("selectableRangeClearCellsValue", undefined); //value for cleared active range
+
 		this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
 		this.registerTableFunction("getRanges", this.getRanges.bind(this));
 		this.registerTableFunction("addRange", this.addRangeFromComponent.bind(this));
+
 		this.registerComponentFunction("cell", "getRanges", this.cellGetRanges.bind(this));
 		this.registerComponentFunction("row", "getRanges", this.rowGetRanges.bind(this));
 		this.registerComponentFunction("column", "getRanges", this.colGetRanges.bind(this));
@@ -205,7 +209,6 @@ class SelectRange extends Module {
 	
 	_handleKeyDown(e) {
 		if (!this.blockKeydown && (!this.table.modules.edit || (this.table.modules.edit && !this.table.modules.edit.currentCell))) {
-
 			if (e.key === "Enter") {
 				// is editing a cell?
 				if (this.table.modules.edit && this.table.modules.edit.currentCell) {
@@ -215,6 +218,14 @@ class SelectRange extends Module {
 				this.table.modules.edit.editCell(this.getActiveCell());
 				
 				e.preventDefault();
+			}
+
+			if ((e.key === "Backspace" || e.key === "Delete") && this.options("selectableRangeClearCells")) {
+				if(this.activeRange){
+					this.activeRange.getCells().forEach((cell) => {
+						cell.setValue(this.options("selectableRangeClearCellsValue"));
+					});
+				}
 			}
 		}
 	}
