@@ -62,8 +62,6 @@ class Edit extends Module{
 		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
 		
-		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
-		
 		
 		// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
 		// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
@@ -90,7 +88,7 @@ class Edit extends Module{
 	keybindingNavigateNext(e){
 		var cell = this.currentCell,
 		newRow = this.options("tabEndNewRow");
-		
+
 		if(cell){
 			if(!this.navigateNext(cell, e)){
 				if(newRow){
@@ -600,8 +598,6 @@ class Edit extends Module{
 		element = cell.getElement(),
 		cellEditor, component, params;
 		
-		console.trace("edit")
-		
 		//prevent editing if another cell is refusing to leave focus (eg. validation fail)
 		
 		if(this.currentCell){
@@ -665,7 +661,6 @@ class Edit extends Module{
 			allowEdit = this.allowEdit(cell);
 			
 			if(allowEdit || forceEdit){
-				
 				self.cancelEdit();
 				
 				self.currentCell = cell;

@@ -15,6 +15,7 @@ class SelectRange extends Module {
 		this.rowSelection = false;
 		this.maxRanges = 0;
 		this.activeRange = false;
+		this.blockKeydown = false;
 		
 		this.keyDownEvent = this._handleKeyDown.bind(this);
 		this.mouseUpEvent = this._handleMouseUp.bind(this);
@@ -83,11 +84,9 @@ class SelectRange extends Module {
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
 		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
 		this.subscribe("cell-click", this.handleCellClick.bind(this));
-		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
 		this.subscribe("cell-rendered", this.renderCell.bind(this));
 		this.subscribe("cell-editing", this.handleEditingCell.bind(this));
-		this.subscribe("edit-success", this.finishEditingCell.bind(this));
-		this.subscribe("edit-cancelled", this.finishEditingCell.bind(this));
+		this.subscribe("edit-editor-clear", this.finishEditingCell.bind(this));
 		this.subscribe("page-changed", this.redraw.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 		this.subscribe("table-redraw", this.redraw.bind(this));
@@ -124,7 +123,7 @@ class SelectRange extends Module {
 		if (column.modules.edit) {
 			// Block editor from taking action so we can trigger edit by
 			// double clicking.
-			column.modules.edit.blocked = true;
+			// column.modules.edit.blocked = true;
 		}
 	}
 	
@@ -203,19 +202,18 @@ class SelectRange extends Module {
 	}
 	
 	_handleKeyDown(e) {
-		if (e.key === "Enter") {
-			// prevent action when pressing enter from editor
-			if (!e.target.classList.contains("tabulator-tableholder")) {
-				return;
+		if (!this.blockKeydown && (!this.table.modules.edit || (this.table.modules.edit && !this.table.modules.edit.currentCell))) {
+
+			if (e.key === "Enter") {
+				// is editing a cell?
+				if (this.table.modules.edit && this.table.modules.edit.currentCell) {
+					return;
+				}
+
+				this.table.modules.edit.editCell(this.getActiveCell());
+				
+				e.preventDefault();
 			}
-			
-			// is editing a cell?
-			if (this.table.modules.edit && this.table.modules.edit.currentCell) {
-				return;
-			}
-			
-			this.editCell(this.getActiveCell());
-			e.preventDefault();
 		}
 	}
 	
@@ -328,30 +326,19 @@ class SelectRange extends Module {
 		this.initializeFocus(cell);
 	}
 	
-	handleCellDblClick(e, cell) {
-		if (cell.column === this.rowHeader) {
-			return;
+	handleEditingCell(cell) {
+		if(this.activeRange){
+			this.activeRange.setBounds(cell);
 		}
-		
-		this.editCell(cell);
-	}
-	
-	editCell(cell) {
-		if (!cell.column.modules.edit) {
-			cell.column.modules.edit = {};
-		}
-		cell.column.modules.edit.blocked = false;
-		cell.element.focus({ preventScroll: true });
-		cell.column.modules.edit.blocked = true;
-	}
-	
-	handleEditingCell() {
-		this.table.rowManager.element.removeEventListener("keydown", this.keyDownEvent);
 	}
 	
 	finishEditingCell() {
+		this.blockKeydown = true;
 		this.table.rowManager.element.focus();
-		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
+
+		setTimeout(() => {
+			this.blockKeydown = false;
+		}, 10)
 	}
 	
 	///////////////////////////////////
@@ -400,17 +387,17 @@ class SelectRange extends Module {
 		if(jump){
 			switch(dir){
 				case "left":
-				nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
-				break;
+					nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
+					break;
 				case "right":
-				nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
-				break;
+					nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
+					break;
 				case "up":
-				nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
-				break;
+					nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
+					break;
 				case "down":
-				nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
-				break;
+					nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
+					break;
 			}
 		}else{
 			if(expand){
@@ -421,17 +408,17 @@ class SelectRange extends Module {
 			
 			switch(dir){
 				case "left":
-				nextCol = Math.max(nextCol - 1, 0);
-				break;
+					nextCol = Math.max(nextCol - 1, 0);
+					break;
 				case "right":
-				nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 2);
-				break;
+					nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 2);
+					break;
 				case "up":
-				nextRow = Math.max(nextRow - 1, 0);
-				break;
+					nextRow = Math.max(nextRow - 1, 0);
+					break;
 				case "down":
-				nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
-				break;
+					nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
+					break;
 			}
 		}
 		
