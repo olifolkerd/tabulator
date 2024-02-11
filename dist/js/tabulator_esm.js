@@ -1510,10 +1510,11 @@ class Clipboard extends Module{
 
 	checkPasteOrigin(e){
 		var valid = true;
-		
-		// if(e.target.tagName != "DIV" || this.table.modules.edit.currentCell){
-		// 	valid = false;
-		// }
+		var blocked = this.confirm("clipboard-paste", [e]);
+
+		if(blocked || !["DIV", "SPAN"].includes(e.target.tagName)){
+			valid = false;
+		}
 
 		return valid;
 	}
@@ -7773,6 +7774,7 @@ class Edit$1 extends Module{
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 		this.subscribe("row-layout", this.rowEditableCheck.bind(this));
 		this.subscribe("data-refreshing", this.cancelEdit.bind(this));
+		this.subscribe("clipboard-paste", this.pasteBlocker.bind(this));
 		
 		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
@@ -7780,6 +7782,17 @@ class Edit$1 extends Module{
 		// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
 		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
 		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
+	}
+
+
+	///////////////////////////////////
+	///////// Paste Negation //////////
+	///////////////////////////////////
+
+	pasteBlocker(e){
+		if(this.currentCell){
+			return true;
+		}
 	}
 	
 	

@@ -249,10 +249,11 @@ class Clipboard extends Module{
 
 	checkPasteOrigin(e){
 		var valid = true;
-		
-		// if(e.target.tagName != "DIV" || this.table.modules.edit.currentCell){
-		// 	valid = false;
-		// }
+		var blocked = this.confirm("clipboard-paste", [e]);
+
+		if(blocked || !["DIV", "SPAN"].includes(e.target.tagName)){
+			valid = false;
+		}
 
 		return valid;
 	}
