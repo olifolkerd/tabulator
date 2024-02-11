@@ -241,7 +241,7 @@ class Range extends CoreFeature{
 		return data;
 	}
 	
-	getCells(structured) {
+	getCells(structured, component) {
 		var cells = [],
 		rows = this.getRows(),
 		columns = this.getColumns();
@@ -252,7 +252,7 @@ class Range extends CoreFeature{
 
 				row.getCells().forEach((cell) => {
 					if (columns.includes(cell.column)) {
-						arr.push(cell.getComponent());
+						arr.push(component ? cell.getComponent() : cell);
 					}
 				});
 
@@ -262,7 +262,7 @@ class Range extends CoreFeature{
 			rows.forEach((row) => {
 				row.getCells().forEach((cell) => {
 					if (columns.includes(cell.column)) {
-						cells.push(cell.getComponent());
+						cells.push(component ? cell.getComponent() : cell);
 					}
 				});
 			});
@@ -272,7 +272,7 @@ class Range extends CoreFeature{
 	}
 	
 	getStructuredCells() {
-		return this.getCells(true);
+		return this.getCells(true, true);
 	}
 	
 	getRows() {
@@ -283,8 +283,8 @@ class Range extends CoreFeature{
 		return this._getTableColumns().slice(this.left + 1, this.right + 2);
 	}
 
-	getBounds(){
-		var cells = this.getCells(),
+	getBounds(component){
+		var cells = this.getCells(false, component),
 		output = {
 			start:null,
 			end:null,

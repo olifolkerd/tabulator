@@ -754,7 +754,7 @@ class SelectRange extends Module {
 		
 		row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
 		
-		return row ? row.getCells().filter((cell) => cell.column.visible)[colIdx + 1] : null;
+		return row ? row.getCells(false, true).filter((cell) => cell.column.visible)[colIdx + 1] : null;
 	}
 	
 	

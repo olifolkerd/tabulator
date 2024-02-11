@@ -22,7 +22,7 @@ class RangeComponent {
 	}
 
 	getCells() {
-		return this._range.getCells();
+		return this._range.getCells(true);
 	}
 
 	getStructuredCells() {
