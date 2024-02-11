@@ -77,6 +77,12 @@ class RangeComponent {
 		}
 	}
 
+	clearValues(){
+		if(this._range.destroyedGuard("clearValues")){
+			this._range.clearValues();
+		}
+	}
+
 	remove(){
 		if(this._range.destroyedGuard("remove")){
 			this._range.destroy(true);

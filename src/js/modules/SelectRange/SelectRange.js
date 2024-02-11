@@ -222,13 +222,7 @@ class SelectRange extends Module {
 
 			if ((e.key === "Backspace" || e.key === "Delete") && this.options("selectableRangeClearCells")) {
 				if(this.activeRange){
-					this.table.blockRedraw();
-					
-					this.activeRange.getCells().forEach((cell) => {
-						cell.setValue(this.options("selectableRangeClearCellsValue"));
-					});
-
-					this.table.restoreRedraw();
+					this.activeRange.clearValues();
 				}
 			}
 		}

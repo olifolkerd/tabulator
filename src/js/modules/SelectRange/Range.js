@@ -78,7 +78,7 @@ class Range extends CoreFeature{
 	
 	setStartBound(element){
 		var row, col;
-
+		
 		if (element.type === "column") {
 			if(this.rangeManager.columnSelection){
 				this.setStart(0, element.getPosition() - 2);
@@ -230,11 +230,11 @@ class Range extends CoreFeature{
 		rows.forEach((row) => {
 			var rowData = row.getData(),
 			result = {};
-
+			
 			columns.forEach((column) => {
 				result[column.field] = rowData[column.field];
 			});
-
+			
 			data.push(result);
 		});
 		
@@ -249,13 +249,13 @@ class Range extends CoreFeature{
 		if (structured) {
 			cells = rows.map((row) => {
 				var arr = [];
-
+				
 				row.getCells().forEach((cell) => {
 					if (columns.includes(cell.column)) {
 						arr.push(component ? cell.getComponent() : cell);
 					}
 				});
-
+				
 				return arr;
 			});
 		} else {
@@ -282,21 +282,35 @@ class Range extends CoreFeature{
 	getColumns() {
 		return this._getTableColumns().slice(this.left + 1, this.right + 2);
 	}
-
+	
+	clearValues(){
+		var cells = this.getCells();
+		var clearValue = this.table.options.selectableRangeClearCellsValue;
+		
+		this.table.blockRedraw();
+		
+		cells.forEach((cell) => {
+			cell.setValue(clearValue);
+		});
+		
+		this.table.restoreRedraw();
+		
+	}
+	
 	getBounds(component){
 		var cells = this.getCells(false, component),
 		output = {
 			start:null,
 			end:null,
 		};
-
+		
 		if(cells.length){
 			output.start = cells[0];
 			output.end = cells[cells.length - 1];
 		}else{
 			console.warn("No bounds defined on range");
 		}
-
+		
 		return output;
 	}
 	
@@ -311,21 +325,21 @@ class Range extends CoreFeature{
 		this.destroyed = true;
 		
 		this.element.remove();
-
+		
 		if(notify){
 			this.rangeManager.rangeRemoved(this);
 		}
-
+		
 		if(this.initialized){
 			this.dispatchExternal("rangeRemoved", this.getComponent());
 		}
 	}
-
+	
 	destroyedGuard(func){
 		if(this.destroyed){
 			console.warn("You cannot call the "  + func + " function on a destroyed range");
 		}
-
+		
 		return !this.destroyed;
 	}
 }
