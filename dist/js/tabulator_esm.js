@@ -20132,7 +20132,7 @@ class Range extends CoreFeature{
 			row = element.row.position - 1;
 			col = element.column.getPosition() - 2;
 			
-			if (element.column === this.rowHeader) {
+			if (element.column === this.rangeManager.rowHeader) {
 				this.setStart(row, 0);
 			} else {
 				this.setStart(row, col);
@@ -20155,7 +20155,7 @@ class Range extends CoreFeature{
 		}else {
 			row = element.row.position - 1;
 			col = element.column.getPosition() - 2;
-			isRowHeader = element.column === this.rowHeader;
+			isRowHeader = element.column === this.rangeManager.rowHeader;
 			
 			if (this.rangeManager.selecting === "row") {
 				this.setEnd(row, this._getTableColumns().length - 2);

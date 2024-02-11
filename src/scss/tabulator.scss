@@ -446,7 +446,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			display: flex;
 			align-items:center;
 			justify-content: center;
-
+			
 			min-width:100%;
 			width:100%;
 			
@@ -766,7 +766,15 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			background-color: $rangeHeaderHighlightBackground;
 			color: $rangeHeaderTextHighlightBackground;
 		}
+		
+		&.tabulator-range-selected{
+			.tabulator-cell.tabulator-range-row-header{
+				background-color: $rangeHeaderSelectedBackground;
+				color: $rangeHeaderSelectedTextColor;
+			}	
+		}
 	}
+
 	
 	//row resize handles
 	.tabulator-row-resize-handle{
