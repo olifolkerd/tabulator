@@ -1079,15 +1079,43 @@ Ajax.defaultLoaderPromise = defaultLoaderPromise;
 Ajax.contentTypeFormatters = defaultContentTypeFormatters;
 
 var defaultPasteActions = {
-	replace:function(rows){
-		return this.table.setData(rows);
+	replace:function(data){
+		return this.table.setData(data);
 	},
-	update:function(rows){
-		return this.table.updateOrAddData(rows);
+	update:function(data){
+		return this.table.updateOrAddData(data);
 	},
-	insert:function(rows){
-		return this.table.addData(rows);
+	insert:function(data){
+		return this.table.addData(data);
 	},
+	range:function(data){
+		var rows = [],
+		range = this.table.modules.selectRange.activeRange,
+		startCell, startRow;
+		
+		if(range){
+			startCell = range.getBounds().start;
+
+			if(startCell){
+				rows = this.table.rowManager.activeRows.slice();
+				startRow = rows.indexOf(startCell.row);
+
+				if(startRow >-1){
+					this.table.blockRedraw();
+
+					rows = rows.slice(startRow, startRow + data.length);
+
+					rows.forEach((row, i) => {
+						row.updateData(data[i]);
+					});
+				
+					this.table.restoreRedraw();
+				}
+			}
+		}
+		
+		return rows;
+	}
 };
 
 var defaultPasteParsers = {
@@ -1097,72 +1125,116 @@ var defaultPasteParsers = {
 		columns = this.table.columnManager.columns,
 		columnMap = [],
 		rows = [];
-
+		
 		//get data from clipboard into array of columns and rows.
 		clipboard = clipboard.split("\n");
-
+		
 		clipboard.forEach(function(row){
 			data.push(row.split("\t"));
 		});
-
+		
 		if(data.length && !(data.length === 1 && data[0].length < 2)){
-
+			
 			//check if headers are present by title
 			data[0].forEach(function(value){
 				var column = columns.find(function(column){
 					return value && column.definition.title && value.trim() && column.definition.title.trim() === value.trim();
 				});
-
+				
 				if(column){
 					columnMap.push(column);
 				}else {
 					headerFindSuccess = false;
 				}
 			});
-
+			
 			//check if column headers are present by field
 			if(!headerFindSuccess){
 				headerFindSuccess = true;
 				columnMap = [];
-
+				
 				data[0].forEach(function(value){
 					var column = columns.find(function(column){
 						return value && column.field && value.trim() && column.field.trim() === value.trim();
 					});
-
+					
 					if(column){
 						columnMap.push(column);
 					}else {
 						headerFindSuccess = false;
 					}
 				});
-
+				
 				if(!headerFindSuccess){
 					columnMap = this.table.columnManager.columnsByIndex;
 				}
 			}
-
+			
 			//remove header row if found
 			if(headerFindSuccess){
 				data.shift();
 			}
-
+			
 			data.forEach(function(item){
 				var row = {};
-
+				
 				item.forEach(function(value, i){
 					if(columnMap[i]){
 						row[columnMap[i].field] = value;
 					}
 				});
-
+				
 				rows.push(row);
 			});
-
+			
 			return rows;
 		}else {
 			return false;
 		}
+	},
+	range:function(clipboard){
+		var data = [],
+		rows = [],
+		range = this.table.modules.selectRange.activeRange,
+		startCell, columnMap, startCol;
+		
+		if(range){
+			startCell = range.getBounds().start;
+			
+			if(startCell){
+				//get data from clipboard into array of columns and rows.
+				clipboard = clipboard.split("\n");
+				
+				clipboard.forEach(function(row){
+					data.push(row.split("\t"));
+				});
+				
+				if(data.length){
+					columnMap = this.table.columnManager.getVisibleColumnsByIndex();
+					startCol = columnMap.indexOf(startCell.column);
+
+					if(startCol > -1){
+						columnMap = columnMap.slice(startCol, startCol + data[0].length);
+
+						data.forEach((item) => {
+							var row = {};
+
+							item.forEach(function(value, i){
+								if(columnMap[i]){
+									row[columnMap[i].field] = value;
+								}
+							});
+							
+							rows.push(row);	
+						});
+
+						return rows;
+					}				
+				}
+			}
+		}
+		
+		return false;
 	}
 };
 
@@ -1373,7 +1445,7 @@ class Clipboard extends Module{
 	paste(e){
 		var data, rowData, rows;
 
-		if(this.checkPaseOrigin(e)){
+		if(this.checkPasteOrigin(e)){
 
 			data = this.getPasteData(e);
 
@@ -1410,12 +1482,12 @@ class Clipboard extends Module{
 	}
 
 
-	checkPaseOrigin(e){
+	checkPasteOrigin(e){
 		var valid = true;
-
-		if(e.target.tagName != "DIV" || this.table.modules.edit.currentCell){
-			valid = false;
-		}
+		
+		// if(e.target.tagName != "DIV" || this.table.modules.edit.currentCell){
+		// 	valid = false;
+		// }
 
 		return valid;
 	}
@@ -19845,7 +19917,7 @@ class RangeComponent {
 	}
 
 	getCells() {
-		return this._range.getCells();
+		return this._range.getCells(true);
 	}
 
 	getStructuredCells() {
@@ -20147,7 +20219,7 @@ class Range extends CoreFeature{
 		return data;
 	}
 	
-	getCells(structured) {
+	getCells(structured, component) {
 		var cells = [],
 		rows = this.getRows(),
 		columns = this.getColumns();
@@ -20158,7 +20230,7 @@ class Range extends CoreFeature{
 
 				row.getCells().forEach((cell) => {
 					if (columns.includes(cell.column)) {
-						arr.push(cell.getComponent());
+						arr.push(component ? cell.getComponent() : cell);
 					}
 				});
 
@@ -20168,7 +20240,7 @@ class Range extends CoreFeature{
 			rows.forEach((row) => {
 				row.getCells().forEach((cell) => {
 					if (columns.includes(cell.column)) {
-						cells.push(cell.getComponent());
+						cells.push(component ? cell.getComponent() : cell);
 					}
 				});
 			});
@@ -20178,7 +20250,7 @@ class Range extends CoreFeature{
 	}
 	
 	getStructuredCells() {
-		return this.getCells(true);
+		return this.getCells(true, true);
 	}
 	
 	getRows() {
@@ -20189,8 +20261,8 @@ class Range extends CoreFeature{
 		return this._getTableColumns().slice(this.left + 1, this.right + 2);
 	}
 
-	getBounds(){
-		var cells = this.getCells(),
+	getBounds(component){
+		var cells = this.getCells(false, component),
 		output = {
 			start:null,
 			end:null,
@@ -20989,7 +21061,7 @@ class SelectRange extends Module {
 		
 		row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
 		
-		return row ? row.getCells().filter((cell) => cell.column.visible)[colIdx + 1] : null;
+		return row ? row.getCells(false, true).filter((cell) => cell.column.visible)[colIdx + 1] : null;
 	}
 	
 	

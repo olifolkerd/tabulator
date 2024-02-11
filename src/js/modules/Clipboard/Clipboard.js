@@ -210,7 +210,7 @@ class Clipboard extends Module{
 	paste(e){
 		var data, rowData, rows;
 
-		if(this.checkPaseOrigin(e)){
+		if(this.checkPasteOrigin(e)){
 
 			data = this.getPasteData(e);
 
@@ -247,12 +247,12 @@ class Clipboard extends Module{
 	}
 
 
-	checkPaseOrigin(e){
+	checkPasteOrigin(e){
 		var valid = true;
-
-		if(e.target.tagName != "DIV" || this.table.modules.edit.currentCell){
-			valid = false;
-		}
+		
+		// if(e.target.tagName != "DIV" || this.table.modules.edit.currentCell){
+		// 	valid = false;
+		// }
 
 		return valid;
 	}
