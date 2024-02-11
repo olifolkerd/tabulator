@@ -20370,7 +20370,7 @@ class SelectRange extends Module {
 	initialize() {
 		if (this.options("selectableRange")) {		
 			if(!this.options("selectableRows")){
-
+				
 				this.maxRanges = this.options("selectableRange");
 				
 				this.initializeTable();
@@ -20424,6 +20424,7 @@ class SelectRange extends Module {
 		this.subscribe("page-changed", this.redraw.bind(this));
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 		this.subscribe("table-redraw", this.redraw.bind(this));
+		this.subscribe("data-processed", this.resetRanges.bind(this));
 		this.subscribe("scroll-vertical", this.layoutChange.bind(this));
 		this.subscribe("scroll-horizontal", this.layoutChange.bind(this));
 		this.subscribe("column-width", this.layoutChange.bind(this));
@@ -20431,8 +20432,9 @@ class SelectRange extends Module {
 		this.subscribe("column-resized", this.layoutChange.bind(this));
 		this.subscribe("cell-height", this.layoutChange.bind(this));
 		this.subscribe("table-destroy", this.tableDestroyed.bind(this));
-
-
+		this.subscribe("data-destroy", this.tableDestroyed.bind(this));
+		
+		
 		this.subscribe("edit-blur", this.restoreFocus.bind(this));
 		
 		
@@ -20476,7 +20478,7 @@ class SelectRange extends Module {
 			}
 		}
 	}
-
+	
 	///////////////////////////////////
 	///////   Table Functions   ///////
 	///////////////////////////////////
@@ -20488,11 +20490,11 @@ class SelectRange extends Module {
 	getRangesData() {
 		return this.ranges.map((range) => range.getData());
 	}
-
+	
 	addRangeFromComponent(start, end){
 		start = start ? start._cell : null;
 		end = end ? end._cell : null;
-
+		
 		return this.addRange(start, end);
 	}
 	
@@ -20549,10 +20551,27 @@ class SelectRange extends Module {
 			e.preventDefault();
 		}
 	}
-
+	
+	initializeFocus(cell){
+		var range;
+		
+		try{
+			if (document.selection) { // IE
+				range = document.body.createTextRange();
+				range.moveToElementText(cell.getElement());
+				range.select();
+			} else if (window.getSelection) {
+				range = document.createRange();
+				range.selectNode(cell.getElement());
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(range);
+			}
+		}catch(e){}
+	}
+	
 	restoreFocus(element){
 		this.table.rowManager.element.focus();
-
+		
 		return true;
 	}
 	
@@ -20562,7 +20581,7 @@ class SelectRange extends Module {
 	
 	handleColumnResized(column) {
 		var selected;
-
+		
 		if (this.selecting !== "column" && this.selecting !== "all") {
 			return;
 		}
@@ -20575,7 +20594,7 @@ class SelectRange extends Module {
 		
 		this.ranges.forEach((range) => {
 			var selectedColumns = range.getColumns(true);
-
+			
 			selectedColumns.forEach((selectedColumn) => {
 				if (selectedColumn !== column) {
 					selectedColumn.setWidth(column.width);
@@ -20637,22 +20656,9 @@ class SelectRange extends Module {
 		
 		this.activeRange.setBounds(false, cell, true);
 	}
-
+	
 	handleCellClick(e, cell){
-		var range;
-
-		try{
-			if (document.selection) { // IE
-				range = document.body.createTextRange();
-				range.moveToElementText(cell.getElement());
-				range.select();
-			} else if (window.getSelection) {
-				range = document.createRange();
-				range.selectNode(cell.getElement());
-				window.getSelection().removeAllRanges();
-				window.getSelection().addRange(range);
-			}
-		}catch(e){}
+		this.initializeFocus(cell);
 	}
 	
 	handleCellDblClick(e, cell) {
@@ -20727,17 +20733,17 @@ class SelectRange extends Module {
 		if(jump){
 			switch(dir){
 				case "left":
-					nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
-					break;
+				nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
+				break;
 				case "right":
-					nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
-					break;
+				nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
+				break;
 				case "up":
-					nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
-					break;
+				nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
+				break;
 				case "down":
-					nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
-					break;
+				nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
+				break;
 			}
 		}else {
 			if(expand){
@@ -20748,17 +20754,17 @@ class SelectRange extends Module {
 			
 			switch(dir){
 				case "left":
-					nextCol = Math.max(nextCol - 1, 0);
-					break;
+				nextCol = Math.max(nextCol - 1, 0);
+				break;
 				case "right":
-					nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 2);
-					break;
+				nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 2);
+				break;
 				case "up":
-					nextRow = Math.max(nextRow - 1, 0);
-					break;
+				nextRow = Math.max(nextRow - 1, 0);
+				break;
 				case "down":
-					nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
-					break;
+				nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
+				break;
 			}
 		}
 		
@@ -20792,10 +20798,10 @@ class SelectRange extends Module {
 			return true;
 		}
 	}
-
+	
 	rangeRemoved(removed){
 		this.ranges = this.ranges.filter((range) => range !== removed);
-
+		
 		if(this.activeRange === removed){
 			if(this.ranges.length){
 				this.activeRange = this.ranges[this.ranges.length - 1];
@@ -20803,7 +20809,7 @@ class SelectRange extends Module {
 				this.addRange();
 			}
 		}
-
+		
 		this.layoutElement();
 	}
 	
@@ -20907,7 +20913,7 @@ class SelectRange extends Module {
 	///////////////////////////////////
 	newSelection(event, element) {
 		var range;
-
+		
 		if (element.type === "column") {
 			if(!this.columnSelection){
 				return;
@@ -20939,16 +20945,16 @@ class SelectRange extends Module {
 			this.resetRanges().setBounds(element);
 		}
 	}
-
+	
 	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element,
 		rowHeader = this.rowHeader.getElement(),
 		rect, view, withinHorizontalView, withinVerticalView;
-
+		
 		if (typeof row === 'undefined') {
 			row = this.getRowByRangePos(range.end.row).getElement();
 		}
-
+		
 		if (typeof column === 'undefined') {
 			column = this.getColumnByRangePos(range.end.col).getElement();
 		}
@@ -20988,7 +20994,7 @@ class SelectRange extends Module {
 		}
 	}
 	
-
+	
 	///////////////////////////////////
 	///////       Layout        ///////
 	///////////////////////////////////
@@ -21062,7 +21068,7 @@ class SelectRange extends Module {
 	
 	layoutRanges() {
 		var activeCell;
-
+		
 		if (!this.table.initialized) {
 			return;
 		}
@@ -21083,17 +21089,17 @@ class SelectRange extends Module {
 		this.overlay.style.visibility = "visible";
 	}
 	
-
+	
 	///////////////////////////////////
 	///////  Helper Functions   ///////
 	///////////////////////////////////	
-
+	
 	getCell(rowIdx, colIdx) {
 		var row;
 		
 		if (colIdx < 0) {
 			colIdx = this.getTableColumns().length + colIdx - 1;
-
+			
 			if (colIdx < 0) {
 				return null;
 			}
@@ -21131,11 +21137,12 @@ class SelectRange extends Module {
 	
 	addRange(start, end) {
 		var  range;
-
+		
 		if(this.maxRanges !== true && this.ranges.length >= this.maxRanges){
 			this.ranges.shift().destroy();
 		}
 		
+		console.log("add");
 		range = new Range(this.table, this, start, end);
 		
 		this.activeRange = range;
@@ -21146,10 +21153,23 @@ class SelectRange extends Module {
 	}
 	
 	resetRanges() {
+		var range, cell;
+		
 		this.ranges.forEach((range) => range.destroy());
 		this.ranges = [];
 		
-		return this.addRange();
+		range = this.addRange();
+		
+		if(this.table.rowManager.activeRows.length){
+			cell = this.table.rowManager.activeRows[0].cells[this.rowHeader ? 1 : 0];
+
+			if(cell){
+				range.setBounds(cell);
+				this.initializeFocus(cell);
+			}
+		}
+		
+		return range;
 	}
 	
 	tableDestroyed(){
