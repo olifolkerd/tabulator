@@ -24,6 +24,8 @@ class Edit extends Module{
 		this.registerColumnOption("cellEdited");
 		this.registerColumnOption("cellEditCancelled");
 		
+		this.registerTableOption("editTriggerEvent", "focus");
+		
 		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
 		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
 		this.registerTableFunction("navigatePrev", this.navigatePrev.bind(this));
@@ -59,17 +61,21 @@ class Edit extends Module{
 		
 		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
+		
+		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
+		
+		
 		// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
 		// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
 		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
 		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
 	}
-
-
+	
+	
 	///////////////////////////////////
 	///////// Paste Negation //////////
 	///////////////////////////////////
-
+	
 	pasteBlocker(e){
 		if(this.currentCell){
 			return true;
@@ -384,30 +390,30 @@ class Edit extends Module{
 		//set column editor
 		switch(typeof column.definition.editor){
 			case "string":
-				if(this.editors[column.definition.editor]){
-					config.editor = this.editors[column.definition.editor];
-				}else{
-					console.warn("Editor Error - No such editor found: ", column.definition.editor);
-				}
-				break;
+			if(this.editors[column.definition.editor]){
+				config.editor = this.editors[column.definition.editor];
+			}else{
+				console.warn("Editor Error - No such editor found: ", column.definition.editor);
+			}
+			break;
 			
 			case "function":
-				config.editor = column.definition.editor;
-				break;
+			config.editor = column.definition.editor;
+			break;
 			
 			case "boolean":
-				if(column.definition.editor === true){
-					if(typeof column.definition.formatter !== "function"){
-						if(this.editors[column.definition.formatter]){
-							config.editor = this.editors[column.definition.formatter];
-						}else{
-							config.editor = this.editors["input"];
-						}
+			if(column.definition.editor === true){
+				if(typeof column.definition.formatter !== "function"){
+					if(this.editors[column.definition.formatter]){
+						config.editor = this.editors[column.definition.formatter];
 					}else{
-						console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
+						config.editor = this.editors["input"];
 					}
+				}else{
+					console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 				}
-				break;
+			}
+			break;
 		}
 		
 		if(config.editor){
@@ -473,12 +479,6 @@ class Edit extends Module{
 			this.updateCellClass(cell);
 			element.setAttribute("tabindex", 0);
 			
-			element.addEventListener("click", function(e){
-				if(!element.classList.contains("tabulator-editing")){
-					element.focus({preventScroll: true});
-				}
-			});
-			
 			element.addEventListener("mousedown", function(e){
 				if (e.button === 2) {
 					e.preventDefault();
@@ -486,12 +486,33 @@ class Edit extends Module{
 					self.mouseClick = true;
 				}
 			});
+
+			if(this.options("editTriggerEvent") === "dblclick"){
+				element.addEventListener("dblclick", function(e){
+					if(!element.classList.contains("tabulator-editing")){
+						element.focus({preventScroll: true});
+						self.edit(cell, e, false);
+					}
+				});
+			}
 			
-			element.addEventListener("focus", function(e){
-				if(!self.recursionBlock){
-					self.edit(cell, e, false);
-				}
-			});
+			
+			if(this.options("editTriggerEvent") === "focus" || this.options("editTriggerEvent") === "click"){
+				element.addEventListener("click", function(e){
+					if(!element.classList.contains("tabulator-editing")){
+						element.focus({preventScroll: true});
+						self.edit(cell, e, false);
+					}
+				});
+			}
+			
+			if(this.options("editTriggerEvent") === "focus"){
+				element.addEventListener("focus", function(e){
+					if(!self.recursionBlock){
+						self.edit(cell, e, false);
+					}
+				});
+			}
 		}
 	}
 	
@@ -554,18 +575,18 @@ class Edit extends Module{
 		if(cell.column.modules.edit){
 			switch(typeof cell.column.modules.edit.check){
 				case "function":
-					if(cell.row.initialized){
-						check = cell.column.modules.edit.check(cell.getComponent());
-					}
-					break;
+				if(cell.row.initialized){
+					check = cell.column.modules.edit.check(cell.getComponent());
+				}
+				break;
 				
 				case "string":
-					check = !!cell.row.data[cell.column.modules.edit.check];
-					break;
+				check = !!cell.row.data[cell.column.modules.edit.check];
+				break;
 				
 				case "boolean":
-					check = cell.column.modules.edit.check;
-					break;
+				check = cell.column.modules.edit.check;
+				break;
 			}
 		}
 		
@@ -578,6 +599,8 @@ class Edit extends Module{
 		rendered = function(){},
 		element = cell.getElement(),
 		cellEditor, component, params;
+		
+		console.trace("edit")
 		
 		//prevent editing if another cell is refusing to leave focus (eg. validation fail)
 		
@@ -712,7 +735,7 @@ class Edit extends Module{
 			return false;
 		}
 	}
-
+	
 	blur(element){
 		if(!this.confirm("edit-blur", [element]) ){
 			element.blur();
