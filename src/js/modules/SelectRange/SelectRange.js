@@ -400,7 +400,7 @@ class SelectRange extends Module {
 					nextCol = Math.max(nextCol - 1, 0);
 					break;
 				case "right":
-					nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 2);
+					nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 1);
 					break;
 				case "up":
 					nextRow = Math.max(nextRow - 1, 0);
@@ -494,13 +494,13 @@ class SelectRange extends Module {
 	findJumpCellLeft(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos),
 		cells = row.cells.filter((cell) => cell.column.visible),
-		isStartingCellEmpty = !cells[colPos + 1].getValue(),
+		isStartingCellEmpty = !cells[colPos].getValue(),
 		isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false,
 		jumpCol = colPos,
 		nextCell = this.findJumpCell(cells.slice(0, colPos), true, isStartingCellEmpty, isLeftOfStartingCellEmpty);
 		
 		if(nextCell){
-			jumpCol = nextCell.column.getPosition() - 2;
+			jumpCol = nextCell.column.getPosition() - 1;
 		}
 		
 		return jumpCol;
@@ -509,13 +509,13 @@ class SelectRange extends Module {
 	findJumpCellRight(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos),
 		cells = row.cells.filter((cell) => cell.column.visible),
-		isStartingCellEmpty = !cells[colPos + 1].getValue(),
-		isRightOfStartingCellEmpty = cells[colPos + 2] ? !cells[colPos + 2].getValue() : false,
+		isStartingCellEmpty = !cells[colPos].getValue(),
+		isRightOfStartingCellEmpty = cells[colPos + 1] ? !cells[colPos + 1].getValue() : false,
 		jumpCol = colPos,
-		nextCell = this.findJumpCell(cells.slice(colPos + 2, cells.length), false, isStartingCellEmpty, isRightOfStartingCellEmpty);
+		nextCell = this.findJumpCell(cells.slice(colPos + 1, cells.length), false, isStartingCellEmpty, isRightOfStartingCellEmpty);
 		
 		if(nextCell){
-			jumpCol = nextCell.column.getPosition() - 2;
+			jumpCol = nextCell.column.getPosition() - 1;
 		}
 		
 		return jumpCol;
@@ -591,8 +591,7 @@ class SelectRange extends Module {
 
 	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element,
-		rowHeader = this.rowHeader.getElement(),
-		rect, view, withinHorizontalView, withinVerticalView;
+		rowHeader, rect, view, withinHorizontalView, withinVerticalView;
 
 		if (typeof row === 'undefined') {
 			row = this.getRowByRangePos(range.end.row).getElement();
@@ -600,6 +599,10 @@ class SelectRange extends Module {
 
 		if (typeof column === 'undefined') {
 			column = this.getColumnByRangePos(range.end.col).getElement();
+		}
+
+		if (this.rowHeader) {
+			rowHeader = this.rowHeader.getElement();
 		}
 		
 		rect = {
@@ -610,11 +613,15 @@ class SelectRange extends Module {
 		};
 		
 		view = {
-			left: tableHolder.scrollLeft + rowHeader.offsetWidth,
+			left: tableHolder.scrollLeft,
 			right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
 			top: tableHolder.scrollTop,
 			bottom:	tableHolder.scrollTop +	tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth,
 		};
+
+		if (rowHeader) {
+			view.left += rowHeader.offsetWidth;
+		}
 		
 		withinHorizontalView = view.left < rect.left &&	rect.left < view.right && view.left < rect.right &&	rect.right < view.right;
 		
@@ -622,7 +629,10 @@ class SelectRange extends Module {
 		
 		if (!withinHorizontalView) {
 			if (rect.left < view.left) {
-				tableHolder.scrollLeft = rect.left - rowHeader.offsetWidth;
+				tableHolder.scrollLeft = rect.left;
+				if (rowHeader) {
+					tableHolder.scrollLeft -= rowHeader.offsetWidth;
+				}
 			} else if (rect.right > view.right) {
 				tableHolder.scrollLeft = rect.right - tableHolder.clientWidth;
 			}
@@ -754,7 +764,7 @@ class SelectRange extends Module {
 		
 		row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
 		
-		return row ? row.getCells().filter((cell) => cell.column.visible)[colIdx + 1] : null;
+		return row ? row.getCells().filter((cell) => cell.column.visible)[colIdx] : null;
 	}
 	
 	
@@ -767,7 +777,7 @@ class SelectRange extends Module {
 	}
 	
 	getColumnByRangePos(pos) {
-		return this.getTableColumns()[pos + 1];
+		return this.getTableColumns()[pos];
 	}
 	
 	getTableRows() {

@@ -81,11 +81,11 @@ class Range extends CoreFeature{
 
 		if (element.type === "column") {
 			if(this.rangeManager.columnSelection){
-				this.setStart(0, element.getPosition() - 2);
+				this.setStart(0, element.getPosition() - 1);
 			}
 		}else{
 			row = element.row.position - 1;
-			col = element.column.getPosition() - 2;
+			col = element.column.getPosition() - 1;
 			
 			if (element.column === this.rowHeader) {
 				this.setStart(row, 0);
@@ -109,7 +109,7 @@ class Range extends CoreFeature{
 			}
 		}else{
 			row = element.row.position - 1;
-			col = element.column.getPosition() - 2;
+			col = element.column.getPosition() - 1;
 			isRowHeader = element.column === this.rowHeader;
 			
 			if (this.rangeManager.selecting === "row") {
@@ -211,7 +211,7 @@ class Range extends CoreFeature{
 	}
 	
 	occupiesColumn(col) {
-		return this.left <= col.getPosition() - 2 && col.getPosition() - 2 <= this.right;
+		return this.left <= col.getPosition() - 1 && col.getPosition() - 1 <= this.right;
 	}
 	
 	overlaps(left, top, right, bottom) {
@@ -280,7 +280,7 @@ class Range extends CoreFeature{
 	}
 	
 	getColumns() {
-		return this._getTableColumns().slice(this.left + 1, this.right + 2);
+		return this._getTableColumns().slice(this.left, this.right + 1);
 	}
 
 	getBounds(){
