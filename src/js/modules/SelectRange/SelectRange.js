@@ -115,7 +115,7 @@ class SelectRange extends Module {
 	
 	initializeColumn(column) {
 		if(this.columnSelection && column.definition.headerSort && this.options("headerSortClickElement") !== "icon"){
-			console.warn("Using column headerSort with selectableRangeColumns option may result in unpredictable behavior");
+			console.warn("Using column headerSort with selectableRangeColumns option may result in unpredictable behavior. Consider using headerSortClickElement: 'icon'.");
 		}
 		
 		if (column.modules.edit) {

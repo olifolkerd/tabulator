@@ -102,9 +102,9 @@ class Range extends CoreFeature{
 		if (element.type === "column") {
 			if(this.rangeManager.columnSelection){
 				if (this.rangeManager.selecting === "column") {
-					this.setEnd(rowsCount - 1, element.getPosition() - 2);
+					this.setEnd(rowsCount - 1, element.getPosition() - 1);
 				} else if (this.rangeManager.selecting === "cell") {
-					this.setEnd(0, element.getPosition() - 2);
+					this.setEnd(0, element.getPosition() - 1);
 				}
 			}
 		}else{
