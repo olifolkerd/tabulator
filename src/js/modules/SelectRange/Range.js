@@ -95,11 +95,7 @@ class Range extends CoreFeature{
 			col = element.column.getPosition() - 1;
 			
 			if (element.column === this.rangeManager.rowHeader) {
-<<<<<<< HEAD
 				this.setStart(row, 1);
-=======
-				this.setStart(row, 0);
->>>>>>> master
 			} else {
 				this.setStart(row, col);
 			}
@@ -120,11 +116,7 @@ class Range extends CoreFeature{
 			}
 		}else{
 			row = element.row.position - 1;
-<<<<<<< HEAD
 			col = element.column.getPosition() - 1;
-=======
-			col = element.column.getPosition() - 2;
->>>>>>> master
 			isRowHeader = element.column === this.rangeManager.rowHeader;
 			
 			if (this.rangeManager.selecting === "row") {
