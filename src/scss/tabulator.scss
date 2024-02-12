@@ -766,6 +766,13 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		}
 	}
 	
+	&.tabulator-range-selected{
+		.tabulator-cell.tabulator-range-row-header{
+			background-color: $rangeHeaderSelectedBackground;
+			color: $rangeHeaderSelectedTextColor;
+		}
+	}
+	
 	//row resize handles
 	.tabulator-row-resize-handle{
 		position:absolute;
@@ -890,13 +897,6 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 					margin-top:2px;
 					background:#666;
 				}
-			}
-		}
-		
-		&.tabulator-range-row-header{
-			&.tabulator-range-selected{
-				background-color: $rangeHeaderSelectedBackground;
-				color: $rangeHeaderSelectedTextColor;
 			}
 		}
 		

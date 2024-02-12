@@ -497,7 +497,8 @@ class SelectRange extends Module {
 		isStartingCellEmpty = !cells[colPos].getValue(),
 		isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false,
 		jumpCol = colPos,
-		nextCell = this.findJumpCell(cells.slice(0, colPos), true, isStartingCellEmpty, isLeftOfStartingCellEmpty);
+		targetCells = this.rowHeader ? cells.slice(1, colPos) : cells.slice(0, colPos),
+		nextCell = this.findJumpCell(targetCells, true, isStartingCellEmpty, isLeftOfStartingCellEmpty);
 		
 		if(nextCell){
 			jumpCol = nextCell.column.getPosition() - 1;
@@ -566,8 +567,13 @@ class SelectRange extends Module {
 				range = this.resetRanges();
 				this.selecting = "all";
 				
-				const topLeftCell = this.getCell(0, 0);
-				const bottomRightCell = this.getCell(-1, -1);
+				var topLeftCell, bottomRightCell = this.getCell(-1, -1);
+
+				if(this.rowHeader){
+					topLeftCell = this.getCell(0, 1);
+				}else{
+					topLeftCell = this.getCell(0, 0);
+				}
 				
 				range.setBounds(topLeftCell, bottomRightCell);		
 				return;
@@ -751,7 +757,7 @@ class SelectRange extends Module {
 		var row;
 		
 		if (colIdx < 0) {
-			colIdx = this.getTableColumns().length + colIdx - 1;
+			colIdx = this.getTableColumns().length + colIdx;
 
 			if (colIdx < 0) {
 				return null;
