@@ -37,7 +37,12 @@ class MoveColumns extends Module{
 	initialize(){
 		if(this.table.options.movableColumns){
 			this.subscribe("column-init", this.initializeColumn.bind(this));
+			this.subscribe("alert-show", this.abortMove.bind(this));
 		}
+	}
+
+	abortMove(){
+		clearTimeout(this.checkTimeout);
 	}
 	
 	initializeColumn(column){

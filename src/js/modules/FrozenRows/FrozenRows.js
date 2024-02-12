@@ -19,12 +19,17 @@ class FrozenRows extends Module{
 	}
 
 	initialize(){
+		var	fragment = document.createDocumentFragment();
+		
 		this.rows = [];
 
 		this.topElement.classList.add("tabulator-frozen-rows-holder");
+		
+		fragment.appendChild(document.createElement("br"));
+		fragment.appendChild(this.topElement);
 
 		// this.table.columnManager.element.append(this.topElement);
-		this.table.columnManager.getContentsElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
+		this.table.columnManager.getContentsElement().insertBefore(fragment, this.table.columnManager.headersElement.nextSibling);
 
 		this.subscribe("row-deleting", this.detachRow.bind(this));
 		this.subscribe("rows-visible", this.visibleRows.bind(this));

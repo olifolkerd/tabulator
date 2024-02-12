@@ -42,4 +42,6 @@ export default class PseudoRow {
 	setCellHeight(){}
 
 	clearCellHeight(){}
+
+	rendered(){}
 }

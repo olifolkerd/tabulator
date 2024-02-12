@@ -407,6 +407,10 @@ export default class ColumnManager extends CoreFeature {
 		
 		return index > -1 ? this.columnsByIndex[index] : false;
 	}
+
+	getVisibleColumnsByIndex() {
+		return this.columnsByIndex.filter((col) => col.visible);
+	}
 	
 	getColumns(){
 		return this.columns;
