@@ -277,6 +277,7 @@ class Tabulator {
 	
 	_loadInitialData(){
 		this.dataLoader.load(this.options.data);
+		this.columnManager.verticalAlignHeaders();
 	}
 	
 	//deconstructor

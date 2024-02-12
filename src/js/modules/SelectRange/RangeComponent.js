@@ -22,7 +22,7 @@ class RangeComponent {
 	}
 
 	getCells() {
-		return this._range.getCells();
+		return this._range.getCells(true);
 	}
 
 	getStructuredCells() {
@@ -74,6 +74,12 @@ class RangeComponent {
 		if(this._range.destroyedGuard("setEndBound")){
 			this._range.setEndBound(end ? end._cell : end);
 			this._range.rangeManager.layoutElement();
+		}
+	}
+
+	clearValues(){
+		if(this._range.destroyedGuard("clearValues")){
+			this._range.clearValues();
 		}
 	}
 

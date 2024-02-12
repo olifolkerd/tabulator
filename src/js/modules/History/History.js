@@ -119,7 +119,7 @@ class History extends Module{
 
 			return true;
 		}else{
-			console.warn("History Undo Error - No more history to undo");
+			console.warn(this.options("history") ? "History Undo Error - No more history to undo" : "History module not enabled");
 			return false;
 		}
 	}
@@ -137,7 +137,7 @@ class History extends Module{
 
 			return true;
 		}else{
-			console.warn("History Redo Error - No more history to redo");
+			console.warn(this.options("history") ? "History Redo Error - No more history to redo" : "History module not enabled");
 			return false;
 		}
 	}

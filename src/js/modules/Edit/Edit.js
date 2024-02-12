@@ -24,6 +24,8 @@ class Edit extends Module{
 		this.registerColumnOption("cellEdited");
 		this.registerColumnOption("cellEditCancelled");
 		
+		this.registerTableOption("editTriggerEvent", "focus");
+		
 		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
 		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
 		this.registerTableFunction("navigatePrev", this.navigatePrev.bind(this));
@@ -55,13 +57,27 @@ class Edit extends Module{
 		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 		this.subscribe("row-layout", this.rowEditableCheck.bind(this));
 		this.subscribe("data-refreshing", this.cancelEdit.bind(this));
+		this.subscribe("clipboard-paste", this.pasteBlocker.bind(this));
 		
 		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
+		
+		
 		// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
 		// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
 		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
 		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
+	}
+	
+	
+	///////////////////////////////////
+	///////// Paste Negation //////////
+	///////////////////////////////////
+	
+	pasteBlocker(e){
+		if(this.currentCell){
+			return true;
+		}
 	}
 	
 	
@@ -72,7 +88,7 @@ class Edit extends Module{
 	keybindingNavigateNext(e){
 		var cell = this.currentCell,
 		newRow = this.options("tabEndNewRow");
-		
+
 		if(cell){
 			if(!this.navigateNext(cell, e)){
 				if(newRow){
@@ -461,12 +477,6 @@ class Edit extends Module{
 			this.updateCellClass(cell);
 			element.setAttribute("tabindex", 0);
 			
-			element.addEventListener("click", function(e){
-				if(!element.classList.contains("tabulator-editing")){
-					element.focus({preventScroll: true});
-				}
-			});
-			
 			element.addEventListener("mousedown", function(e){
 				if (e.button === 2) {
 					e.preventDefault();
@@ -474,12 +484,33 @@ class Edit extends Module{
 					self.mouseClick = true;
 				}
 			});
+
+			if(this.options("editTriggerEvent") === "dblclick"){
+				element.addEventListener("dblclick", function(e){
+					if(!element.classList.contains("tabulator-editing")){
+						element.focus({preventScroll: true});
+						self.edit(cell, e, false);
+					}
+				});
+			}
 			
-			element.addEventListener("focus", function(e){
-				if(!self.recursionBlock){
-					self.edit(cell, e, false);
-				}
-			});
+			
+			if(this.options("editTriggerEvent") === "focus" || this.options("editTriggerEvent") === "click"){
+				element.addEventListener("click", function(e){
+					if(!element.classList.contains("tabulator-editing")){
+						element.focus({preventScroll: true});
+						self.edit(cell, e, false);
+					}
+				});
+			}
+			
+			if(this.options("editTriggerEvent") === "focus"){
+				element.addEventListener("focus", function(e){
+					if(!self.recursionBlock){
+						self.edit(cell, e, false);
+					}
+				});
+			}
 		}
 	}
 	
@@ -630,7 +661,6 @@ class Edit extends Module{
 			allowEdit = this.allowEdit(cell);
 			
 			if(allowEdit || forceEdit){
-				
 				self.cancelEdit();
 				
 				self.currentCell = cell;
@@ -700,7 +730,7 @@ class Edit extends Module{
 			return false;
 		}
 	}
-
+	
 	blur(element){
 		if(!this.confirm("edit-blur", [element]) ){
 			element.blur();

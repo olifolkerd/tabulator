@@ -6,6 +6,8 @@ export default {
 
 	rowAdd: function(action){
 		action.component.deleteActual();
+
+		this.table.rowManager.checkPlaceholder();
 	},
 
 	rowDelete: function(action){
@@ -16,6 +18,8 @@ export default {
 		}
 
 		this._rebindRow(action.component, newRow);
+
+		this.table.rowManager.checkPlaceholder();
 	},
 
 	rowMove: function(action){

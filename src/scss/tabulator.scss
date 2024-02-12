@@ -402,6 +402,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
+			display: inline-block;
 			
 			background:lighten($headerBackgroundColor, 5%) !important;
 			
@@ -419,7 +420,8 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			}
 		}
 		
-		.tabulator-frozen-rows-holder{		
+		.tabulator-frozen-rows-holder{	
+			display: inline-block;	
 			&:empty{
 				display: none;
 			}
@@ -445,12 +447,12 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			align-items:center;
 			justify-content: center;
 			
+			min-width:100%;
+			width:100%;
+			
 			&[tabulator-render-mode="virtual"]{
 				min-height:100%;
-				min-width:100%;
 			}
-			
-			width:100%;
 			
 			.tabulator-placeholder-contents {
 				display: inline-block;
@@ -655,7 +657,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		margin-left: -3px;
 		margin-right: -3px;
 		
-		z-index: 10;
+		z-index: 11;
 		vertical-align: middle;
 		
 		@media (hover:hover) and (pointer:fine){
@@ -764,7 +766,15 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			background-color: $rangeHeaderHighlightBackground;
 			color: $rangeHeaderTextHighlightBackground;
 		}
+		
+		&.tabulator-range-selected{
+			.tabulator-cell.tabulator-range-row-header{
+				background-color: $rangeHeaderSelectedBackground;
+				color: $rangeHeaderSelectedTextColor;
+			}	
+		}
 	}
+
 	
 	&.tabulator-range-selected{
 		.tabulator-cell.tabulator-range-row-header{
@@ -831,6 +841,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		white-space:nowrap;
 		overflow:hidden;
 		text-overflow:ellipsis;
+		outline:none;
 		
 		&.tabulator-frozen{
 			display: inline-block;

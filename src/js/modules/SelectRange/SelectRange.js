@@ -15,6 +15,7 @@ class SelectRange extends Module {
 		this.rowSelection = false;
 		this.maxRanges = 0;
 		this.activeRange = false;
+		this.blockKeydown = false;
 		
 		this.keyDownEvent = this._handleKeyDown.bind(this);
 		this.mouseUpEvent = this._handleMouseUp.bind(this);
@@ -22,9 +23,13 @@ class SelectRange extends Module {
 		this.registerTableOption("selectableRange", false); //enable selectable range
 		this.registerTableOption("selectableRangeColumns", false); //enable selectable range
 		this.registerTableOption("selectableRangeRows", false); //enable selectable range
+		this.registerTableOption("selectableRangeClearCells", false); //allow clearing of active range
+		this.registerTableOption("selectableRangeClearCellsValue", undefined); //value for cleared active range
+
 		this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
 		this.registerTableFunction("getRanges", this.getRanges.bind(this));
 		this.registerTableFunction("addRange", this.addRangeFromComponent.bind(this));
+
 		this.registerComponentFunction("cell", "getRanges", this.cellGetRanges.bind(this));
 		this.registerComponentFunction("row", "getRanges", this.rowGetRanges.bind(this));
 		this.registerComponentFunction("column", "getRanges", this.colGetRanges.bind(this));
@@ -37,7 +42,7 @@ class SelectRange extends Module {
 	initialize() {
 		if (this.options("selectableRange")) {		
 			if(!this.options("selectableRows")){
-
+				
 				this.maxRanges = this.options("selectableRange");
 				
 				this.initializeTable();
@@ -79,28 +84,32 @@ class SelectRange extends Module {
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
 		this.subscribe("column-resized", this.handleColumnResized.bind(this));
-		this.subscribe("columns-loaded", this.updateHeaderColumn.bind(this));
-		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
-		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
-		this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
-		this.subscribe("cell-rendered", this.renderCell.bind(this));
-		this.subscribe("cell-editing", this.handleEditingCell.bind(this));
-		this.subscribe("edit-success", this.finishEditingCell.bind(this));
-		this.subscribe("edit-cancelled", this.finishEditingCell.bind(this));
-		this.subscribe("page-changed", this.redraw.bind(this));
-		this.subscribe("table-layout", this.layoutElement.bind(this));
-		this.subscribe("table-redraw", this.redraw.bind(this));
-		this.subscribe("scroll-vertical", this.layoutChange.bind(this));
-		this.subscribe("scroll-horizontal", this.layoutChange.bind(this));
 		this.subscribe("column-width", this.layoutChange.bind(this));
 		this.subscribe("column-height", this.layoutChange.bind(this));
 		this.subscribe("column-resized", this.layoutChange.bind(this));
+		this.subscribe("columns-loaded", this.updateHeaderColumn.bind(this));
+
 		this.subscribe("cell-height", this.layoutChange.bind(this));
-		this.subscribe("table-destroy", this.tableDestroyed.bind(this));
-
-
-		this.subscribe("edit-blur", this.restoreFocus.bind(this));
+		this.subscribe("cell-rendered", this.renderCell.bind(this));
+		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
+		this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
+		this.subscribe("cell-click", this.handleCellClick.bind(this));
+		this.subscribe("cell-editing", this.handleEditingCell.bind(this));
 		
+		this.subscribe("page-changed", this.redraw.bind(this));
+
+		this.subscribe("scroll-vertical", this.layoutChange.bind(this));
+		this.subscribe("scroll-horizontal", this.layoutChange.bind(this));
+		
+		this.subscribe("data-destroy", this.tableDestroyed.bind(this));
+		this.subscribe("data-processed", this.resetRanges.bind(this));
+		
+		this.subscribe("table-layout", this.layoutElement.bind(this));
+		this.subscribe("table-redraw", this.redraw.bind(this));
+		this.subscribe("table-destroy", this.tableDestroyed.bind(this));
+		
+		this.subscribe("edit-editor-clear", this.finishEditingCell.bind(this));
+		this.subscribe("edit-blur", this.restoreFocus.bind(this));
 		
 		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "left"));
 		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "right"));
@@ -108,7 +117,6 @@ class SelectRange extends Module {
 		this.subscribe("keybinding-nav-right", this.keyNavigate.bind(this, "right"));
 		this.subscribe("keybinding-nav-up", this.keyNavigate.bind(this, "up"));
 		this.subscribe("keybinding-nav-down", this.keyNavigate.bind(this, "down"));
-		
 		this.subscribe("keybinding-nav-range", this.keyNavigateRange.bind(this));
 	}
 	
@@ -121,7 +129,7 @@ class SelectRange extends Module {
 		if (column.modules.edit) {
 			// Block editor from taking action so we can trigger edit by
 			// double clicking.
-			column.modules.edit.blocked = true;
+			// column.modules.edit.blocked = true;
 		}
 	}
 	
@@ -142,7 +150,7 @@ class SelectRange extends Module {
 			}
 		}
 	}
-
+	
 	///////////////////////////////////
 	///////   Table Functions   ///////
 	///////////////////////////////////
@@ -154,11 +162,11 @@ class SelectRange extends Module {
 	getRangesData() {
 		return this.ranges.map((range) => range.getData());
 	}
-
+	
 	addRangeFromComponent(start, end){
 		start = start ? start._cell : null;
 		end = end ? end._cell : null;
-
+		
 		return this.addRange(start, end);
 	}
 	
@@ -200,22 +208,43 @@ class SelectRange extends Module {
 	}
 	
 	_handleKeyDown(e) {
-		if (e.key === "Enter") {
-			// prevent action when pressing enter from editor
-			if (!e.target.classList.contains("tabulator-tableholder")) {
-				return;
+		if (!this.blockKeydown && (!this.table.modules.edit || (this.table.modules.edit && !this.table.modules.edit.currentCell))) {
+			if (e.key === "Enter") {
+				// is editing a cell?
+				if (this.table.modules.edit && this.table.modules.edit.currentCell) {
+					return;
+				}
+
+				this.table.modules.edit.editCell(this.getActiveCell());
+				
+				e.preventDefault();
 			}
-			
-			// is editing a cell?
-			if (this.table.modules.edit && this.table.modules.edit.currentCell) {
-				return;
+
+			if ((e.key === "Backspace" || e.key === "Delete") && this.options("selectableRangeClearCells")) {
+				if(this.activeRange){
+					this.activeRange.clearValues();
+				}
 			}
-			
-			this.editCell(this.getActiveCell());
-			e.preventDefault();
 		}
 	}
-
+	
+	initializeFocus(cell){
+		var range;
+		
+		try{
+			if (document.selection) { // IE
+				range = document.body.createTextRange();
+				range.moveToElementText(cell.getElement());
+				range.select();
+			} else if (window.getSelection) {
+				range = document.createRange();
+				range.selectNode(cell.getElement());
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(range);
+			}
+		}catch(e){}
+	}
+	
 	restoreFocus(element){
 		this.table.rowManager.element.focus();
 		
@@ -228,7 +257,7 @@ class SelectRange extends Module {
 	
 	handleColumnResized(column) {
 		var selected;
-
+		
 		if (this.selecting !== "column" && this.selecting !== "all") {
 			return;
 		}
@@ -241,7 +270,7 @@ class SelectRange extends Module {
 		
 		this.ranges.forEach((range) => {
 			var selectedColumns = range.getColumns(true);
-
+			
 			selectedColumns.forEach((selectedColumn) => {
 				if (selectedColumn !== column) {
 					selectedColumn.setWidth(column.width);
@@ -304,30 +333,23 @@ class SelectRange extends Module {
 		this.activeRange.setBounds(false, cell, true);
 	}
 	
-	handleCellDblClick(e, cell) {
-		if (cell.column === this.rowHeader) {
-			return;
-		}
-		
-		this.editCell(cell);
+	handleCellClick(e, cell){
+		this.initializeFocus(cell);
 	}
 	
-	editCell(cell) {
-		if (!cell.column.modules.edit) {
-			cell.column.modules.edit = {};
+	handleEditingCell(cell) {
+		if(this.activeRange){
+			this.activeRange.setBounds(cell);
 		}
-		cell.column.modules.edit.blocked = false;
-		cell.element.focus({ preventScroll: true });
-		cell.column.modules.edit.blocked = true;
-	}
-	
-	handleEditingCell() {
-		this.table.rowManager.element.removeEventListener("keydown", this.keyDownEvent);
 	}
 	
 	finishEditingCell() {
+		this.blockKeydown = true;
 		this.table.rowManager.element.focus();
-		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
+
+		setTimeout(() => {
+			this.blockKeydown = false;
+		}, 10);
 	}
 	
 	///////////////////////////////////
@@ -441,10 +463,10 @@ class SelectRange extends Module {
 			return true;
 		}
 	}
-
+	
 	rangeRemoved(removed){
 		this.ranges = this.ranges.filter((range) => range !== removed);
-
+		
 		if(this.activeRange === removed){
 			if(this.ranges.length){
 				this.activeRange = this.ranges[this.ranges.length - 1];
@@ -452,7 +474,7 @@ class SelectRange extends Module {
 				this.addRange();
 			}
 		}
-
+		
 		this.layoutElement();
 	}
 	
@@ -557,7 +579,7 @@ class SelectRange extends Module {
 	///////////////////////////////////
 	newSelection(event, element) {
 		var range;
-
+		
 		if (element.type === "column") {
 			if(!this.columnSelection){
 				return;
@@ -594,7 +616,7 @@ class SelectRange extends Module {
 			this.resetRanges().setBounds(element);
 		}
 	}
-
+	
 	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element,
 		rowHeader, rect, view, withinHorizontalView, withinVerticalView;
@@ -602,7 +624,7 @@ class SelectRange extends Module {
 		if (typeof row === 'undefined') {
 			row = this.getRowByRangePos(range.end.row).getElement();
 		}
-
+		
 		if (typeof column === 'undefined') {
 			column = this.getColumnByRangePos(range.end.col).getElement();
 		}
@@ -653,7 +675,7 @@ class SelectRange extends Module {
 		}
 	}
 	
-
+	
 	///////////////////////////////////
 	///////       Layout        ///////
 	///////////////////////////////////
@@ -727,7 +749,7 @@ class SelectRange extends Module {
 	
 	layoutRanges() {
 		var activeCell;
-
+		
 		if (!this.table.initialized) {
 			return;
 		}
@@ -748,17 +770,16 @@ class SelectRange extends Module {
 		this.overlay.style.visibility = "visible";
 	}
 	
-
+	
 	///////////////////////////////////
 	///////  Helper Functions   ///////
 	///////////////////////////////////	
-
+	
 	getCell(rowIdx, colIdx) {
 		var row;
 		
 		if (colIdx < 0) {
 			colIdx = this.getTableColumns().length + colIdx;
-
 			if (colIdx < 0) {
 				return null;
 			}
@@ -770,7 +791,7 @@ class SelectRange extends Module {
 		
 		row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
 		
-		return row ? row.getCells().filter((cell) => cell.column.visible)[colIdx] : null;
+		return row ? row.getCells(false, true).filter((cell) => cell.column.visible)[colIdx] : null;
 	}
 	
 	
@@ -796,7 +817,7 @@ class SelectRange extends Module {
 	
 	addRange(start, end) {
 		var  range;
-
+		
 		if(this.maxRanges !== true && this.ranges.length >= this.maxRanges){
 			this.ranges.shift().destroy();
 		}
@@ -811,10 +832,23 @@ class SelectRange extends Module {
 	}
 	
 	resetRanges() {
+		var range, cell;
+		
 		this.ranges.forEach((range) => range.destroy());
 		this.ranges = [];
 		
-		return this.addRange();
+		range = this.addRange();
+		
+		if(this.table.rowManager.activeRows.length){
+			cell = this.table.rowManager.activeRows[0].cells[this.rowHeader ? 1 : 0];
+
+			if(cell){
+				range.setBounds(cell);
+				this.initializeFocus(cell);
+			}
+		}
+		
+		return range;
 	}
 	
 	tableDestroyed(){

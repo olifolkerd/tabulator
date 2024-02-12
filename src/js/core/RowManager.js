@@ -344,7 +344,7 @@ export default class RowManager extends CoreFeature{
 			
 			this.regenerateRowPositions();
 			
-			if(rows.length){
+			if(this.displayRowsCount){
 				this._clearPlaceholder();
 			}
 			
@@ -972,6 +972,14 @@ export default class RowManager extends CoreFeature{
 	tableEmpty(){
 		this.renderEmptyScroll();
 		this._showPlaceholder();
+	}
+
+	checkPlaceholder(){
+		if(this.displayRowsCount){
+			this._clearPlaceholder();
+		}else{
+			this.tableEmpty();
+		}
 	}
 	
 	_showPlaceholder(){

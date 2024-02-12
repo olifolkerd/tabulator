@@ -85,7 +85,7 @@ class Range extends CoreFeature{
 	
 	setStartBound(element){
 		var row, col;
-
+		
 		if (element.type === "column") {
 			if(this.rangeManager.columnSelection){
 				this.setStart(0, element.getPosition() - 1);
@@ -95,7 +95,11 @@ class Range extends CoreFeature{
 			col = element.column.getPosition() - 1;
 			
 			if (element.column === this.rangeManager.rowHeader) {
+<<<<<<< HEAD
 				this.setStart(row, 1);
+=======
+				this.setStart(row, 0);
+>>>>>>> master
 			} else {
 				this.setStart(row, col);
 			}
@@ -116,7 +120,11 @@ class Range extends CoreFeature{
 			}
 		}else{
 			row = element.row.position - 1;
+<<<<<<< HEAD
 			col = element.column.getPosition() - 1;
+=======
+			col = element.column.getPosition() - 2;
+>>>>>>> master
 			isRowHeader = element.column === this.rangeManager.rowHeader;
 			
 			if (this.rangeManager.selecting === "row") {
@@ -237,18 +245,18 @@ class Range extends CoreFeature{
 		rows.forEach((row) => {
 			var rowData = row.getData(),
 			result = {};
-
+			
 			columns.forEach((column) => {
 				result[column.field] = rowData[column.field];
 			});
-
+			
 			data.push(result);
 		});
 		
 		return data;
 	}
 	
-	getCells(structured) {
+	getCells(structured, component) {
 		var cells = [],
 		rows = this.getRows(),
 		columns = this.getColumns();
@@ -256,20 +264,20 @@ class Range extends CoreFeature{
 		if (structured) {
 			cells = rows.map((row) => {
 				var arr = [];
-
+				
 				row.getCells().forEach((cell) => {
 					if (columns.includes(cell.column)) {
-						arr.push(cell.getComponent());
+						arr.push(component ? cell.getComponent() : cell);
 					}
 				});
-
+				
 				return arr;
 			});
 		} else {
 			rows.forEach((row) => {
 				row.getCells().forEach((cell) => {
 					if (columns.includes(cell.column)) {
-						cells.push(cell.getComponent());
+						cells.push(component ? cell.getComponent() : cell);
 					}
 				});
 			});
@@ -279,7 +287,7 @@ class Range extends CoreFeature{
 	}
 	
 	getStructuredCells() {
-		return this.getCells(true);
+		return this.getCells(true, true);
 	}
 	
 	getRows() {
@@ -289,21 +297,35 @@ class Range extends CoreFeature{
 	getColumns() {
 		return this._getTableColumns().slice(this.left, this.right + 1);
 	}
-
-	getBounds(){
-		var cells = this.getCells(),
+	
+	clearValues(){
+		var cells = this.getCells();
+		var clearValue = this.table.options.selectableRangeClearCellsValue;
+		
+		this.table.blockRedraw();
+		
+		cells.forEach((cell) => {
+			cell.setValue(clearValue);
+		});
+		
+		this.table.restoreRedraw();
+		
+	}
+	
+	getBounds(component){
+		var cells = this.getCells(false, component),
 		output = {
 			start:null,
 			end:null,
 		};
-
+		
 		if(cells.length){
 			output.start = cells[0];
 			output.end = cells[cells.length - 1];
 		}else{
 			console.warn("No bounds defined on range");
 		}
-
+		
 		return output;
 	}
 	
@@ -318,21 +340,21 @@ class Range extends CoreFeature{
 		this.destroyed = true;
 		
 		this.element.remove();
-
+		
 		if(notify){
 			this.rangeManager.rangeRemoved(this);
 		}
-
+		
 		if(this.initialized){
 			this.dispatchExternal("rangeRemoved", this.getComponent());
 		}
 	}
-
+	
 	destroyedGuard(func){
 		if(this.destroyed){
 			console.warn("You cannot call the "  + func + " function on a destroyed range");
 		}
-
+		
 		return !this.destroyed;
 	}
 }
