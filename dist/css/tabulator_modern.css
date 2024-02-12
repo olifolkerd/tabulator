@@ -598,6 +598,11 @@
   color: #fff;
 }
 
+.tabulator-row.tabulator-range-highlight.tabulator-range-selected .tabulator-cell.tabulator-range-row-header {
+  background-color: #2544b7;
+  color: #FFFFFF;
+}
+
 .tabulator-row .tabulator-row-resize-handle {
   position: absolute;
   right: 0;

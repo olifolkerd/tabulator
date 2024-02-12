@@ -1,4 +1,4 @@
-/* Tabulator v5.5.4 (c) Oliver Folkerd 2024 */
+/* Tabulator v5.6.0 (c) Oliver Folkerd 2024 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -1552,6 +1552,8 @@
 				this.table.columnManager.deregisterColumn(this);
 
 				this.table.columnManager.rerenderColumns(true);
+
+				this.dispatch("column-deleted", this);
 
 				resolve();
 			});
@@ -3980,8 +3982,6 @@
 				}
 			});
 			
-			
-			
 			if(onlyGroupHeaders){
 				element.style.minWidth = this.table.columnManager.getWidth() + "px";
 			}else {
@@ -3998,6 +3998,10 @@
 			}
 			
 			this.renderRows();
+
+			if(!this.rows().length){
+				this.table.rowManager.tableEmpty();
+			}
 		}
 		
 		scrollToRowNearestTop(row){
@@ -4991,7 +4995,7 @@
 				
 				this.regenerateRowPositions();
 				
-				if(rows.length){
+				if(this.displayRowsCount){
 					this._clearPlaceholder();
 				}
 				
@@ -5619,6 +5623,14 @@
 		tableEmpty(){
 			this.renderEmptyScroll();
 			this._showPlaceholder();
+		}
+
+		checkPlaceholder(){
+			if(this.displayRowsCount){
+				this._clearPlaceholder();
+			}else {
+				this.tableEmpty();
+			}
 		}
 		
 		_showPlaceholder(){
@@ -7879,6 +7891,8 @@
 		alert(content, type = "msg"){
 			if(content){
 				this.clear();
+
+				this.dispatch("alert-show", type);
 	            
 				this.type = type;
 	            
@@ -7901,6 +7915,8 @@
 		}
 	    
 		clear(){
+			this.dispatch("alert-hide", this.type);
+
 			if(this.element.parentNode){
 				this.element.parentNode.removeChild(this.element);
 			}
@@ -8164,6 +8180,7 @@
 		
 		_loadInitialData(){
 			this.dataLoader.load(this.options.data);
+			this.columnManager.verticalAlignHeaders();
 		}
 		
 		//deconstructor
@@ -9211,15 +9228,58 @@
 	Ajax.contentTypeFormatters = defaultContentTypeFormatters;
 
 	var defaultPasteActions = {
-		replace:function(rows){
-			return this.table.setData(rows);
+		replace:function(data){
+			return this.table.setData(data);
 		},
-		update:function(rows){
-			return this.table.updateOrAddData(rows);
+		update:function(data){
+			return this.table.updateOrAddData(data);
 		},
-		insert:function(rows){
-			return this.table.addData(rows);
+		insert:function(data){
+			return this.table.addData(data);
 		},
+		range:function(data){
+			var rows = [],
+			range = this.table.modules.selectRange.activeRange,
+			singleCell = false,
+			bounds, startCell, startRow, rowWidth, dataLength;
+
+			dataLength = data.length;
+			
+			if(range){
+				bounds = range.getBounds();
+				startCell = bounds.start;
+				
+				if(bounds.start === bounds.end){
+					singleCell = true;
+				}
+				
+				if(startCell){
+					rows = this.table.rowManager.activeRows.slice();
+					startRow = rows.indexOf(startCell.row);
+
+					if(singleCell){
+						rowWidth = data.length;
+					}else {
+						rowWidth = (rows.indexOf(bounds.end.row) - startRow) + 1;
+					}
+					
+					
+					if(startRow >-1){
+						this.table.blockRedraw();
+						
+						rows = rows.slice(startRow, startRow + rowWidth);
+						
+						rows.forEach((row, i) => {
+							row.updateData(data[i % dataLength]);
+						});
+						
+						this.table.restoreRedraw();
+					}
+				}
+			}
+			
+			return rows;
+		}
 	};
 
 	var defaultPasteParsers = {
@@ -9229,72 +9289,127 @@
 			columns = this.table.columnManager.columns,
 			columnMap = [],
 			rows = [];
-
+			
 			//get data from clipboard into array of columns and rows.
 			clipboard = clipboard.split("\n");
-
+			
 			clipboard.forEach(function(row){
 				data.push(row.split("\t"));
 			});
-
+			
 			if(data.length && !(data.length === 1 && data[0].length < 2)){
-
+				
 				//check if headers are present by title
 				data[0].forEach(function(value){
 					var column = columns.find(function(column){
 						return value && column.definition.title && value.trim() && column.definition.title.trim() === value.trim();
 					});
-
+					
 					if(column){
 						columnMap.push(column);
 					}else {
 						headerFindSuccess = false;
 					}
 				});
-
+				
 				//check if column headers are present by field
 				if(!headerFindSuccess){
 					headerFindSuccess = true;
 					columnMap = [];
-
+					
 					data[0].forEach(function(value){
 						var column = columns.find(function(column){
 							return value && column.field && value.trim() && column.field.trim() === value.trim();
 						});
-
+						
 						if(column){
 							columnMap.push(column);
 						}else {
 							headerFindSuccess = false;
 						}
 					});
-
+					
 					if(!headerFindSuccess){
 						columnMap = this.table.columnManager.columnsByIndex;
 					}
 				}
-
+				
 				//remove header row if found
 				if(headerFindSuccess){
 					data.shift();
 				}
-
+				
 				data.forEach(function(item){
 					var row = {};
-
+					
 					item.forEach(function(value, i){
 						if(columnMap[i]){
 							row[columnMap[i].field] = value;
 						}
 					});
-
+					
 					rows.push(row);
 				});
-
+				
 				return rows;
 			}else {
 				return false;
 			}
+		},
+		range:function(clipboard){
+			var data = [],
+			rows = [],
+			range = this.table.modules.selectRange.activeRange,
+			singleCell = false,
+			bounds, startCell, colWidth, columnMap, startCol;
+			
+			if(range){
+				bounds = range.getBounds();
+				startCell = bounds.start;
+
+				if(bounds.start === bounds.end){
+					singleCell = true;
+				}
+				
+				if(startCell){
+					//get data from clipboard into array of columns and rows.
+					clipboard = clipboard.split("\n");
+					
+					clipboard.forEach(function(row){
+						data.push(row.split("\t"));
+					});
+					
+					if(data.length){
+						columnMap = this.table.columnManager.getVisibleColumnsByIndex();
+						startCol = columnMap.indexOf(startCell.column);
+
+						if(startCol > -1){
+							if(singleCell){
+								colWidth = data[0].length;
+							}else {
+								colWidth = (columnMap.indexOf(bounds.end.column) - startCol) + 1;
+							}
+
+							columnMap = columnMap.slice(startCol, startCol + colWidth);
+
+							data.forEach((item) => {
+								var row = {};
+								var itemLength = item.length;
+
+								columnMap.forEach(function(col, i){
+									row[col.field] = item[i % itemLength];
+								});
+								
+								rows.push(row);	
+							});
+
+							return rows;
+						}				
+					}
+				}
+			}
+			
+			return false;
 		}
 	};
 
@@ -9505,7 +9620,7 @@
 		paste(e){
 			var data, rowData, rows;
 
-			if(this.checkPaseOrigin(e)){
+			if(this.checkPasteOrigin(e)){
 
 				data = this.getPasteData(e);
 
@@ -9542,10 +9657,11 @@
 		}
 
 
-		checkPaseOrigin(e){
+		checkPasteOrigin(e){
 			var valid = true;
+			var blocked = this.confirm("clipboard-paste", [e]);
 
-			if(e.target.tagName != "DIV" || this.table.modules.edit.currentCell){
+			if(blocked || !["DIV", "SPAN"].includes(e.target.tagName)){
 				valid = false;
 			}
 
@@ -9980,8 +10096,14 @@
 		}
 		
 		initializeTopRow(){
+			var	fragment = document.createDocumentFragment();
+			
 			if(!this.topInitialized){
-				this.table.columnManager.getContentsElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
+
+				fragment.appendChild(document.createElement("br"));
+				fragment.appendChild(this.topElement);
+
+				this.table.columnManager.getContentsElement().insertBefore(fragment, this.table.columnManager.headersElement.nextSibling);
 				this.topInitialized = true;
 			}
 		}
@@ -13723,6 +13845,8 @@
 			this.registerColumnOption("cellEdited");
 			this.registerColumnOption("cellEditCancelled");
 			
+			this.registerTableOption("editTriggerEvent", "focus");
+			
 			this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
 			this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
 			this.registerTableFunction("navigatePrev", this.navigatePrev.bind(this));
@@ -13754,13 +13878,27 @@
 			this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 			this.subscribe("row-layout", this.rowEditableCheck.bind(this));
 			this.subscribe("data-refreshing", this.cancelEdit.bind(this));
+			this.subscribe("clipboard-paste", this.pasteBlocker.bind(this));
 			
 			this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 			this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
+			
+			
 			// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
 			// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
 			this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
 			this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
+		}
+		
+		
+		///////////////////////////////////
+		///////// Paste Negation //////////
+		///////////////////////////////////
+		
+		pasteBlocker(e){
+			if(this.currentCell){
+				return true;
+			}
 		}
 		
 		
@@ -13771,7 +13909,7 @@
 		keybindingNavigateNext(e){
 			var cell = this.currentCell,
 			newRow = this.options("tabEndNewRow");
-			
+
 			if(cell){
 				if(!this.navigateNext(cell, e)){
 					if(newRow){
@@ -14160,12 +14298,6 @@
 				this.updateCellClass(cell);
 				element.setAttribute("tabindex", 0);
 				
-				element.addEventListener("click", function(e){
-					if(!element.classList.contains("tabulator-editing")){
-						element.focus({preventScroll: true});
-					}
-				});
-				
 				element.addEventListener("mousedown", function(e){
 					if (e.button === 2) {
 						e.preventDefault();
@@ -14173,12 +14305,33 @@
 						self.mouseClick = true;
 					}
 				});
+
+				if(this.options("editTriggerEvent") === "dblclick"){
+					element.addEventListener("dblclick", function(e){
+						if(!element.classList.contains("tabulator-editing")){
+							element.focus({preventScroll: true});
+							self.edit(cell, e, false);
+						}
+					});
+				}
 				
-				element.addEventListener("focus", function(e){
-					if(!self.recursionBlock){
-						self.edit(cell, e, false);
-					}
-				});
+				
+				if(this.options("editTriggerEvent") === "focus" || this.options("editTriggerEvent") === "click"){
+					element.addEventListener("click", function(e){
+						if(!element.classList.contains("tabulator-editing")){
+							element.focus({preventScroll: true});
+							self.edit(cell, e, false);
+						}
+					});
+				}
+				
+				if(this.options("editTriggerEvent") === "focus"){
+					element.addEventListener("focus", function(e){
+						if(!self.recursionBlock){
+							self.edit(cell, e, false);
+						}
+					});
+				}
 			}
 		}
 		
@@ -14325,7 +14478,6 @@
 				allowEdit = this.allowEdit(cell);
 				
 				if(allowEdit || forceEdit){
-					
 					self.cancelEdit();
 					
 					self.currentCell = cell;
@@ -14395,7 +14547,7 @@
 				return false;
 			}
 		}
-
+		
 		blur(element){
 			if(!this.confirm("edit-blur", [element]) ){
 				element.blur();
@@ -14940,7 +15092,8 @@
 				if(col){
 					var cellEl = document.createElement("td"),
 					column = col.component._column,
-					index = this.table.columnManager.findColumnIndex(column),
+					table =  this.table,
+					index = table.columnManager.findColumnIndex(column),
 					value = col.value,
 					cellStyle;
 					
@@ -14966,6 +15119,9 @@
 						},
 						getRow:function(){
 							return row.component;
+						},
+						getTable:function(){
+							return table;
 						},
 						getComponent:function(){
 							return cellWrapper;
@@ -17011,7 +17167,9 @@
 			this.subscribe("columns-loading", this.reset.bind(this));
 			
 			this.subscribe("column-add", this.reinitializeColumns.bind(this));
-			this.subscribe("column-delete", this.reinitializeColumns.bind(this));
+			this.subscribe("column-deleted", this.reinitializeColumns.bind(this));
+			this.subscribe("column-hide", this.reinitializeColumns.bind(this));
+			this.subscribe("column-show", this.reinitializeColumns.bind(this));
 			
 			this.subscribe("table-redraw", this.layout.bind(this));
 			this.subscribe("layout-refreshing", this.blockLayout.bind(this));
@@ -17037,16 +17195,16 @@
 			this.table.columnManager.columnsByIndex.forEach((column) => {
 				this.initializeColumn(column);
 			});
+
+			this.layout();
 		}
 		
 		//initialize specific column
 		initializeColumn(column){
 			var config = {margin:0, edge:false};
 			
-			if(!column.isGroup){
-				
+			if(!column.isGroup){			
 				if(this.frozenCheck(column)){
-					
 					config.position = this.initializationMode;
 					
 					if(this.initializationMode == "left"){
@@ -17137,9 +17295,8 @@
 						leftParents.push(parentEl);
 					}
 					
-					if(column.modules.frozen.edge){
-						parentEl.classList.add("tabulator-frozen-" + column.modules.frozen.position);
-					}
+					parentEl.classList.toggle("tabulator-frozen-left",  column.modules.frozen.edge && column.modules.frozen.position === "left");
+					parentEl.classList.toggle("tabulator-frozen-right", column.modules.frozen.edge && column.modules.frozen.position === "right");
 				}else {
 					this.layoutElement(column.getElement(), column);
 				}
@@ -17187,7 +17344,6 @@
 		//layout columns appropriately
 		layout(){	
 			if(this.active && !this.blocked){
-			
 				//calculate left columns
 				this.layoutColumnPosition();
 				
@@ -17250,9 +17406,8 @@
 
 				element.classList.add("tabulator-frozen");
 				
-				if(column.modules.frozen.edge){
-					element.classList.add("tabulator-frozen-" + column.modules.frozen.position);
-				}
+				element.classList.toggle("tabulator-frozen-left",  column.modules.frozen.edge && column.modules.frozen.position === "left");
+				element.classList.toggle("tabulator-frozen-right", column.modules.frozen.edge && column.modules.frozen.position === "right");
 			}
 		}
 
@@ -17296,12 +17451,17 @@
 		}
 
 		initialize(){
+			var	fragment = document.createDocumentFragment();
+			
 			this.rows = [];
 
 			this.topElement.classList.add("tabulator-frozen-rows-holder");
+			
+			fragment.appendChild(document.createElement("br"));
+			fragment.appendChild(this.topElement);
 
 			// this.table.columnManager.element.append(this.topElement);
-			this.table.columnManager.getContentsElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
+			this.table.columnManager.getContentsElement().insertBefore(fragment, this.table.columnManager.headersElement.nextSibling);
 
 			this.subscribe("row-deleting", this.detachRow.bind(this));
 			this.subscribe("rows-visible", this.visibleRows.bind(this));
@@ -18767,6 +18927,8 @@
 
 		rowAdd: function(action){
 			action.component.deleteActual();
+
+			this.table.rowManager.checkPlaceholder();
 		},
 
 		rowDelete: function(action){
@@ -18777,6 +18939,8 @@
 			}
 
 			this._rebindRow(action.component, newRow);
+
+			this.table.rowManager.checkPlaceholder();
 		},
 
 		rowMove: function(action){
@@ -18803,10 +18967,14 @@
 			}
 
 			this._rebindRow(action.component, newRow);
+
+			this.table.rowManager.checkPlaceholder();
 		},
 
 		rowDelete:function(action){
 			action.component.deleteActual();
+
+			this.table.rowManager.checkPlaceholder();
 		},
 
 		rowMove: function(action){
@@ -18931,7 +19099,7 @@
 
 				return true;
 			}else {
-				console.warn("History Undo Error - No more history to undo");
+				console.warn(this.options("history") ? "History Undo Error - No more history to undo" : "History module not enabled");
 				return false;
 			}
 		}
@@ -18949,7 +19117,7 @@
 
 				return true;
 			}else {
-				console.warn("History Redo Error - No more history to redo");
+				console.warn(this.options("history") ? "History Redo Error - No more history to redo" : "History module not enabled");
 				return false;
 			}
 		}
@@ -20451,7 +20619,12 @@
 		initialize(){
 			if(this.table.options.movableColumns){
 				this.subscribe("column-init", this.initializeColumn.bind(this));
+				this.subscribe("alert-show", this.abortMove.bind(this));
 			}
+		}
+
+		abortMove(){
+			clearTimeout(this.checkTimeout);
 		}
 		
 		initializeColumn(column){
@@ -24195,7 +24368,7 @@
 					this.autoResize = true;
 					
 					this.resizeObserver = new ResizeObserver((entry) => {
-						if(!table.browserMobile || (table.browserMobile &&!table.modules.edit.currentCell)){
+						if(!table.browserMobile || (table.browserMobile && (!table.modules.edit || (table.modules.edit && !table.modules.edit.currentCell)))){
 							
 							var nodeHeight = Math.floor(entry[0].contentRect.height);
 							var nodeWidth = Math.floor(entry[0].contentRect.width);
@@ -24221,7 +24394,7 @@
 					if(this.table.element.parentNode && !this.table.rowManager.fixedHeight && (tableStyle.getPropertyValue("max-height") || tableStyle.getPropertyValue("min-height"))){
 						
 						this.containerObserver = new ResizeObserver((entry) => {
-							if(!table.browserMobile || (table.browserMobile &&!table.modules.edit.currentCell)){
+							if(!table.browserMobile || (table.browserMobile && (!table.modules.edit || (table.modules.edit && !table.modules.edit.currentCell)))){
 								
 								var nodeHeight = Math.floor(entry[0].contentRect.height);
 								var nodeWidth = Math.floor(entry[0].contentRect.width);
@@ -24244,7 +24417,7 @@
 					
 				}else {
 					this.binding = function(){
-						if(!table.browserMobile || (table.browserMobile && !table.modules.edit.currentCell)){
+						if(!table.browserMobile || (table.browserMobile && (!table.modules.edit || (table.modules.edit && !table.modules.edit.currentCell)))){
 							table.columnManager.rerenderColumns(true);
 							table.redraw();
 						}
@@ -24733,6 +24906,7 @@
 		
 		initializeRow(row){
 			var self = this,
+			selectable = self.checkRowSelectability(row),
 			element = row.getElement();
 			
 			// trigger end of row selection
@@ -24746,12 +24920,12 @@
 			};
 			
 			row.modules.select = {selected:false};
+
+			element.classList.toggle("tabulator-selectable", selectable);
+			element.classList.toggle("tabulator-unselectable", !selectable);
 			
 			//set row selection class
-			if(self.checkRowSelectability(row)){
-				element.classList.add("tabulator-selectable");
-				element.classList.remove("tabulator-unselectable");
-				
+			if(self.checkRowSelectability(row)){			
 				if(self.table.options.selectableRows && self.table.options.selectableRows != "highlight"){
 					if(self.table.options.selectableRowsRangeMode === "click"){
 						element.addEventListener("click", this.handleComplexRowClick.bind(this, row));
@@ -24802,10 +24976,6 @@
 						});
 					}
 				}
-				
-			}else {
-				element.classList.add("tabulator-unselectable");
-				element.classList.remove("tabulator-selectable");
 			}
 		}
 		
@@ -24828,7 +24998,7 @@
 						if(toggledRow !== this.lastClickedRow){
 							
 							if(this.table.options.selectableRows !== true && !this.isRowSelected(row)){
-								if(this.selectedRows.length < this.table.options.selectable){
+								if(this.selectedRows.length < this.table.options.selectableRows){
 									this.toggleRow(toggledRow);
 								}
 							}else {
@@ -24841,8 +25011,8 @@
 					this.deselectRows(undefined, true);
 					
 					if(this.table.options.selectableRows !== true){
-						if(toggledRows.length > this.table.options.selectable){
-							toggledRows = toggledRows.slice(0, this.table.options.selectable);
+						if(toggledRows.length > this.table.options.selectableRows){
+							toggledRows = toggledRows.slice(0, this.table.options.selectableRows);
 						}
 					}
 					
@@ -24889,6 +25059,10 @@
 					rowMatch = this.table.rowManager.rows;
 					break;
 				
+				case "number":
+					rowMatch = this.table.rowManager.findRow(rows);
+					break;
+					
 				case "string":
 					rowMatch = this.table.rowManager.findRow(rows);
 				
@@ -24924,8 +25098,8 @@
 		//select an individual row
 		_selectRow(rowInfo, silent, force){
 			//handle max row count
-			if(!isNaN(this.table.options.selectable) && this.table.options.selectableRows !== true && !force){
-				if(this.selectedRows.length >= this.table.options.selectable){
+			if(!isNaN(this.table.options.selectableRows) && this.table.options.selectableRows !== true && !force){
+				if(this.selectedRows.length >= this.table.options.selectableRows){
 					if(this.table.options.selectableRowsRollingSelection){
 						this._deselectRow(this.selectedRows[0]);
 					}else {
@@ -24979,6 +25153,10 @@
 			switch(typeof rows){
 				case "undefined":
 					rowMatch = Object.assign([], this.selectedRows);
+					break;
+
+				case "number":
+					rowMatch = this.table.rowManager.findRow(rows);
 					break;
 				
 				case "string":
@@ -25902,7 +26080,7 @@
 		}
 
 		getCells() {
-			return this._range.getCells();
+			return this._range.getCells(true);
 		}
 
 		getStructuredCells() {
@@ -25954,6 +26132,12 @@
 			if(this._range.destroyedGuard("setEndBound")){
 				this._range.setEndBound(end ? end._cell : end);
 				this._range.rangeManager.layoutElement();
+			}
+		}
+
+		clearValues(){
+			if(this._range.destroyedGuard("clearValues")){
+				this._range.clearValues();
 			}
 		}
 
@@ -26041,7 +26225,7 @@
 		
 		setStartBound(element){
 			var row, col;
-
+			
 			if (element.type === "column") {
 				if(this.rangeManager.columnSelection){
 					this.setStart(0, element.getPosition() - 2);
@@ -26050,7 +26234,7 @@
 				row = element.row.position - 1;
 				col = element.column.getPosition() - 2;
 				
-				if (element.column === this.rowHeader) {
+				if (element.column === this.rangeManager.rowHeader) {
 					this.setStart(row, 0);
 				} else {
 					this.setStart(row, col);
@@ -26073,7 +26257,7 @@
 			}else {
 				row = element.row.position - 1;
 				col = element.column.getPosition() - 2;
-				isRowHeader = element.column === this.rowHeader;
+				isRowHeader = element.column === this.rangeManager.rowHeader;
 				
 				if (this.rangeManager.selecting === "row") {
 					this.setEnd(row, this._getTableColumns().length - 2);
@@ -26193,18 +26377,18 @@
 			rows.forEach((row) => {
 				var rowData = row.getData(),
 				result = {};
-
+				
 				columns.forEach((column) => {
 					result[column.field] = rowData[column.field];
 				});
-
+				
 				data.push(result);
 			});
 			
 			return data;
 		}
 		
-		getCells(structured) {
+		getCells(structured, component) {
 			var cells = [],
 			rows = this.getRows(),
 			columns = this.getColumns();
@@ -26212,20 +26396,20 @@
 			if (structured) {
 				cells = rows.map((row) => {
 					var arr = [];
-
+					
 					row.getCells().forEach((cell) => {
 						if (columns.includes(cell.column)) {
-							arr.push(cell.getComponent());
+							arr.push(component ? cell.getComponent() : cell);
 						}
 					});
-
+					
 					return arr;
 				});
 			} else {
 				rows.forEach((row) => {
 					row.getCells().forEach((cell) => {
 						if (columns.includes(cell.column)) {
-							cells.push(cell.getComponent());
+							cells.push(component ? cell.getComponent() : cell);
 						}
 					});
 				});
@@ -26235,7 +26419,7 @@
 		}
 		
 		getStructuredCells() {
-			return this.getCells(true);
+			return this.getCells(true, true);
 		}
 		
 		getRows() {
@@ -26245,21 +26429,35 @@
 		getColumns() {
 			return this._getTableColumns().slice(this.left + 1, this.right + 2);
 		}
-
-		getBounds(){
-			var cells = this.getCells(),
+		
+		clearValues(){
+			var cells = this.getCells();
+			var clearValue = this.table.options.selectableRangeClearCellsValue;
+			
+			this.table.blockRedraw();
+			
+			cells.forEach((cell) => {
+				cell.setValue(clearValue);
+			});
+			
+			this.table.restoreRedraw();
+			
+		}
+		
+		getBounds(component){
+			var cells = this.getCells(false, component),
 			output = {
 				start:null,
 				end:null,
 			};
-
+			
 			if(cells.length){
 				output.start = cells[0];
 				output.end = cells[cells.length - 1];
 			}else {
 				console.warn("No bounds defined on range");
 			}
-
+			
 			return output;
 		}
 		
@@ -26274,21 +26472,21 @@
 			this.destroyed = true;
 			
 			this.element.remove();
-
+			
 			if(notify){
 				this.rangeManager.rangeRemoved(this);
 			}
-
+			
 			if(this.initialized){
 				this.dispatchExternal("rangeRemoved", this.getComponent());
 			}
 		}
-
+		
 		destroyedGuard(func){
 			if(this.destroyed){
 				console.warn("You cannot call the "  + func + " function on a destroyed range");
 			}
-
+			
 			return !this.destroyed;
 		}
 	}
@@ -26307,6 +26505,7 @@
 			this.rowSelection = false;
 			this.maxRanges = 0;
 			this.activeRange = false;
+			this.blockKeydown = false;
 			
 			this.keyDownEvent = this._handleKeyDown.bind(this);
 			this.mouseUpEvent = this._handleMouseUp.bind(this);
@@ -26314,9 +26513,13 @@
 			this.registerTableOption("selectableRange", false); //enable selectable range
 			this.registerTableOption("selectableRangeColumns", false); //enable selectable range
 			this.registerTableOption("selectableRangeRows", false); //enable selectable range
+			this.registerTableOption("selectableRangeClearCells", false); //allow clearing of active range
+			this.registerTableOption("selectableRangeClearCellsValue", undefined); //value for cleared active range
+
 			this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
 			this.registerTableFunction("getRanges", this.getRanges.bind(this));
 			this.registerTableFunction("addRange", this.addRangeFromComponent.bind(this));
+
 			this.registerComponentFunction("cell", "getRanges", this.cellGetRanges.bind(this));
 			this.registerComponentFunction("row", "getRanges", this.rowGetRanges.bind(this));
 			this.registerComponentFunction("column", "getRanges", this.colGetRanges.bind(this));
@@ -26329,7 +26532,7 @@
 		initialize() {
 			if (this.options("selectableRange")) {		
 				if(!this.options("selectableRows")){
-
+					
 					this.maxRanges = this.options("selectableRange");
 					
 					this.initializeTable();
@@ -26371,28 +26574,32 @@
 			this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 			this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
 			this.subscribe("column-resized", this.handleColumnResized.bind(this));
-			this.subscribe("columns-loaded", this.updateHeaderColumn.bind(this));
-			this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
-			this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
-			this.subscribe("cell-dblclick", this.handleCellDblClick.bind(this));
-			this.subscribe("cell-rendered", this.renderCell.bind(this));
-			this.subscribe("cell-editing", this.handleEditingCell.bind(this));
-			this.subscribe("edit-success", this.finishEditingCell.bind(this));
-			this.subscribe("edit-cancelled", this.finishEditingCell.bind(this));
-			this.subscribe("page-changed", this.redraw.bind(this));
-			this.subscribe("table-layout", this.layoutElement.bind(this));
-			this.subscribe("table-redraw", this.redraw.bind(this));
-			this.subscribe("scroll-vertical", this.layoutChange.bind(this));
-			this.subscribe("scroll-horizontal", this.layoutChange.bind(this));
 			this.subscribe("column-width", this.layoutChange.bind(this));
 			this.subscribe("column-height", this.layoutChange.bind(this));
 			this.subscribe("column-resized", this.layoutChange.bind(this));
+			this.subscribe("columns-loaded", this.updateHeaderColumn.bind(this));
+
 			this.subscribe("cell-height", this.layoutChange.bind(this));
-			this.subscribe("table-destroy", this.tableDestroyed.bind(this));
-
-
-			this.subscribe("edit-blur", this.restoreFocus.bind(this));
+			this.subscribe("cell-rendered", this.renderCell.bind(this));
+			this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
+			this.subscribe("cell-mousemove", this.handleCellMouseMove.bind(this));
+			this.subscribe("cell-click", this.handleCellClick.bind(this));
+			this.subscribe("cell-editing", this.handleEditingCell.bind(this));
 			
+			this.subscribe("page-changed", this.redraw.bind(this));
+
+			this.subscribe("scroll-vertical", this.layoutChange.bind(this));
+			this.subscribe("scroll-horizontal", this.layoutChange.bind(this));
+			
+			this.subscribe("data-destroy", this.tableDestroyed.bind(this));
+			this.subscribe("data-processed", this.resetRanges.bind(this));
+			
+			this.subscribe("table-layout", this.layoutElement.bind(this));
+			this.subscribe("table-redraw", this.redraw.bind(this));
+			this.subscribe("table-destroy", this.tableDestroyed.bind(this));
+			
+			this.subscribe("edit-editor-clear", this.finishEditingCell.bind(this));
+			this.subscribe("edit-blur", this.restoreFocus.bind(this));
 			
 			this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "left"));
 			this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "right"));
@@ -26400,7 +26607,6 @@
 			this.subscribe("keybinding-nav-right", this.keyNavigate.bind(this, "right"));
 			this.subscribe("keybinding-nav-up", this.keyNavigate.bind(this, "up"));
 			this.subscribe("keybinding-nav-down", this.keyNavigate.bind(this, "down"));
-			
 			this.subscribe("keybinding-nav-range", this.keyNavigateRange.bind(this));
 		}
 		
@@ -26410,11 +26616,7 @@
 				console.warn("Using column headerSort with selectableRangeColumns option may result in unpredictable behavior");
 			}
 			
-			if (column.modules.edit) {
-				// Block editor from taking action so we can trigger edit by
-				// double clicking.
-				column.modules.edit.blocked = true;
-			}
+			if (column.modules.edit) ;
 		}
 		
 		updateHeaderColumn(){
@@ -26434,7 +26636,7 @@
 				}
 			}
 		}
-
+		
 		///////////////////////////////////
 		///////   Table Functions   ///////
 		///////////////////////////////////
@@ -26446,11 +26648,11 @@
 		getRangesData() {
 			return this.ranges.map((range) => range.getData());
 		}
-
+		
 		addRangeFromComponent(start, end){
 			start = start ? start._cell : null;
 			end = end ? end._cell : null;
-
+			
 			return this.addRange(start, end);
 		}
 		
@@ -26492,22 +26694,43 @@
 		}
 		
 		_handleKeyDown(e) {
-			if (e.key === "Enter") {
-				// prevent action when pressing enter from editor
-				if (!e.target.classList.contains("tabulator-tableholder")) {
-					return;
+			if (!this.blockKeydown && (!this.table.modules.edit || (this.table.modules.edit && !this.table.modules.edit.currentCell))) {
+				if (e.key === "Enter") {
+					// is editing a cell?
+					if (this.table.modules.edit && this.table.modules.edit.currentCell) {
+						return;
+					}
+
+					this.table.modules.edit.editCell(this.getActiveCell());
+					
+					e.preventDefault();
 				}
-				
-				// is editing a cell?
-				if (this.table.modules.edit && this.table.modules.edit.currentCell) {
-					return;
+
+				if ((e.key === "Backspace" || e.key === "Delete") && this.options("selectableRangeClearCells")) {
+					if(this.activeRange){
+						this.activeRange.clearValues();
+					}
 				}
-				
-				this.editCell(this.getActiveCell());
-				e.preventDefault();
 			}
 		}
-
+		
+		initializeFocus(cell){
+			var range;
+			
+			try{
+				if (document.selection) { // IE
+					range = document.body.createTextRange();
+					range.moveToElementText(cell.getElement());
+					range.select();
+				} else if (window.getSelection) {
+					range = document.createRange();
+					range.selectNode(cell.getElement());
+					window.getSelection().removeAllRanges();
+					window.getSelection().addRange(range);
+				}
+			}catch(e){}
+		}
+		
 		restoreFocus(element){
 			this.table.rowManager.element.focus();
 			
@@ -26520,7 +26743,7 @@
 		
 		handleColumnResized(column) {
 			var selected;
-
+			
 			if (this.selecting !== "column" && this.selecting !== "all") {
 				return;
 			}
@@ -26533,7 +26756,7 @@
 			
 			this.ranges.forEach((range) => {
 				var selectedColumns = range.getColumns(true);
-
+				
 				selectedColumns.forEach((selectedColumn) => {
 					if (selectedColumn !== column) {
 						selectedColumn.setWidth(column.width);
@@ -26596,30 +26819,23 @@
 			this.activeRange.setBounds(false, cell, true);
 		}
 		
-		handleCellDblClick(e, cell) {
-			if (cell.column === this.rowHeader) {
-				return;
-			}
-			
-			this.editCell(cell);
+		handleCellClick(e, cell){
+			this.initializeFocus(cell);
 		}
 		
-		editCell(cell) {
-			if (!cell.column.modules.edit) {
-				cell.column.modules.edit = {};
+		handleEditingCell(cell) {
+			if(this.activeRange){
+				this.activeRange.setBounds(cell);
 			}
-			cell.column.modules.edit.blocked = false;
-			cell.element.focus({ preventScroll: true });
-			cell.column.modules.edit.blocked = true;
-		}
-		
-		handleEditingCell() {
-			this.table.rowManager.element.removeEventListener("keydown", this.keyDownEvent);
 		}
 		
 		finishEditingCell() {
+			this.blockKeydown = true;
 			this.table.rowManager.element.focus();
-			this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
+
+			setTimeout(() => {
+				this.blockKeydown = false;
+			}, 10);
 		}
 		
 		///////////////////////////////////
@@ -26733,10 +26949,10 @@
 				return true;
 			}
 		}
-
+		
 		rangeRemoved(removed){
 			this.ranges = this.ranges.filter((range) => range !== removed);
-
+			
 			if(this.activeRange === removed){
 				if(this.ranges.length){
 					this.activeRange = this.ranges[this.ranges.length - 1];
@@ -26744,7 +26960,7 @@
 					this.addRange();
 				}
 			}
-
+			
 			this.layoutElement();
 		}
 		
@@ -26848,7 +27064,7 @@
 		///////////////////////////////////
 		newSelection(event, element) {
 			var range;
-
+			
 			if (element.type === "column") {
 				if(!this.columnSelection){
 					return;
@@ -26880,16 +27096,16 @@
 				this.resetRanges().setBounds(element);
 			}
 		}
-
+		
 		autoScroll(range, row, column) {
 			var tableHolder = this.table.rowManager.element,
 			rowHeader = this.rowHeader.getElement(),
 			rect, view, withinHorizontalView, withinVerticalView;
-
+			
 			if (typeof row === 'undefined') {
 				row = this.getRowByRangePos(range.end.row).getElement();
 			}
-
+			
 			if (typeof column === 'undefined') {
 				column = this.getColumnByRangePos(range.end.col).getElement();
 			}
@@ -26929,7 +27145,7 @@
 			}
 		}
 		
-
+		
 		///////////////////////////////////
 		///////       Layout        ///////
 		///////////////////////////////////
@@ -27003,7 +27219,7 @@
 		
 		layoutRanges() {
 			var activeCell;
-
+			
 			if (!this.table.initialized) {
 				return;
 			}
@@ -27024,17 +27240,17 @@
 			this.overlay.style.visibility = "visible";
 		}
 		
-
+		
 		///////////////////////////////////
 		///////  Helper Functions   ///////
 		///////////////////////////////////	
-
+		
 		getCell(rowIdx, colIdx) {
 			var row;
 			
 			if (colIdx < 0) {
 				colIdx = this.getTableColumns().length + colIdx - 1;
-
+				
 				if (colIdx < 0) {
 					return null;
 				}
@@ -27046,7 +27262,7 @@
 			
 			row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
 			
-			return row ? row.getCells().filter((cell) => cell.column.visible)[colIdx + 1] : null;
+			return row ? row.getCells(false, true).filter((cell) => cell.column.visible)[colIdx + 1] : null;
 		}
 		
 		
@@ -27072,7 +27288,7 @@
 		
 		addRange(start, end) {
 			var  range;
-
+			
 			if(this.maxRanges !== true && this.ranges.length >= this.maxRanges){
 				this.ranges.shift().destroy();
 			}
@@ -27087,10 +27303,23 @@
 		}
 		
 		resetRanges() {
+			var range, cell;
+			
 			this.ranges.forEach((range) => range.destroy());
 			this.ranges = [];
 			
-			return this.addRange();
+			range = this.addRange();
+			
+			if(this.table.rowManager.activeRows.length){
+				cell = this.table.rowManager.activeRows[0].cells[this.rowHeader ? 1 : 0];
+
+				if(cell){
+					range.setBounds(cell);
+					this.initializeFocus(cell);
+				}
+			}
+			
+			return range;
 		}
 		
 		tableDestroyed(){
@@ -27272,6 +27501,17 @@
 				return true;
 			}
 			return isNaN(value);
+		},
+
+		//must be alphanumeric
+		alphanumeric: function(cell, value, parameters){
+			if(value === "" || value === null || typeof value === "undefined"){
+				return true;
+			}
+
+			var reg = new RegExp(/^[a-z0-9]+$/i);
+
+			return reg.test(value);
 		},
 
 		//maximum value

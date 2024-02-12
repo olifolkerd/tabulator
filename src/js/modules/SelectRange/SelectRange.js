@@ -349,7 +349,7 @@ class SelectRange extends Module {
 
 		setTimeout(() => {
 			this.blockKeydown = false;
-		}, 10)
+		}, 10);
 	}
 	
 	///////////////////////////////////
