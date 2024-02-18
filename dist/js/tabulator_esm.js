@@ -6049,12 +6049,14 @@ function time(cell, onRendered, success, cancel, editorParams){
 				newDatetime = DT.fromFormat(String(cellValue), inputFormat);
 			}
 			
-			cellValue = newDatetime.toFormat("hh:mm");
+			cellValue = newDatetime.toFormat("HH:mm");
 			
 		}else {
 			console.error("Editor Error - 'date' editor 'format' param is dependant on luxon.js");
 		}
 	}
+
+	console.log("val", cellValue);
 	
 	input.value = cellValue;
 	
@@ -6176,7 +6178,7 @@ function datetime(cell, onRendered, success, cancel, editorParams){
 				newDatetime = DT.fromFormat(String(cellValue), inputFormat);
 			}
 			
-			cellValue = newDatetime.toFormat("yyyy-MM-dd")  + "T" + newDatetime.toFormat("hh:mm");
+			cellValue = newDatetime.toFormat("yyyy-MM-dd")  + "T" + newDatetime.toFormat("HH:mm");
 		}else {
 			console.error("Editor Error - 'date' editor 'format' param is dependant on luxon.js");
 		}
@@ -11068,6 +11070,7 @@ class FrozenColumns extends Module{
 		this.subscribe("column-deleted", this.reinitializeColumns.bind(this));
 		this.subscribe("column-hide", this.reinitializeColumns.bind(this));
 		this.subscribe("column-show", this.reinitializeColumns.bind(this));
+		this.subscribe("columns-loaded", this.reinitializeColumns.bind(this));
 		
 		this.subscribe("table-redraw", this.layout.bind(this));
 		this.subscribe("layout-refreshing", this.blockLayout.bind(this));
@@ -20067,6 +20070,13 @@ class Range extends CoreFeature{
 		this.table = table;
 		this.start = {row:0, col:0};
 		this.end = {row:0, col:0};
+
+		if(this.rangeManager.rowHeader){
+			this.left = 1;
+			this.right = 1;
+			this.start.col = 1;
+			this.end.col = 1;
+		}
 		
 		this.initElement();
 		
@@ -20126,14 +20136,14 @@ class Range extends CoreFeature{
 		
 		if (element.type === "column") {
 			if(this.rangeManager.columnSelection){
-				this.setStart(0, element.getPosition() - 2);
+				this.setStart(0, element.getPosition() - 1);
 			}
 		}else {
 			row = element.row.position - 1;
-			col = element.column.getPosition() - 2;
+			col = element.column.getPosition() - 1;
 			
 			if (element.column === this.rangeManager.rowHeader) {
-				this.setStart(row, 0);
+				this.setStart(row, 1);
 			} else {
 				this.setStart(row, col);
 			}
@@ -20147,18 +20157,18 @@ class Range extends CoreFeature{
 		if (element.type === "column") {
 			if(this.rangeManager.columnSelection){
 				if (this.rangeManager.selecting === "column") {
-					this.setEnd(rowsCount - 1, element.getPosition() - 2);
+					this.setEnd(rowsCount - 1, element.getPosition() - 1);
 				} else if (this.rangeManager.selecting === "cell") {
-					this.setEnd(0, element.getPosition() - 2);
+					this.setEnd(0, element.getPosition() - 1);
 				}
 			}
 		}else {
 			row = element.row.position - 1;
-			col = element.column.getPosition() - 2;
+			col = element.column.getPosition() - 1;
 			isRowHeader = element.column === this.rangeManager.rowHeader;
 			
 			if (this.rangeManager.selecting === "row") {
-				this.setEnd(row, this._getTableColumns().length - 2);
+				this.setEnd(row, this._getTableColumns().length - 1);
 			} else if (this.rangeManager.selecting !== "row" && isRowHeader) {
 				this.setEnd(row, 0);
 			} else if (this.rangeManager.selecting === "column") {
@@ -20240,11 +20250,11 @@ class Range extends CoreFeature{
 	}
 	
 	atTopLeft(cell) {
-		return cell.row.position - 1 === this.top && cell.column.getPosition() - 2 === this.left;
+		return cell.row.position - 1 === this.top && cell.column.getPosition() - 1 === this.left;
 	}
 	
 	atBottomRight(cell) {
-		return cell.row.position - 1 === this.bottom && cell.column.getPosition() - 2 === this.right;
+		return cell.row.position - 1 === this.bottom && cell.column.getPosition() - 1 === this.right;
 	}
 	
 	occupies(cell) {
@@ -20256,7 +20266,7 @@ class Range extends CoreFeature{
 	}
 	
 	occupiesColumn(col) {
-		return this.left <= col.getPosition() - 2 && col.getPosition() - 2 <= this.right;
+		return this.left <= col.getPosition() - 1 && col.getPosition() - 1 <= this.right;
 	}
 	
 	overlaps(left, top, right, bottom) {
@@ -20325,7 +20335,7 @@ class Range extends CoreFeature{
 	}
 	
 	getColumns() {
-		return this._getTableColumns().slice(this.left + 1, this.right + 2);
+		return this._getTableColumns().slice(this.left, this.right + 1);
 	}
 	
 	clearValues(){
@@ -20511,7 +20521,7 @@ class SelectRange extends Module {
 	
 	initializeColumn(column) {
 		if(this.columnSelection && column.definition.headerSort && this.options("headerSortClickElement") !== "icon"){
-			console.warn("Using column headerSort with selectableRangeColumns option may result in unpredictable behavior");
+			console.warn("Using column headerSort with selectableRangeColumns option may result in unpredictable behavior. Consider using headerSortClickElement: 'icon'.");
 		}
 		
 		if (column.modules.edit) ;
@@ -20806,7 +20816,7 @@ class SelectRange extends Module {
 					nextCol = Math.max(nextCol - 1, 0);
 					break;
 				case "right":
-					nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 2);
+					nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 1);
 					break;
 				case "up":
 					nextRow = Math.max(nextRow - 1, 0);
@@ -20900,13 +20910,14 @@ class SelectRange extends Module {
 	findJumpCellLeft(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos),
 		cells = row.cells.filter((cell) => cell.column.visible),
-		isStartingCellEmpty = !cells[colPos + 1].getValue(),
+		isStartingCellEmpty = !cells[colPos].getValue(),
 		isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false,
 		jumpCol = colPos,
-		nextCell = this.findJumpCell(cells.slice(0, colPos), true, isStartingCellEmpty, isLeftOfStartingCellEmpty);
+		targetCells = this.rowHeader ? cells.slice(1, colPos) : cells.slice(0, colPos),
+		nextCell = this.findJumpCell(targetCells, true, isStartingCellEmpty, isLeftOfStartingCellEmpty);
 		
 		if(nextCell){
-			jumpCol = nextCell.column.getPosition() - 2;
+			jumpCol = nextCell.column.getPosition() - 1;
 		}
 		
 		return jumpCol;
@@ -20915,13 +20926,13 @@ class SelectRange extends Module {
 	findJumpCellRight(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos),
 		cells = row.cells.filter((cell) => cell.column.visible),
-		isStartingCellEmpty = !cells[colPos + 1].getValue(),
-		isRightOfStartingCellEmpty = cells[colPos + 2] ? !cells[colPos + 2].getValue() : false,
+		isStartingCellEmpty = !cells[colPos].getValue(),
+		isRightOfStartingCellEmpty = cells[colPos + 1] ? !cells[colPos + 1].getValue() : false,
 		jumpCol = colPos,
-		nextCell = this.findJumpCell(cells.slice(colPos + 2, cells.length), false, isStartingCellEmpty, isRightOfStartingCellEmpty);
+		nextCell = this.findJumpCell(cells.slice(colPos + 1, cells.length), false, isStartingCellEmpty, isRightOfStartingCellEmpty);
 		
 		if(nextCell){
-			jumpCol = nextCell.column.getPosition() - 2;
+			jumpCol = nextCell.column.getPosition() - 1;
 		}
 		
 		return jumpCol;
@@ -20972,8 +20983,13 @@ class SelectRange extends Module {
 				range = this.resetRanges();
 				this.selecting = "all";
 				
-				const topLeftCell = this.getCell(0, 0);
-				const bottomRightCell = this.getCell(-1, -1);
+				var topLeftCell, bottomRightCell = this.getCell(-1, -1);
+
+				if(this.rowHeader){
+					topLeftCell = this.getCell(0, 1);
+				}else {
+					topLeftCell = this.getCell(0, 0);
+				}
 				
 				range.setBounds(topLeftCell, bottomRightCell);		
 				return;
@@ -20997,15 +21013,18 @@ class SelectRange extends Module {
 	
 	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element,
-		rowHeader = this.rowHeader.getElement(),
-		rect, view, withinHorizontalView, withinVerticalView;
-		
+		rowHeader, rect, view, withinHorizontalView, withinVerticalView;
+
 		if (typeof row === 'undefined') {
 			row = this.getRowByRangePos(range.end.row).getElement();
 		}
 		
 		if (typeof column === 'undefined') {
 			column = this.getColumnByRangePos(range.end.col).getElement();
+		}
+
+		if (this.rowHeader) {
+			rowHeader = this.rowHeader.getElement();
 		}
 		
 		rect = {
@@ -21016,11 +21035,15 @@ class SelectRange extends Module {
 		};
 		
 		view = {
-			left: tableHolder.scrollLeft + rowHeader.offsetWidth,
+			left: tableHolder.scrollLeft,
 			right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
 			top: tableHolder.scrollTop,
 			bottom:	tableHolder.scrollTop +	tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth,
 		};
+
+		if (rowHeader) {
+			view.left += rowHeader.offsetWidth;
+		}
 		
 		withinHorizontalView = view.left < rect.left &&	rect.left < view.right && view.left < rect.right &&	rect.right < view.right;
 		
@@ -21028,7 +21051,10 @@ class SelectRange extends Module {
 		
 		if (!withinHorizontalView) {
 			if (rect.left < view.left) {
-				tableHolder.scrollLeft = rect.left - rowHeader.offsetWidth;
+				tableHolder.scrollLeft = rect.left;
+				if (rowHeader) {
+					tableHolder.scrollLeft -= rowHeader.offsetWidth;
+				}
 			} else if (rect.right > view.right) {
 				tableHolder.scrollLeft = rect.right - tableHolder.clientWidth;
 			}
@@ -21147,8 +21173,7 @@ class SelectRange extends Module {
 		var row;
 		
 		if (colIdx < 0) {
-			colIdx = this.getTableColumns().length + colIdx - 1;
-			
+			colIdx = this.getTableColumns().length + colIdx;
 			if (colIdx < 0) {
 				return null;
 			}
@@ -21160,7 +21185,7 @@ class SelectRange extends Module {
 		
 		row = this.table.rowManager.getRowFromPosition(rowIdx + 1);
 		
-		return row ? row.getCells(false, true).filter((cell) => cell.column.visible)[colIdx + 1] : null;
+		return row ? row.getCells(false, true).filter((cell) => cell.column.visible)[colIdx] : null;
 	}
 	
 	
@@ -21173,7 +21198,7 @@ class SelectRange extends Module {
 	}
 	
 	getColumnByRangePos(pos) {
-		return this.getTableColumns()[pos + 1];
+		return this.getTableColumns()[pos];
 	}
 	
 	getTableRows() {

@@ -37,7 +37,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 				newDatetime = DT.fromFormat(String(cellValue), inputFormat);
 			}
 			
-			cellValue = newDatetime.toFormat("yyyy-MM-dd")  + "T" + newDatetime.toFormat("hh:mm");
+			cellValue = newDatetime.toFormat("yyyy-MM-dd")  + "T" + newDatetime.toFormat("HH:mm");
 		}else{
 			console.error("Editor Error - 'date' editor 'format' param is dependant on luxon.js");
 		}
