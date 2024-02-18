@@ -1109,13 +1109,11 @@ export default class RowManager extends CoreFeature{
 	
 	//redraw table
 	redraw (force){
-		const resized = this.adjustTableSize();
+		this.adjustTableSize();
 		this.table.tableWidth = this.table.element.clientWidth;
 		
-		if(!force){
-			if(resized) {
-				this.reRenderInPosition();
-			}
+		if(!force){	
+			this.reRenderInPosition();
 			this.scrollHorizontal(this.scrollLeft);
 		}else{
 			this.renderTable();
