@@ -631,12 +631,16 @@ class Edit extends Module{
 					
 					cell.setValue(value, true);
 
-					
 					return valid === true;
 				}else{
+					editFinished = true;
 					self.invalidEdit = true;
 					self.focusCellNoEvent(cell, true);
 					rendered();
+
+					setTimeout(() => {
+						editFinished = false;
+					}, 10);
 					return false;
 				}
 			}else{
