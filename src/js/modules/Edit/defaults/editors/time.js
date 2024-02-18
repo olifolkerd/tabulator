@@ -44,7 +44,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 
-	console.log("val", cellValue)
+	console.log("val", cellValue);
 	
 	input.value = cellValue;
 	

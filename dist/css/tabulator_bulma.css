@@ -603,6 +603,11 @@
   color: #FFFFFF;
 }
 
+.tabulator-row.tabulator-range-selected .tabulator-cell.tabulator-range-row-header {
+  background-color: #009e86;
+  color: #FFFFFF;
+}
+
 .tabulator-row .tabulator-row-resize-handle {
   position: absolute;
   right: 0;
@@ -717,11 +722,6 @@
   height: 3px;
   margin-top: 2px;
   background: #666;
-}
-
-.tabulator-row .tabulator-cell.tabulator-range-row-header.tabulator-range-selected {
-  background-color: #009e86;
-  color: #FFFFFF;
 }
 
 .tabulator-row .tabulator-cell.tabulator-range-selected:not(.tabulator-range-only-cell-selected):not(.tabulator-range-row-header) {
