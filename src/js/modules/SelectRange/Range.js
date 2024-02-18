@@ -22,6 +22,13 @@ class Range extends CoreFeature{
 		this.table = table;
 		this.start = {row:0, col:0};
 		this.end = {row:0, col:0};
+
+		if(this.rangeManager.rowHeader){
+			this.left = 1;
+			this.right = 1;
+			this.start.col = 1;
+			this.end.col = 1;
+		}
 		
 		this.initElement();
 		
@@ -81,14 +88,14 @@ class Range extends CoreFeature{
 		
 		if (element.type === "column") {
 			if(this.rangeManager.columnSelection){
-				this.setStart(0, element.getPosition() - 2);
+				this.setStart(0, element.getPosition() - 1);
 			}
 		}else{
 			row = element.row.position - 1;
-			col = element.column.getPosition() - 2;
+			col = element.column.getPosition() - 1;
 			
 			if (element.column === this.rangeManager.rowHeader) {
-				this.setStart(row, 0);
+				this.setStart(row, 1);
 			} else {
 				this.setStart(row, col);
 			}
@@ -102,18 +109,18 @@ class Range extends CoreFeature{
 		if (element.type === "column") {
 			if(this.rangeManager.columnSelection){
 				if (this.rangeManager.selecting === "column") {
-					this.setEnd(rowsCount - 1, element.getPosition() - 2);
+					this.setEnd(rowsCount - 1, element.getPosition() - 1);
 				} else if (this.rangeManager.selecting === "cell") {
-					this.setEnd(0, element.getPosition() - 2);
+					this.setEnd(0, element.getPosition() - 1);
 				}
 			}
 		}else{
 			row = element.row.position - 1;
-			col = element.column.getPosition() - 2;
+			col = element.column.getPosition() - 1;
 			isRowHeader = element.column === this.rangeManager.rowHeader;
 			
 			if (this.rangeManager.selecting === "row") {
-				this.setEnd(row, this._getTableColumns().length - 2);
+				this.setEnd(row, this._getTableColumns().length - 1);
 			} else if (this.rangeManager.selecting !== "row" && isRowHeader) {
 				this.setEnd(row, 0);
 			} else if (this.rangeManager.selecting === "column") {
@@ -195,11 +202,11 @@ class Range extends CoreFeature{
 	}
 	
 	atTopLeft(cell) {
-		return cell.row.position - 1 === this.top && cell.column.getPosition() - 2 === this.left;
+		return cell.row.position - 1 === this.top && cell.column.getPosition() - 1 === this.left;
 	}
 	
 	atBottomRight(cell) {
-		return cell.row.position - 1 === this.bottom && cell.column.getPosition() - 2 === this.right;
+		return cell.row.position - 1 === this.bottom && cell.column.getPosition() - 1 === this.right;
 	}
 	
 	occupies(cell) {
@@ -211,7 +218,7 @@ class Range extends CoreFeature{
 	}
 	
 	occupiesColumn(col) {
-		return this.left <= col.getPosition() - 2 && col.getPosition() - 2 <= this.right;
+		return this.left <= col.getPosition() - 1 && col.getPosition() - 1 <= this.right;
 	}
 	
 	overlaps(left, top, right, bottom) {
@@ -280,7 +287,7 @@ class Range extends CoreFeature{
 	}
 	
 	getColumns() {
-		return this._getTableColumns().slice(this.left + 1, this.right + 2);
+		return this._getTableColumns().slice(this.left, this.right + 1);
 	}
 	
 	clearValues(){
