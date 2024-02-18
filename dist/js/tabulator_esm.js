@@ -27915,7 +27915,7 @@ class Tabulator {
 		this.options.height = isNaN(height) ? height : height + "px";
 		this.element.style.height = this.options.height;
 		this.rowManager.initializeRenderer();
-		this.rowManager.redraw();
+		this.rowManager.redraw(true);
 	}
 	
 	//////////////////// Event Bus ///////////////////
