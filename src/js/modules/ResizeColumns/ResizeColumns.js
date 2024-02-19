@@ -149,6 +149,7 @@ class ResizeColumns extends Module{
 				self.startColumn = column;
 				self.initialNextColumn = self.nextColumn = nearestColumn.nextColumn();
 				self._mouseDown(e, nearestColumn, handle);
+				self.table.externalEvents.dispatch("columnResizeStart", nearestColumn.getComponent());
 			};
 			
 			handle.addEventListener("mousedown", handleDown);
@@ -259,6 +260,8 @@ class ResizeColumns extends Module{
 			if(!self.table.browserSlow && column.modules.resize && column.modules.resize.variableHeight){
 				column.checkCellHeights();
 			}
+
+			self.table.externalEvents.dispatch("columnResizeMoved", column.getComponent());
 		}
 		
 		function mouseUp(e){
