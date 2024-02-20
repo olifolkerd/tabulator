@@ -274,8 +274,14 @@ class ColumnCalcs extends Module{
 	}
 	
 	initializeTopRow(){
+		var	fragment = document.createDocumentFragment();
+		
 		if(!this.topInitialized){
-			this.table.columnManager.getContentsElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
+
+			fragment.appendChild(document.createElement("br"));
+			fragment.appendChild(this.topElement);
+
+			this.table.columnManager.getContentsElement().insertBefore(fragment, this.table.columnManager.headersElement.nextSibling);
 			this.topInitialized = true;
 		}
 	}

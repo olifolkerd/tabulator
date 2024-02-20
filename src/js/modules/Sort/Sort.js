@@ -131,13 +131,13 @@ class Sort extends Module{
 
 			switch(this.table.options.headerSortElement){
 				case "function":
-					//do nothing
+				//do nothing
 					break;
 
 				case "object":
 					arrowEl.appendChild(this.table.options.headerSortElement);
 					break;
-					
+
 				default:
 					arrowEl.innerHTML = this.table.options.headerSortElement;
 			}
@@ -148,6 +148,12 @@ class Sort extends Module{
 			column.modules.sort.element = arrowEl;
 
 			this.setColumnHeaderSortIcon(column, "none");
+
+			if(this.table.options.headerSortClickElement === "icon"){
+				arrowEl.addEventListener("mousedown", (e) => {
+					e.stopPropagation();
+				});
+			}
 
 			//sort on click
 			(this.table.options.headerSortClickElement === "icon" ? arrowEl : colEl).addEventListener("click", (e) => {
@@ -416,7 +422,7 @@ class Sort extends Module{
 			while(sortEl.firstChild) sortEl.removeChild(sortEl.firstChild);
 
 			arrowEl = this.table.options.headerSortElement.call(this.table, column.getComponent(), dir);
-			
+
 			if(typeof arrowEl === "object"){
 				sortEl.appendChild(arrowEl);
 			}else{

@@ -142,6 +142,7 @@ class Clipboard extends Module{
 		var sel, textRange;
 		this.blocked = false;
 		this.customSelection = false;
+	
 
 		if (this.mode === true || this.mode === "copy") {
 
@@ -209,7 +210,7 @@ class Clipboard extends Module{
 	paste(e){
 		var data, rowData, rows;
 
-		if(this.checkPaseOrigin(e)){
+		if(this.checkPasteOrigin(e)){
 
 			data = this.getPasteData(e);
 
@@ -246,10 +247,11 @@ class Clipboard extends Module{
 	}
 
 
-	checkPaseOrigin(e){
+	checkPasteOrigin(e){
 		var valid = true;
+		var blocked = this.confirm("clipboard-paste", [e]);
 
-		if(e.target.tagName != "DIV" || this.table.modules.edit.currentCell){
+		if(blocked || !["DIV", "SPAN"].includes(e.target.tagName)){
 			valid = false;
 		}
 

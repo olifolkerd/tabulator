@@ -31,7 +31,10 @@ class FrozenColumns extends Module{
 		this.subscribe("columns-loading", this.reset.bind(this));
 		
 		this.subscribe("column-add", this.reinitializeColumns.bind(this));
-		this.subscribe("column-delete", this.reinitializeColumns.bind(this));
+		this.subscribe("column-deleted", this.reinitializeColumns.bind(this));
+		this.subscribe("column-hide", this.reinitializeColumns.bind(this));
+		this.subscribe("column-show", this.reinitializeColumns.bind(this));
+		this.subscribe("columns-loaded", this.reinitializeColumns.bind(this));
 		
 		this.subscribe("table-redraw", this.layout.bind(this));
 		this.subscribe("layout-refreshing", this.blockLayout.bind(this));
@@ -57,16 +60,16 @@ class FrozenColumns extends Module{
 		this.table.columnManager.columnsByIndex.forEach((column) => {
 			this.initializeColumn(column);
 		});
+
+		this.layout();
 	}
 	
 	//initialize specific column
 	initializeColumn(column){
 		var config = {margin:0, edge:false};
 		
-		if(!column.isGroup){
-			
+		if(!column.isGroup){			
 			if(this.frozenCheck(column)){
-				
 				config.position = this.initializationMode;
 				
 				if(this.initializationMode == "left"){
@@ -157,9 +160,8 @@ class FrozenColumns extends Module{
 					leftParents.push(parentEl);
 				}
 				
-				if(column.modules.frozen.edge){
-					parentEl.classList.add("tabulator-frozen-" + column.modules.frozen.position);
-				}
+				parentEl.classList.toggle("tabulator-frozen-left",  column.modules.frozen.edge && column.modules.frozen.position === "left");
+				parentEl.classList.toggle("tabulator-frozen-right", column.modules.frozen.edge && column.modules.frozen.position === "right");
 			}else{
 				this.layoutElement(column.getElement(), column);
 			}
@@ -207,7 +209,6 @@ class FrozenColumns extends Module{
 	//layout columns appropriately
 	layout(){	
 		if(this.active && !this.blocked){
-		
 			//calculate left columns
 			this.layoutColumnPosition();
 			
@@ -270,9 +271,8 @@ class FrozenColumns extends Module{
 
 			element.classList.add("tabulator-frozen");
 			
-			if(column.modules.frozen.edge){
-				element.classList.add("tabulator-frozen-" + column.modules.frozen.position);
-			}
+			element.classList.toggle("tabulator-frozen-left",  column.modules.frozen.edge && column.modules.frozen.position === "left");
+			element.classList.toggle("tabulator-frozen-right", column.modules.frozen.edge && column.modules.frozen.position === "right");
 		}
 	}
 

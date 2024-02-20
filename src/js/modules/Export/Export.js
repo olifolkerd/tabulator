@@ -35,10 +35,20 @@ class Export extends Module{
 		this.cloneTableStyle = style;
 		this.config = config || {};
 		this.colVisProp = colVisProp;
+
+		var headers, body;
 		
-		var headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders()) : [];
-		var body = this.bodyToExportRows(this.rowLookup(range));
-		
+		if (range === 'range') {
+			var columns = this.table.modules.selectRange.selectedColumns();
+			headers = this.config.columnHeaders !== false
+				? this.headersToExportRows(this.generateColumnGroupHeaders(columns))
+				: [];
+			body = this.bodyToExportRows(this.rowLookup(range), this.table.modules.selectRange.selectedColumns(true));
+		} else {
+			headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders()) : [];
+			body = this.bodyToExportRows(this.rowLookup(range));
+		}
+
 		return headers.concat(body);
 	}
 	
@@ -73,7 +83,11 @@ class Export extends Module{
 				case "selected":
 					rows = this.table.modules.selectRow.selectedRows;
 					break;
-				
+
+				case "range":
+					rows = this.table.modules.selectRange.selectedRows();
+					break;
+
 				case "active":
 				default:
 					if(this.table.options.pagination){
@@ -87,10 +101,12 @@ class Export extends Module{
 		return Object.assign([], rows);
 	}
 	
-	generateColumnGroupHeaders(){
+	generateColumnGroupHeaders(columns){
 		var output = [];
 		
-		var columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
+		if (!columns) {
+			columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
+		}
 		
 		columns.forEach((column) => {
 			var colData = this.processColumnGroup(column);
@@ -99,7 +115,7 @@ class Export extends Module{
 				output.push(colData);
 			}
 		});
-		
+
 		return output;
 	}
 	
@@ -227,16 +243,16 @@ class Export extends Module{
 		return exportRows;
 	}
 	
-	bodyToExportRows(rows){
-		
-		var columns = [];
+	bodyToExportRows(rows, columns = []){
 		var exportRows = [];
 		
-		this.table.columnManager.columnsByIndex.forEach((column) => {
-			if (this.columnVisCheck(column)) {
-				columns.push(column.getComponent());
-			}
-		});
+		if (columns.length === 0) {
+			this.table.columnManager.columnsByIndex.forEach((column) => {
+				if (this.columnVisCheck(column)) {
+					columns.push(column.getComponent());
+				}
+			});
+		}
 		
 		if(this.config.columnCalcs !== false && this.table.modExists("columnCalcs")){
 			if(this.table.modules.columnCalcs.topInitialized){
@@ -247,7 +263,7 @@ class Export extends Module{
 				rows.push(this.table.modules.columnCalcs.botRow);
 			}
 		}
-		
+
 		rows = rows.filter((row) => {
 			switch(row.type){
 				case "group":
@@ -474,7 +490,8 @@ class Export extends Module{
 			if(col){
 				var cellEl = document.createElement("td"),
 				column = col.component._column,
-				index = this.table.columnManager.findColumnIndex(column),
+				table =  this.table,
+				index = table.columnManager.findColumnIndex(column),
 				value = col.value,
 				cellStyle;
 				
@@ -500,6 +517,9 @@ class Export extends Module{
 					},
 					getRow:function(){
 						return row.component;
+					},
+					getTable:function(){
+						return table;
 					},
 					getComponent:function(){
 						return cellWrapper;

@@ -201,7 +201,7 @@ class Persistence extends Module{
 	}
 
 	setColumnLayout(layout){
-		this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout));
+		this.table.columnManager.setColumns(this.mergeDefinition(this.table.options.columns, layout, true));
 		return true;
 	}
 
@@ -267,7 +267,7 @@ class Persistence extends Module{
 	}
 
 	//merge old and new column definitions
-	mergeDefinition(oldCols, newCols){
+	mergeDefinition(oldCols, newCols, mergeAllNew){
 		var output = [];
 
 		newCols = newCols || [];
@@ -277,7 +277,9 @@ class Persistence extends Module{
 			keys;
 
 			if(from){
-				if(this.config.columns === true || this.config.columns == undefined){
+				if(mergeAllNew){
+					keys = Object.keys(column);
+				}else if(this.config.columns === true || this.config.columns == undefined){
 					keys =  Object.keys(from);
 					keys.push("width");
 				}else{

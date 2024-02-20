@@ -118,8 +118,8 @@ export default class CoreFeature{
 	/////////// Deprecation Checks ///////////
 	//////////////////////////////////////////
 
-	deprecationCheck(oldOption, newOption){
-		return this.table.deprecationAdvisor.check(oldOption, newOption);
+	deprecationCheck(oldOption, newOption,  convert){
+		return this.table.deprecationAdvisor.check(oldOption, newOption,  convert);
 	}
 
 	deprecationCheckMsg(oldOption, msg){

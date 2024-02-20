@@ -178,7 +178,7 @@ class Page extends Module{
 	
 	userSetPageToRow(row){
 		if(this.table.options.pagination){
-			row = this.rowManager.findRow(row);
+			row = this.table.rowManager.findRow(row);
 			
 			if(row){
 				return this.setPageToRow(row);

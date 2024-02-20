@@ -12,10 +12,14 @@ export default {
 		}
 
 		this._rebindRow(action.component, newRow);
+
+		this.table.rowManager.checkPlaceholder();
 	},
 
 	rowDelete:function(action){
 		action.component.deleteActual();
+
+		this.table.rowManager.checkPlaceholder();
 	},
 
 	rowMove: function(action){

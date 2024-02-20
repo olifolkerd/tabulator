@@ -1,6 +1,6 @@
 {
   "name": "tabulator-tables",
-  "version": "5.5.2",
+  "version": "5.6.1",
   "description": "Interactive table generation JavaScript library",
   "style": "dist/css/tabulator.css",
   "main": "dist/js/tabulator.js",
@@ -47,20 +47,19 @@
   "bugs": {
     "url": "https://github.com/olifolkerd/tabulator/issues"
   },
-  "homepage": "http://tabulator.info/",
+  "homepage": "https://tabulator.info/",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^11.0.1",
     "eslint": "^8.10.0",
     "eslint-plugin-only-warn": "^1.0.3",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.2",
-    "node-sass": "^7.0.3",
+    "node-sass": "^9.0.0",
     "postcss": "^8.2.4",
     "postcss-prettify": "^0.3.4",
     "rollup": "^2.36.1",
     "rollup-plugin-license": "^2.2.0",
     "rollup-plugin-postcss": "^4.0.0",
     "rollup-plugin-terser": "^7.0.2"
-  },
-  "dependencies": {}
+  }
 }

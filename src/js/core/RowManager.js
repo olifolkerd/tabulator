@@ -344,7 +344,7 @@ export default class RowManager extends CoreFeature{
 			
 			this.regenerateRowPositions();
 			
-			if(rows.length){
+			if(this.displayRowsCount){
 				this._clearPlaceholder();
 			}
 			
@@ -714,7 +714,7 @@ export default class RowManager extends CoreFeature{
 	refreshPipelines(handler, stage, index, renderInPosition){
 		this.dispatch("data-refreshing");
 		
-		if(!handler){
+		if(!handler || !this.activeRowsPipeline[0]){
 			this.activeRowsPipeline[0] = this.rows.slice(0);
 		}
 		
@@ -724,7 +724,6 @@ export default class RowManager extends CoreFeature{
 			//handle case where all data needs refreshing
 			
 			case "dataPipeline":
-			
 				for(let i = index; i < this.dataPipeline.length; i++){
 					let result = this.dataPipeline[i].handler(this.activeRowsPipeline[i].slice(0));
 				
@@ -974,6 +973,14 @@ export default class RowManager extends CoreFeature{
 		this.renderEmptyScroll();
 		this._showPlaceholder();
 	}
+
+	checkPlaceholder(){
+		if(this.displayRowsCount){
+			this._clearPlaceholder();
+		}else{
+			this.tableEmpty();
+		}
+	}
 	
 	_showPlaceholder(){
 		if(this.placeholder){
@@ -1102,13 +1109,11 @@ export default class RowManager extends CoreFeature{
 	
 	//redraw table
 	redraw (force){
-		const resized = this.adjustTableSize();
+		this.adjustTableSize();
 		this.table.tableWidth = this.table.element.clientWidth;
 		
-		if(!force){
-			if(resized) {
-				this.reRenderInPosition();
-			}
+		if(!force){	
+			this.reRenderInPosition();
 			this.scrollHorizontal(this.scrollLeft);
 		}else{
 			this.renderTable();
