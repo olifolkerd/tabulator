@@ -165,6 +165,10 @@ class Range extends CoreFeature{
 		_vDomLeft = this.table.columnManager.renderer.leftCol,
 		_vDomRight = this.table.columnManager.renderer.rightCol,		
 		top, bottom, left, right, topLeftCell, bottomRightCell;
+
+		if(this.rangeManager.rowHeader) {
+			_vDomRight += 1;
+		}
 		
 		if (_vDomTop == null) {
 			_vDomTop = 0;
