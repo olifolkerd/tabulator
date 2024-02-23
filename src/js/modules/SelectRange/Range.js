@@ -166,7 +166,7 @@ class Range extends CoreFeature{
 		_vDomRight = this.table.columnManager.renderer.rightCol,		
 		top, bottom, left, right, topLeftCell, bottomRightCell;
 
-		if(this.rangeManager.rowHeader) {
+		if(this.table.options.renderHorizontal === "virtual" && this.rangeManager.rowHeader) {
 			_vDomRight += 1;
 		}
 		
