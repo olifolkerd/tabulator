@@ -808,7 +808,7 @@ class SelectRange extends Module {
 	}
 	
 	getTableRows() {
-		return this.table.rowManager.getDisplayRows();
+		return this.table.rowManager.getDisplayRows().filter(row=> row.type === "row");
 	}
 	
 	getTableColumns() {

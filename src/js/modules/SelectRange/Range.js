@@ -152,7 +152,7 @@ class Range extends CoreFeature{
 	}
 	
 	_getTableRows() {
-		return this.table.rowManager.getDisplayRows();
+		return this.table.rowManager.getDisplayRows().filter(row=> row.type === "row");
 	}
 	
 	///////////////////////////////////
