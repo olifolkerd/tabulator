@@ -13206,7 +13206,7 @@
 					el = document.createElement("div");
 					el.tabIndex = 0;
 					
-					contents = this.params.itemFormatter ? this.params.itemFormatter(item.label, item.value, item.original, el) : item.label;
+					contents = this.params.itemFormatter ? this.params.itemFormatter(item.label, item.value, item, el) : item.label;
 					
 					if(contents instanceof HTMLElement){
 						el.appendChild(contents);

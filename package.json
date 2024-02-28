@@ -1,5 +1,5 @@
 {
-  "name": "tabulator-tables",
+  "name": "emr-tabulator",
   "version": "5.6.1",
   "description": "Interactive table generation JavaScript library",
   "style": "dist/css/tabulator.css",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/olifolkerd/tabulator.git"
+    "url": "git+https://github.com/olifolkerd/tabulator.git"
   },
   "keywords": [
     "table",
