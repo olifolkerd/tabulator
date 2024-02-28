@@ -1,5 +1,5 @@
 {
-  "name": "@emr/tabulator-tables",
+  "name": "emr-tabulator-tables",
   "version": "5.6.1",
   "description": "Interactive table generation JavaScript library",
   "style": "dist/css/tabulator.css",
@@ -394,5 +394,8 @@
     "yaml": "^1.10.2",
     "yargs": "^17.7.2",
     "yargs-parser": "^20.2.9"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
