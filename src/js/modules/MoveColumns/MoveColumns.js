@@ -201,6 +201,7 @@ class MoveColumns extends Module{
 		}
 		
 		this.moveHover(e);
+		this.table.externalEvents.dispatch("columnMoveStart", column);
 	}
 	
 	_bindMouseMove(){
