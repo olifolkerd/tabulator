@@ -18,14 +18,13 @@ $sortArrowActive: #666 !default;
 $sortArrowInactive: #bbb !default;
 
 //row theming
-$rowBackgroundColor:transparent !default; //table row background color
+$rowBackgroundColor:#fff !default; //table row background color
 $rowAltBackgroundColor: $table-striped-color !default; //table row background color
 $rowBorderColor:$table-border-color !default; //table border color
 $rowHoverBackground:$table-striped-color !default; //row background color on hover
 
 $rowSelectedBackground:$primary-color !default; //row background color when selected
 $rowSelectedBackgroundHover: $primary-color !default;//row background color when selected and hovered
-
 
 $editBoxColor:$primary-color !default; //border color for edit boxes
 $errorColor:#dd0000 !default; //error indication
@@ -34,6 +33,13 @@ $errorColor:#dd0000 !default; //error indication
 $footerBorderColor:$table-border-color !default; //footer border color
 $footerSeparatorColor:$table-border-color !default; //footer bottom separator color
 $footerActiveColor:$primary-color !default; //footer bottom active text color
+
+//range selection
+$rangeBorderColor: #{darken($primary-color, 10%)} !default; //range border color
+$rangeHandleColor: $rangeBorderColor !default; //range handle color
+$rangeHeaderSelectedBackground: $rangeBorderColor !default; //header background color when selected
+$rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when selected
+
 
 @import "../../tabulator.scss";
 
@@ -137,14 +143,16 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 					background-color:$rowSelectedBackground !important;
 				}
 
-				&.tabulator-selectable:hover{
-					background-color:$rowHoverBackground;
-					cursor: pointer;
-				}
+				@media (hover:hover) and (pointer:fine){
+					&.tabulator-selectable:hover{
+						background-color:$rowHoverBackground;
+						cursor: pointer;
+					}
 
-				&.tabulator-selected:hover{
-					background-color:$rowSelectedBackgroundHover !important;
-					cursor: pointer;
+					&.tabulator-selected:hover{
+						background-color:$rowSelectedBackgroundHover !important;
+						cursor: pointer;
+					}
 				}
 			}
 		}
@@ -157,7 +165,7 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 	border-bottom:1px solid $rowBorderColor;
 
 	&.tabulator-row-even{
-		background-color: transparent;
+		background-color: $rowBackgroundColor;
 	}
 
 	.tabulator-cell{
@@ -211,8 +219,10 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 			}
 		}
 
-		&:hover{
-			color:$headerBackgroundColor;
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				color:$headerBackgroundColor;
+			}
 		}
 	}
 

@@ -37,6 +37,13 @@ $footerSeparatorColor:#999 !default; //footer bottom separator color
 $footerActiveColor:#d00 !default; //footer bottom active text color
 
 
+//range selection
+$rangeBorderColor: #2975DD !default; //range border color
+$rangeHandleColor: $rangeBorderColor !default; //range handle color
+$rangeHeaderSelectedBackground: #3876ca !default; //header background color when selected
+$rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when selected
+$rangeHeaderHighlightBackground: #D6D6D6 !default; //header background color when highlighted
+$rangeHeaderTextHighlightBackground: #000000 !default; //header text color when highlighted
 
 //Tabulator Containing Element
 .tabulator{
@@ -72,6 +79,13 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		user-select: none;
 	}
 	
+	&.tabulator-ranges{
+		.tabulator-cell:not(.tabulator-editing){
+			user-select: none;
+		}
+	}
+	
+	
 	//column header containing element
 	.tabulator-header{
 		position:relative;
@@ -91,6 +105,8 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		-khtml-user-select: none;
 		-webkit-user-select: none;
 		-o-user-select: none;
+		
+		outline: none;
 		
 		&.tabulator-header-hidden{
 			display:none;
@@ -128,6 +144,16 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				pointer-events: none;
 			}
 			
+			&.tabulator-range-highlight{
+				background-color: $rangeHeaderHighlightBackground;
+				color: $rangeHeaderTextHighlightBackground;
+			}
+			
+			&.tabulator-range-selected{
+				background-color: $rangeHeaderSelectedBackground;
+				color: $rangeHeaderSelectedTextColor;
+			}
+			
 			//hold content of column header
 			.tabulator-col-content{
 				box-sizing:border-box;
@@ -158,7 +184,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					overflow: hidden;
 					text-overflow: ellipsis;
 					vertical-align:bottom;
-
+					
 					&.tabulator-col-title-wrap{
 						white-space: normal;
 						text-overflow: initial;
@@ -248,18 +274,22 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					padding-right:25px;
 				}
 				
-				&.tabulator-col-sorter-element:hover{
-					cursor:pointer;
-					background-color:darken($headerBackgroundColor, 10%);
+				@media (hover:hover) and (pointer:fine){
+					&.tabulator-col-sorter-element:hover{
+						cursor:pointer;
+						background-color:darken($headerBackgroundColor, 10%);
+					}
 				}
 				
 				&[aria-sort="none"]{
 					.tabulator-col-content .tabulator-col-sorter{
 						color: $sortArrowInactive;
 						
-						&.tabulator-col-sorter-element .tabulator-arrow:hover{
-							cursor:pointer;
-							border-bottom: 6px solid $sortArrowHover;
+						@media (hover:hover) and (pointer:fine){
+							&.tabulator-col-sorter-element .tabulator-arrow:hover{
+								cursor:pointer;
+								border-bottom: 6px solid $sortArrowHover;
+							}
 						}
 						
 						.tabulator-arrow{
@@ -273,9 +303,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					.tabulator-col-content .tabulator-col-sorter{
 						color: $sortArrowActive;
 						
-						&.tabulator-col-sorter-element .tabulator-arrow:hover{
-							cursor:pointer;
-							border-bottom: 6px solid $sortArrowHover;
+						@media (hover:hover) and (pointer:fine){
+							&.tabulator-col-sorter-element .tabulator-arrow:hover{
+								cursor:pointer;
+								border-bottom: 6px solid $sortArrowHover;
+							}
 						}
 						
 						.tabulator-arrow{
@@ -290,9 +322,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					.tabulator-col-content .tabulator-col-sorter{
 						color: $sortArrowActive;
 						
-						&.tabulator-col-sorter-element .tabulator-arrow:hover{
-							cursor:pointer;
-							border-top: 6px solid $sortArrowHover;
+						@media (hover:hover) and (pointer:fine){
+							&.tabulator-col-sorter-element .tabulator-arrow:hover{
+								cursor:pointer;
+								border-top: 6px solid $sortArrowHover;
+							}
 						}
 						
 						.tabulator-arrow{
@@ -354,7 +388,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			
 			// background-color: inherit;
 			
-			z-index: 10;
+			z-index: 11;
 			
 			&.tabulator-frozen-left{
 				border-right:2px solid $rowBorderColor;
@@ -368,7 +402,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
-			min-width:600%;
+			display: inline-block;
 			
 			background:lighten($headerBackgroundColor, 5%) !important;
 			
@@ -386,9 +420,8 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 		
-		.tabulator-frozen-rows-holder{
-			min-width:600%;
-			
+		.tabulator-frozen-rows-holder{	
+			display: inline-block;	
 			&:empty{
 				display: none;
 			}
@@ -412,13 +445,14 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			box-sizing:border-box;
 			display: flex;
 			align-items:center;
+			justify-content: center;
+			
+			min-width:100%;
+			width:100%;
 			
 			&[tabulator-render-mode="virtual"]{
 				min-height:100%;
-				min-width:100%;
 			}
-			
-			width:100%;
 			
 			.tabulator-placeholder-contents {
 				display: inline-block;
@@ -459,6 +493,36 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				}
 			}
 			
+		}
+		
+		.tabulator-range-overlay {
+			position: absolute;
+			inset: 0;
+			z-index: 10;
+			pointer-events: none;
+			
+			& .tabulator-range {
+				position: absolute;
+				box-sizing: border-box;
+				border: 1px solid $rangeBorderColor;
+				
+				&.tabulator-range-active::after {
+					content: '';
+					position: absolute;
+					right: -3px;
+					bottom: -3px;
+					width: 6px;
+					height: 6px;
+					background-color: $rangeHandleColor;
+					border-radius: 999px;
+				}
+			}
+			
+			& .tabulator-range-cell-active {
+				position: absolute;
+				box-sizing: border-box;
+				border: 2px solid $rangeBorderColor;
+			}
 		}
 	}
 	
@@ -572,11 +636,13 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				opacity:.5;
 			}
 			
-			&:not(.disabled){
-				&:hover{
-					cursor:pointer;
-					background:rgba(0,0,0,.2);
-					color:#fff;
+			&:not(disabled){
+				@media (hover:hover) and (pointer:fine){
+					&:hover{
+						cursor:pointer;
+						background:rgba(0,0,0,.2);
+						color:#fff;
+					}
 				}
 			}
 		}
@@ -591,11 +657,13 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		margin-left: -3px;
 		margin-right: -3px;
 		
-		z-index: 10;
+		z-index: 11;
 		vertical-align: middle;
 		
-		&:hover{
-			cursor:ew-resize;
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				cursor:ew-resize;
+			}
 		}
 		
 		&:last-of-type{
@@ -660,18 +728,22 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		background-color: $rowAltBackgroundColor;
 	}
 	
-	&.tabulator-selectable:hover{
-		background-color:$rowHoverBackground;
-		cursor: pointer;
+	@media (hover:hover) and (pointer:fine){
+		&.tabulator-selectable:hover{
+			background-color:$rowHoverBackground;
+			cursor: pointer;
+		}
 	}
 	
 	&.tabulator-selected{
 		background-color:$rowSelectedBackground;
 	}
 	
-	&.tabulator-selected:hover{
-		background-color:$rowSelectedBackgroundHover;
-		cursor: pointer;
+	@media (hover:hover) and (pointer:fine){
+		&.tabulator-selected:hover{
+			background-color:$rowSelectedBackgroundHover;
+			cursor: pointer;
+		}
 	}
 	
 	&.tabulator-row-moving{
@@ -689,6 +761,28 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		z-index:15;
 	}
 	
+	&.tabulator-range-highlight{
+		.tabulator-cell.tabulator-range-row-header{
+			background-color: $rangeHeaderHighlightBackground;
+			color: $rangeHeaderTextHighlightBackground;
+		}
+		
+		&.tabulator-range-selected{
+			.tabulator-cell.tabulator-range-row-header{
+				background-color: $rangeHeaderSelectedBackground;
+				color: $rangeHeaderSelectedTextColor;
+			}	
+		}
+	}
+
+	
+	&.tabulator-range-selected{
+		.tabulator-cell.tabulator-range-row-header{
+			background-color: $rangeHeaderSelectedBackground;
+			color: $rangeHeaderSelectedTextColor;
+		}
+	}
+	
 	//row resize handles
 	.tabulator-row-resize-handle{
 		position:absolute;
@@ -702,12 +796,12 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			bottom:auto;
 		}
 		
-		&:hover{
-			cursor:ns-resize;
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				cursor:ns-resize;
+			}
 		}
 	}
-	
-	
 	
 	.tabulator-responsive-collapse{
 		box-sizing:border-box;
@@ -747,6 +841,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		white-space:nowrap;
 		overflow:hidden;
 		text-overflow:ellipsis;
+		outline:none;
 		
 		&.tabulator-frozen{
 			display: inline-block;
@@ -756,7 +851,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			
 			background-color: inherit;
 			
-			z-index: 10;
+			z-index: 11;
 			
 			&.tabulator-frozen-left{
 				border-right:2px solid $rowBorderColor;
@@ -816,6 +911,15 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			}
 		}
 		
+		&.tabulator-range-selected:not(.tabulator-range-only-cell-selected):not(.tabulator-range-row-header){
+			background-color: $rowSelectedBackground;
+		}
+		
+		.tabulator-data-tree-branch-empty{
+			display:inline-block;
+			width:7px;
+		}
+		
 		.tabulator-data-tree-branch{
 			display:inline-block;
 			vertical-align:middle;
@@ -850,9 +954,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			
 			overflow:hidden;
 			
-			&:hover{
-				cursor:pointer;
-				background:rgba(0, 0, 0, .2);
+			@media (hover:hover) and (pointer:fine){
+				&:hover{
+					cursor:pointer;
+					background:rgba(0, 0, 0, .2);
+				}
 			}
 			
 			.tabulator-data-tree-control-collapse{
@@ -921,9 +1027,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			font-weight:bold;
 			font-size:1.1em;
 			
-			&:hover{
-				opacity:.7;
-				cursor: pointer;
+			@media (hover:hover) and (pointer:fine){
+				&:hover{
+					opacity:.7;
+					cursor: pointer;
+				}
 			}
 			
 			&.open{
@@ -935,7 +1043,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					display:none;
 				}
 			}
-
+			
 			svg{
 				stroke:$rowBackgroundColor;
 			}
@@ -967,9 +1075,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		
 		min-width: 100%;
 		
-		&:hover{
-			cursor:pointer;
-			background-color:rgba(0,0,0,.1);
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				cursor:pointer;
+				background-color:rgba(0,0,0,.1);
+			}
 		}
 		
 		&.tabulator-group-visible{
@@ -1078,9 +1188,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			opacity: .5;
 		}
 		
-		&:not(.tabulator-menu-item-disabled):hover{
-			cursor: pointer;
-			background: $rowAltBackgroundColor;
+		@media (hover:hover) and (pointer:fine){
+			&:not(.tabulator-menu-item-disabled):hover{
+				cursor: pointer;
+				background: $rowAltBackgroundColor;
+			}
 		}
 		
 		&.tabulator-menu-item-submenu{
@@ -1139,11 +1251,13 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			outline:1px solid $editBoxColor;
 		}
 		
-		&:hover{
-			cursor:pointer;
-			
-			color:$rowBackgroundColor;
-			background:$editBoxColor;
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				cursor:pointer;
+				
+				color:$rowBackgroundColor;
+				background:$editBoxColor;
+			}
 		}
 	}
 	
@@ -1325,9 +1439,11 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		
 		min-width: 100%;
 		
-		&:hover{
-			cursor:pointer;
-			background-color:rgba(0,0,0,.1);
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				cursor:pointer;
+				background-color:rgba(0,0,0,.1);
+			}
 		}
 		
 		&.tabulator-group-visible{
@@ -1413,9 +1529,11 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		
 		overflow:hidden;
 		
-		&:hover{
-			cursor:pointer;
-			background:rgba(0, 0, 0, .2);
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				cursor:pointer;
+				background:rgba(0, 0, 0, .2);
+			}
 		}
 		
 		.tabulator-data-tree-control-collapse{
@@ -1463,4 +1581,3 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		}
 	}
 }
-

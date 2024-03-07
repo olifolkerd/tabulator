@@ -173,8 +173,13 @@ export default class VirtualDomHorizontal extends Renderer{
 		if(this.initialized){
 			this.initializeRow(row);
 		}else{
+			const rowFrag = document.createDocumentFragment();
 			row.cells.forEach((cell) => {
-				row.element.appendChild(cell.getElement());
+				rowFrag.appendChild(cell.getElement());
+			});
+			row.element.appendChild(rowFrag);
+
+			row.cells.forEach((cell) => {
 				cell.cellRendered();
 			});
 		}

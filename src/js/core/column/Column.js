@@ -257,6 +257,10 @@ class Column extends CoreFeature{
 				titleElement.focus();
 			});
 
+			titleElement.addEventListener("mousedown", (e) => {
+				e.stopPropagation();
+			});
+
 			titleElement.addEventListener("change", () => {
 				def.title = titleElement.value;
 				this.dispatchExternal("columnTitleChanged", this.getComponent());
@@ -802,6 +806,8 @@ class Column extends CoreFeature{
 
 			this.table.columnManager.rerenderColumns(true);
 
+			this.dispatch("column-deleted", this);
+
 			resolve();
 		});
 	}
@@ -941,6 +947,10 @@ class Column extends CoreFeature{
 		}
 
 		return this.component;
+	}
+
+	getPosition(){
+		return this.table.columnManager.getVisibleColumnsByIndex().indexOf(this) + 1;
 	}
 }
 

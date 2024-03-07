@@ -11,11 +11,11 @@ class SelectRow extends Module{
 		this.selectedRows = []; //hold selected rows
 		this.headerCheckboxElement = null; // hold header select element
 		
-		this.registerTableOption("selectable", "highlight"); //highlight rows on hover
-		this.registerTableOption("selectableRangeMode", "drag");  //highlight rows on hover
-		this.registerTableOption("selectableRollingSelection", true); //roll selection once maximum number of selectable rows is reached
-		this.registerTableOption("selectablePersistence", true); // maintain selection when table view is updated
-		this.registerTableOption("selectableCheck", function(data, row){return true;}); //check whether row is selectable
+		this.registerTableOption("selectableRows", "highlight"); //highlight rows on hover
+		this.registerTableOption("selectableRowsRangeMode", "drag");  //highlight rows on hover
+		this.registerTableOption("selectableRowsRollingSelection", true); //roll selection once maximum number of selectable rows is reached
+		this.registerTableOption("selectableRowsPersistence", true); // maintain selection when table view is updated
+		this.registerTableOption("selectableRowsCheck", function(data, row){return true;}); //check whether row is selectable
 		
 		this.registerTableFunction("selectRow", this.selectRows.bind(this));
 		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
@@ -31,16 +31,31 @@ class SelectRow extends Module{
 	}
 	
 	initialize(){
-		if(this.table.options.selectable !== false){
+
+		this.deprecatedOptionsCheck();
+
+		if(this.table.options.selectableRows === "highlight" && this.table.options.selectableRange){
+			this.table.options.selectableRows = false;
+		}
+
+		if(this.table.options.selectableRows !== false){
 			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
 			this.subscribe("rows-wipe", this.clearSelectionData.bind(this));
 			this.subscribe("rows-retrieve", this.rowRetrieve.bind(this));
 			
-			if(this.table.options.selectable && !this.table.options.selectablePersistence){
+			if(this.table.options.selectableRows && !this.table.options.selectableRowsPersistence){
 				this.subscribe("data-refreshing", this.deselectRows.bind(this));
 			}
 		}
+	}
+
+	deprecatedOptionsCheck(){
+		this.deprecationCheck("selectable", "selectableRows", true);
+		this.deprecationCheck("selectableRollingSelection", "selectableRowsRollingSelection", true);
+		this.deprecationCheck("selectableRangeMode", "selectableRowsRangeMode", true);
+		this.deprecationCheck("selectablePersistence", "selectableRowsPersistence", true);
+		this.deprecationCheck("selectableCheck", "selectableRowsCheck", true);
 	}
 	
 	rowRetrieve(type, prevValue){
@@ -52,18 +67,21 @@ class SelectRow extends Module{
 	}
 	
 	clearSelectionData(silent){
+		var prevSelected = this.selectedRows.length;
+
 		this.selecting = false;
 		this.lastClickedRow = false;
 		this.selectPrev = [];
 		this.selectedRows = [];
 		
-		if(silent !== true){
+		if(prevSelected && silent !== true){
 			this._rowSelectionChanged();
 		}
 	}
 	
 	initializeRow(row){
 		var self = this,
+		selectable = self.checkRowSelectability(row),
 		element = row.getElement();
 		
 		// trigger end of row selection
@@ -77,14 +95,14 @@ class SelectRow extends Module{
 		};
 		
 		row.modules.select = {selected:false};
+
+		element.classList.toggle("tabulator-selectable", selectable);
+		element.classList.toggle("tabulator-unselectable", !selectable);
 		
 		//set row selection class
-		if(self.table.options.selectableCheck.call(this.table, row.getComponent())){
-			element.classList.add("tabulator-selectable");
-			element.classList.remove("tabulator-unselectable");
-			
-			if(self.table.options.selectable && self.table.options.selectable != "highlight"){
-				if(self.table.options.selectableRangeMode === "click"){
+		if(self.checkRowSelectability(row)){			
+			if(self.table.options.selectableRows && self.table.options.selectableRows != "highlight"){
+				if(self.table.options.selectableRowsRangeMode === "click"){
 					element.addEventListener("click", this.handleComplexRowClick.bind(this, row));
 				}else{
 					element.addEventListener("click", function(e){
@@ -133,10 +151,6 @@ class SelectRow extends Module{
 					});
 				}
 			}
-			
-		}else{
-			element.classList.add("tabulator-unselectable");
-			element.classList.remove("tabulator-selectable");
 		}
 	}
 	
@@ -158,8 +172,8 @@ class SelectRow extends Module{
 				toggledRows.forEach((toggledRow)=>{
 					if(toggledRow !== this.lastClickedRow){
 						
-						if(this.table.options.selectable !== true && !this.isRowSelected(row)){
-							if(this.selectedRows.length < this.table.options.selectable){
+						if(this.table.options.selectableRows !== true && !this.isRowSelected(row)){
+							if(this.selectedRows.length < this.table.options.selectableRows){
 								this.toggleRow(toggledRow);
 							}
 						}else{
@@ -171,9 +185,9 @@ class SelectRow extends Module{
 			}else{
 				this.deselectRows(undefined, true);
 				
-				if(this.table.options.selectable !== true){
-					if(toggledRows.length > this.table.options.selectable){
-						toggledRows = toggledRows.slice(0, this.table.options.selectable);
+				if(this.table.options.selectableRows !== true){
+					if(toggledRows.length > this.table.options.selectableRows){
+						toggledRows = toggledRows.slice(0, this.table.options.selectableRows);
 					}
 				}
 				
@@ -190,10 +204,18 @@ class SelectRow extends Module{
 			this.lastClickedRow = row;
 		}
 	}
+
+	checkRowSelectability(row){
+		if(row && row.type === "row"){
+			return this.table.options.selectableRowsCheck.call(this.table, row.getComponent());
+		}
+
+		return false;
+	}
 	
 	//toggle row selection
 	toggleRow(row){
-		if(this.table.options.selectableCheck.call(this.table, row.getComponent())){
+		if(this.checkRowSelectability(row)){
 			if(row.modules.select && row.modules.select.selected){
 				this._deselectRow(row);
 			}else{
@@ -204,56 +226,56 @@ class SelectRow extends Module{
 	
 	//select a number of rows
 	selectRows(rows){
-		var rowMatch;
+		var changes = [], 
+		rowMatch, change;
 		
 		switch(typeof rows){
 			case "undefined":
-				this.table.rowManager.rows.forEach((row) => {
-					this._selectRow(row, true, true);
-				});
-			
-				this._rowSelectionChanged();
+				rowMatch = this.table.rowManager.rows;
 				break;
 			
+			case "number":
+				rowMatch = this.table.rowManager.findRow(rows);
+				break;
+				
 			case "string":
 				rowMatch = this.table.rowManager.findRow(rows);
 			
-				if(rowMatch){
-					this._selectRow(rowMatch, true, true);
-					this._rowSelectionChanged();
-				}else{
+				if(!rowMatch){
 					rowMatch = this.table.rowManager.getRows(rows);
-					
-					rowMatch.forEach((row) => {
-						this._selectRow(row, true, true);
-					});
-
-					if(rowMatch.length){
-						this._rowSelectionChanged();
-					}
 				}
 				break;
 			
 			default:
-				if(Array.isArray(rows)){
-					rows.forEach((row) => {
-						this._selectRow(row, true, true);
-					});
-				
-					this._rowSelectionChanged();
-				}else{
-					this._selectRow(rows, false, true);
-				}
+				rowMatch = rows;
 				break;
 		}
+
+		if(Array.isArray(rowMatch)){
+			if(rowMatch.length){
+				rowMatch.forEach((row) => {
+					change = this._selectRow(row, true, true);
+
+					if(change){
+						changes.push(change);
+					}
+				});
+
+				this._rowSelectionChanged(false, changes);
+			}
+		}else{
+			if(rowMatch){
+				this._selectRow(rowMatch, false, true);
+			}
+		}	
 	}
 	
 	//select an individual row
 	_selectRow(rowInfo, silent, force){
 		//handle max row count
-		if(!isNaN(this.table.options.selectable) && this.table.options.selectable !== true && !force){
-			if(this.selectedRows.length >= this.table.options.selectable){
-				if(this.table.options.selectableRollingSelection){
+		if(!isNaN(this.table.options.selectableRows) && this.table.options.selectableRows !== true && !force){
+			if(this.selectedRows.length >= this.table.options.selectableRows){
+				if(this.table.options.selectableRowsRollingSelection){
 					this._deselectRow(this.selectedRows[0]);
 				}else{
 					return false;
@@ -283,7 +305,9 @@ class SelectRow extends Module{
 				
 				this.dispatchExternal("rowSelected", row.getComponent());
 				
-				this._rowSelectionChanged(silent);
+				this._rowSelectionChanged(silent, row);
+
+				return row;
 			}
 		}else{
 			if(!silent){
@@ -298,39 +322,55 @@ class SelectRow extends Module{
 	
 	//deselect a number of rows
 	deselectRows(rows, silent){
-		var self = this,
-		rowCount;
+		var changes = [], 
+		rowMatch, change;
 		
-		if(typeof rows == "undefined"){
+		switch(typeof rows){
+			case "undefined":
+				rowMatch = Object.assign([], this.selectedRows);
+				break;
+
+			case "number":
+				rowMatch = this.table.rowManager.findRow(rows);
+				break;
 			
-			rowCount = self.selectedRows.length;
+			case "string":
+				rowMatch = this.table.rowManager.findRow(rows);
 			
-			for(let i = 0; i < rowCount; i++){
-				self._deselectRow(self.selectedRows[0], true);
-			}
+				if(!rowMatch){
+					rowMatch = this.table.rowManager.getRows(rows);
+				}
+				break;
 			
-			if(rowCount){
-				self._rowSelectionChanged(silent);
-			}
-			
-		}else{
-			if(Array.isArray(rows)){
-				rows.forEach(function(row){
-					self._deselectRow(row, true);
-				});
-				
-				self._rowSelectionChanged(silent);
-			}else{
-				self._deselectRow(rows, silent);
-			}
+			default:
+				rowMatch = rows;
+				break;
 		}
+
+		if(Array.isArray(rowMatch)){
+			if(rowMatch.length){
+				rowMatch.forEach((row) => {
+					change = this._deselectRow(row, true, true);
+
+					if(change){
+						changes.push(change);
+					}
+				});
+
+				this._rowSelectionChanged(silent, [], changes);
+			}
+		}else{
+			if(rowMatch){
+				this._deselectRow(rowMatch, silent, true);
+			}
+		}	
 	}
 	
 	//deselect an individual row
 	_deselectRow(rowInfo, silent){
 		var self = this,
 		row = self.table.rowManager.findRow(rowInfo),
-		index;
+		index, element;
 		
 		if(row){
 			index = self.selectedRows.findIndex(function(selectedRow){
@@ -338,8 +378,13 @@ class SelectRow extends Module{
 			});
 			
 			if(index > -1){
+
+				element = row.getElement();
 				
-				row.getElement().classList.remove("tabulator-selected");
+				if(element){
+					element.classList.remove("tabulator-selected");
+				}
+				
 				if(!row.modules.select){
 					row.modules.select = {};
 				}
@@ -356,7 +401,9 @@ class SelectRow extends Module{
 				
 				this.dispatchExternal("rowDeselected", row.getComponent());
 				
-				self._rowSelectionChanged(silent);
+				self._rowSelectionChanged(silent, undefined, row);
+
+				return row;
 			}
 		}else{
 			if(!silent){
@@ -376,7 +423,6 @@ class SelectRow extends Module{
 	}
 	
 	getSelectedRows(){
-		
 		var rows = [];
 		
 		this.selectedRows.forEach(function(row){
@@ -386,7 +432,7 @@ class SelectRow extends Module{
 		return rows;
 	}
 	
-	_rowSelectionChanged(silent){
+	_rowSelectionChanged(silent, selected = [], deselected = []){
 		if(this.headerCheckboxElement){
 			if(this.selectedRows.length === 0){
 				this.headerCheckboxElement.checked = false;
@@ -401,7 +447,19 @@ class SelectRow extends Module{
 		}
 		
 		if(!silent){
-			this.dispatchExternal("rowSelectionChanged", this.getSelectedData(), this.getSelectedRows());
+			if(!Array.isArray(selected)){
+				selected = [selected];
+			}
+
+			selected = selected.map(row => row.getComponent());
+
+			if(!Array.isArray(deselected)){
+				deselected = [deselected];
+			}
+
+			deselected = deselected.map(row => row.getComponent());
+
+			this.dispatchExternal("rowSelectionChanged", this.getSelectedData(), this.getSelectedRows(), selected, deselected);
 		}
 	}
 	

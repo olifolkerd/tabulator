@@ -7,11 +7,11 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	indetermState = false,
 	trueValueSet = Object.keys(editorParams).includes("trueValue"),
 	falseValueSet = Object.keys(editorParams).includes("falseValue");
-
+	
 	input.setAttribute("type", "checkbox");
 	input.style.marginTop = "5px";
 	input.style.boxSizing = "border-box";
-
+	
 	if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
 		for (let key in editorParams.elementAttributes){
 			if(key.charAt(0) == "+"){
@@ -22,35 +22,33 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			}
 		}
 	}
-
+	
 	input.value = value;
-
+	
 	if(tristate && (typeof value === "undefined" || value === indetermValue || value === "")){
 		indetermState = true;
 		input.indeterminate = true;
 	}
-
-	if(this.table.browser != "firefox"){ //prevent blur issue on mac firefox
+	
+	if(this.table.browser != "firefox" && this.table.browser != "safari"){ //prevent blur issue on mac firefox
 		onRendered(function(){
-			input.focus({preventScroll: true});
+			if(cell.getType() === "cell"){
+				input.focus({preventScroll: true});
+			}
 		});
 	}
-
+	
 	input.checked = trueValueSet ? value === editorParams.trueValue : (value === true || value === "true" || value === "True" || value === 1);
-
-	onRendered(function(){
-		input.focus();
-	});
-
+	
 	function setValue(blur){
 		var checkedValue = input.checked;
-
+		
 		if(trueValueSet && checkedValue){
 			checkedValue = editorParams.trueValue;
 		}else if(falseValueSet && !checkedValue){
 			checkedValue = editorParams.falseValue;
 		}
-
+		
 		if(tristate){
 			if(!blur){
 				if(input.checked && !indetermState){
@@ -73,7 +71,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			return checkedValue;
 		}
 	}
-
+	
 	//submit new value on blur
 	input.addEventListener("change", function(e){
 		success(setValue());
@@ -82,7 +80,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	input.addEventListener("blur", function(e){
 		success(setValue(true));
 	});
-
+	
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
 		if(e.keyCode == 13){
@@ -92,6 +90,6 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			cancel();
 		}
 	});
-
+	
 	return input;
 }

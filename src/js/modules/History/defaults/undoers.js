@@ -6,6 +6,8 @@ export default {
 
 	rowAdd: function(action){
 		action.component.deleteActual();
+
+		this.table.rowManager.checkPlaceholder();
 	},
 
 	rowDelete: function(action){
@@ -16,10 +18,16 @@ export default {
 		}
 
 		this._rebindRow(action.component, newRow);
+
+		this.table.rowManager.checkPlaceholder();
 	},
 
 	rowMove: function(action){
-		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.posFrom], !action.data.after);
-		this.table.rowManager.redraw();
+		var after = (action.data.posFrom  - action.data.posTo) > 0;
+
+		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.getRowFromPosition(action.data.posFrom), after);
+
+		this.table.rowManager.regenerateRowPositions();
+		this.table.rowManager.reRenderInPosition();
 	},
 };

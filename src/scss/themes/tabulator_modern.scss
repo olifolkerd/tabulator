@@ -41,6 +41,15 @@ $handleWidth:10px !default; //width of the row handle
 $handleColor: $primary !default; //color for odd numbered rows
 $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
+//range selection
+$rangeBorderColor: #{darken($primary, 10%)} !default; //range border color
+$rangeHandleColor: $rangeBorderColor !default; //range handle color
+$rangeHeaderSelectedBackground: $rangeBorderColor !default; //header background color when selected
+$rangeHeaderHighlightBackground: $primary !default; //header background color when highlighted
+$rangeHeaderTextHighlightBackground: #fff !default; //header text color when highlighted
+
+
+
 @import "../tabulator.scss";
 
 .tabulator{
@@ -55,6 +64,10 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		.tabulator-col{
 			border-right:2px solid $headerBorderColor;
 			background-color: $headerBackgroundColor;
+
+			&:nth-child(1) {
+				padding-left: $handleWidth;
+			}
 
 			.tabulator-col-content{
 				.tabulator-col-title{
@@ -162,11 +175,13 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		}
 	}
 
-	&.tabulator-selectable:hover{
-		cursor: pointer;
+	@media (hover:hover) and (pointer:fine){
+		&.tabulator-selectable:hover{
+			cursor: pointer;
 
-		.tabulator-cell{
-			background-color:$rowHoverBackground;
+			.tabulator-cell{
+				background-color:$rowHoverBackground;
+			}
 		}
 	}
 
@@ -176,10 +191,12 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		}
 	}
 
-	&.tabulator-selected:hover{
-		.tabulator-cell{
-			background-color:$rowSelectedBackgroundHover;
-			cursor: pointer;
+	@media (hover:hover) and (pointer:fine){
+		&.tabulator-selected:hover{
+			.tabulator-cell{
+				background-color:$rowSelectedBackgroundHover;
+				cursor: pointer;
+			}
 		}
 	}
 

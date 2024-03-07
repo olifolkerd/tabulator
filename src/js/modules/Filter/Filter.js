@@ -22,6 +22,7 @@ class Filter extends Module{
 		this.registerTableOption("initialFilter", false); //initial filtering criteria
 		this.registerTableOption("initialHeaderFilter", false); //initial header filtering criteria
 		this.registerTableOption("headerFilterLiveFilterDelay", 300); //delay before updating column after user types in header filter
+		this.registerTableOption("placeholderHeaderFilter", false); //placeholder when header filter is empty
 
 		this.registerColumnOption("headerFilter");
 		this.registerColumnOption("headerFilterPlaceholder");
@@ -57,6 +58,7 @@ class Filter extends Module{
 		this.subscribe("column-width-fit-before", this.hideHeaderFilterElements.bind(this));
 		this.subscribe("column-width-fit-after", this.showHeaderFilterElements.bind(this));
 		this.subscribe("table-built", this.tableBuilt.bind(this));
+		this.subscribe("placeholder", this.generatePlaceholder.bind(this));
 
 		if(this.table.options.filterMode === "remote"){
 			this.subscribe("data-params", this.remoteFilterParams.bind(this));
@@ -90,6 +92,12 @@ class Filter extends Module{
 	remoteFilterParams(data, config, silent, params){
 		params.filter = this.getFilters(true, true);
 		return params;
+	}
+
+	generatePlaceholder(text){
+		if(this.table.options.placeholderHeaderFilter && Object.keys(this.headerFilters).length){
+			return this.table.options.placeholderHeaderFilter;
+		}
 	}
 
 	///////////////////////////////////
@@ -182,11 +190,6 @@ class Filter extends Module{
 		var def = column.definition;
 
 		if(def.headerFilter){
-
-			if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
-				this.module("localize").setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
-			}
-
 			this.initializeColumn(column);
 		}
 	}
@@ -298,12 +301,16 @@ class Filter extends Module{
 		var self = this,
 		success = column.modules.filter.success,
 		field = column.getField(),
-		filterElement, editor, editorElement, cellWrapper, typingTimer, searchTrigger, params;
+		filterElement, editor, editorElement, cellWrapper, typingTimer, searchTrigger, params, onRenderedCallback;
 
 		column.modules.filter.value = initialValue;
 
 		//handle aborted edit
 		function cancel(){}
+
+		function onRendered(callback){
+			onRenderedCallback = callback;
+		}
 
 		if(column.modules.filter.headerElement && column.modules.filter.headerElement.parentNode){
 			column.contentElement.removeChild(column.modules.filter.headerElement.parentNode);
@@ -376,6 +383,9 @@ class Filter extends Module{
 					getTable:() => {
 						return this.table;
 					},
+					getType:() => {
+						return "header";
+					},
 					getRow:function(){
 						return {
 							normalizeHeight:function(){
@@ -389,7 +399,7 @@ class Filter extends Module{
 
 				params = typeof params === "function" ? params.call(self.table, cellWrapper) : params;
 
-				editorElement = editor.call(this.table.modules.edit, cellWrapper, function(){}, success, cancel, params);
+				editorElement = editor.call(this.table.modules.edit, cellWrapper, onRendered, success, cancel, params);
 
 				if(!editorElement){
 					console.warn("Filter Error - Cannot add filter to " + field + " column, editor returned a value of false");
@@ -403,7 +413,7 @@ class Filter extends Module{
 
 				//set Placeholder Text
 				self.langBind("headerFilters|columns|" + column.definition.field, function(value){
-					editorElement.setAttribute("placeholder", typeof value !== "undefined" && value ? value : self.langText("headerFilters|default"));
+					editorElement.setAttribute("placeholder", typeof value !== "undefined" && value ? value : (column.definition.headerFilterPlaceholder || self.langText("headerFilters|default")));
 				});
 
 				//focus on element on click
@@ -484,6 +494,10 @@ class Filter extends Module{
 
 				if(!reinitialize){
 					self.headerFilterColumns.push(column);
+				}
+
+				if(onRenderedCallback){
+					onRenderedCallback();
 				}
 			}
 		}else{

@@ -4,14 +4,21 @@ export default class BasicHorizontal extends Renderer{
 	constructor(table){
 		super(table);
 	}
-
-	renderRowCells(row){
+	
+	renderRowCells(row, inFragment) {
+		const rowFrag = document.createDocumentFragment();
 		row.cells.forEach((cell) => {
-			row.element.appendChild(cell.getElement());
-			cell.cellRendered();
+			rowFrag.appendChild(cell.getElement());
 		});
+		row.element.appendChild(rowFrag);
+		
+		if(!inFragment){
+			row.cells.forEach((cell) => {
+				cell.cellRendered();
+			});
+		}
 	}
-
+	
 	reinitializeColumnWidths(columns){
 		columns.forEach(function(column){
 			column.reinitializeWidth();

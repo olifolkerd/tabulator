@@ -61,10 +61,23 @@ class ColumnCalcs extends Module{
 		
 		this.subscribe("redraw-blocked", this.blockRedraw.bind(this));
 		this.subscribe("redraw-restored", this.restoreRedraw.bind(this));
+
+		this.subscribe("table-redrawing", this.resizeHolderWidth.bind(this));
+		this.subscribe("column-resized", this.resizeHolderWidth.bind(this));
+		this.subscribe("column-show", this.resizeHolderWidth.bind(this));
+		this.subscribe("column-hide", this.resizeHolderWidth.bind(this));
 		
 		this.registerTableFunction("getCalcResults", this.getResults.bind(this));
 		this.registerTableFunction("recalc", this.userRecalc.bind(this));
+
+
+		this.resizeHolderWidth();
 	}
+
+	resizeHolderWidth(){
+		this.topElement.style.minWidth = this.table.columnManager.headersElement.offsetWidth + "px";
+	}
+
 	
 	tableRedraw(force){
 		this.recalc(this.table.rowManager.activeRows);
@@ -261,8 +274,14 @@ class ColumnCalcs extends Module{
 	}
 	
 	initializeTopRow(){
+		var	fragment = document.createDocumentFragment();
+		
 		if(!this.topInitialized){
-			this.table.columnManager.getContentsElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
+
+			fragment.appendChild(document.createElement("br"));
+			fragment.appendChild(this.topElement);
+
+			this.table.columnManager.getContentsElement().insertBefore(fragment, this.table.columnManager.headersElement.nextSibling);
 			this.topInitialized = true;
 		}
 	}

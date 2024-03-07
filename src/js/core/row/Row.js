@@ -65,7 +65,7 @@ export default class Row extends CoreFeature{
 	}
 	
 	//functions to setup on first render
-	initialize(force){
+	initialize(force, inFragment){
 		this.create();
 		
 		if(!this.initialized || force){
@@ -80,7 +80,7 @@ export default class Row extends CoreFeature{
 			
 			this.initialized = true;
 			
-			this.table.columnManager.renderer.renderRowCells(this);
+			this.table.columnManager.renderer.renderRowCells(this, inFragment);
 			
 			if(force){
 				this.normalizeHeight();
@@ -94,8 +94,14 @@ export default class Row extends CoreFeature{
 			
 			this.dispatch("row-layout-after", this);
 		}else{
-			this.table.columnManager.renderer.rerenderRowCells(this);
+			this.table.columnManager.renderer.rerenderRowCells(this, inFragment);
 		}
+	}
+
+	rendered(){
+		this.cells.forEach((cell) => {
+			cell.cellRendered();
+		});
 	}
 	
 	reinitializeHeight(){
@@ -315,7 +321,7 @@ export default class Row extends CoreFeature{
 		
 		column = this.table.columnManager.findColumn(column);
 		
-		if(!this.initialized){
+		if(!this.initialized && this.cells.length === 0){
 			this.generateCells();
 		}
 		
@@ -339,7 +345,7 @@ export default class Row extends CoreFeature{
 	}
 	
 	getCells(){
-		if(!this.initialized){
+		if(!this.initialized && this.cells.length === 0){
 			this.generateCells();
 		}
 		

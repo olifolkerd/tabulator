@@ -38,6 +38,13 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 // $footerSeparatorColor:#999 !default; //footer bottom separator color
 // $footerActiveColor:#d00 !default; //footer bottom active text color
 
+//range selection
+$rangeBorderColor: #{darken($rowSelectedBackground, 10%)} !default; //range border color
+$rangeHandleColor: $rangeBorderColor !default; //range handle color
+$rangeHeaderSelectedBackground: $rangeBorderColor !default; //header background color when selected
+$rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when selected
+
+
 @import "../../tabulator.scss";
 
 .tabulator{
@@ -136,11 +143,13 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 			}
 			
 			&:not(.disabled){
-				&:hover{
-					cursor:pointer;
-					border-color:$button-hover-border-color;
-					background:inherit;
-					color:inherit;
+				@media (hover:hover) and (pointer:fine){
+					&:hover{
+						cursor:pointer;
+						border-color:$button-hover-border-color;
+						background:inherit;
+						color:inherit;
+					}
 				}
 			}
 		}
@@ -208,8 +217,10 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 		background-color:$rowSelectedBackground !important;
 	}
 	
-	&.tabulator-selected:hover{
-		background-color:darken($rowSelectedBackground, 10%) !important;
+	@media (hover:hover) and (pointer:fine){
+		&.tabulator-selected:hover{
+			background-color:darken($rowSelectedBackground, 10%) !important;
+		}
 	}
 	
 	.tabulator-cell{
@@ -246,8 +257,10 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 			color:$backgroundColor;
 		}
 
-		&:hover{
-			color:$backgroundColor;
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				color:$backgroundColor;
+			}
 		}
 	}
 }

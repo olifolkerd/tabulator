@@ -28,6 +28,16 @@ class Layout extends Module{
 		}
 
 		this.table.element.setAttribute("tabulator-layout", this.mode);
+		this.subscribe("column-init", this.initializeColumn.bind(this));
+	}
+
+	initializeColumn(column){
+		if(column.definition.widthGrow){
+			column.definition.widthGrow = Number(column.definition.widthGrow);
+		}
+		if(column.definition.widthShrink){
+			column.definition.widthShrink = Number(column.definition.widthShrink);
+		}
 	}
 
 	getMode(){

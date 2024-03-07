@@ -6,7 +6,10 @@ export default function(list, options, setFileContents){
 	workbook = XLSX.utils.book_new(),
 	tableFeatures = new CoreFeature(this),
 	compression =  'compress' in options ? options.compress : true,
+	writeOptions = options.writeOptions || {bookType:'xlsx', bookSST:true, compression},
 	output;
+
+	writeOptions.type = 'binary';
 
 	workbook.SheetNames = [];
 	workbook.Sheets = {};
@@ -93,7 +96,7 @@ export default function(list, options, setFileContents){
 		return buf;
 	}
 
-	output = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary', compression });
+	output = XLSX.write(workbook, writeOptions);
 
 	setFileContents(s2ab(output), "application/octet-stream");
 }

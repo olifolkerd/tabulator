@@ -94,9 +94,15 @@ class Group{
 			toggleElement = this.groupManager.table.options.groupToggleElement == "arrow" ? this.arrowElement : this.element;
 			
 			toggleElement.addEventListener("click", (e) => {
-				e.stopPropagation();
-				e.stopImmediatePropagation();
-				this.toggleVisibility();
+				if(this.groupManager.table.options.groupToggleElement === "arrow"){
+					e.stopPropagation();
+					e.stopImmediatePropagation();
+				}
+
+				//allow click event to propagate before toggling visibility
+				setTimeout(() => {
+					this.toggleVisibility();
+				});
 			});
 		}
 	}
@@ -159,7 +165,7 @@ class Group{
 		
 		row.modules.group = this;
 		
-		this.generateGroupHeaderContents();
+		// this.generateGroupHeaderContents();
 		
 		if(this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table"){
 			this.groupManager.table.modules.columnCalcs.recalcGroup(this);
@@ -199,7 +205,6 @@ class Group{
 		var index = this.rows.indexOf(row);
 		var el = row.getElement();
 		
-		
 		if(index > -1){
 			this.rows.splice(index, 1);
 		}
@@ -209,19 +214,22 @@ class Group{
 				this.parent.removeGroup(this);
 			}else{
 				this.groupManager.removeGroup(this);
-			}
+			}		
 			
 			this.groupManager.updateGroupRows(true);
+			
 		}else{
 			
 			if(el.parentNode){
 				el.parentNode.removeChild(el);
 			}
 			
-			this.generateGroupHeaderContents();
-			
-			if(this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table"){
-				this.groupManager.table.modules.columnCalcs.recalcGroup(this);
+			if(!this.groupManager.blockRedraw){
+				this.generateGroupHeaderContents();
+				
+				if(this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table"){
+					this.groupManager.table.modules.columnCalcs.recalcGroup(this);
+				}
 			}
 			
 		}
@@ -340,6 +348,7 @@ class Group{
 		}
 		return count;
 	}
+
 	
 	toggleVisibility(){
 		if(this.visible){
@@ -464,12 +473,18 @@ class Group{
 		return output;
 	}
 	
-	getRows(component){
+	getRows(component, includeChildren){
 		var output = [];
 		
-		this.rows.forEach(function(row){
-			output.push(component ? row.getComponent() : row);
-		});
+		if(includeChildren && this.groupList.length){
+			this.groupList.forEach((group) => {
+				output = output.concat(group.getRows(component, includeChildren));
+			});
+		}else{
+			this.rows.forEach(function(row){
+				output.push(component ? row.getComponent() : row);
+			});
+		}
 		
 		return output;
 	}
@@ -477,7 +492,9 @@ class Group{
 	generateGroupHeaderContents(){
 		var data = [];
 		
-		this.rows.forEach(function(row){
+		var rows = this.getRows(false, true);
+		
+		rows.forEach(function(row){
 			data.push(row.getData());
 		});
 		
@@ -582,6 +599,8 @@ class Group{
 	clearCellHeight(){}
 	
 	deinitializeHeight(){}
+
+	rendered(){}
 	
 	//////////////// Object Generation /////////////////
 	getComponent(){

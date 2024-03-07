@@ -13,6 +13,25 @@ export default class Helpers{
 		};
 	}
 
+	static retrieveNestedData(separator, field, data){
+		var structure = separator ? field.split(separator) : [field],
+		length = structure.length,
+		output;
+
+		for(let i = 0; i < length; i++){
+
+			data = data[structure[i]];
+
+			output = data;
+
+			if(!data){
+				break;
+			}
+		}
+
+		return output;
+	}
+
 	static deepClone(obj, clone, list = []){
 		var objectProto = {}.__proto__,
 		arrayProto = [].__proto__;

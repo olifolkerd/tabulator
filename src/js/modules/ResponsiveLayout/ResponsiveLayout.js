@@ -272,6 +272,9 @@ class ResponsiveLayout extends Module{
 						getData:function(){
 							return data;
 						},
+						getType:function(){
+							return "cell";
+						},
 						getElement:function(){
 							return document.createElement("div");
 						},

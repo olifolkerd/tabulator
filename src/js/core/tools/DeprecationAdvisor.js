@@ -12,7 +12,7 @@ export default class DeprecationAdvisor extends CoreFeature{
 		}
 	}
 	
-	check(oldOption, newOption){
+	check(oldOption, newOption, convert){
 		var msg = "";
 		
 		if(typeof this.options(oldOption) !== "undefined"){
@@ -21,6 +21,10 @@ export default class DeprecationAdvisor extends CoreFeature{
 			if(newOption){
 				msg = msg + ", Please use the %c" + newOption + "%c option instead";
 				this._warnUser(msg, 'font-weight: bold;', 'font-weight: normal;', 'font-weight: bold;', 'font-weight: normal;');
+
+				if(convert){
+					this.table.options[newOption] = this.table.options[oldOption];
+				}
 			}else{
 				this._warnUser(msg, 'font-weight: bold;', 'font-weight: normal;');
 			}

@@ -181,17 +181,21 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		background-color: transparent;
 	}
 
-	&.tabulator-selectable:hover{
-		background-color:$rowHoverBackground !important;
+	@media (hover:hover) and (pointer:fine){
+		&.tabulator-selectable:hover{
+			background-color:$rowHoverBackground !important;
+		}
 	}
 
 	&.tabulator-selected{
 		background-color:$rowSelectedBackground !important;
 	}
 
-	&.tabulator-selected:hover{
-		background-color:$rowSelectedBackgroundHover !important;
-		cursor: pointer;
+	@media (hover:hover) and (pointer:fine){
+		&.tabulator-selected:hover{
+			background-color:$rowSelectedBackgroundHover !important;
+			cursor: pointer;
+		}
 	}
 
 	.tabulator-cell{

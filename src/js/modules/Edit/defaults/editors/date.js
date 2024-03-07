@@ -1,6 +1,7 @@
 //input element
 export default function(cell, onRendered, success, cancel, editorParams){
 	var inputFormat = editorParams.format,
+	vertNav = editorParams.verticalNavigation || "editor",
 	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null;
 	
 	//create and style input
@@ -51,28 +52,44 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		if(DT){		
 			cellValue = convertDate(cellValue);			
 		}else{
-			console.error("Editor Error - 'date' editor 'inputFormat' param is dependant on luxon.js");
+			console.error("Editor Error - 'date' editor 'format' param is dependant on luxon.js");
 		}
 	}
 	
 	input.value = cellValue;
 	
 	onRendered(function(){
-		input.focus({preventScroll: true});
-		input.style.height = "100%";
-		
-		if(editorParams.selectContents){
-			input.select();
+		if(cell.getType() === "cell"){
+			input.focus({preventScroll: true});
+			input.style.height = "100%";
+			
+			if(editorParams.selectContents){
+				input.select();
+			}
 		}
 	});
 	
-	function onChange(e){
-		var value = input.value;
+	function onChange(){
+		var value = input.value,
+		luxDate;
 		
 		if(((cellValue === null || typeof cellValue === "undefined") && value !== "") || value !== cellValue){
 			
 			if(value && inputFormat){
-				value = DT.fromFormat(String(value), "yyyy-MM-dd").toFormat(inputFormat);
+				luxDate = DT.fromFormat(String(value), "yyyy-MM-dd");
+
+				switch(inputFormat){
+					case true:
+						value = luxDate;
+						break;
+
+					case "iso":
+						value = luxDate.toISO();
+						break;
+
+					default:
+						value = luxDate.toFormat(inputFormat);
+				}
 			}
 			
 			if(success(value)){
@@ -83,16 +100,19 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		}
 	}
 	
-	//submit new value on blur or change
-	input.addEventListener("change", onChange);
-	input.addEventListener("blur", onChange);
+	//submit new value on blur
+	input.addEventListener("blur", function(e) {
+		if (e.relatedTarget || e.rangeParent || e.explicitOriginalTarget !== input) {
+			onChange(); // only on a "true" blur; not when focusing browser's date/time picker
+		}
+	});
 	
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
 		switch(e.keyCode){
 			// case 9:
 			case 13:
-				onChange(e);
+				onChange();
 				break;
 			
 			case 27:
@@ -102,6 +122,14 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			case 35:
 			case 36:
 				e.stopPropagation();
+				break;
+			
+			case 38: //up arrow
+			case 40: //down arrow
+				if(vertNav == "editor"){
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+				}
 				break;
 		}
 	});

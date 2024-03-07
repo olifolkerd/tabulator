@@ -18,7 +18,7 @@ export default class Edit{
 		
 		this.initialValues = null; 
 		
-		this.isFilter = !cell._getSelf;
+		this.isFilter = cell.getType() === "header";
 		
 		this.filterTimeout = null;
 		this.filtered = false;
@@ -83,10 +83,12 @@ export default class Edit{
 		
 		function clickStop(e){
 			e.stopPropagation();
-		}
+		}	
 		
-		this.input.style.height = "100%";
-		this.input.focus({preventScroll: true});
+		if(!this.isFilter){
+			this.input.style.height = "100%";
+			this.input.focus({preventScroll: true});
+		}
 		
 		
 		cellEl.addEventListener("click", clickStop);
@@ -306,6 +308,7 @@ export default class Edit{
 				break;
 			
 			case 9: //tab
+				this._keyTab(e);
 				break;
 			
 			default:
@@ -352,6 +355,16 @@ export default class Edit{
 	//////// Keyboard Navigation /////////
 	//////////////////////////////////////
 	
+	_keyTab(e){
+		if(this.params.autocomplete && this.lastAction === "typing"){
+			this._resolveValue(true);
+		}else{
+			if(this.focusedItem){
+				this._chooseItem(this.focusedItem, true);
+			}
+		}
+	}
+	
 	_keyUp(e){
 		var index = this.displayItems.indexOf(this.focusedItem);
 		
@@ -385,9 +398,11 @@ export default class Edit{
 	}
 	
 	_keySide(e){
-		e.stopImmediatePropagation();
-		e.stopPropagation();
-		e.preventDefault();
+		if(!this.params.autocomplete){
+			e.stopImmediatePropagation();
+			e.stopPropagation();
+			e.preventDefault();
+		}
 	}
 	
 	_keyEnter(e){
@@ -987,7 +1002,7 @@ export default class Edit{
 	
 	_resolveValue(blur){
 		var output, initialValue;
-
+		
 		if(this.popup){
 			this.popup.hide(true);
 		}
@@ -1006,7 +1021,7 @@ export default class Edit{
 				if(this.currentItems[0]){
 					output = this.currentItems[0].value;
 				}else{
-					initialValue = this.initialValues[0];
+					initialValue = Array.isArray(this.initialValues) ? this.initialValues[0] : this.initialValues;
 					
 					if(initialValue === null || typeof initialValue === "undefined" || initialValue === ""){
 						output = initialValue;

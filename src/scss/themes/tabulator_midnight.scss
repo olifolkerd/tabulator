@@ -35,6 +35,19 @@ $footerBorderColor:#aaa !default; //footer border color
 $footerSeparatorColor:#999 !default; //footer bottom separator color
 $footerActiveColor:#fff !default; //footer bottom active text color
 
+$headerHighlightBackground: #777 !default; //header background color when highlighted
+$headerTextHighlightBackground: #fff !default; //header background color when highlighted
+
+//range selection
+$rangeBorderColor: #ccc !default; //range border color
+$rangeHandleColor: $rangeBorderColor !default; //range handle color
+$rangeHeaderSelectedBackground: $rangeBorderColor !default; //header background color when selected
+$rangeHeaderSelectedTextColor: #333 !default; //header text color when selected
+$rangeHeaderHighlightBackground: #999 !default; //header background color when highlighted
+$rangeHeaderTextHighlightBackground: #000000 !default; //header text color when highlighted
+
+
+
 @import "../tabulator.scss";
 
 //Tabulator Containing Element
@@ -113,9 +126,11 @@ $footerActiveColor:#fff !default; //footer bottom active text color
 
 		color:#333;
 
-		&:hover{
-			cursor:pointer;
-			background-color:rgba(0,0,0,.1);
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				cursor:pointer;
+				background-color:rgba(0,0,0,.1);
+			}
 		}
 
 		span{
@@ -143,9 +158,11 @@ $footerActiveColor:#fff !default; //footer bottom active text color
 			outline:1px solid $rowAltBackgroundColor;
 		}
 
-		&:hover{
-			color:$editBoxColor;
-			background:$rowBackgroundColor;
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				color:$editBoxColor;
+				background:$rowBackgroundColor;
+			}
 		}
 	}
 }

@@ -35,10 +35,12 @@ export default class CellComponent {
 		return this._cell.row.getComponent();
 	}
 
-	getData(){
-		return this._cell.row.getData();
+	getData(transform){
+		return this._cell.row.getData(transform);
 	}
-
+	getType(){
+		return "cell";
+	}
 	getField(){
 		return this._cell.column.getField();
 	}

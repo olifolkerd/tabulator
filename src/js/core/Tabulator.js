@@ -277,6 +277,7 @@ class Tabulator {
 	
 	_loadInitialData(){
 		this.dataLoader.load(this.options.data);
+		this.columnManager.verticalAlignHeaders();
 	}
 	
 	//deconstructor
@@ -290,13 +291,7 @@ class Tabulator {
 		this.eventBus.dispatch("table-destroy");
 		
 		//clear row data
-		this.rowManager.rows.forEach(function(row){
-			row.wipe();
-		});
-		
-		this.rowManager.rows = [];
-		this.rowManager.activeRows = [];
-		this.rowManager.displayRows = [];
+		this.rowManager.destroy();
 		
 		//clear DOM
 		while(element.firstChild) element.removeChild(element.firstChild);
@@ -316,6 +311,9 @@ class Tabulator {
 			this.browserSlow = true;
 		}else if(ua.indexOf("Firefox") > -1){
 			this.browser = "firefox";
+			this.browserSlow = false;
+		}else if(ua.indexOf("Mac OS") > -1){
+			this.browser = "safari";
 			this.browserSlow = false;
 		}else{
 			this.browser = "other";
@@ -431,7 +429,12 @@ class Tabulator {
 								if(!responses){
 									resolve();
 								}
+							})
+							.catch((e) => {
+								reject("Update Error - Unable to update row", item, e);
 							});
+					}else{
+						reject("Update Error - Unable to find row", item);
 					}
 				});
 			}else{
@@ -587,7 +590,7 @@ class Tabulator {
 			data = JSON.parse(data);
 		}
 		
-		return this.rowManager.addRows(data, pos, index)
+		return this.rowManager.addRows(data, pos, index, true)
 			.then((rows)=>{
 				return rows[0].getComponent();
 			});
@@ -827,7 +830,7 @@ class Tabulator {
 		this.options.height = isNaN(height) ? height : height + "px";
 		this.element.style.height = this.options.height;
 		this.rowManager.initializeRenderer();
-		this.rowManager.redraw();
+		this.rowManager.redraw(true);
 	}
 	
 	//////////////////// Event Bus ///////////////////

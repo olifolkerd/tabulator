@@ -76,7 +76,7 @@ class Menu extends Module{
 			this.subscribe("group-dblclick", this.loadMenuEvent.bind(this, this.table.options.groupDblClickMenu));
 		}
 	}
-	
+
 	initializeColumn(column){
 		var	def = column.definition;
 		
@@ -285,6 +285,7 @@ class Menu extends Module{
 				this.rootPopup = null;
 				
 				if(this.currentComponent){
+					this.dispatch("menu-closed", menu, popup);
 					this.dispatchExternal("menuClosed", this.currentComponent.getComponent());
 					this.currentComponent = null;
 				}
@@ -292,6 +293,7 @@ class Menu extends Module{
 			
 			this.currentComponent = component;
 			
+			this.dispatch("menu-opened", menu, popup);
 			this.dispatchExternal("menuOpened", component.getComponent());
 		}
 	}
