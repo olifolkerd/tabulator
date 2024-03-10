@@ -26966,13 +26966,13 @@ class ModuleBinder extends TableRegistry {
 	
 	static moduleBindings = {};
 	static modulesRegistered = false;
-
+	
 	static defaultModules = false;
-
+	
 	constructor(){
 		super();
 	}
-
+	
 	static initializeModuleBinder(defaultModules){
 		if(!ModuleBinder.modulesRegistered){
 			ModuleBinder.modulesRegistered = true;
@@ -27003,7 +27003,7 @@ class ModuleBinder extends TableRegistry {
 			console.warn("Module Error - module does not exist:", name);
 		}
 	}
-
+	
 	static _registerModules(modules, core){
 		var mods = Object.values(modules);
 		
@@ -27025,11 +27025,15 @@ class ModuleBinder extends TableRegistry {
 			ModuleBinder._registerModuleBinding(mod);
 		});
 	}
-
+	
 	static _registerModuleBinding(mod){
-		ModuleBinder.moduleBindings[mod.moduleName] = mod;
+		if(mod.moduleName){
+			ModuleBinder.moduleBindings[mod.moduleName] = mod;
+		}else {
+			console.error("Unable to bind module, no moduleName defined", mod.moduleName);
+		}
 	}
-
+	
 	
 	//ensure that module are bound to instantiated function
 	_bindModules(){
