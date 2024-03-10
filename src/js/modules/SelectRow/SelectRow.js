@@ -1,8 +1,11 @@
 import Module from '../../core/Module.js';
 
+import extensions from './extensions/extensions.js';
+
 export default class SelectRow extends Module{
 
 	static moduleName = "selectRow";
+	static moduleExtensions = extensions;
 	
 	constructor(table){
 		super(table);

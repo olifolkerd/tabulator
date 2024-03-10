@@ -10762,65 +10762,6 @@ function responsiveCollapse(cell, formatterParams, onRendered){
 	return el;
 }
 
-function rowSelection(cell, formatterParams, onRendered){
-	var checkbox = document.createElement("input");
-	var blocked = false;
-
-	checkbox.type = 'checkbox';
-
-	checkbox.setAttribute("aria-label", "Select Row");
-	
-	if(this.table.modExists("selectRow", true)){
-
-		checkbox.addEventListener("click", (e) => {
-			e.stopPropagation();
-		});
-
-		if(typeof cell.getRow == 'function'){
-			var row = cell.getRow();
-
-			if(row instanceof RowComponent){
-
-				checkbox.addEventListener("change", (e) => {
-					if(this.table.options.selectableRowsRangeMode === "click"){
-						if(!blocked){
-							row.toggleSelect();
-						}else {
-							blocked = false;
-						}
-					}else {
-						row.toggleSelect();
-					}
-				});
-
-				if(this.table.options.selectableRowsRangeMode === "click"){
-					checkbox.addEventListener("click", (e) => {
-						blocked = true;
-						this.table.modules.selectRow.handleComplexRowClick(row._row, e);
-					});
-				}
-
-				checkbox.checked = row.isSelected && row.isSelected();
-				this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
-			}else {
-				checkbox = "";
-			}
-		}else {
-			checkbox.addEventListener("change", (e) => {
-				if(this.table.modules.selectRow.selectedRows.length){
-					this.table.deselectRow();
-				}else {
-					this.table.selectRow(formatterParams.rowRange);
-				}
-			});
-
-			this.table.modules.selectRow.registerHeaderSelectCheckbox(checkbox);
-		}
-	}
-
-	return checkbox;
-}
-
 var defaultFormatters = {
 	plaintext:plaintext,
 	html:html$1,
@@ -10841,7 +10782,6 @@ var defaultFormatters = {
 	rownum:rownum,
 	handle:handle,
 	responsiveCollapse:responsiveCollapse,
-	rowSelection:rowSelection,
 };
 
 class Format extends Module{
@@ -18747,9 +18687,77 @@ class ResponsiveLayout extends Module{
 	}
 }
 
+function rowSelection(cell, formatterParams, onRendered){
+	var checkbox = document.createElement("input");
+	var blocked = false;
+
+	checkbox.type = 'checkbox';
+
+	checkbox.setAttribute("aria-label", "Select Row");
+	
+	if(this.table.modExists("selectRow", true)){
+
+		checkbox.addEventListener("click", (e) => {
+			e.stopPropagation();
+		});
+
+		if(typeof cell.getRow == 'function'){
+			var row = cell.getRow();
+
+			if(row instanceof RowComponent){
+
+				checkbox.addEventListener("change", (e) => {
+					if(this.table.options.selectableRowsRangeMode === "click"){
+						if(!blocked){
+							row.toggleSelect();
+						}else {
+							blocked = false;
+						}
+					}else {
+						row.toggleSelect();
+					}
+				});
+
+				if(this.table.options.selectableRowsRangeMode === "click"){
+					checkbox.addEventListener("click", (e) => {
+						blocked = true;
+						this.table.modules.selectRow.handleComplexRowClick(row._row, e);
+					});
+				}
+
+				checkbox.checked = row.isSelected && row.isSelected();
+				this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
+			}else {
+				checkbox = "";
+			}
+		}else {
+			checkbox.addEventListener("change", (e) => {
+				if(this.table.modules.selectRow.selectedRows.length){
+					this.table.deselectRow();
+				}else {
+					this.table.selectRow(formatterParams.rowRange);
+				}
+			});
+
+			this.table.modules.selectRow.registerHeaderSelectCheckbox(checkbox);
+		}
+	}
+
+	return checkbox;
+}
+
+var extensions = {
+	format:{
+		formatters:{
+			rowSelection:rowSelection,
+		}
+	}
+};
+
 class SelectRow extends Module{
 
 	static moduleName = "selectRow";
+	static moduleExtensions = extensions;
 	
 	constructor(table){
 		super(table);
@@ -26965,6 +26973,7 @@ class TableRegistry {
 class ModuleBinder extends TableRegistry {
 	
 	static moduleBindings = {};
+	static moduleExtensions = {};
 	static modulesRegistered = false;
 	
 	static defaultModules = false;
@@ -27023,6 +27032,7 @@ class ModuleBinder extends TableRegistry {
 		
 		modules.forEach((mod) => {
 			ModuleBinder._registerModuleBinding(mod);
+			ModuleBinder._registerModuleExtensions(mod);
 		});
 	}
 	
@@ -27033,6 +27043,45 @@ class ModuleBinder extends TableRegistry {
 			console.error("Unable to bind module, no moduleName defined", mod.moduleName);
 		}
 	}
+	
+	static _registerModuleExtensions(mod){
+		var extensions = mod.moduleExtensions;
+		
+		if(mod.moduleExtensions){
+			for (let modKey in extensions) {
+				var ext = extensions[modKey];
+				
+				if(ModuleBinder.moduleBindings[modKey]){
+					for (let propKey in ext) {
+						console.log("ext", modKey, propKey, ext[propKey]);
+						ModuleBinder._extendModule(modKey, propKey, ext[propKey]);
+					}
+				}else {
+					if(!ModuleBinder.moduleExtensions[modKey]){
+						ModuleBinder.moduleExtensions[modKey] = {};
+					}
+					
+					for (let propKey in ext) {
+						ModuleBinder.moduleExtensions[modKey][propKey] = ext[propKey];
+					}
+				}
+			}
+		}
+
+		ModuleBinder._extendModuleFromQueue(mod);
+	}
+	
+	static _extendModuleFromQueue(mod){
+		var extensions = ModuleBinder.moduleExtensions[mod.moduleName];
+		
+		if(extensions){
+			for (let propKey in extensions) {
+				console.log("ret", mod.moduleName, propKey, extensions[propKey]);
+				ModuleBinder._extendModule(mod.moduleName, propKey, extensions[propKey]);
+			}
+		}
+	}
+	
 	
 	
 	//ensure that module are bound to instantiated function

@@ -17,7 +17,6 @@ import buttonCross from './formatters/buttonCross.js';
 import rownum from './formatters/rownum.js';
 import handle from './formatters/handle.js';
 import responsiveCollapse from './formatters/responsiveCollapse.js';
-import rowSelection from './formatters/rowSelection.js';
 
 export default {
 	plaintext:plaintext,
@@ -39,5 +38,4 @@ export default {
 	rownum:rownum,
 	handle:handle,
 	responsiveCollapse:responsiveCollapse,
-	rowSelection:rowSelection,
 };
