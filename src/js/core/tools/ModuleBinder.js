@@ -4,6 +4,7 @@ import TableRegistry from './TableRegistry.js';
 export default class ModuleBinder extends TableRegistry {
 	
 	static moduleBindings = {};
+	static moduleExtensions = {};
 	static modulesRegistered = false;
 	
 	static defaultModules = false;
@@ -62,6 +63,7 @@ export default class ModuleBinder extends TableRegistry {
 		
 		modules.forEach((mod) => {
 			ModuleBinder._registerModuleBinding(mod);
+			ModuleBinder._registerModuleExtensions(mod);
 		});
 	}
 	
@@ -72,6 +74,45 @@ export default class ModuleBinder extends TableRegistry {
 			console.error("Unable to bind module, no moduleName defined", mod.moduleName);
 		}
 	}
+	
+	static _registerModuleExtensions(mod){
+		var extensions = mod.moduleExtensions;
+		
+		if(mod.moduleExtensions){
+			for (let modKey in extensions) {
+				var ext = extensions[modKey];
+				
+				if(ModuleBinder.moduleBindings[modKey]){
+					for (let propKey in ext) {
+						console.log("ext", modKey, propKey, ext[propKey]);
+						ModuleBinder._extendModule(modKey, propKey, ext[propKey]);
+					}
+				}else{
+					if(!ModuleBinder.moduleExtensions[modKey]){
+						ModuleBinder.moduleExtensions[modKey] = {};
+					}
+					
+					for (let propKey in ext) {
+						ModuleBinder.moduleExtensions[modKey][propKey] = ext[propKey];
+					}
+				}
+			}
+		}
+
+		ModuleBinder._extendModuleFromQueue(mod);
+	}
+	
+	static _extendModuleFromQueue(mod){
+		var extensions = ModuleBinder.moduleExtensions[mod.moduleName];
+		
+		if(extensions){
+			for (let propKey in extensions) {
+				console.log("ret", mod.moduleName, propKey, extensions[propKey]);
+				ModuleBinder._extendModule(mod.moduleName, propKey, extensions[propKey]);
+			}
+		}
+	}
+	
 	
 	
 	//ensure that module are bound to instantiated function
