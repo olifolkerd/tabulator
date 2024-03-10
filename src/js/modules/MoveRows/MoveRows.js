@@ -1,7 +1,14 @@
 import Module from '../../core/Module.js';
 import Helpers from '../../core/tools/Helpers.js';
 
-class MoveRows extends Module{
+import defaultSenders from './defaults/senders.js';
+
+export default class MoveRows extends Module{
+
+	static moduleName = "moveRow";
+
+	//load defaults
+	static senders = defaultSenders;
 
 	constructor(table){
 		super(table);
@@ -623,14 +630,4 @@ MoveRows.prototype.receivers = {
 
 		return false;
 	},
-};
-
-MoveRows.prototype.senders = {
-	delete:function(fromRow, toRow, toTable){
-		fromRow.delete();
-	}
-};
-
-MoveRows.moduleName = "moveRow";
-
-export default MoveRows;
+}

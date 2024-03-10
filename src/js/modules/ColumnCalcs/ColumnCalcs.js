@@ -8,7 +8,12 @@ import Row from '../../core/row/Row.js';
 
 import defaultCalculations from './defaults/calculations.js';
 
-class ColumnCalcs extends Module{
+export default class ColumnCalcs extends Module{
+
+	static moduleName = "columnCalcs";
+
+	//load defaults
+	static calculations = defaultCalculations;
 	
 	constructor(table){
 		super(table);
@@ -579,10 +584,3 @@ class ColumnCalcs extends Module{
 		}
 	}
 }
-
-ColumnCalcs.moduleName = "columnCalcs";
-
-//load defaults
-ColumnCalcs.calculations = defaultCalculations;
-
-export default ColumnCalcs;

@@ -1,7 +1,9 @@
 import Module from '../../core/Module.js';
 import TableRegistry from '../../core/tools/TableRegistry.js';
 
-class Comms extends Module{
+export default class Comms extends Module{
+
+	static moduleName = "comms";
 
 	constructor(table){
 		super(table);
@@ -46,7 +48,3 @@ class Comms extends Module{
 		}
 	}
 }
-
-Comms.moduleName = "comms";
-
-export default Comms;

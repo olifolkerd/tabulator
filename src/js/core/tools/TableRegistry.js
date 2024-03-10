@@ -1,6 +1,8 @@
 import Tabulator from '../Tabulator.js';
 
-class TableRegistry {
+export default class TableRegistry {
+
+	static tables = [];
 
 	static register(table){
 		TableRegistry.tables.push(table);
@@ -56,7 +58,3 @@ class TableRegistry {
 		});
 	}
 }
-
-TableRegistry.tables = [];
-
-export default TableRegistry;

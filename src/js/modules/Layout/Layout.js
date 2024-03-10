@@ -2,7 +2,12 @@ import Module from '../../core/Module.js';
 
 import defaultModes from './defaults/modes.js';
 
-class Layout extends Module{
+export default class Layout extends Module{
+
+	static moduleName = "layout";
+
+	//load defaults
+	static modes = defaultModes;
 
 	constructor(table){
 		super(table, "layout");
@@ -51,10 +56,3 @@ class Layout extends Module{
 		this.dispatch("layout-refreshed");
 	}
 }
-
-Layout.moduleName = "layout";
-
-//load defaults
-Layout.modes = defaultModes;
-
-export default Layout;

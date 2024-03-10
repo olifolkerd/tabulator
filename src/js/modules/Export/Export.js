@@ -3,7 +3,9 @@ import Module from '../../core/Module.js';
 import ExportRow from './ExportRow.js';
 import ExportColumn from './ExportColumn.js';
 
-class Export extends Module{
+export default class Export extends Module{
+
+	static moduleName = "export";
 	
 	constructor(table){
 		super(table);
@@ -640,7 +642,3 @@ class Export extends Module{
 		}
 	}
 }
-
-Export.moduleName = "export";
-
-export default Export;

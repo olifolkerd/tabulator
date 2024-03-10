@@ -1,4 +1,4 @@
-class RangeComponent {
+export default class RangeComponent {
 	constructor(range) {
 		this._range = range;
 
@@ -89,5 +89,3 @@ class RangeComponent {
 		}
 	}
 }
-
-export default RangeComponent;

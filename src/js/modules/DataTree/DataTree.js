@@ -4,7 +4,9 @@ import Row from '../../core/row/Row.js';
 
 import RowComponent from '../../core/row/RowComponent.js';
 
-class DataTree extends Module{
+export default class DataTree extends Module{
+
+	static moduleName = "dataTree";
 
 	constructor(table){
 		super(table);
@@ -601,7 +603,3 @@ class DataTree extends Module{
 		return (this.field ? typeof data[this.field] !== "undefined" : false) || (this.elementField ? typeof data[this.elementField] !== "undefined" : false);
 	}
 }
-
-DataTree.moduleName = "dataTree";
-
-export default DataTree;

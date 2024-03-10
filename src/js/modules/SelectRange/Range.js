@@ -1,7 +1,7 @@
 import CoreFeature from '../../core/CoreFeature.js';
 import RangeComponent from "./RangeComponent";
 
-class Range extends CoreFeature{
+export default class Range extends CoreFeature{
 	constructor(table, rangeManager, start, end) {
 		super(table);
 		
@@ -350,5 +350,3 @@ class Range extends CoreFeature{
 		return !this.destroyed;
 	}
 }
-
-export default Range;

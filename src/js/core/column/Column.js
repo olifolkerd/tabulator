@@ -4,7 +4,9 @@ import defaultOptions from './defaults/options.js';
 
 import Cell from '../cell/Cell.js';
 
-class Column extends CoreFeature{
+export default class Column extends CoreFeature{
+
+	static defaultOptionList = defaultOptions;
 
 	constructor(def, parent){
 		super(parent.table);
@@ -953,7 +955,3 @@ class Column extends CoreFeature{
 		return this.table.columnManager.getVisibleColumnsByIndex().indexOf(this) + 1;
 	}
 }
-
-Column.defaultOptionList = defaultOptions;
-
-export default Column;

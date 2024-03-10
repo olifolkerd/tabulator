@@ -2,7 +2,12 @@ import Module from '../../core/Module.js';
 
 import defaultSorters from './defaults/sorters.js';
 
-class Sort extends Module{
+export default class Sort extends Module{
+
+	static moduleName = "sort";
+
+	//load defaults
+	static sorters = defaultSorters;
 	
 	constructor(table){
 		super(table);
@@ -468,10 +473,3 @@ class Sort extends Module{
 		return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
 	}
 }
-
-Sort.moduleName = "sort";
-
-//load defaults
-Sort.sorters = defaultSorters;
-
-export default Sort;

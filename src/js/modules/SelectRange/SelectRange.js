@@ -1,7 +1,10 @@
 import Module from "../../core/Module.js";
 import Range from "./Range.js";
 
-class SelectRange extends Module {
+export default class SelectRange extends Module {
+
+	static moduleName = "selectRange";
+
 	constructor(table) {
 		super(table);
 		
@@ -864,7 +867,3 @@ class SelectRange extends Module {
 		return component ? this.activeRange.getColumns().map((col) => col.getComponent()) : this.activeRange.getColumns();
 	}
 }
-
-SelectRange.moduleName = "selectRange";
-
-export default SelectRange;

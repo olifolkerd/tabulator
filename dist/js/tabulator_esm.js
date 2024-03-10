@@ -650,6 +650,11 @@ class Module extends CoreFeature{
 var defaultAccessors = {};
 
 class Accessor extends Module{
+	
+	static moduleName = "accessor";
+
+	//load defaults
+	static accessors = defaultAccessors;
 
 	constructor(table){
 		super(table);
@@ -754,10 +759,6 @@ class Accessor extends Module{
 		return data;
 	}
 }
-
-//load defaults
-Accessor.moduleName = "accessor";
-Accessor.accessors = defaultAccessors;
 
 var defaultConfig = {
 	method: "GET",
@@ -943,6 +944,14 @@ var defaultContentTypeFormatters = {
 };
 
 class Ajax extends Module{
+
+	static moduleName = "ajax";
+
+	//load defaults
+	static defaultConfig = defaultConfig;
+	static defaultURLGenerator = urlBuilder;
+	static defaultLoaderPromise = defaultLoaderPromise;
+	static contentTypeFormatters = defaultContentTypeFormatters;
 	
 	constructor(table){
 		super(table);
@@ -1069,14 +1078,6 @@ class Ajax extends Module{
 		}
 	}
 }
-
-Ajax.moduleName = "ajax";
-
-//load defaults
-Ajax.defaultConfig = defaultConfig;
-Ajax.defaultURLGenerator = urlBuilder;
-Ajax.defaultLoaderPromise = defaultLoaderPromise;
-Ajax.contentTypeFormatters = defaultContentTypeFormatters;
 
 var defaultPasteActions = {
 	replace:function(data){
@@ -1265,6 +1266,12 @@ var defaultPasteParsers = {
 };
 
 class Clipboard extends Module{
+
+	static moduleName = "clipboard";
+
+	//load defaults
+	static pasteActions = defaultPasteActions;
+	static pasteParsers = defaultPasteParsers;
 
 	constructor(table){
 		super(table);
@@ -1533,12 +1540,6 @@ class Clipboard extends Module{
 		return data;
 	}
 }
-
-Clipboard.moduleName = "clipboard";
-
-//load defaults
-Clipboard.pasteActions = defaultPasteActions;
-Clipboard.pasteParsers = defaultPasteParsers;
 
 class CalcComponent{
 	constructor (row){
@@ -2132,6 +2133,8 @@ var defaultColumnOptions = {
 };
 
 class Column extends CoreFeature{
+
+	static defaultOptionList = defaultColumnOptions;
 
 	constructor(def, parent){
 		super(parent.table);
@@ -3081,8 +3084,6 @@ class Column extends CoreFeature{
 	}
 }
 
-Column.defaultOptionList = defaultColumnOptions;
-
 //public row object
 class RowComponent {
 
@@ -3733,6 +3734,11 @@ var defaultCalculations = {
 };
 
 class ColumnCalcs extends Module{
+
+	static moduleName = "columnCalcs";
+
+	//load defaults
+	static calculations = defaultCalculations;
 	
 	constructor(table){
 		super(table);
@@ -4304,12 +4310,9 @@ class ColumnCalcs extends Module{
 	}
 }
 
-ColumnCalcs.moduleName = "columnCalcs";
-
-//load defaults
-ColumnCalcs.calculations = defaultCalculations;
-
 class DataTree extends Module{
+
+	static moduleName = "dataTree";
 
 	constructor(table){
 		super(table);
@@ -4907,8 +4910,6 @@ class DataTree extends Module{
 	}
 }
 
-DataTree.moduleName = "dataTree";
-
 function csv(list, options = {}, setFileContents){
 	var delimiter = options.delimiter ? options.delimiter : ",",
 	fileContents = [],
@@ -5269,6 +5270,11 @@ var defaultDownloaders = {
 
 class Download extends Module{
 
+	static moduleName = "download";
+
+	//load defaults
+	static downloaders = defaultDownloaders;
+
 	constructor(table){
 		super(table);
 
@@ -5405,11 +5411,6 @@ class Download extends Module{
 		}
 	}
 }
-
-Download.moduleName = "download";
-
-//load defaults
-Download.downloaders = defaultDownloaders;
 
 function maskInput(el, options){
 	var mask = options.mask,
@@ -7729,6 +7730,11 @@ var defaultEditors = {
 };
 
 class Edit$1 extends Module{
+
+	static moduleName = "edit";
+
+	//load defaults
+	static editors = defaultEditors;
 	
 	constructor(table){
 		super(table);
@@ -8495,11 +8501,6 @@ class Edit$1 extends Module{
 	}
 }
 
-Edit$1.moduleName = "edit";
-
-//load defaults
-Edit$1.editors = defaultEditors;
-
 class ExportRow{
 	constructor(type, columns, component, indent){
 		this.type = type;
@@ -8520,6 +8521,8 @@ class ExportColumn{
 }
 
 class Export extends Module{
+
+	static moduleName = "export";
 	
 	constructor(table){
 		super(table);
@@ -9157,8 +9160,6 @@ class Export extends Module{
 	}
 }
 
-Export.moduleName = "export";
-
 var defaultFilters = {
 
 	//equal to
@@ -9269,6 +9270,11 @@ var defaultFilters = {
 };
 
 class Filter extends Module{
+
+	static moduleName = "filter";
+
+	//load defaults
+	static filters = defaultFilters;
 
 	constructor(table){
 		super(table);
@@ -10162,11 +10168,6 @@ class Filter extends Module{
 	}
 }
 
-Filter.moduleName = "filter";
-
-//load defaults
-Filter.filters = defaultFilters;
-
 function plaintext(cell, formatterParams, onRendered){
 	return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 }
@@ -10840,6 +10841,11 @@ var defaultFormatters = {
 };
 
 class Format extends Module{
+
+	static moduleName = "format";
+
+	//load defaults
+	static formatters = defaultFormatters;
 	
 	constructor(table){
 		super(table);
@@ -11045,12 +11051,9 @@ class Format extends Module{
 	}
 }
 
-Format.moduleName = "format";
-
-//load defaults
-Format.formatters = defaultFormatters;
-
 class FrozenColumns extends Module{
+
+	static moduleName = "frozenColumns";
 	
 	constructor(table){
 		super(table);
@@ -11345,9 +11348,9 @@ class FrozenColumns extends Module{
 	}
 }
 
-FrozenColumns.moduleName = "frozenColumns";
-
 class FrozenRows extends Module{
+
+	static moduleName = "frozenRows";
 
 	constructor(table){
 		super(table);
@@ -11516,8 +11519,6 @@ class FrozenRows extends Module{
 		});
 	}
 }
-
-FrozenRows.moduleName = "frozenRows";
 
 //public group object
 class GroupComponent {
@@ -12201,6 +12202,8 @@ class Group{
 }
 
 class GroupRows extends Module{
+
+	static moduleName = "groupRows";
 	
 	constructor(table){
 		super(table);
@@ -12832,8 +12835,6 @@ class GroupRows extends Module{
 	
 }
 
-GroupRows.moduleName = "groupRows";
-
 var defaultUndoers = {
 	cellEdit: function(action){
 		action.component.setValueProcessData(action.data.oldValue);
@@ -12901,6 +12902,12 @@ var defaultRedoers = {
 };
 
 class History extends Module{
+
+	static moduleName = "history";
+
+	//load defaults
+	static undoers = defaultUndoers;
+	static redoers = defaultRedoers;
 
 	constructor(table){
 		super(table);
@@ -13058,13 +13065,9 @@ class History extends Module{
 	}
 }
 
-History.moduleName = "history";
-
-//load defaults
-History.undoers = defaultUndoers;
-History.redoers = defaultRedoers;
-
 class HtmlTableImport extends Module{
+
+	static moduleName = "htmlTableImport";
 
 	constructor(table){
 		super(table);
@@ -13241,9 +13244,7 @@ class HtmlTableImport extends Module{
 	}
 }
 
-HtmlTableImport.moduleName = "htmlTableImport";
-
-function csvImporter(input){
+function csv$1(input){
 	var data = [],
 	row = 0, 
 	col = 0,
@@ -13314,14 +13315,14 @@ function json$1(input){
 	}
 }
 
-function arrayImporter(input){
+function array (input){
 	return input;
 }
 
 var defaultImporters = {
-	csv:csvImporter,
+	csv:csv$1,
 	json:json$1,
-	array:arrayImporter,
+	array:array,
 };
 
 class Import extends Module{
@@ -13514,6 +13515,8 @@ Import.moduleName = "import";
 Import.importers = defaultImporters;
 
 class Interaction extends Module{
+
+	static moduleName = "interaction";
 
 	constructor(table){
 		super(table);
@@ -13842,8 +13845,6 @@ class Interaction extends Module{
 	}
 }
 
-Interaction.moduleName = "interaction";
-
 var defaultBindings = {
 	navPrev:"shift + 9",
 	navNext:9,
@@ -14032,6 +14033,12 @@ var defaultActions = {
 
 class Keybindings extends Module{
 
+	static moduleName = "keybindings";
+
+	//load defaults
+	static bindings = defaultBindings;
+	static actions = defaultActions;
+
 	constructor(table){
 		super(table);
 
@@ -14191,13 +14198,9 @@ class Keybindings extends Module{
 	}
 }
 
-Keybindings.moduleName = "keybindings";
-
-//load defaults
-Keybindings.bindings = defaultBindings;
-Keybindings.actions = defaultActions;
-
 class Menu extends Module{
+
+	static moduleName = "menu";
 	
 	constructor(table){
 		super(table);
@@ -14496,9 +14499,9 @@ class Menu extends Module{
 	}
 }
 
-Menu.moduleName = "menu";
-
 class MoveColumns extends Module{
+
+	static moduleName = "moveColumn";
 	
 	constructor(table){
 		super(table);
@@ -14796,9 +14799,18 @@ class MoveColumns extends Module{
 	}
 }
 
-MoveColumns.moduleName = "moveColumn";
+var defaultSenders = {
+    delete:function(fromRow, toRow, toTable){
+        fromRow.delete();
+    }
+};
 
 class MoveRows extends Module{
+
+	static moduleName = "moveRow";
+
+	//load defaults
+	static senders = defaultSenders;
 
 	constructor(table){
 		super(table);
@@ -15422,17 +15434,14 @@ MoveRows.prototype.receivers = {
 	},
 };
 
-MoveRows.prototype.senders = {
-	delete:function(fromRow, toRow, toTable){
-		fromRow.delete();
-	}
-};
-
-MoveRows.moduleName = "moveRow";
-
 var defaultMutators = {};
 
 class Mutator extends Module{
+
+	static moduleName = "mutator";
+
+	//load defaults
+	static mutators = defaultMutators;
 
 	constructor(table){
 		super(table);
@@ -15584,11 +15593,6 @@ class Mutator extends Module{
 	}
 }
 
-Mutator.moduleName = "mutator";
-
-//load defaults
-Mutator.mutators = defaultMutators;
-
 function rows(pageSize, currentRow, currentPage, totalRows, totalPages){
 	var el = document.createElement("span"),
 	showingEl = document.createElement("span"),
@@ -15670,6 +15674,11 @@ var defaultPageCounters = {
 };
 
 class Page extends Module{
+
+	static moduleName = "page";
+
+	//load defaults
+	static pageCounters = defaultPageCounters;
 	
 	constructor(table){
 		super(table);
@@ -16538,11 +16547,6 @@ class Page extends Module{
 	}
 }
 
-Page.moduleName = "page";
-
-//load defaults
-Page.pageCounters = defaultPageCounters;
-
 // read persistance information from storage
 var defaultReaders = {
 	local:function(id, type){
@@ -16588,6 +16592,14 @@ var defaultWriters = {
 };
 
 class Persistence extends Module{
+
+	static moduleName = "persistence";
+
+	static moduleInitOrder = -10;
+
+	//load defaults
+	static readers = defaultReaders;
+	static writers = defaultWriters;
 
 	constructor(table){
 		super(table);
@@ -17048,15 +17060,9 @@ class Persistence extends Module{
 	}
 }
 
-Persistence.moduleName = "persistence";
-
-Persistence.moduleInitOrder = -10;
-
-//load defaults
-Persistence.readers = defaultReaders;
-Persistence.writers = defaultWriters;
-
 class Popup$1 extends Module{
+	
+	static moduleName = "popup";
 	
 	constructor(table){
 		super(table);
@@ -17276,15 +17282,13 @@ class Popup$1 extends Module{
 			this.dispatchExternal("popupClosed", component.getComponent());
 		});
 
-
-
 		this.dispatchExternal("popupOpened", component.getComponent());
 	}
 }
 
-Popup$1.moduleName = "popup";
-
 class Print extends Module{
+
+	static moduleName = "print";
 
 	constructor(table){
 		super(table);
@@ -17417,9 +17421,9 @@ class Print extends Module{
 	}
 }
 
-Print.moduleName = "print";
-
 class ReactiveData extends Module{
+
+	static moduleName = "reactiveData";
 	
 	constructor(table){
 		super(table);
@@ -17819,10 +17823,10 @@ class ReactiveData extends Module{
 	}
 }
 
-ReactiveData.moduleName = "reactiveData";
-
 class ResizeColumns extends Module{
-	
+
+	static moduleName = "resizeColumns";
+
 	constructor(table){
 		super(table);
 		
@@ -18127,9 +18131,9 @@ class ResizeColumns extends Module{
 	}
 }
 
-ResizeColumns.moduleName = "resizeColumns";
-
 class ResizeRows extends Module{
+
+	static moduleName = "resizeRows";
 
 	constructor(table){
 		super(table);
@@ -18236,9 +18240,9 @@ class ResizeRows extends Module{
 	}
 }
 
-ResizeRows.moduleName = "resizeRows";
-
 class ResizeTable extends Module{
+
+	static moduleName = "resizeTable";
 	
 	constructor(table){
 		super(table);
@@ -18393,9 +18397,9 @@ class ResizeTable extends Module{
 	}
 }
 
-ResizeTable.moduleName = "resizeTable";
-
 class ResponsiveLayout extends Module{
+
+	static moduleName = "responsiveLayout";
 
 	constructor(table){
 		super(table);
@@ -18738,9 +18742,9 @@ class ResponsiveLayout extends Module{
 	}
 }
 
-ResponsiveLayout.moduleName = "responsiveLayout";
-
 class SelectRow extends Module{
+
+	static moduleName = "selectRow";
 	
 	constructor(table){
 		super(table);
@@ -19230,8 +19234,6 @@ class SelectRow extends Module{
 	}
 }
 
-SelectRow.moduleName = "selectRow";
-
 //sort numbers
 function number$1(a, b, aRow, bRow, column, dir, params){
 	var alignEmptyValues = params.alignEmptyValues;
@@ -19380,7 +19382,7 @@ function boolean(a, b, aRow, bRow, column, dir, params){
 }
 
 //sort if element contains any data
-function array(a, b, aRow, bRow, column, dir, params){
+function array$1(a, b, aRow, bRow, column, dir, params){
 	var type = params.type || "length",
 	alignEmptyValues = params.alignEmptyValues,
 	emptyAlign = 0;
@@ -19494,12 +19496,17 @@ var defaultSorters = {
 	time:time$1,
 	datetime:datetime$2,
 	boolean:boolean,
-	array:array,
+	array:array$1,
 	exists:exists,
 	alphanum:alphanum
 };
 
 class Sort extends Module{
+
+	static moduleName = "sort";
+
+	//load defaults
+	static sorters = defaultSorters;
 	
 	constructor(table){
 		super(table);
@@ -19966,11 +19973,6 @@ class Sort extends Module{
 	}
 }
 
-Sort.moduleName = "sort";
-
-//load defaults
-Sort.sorters = defaultSorters;
-
 class RangeComponent {
 	constructor(range) {
 		this._range = range;
@@ -20414,6 +20416,9 @@ class Range extends CoreFeature{
 }
 
 class SelectRange extends Module {
+
+	static moduleName = "selectRange";
+
 	constructor(table) {
 		super(table);
 		
@@ -21273,9 +21278,9 @@ class SelectRange extends Module {
 	}
 }
 
-SelectRange.moduleName = "selectRange";
-
 class Tooltip extends Module{
+
+	static moduleName = "tooltip";
 	
 	constructor(table){
 		super(table);
@@ -21398,8 +21403,6 @@ class Tooltip extends Module{
 		}
 	}
 }
-
-Tooltip.moduleName = "tooltip";
 
 var defaultValidators = {
 	//is integer
@@ -21553,6 +21556,11 @@ var defaultValidators = {
 };
 
 class Validate extends Module{
+
+	static moduleName = "validate";
+
+	//load defaults
+	static validators = defaultValidators;
 	
 	constructor(table){
 		super(table);
@@ -21846,11 +21854,6 @@ class Validate extends Module{
 		}
 	}
 }
-
-Validate.moduleName = "validate";
-
-//load defaults
-Validate.validators = defaultValidators;
 
 var modules = /*#__PURE__*/Object.freeze({
 	__proto__: null,
@@ -26320,6 +26323,8 @@ class DeprecationAdvisor extends CoreFeature{
 
 class TableRegistry {
 
+	static tables = [];
+
 	static register(table){
 		TableRegistry.tables.push(table);
 	}
@@ -26374,8 +26379,6 @@ class TableRegistry {
 		});
 	}
 }
-
-TableRegistry.tables = [];
 
 //resize columns to fit data they contain
 function fitData(columns, forced){
@@ -26622,6 +26625,11 @@ var defaultModes = {
 
 class Layout extends Module{
 
+	static moduleName = "layout";
+
+	//load defaults
+	static modes = defaultModes;
+
 	constructor(table){
 		super(table, "layout");
 
@@ -26670,11 +26678,6 @@ class Layout extends Module{
 	}
 }
 
-Layout.moduleName = "layout";
-
-//load defaults
-Layout.modes = defaultModes;
-
 var defaultLangs = {
 	"default":{ //hold default locale text
 		"groups":{
@@ -26714,6 +26717,11 @@ var defaultLangs = {
 };
 
 class Localize extends Module{
+
+	static moduleName = "localize";
+
+	//load defaults
+	static langs = defaultLangs;
 
 	constructor(table){
 		super(table);
@@ -26887,12 +26895,9 @@ class Localize extends Module{
 	}
 }
 
-Localize.moduleName = "localize";
-
-//load defaults
-Localize.langs = defaultLangs;
-
 class Comms extends Module{
+
+	static moduleName = "comms";
 
 	constructor(table){
 		super(table);
@@ -26937,8 +26942,6 @@ class Comms extends Module{
 		}
 	}
 }
-
-Comms.moduleName = "comms";
 
 var coreModules = /*#__PURE__*/Object.freeze({
 	__proto__: null,

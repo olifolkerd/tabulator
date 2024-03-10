@@ -1,5 +1,5 @@
 //public group object
-class GroupComponent {
+export default class GroupComponent {
 	constructor (group){
 		this._group = group;
 		this.type = "GroupComponent";
@@ -67,5 +67,3 @@ class GroupComponent {
 		return this._group.groupManager.table;
 	}
 }
-
-export default GroupComponent;
