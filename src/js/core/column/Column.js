@@ -954,4 +954,8 @@ export default class Column extends CoreFeature{
 	getPosition(){
 		return this.table.columnManager.getVisibleColumnsByIndex().indexOf(this) + 1;
 	}
+
+	getParentComponent(){
+		return this.parent instanceof Column ? this.parent.getComponent() : false;
+	}
 }

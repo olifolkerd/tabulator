@@ -2053,7 +2053,7 @@ class ColumnComponent {
 	}
 
 	getParentColumn(){
-		return this._column.parent instanceof Column ? this._column.parent.getComponent() : false;
+		return this._column.getParentComponent();
 	}
 
 	_getSelf(){
@@ -3081,6 +3081,10 @@ class Column extends CoreFeature{
 
 	getPosition(){
 		return this.table.columnManager.getVisibleColumnsByIndex().indexOf(this) + 1;
+	}
+
+	getParentComponent(){
+		return this.parent instanceof Column ? this.parent.getComponent() : false;
 	}
 }
 
