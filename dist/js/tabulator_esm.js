@@ -13330,6 +13330,11 @@ var defaultImporters = {
 };
 
 class Import extends Module{
+
+	static moduleName = "import";
+
+	//load defaults
+	static importers = defaultImporters;
     
 	constructor(table){
 		super(table);
@@ -13512,11 +13517,6 @@ class Import extends Module{
 		return this.table.setData(data);
 	}
 }
-
-Import.moduleName = "import";
-
-//load defaults
-Import.importers = defaultImporters;
 
 class Interaction extends Module{
 
@@ -14809,12 +14809,44 @@ var defaultSenders = {
 	}
 };
 
+var defaultReceivers = {
+	insert:function(fromRow, toRow, fromTable){
+		this.table.addRow(fromRow.getData(), undefined, toRow);
+		return true;
+	},
+
+	add:function(fromRow, toRow, fromTable){
+		this.table.addRow(fromRow.getData());
+		return true;
+	},
+
+	update:function(fromRow, toRow, fromTable){
+		if(toRow){
+			toRow.update(fromRow.getData());
+			return true;
+		}
+
+		return false;
+	},
+
+	replace:function(fromRow, toRow, fromTable){
+		if(toRow){
+			this.table.addRow(fromRow.getData(), undefined, toRow);
+			toRow.delete();
+			return true;
+		}
+
+		return false;
+	},
+};
+
 class MoveRows extends Module{
 
 	static moduleName = "moveRow";
 
 	//load defaults
 	static senders = defaultSenders;
+	static receivers = defaultReceivers;
 
 	constructor(table){
 		super(table);
@@ -15367,7 +15399,7 @@ class MoveRows extends Module{
 
 		switch(typeof this.table.options.movableRowsReceiver){
 			case "string":
-				receiver = this.receivers[this.table.options.movableRowsReceiver];
+				receiver = MoveRows.receivers[this.table.options.movableRowsReceiver];
 				break;
 
 			case "function":
@@ -15406,37 +15438,6 @@ class MoveRows extends Module{
 		}
 	}
 }
-
-MoveRows.prototype.receivers = {
-	insert:function(fromRow, toRow, fromTable){
-		this.table.addRow(fromRow.getData(), undefined, toRow);
-		return true;
-	},
-
-	add:function(fromRow, toRow, fromTable){
-		this.table.addRow(fromRow.getData());
-		return true;
-	},
-
-	update:function(fromRow, toRow, fromTable){
-		if(toRow){
-			toRow.update(fromRow.getData());
-			return true;
-		}
-
-		return false;
-	},
-
-	replace:function(fromRow, toRow, fromTable){
-		if(toRow){
-			this.table.addRow(fromRow.getData(), undefined, toRow);
-			toRow.delete();
-			return true;
-		}
-
-		return false;
-	},
-};
 
 var defaultMutators = {};
 
@@ -21859,7 +21860,7 @@ class Validate extends Module{
 	}
 }
 
-var modules = /*#__PURE__*/Object.freeze({
+var allModules = /*#__PURE__*/Object.freeze({
 	__proto__: null,
 	AccessorModule: Accessor,
 	AjaxModule: Ajax,
@@ -26325,66 +26326,6 @@ class DeprecationAdvisor extends CoreFeature{
 	}
 }
 
-class TableRegistry {
-	static registry = {
-		tables:[],
-		
-		register(table){
-			TableRegistry.registry.tables.push(table);
-		},
-		
-		deregister(table){
-			var index = TableRegistry.registry.tables.indexOf(table);
-			
-			if(index > -1){
-				TableRegistry.registry.tables.splice(index, 1);
-			}
-		},
-		
-		lookupTable(query, silent){
-			var results = [],
-			matches, match;
-			
-			if(typeof query === "string"){
-				matches = document.querySelectorAll(query);
-				
-				if(matches.length){
-					for(var i = 0; i < matches.length; i++){
-						match = TableRegistry.registry.matchElement(matches[i]);
-						
-						if(match){
-							results.push(match);
-						}
-					}
-				}
-				
-			}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof TableRegistry){
-				match = TableRegistry.registry.matchElement(query);
-				
-				if(match){
-					results.push(match);
-				}
-			}else if(Array.isArray(query)){
-				query.forEach(function(item){
-					results = results.concat(TableRegistry.registry.lookupTable(item));
-				});
-			}else {
-				if(!silent){
-					console.warn("Table Connection Error - Invalid Selector", query);
-				}
-			}
-			
-			return results;
-		},
-		
-		matchElement(element){
-			return TableRegistry.registry.tables.find(function(table){
-				return element instanceof TableRegistry ? table === element : table.element === element;
-			});
-		}
-	}
-}
-
 //resize columns to fit data they contain
 function fitData(columns, forced){
 	if(forced){
@@ -26955,97 +26896,115 @@ var coreModules = /*#__PURE__*/Object.freeze({
 	CommsModule: Comms
 });
 
-class ModuleBinder {
-	
-	constructor(tabulator, modules){
-		this.bindStaticFunctionality(tabulator);
-		this.bindModules(tabulator, coreModules, true);
+class TableRegistry {
+	static registry = {
+		tables:[],
 		
-		if(modules){
-			this.bindModules(tabulator, modules);
+		register(table){
+			TableRegistry.registry.tables.push(table);
+		},
+		
+		deregister(table){
+			var index = TableRegistry.registry.tables.indexOf(table);
+			
+			if(index > -1){
+				TableRegistry.registry.tables.splice(index, 1);
+			}
+		},
+		
+		lookupTable(query, silent){
+			var results = [],
+			matches, match;
+			
+			if(typeof query === "string"){
+				matches = document.querySelectorAll(query);
+				
+				if(matches.length){
+					for(var i = 0; i < matches.length; i++){
+						match = TableRegistry.registry.matchElement(matches[i]);
+						
+						if(match){
+							results.push(match);
+						}
+					}
+				}
+				
+			}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof TableRegistry){
+				match = TableRegistry.registry.matchElement(query);
+				
+				if(match){
+					results.push(match);
+				}
+			}else if(Array.isArray(query)){
+				query.forEach(function(item){
+					results = results.concat(TableRegistry.registry.lookupTable(item));
+				});
+			}else {
+				if(!silent){
+					console.warn("Table Connection Error - Invalid Selector", query);
+				}
+			}
+			
+			return results;
+		},
+		
+		matchElement(element){
+			return TableRegistry.registry.tables.find(function(table){
+				return element instanceof TableRegistry ? table === element : table.element === element;
+			});
+		}
+	};
+
+		
+	static findTable(query){
+		var results = TableRegistry.registry.lookupTable(query, true);
+		return Array.isArray(results) && !results.length ? false : results;
+	}
+}
+
+class ModuleBinder extends TableRegistry {
+	
+	static moduleBindings = {};
+	static modulesRegistered = false;
+
+	static defaultModules = false;
+
+	constructor(){
+		super();
+	}
+
+	static initializeModuleBinder(defaultModules){
+		if(!ModuleBinder.modulesRegistered){
+			ModuleBinder.modulesRegistered = true;
+			ModuleBinder._registerModules(coreModules, true);
+			
+			if(defaultModules){
+				ModuleBinder._registerModules(defaultModules);
+			}
 		}
 	}
 	
-	bindStaticFunctionality(tabulator){
-		tabulator.moduleBindings = {};
-		
-		tabulator.extendModule = function(name, property, values){
-			if(tabulator.moduleBindings[name]){
-				var source = tabulator.moduleBindings[name][property];
-				
-				if(source){
-					if(typeof values == "object"){
-						for(let key in values){
-							source[key] = values[key];
-						}
-					}else {
-						console.warn("Module Error - Invalid value type, it must be an object");
+	static _extendModule(name, property, values){
+		if(ModuleBinder.moduleBindings[name]){
+			var source = ModuleBinder.moduleBindings[name][property];
+			
+			if(source){
+				if(typeof values == "object"){
+					for(let key in values){
+						source[key] = values[key];
 					}
 				}else {
-					console.warn("Module Error - property does not exist:", property);
+					console.warn("Module Error - Invalid value type, it must be an object");
 				}
 			}else {
-				console.warn("Module Error - module does not exist:", name);
+				console.warn("Module Error - property does not exist:", property);
 			}
-		};
-		
-		tabulator.registerModule = function(modules){
-			if(!Array.isArray(modules)){
-				modules = [modules];
-			}
-			
-			modules.forEach((mod) => {
-				tabulator.registerModuleBinding(mod);
-			});
-		};
-		
-		tabulator.registerModuleBinding = function(mod){
-			tabulator.moduleBindings[mod.moduleName] = mod;
-		};
-		
-		tabulator.findTable = function(query){
-			var results = tabulator.registry.lookupTable(query, true);
-			return Array.isArray(results) && !results.length ? false : results;
-		};
-		
-		//ensure that module are bound to instantiated function
-		tabulator.prototype.bindModules = function(){
-			var orderedStartMods = [],
-			orderedEndMods = [],
-			unOrderedMods = [];
-			
-			this.modules = {};
-			
-			for(var name in tabulator.moduleBindings){
-				let mod = tabulator.moduleBindings[name];
-				let module = new mod(this);
-				
-				this.modules[name] = module;
-				
-				if(mod.prototype.moduleCore){
-					this.modulesCore.push(module);
-				}else {
-					if(mod.moduleInitOrder){
-						if(mod.moduleInitOrder < 0){
-							orderedStartMods.push(module);
-						}else {
-							orderedEndMods.push(module);
-						}
-						
-					}else {
-						unOrderedMods.push(module);
-					}
-				}
-			}
-			
-			orderedStartMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
-			orderedEndMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
-			
-			this.modulesRegular = orderedStartMods.concat(unOrderedMods.concat(orderedEndMods));
-		};
+		}else {
+			console.warn("Module Error - module does not exist:", name);
+		}
 	}
-	
-	bindModules(tabulator, modules, core){
+
+	static _registerModules(modules, core){
 		var mods = Object.values(modules);
 		
 		if(core){
@@ -27054,7 +27013,58 @@ class ModuleBinder {
 			});
 		}
 		
-		tabulator.registerModule(mods);
+		ModuleBinder._registerModule(mods);
+	}
+	
+	static _registerModule(modules){
+		if(!Array.isArray(modules)){
+			modules = [modules];
+		}
+		
+		modules.forEach((mod) => {
+			ModuleBinder._registerModuleBinding(mod);
+		});
+	}
+
+	static _registerModuleBinding(mod){
+		ModuleBinder.moduleBindings[mod.moduleName] = mod;
+	}
+
+	
+	//ensure that module are bound to instantiated function
+	_bindModules(){
+		var orderedStartMods = [],
+		orderedEndMods = [],
+		unOrderedMods = [];
+		
+		this.modules = {};
+		
+		for(var name in ModuleBinder.moduleBindings){
+			let mod = ModuleBinder.moduleBindings[name];
+			let module = new mod(this);
+			
+			this.modules[name] = module;
+			
+			if(mod.prototype.moduleCore){
+				this.modulesCore.push(module);
+			}else {
+				if(mod.moduleInitOrder){
+					if(mod.moduleInitOrder < 0){
+						orderedStartMods.push(module);
+					}else {
+						orderedEndMods.push(module);
+					}
+					
+				}else {
+					unOrderedMods.push(module);
+				}
+			}
+		}
+		
+		orderedStartMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
+		orderedEndMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
+		
+		this.modulesRegular = orderedStartMods.concat(unOrderedMods.concat(orderedEndMods));
 	}
 }
 
@@ -27123,10 +27133,25 @@ class Alert extends CoreFeature{
 	}
 }
 
-class Tabulator extends TableRegistry{
-	
-	constructor(element, options){
+class Tabulator extends ModuleBinder{
+
+	//default setup options
+	static defaultOptions = defaultOptions;
+
+	static extendModule(){
+		Tabulator.initializeModuleBinder();
+		Tabulator._extendModule(...arguments);
+	}
+
+	static registerModule(){
+		Tabulator.initializeModuleBinder();
+		Tabulator._registerModule(...arguments);
+	}
+
+	constructor(element, options, modules){
 		super();
+
+		Tabulator.initializeModuleBinder(modules);
 
 		this.options = {};
 		
@@ -27196,7 +27221,7 @@ class Tabulator extends TableRegistry{
 		this.dataLoader = new DataLoader(this);
 		this.alertManager = new Alert(this);
 		
-		this.bindModules();
+		this._bindModules();
 		
 		this.options = this.optionsList.generate(Tabulator.defaultOptions, options);
 		
@@ -27989,18 +28014,23 @@ class Tabulator extends TableRegistry{
 	}
 }
 
-//default setup options
-Tabulator.defaultOptions = defaultOptions;
-
-//bind modules and static functionality
-new ModuleBinder(Tabulator);
-
 //tabulator with all modules installed
 
-class TabulatorFull extends Tabulator {}
+class TabulatorFull extends Tabulator {
+	static extendModule(){
+		Tabulator.initializeModuleBinder(allModules);
+		Tabulator._extendModule(...arguments);
+	}
 
-//bind modules and static functionality
-new ModuleBinder(TabulatorFull, modules);
+	static registerModule(){
+		Tabulator.initializeModuleBinder(allModules);
+		Tabulator._registerModule(...arguments);
+	}
+
+	constructor(element, options, modules){
+		super(element, options, allModules);
+	}
+}
 
 class PseudoRow {
 
