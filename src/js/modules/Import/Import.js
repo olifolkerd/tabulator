@@ -2,7 +2,12 @@ import Module from '../../core/Module.js';
 
 import defaultImporters from './defaults/importers.js';
 
-class Import extends Module{
+export default class Import extends Module{
+
+	static moduleName = "import";
+
+	//load defaults
+	static importers = defaultImporters;
     
 	constructor(table){
 		super(table);
@@ -185,10 +190,3 @@ class Import extends Module{
 		return this.table.setData(data);
 	}
 }
-
-Import.moduleName = "import";
-
-//load defaults
-Import.importers = defaultImporters;
-
-export default Import;

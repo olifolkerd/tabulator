@@ -55,5 +55,5 @@ export default class TableRegistry {
 				return element instanceof TableRegistry ? table === element : table.element === element;
 			});
 		}
-	}
+	};
 }
