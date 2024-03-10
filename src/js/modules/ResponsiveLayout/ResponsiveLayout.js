@@ -1,8 +1,10 @@
 import Module from '../../core/Module.js';
+import extensions from './extensions/extensions.js';
 
 export default class ResponsiveLayout extends Module{
 
 	static moduleName = "responsiveLayout";
+	static moduleExtensions = extensions;
 
 	constructor(table){
 		super(table);

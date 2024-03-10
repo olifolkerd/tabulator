@@ -16,7 +16,6 @@ import buttonTick from './formatters/buttonTick.js';
 import buttonCross from './formatters/buttonCross.js';
 import rownum from './formatters/rownum.js';
 import handle from './formatters/handle.js';
-import responsiveCollapse from './formatters/responsiveCollapse.js';
 
 export default {
 	plaintext:plaintext,
@@ -37,5 +36,4 @@ export default {
 	buttonCross:buttonCross,
 	rownum:rownum,
 	handle:handle,
-	responsiveCollapse:responsiveCollapse,
 };

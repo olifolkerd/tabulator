@@ -1,5 +1,4 @@
 import Module from '../../core/Module.js';
-
 import extensions from './extensions/extensions.js';
 
 export default class SelectRow extends Module{
