@@ -23,7 +23,10 @@ import OptionsList from './tools/OptionsList.js';
 import Alert from './tools/Alert.js';
 
 class Tabulator extends TableRegistry{
-	
+
+	//default setup options
+	static defaultOptions = defaultOptions;
+
 	constructor(element, options){
 		super();
 
@@ -887,9 +890,6 @@ class Tabulator extends TableRegistry{
 		return mod;
 	}
 }
-
-//default setup options
-Tabulator.defaultOptions = defaultOptions;
 
 //bind modules and static functionality
 new ModuleBinder(Tabulator);
