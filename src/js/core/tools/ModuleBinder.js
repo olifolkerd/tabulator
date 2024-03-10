@@ -1,5 +1,4 @@
 import * as coreModules from '../modules/core.js';
-import TableRegistry from './TableRegistry.js';
 
 export default class ModuleBinder {
 	
@@ -50,7 +49,7 @@ export default class ModuleBinder {
 		};
 		
 		tabulator.findTable = function(query){
-			var results = TableRegistry.lookupTable(query, true);
+			var results = tabulator.registry.lookupTable(query, true);
 			return Array.isArray(results) && !results.length ? false : results;
 		};
 		

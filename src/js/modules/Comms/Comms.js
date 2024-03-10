@@ -1,5 +1,4 @@
 import Module from '../../core/Module.js';
-import TableRegistry from '../../core/tools/TableRegistry.js';
 
 export default class Comms extends Module{
 
@@ -17,7 +16,7 @@ export default class Comms extends Module{
 		var connections = [],
 		connection;
 
-		connection = TableRegistry.lookupTable(selectors);
+		connection = this.table.constructor.registry.lookupTable(selectors);
 
 		connection.forEach((con) =>{
 			if(this.table !== con){

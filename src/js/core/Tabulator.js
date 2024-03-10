@@ -22,10 +22,11 @@ import OptionsList from './tools/OptionsList.js';
 
 import Alert from './tools/Alert.js';
 
-class Tabulator {
+class Tabulator extends TableRegistry{
 	
 	constructor(element, options){
-		
+		super();
+
 		this.options = {};
 		
 		this.columnManager = null; // hold Column Manager
@@ -65,7 +66,7 @@ class Tabulator {
 			});
 		}
 		
-		TableRegistry.register(this); //register table for inter-device communication
+		this.constructor.registry.register(this); //register table for inter-device communication
 	}
 	
 	initializeElement(element){
@@ -286,7 +287,7 @@ class Tabulator {
 		
 		this.destroyed = true;
 		
-		TableRegistry.deregister(this); //deregister table from inter-device communication
+		this.constructor.registry.deregister(this); //deregister table from inter-device communication
 		
 		this.eventBus.dispatch("table-destroy");
 		

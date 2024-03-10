@@ -14804,9 +14804,9 @@ class MoveColumns extends Module{
 }
 
 var defaultSenders = {
-    delete:function(fromRow, toRow, toTable){
-        fromRow.delete();
-    }
+	delete:function(fromRow, toRow, toTable){
+		fromRow.delete();
+	}
 };
 
 class MoveRows extends Module{
@@ -15335,7 +15335,7 @@ class MoveRows extends Module{
 
 			switch(typeof this.table.options.movableRowsSender){
 				case "string":
-					sender = this.senders[this.table.options.movableRowsSender];
+					sender = MoveRows.senders[this.table.options.movableRowsSender];
 					break;
 
 				case "function":
@@ -26326,61 +26326,62 @@ class DeprecationAdvisor extends CoreFeature{
 }
 
 class TableRegistry {
-
-	static tables = [];
-
-	static register(table){
-		TableRegistry.tables.push(table);
-	}
-
-	static deregister(table){
-		var index = TableRegistry.tables.indexOf(table);
-
-		if(index > -1){
-			TableRegistry.tables.splice(index, 1);
-		}
-	}
-
-	static lookupTable(query, silent){
-		var results = [],
-		matches, match;
-
-		if(typeof query === "string"){
-			matches = document.querySelectorAll(query);
-
-			if(matches.length){
-				for(var i = 0; i < matches.length; i++){
-					match = TableRegistry.matchElement(matches[i]);
-
-					if(match){
-						results.push(match);
+	static registry = {
+		tables:[],
+		
+		register(table){
+			TableRegistry.registry.tables.push(table);
+		},
+		
+		deregister(table){
+			var index = TableRegistry.registry.tables.indexOf(table);
+			
+			if(index > -1){
+				TableRegistry.registry.tables.splice(index, 1);
+			}
+		},
+		
+		lookupTable(query, silent){
+			var results = [],
+			matches, match;
+			
+			if(typeof query === "string"){
+				matches = document.querySelectorAll(query);
+				
+				if(matches.length){
+					for(var i = 0; i < matches.length; i++){
+						match = TableRegistry.registry.matchElement(matches[i]);
+						
+						if(match){
+							results.push(match);
+						}
 					}
 				}
+				
+			}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof TableRegistry){
+				match = TableRegistry.registry.matchElement(query);
+				
+				if(match){
+					results.push(match);
+				}
+			}else if(Array.isArray(query)){
+				query.forEach(function(item){
+					results = results.concat(TableRegistry.registry.lookupTable(item));
+				});
+			}else {
+				if(!silent){
+					console.warn("Table Connection Error - Invalid Selector", query);
+				}
 			}
-
-		}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof Tabulator){
-			match = TableRegistry.matchElement(query);
-
-			if(match){
-				results.push(match);
-			}
-		}else if(Array.isArray(query)){
-			query.forEach(function(item){
-				results = results.concat(TableRegistry.lookupTable(item));
+			
+			return results;
+		},
+		
+		matchElement(element){
+			return TableRegistry.registry.tables.find(function(table){
+				return element instanceof TableRegistry ? table === element : table.element === element;
 			});
-		}else {
-			if(!silent){
-				console.warn("Table Connection Error - Invalid Selector", query);
-			}
 		}
-
-		return results;
-	}
-
-	static matchElement(element){
-		return TableRegistry.tables.find(function(table){
-			return element instanceof Tabulator ? table === element : table.element === element;
-		});
 	}
 }
 
@@ -26915,7 +26916,7 @@ class Comms extends Module{
 		var connections = [],
 		connection;
 
-		connection = TableRegistry.lookupTable(selectors);
+		connection = this.table.constructor.registry.lookupTable(selectors);
 
 		connection.forEach((con) =>{
 			if(this.table !== con){
@@ -27003,7 +27004,7 @@ class ModuleBinder {
 		};
 		
 		tabulator.findTable = function(query){
-			var results = TableRegistry.lookupTable(query, true);
+			var results = tabulator.registry.lookupTable(query, true);
 			return Array.isArray(results) && !results.length ? false : results;
 		};
 		
@@ -27122,10 +27123,11 @@ class Alert extends CoreFeature{
 	}
 }
 
-class Tabulator {
+class Tabulator extends TableRegistry{
 	
 	constructor(element, options){
-		
+		super();
+
 		this.options = {};
 		
 		this.columnManager = null; // hold Column Manager
@@ -27165,7 +27167,7 @@ class Tabulator {
 			});
 		}
 		
-		TableRegistry.register(this); //register table for inter-device communication
+		this.constructor.registry.register(this); //register table for inter-device communication
 	}
 	
 	initializeElement(element){
@@ -27386,7 +27388,7 @@ class Tabulator {
 		
 		this.destroyed = true;
 		
-		TableRegistry.deregister(this); //deregister table from inter-device communication
+		this.constructor.registry.deregister(this); //deregister table from inter-device communication
 		
 		this.eventBus.dispatch("table-destroy");
 		
