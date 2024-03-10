@@ -56,4 +56,10 @@ export default class TableRegistry {
 			});
 		}
 	};
+
+		
+	static findTable(query){
+		var results = TableRegistry.registry.lookupTable(query, true);
+		return Array.isArray(results) && !results.length ? false : results;
+	}
 }
