@@ -15,20 +15,31 @@ import InternalEventBus from './tools/InternalEventBus.js';
 
 import DeprecationAdvisor from './tools/DeprecationAdvisor.js';
 
-import TableRegistry from './tools/TableRegistry.js';
 import ModuleBinder from './tools/ModuleBinder.js';
 
 import OptionsList from './tools/OptionsList.js';
 
 import Alert from './tools/Alert.js';
 
-class Tabulator extends TableRegistry{
+class Tabulator extends ModuleBinder{
 
 	//default setup options
 	static defaultOptions = defaultOptions;
 
-	constructor(element, options){
+	static extendModule(){
+		Tabulator.initializeModuleBinder();
+		Tabulator._extendModule(...arguments);
+	}
+
+	static registerModule(){
+		Tabulator.initializeModuleBinder();
+		Tabulator._registerModule(...arguments);
+	}
+
+	constructor(element, options, modules){
 		super();
+
+		Tabulator.initializeModuleBinder(modules);
 
 		this.options = {};
 		
@@ -98,7 +109,7 @@ class Tabulator extends TableRegistry{
 		this.dataLoader = new DataLoader(this);
 		this.alertManager = new Alert(this);
 		
-		this.bindModules();
+		this._bindModules();
 		
 		this.options = this.optionsList.generate(Tabulator.defaultOptions, options);
 		
@@ -890,8 +901,5 @@ class Tabulator extends TableRegistry{
 		return mod;
 	}
 }
-
-//bind modules and static functionality
-new ModuleBinder(Tabulator);
 
 export default Tabulator;
