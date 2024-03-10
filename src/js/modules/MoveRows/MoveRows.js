@@ -529,7 +529,7 @@ export default class MoveRows extends Module{
 
 			switch(typeof this.table.options.movableRowsSender){
 				case "string":
-					sender = this.senders[this.table.options.movableRowsSender];
+					sender = MoveRows.senders[this.table.options.movableRowsSender];
 					break;
 
 				case "function":
