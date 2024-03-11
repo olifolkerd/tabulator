@@ -84,6 +84,8 @@ export default class ResizeRows extends Module{
 		var self = this,
 		guideEl;
 
+		self.dispatchExternal("rowResizing", row.getComponent());
+
 		if(self.table.options.resizableRowGuide){
 			guideEl = document.createElement("span");
 			guideEl.classList.add('tabulator-row-resize-guide');

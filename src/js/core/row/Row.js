@@ -211,6 +211,10 @@ export default class Row extends CoreFeature{
 			
 			// this.outerHeight = this.element.outerHeight();
 			this.outerHeight = this.element.offsetHeight;
+
+			if(this.subscribedExternal("rowHeight")){
+				this.dispatchExternal("rowHeight", this.getComponent());
+			}
 		}
 	}
 	

@@ -3396,6 +3396,10 @@ class Row extends CoreFeature{
 			
 			// this.outerHeight = this.element.outerHeight();
 			this.outerHeight = this.element.offsetHeight;
+
+			if(this.subscribedExternal("rowHeight")){
+				this.dispatchExternal("rowHeight", this.getComponent());
+			}
 		}
 	}
 	
@@ -18167,6 +18171,8 @@ class ResizeRows extends Module{
 	_mouseDown(e, row, handle){
 		var self = this,
 		guideEl;
+
+		self.dispatchExternal("rowResizing", row.getComponent());
 
 		if(self.table.options.resizableRowGuide){
 			guideEl = document.createElement("span");
