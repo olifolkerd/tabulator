@@ -74,8 +74,7 @@ export default class ResizeRows extends Module{
 		handleY = handle.getBoundingClientRect().y - this.table.element.getBoundingClientRect().y,
 		tableY = this.table.element.getBoundingClientRect().y,
 		rowY = row.element.getBoundingClientRect().top - tableY,
-		mouseDiff = mouseY - this.startY,
-		minHeight = row.calcMinHeight();
+		mouseDiff = mouseY - this.startY;
 
 		return Math.max(handleY + mouseDiff, rowY);
 	}
