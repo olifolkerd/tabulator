@@ -80,11 +80,11 @@ export default class Column extends CoreFeature{
 		
 		switch(this.table.options.columnHeaderVertAlign){
 			case "middle":
-			el.style.justifyContent = "center";
-			break;
+				el.style.justifyContent = "center";
+				break;
 			case "bottom":
-			el.style.justifyContent = "flex-end";
-			break;
+				el.style.justifyContent = "flex-end";
+				break;
 		}
 		
 		return el;
@@ -298,18 +298,18 @@ export default class Column extends CoreFeature{
 		
 		switch(typeof contents){
 			case "object":
-			if(contents instanceof Node){
-				el.appendChild(contents);
-			}else{
-				el.innerHTML = "";
-				console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
-			}
-			break;
+				if(contents instanceof Node){
+					el.appendChild(contents);
+				}else{
+					el.innerHTML = "";
+					console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
+				}
+				break;
 			case "undefined":
-			el.innerHTML = "";
-			break;
+				el.innerHTML = "";
+				break;
 			default:
-			el.innerHTML = contents;
+				el.innerHTML = contents;
 		}
 	}
 	
@@ -916,18 +916,18 @@ export default class Column extends CoreFeature{
 				definition = Object.assign(definition, updates);
 				
 				return this.table.columnManager.addColumn(definition, false, this)
-				.then((column) => {
+					.then((column) => {
 					
-					if(definition.field == this.field){
-						this.field = false; //clear field name to prevent deletion of duplicate column from arrays
-					}
+						if(definition.field == this.field){
+							this.field = false; //clear field name to prevent deletion of duplicate column from arrays
+						}
 					
-					return this.delete()
-					.then(() => {
-						return column.getComponent();
+						return this.delete()
+							.then(() => {
+								return column.getComponent();
+							});
+					
 					});
-					
-				});
 			}else{
 				console.error("Column Update Error - The updateDefinition function is only available on ungrouped columns");
 				return Promise.reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
