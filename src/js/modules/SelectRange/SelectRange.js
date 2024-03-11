@@ -4,6 +4,7 @@ import Range from "./Range.js";
 export default class SelectRange extends Module {
 	
 	static moduleName = "selectRange";
+	static moduleInitOrder = 1;
 	
 	constructor(table) {
 		super(table);
@@ -43,7 +44,7 @@ export default class SelectRange extends Module {
 	///////////////////////////////////
 	
 	initialize() {
-		if (this.options("selectableRange")) {		
+		if (this.options("selectableRange")) {	
 			if(!this.options("selectableRows")){
 				this.maxRanges = this.options("selectableRange");
 				
