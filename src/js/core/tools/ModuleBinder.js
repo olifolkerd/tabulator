@@ -80,7 +80,7 @@ export default class ModuleBinder extends TableRegistry {
 		
 		if(mod.moduleExtensions){
 			for (let modKey in extensions) {
-				var ext = extensions[modKey];
+				let ext = extensions[modKey];
 				
 				if(ModuleBinder.moduleBindings[modKey]){
 					for (let propKey in ext) {
@@ -92,7 +92,11 @@ export default class ModuleBinder extends TableRegistry {
 					}
 					
 					for (let propKey in ext) {
-						ModuleBinder.moduleExtensions[modKey][propKey] = ext[propKey];
+						if(!ModuleBinder.moduleExtensions[modKey][propKey]){
+							ModuleBinder.moduleExtensions[modKey][propKey] = {};
+						}
+
+						Object.assign(ModuleBinder.moduleExtensions[modKey][propKey], ext[propKey]);
 					}
 				}
 			}
@@ -110,8 +114,6 @@ export default class ModuleBinder extends TableRegistry {
 			}
 		}
 	}
-	
-	
 	
 	//ensure that module are bound to instantiated function
 	_bindModules(){
