@@ -845,7 +845,7 @@ export default class SelectRange extends Module {
 	}
 	
 	resetRanges() {
-		var range, cell;
+		var range, cell, visibleCells;
 		
 		this.ranges.forEach((range) => range.destroy());
 		this.ranges = [];
@@ -853,8 +853,9 @@ export default class SelectRange extends Module {
 		range = this.addRange();
 		
 		if(this.table.rowManager.activeRows.length){
-			cell = this.table.rowManager.activeRows[0].cells[this.rowHeader ? 1 : 0];
-			
+			visibleCells = this.table.rowManager.activeRows[0].cells.filter((cell) => cell.column.visible);
+			cell = visibleCells[this.rowHeader ? 1 : 0];
+
 			if(cell){
 				range.setBounds(cell);
 				this.initializeFocus(cell);
