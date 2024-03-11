@@ -6876,7 +6876,7 @@
 			return {x, y, offset};
 		}
 		
-		show(origin, position){
+		async show(origin, position){
 			var x, y, parentEl, parentOffset, coords;
 			
 			if(this.destroyed || this.table.destroyed){
@@ -6907,13 +6907,13 @@
 			this.element.style.top = y + "px";
 			this.element.style.left = x + "px";
 			
-			this.container.appendChild(this.element);
+			await this.container.appendChild(this.element);
 			
+			this._fitToScreen(x, y, parentEl, parentOffset, position);
+
 			if(typeof this.renderedCallback === "function"){
 				this.renderedCallback();
 			}
-			
-			this._fitToScreen(x, y, parentEl, parentOffset, position);
 			
 			this.visible = true;
 			
@@ -13184,19 +13184,24 @@
 			this.displayItems = [];
 		}
 		
-		_buildList(data){
+		async _buildList(data){
 			this._clearList();
 			
-			data.forEach((option) => {
-				this._buildItem(option);
+			var p = new Promise((resolve, reject) => {
+				data.forEach(async (option) => {
+					await this._buildItem(option);
+					resolve();
+				});
 			});
 			
-			if(!this.displayItems.length){
-				this._addPlaceholder(this.params.placeholderEmpty);
-			}  
+			p.then(() => {
+				if(!this.displayItems.length){
+					this._addPlaceholder(this.params.placeholderEmpty);
+				} 
+			}); 
 		}
 		
-		_buildItem(item){
+		async _buildItem(item){
 			var el = item.element,
 			contents;
 			
@@ -13206,10 +13211,11 @@
 					el = document.createElement("div");
 					el.tabIndex = 0;
 					
+					/*rtms: changed to pass whole item object instead of item.original*/
 					contents = this.params.itemFormatter ? this.params.itemFormatter(item.label, item.value, item, el) : item.label;
 					
 					if(contents instanceof HTMLElement){
-						el.appendChild(contents);
+						await el.appendChild(contents);
 					}else {
 						el.innerHTML = contents;
 					}
@@ -13246,7 +13252,7 @@
 				
 				this._styleItem(item);
 				
-				this.listEl.appendChild(el);
+				await this.listEl.appendChild(el);
 				
 				if(item.group){
 					item.options.forEach((option) => {
@@ -13256,6 +13262,7 @@
 					this.displayItems.push(item);
 				}
 			}
+			return Promise.resolve();
 		}
 		
 		_showList(){
@@ -14420,6 +14427,7 @@
 			var self = this,
 			allowEdit = true,
 			rendered = function(){},
+			popup = null,
 			element = cell.getElement(),
 			editFinished = false,
 			cellEditor, component, params;
@@ -14478,11 +14486,24 @@
 				if(self.currentCell === cell && !editFinished){
 					self.cancelEdit();
 				}
+
+
 			}
 			
-			function onRendered(callback){
-				rendered = callback;
-			}
+			function onRendered(callback, popupWidget = null, popupRenderCallback = undefined){
+				/*rtms: handle popup type custom editors here */
+				rendered = () => {
+					callback();
+					if (popupWidget) { 
+						popupWidget.classList.add("tabulator-edit-popup");
+						popup = new Popup(self.table, popupWidget);
+						if (popupRenderCallback) {
+							popup.renderCallback(popupRenderCallback);
+						}
+						popup.show(element, "bottom");
+					} 
+				}; 
+			} 
 			
 			if(!cell.column.modules.edit.blocked){
 				if(e){

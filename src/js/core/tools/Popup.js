@@ -129,7 +129,7 @@ export default class Popup extends CoreFeature{
 		return {x, y, offset};
 	}
 	
-	show(origin, position){
+	async show(origin, position){
 		var x, y, parentEl, parentOffset, coords;
 		
 		if(this.destroyed || this.table.destroyed){
@@ -160,13 +160,13 @@ export default class Popup extends CoreFeature{
 		this.element.style.top = y + "px";
 		this.element.style.left = x + "px";
 		
-		this.container.appendChild(this.element);
+		await this.container.appendChild(this.element);
 		
+		this._fitToScreen(x, y, parentEl, parentOffset, position);
+
 		if(typeof this.renderedCallback === "function"){
 			this.renderedCallback();
 		}
-		
-		this._fitToScreen(x, y, parentEl, parentOffset, position);
 		
 		this.visible = true;
 		

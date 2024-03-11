@@ -1,5 +1,6 @@
 import Module from '../../core/Module.js';
 import Helpers from '../../core/tools/Helpers.js';
+import Popup from '../../core/tools/Popup.js';
 
 import defaultEditors from './defaults/editors.js';
 
@@ -595,6 +596,8 @@ class Edit extends Module{
 		var self = this,
 		allowEdit = true,
 		rendered = function(){},
+		popup = null,
+		popupEditor = HTMLElement,
 		element = cell.getElement(),
 		editFinished = false,
 		cellEditor, component, params;
@@ -657,11 +660,24 @@ class Edit extends Module{
 			}else{
 				// console.warn("Edit Success Error - cannot call cancel on a cell that is no longer being edited");
 			}
+
+
 		}
 		
-		function onRendered(callback){
-			rendered = callback;
-		}
+		function onRendered(callback, popupWidget = null, popupRenderCallback = undefined){
+			/*rtms: handle popup type custom editors here */
+			rendered = () => {
+				callback();
+				if (popupWidget) { 
+					popupWidget.classList.add("tabulator-edit-popup");
+					popup = new Popup(self.table, popupWidget);
+					if (popupRenderCallback) {
+						popup.renderCallback(popupRenderCallback);
+					}
+					popup.show(element, "bottom");
+				} 
+			}; 
+		} 
 		
 		if(!cell.column.modules.edit.blocked){
 			if(e){

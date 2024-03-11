@@ -1,5 +1,6 @@
 import maskInput from './inputMask.js';
 import urlBuilder from '../Ajax/defaults/urlGenerator.js';
+import Popup from '../../core/tools/Popup.js';
 
 export default class Edit{
 	constructor(editor, cell, onRendered, success, cancel, editorParams){
@@ -816,19 +817,24 @@ export default class Edit{
 		this.displayItems = [];
 	}
 	
-	_buildList(data){
+	async _buildList(data){
 		this._clearList();
 		
-		data.forEach((option) => {
-			this._buildItem(option);
+		var p = new Promise((resolve, reject) => {
+			data.forEach(async (option) => {
+				await this._buildItem(option);
+				resolve();
+			});
 		});
 		
-		if(!this.displayItems.length){
-			this._addPlaceholder(this.params.placeholderEmpty);
-		}  
+		p.then(() => {
+			if(!this.displayItems.length){
+				this._addPlaceholder(this.params.placeholderEmpty);
+			} 
+		}); 
 	}
 	
-	_buildItem(item){
+	async _buildItem(item){
 		var el = item.element,
 		contents;
 		
@@ -838,10 +844,11 @@ export default class Edit{
 				el = document.createElement("div");
 				el.tabIndex = 0;
 				
+				/*rtms: changed to pass whole item object instead of item.original*/
 				contents = this.params.itemFormatter ? this.params.itemFormatter(item.label, item.value, item, el) : item.label;
 				
 				if(contents instanceof HTMLElement){
-					el.appendChild(contents);
+					await el.appendChild(contents);
 				}else{
 					el.innerHTML = contents;
 				}
@@ -878,7 +885,7 @@ export default class Edit{
 			
 			this._styleItem(item);
 			
-			this.listEl.appendChild(el);
+			await this.listEl.appendChild(el);
 			
 			if(item.group){
 				item.options.forEach((option) => {
@@ -888,6 +895,7 @@ export default class Edit{
 				this.displayItems.push(item);
 			}
 		}
+		return Promise.resolve();
 	}
 	
 	_showList(){
