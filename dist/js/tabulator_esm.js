@@ -8462,13 +8462,11 @@ class ExportColumn{
 	}
 }
 
-var columnLookups = {
-	range:function(){
-		return this.modules.selectRange.selectedColumns();
-	},
+var columnLookups$1 = {
+
 };
 
-var rowLookups = {
+var rowLookups$1 = {
 	visible:function(){
 		return this.rowManager.getVisibleRows(false, true);
 	},
@@ -8477,9 +8475,6 @@ var rowLookups = {
 	},
 	selected:function(){
 		return this.modules.selectRow.selectedRows;
-	},
-	range:function(){
-		return this.modules.selectRange.selectedRows();
 	},
 	active:function(){
 		if(this.options.pagination){
@@ -8494,8 +8489,8 @@ class Export extends Module{
 
 	static moduleName = "export";
 
-	static columnLookups = columnLookups;
-	static rowLookups = rowLookups;
+	static columnLookups = columnLookups$1;
+	static rowLookups = rowLookups$1;
 	
 	constructor(table){
 		super(table);
@@ -19847,6 +19842,18 @@ var pasteParsers = {
 	}
 };
 
+var columnLookups = {
+	range:function(){
+		return this.modules.selectRange.selectedColumns();
+	},
+};
+
+var rowLookups = {
+	range:function(){
+		return this.modules.selectRange.selectedRows();
+	},
+};
+
 var extensions = {
 	keybindings:{
 		bindings:bindings,
@@ -19856,6 +19863,10 @@ var extensions = {
 		pasteActions:pasteActions,
 		pasteParsers:pasteParsers
 	},
+	export:{
+		columnLookups:columnLookups,
+		rowLookups:rowLookups,
+	}
 };
 
 class SelectRange extends Module {
