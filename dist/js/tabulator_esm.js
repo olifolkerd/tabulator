@@ -8462,9 +8462,40 @@ class ExportColumn{
 	}
 }
 
+var columnLookups = {
+	range:function(){
+		return this.modules.selectRange.selectedColumns();
+	},
+};
+
+var rowLookups = {
+	visible:function(){
+		return this.rowManager.getVisibleRows(false, true);
+	},
+	all:function(){
+		return this.rowManager.rows;
+	},
+	selected:function(){
+		return this.modules.selectRow.selectedRows;
+	},
+	range:function(){
+		return this.modules.selectRange.selectedRows();
+	},
+	active:function(){
+		if(this.options.pagination){
+			return this.rowManager.getDisplayRows(this.rowManager.displayRows.length - 2);
+		}else {
+			return this.rowManager.getDisplayRows();
+		}
+	},
+};
+
 class Export extends Module{
 
 	static moduleName = "export";
+
+	static columnLookups = columnLookups;
+	static rowLookups = rowLookups;
 	
 	constructor(table){
 		super(table);
@@ -8493,20 +8524,25 @@ class Export extends Module{
 	///////////////////////////////////
 	
 	generateExportList(config, style, range, colVisProp){
-		var headers, body;
+		var headers, body, columns, colLookup;
 
 		this.cloneTableStyle = style;
 		this.config = config || {};
 		this.colVisProp = colVisProp;
-		
-		if (range === 'range') {
-			var columns = this.table.modules.selectRange.selectedColumns();
-			headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders(columns)) : [];
-			body = this.bodyToExportRows(this.rowLookup(range), this.table.modules.selectRange.selectedColumns(true));
-		} else {
-			headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders()) : [];
-			body = this.bodyToExportRows(this.rowLookup(range));
+
+		colLookup = Export.columnLookups[range];
+
+		if(colLookup){
+			columns = colLookup.call(this.table);
 		}
+
+		headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders(columns)) : [];
+
+		if(columns){
+			columns = columns.map(col => col.getComponent());
+		}
+		
+		body = this.bodyToExportRows(this.rowLookup(range), columns);
 
 		return headers.concat(body);
 	}
@@ -8518,7 +8554,8 @@ class Export extends Module{
 	}
 	
 	rowLookup(range){
-		var rows = [];
+		var rows = [], 
+		rowLookup;
 		
 		if(typeof range == "function"){
 			range.call(this.table).forEach((row) =>{
@@ -8529,32 +8566,9 @@ class Export extends Module{
 				}
 			});
 		}else {
-			switch(range){
-				case true:
-				case "visible":
-					rows = this.table.rowManager.getVisibleRows(false, true);
-					break;
-				
-				case "all":
-					rows = this.table.rowManager.rows;
-					break;
-				
-				case "selected":
-					rows = this.table.modules.selectRow.selectedRows;
-					break;
+			rowLookup = Export.rowLookups[range] || Export.rowLookups["active"];
 
-				case "range":
-					rows = this.table.modules.selectRange.selectedRows();
-					break;
-
-				case "active":
-				default:
-					if(this.table.options.pagination){
-						rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
-					}else {
-						rows = this.table.rowManager.getDisplayRows();
-					}
-			}
+			rows = rowLookup.call(this.table);
 		}
 		
 		return Object.assign([], rows);
@@ -27217,7 +27231,7 @@ class ModuleBinder extends TableRegistry {
 		
 		if(mod.moduleExtensions){
 			for (let modKey in extensions) {
-				var ext = extensions[modKey];
+				let ext = extensions[modKey];
 				
 				if(ModuleBinder.moduleBindings[modKey]){
 					for (let propKey in ext) {
@@ -27229,7 +27243,11 @@ class ModuleBinder extends TableRegistry {
 					}
 					
 					for (let propKey in ext) {
-						ModuleBinder.moduleExtensions[modKey][propKey] = ext[propKey];
+						if(!ModuleBinder.moduleExtensions[modKey][propKey]){
+							ModuleBinder.moduleExtensions[modKey][propKey] = {};
+						}
+
+						Object.assign(ModuleBinder.moduleExtensions[modKey][propKey], ext[propKey]);
 					}
 				}
 			}
@@ -27247,8 +27265,6 @@ class ModuleBinder extends TableRegistry {
 			}
 		}
 	}
-	
-	
 	
 	//ensure that module are bound to instantiated function
 	_bindModules(){
