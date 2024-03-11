@@ -84,7 +84,6 @@ export default class ModuleBinder extends TableRegistry {
 				
 				if(ModuleBinder.moduleBindings[modKey]){
 					for (let propKey in ext) {
-						console.log("ext", modKey, propKey, ext[propKey]);
 						ModuleBinder._extendModule(modKey, propKey, ext[propKey]);
 					}
 				}else{
@@ -107,7 +106,6 @@ export default class ModuleBinder extends TableRegistry {
 		
 		if(extensions){
 			for (let propKey in extensions) {
-				console.log("ret", mod.moduleName, propKey, extensions[propKey]);
 				ModuleBinder._extendModule(mod.moduleName, propKey, extensions[propKey]);
 			}
 		}
