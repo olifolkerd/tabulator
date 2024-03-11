@@ -3319,20 +3319,13 @@ class Row extends CoreFeature{
 	
 	//get heights when doing bulk row style calcs in virtual DOM
 	calcHeight(force){
-		var maxHeight = 0,
-		minHeight;
-		
+		var maxHeight = 0, minHeight  = 0;
+
 		if(this.table.options.rowHeight){
 			this.height = this.table.options.rowHeight;
 		}else {
-			minHeight = this.table.options.resizableRows ? this.element.clientHeight : 0;
-			
-			this.cells.forEach(function(cell){
-				var height = cell.getHeight();
-				if(height > maxHeight){
-					maxHeight = height;
-				}
-			});
+			minHeight = this.calcMinHeight();
+			maxHeight = this.calcMaxHeight();
 			
 			if(force){
 				this.height = Math.max(maxHeight, minHeight);
@@ -3343,6 +3336,21 @@ class Row extends CoreFeature{
 		
 		this.heightStyled = this.height ? this.height + "px" : "";
 		this.outerHeight = this.element.offsetHeight;
+	}
+
+	calcMinHeight(){
+		return this.table.options.resizableRows ? this.element.clientHeight : 0;
+	}
+
+	calcMaxHeight(){
+		var maxHeight = 0;
+		this.cells.forEach(function(cell){
+			var height = cell.getHeight();
+			if(height > maxHeight){
+				maxHeight = height;
+			}
+		});
+		return maxHeight;
 	}
 	
 	//set of cells
@@ -17742,6 +17750,7 @@ class ResizeColumns extends Module{
 		this.initialized = false;
 		this.registerColumnOption("resizable", true);
 		this.registerTableOption("resizableColumnFit", false);
+		this.registerTableOption("resizableColumnGuide", false);
 	}
 	
 	initialize(){
@@ -17934,60 +17943,97 @@ class ResizeColumns extends Module{
 		}
 	}
 	
+	resize(e, column){
+		var x = typeof e.clientX === "undefined" ? e.touches[0].clientX : e.clientX,
+		startDiff = x - this.startX,
+		moveDiff = x - this.latestX,
+		blockedBefore, blockedAfter;
+
+		this.latestX = x;
+
+		if(this.table.rtl){
+			startDiff = -startDiff;
+			moveDiff = -moveDiff;
+		}
+
+		blockedBefore = column.width == column.minWidth || column.width == column.maxWidth;
+
+		column.setWidth(this.startWidth + startDiff);
+
+		blockedAfter = column.width == column.minWidth || column.width == column.maxWidth;
+
+		if(moveDiff < 0){
+			this.nextColumn = this.initialNextColumn;
+		}
+
+		if(this.table.options.resizableColumnFit && this.nextColumn && !(blockedBefore && blockedAfter)){
+			let colWidth = this.nextColumn.getWidth();
+
+		if(moveDiff > 0){
+				if(colWidth <= this.nextColumn.minWidth){
+					this.nextColumn = this.nextColumn.nextColumn();
+				}
+			}
+
+			if(this.nextColumn){
+				this.nextColumn.setWidth(this.nextColumn.getWidth() - moveDiff);
+			}
+		}
+
+		this.table.columnManager.rerenderColumns(true);
+
+		if(!this.table.browserSlow && column.modules.resize && column.modules.resize.variableHeight){
+			column.checkCellHeights();
+		}
+	}
+
+	calcGuidePosition(e, column, handle) {
+		var mouseX = typeof e.clientX === "undefined" ? e.touches[0].clientX : e.clientX,
+		handleX = handle.getBoundingClientRect().x - this.table.element.getBoundingClientRect().x,
+		tableX = this.table.element.getBoundingClientRect().x,
+		columnX = column.element.getBoundingClientRect().left - tableX,
+		mouseDiff = mouseX - this.startX,
+		pos = Math.max(handleX + mouseDiff, columnX + column.minWidth);
+
+		if(column.maxWidth){
+			pos = Math.min(pos, columnX + column.maxWidth);
+		}
+
+		return pos;
+	}
+
 	_checkResizability(column){
 		return column.definition.resizable;
 	}
 	
 	_mouseDown(e, column, handle){
-		var self = this;
-		
+		var self = this,
+		guideEl;
+
+		if(self.table.options.resizableColumnGuide){
+			guideEl = document.createElement("span");
+			guideEl.classList.add('tabulator-col-resize-guide');
+			self.table.element.appendChild(guideEl);
+			setTimeout(() => {
+				guideEl.style.left = self.calcGuidePosition(e, column, handle) + "px";
+			});
+		}
+
 		self.table.element.classList.add("tabulator-block-select");
-		
+
 		function mouseMove(e){
-			var x = typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX,
-			startDiff = x - self.startX,
-			moveDiff = x - self.latestX,
-			blockedBefore, blockedAfter;
-			
-			self.latestX = x;
-			
-			if(self.table.rtl){
-				startDiff = -startDiff;
-				moveDiff = -moveDiff;
-			}
-			
-			blockedBefore = column.width == column.minWidth || column.width == column.maxWidth;
-			
-			column.setWidth(self.startWidth + startDiff);
-			
-			blockedAfter = column.width == column.minWidth || column.width == column.maxWidth;
-			
-			if(moveDiff < 0){
-				self.nextColumn = self.initialNextColumn;
-			}
-			
-			if(self.table.options.resizableColumnFit && self.nextColumn && !(blockedBefore && blockedAfter)){
-				let colWidth = self.nextColumn.getWidth();
-				
-				if(moveDiff > 0){
-					if(colWidth <= self.nextColumn.minWidth){
-						self.nextColumn = self.nextColumn.nextColumn();
-					}
-				}
-				
-				if(self.nextColumn){
-					self.nextColumn.setWidth(self.nextColumn.getWidth() - moveDiff);
-				}
-			}
-			
-			self.table.columnManager.rerenderColumns(true);
-			
-			if(!self.table.browserSlow && column.modules.resize && column.modules.resize.variableHeight){
-				column.checkCellHeights();
+			if(self.table.options.resizableColumnGuide){
+				guideEl.style.left = self.calcGuidePosition(e, column, handle) + "px";
+			}else {
+				self.resize(e, column);
 			}
 		}
 		
 		function mouseUp(e){
+			if(self.table.options.resizableColumnGuide){
+				self.resize(e, column);
+				guideEl.remove();
+			}
 			
 			//block editor from taking action while resizing is taking place
 			if(self.startColumn.modules.edit){
@@ -18021,7 +18067,7 @@ class ResizeColumns extends Module{
 			self.startColumn.modules.edit.blocked = true;
 		}
 		
-		self.startX = typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX;
+		self.startX = typeof e.clientX === "undefined" ? e.touches[0].clientX : e.clientX;
 		self.latestX = self.startX;
 		self.startWidth = column.getWidth();
 		
@@ -18046,6 +18092,7 @@ class ResizeRows extends Module{
 		this.prevHandle = null;
 
 		this.registerTableOption("resizableRows", false); //resizable rows
+		this.registerTableOption("resizableRowGuide", false);
 	}
 
 	initialize(){
@@ -18096,16 +18143,50 @@ class ResizeRows extends Module{
 		rowEl.appendChild(prevHandle);
 	}
 
+	resize(e, row) {
+		row.setHeight(self.startHeight + ((typeof e.clientY === "undefined" ? e.touches[0].clientY : e.clientY) - self.startY));
+	}
+
+	calcGuidePosition(e, row, handle) {
+		var mouseY = typeof e.clientY === "undefined" ? e.touches[0].clientY : e.clientY,
+		handleY = handle.getBoundingClientRect().y - this.table.element.getBoundingClientRect().y,
+		tableY = this.table.element.getBoundingClientRect().y,
+		rowY = row.element.getBoundingClientRect().top - tableY,
+		mouseDiff = mouseY - this.startY,
+		minHeight = row.calcMinHeight(),
+		maxHeight = row.calcMaxHeight();
+
+		return Math.min(Math.max(handleY + mouseDiff, rowY + minHeight), rowY + maxHeight);
+	}
+
 	_mouseDown(e, row, handle){
-		var self = this;
+		var self = this,
+		guideEl;
+
+		if(self.table.options.resizableRowGuide){
+			guideEl = document.createElement("span");
+			guideEl.classList.add('tabulator-row-resize-guide');
+			self.table.element.appendChild(guideEl);
+			setTimeout(() => {
+				guideEl.style.top = self.calcGuidePosition(e, row, handle) + "px";
+			});
+		}
 
 		self.table.element.classList.add("tabulator-block-select");
 
 		function mouseMove(e){
-			row.setHeight(self.startHeight + ((typeof e.screenY === "undefined" ? e.touches[0].screenY : e.screenY) - self.startY));
+			if(self.table.options.resizableRowGuide){
+				guideEl.style.top = self.calcGuidePosition(e, row, handle) + "px";
+			}else {
+				self.resize(e, row);
+			}
 		}
 
 		function mouseUp(e){
+			if(self.table.options.resizableRowGuide){
+				self.resize(e, row);
+				guideEl.remove();
+			}
 
 			// //block editor from taking action while resizing is taking place
 			// if(self.startColumn.modules.edit){
@@ -18130,7 +18211,7 @@ class ResizeRows extends Module{
 		// 	self.startColumn.modules.edit.blocked = true;
 		// }
 
-		self.startY = typeof e.screenY === "undefined" ? e.touches[0].screenY : e.screenY;
+		self.startY = typeof e.clientY === "undefined" ? e.touches[0].clientY : e.clientY;
 		self.startHeight = row.getHeight();
 
 		document.body.addEventListener("mousemove", mouseMove);
@@ -20239,7 +20320,7 @@ class Range extends CoreFeature{
 	}
 	
 	_getTableRows() {
-		return this.table.rowManager.getDisplayRows();
+		return this.table.rowManager.getDisplayRows().filter(row=> row.type === "row");
 	}
 	
 	///////////////////////////////////
@@ -21258,7 +21339,7 @@ class SelectRange extends Module {
 	}
 	
 	getTableRows() {
-		return this.table.rowManager.getDisplayRows();
+		return this.table.rowManager.getDisplayRows().filter(row=> row.type === "row");
 	}
 	
 	getTableColumns() {
@@ -21282,7 +21363,7 @@ class SelectRange extends Module {
 	}
 	
 	resetRanges() {
-		var range, cell;
+		var range, cell, visibleCells;
 		
 		this.ranges.forEach((range) => range.destroy());
 		this.ranges = [];
@@ -21290,8 +21371,9 @@ class SelectRange extends Module {
 		range = this.addRange();
 		
 		if(this.table.rowManager.activeRows.length){
-			cell = this.table.rowManager.activeRows[0].cells[this.rowHeader ? 1 : 0];
-			
+			visibleCells = this.table.rowManager.activeRows[0].cells.filter((cell) => cell.column.visible);
+			cell = visibleCells[this.rowHeader ? 1 : 0];
+
 			if(cell){
 				range.setBounds(cell);
 				this.initializeFocus(cell);

@@ -138,10 +138,12 @@ export default class Row extends CoreFeature{
 	
 	//get heights when doing bulk row style calcs in virtual DOM
 	calcHeight(force){
+		var maxHeight = 0, minHeight  = 0;
+
 		if(this.table.options.rowHeight){
 			this.height = this.table.options.rowHeight;
 		}else{
-			var minHeight = this.calcMinHeight(),
+			minHeight = this.calcMinHeight();
 			maxHeight = this.calcMaxHeight();
 			
 			if(force){
