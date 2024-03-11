@@ -206,7 +206,7 @@ class Helpers{
 	}
 }
 
-class Popup extends CoreFeature{
+let Popup$1 = class Popup extends CoreFeature{
 	constructor(table, element, parent){
 		super(table);
 		
@@ -507,7 +507,7 @@ class Popup extends CoreFeature{
 		
 		return this.childPopup;
 	}
-}
+};
 
 class Module extends CoreFeature{
 	
@@ -630,7 +630,7 @@ class Module extends CoreFeature{
 	///////////////////////////////////
 	
 	popup(menuEl, menuContainer){
-		return new Popup(this.table, menuEl, menuContainer);
+		return new Popup$1(this.table, menuEl, menuContainer);
 	}
 	
 	///////////////////////////////////
@@ -764,18 +764,18 @@ var defaultConfig = {
 	method: "GET",
 };
 
-function generateParamsList(data, prefix){
+function generateParamsList$1(data, prefix){
 	var output = [];
 
 	prefix = prefix || "";
 
 	if(Array.isArray(data)){
 		data.forEach((item, i) => {
-			output = output.concat(generateParamsList(item, prefix ? prefix + "[" + i + "]" : i));
+			output = output.concat(generateParamsList$1(item, prefix ? prefix + "[" + i + "]" : i));
 		});
 	}else if (typeof data === "object"){
 		for (var key in data){
-			output = output.concat(generateParamsList(data[key], prefix ? prefix + "[" + key + "]" : key));
+			output = output.concat(generateParamsList$1(data[key], prefix ? prefix + "[" + key + "]" : key));
 		}
 	}else {
 		output.push({key:prefix, value:data});
@@ -785,7 +785,7 @@ function generateParamsList(data, prefix){
 }
 
 function serializeParams(params){
-	var output = generateParamsList(params),
+	var output = generateParamsList$1(params),
 	encoded = [];
 
 	output.forEach(function(item){
@@ -897,18 +897,18 @@ function defaultLoaderPromise(url, config, params){
 	});
 }
 
-function generateParamsList$1(data, prefix){
+function generateParamsList(data, prefix){
 	var output = [];
 
 	prefix = prefix || "";
 
 	if(Array.isArray(data)){
 		data.forEach((item, i) => {
-			output = output.concat(generateParamsList$1(item, prefix ? prefix + "[" + i + "]" : i));
+			output = output.concat(generateParamsList(item, prefix ? prefix + "[" + i + "]" : i));
 		});
 	}else if (typeof data === "object"){
 		for (var key in data){
-			output = output.concat(generateParamsList$1(data[key], prefix ? prefix + "[" + key + "]" : key));
+			output = output.concat(generateParamsList(data[key], prefix ? prefix + "[" + key + "]" : key));
 		}
 	}else {
 		output.push({key:prefix, value:data});
@@ -931,7 +931,7 @@ var defaultContentTypeFormatters = {
 		},
 		body:function(url, config, params){
 
-			var output = generateParamsList$1(params),
+			var output = generateParamsList(params),
 			form = new FormData();
 
 			output.forEach(function(item){
@@ -2208,11 +2208,11 @@ class Column extends CoreFeature{
 		
 		switch(this.table.options.columnHeaderVertAlign){
 			case "middle":
-			el.style.justifyContent = "center";
-			break;
+				el.style.justifyContent = "center";
+				break;
 			case "bottom":
-			el.style.justifyContent = "flex-end";
-			break;
+				el.style.justifyContent = "flex-end";
+				break;
 		}
 		
 		return el;
@@ -2426,18 +2426,18 @@ class Column extends CoreFeature{
 		
 		switch(typeof contents){
 			case "object":
-			if(contents instanceof Node){
-				el.appendChild(contents);
-			}else {
-				el.innerHTML = "";
-				console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
-			}
-			break;
+				if(contents instanceof Node){
+					el.appendChild(contents);
+				}else {
+					el.innerHTML = "";
+					console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
+				}
+				break;
 			case "undefined":
-			el.innerHTML = "";
-			break;
+				el.innerHTML = "";
+				break;
 			default:
-			el.innerHTML = contents;
+				el.innerHTML = contents;
 		}
 	}
 	
@@ -3044,18 +3044,18 @@ class Column extends CoreFeature{
 				definition = Object.assign(definition, updates);
 				
 				return this.table.columnManager.addColumn(definition, false, this)
-				.then((column) => {
+					.then((column) => {
 					
-					if(definition.field == this.field){
-						this.field = false; //clear field name to prevent deletion of duplicate column from arrays
-					}
+						if(definition.field == this.field){
+							this.field = false; //clear field name to prevent deletion of duplicate column from arrays
+						}
 					
-					return this.delete()
-					.then(() => {
-						return column.getComponent();
+						return this.delete()
+							.then(() => {
+								return column.getComponent();
+							});
+					
 					});
-					
-				});
 			}else {
 				console.error("Column Update Error - The updateDefinition function is only available on ungrouped columns");
 				return Promise.reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
@@ -4930,7 +4930,7 @@ class DataTree extends Module{
 	}
 }
 
-function csv(list, options = {}, setFileContents){
+function csv$1(list, options = {}, setFileContents){
 	var delimiter = options.delimiter ? options.delimiter : ",",
 	fileContents = [],
 	headers = [];
@@ -4992,7 +4992,7 @@ function csv(list, options = {}, setFileContents){
 	setFileContents(fileContents, "text/csv");
 }
 
-function json(list, options, setFileContents){
+function json$1(list, options, setFileContents){
 	var fileContents = [];
 
 	list.forEach((row) => {
@@ -5240,7 +5240,7 @@ function xlsx(list, options, setFileContents){
 	setFileContents(s2ab(output), "application/octet-stream");
 }
 
-function html(list, options, setFileContents){
+function html$1(list, options, setFileContents){
 	if(this.modExists("export", true)){
 		setFileContents(this.modules.export.generateHTMLTable(list), "text/html");
 	}
@@ -5280,12 +5280,12 @@ function jsonLines (list, options, setFileContents) {
 }
 
 var defaultDownloaders = {
-	csv:csv,
-	json:json,
+	csv:csv$1,
+	json:json$1,
 	jsonLines:jsonLines,
 	pdf:pdf,
 	xlsx:xlsx,
-	html:html,
+	html:html$1,
 };
 
 class Download extends Module{
@@ -5584,7 +5584,7 @@ function input(cell, onRendered, success, cancel, editorParams){
 }
 
 //resizable text area element
-function textarea(cell, onRendered, success, cancel, editorParams){
+function textarea$1(cell, onRendered, success, cancel, editorParams){
 	var cellValue = cell.getValue(),
 	vertNav = editorParams.verticalNavigation || "hybrid",
 	value = String(cellValue !== null && typeof cellValue !== "undefined"  ? cellValue : ""),
@@ -5706,7 +5706,7 @@ function textarea(cell, onRendered, success, cancel, editorParams){
 }
 
 //input element with type of number
-function number(cell, onRendered, success, cancel, editorParams){
+function number$1(cell, onRendered, success, cancel, editorParams){
 	var cellValue = cell.getValue(),
 	vertNav = editorParams.verticalNavigation || "editor",
 	input = document.createElement("input");
@@ -5897,7 +5897,7 @@ function range(cell, onRendered, success, cancel, editorParams){
 }
 
 //input element
-function date(cell, onRendered, success, cancel, editorParams){
+function date$1(cell, onRendered, success, cancel, editorParams){
 	var inputFormat = editorParams.format,
 	vertNav = editorParams.verticalNavigation || "editor",
 	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null;
@@ -6036,7 +6036,7 @@ function date(cell, onRendered, success, cancel, editorParams){
 }
 
 //input element
-function time(cell, onRendered, success, cancel, editorParams){
+function time$1(cell, onRendered, success, cancel, editorParams){
 	var inputFormat = editorParams.format,
 	vertNav = editorParams.verticalNavigation || "editor",
 	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
@@ -6163,7 +6163,7 @@ function time(cell, onRendered, success, cancel, editorParams){
 }
 
 //input element
-function datetime(cell, onRendered, success, cancel, editorParams){
+function datetime$2(cell, onRendered, success, cancel, editorParams){
 	var inputFormat = editorParams.format,
 	vertNav = editorParams.verticalNavigation || "editor",
 	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
@@ -6288,7 +6288,7 @@ function datetime(cell, onRendered, success, cancel, editorParams){
 	return input;
 }
 
-class Edit{
+let Edit$1 = class Edit{
 	constructor(editor, cell, onRendered, success, cancel, editorParams){
 		this.edit = editor;
 		this.table = editor.table;
@@ -7332,19 +7332,19 @@ class Edit{
 		}
 	}
 	
-}
+};
 
 function select(cell, onRendered, success, cancel, editorParams){
 
 	this.deprecationMsg("The select editor has been deprecated, please use the new list editor");
 
-	var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
+	var list = new Edit$1(this, cell, onRendered, success, cancel, editorParams);
 
 	return list.input;
 }
 
 function list(cell, onRendered, success, cancel, editorParams){
-	var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
+	var list = new Edit$1(this, cell, onRendered, success, cancel, editorParams);
 
 	return list.input;
 }
@@ -7355,13 +7355,13 @@ function autocomplete(cell, onRendered, success, cancel, editorParams){
 
 	editorParams.autocomplete = true;
 
-	var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
+	var list = new Edit$1(this, cell, onRendered, success, cancel, editorParams);
 
 	return list.input;
 }
 
 //star rating
-function star(cell, onRendered, success, cancel, editorParams){
+function star$1(cell, onRendered, success, cancel, editorParams){
 	var self = this,
 	element = cell.getElement(),
 	value = cell.getValue(),
@@ -7508,7 +7508,7 @@ function star(cell, onRendered, success, cancel, editorParams){
 }
 
 //draggable progress bar
-function progress(cell, onRendered, success, cancel, editorParams){
+function progress$1(cell, onRendered, success, cancel, editorParams){
 	var element = cell.getElement(),
 	max = typeof editorParams.max === "undefined" ? ((element.getElementsByTagName("div")[0] && element.getElementsByTagName("div")[0].getAttribute("max")) || 100) : editorParams.max,
 	min = typeof editorParams.min === "undefined" ? ((element.getElementsByTagName("div")[0] && element.getElementsByTagName("div")[0].getAttribute("min")) || 0) : editorParams.min,
@@ -7636,7 +7636,7 @@ function progress(cell, onRendered, success, cancel, editorParams){
 }
 
 //checkbox
-function tickCross(cell, onRendered, success, cancel, editorParams){
+function tickCross$1(cell, onRendered, success, cancel, editorParams){
 	var value = cell.getValue(),
 	input = document.createElement("input"),
 	tristate = editorParams.tristate,
@@ -7733,21 +7733,21 @@ function tickCross(cell, onRendered, success, cancel, editorParams){
 
 var defaultEditors = {
 	input:input,
-	textarea:textarea,
-	number:number,
+	textarea:textarea$1,
+	number:number$1,
 	range:range,
-	date:date,
-	time:time,
-	datetime:datetime,
+	date:date$1,
+	time:time$1,
+	datetime:datetime$2,
 	select:select,
 	list:list,
 	autocomplete:autocomplete,
-	star:star,
-	progress:progress,
-	tickCross:tickCross,
+	star:star$1,
+	progress:progress$1,
+	tickCross:tickCross$1,
 };
 
-class Edit$1 extends Module{
+class Edit extends Module{
 
 	static moduleName = "edit";
 
@@ -7763,7 +7763,7 @@ class Edit$1 extends Module{
 		this.invalidEdit = false;
 		this.editedCells = [];
 		
-		this.editors = Edit$1.editors;
+		this.editors = Edit.editors;
 		
 		this.registerColumnOption("editable");
 		this.registerColumnOption("editor");
@@ -10190,11 +10190,11 @@ function plaintext(cell, formatterParams, onRendered){
 	return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 }
 
-function html$1(cell, formatterParams, onRendered){
+function html(cell, formatterParams, onRendered){
 	return cell.getValue();
 }
 
-function textarea$1(cell, formatterParams, onRendered){
+function textarea(cell, formatterParams, onRendered){
 	cell.getElement().style.whiteSpace = "pre-wrap";
 	return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 }
@@ -10365,7 +10365,7 @@ function image(cell, formatterParams, onRendered){
 	return el;
 }
 
-function tickCross$1(cell, formatterParams, onRendered){
+function tickCross(cell, formatterParams, onRendered){
 	var value = cell.getValue(),
 	element = cell.getElement(),
 	empty = formatterParams.allowEmpty,
@@ -10479,7 +10479,7 @@ function lookup (cell, formatterParams, onRendered) {
 	return formatterParams[value];
 }
 
-function star$1(cell, formatterParams, onRendered){
+function star(cell, formatterParams, onRendered){
 	var value = cell.getValue(),
 	element = cell.getElement(),
 	maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5,
@@ -10566,7 +10566,7 @@ function traffic(cell, formatterParams, onRendered){
 	return el;
 }
 
-function progress$1(cell, formatterParams = {}, onRendered){ //progress bar
+function progress(cell, formatterParams = {}, onRendered){ //progress bar
 	var value = this.sanitizeHTML(cell.getValue()) || 0,
 	element = cell.getElement(),
 	max = formatterParams.max ? formatterParams.max : 100,
@@ -10733,18 +10733,18 @@ function handle(cell, formatterParams, onRendered){
 
 var defaultFormatters = {
 	plaintext:plaintext,
-	html:html$1,
-	textarea:textarea$1,
+	html:html,
+	textarea:textarea,
 	money:money,
 	link:link,
 	image:image,
-	tickCross:tickCross$1,
+	tickCross:tickCross,
 	datetime:datetime$1,
 	datetimediff:datetimediff,
 	lookup:lookup,
-	star:star$1,
+	star:star,
 	traffic:traffic,
-	progress:progress$1,
+	progress:progress,
 	color:color,
 	buttonTick:buttonTick,
 	buttonCross:buttonCross,
@@ -13160,7 +13160,7 @@ class HtmlTableImport extends Module{
 	}
 }
 
-function csv$1(input){
+function csv(input){
 	var data = [],
 	row = 0, 
 	col = 0,
@@ -13222,7 +13222,7 @@ function csv$1(input){
 	return data;
 }
 
-function json$1(input){
+function json(input){
 	try {
 		return JSON.parse(input);
 	} catch(e) {
@@ -13231,14 +13231,14 @@ function json$1(input){
 	}
 }
 
-function array (input){
+function array$1 (input){
 	return input;
 }
 
 var defaultImporters = {
-	csv:csv$1,
-	json:json$1,
-	array:array,
+	csv:csv,
+	json:json,
+	array:array$1,
 };
 
 class Import extends Module{
@@ -16977,7 +16977,7 @@ class Persistence extends Module{
 	}
 }
 
-class Popup$1 extends Module{
+class Popup extends Module{
 	
 	static moduleName = "popup";
 	
@@ -18162,8 +18162,7 @@ class ResizeRows extends Module{
 		handleY = handle.getBoundingClientRect().y - this.table.element.getBoundingClientRect().y,
 		tableY = this.table.element.getBoundingClientRect().y,
 		rowY = row.element.getBoundingClientRect().top - tableY,
-		mouseDiff = mouseY - this.startY,
-		minHeight = row.calcMinHeight();
+		mouseDiff = mouseY - this.startY;
 
 		return Math.max(handleY + mouseDiff, rowY);
 	}
@@ -18435,7 +18434,7 @@ function responsiveCollapse(cell, formatterParams, onRendered){
 	return el;
 }
 
-var extensions = {
+var extensions$1 = {
 	format:{
 		formatters:{
 			responsiveCollapse:responsiveCollapse,
@@ -18446,7 +18445,7 @@ var extensions = {
 class ResponsiveLayout extends Module{
 
 	static moduleName = "responsiveLayout";
-	static moduleExtensions = extensions;
+	static moduleExtensions = extensions$1;
 
 	constructor(table){
 		super(table);
@@ -18848,7 +18847,7 @@ function rowSelection(cell, formatterParams, onRendered){
 	return checkbox;
 }
 
-var extensions$1 = {
+var extensions = {
 	format:{
 		formatters:{
 			rowSelection:rowSelection,
@@ -18859,7 +18858,7 @@ var extensions$1 = {
 class SelectRow extends Module{
 
 	static moduleName = "selectRow";
-	static moduleExtensions = extensions$1;
+	static moduleExtensions = extensions;
 	
 	constructor(table){
 		super(table);
@@ -19350,7 +19349,7 @@ class SelectRow extends Module{
 }
 
 //sort numbers
-function number$1(a, b, aRow, bRow, column, dir, params){
+function number(a, b, aRow, bRow, column, dir, params){
 	var alignEmptyValues = params.alignEmptyValues;
 	var decimal = params.decimalSeparator;
 	var thousand = params.thousandSeparator;
@@ -19426,7 +19425,7 @@ function string(a, b, aRow, bRow, column, dir, params){
 }
 
 //sort datetime
-function datetime$2(a, b, aRow, bRow, column, dir, params){
+function datetime(a, b, aRow, bRow, column, dir, params){
 	var DT = window.DateTime || luxon.DateTime;
 	var format = params.format || "dd/MM/yyyy HH:mm:ss",
 	alignEmptyValues = params.alignEmptyValues,
@@ -19471,21 +19470,21 @@ function datetime$2(a, b, aRow, bRow, column, dir, params){
 }
 
 //sort date
-function date$1(a, b, aRow, bRow, column, dir, params){
+function date(a, b, aRow, bRow, column, dir, params){
 	if(!params.format){
 		params.format = "dd/MM/yyyy";
 	}
 
-	return datetime$2.call(this, a, b, aRow, bRow, column, dir, params);
+	return datetime.call(this, a, b, aRow, bRow, column, dir, params);
 }
 
 //sort times
-function time$1(a, b, aRow, bRow, column, dir, params){
+function time(a, b, aRow, bRow, column, dir, params){
 	if(!params.format){
 		params.format = "HH:mm";
 	}
 
-	return datetime$2.call(this, a, b, aRow, bRow, column, dir, params);
+	return datetime.call(this, a, b, aRow, bRow, column, dir, params);
 }
 
 //sort booleans
@@ -19497,7 +19496,7 @@ function boolean(a, b, aRow, bRow, column, dir, params){
 }
 
 //sort if element contains any data
-function array$1(a, b, aRow, bRow, column, dir, params){
+function array(a, b, aRow, bRow, column, dir, params){
 	var type = params.type || "length",
 	alignEmptyValues = params.alignEmptyValues,
 	emptyAlign = 0;
@@ -19605,13 +19604,13 @@ function alphanum(as, bs, aRow, bRow, column, dir, params){
 }
 
 var defaultSorters = {
-	number:number$1,
+	number:number,
 	string:string,
-	date:date$1,
-	time:time$1,
-	datetime:datetime$2,
+	date:date,
+	time:time,
+	datetime:datetime,
 	boolean:boolean,
-	array:array$1,
+	array:array,
 	exists:exists,
 	alphanum:alphanum
 };
@@ -21993,7 +21992,7 @@ var allModules = /*#__PURE__*/Object.freeze({
 	ColumnCalcsModule: ColumnCalcs,
 	DataTreeModule: DataTree,
 	DownloadModule: Download,
-	EditModule: Edit$1,
+	EditModule: Edit,
 	ExportModule: Export,
 	FilterModule: Filter,
 	FormatModule: Format,
@@ -22011,16 +22010,16 @@ var allModules = /*#__PURE__*/Object.freeze({
 	MutatorModule: Mutator,
 	PageModule: Page,
 	PersistenceModule: Persistence,
-	PopupModule: Popup$1,
+	PopupModule: Popup,
 	PrintModule: Print,
 	ReactiveDataModule: ReactiveData,
 	ResizeColumnsModule: ResizeColumns,
 	ResizeRowsModule: ResizeRows,
 	ResizeTableModule: ResizeTable,
 	ResponsiveLayoutModule: ResponsiveLayout,
+	SelectRangeModule: SelectRange,
 	SelectRowModule: SelectRow,
 	SortModule: Sort,
-	SelectRangeModule: SelectRange,
 	TooltipModule: Tooltip,
 	ValidateModule: Validate
 });
@@ -27016,9 +27015,9 @@ class Comms extends Module{
 
 var coreModules = /*#__PURE__*/Object.freeze({
 	__proto__: null,
+	CommsModule: Comms,
 	LayoutModule: Layout,
-	LocalizeModule: Localize,
-	CommsModule: Comms
+	LocalizeModule: Localize
 });
 
 class TableRegistry {
@@ -28182,23 +28181,27 @@ class Tabulator extends ModuleBinder{
 	}
 }
 
+var Tabulator$1 = Tabulator;
+
 //tabulator with all modules installed
 
-class TabulatorFull extends Tabulator {
+class TabulatorFull extends Tabulator$1 {
 	static extendModule(){
-		Tabulator.initializeModuleBinder(allModules);
-		Tabulator._extendModule(...arguments);
+		Tabulator$1.initializeModuleBinder(allModules);
+		Tabulator$1._extendModule(...arguments);
 	}
 
 	static registerModule(){
-		Tabulator.initializeModuleBinder(allModules);
-		Tabulator._registerModule(...arguments);
+		Tabulator$1.initializeModuleBinder(allModules);
+		Tabulator$1._registerModule(...arguments);
 	}
 
 	constructor(element, options, modules){
 		super(element, options, allModules);
 	}
 }
+
+var TabulatorFull$1 = TabulatorFull;
 
 class PseudoRow {
 
@@ -28248,5 +28251,5 @@ class PseudoRow {
 	rendered(){}
 }
 
-export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit$1 as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup$1 as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent, SelectRange as SelectRangeModule, SelectRow as SelectRowModule, Sort as SortModule, Tabulator, TabulatorFull, Tooltip as TooltipModule, Validate as ValidateModule };
+export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent, SelectRange as SelectRangeModule, SelectRow as SelectRowModule, Sort as SortModule, Tabulator$1 as Tabulator, TabulatorFull$1 as TabulatorFull, Tooltip as TooltipModule, Validate as ValidateModule };
 //# sourceMappingURL=tabulator_esm.js.map

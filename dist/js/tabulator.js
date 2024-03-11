@@ -3,7 +3,7 @@
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
 	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Tabulator = factory());
-}(this, (function () { 'use strict';
+})(this, (function () { 'use strict';
 
 	var defaultOptions = {
 
@@ -756,12 +756,12 @@
 	}
 
 	class Column extends CoreFeature{
-
+		
 		static defaultOptionList = defaultColumnOptions;
-
+		
 		constructor(def, parent){
 			super(parent.table);
-
+			
 			this.definition = def; //column definition
 			this.parent = parent; //hold parent object
 			this.type = "column"; //type of element
@@ -775,22 +775,22 @@
 			this.isGroup = false;
 			this.hozAlign = ""; //horizontal text alignment
 			this.vertAlign = ""; //vert text alignment
-
+			
 			//multi dimensional filed handling
 			this.field ="";
 			this.fieldStructure = "";
 			this.getFieldValue = "";
 			this.setFieldValue = "";
-
+			
 			this.titleDownload = null;
 			this.titleFormatterRendered = false;
-
+			
 			this.mapDefinitions();
-
+			
 			this.setField(this.definition.field);
-
+			
 			this.modules = {}; //hold module variables;
-
+			
 			this.width = null; //column width
 			this.widthStyled = ""; //column width pre-styled to improve render efficiency
 			this.maxWidth = null; //column maximum width
@@ -799,36 +799,36 @@
 			this.minWidth = null; //column minimum width
 			this.minWidthStyled = ""; //column minimum pre-styled to improve render efficiency
 			this.widthFixed = false; //user has specified a width for this column
-
+			
 			this.visible = true; //default visible state
-
+			
 			this.component = null;
-
+			
 			//initialize column
 			if(this.definition.columns){
-
+				
 				this.isGroup = true;
-
+				
 				this.definition.columns.forEach((def, i) => {
 					var newCol = new Column(def, this);
 					this.attachColumn(newCol);
 				});
-
+				
 				this.checkColumnVisibility();
 			}else {
 				parent.registerColumnField(this);
 			}
-
+			
 			this._initialize();
 		}
-
+		
 		createElement (){
 			var el = document.createElement("div");
-
+			
 			el.classList.add("tabulator-col");
 			el.setAttribute("role", "columnheader");
 			el.setAttribute("aria-sort", "none");
-
+			
 			switch(this.table.options.columnHeaderVertAlign){
 				case "middle":
 					el.style.justifyContent = "center";
@@ -837,21 +837,21 @@
 					el.style.justifyContent = "flex-end";
 					break;
 			}
-
+			
 			return el;
 		}
-
+		
 		createGroupElement (){
 			var el = document.createElement("div");
-
+			
 			el.classList.add("tabulator-col-group-cols");
-
+			
 			return el;
 		}
-
+		
 		mapDefinitions(){
 			var defaults = this.table.options.columnDefaults;
-
+			
 			//map columnDefaults onto column definitions
 			if(defaults){
 				for(let key in defaults){
@@ -860,10 +860,10 @@
 					}
 				}
 			}
-
+			
 			this.definition = this.table.columnManager.optionsList.generate(Column.defaultOptionList, this.definition);
 		}
-
+		
 		checkDefinition(){
 			Object.keys(this.definition).forEach((key) => {
 				if(Column.defaultOptionList.indexOf(key) === -1){
@@ -871,24 +871,24 @@
 				}
 			});
 		}
-
+		
 		setField(field){
 			this.field = field;
 			this.fieldStructure = field ? (this.table.options.nestedFieldSeparator ? field.split(this.table.options.nestedFieldSeparator) : [field]) : [];
 			this.getFieldValue = this.fieldStructure.length > 1 ? this._getNestedData : this._getFlatData;
 			this.setFieldValue = this.fieldStructure.length > 1 ? this._setNestedData : this._setFlatData;
 		}
-
+		
 		//register column position with column manager
 		registerColumnPosition(column){
 			this.parent.registerColumnPosition(column);
 		}
-
+		
 		//register column position with column manager
 		registerColumnField(column){
 			this.parent.registerColumnField(column);
 		}
-
+		
 		//trigger position registration
 		reRegisterPosition(){
 			if(this.isGroup){
@@ -899,40 +899,40 @@
 				this.registerColumnPosition(this);
 			}
 		}
-
+		
 		//build header element
 		_initialize(){
 			var def = this.definition;
-
+			
 			while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
-
+			
 			if(def.headerVertical){
 				this.element.classList.add("tabulator-col-vertical");
-
+				
 				if(def.headerVertical === "flip"){
 					this.element.classList.add("tabulator-col-vertical-flip");
 				}
 			}
-
+			
 			this.contentElement = this._buildColumnHeaderContent();
-
+			
 			this.element.appendChild(this.contentElement);
-
+			
 			if(this.isGroup){
 				this._buildGroupHeader();
 			}else {
 				this._buildColumnHeader();
 			}
-
+			
 			this.dispatch("column-init", this);
 		}
-
+		
 		//build header element for header
 		_buildColumnHeader(){
 			var def = this.definition;
-
+			
 			this.dispatch("column-layout", this);
-
+			
 			//set column visibility
 			if(typeof def.visible != "undefined"){
 				if(def.visible){
@@ -941,7 +941,7 @@
 					this.hide(true);
 				}
 			}
-
+			
 			//assign additional css classes to column header
 			if(def.cssClass){
 				var classNames = def.cssClass.split(" ");
@@ -949,14 +949,14 @@
 					this.element.classList.add(className);
 				});
 			}
-
+			
 			if(def.field){
 				this.element.setAttribute("tabulator-field", def.field);
 			}
-
+			
 			//set min width if present
 			this.setMinWidth(parseInt(def.minWidth));
-
+			
 			if (def.maxInitialWidth) {
 				this.maxInitialWidth = parseInt(def.maxInitialWidth);
 			}
@@ -964,63 +964,63 @@
 			if(def.maxWidth){
 				this.setMaxWidth(parseInt(def.maxWidth));
 			}
-
+			
 			this.reinitializeWidth();
-
+			
 			//set horizontal text alignment
 			this.hozAlign = this.definition.hozAlign;
 			this.vertAlign = this.definition.vertAlign;
-
+			
 			this.titleElement.style.textAlign = this.definition.headerHozAlign;
 		}
-
+		
 		_buildColumnHeaderContent(){
 			var contentElement = document.createElement("div");
 			contentElement.classList.add("tabulator-col-content");
-
+			
 			this.titleHolderElement = document.createElement("div");
 			this.titleHolderElement.classList.add("tabulator-col-title-holder");
-
+			
 			contentElement.appendChild(this.titleHolderElement);
-
+			
 			this.titleElement = this._buildColumnHeaderTitle();
-
+			
 			this.titleHolderElement.appendChild(this.titleElement);
-
+			
 			return contentElement;
 		}
-
+		
 		//build title element of column
 		_buildColumnHeaderTitle(){
 			var def = this.definition;
-
+			
 			var titleHolderElement = document.createElement("div");
 			titleHolderElement.classList.add("tabulator-col-title");
 			
 			if(def.headerWordWrap){
 				titleHolderElement.classList.add("tabulator-col-title-wrap");
 			}
-
+			
 			if(def.editableTitle){
 				var titleElement = document.createElement("input");
 				titleElement.classList.add("tabulator-title-editor");
-
+				
 				titleElement.addEventListener("click", (e) => {
 					e.stopPropagation();
 					titleElement.focus();
 				});
-
+				
 				titleElement.addEventListener("mousedown", (e) => {
 					e.stopPropagation();
 				});
-
+				
 				titleElement.addEventListener("change", () => {
 					def.title = titleElement.value;
 					this.dispatchExternal("columnTitleChanged", this.getComponent());
 				});
-
+				
 				titleHolderElement.appendChild(titleElement);
-
+				
 				if(def.field){
 					this.langBind("columns|" + def.field, (text) => {
 						titleElement.value = text || (def.title || "&nbsp;");
@@ -1028,7 +1028,7 @@
 				}else {
 					titleElement.value  = def.title || "&nbsp;";
 				}
-
+				
 			}else {
 				if(def.field){
 					this.langBind("columns|" + def.field, (text) => {
@@ -1038,15 +1038,15 @@
 					this._formatColumnHeaderTitle(titleHolderElement, def.title || "&nbsp;");
 				}
 			}
-
+			
 			return titleHolderElement;
 		}
-
+		
 		_formatColumnHeaderTitle(el, title){
 			var contents = this.chain("column-format", [this, title, el], null, () => {
 				return title;
 			});
-
+			
 			switch(typeof contents){
 				case "object":
 					if(contents instanceof Node){
@@ -1063,13 +1063,13 @@
 					el.innerHTML = contents;
 			}
 		}
-
+		
 		//build header element for column group
 		_buildGroupHeader(){
 			this.element.classList.add("tabulator-col-group");
 			this.element.setAttribute("role", "columngroup");
 			this.element.setAttribute("aria-title", this.definition.title);
-
+			
 			//asign additional css classes to column header
 			if(this.definition.cssClass){
 				var classNames = this.definition.cssClass.split(" ");
@@ -1077,53 +1077,53 @@
 					this.element.classList.add(className);
 				});
 			}
-
+			
 			this.titleElement.style.textAlign = this.definition.headerHozAlign;
-
+			
 			this.element.appendChild(this.groupElement);
 		}
-
+		
 		//flat field lookup
 		_getFlatData(data){
 			return data[this.field];
 		}
-
+		
 		//nested field lookup
 		_getNestedData(data){
 			var dataObj = data,
 			structure = this.fieldStructure,
 			length = structure.length,
 			output;
-
+			
 			for(let i = 0; i < length; i++){
-
+				
 				dataObj = dataObj[structure[i]];
-
+				
 				output = dataObj;
-
+				
 				if(!dataObj){
 					break;
 				}
 			}
-
+			
 			return output;
 		}
-
+		
 		//flat field set
 		_setFlatData(data, value){
 			if(this.field){
 				data[this.field] = value;
 			}
 		}
-
+		
 		//nested field set
 		_setNestedData(data, value){
 			var dataObj = data,
 			structure = this.fieldStructure,
 			length = structure.length;
-
+			
 			for(let i = 0; i < length; i++){
-
+				
 				if(i == length -1){
 					dataObj[structure[i]] = value;
 				}else {
@@ -1134,39 +1134,39 @@
 							break;
 						}
 					}
-
+					
 					dataObj = dataObj[structure[i]];
 				}
 			}
 		}
-
+		
 		//attach column to this group
 		attachColumn(column){
 			if(this.groupElement){
 				this.columns.push(column);
 				this.groupElement.appendChild(column.getElement());
-
+				
 				column.columnRendered();
 			}else {
 				console.warn("Column Warning - Column being attached to another column instead of column group");
 			}
 		}
-
+		
 		//vertically align header in column
 		verticalAlign(alignment, height){
-
+			
 			//calculate height of column header and group holder element
 			var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : (height || this.parent.getHeadersElement().clientHeight);
 			// var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
-
+			
 			this.element.style.height = parentHeight + "px";
-
+			
 			this.dispatch("column-height", this, this.element.style.height);
-
+			
 			if(this.isGroup){
 				this.groupElement.style.minHeight = (parentHeight - this.contentElement.offsetHeight) + "px";
 			}
-
+			
 			//vertically align cell contents
 			// if(!this.isGroup && alignment !== "top"){
 			// 	if(alignment === "bottom"){
@@ -1175,46 +1175,46 @@
 			// 		this.element.style.paddingTop = ((this.element.clientHeight - this.contentElement.offsetHeight) / 2) + "px";
 			// 	}
 			// }
-
+			
 			this.columns.forEach(function(column){
 				column.verticalAlign(alignment);
 			});
 		}
-
+		
 		//clear vertical alignment
 		clearVerticalAlign(){
 			this.element.style.paddingTop = "";
 			this.element.style.height = "";
 			this.element.style.minHeight = "";
 			this.groupElement.style.minHeight = "";
-
+			
 			this.columns.forEach(function(column){
 				column.clearVerticalAlign();
 			});
-
+			
 			this.dispatch("column-height", this, "");
 		}
-
+		
 		//// Retrieve Column Information ////
 		//return column header element
 		getElement(){
 			return this.element;
 		}
-
+		
 		//return column group element
 		getGroupElement(){
 			return this.groupElement;
 		}
-
+		
 		//return field name
 		getField(){
 			return this.field;
 		}
-
+		
 		getTitleDownload() {
 			return this.titleDownload;
 		}
-
+		
 		//return the first column in a group
 		getFirstColumn(){
 			if(!this.isGroup){
@@ -1227,7 +1227,7 @@
 				}
 			}
 		}
-
+		
 		//return the last column in a group
 		getLastColumn(){
 			if(!this.isGroup){
@@ -1240,15 +1240,15 @@
 				}
 			}
 		}
-
+		
 		//return all columns in a group
 		getColumns(traverse){
 			var columns = [];
-
+			
 			if(traverse){
 				this.columns.forEach((column) => {
 					columns.push(column);
-						
+					
 					columns = columns.concat(column.getColumns(true));
 				});
 			}else {
@@ -1257,12 +1257,12 @@
 			
 			return columns;
 		}
-
+		
 		//return all columns in a group
 		getCells(){
 			return this.cells;
 		}
-
+		
 		//retrieve the top column in a group of columns
 		getTopColumn(){
 			if(this.parent.isGroup){
@@ -1271,32 +1271,32 @@
 				return this;
 			}
 		}
-
+		
 		//return column definition object
 		getDefinition(updateBranches){
 			var colDefs = [];
-
+			
 			if(this.isGroup && updateBranches){
 				this.columns.forEach(function(column){
 					colDefs.push(column.getDefinition(true));
 				});
-
+				
 				this.definition.columns = colDefs;
 			}
-
+			
 			return this.definition;
 		}
-
+		
 		//////////////////// Actions ////////////////////
 		checkColumnVisibility(){
 			var visible = false;
-
+			
 			this.columns.forEach(function(column){
 				if(column.visible){
 					visible = true;
 				}
 			});
-
+			
 			if(visible){
 				this.show();
 				this.dispatchExternal("columnVisibilityChanged", this.getComponent(), false);
@@ -1304,144 +1304,148 @@
 				this.hide();
 			}
 		}
-
+		
 		//show column
 		show(silent, responsiveToggle){
 			if(!this.visible){
 				this.visible = true;
-
+				
 				this.element.style.display = "";
-
+				
 				if(this.parent.isGroup){
 					this.parent.checkColumnVisibility();
 				}
-
+				
 				this.cells.forEach(function(cell){
 					cell.show();
 				});
-
+				
 				if(!this.isGroup && this.width === null){
 					this.reinitializeWidth();
 				}
-
+				
 				this.table.columnManager.verticalAlignHeaders();
-
+				
 				this.dispatch("column-show", this, responsiveToggle);
-
+				
 				if(!silent){
 					this.dispatchExternal("columnVisibilityChanged", this.getComponent(), true);
 				}
-
+				
 				if(this.parent.isGroup){
 					this.parent.matchChildWidths();
 				}
-
+				
 				if(!this.silent){
 					this.table.columnManager.rerenderColumns();
 				}
 			}
 		}
-
+		
 		//hide column
 		hide(silent, responsiveToggle){
 			if(this.visible){
 				this.visible = false;
-
+				
 				this.element.style.display = "none";
-
+				
 				this.table.columnManager.verticalAlignHeaders();
-
+				
 				if(this.parent.isGroup){
 					this.parent.checkColumnVisibility();
 				}
-
+				
 				this.cells.forEach(function(cell){
 					cell.hide();
 				});
-
+				
 				this.dispatch("column-hide", this, responsiveToggle);
-
+				
 				if(!silent){
 					this.dispatchExternal("columnVisibilityChanged", this.getComponent(), false);
 				}
-
+				
 				if(this.parent.isGroup){
 					this.parent.matchChildWidths();
 				}
-
+				
 				if(!this.silent){
 					this.table.columnManager.rerenderColumns();
 				}
 			}
 		}
-
+		
 		matchChildWidths(){
 			var childWidth = 0;
-
+			
 			if(this.contentElement && this.columns.length){
 				this.columns.forEach(function(column){
 					if(column.visible){
 						childWidth += column.getWidth();
 					}
 				});
-
+				
 				this.contentElement.style.maxWidth = (childWidth - 1) + "px";
-
+				
 				if(this.parent.isGroup){
 					this.parent.matchChildWidths();
 				}
 			}
 		}
-
+		
 		removeChild(child){
 			var index = this.columns.indexOf(child);
-
+			
 			if(index > -1){
 				this.columns.splice(index, 1);
 			}
-
+			
 			if(!this.columns.length){
 				this.delete();
 			}
 		}
-
+		
 		setWidth(width){
 			this.widthFixed = true;
 			this.setWidthActual(width);
 		}
-
+		
 		setWidthActual(width){
 			if(isNaN(width)){
 				width = Math.floor((this.table.element.clientWidth/100) * parseInt(width));
 			}
-
+			
 			width = Math.max(this.minWidth, width);
-
+			
 			if(this.maxWidth){
 				width = Math.min(this.maxWidth, width);
 			}
-
+			
 			this.width = width;
 			this.widthStyled = width ? width + "px" : "";
-
+			
 			this.element.style.width = this.widthStyled;
-
+			
 			if(!this.isGroup){
 				this.cells.forEach(function(cell){
 					cell.setWidth();
 				});
 			}
-
+			
 			if(this.parent.isGroup){
 				this.parent.matchChildWidths();
 			}
-
+			
 			this.dispatch("column-width", this);
+			
+			if(this.subscribedExternal("columnWidth")){
+				this.dispatchExternal("columnWidth", this.getComponent());
+			}
 		}
-
+		
 		checkCellHeights(){
 			var rows = [];
-
+			
 			this.cells.forEach(function(cell){
 				if(cell.row.heightInitialized){
 					if(cell.row.getElement().offsetParent !== null){
@@ -1452,19 +1456,19 @@
 					}
 				}
 			});
-
+			
 			rows.forEach(function(row){
 				row.calcHeight();
 			});
-
+			
 			rows.forEach(function(row){
 				row.setCellHeight();
 			});
 		}
-
+		
 		getWidth(){
 			var width = 0;
-
+			
 			if(this.isGroup){
 				this.columns.forEach(function(column){
 					if(column.visible){
@@ -1474,58 +1478,58 @@
 			}else {
 				width = this.width;
 			}
-
+			
 			return width;
 		}
-
+		
 		getLeftOffset(){
 			var offset = this.element.offsetLeft;
-
+			
 			if(this.parent.isGroup){
 				offset += this.parent.getLeftOffset();
 			}
-
+			
 			return offset;
 		}
-
+		
 		getHeight(){
 			return Math.ceil(this.element.getBoundingClientRect().height);
 		}
-
+		
 		setMinWidth(minWidth){
 			if(this.maxWidth && minWidth > this.maxWidth){
 				minWidth = this.maxWidth;
-
+				
 				console.warn("the minWidth ("+ minWidth + "px) for column '" + this.field + "' cannot be bigger that its maxWidth ("+ this.maxWidthStyled + ")");
 			}
-
+			
 			this.minWidth = minWidth;
 			this.minWidthStyled = minWidth ? minWidth + "px" : "";
-
+			
 			this.element.style.minWidth = this.minWidthStyled;
-
+			
 			this.cells.forEach(function(cell){
 				cell.setMinWidth();
 			});
 		}
-
+		
 		setMaxWidth(maxWidth){
 			if(this.minWidth && maxWidth < this.minWidth){
 				maxWidth = this.minWidth;
-
+				
 				console.warn("the maxWidth ("+ maxWidth + "px) for column '" + this.field + "' cannot be smaller that its minWidth ("+ this.minWidthStyled + ")");
 			}
-
+			
 			this.maxWidth = maxWidth;
 			this.maxWidthStyled = maxWidth ? maxWidth + "px" : "";
-
+			
 			this.element.style.maxWidth = this.maxWidthStyled;
-
+			
 			this.cells.forEach(function(cell){
 				cell.setMaxWidth();
 			});
 		}
-
+		
 		delete(){
 			return new Promise((resolve, reject) => {
 				if(this.isGroup){
@@ -1533,117 +1537,117 @@
 						column.delete();
 					});
 				}
-
+				
 				this.dispatch("column-delete", this);
-
+				
 				var cellCount = this.cells.length;
-
+				
 				for(let i = 0; i < cellCount; i++){
 					this.cells[0].delete();
 				}
-
+				
 				if(this.element.parentNode){
 					this.element.parentNode.removeChild(this.element);
 				}
-
+				
 				this.element = false;
 				this.contentElement = false;
 				this.titleElement = false;
 				this.groupElement = false;
-
+				
 				if(this.parent.isGroup){
 					this.parent.removeChild(this);
 				}
-
+				
 				this.table.columnManager.deregisterColumn(this);
-
+				
 				this.table.columnManager.rerenderColumns(true);
-
+				
 				this.dispatch("column-deleted", this);
-
+				
 				resolve();
 			});
 		}
-
+		
 		columnRendered(){
 			if(this.titleFormatterRendered){
 				this.titleFormatterRendered();
 			}
-
+			
 			this.dispatch("column-rendered", this);
 		}
-
+		
 		//////////////// Cell Management /////////////////
 		//generate cell for this column
 		generateCell(row){
 			var cell = new Cell(this, row);
-
+			
 			this.cells.push(cell);
-
+			
 			return cell;
 		}
-
+		
 		nextColumn(){
 			var index = this.table.columnManager.findColumnIndex(this);
 			return index > -1 ? this._nextVisibleColumn(index + 1) : false;
 		}
-
+		
 		_nextVisibleColumn(index){
 			var column = this.table.columnManager.getColumnByIndex(index);
 			return !column || column.visible ? column : this._nextVisibleColumn(index + 1);
 		}
-
+		
 		prevColumn(){
 			var index = this.table.columnManager.findColumnIndex(this);
 			return index > -1 ? this._prevVisibleColumn(index - 1) : false;
 		}
-
+		
 		_prevVisibleColumn(index){
 			var column = this.table.columnManager.getColumnByIndex(index);
 			return !column || column.visible ? column : this._prevVisibleColumn(index - 1);
 		}
-
+		
 		reinitializeWidth(force){
 			this.widthFixed = false;
-
+			
 			//set width if present
 			if(typeof this.definition.width !== "undefined" && !force){
 				// maxInitialWidth ignored here as width specified
 				this.setWidth(this.definition.width);
 			}
-
+			
 			this.dispatch("column-width-fit-before", this);
-
+			
 			this.fitToData(force);
-
+			
 			this.dispatch("column-width-fit-after", this);
 		}
-
+		
 		//set column width to maximum cell width for non group columns
 		fitToData(force){
 			if(this.isGroup){
 				return;
 			}
-
+			
 			if(!this.widthFixed){
 				this.element.style.width = "";
-
+				
 				this.cells.forEach((cell) => {
 					cell.clearWidth();
 				});
 			}
-
+			
 			var maxWidth = this.element.offsetWidth;
-
+			
 			if(!this.width || !this.widthFixed){
 				this.cells.forEach((cell) => {
 					var width = cell.getWidth();
-
+					
 					if(width > maxWidth){
 						maxWidth = width;
 					}
 				});
-
+				
 				if(maxWidth){
 					var setTo = maxWidth + 1;
 					if (this.maxInitialWidth && !force) {
@@ -1653,27 +1657,27 @@
 				}
 			}
 		}
-
+		
 		updateDefinition(updates){
 			var definition;
-
+			
 			if(!this.isGroup){
 				if(!this.parent.isGroup){
 					definition = Object.assign({}, this.getDefinition());
 					definition = Object.assign(definition, updates);
-
+					
 					return this.table.columnManager.addColumn(definition, false, this)
 						.then((column) => {
-
+						
 							if(definition.field == this.field){
 								this.field = false; //clear field name to prevent deletion of duplicate column from arrays
 							}
-
+						
 							return this.delete()
 								.then(() => {
 									return column.getComponent();
 								});
-
+						
 						});
 				}else {
 					console.error("Column Update Error - The updateDefinition function is only available on ungrouped columns");
@@ -1684,28 +1688,28 @@
 				return Promise.reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
 			}
 		}
-
+		
 		deleteCell(cell){
 			var index = this.cells.indexOf(cell);
-
+			
 			if(index > -1){
 				this.cells.splice(index, 1);
 			}
 		}
-
+		
 		//////////////// Object Generation /////////////////
 		getComponent(){
 			if(!this.component){
 				this.component = new ColumnComponent(this);
 			}
-
+			
 			return this.component;
 		}
-
+		
 		getPosition(){
 			return this.table.columnManager.getVisibleColumnsByIndex().indexOf(this) + 1;
 		}
-
+		
 		getParentComponent(){
 			return this.parent instanceof Column ? this.parent.getComponent() : false;
 		}
@@ -3678,6 +3682,10 @@
 				
 				// this.outerHeight = this.element.outerHeight();
 				this.outerHeight = this.element.offsetHeight;
+
+				if(this.subscribedExternal("rowHeight")){
+					this.dispatchExternal("rowHeight", this.getComponent());
+				}
 			}
 		}
 		
@@ -6701,7 +6709,7 @@
 		}
 	}
 
-	class Popup extends CoreFeature{
+	let Popup$1 = class Popup extends CoreFeature{
 		constructor(table, element, parent){
 			super(table);
 			
@@ -7002,7 +7010,7 @@
 			
 			return this.childPopup;
 		}
-	}
+	};
 
 	class Module extends CoreFeature{
 		
@@ -7125,7 +7133,7 @@
 		///////////////////////////////////
 		
 		popup(menuEl, menuContainer){
-			return new Popup(this.table, menuEl, menuContainer);
+			return new Popup$1(this.table, menuEl, menuContainer);
 		}
 		
 		///////////////////////////////////
@@ -7707,9 +7715,9 @@
 
 	var coreModules = /*#__PURE__*/Object.freeze({
 		__proto__: null,
+		CommsModule: Comms,
 		LayoutModule: Layout,
-		LocalizeModule: Localize,
-		CommsModule: Comms
+		LocalizeModule: Localize
 	});
 
 	class TableRegistry {
@@ -8990,18 +8998,18 @@
 		method: "GET",
 	};
 
-	function generateParamsList(data, prefix){
+	function generateParamsList$1(data, prefix){
 		var output = [];
 
 		prefix = prefix || "";
 
 		if(Array.isArray(data)){
 			data.forEach((item, i) => {
-				output = output.concat(generateParamsList(item, prefix ? prefix + "[" + i + "]" : i));
+				output = output.concat(generateParamsList$1(item, prefix ? prefix + "[" + i + "]" : i));
 			});
 		}else if (typeof data === "object"){
 			for (var key in data){
-				output = output.concat(generateParamsList(data[key], prefix ? prefix + "[" + key + "]" : key));
+				output = output.concat(generateParamsList$1(data[key], prefix ? prefix + "[" + key + "]" : key));
 			}
 		}else {
 			output.push({key:prefix, value:data});
@@ -9011,7 +9019,7 @@
 	}
 
 	function serializeParams(params){
-		var output = generateParamsList(params),
+		var output = generateParamsList$1(params),
 		encoded = [];
 
 		output.forEach(function(item){
@@ -9123,18 +9131,18 @@
 		});
 	}
 
-	function generateParamsList$1(data, prefix){
+	function generateParamsList(data, prefix){
 		var output = [];
 
 		prefix = prefix || "";
 
 		if(Array.isArray(data)){
 			data.forEach((item, i) => {
-				output = output.concat(generateParamsList$1(item, prefix ? prefix + "[" + i + "]" : i));
+				output = output.concat(generateParamsList(item, prefix ? prefix + "[" + i + "]" : i));
 			});
 		}else if (typeof data === "object"){
 			for (var key in data){
-				output = output.concat(generateParamsList$1(data[key], prefix ? prefix + "[" + key + "]" : key));
+				output = output.concat(generateParamsList(data[key], prefix ? prefix + "[" + key + "]" : key));
 			}
 		}else {
 			output.push({key:prefix, value:data});
@@ -9157,7 +9165,7 @@
 			},
 			body:function(url, config, params){
 
-				var output = generateParamsList$1(params),
+				var output = generateParamsList(params),
 				form = new FormData();
 
 				output.forEach(function(item){
@@ -11085,7 +11093,7 @@
 		}
 	}
 
-	function csv(list, options = {}, setFileContents){
+	function csv$1(list, options = {}, setFileContents){
 		var delimiter = options.delimiter ? options.delimiter : ",",
 		fileContents = [],
 		headers = [];
@@ -11147,7 +11155,7 @@
 		setFileContents(fileContents, "text/csv");
 	}
 
-	function json(list, options, setFileContents){
+	function json$1(list, options, setFileContents){
 		var fileContents = [];
 
 		list.forEach((row) => {
@@ -11395,7 +11403,7 @@
 		setFileContents(s2ab(output), "application/octet-stream");
 	}
 
-	function html(list, options, setFileContents){
+	function html$1(list, options, setFileContents){
 		if(this.modExists("export", true)){
 			setFileContents(this.modules.export.generateHTMLTable(list), "text/html");
 		}
@@ -11435,12 +11443,12 @@
 	}
 
 	var defaultDownloaders = {
-		csv:csv,
-		json:json,
+		csv:csv$1,
+		json:json$1,
 		jsonLines:jsonLines,
 		pdf:pdf,
 		xlsx:xlsx,
-		html:html,
+		html:html$1,
 	};
 
 	class Download extends Module{
@@ -11739,7 +11747,7 @@
 	}
 
 	//resizable text area element
-	function textarea(cell, onRendered, success, cancel, editorParams){
+	function textarea$1(cell, onRendered, success, cancel, editorParams){
 		var cellValue = cell.getValue(),
 		vertNav = editorParams.verticalNavigation || "hybrid",
 		value = String(cellValue !== null && typeof cellValue !== "undefined"  ? cellValue : ""),
@@ -11861,7 +11869,7 @@
 	}
 
 	//input element with type of number
-	function number(cell, onRendered, success, cancel, editorParams){
+	function number$1(cell, onRendered, success, cancel, editorParams){
 		var cellValue = cell.getValue(),
 		vertNav = editorParams.verticalNavigation || "editor",
 		input = document.createElement("input");
@@ -12052,7 +12060,7 @@
 	}
 
 	//input element
-	function date(cell, onRendered, success, cancel, editorParams){
+	function date$1(cell, onRendered, success, cancel, editorParams){
 		var inputFormat = editorParams.format,
 		vertNav = editorParams.verticalNavigation || "editor",
 		DT = inputFormat ? (window.DateTime || luxon.DateTime) : null;
@@ -12191,7 +12199,7 @@
 	}
 
 	//input element
-	function time(cell, onRendered, success, cancel, editorParams){
+	function time$1(cell, onRendered, success, cancel, editorParams){
 		var inputFormat = editorParams.format,
 		vertNav = editorParams.verticalNavigation || "editor",
 		DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
@@ -12318,7 +12326,7 @@
 	}
 
 	//input element
-	function datetime(cell, onRendered, success, cancel, editorParams){
+	function datetime$2(cell, onRendered, success, cancel, editorParams){
 		var inputFormat = editorParams.format,
 		vertNav = editorParams.verticalNavigation || "editor",
 		DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
@@ -12443,7 +12451,7 @@
 		return input;
 	}
 
-	class Edit{
+	let Edit$1 = class Edit{
 		constructor(editor, cell, onRendered, success, cancel, editorParams){
 			this.edit = editor;
 			this.table = editor.table;
@@ -13487,19 +13495,19 @@
 			}
 		}
 		
-	}
+	};
 
 	function select(cell, onRendered, success, cancel, editorParams){
 
 		this.deprecationMsg("The select editor has been deprecated, please use the new list editor");
 
-		var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
+		var list = new Edit$1(this, cell, onRendered, success, cancel, editorParams);
 
 		return list.input;
 	}
 
 	function list(cell, onRendered, success, cancel, editorParams){
-		var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
+		var list = new Edit$1(this, cell, onRendered, success, cancel, editorParams);
 
 		return list.input;
 	}
@@ -13510,13 +13518,13 @@
 
 		editorParams.autocomplete = true;
 
-		var list = new Edit(this, cell, onRendered, success, cancel, editorParams);
+		var list = new Edit$1(this, cell, onRendered, success, cancel, editorParams);
 
 		return list.input;
 	}
 
 	//star rating
-	function star(cell, onRendered, success, cancel, editorParams){
+	function star$1(cell, onRendered, success, cancel, editorParams){
 		var self = this,
 		element = cell.getElement(),
 		value = cell.getValue(),
@@ -13663,7 +13671,7 @@
 	}
 
 	//draggable progress bar
-	function progress(cell, onRendered, success, cancel, editorParams){
+	function progress$1(cell, onRendered, success, cancel, editorParams){
 		var element = cell.getElement(),
 		max = typeof editorParams.max === "undefined" ? ((element.getElementsByTagName("div")[0] && element.getElementsByTagName("div")[0].getAttribute("max")) || 100) : editorParams.max,
 		min = typeof editorParams.min === "undefined" ? ((element.getElementsByTagName("div")[0] && element.getElementsByTagName("div")[0].getAttribute("min")) || 0) : editorParams.min,
@@ -13791,7 +13799,7 @@
 	}
 
 	//checkbox
-	function tickCross(cell, onRendered, success, cancel, editorParams){
+	function tickCross$1(cell, onRendered, success, cancel, editorParams){
 		var value = cell.getValue(),
 		input = document.createElement("input"),
 		tristate = editorParams.tristate,
@@ -13888,21 +13896,21 @@
 
 	var defaultEditors = {
 		input:input,
-		textarea:textarea,
-		number:number,
+		textarea:textarea$1,
+		number:number$1,
 		range:range,
-		date:date,
-		time:time,
-		datetime:datetime,
+		date:date$1,
+		time:time$1,
+		datetime:datetime$2,
 		select:select,
 		list:list,
 		autocomplete:autocomplete,
-		star:star,
-		progress:progress,
-		tickCross:tickCross,
+		star:star$1,
+		progress:progress$1,
+		tickCross:tickCross$1,
 	};
 
-	class Edit$1 extends Module{
+	class Edit extends Module{
 
 		static moduleName = "edit";
 
@@ -13918,7 +13926,7 @@
 			this.invalidEdit = false;
 			this.editedCells = [];
 			
-			this.editors = Edit$1.editors;
+			this.editors = Edit.editors;
 			
 			this.registerColumnOption("editable");
 			this.registerColumnOption("editor");
@@ -16345,11 +16353,11 @@
 		return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 	}
 
-	function html$1(cell, formatterParams, onRendered){
+	function html(cell, formatterParams, onRendered){
 		return cell.getValue();
 	}
 
-	function textarea$1(cell, formatterParams, onRendered){
+	function textarea(cell, formatterParams, onRendered){
 		cell.getElement().style.whiteSpace = "pre-wrap";
 		return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 	}
@@ -16520,7 +16528,7 @@
 		return el;
 	}
 
-	function tickCross$1(cell, formatterParams, onRendered){
+	function tickCross(cell, formatterParams, onRendered){
 		var value = cell.getValue(),
 		element = cell.getElement(),
 		empty = formatterParams.allowEmpty,
@@ -16634,7 +16642,7 @@
 		return formatterParams[value];
 	}
 
-	function star$1(cell, formatterParams, onRendered){
+	function star(cell, formatterParams, onRendered){
 		var value = cell.getValue(),
 		element = cell.getElement(),
 		maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5,
@@ -16721,7 +16729,7 @@
 		return el;
 	}
 
-	function progress$1(cell, formatterParams = {}, onRendered){ //progress bar
+	function progress(cell, formatterParams = {}, onRendered){ //progress bar
 		var value = this.sanitizeHTML(cell.getValue()) || 0,
 		element = cell.getElement(),
 		max = formatterParams.max ? formatterParams.max : 100,
@@ -16888,18 +16896,18 @@
 
 	var defaultFormatters = {
 		plaintext:plaintext,
-		html:html$1,
-		textarea:textarea$1,
+		html:html,
+		textarea:textarea,
 		money:money,
 		link:link,
 		image:image,
-		tickCross:tickCross$1,
+		tickCross:tickCross,
 		datetime:datetime$1,
 		datetimediff:datetimediff,
 		lookup:lookup,
-		star:star$1,
+		star:star,
 		traffic:traffic,
-		progress:progress$1,
+		progress:progress,
 		color:color,
 		buttonTick:buttonTick,
 		buttonCross:buttonCross,
@@ -19315,7 +19323,7 @@
 		}
 	}
 
-	function csv$1(input){
+	function csv(input){
 		var data = [],
 		row = 0, 
 		col = 0,
@@ -19377,7 +19385,7 @@
 		return data;
 	}
 
-	function json$1(input){
+	function json(input){
 		try {
 			return JSON.parse(input);
 		} catch(e) {
@@ -19386,14 +19394,14 @@
 		}
 	}
 
-	function array (input){
+	function array$1 (input){
 		return input;
 	}
 
 	var defaultImporters = {
-		csv:csv$1,
-		json:json$1,
-		array:array,
+		csv:csv,
+		json:json,
+		array:array$1,
 	};
 
 	class Import extends Module{
@@ -23132,7 +23140,7 @@
 		}
 	}
 
-	class Popup$1 extends Module{
+	class Popup extends Module{
 		
 		static moduleName = "popup";
 		
@@ -24061,7 +24069,7 @@
 					
 					if(oldWidth !== nearestColumn.getWidth()){
 						self.dispatch("column-resized", nearestColumn);
-						self.table.externalEvents.dispatch("columnResized", nearestColumn.getComponent());
+						self.dispatchExternal("columnResized", nearestColumn.getComponent());
 					}
 				});
 				
@@ -24173,6 +24181,8 @@
 			var self = this,
 			guideEl;
 
+			this.dispatchExternal("columnResizing", column.getComponent());
+
 			if(self.table.options.resizableColumnGuide){
 				guideEl = document.createElement("span");
 				guideEl.classList.add('tabulator-col-resize-guide');
@@ -24219,7 +24229,7 @@
 					self.table.columnManager.verticalAlignHeaders();
 
 					self.dispatch("column-resized", column);
-					self.table.externalEvents.dispatch("columnResized", column.getComponent());
+					self.dispatchExternal("columnResized", column.getComponent());
 				}
 			}
 			
@@ -24315,8 +24325,7 @@
 			handleY = handle.getBoundingClientRect().y - this.table.element.getBoundingClientRect().y,
 			tableY = this.table.element.getBoundingClientRect().y,
 			rowY = row.element.getBoundingClientRect().top - tableY,
-			mouseDiff = mouseY - this.startY,
-			minHeight = row.calcMinHeight();
+			mouseDiff = mouseY - this.startY;
 
 			return Math.max(handleY + mouseDiff, rowY);
 		}
@@ -24324,6 +24333,8 @@
 		_mouseDown(e, row, handle){
 			var self = this,
 			guideEl;
+
+			self.dispatchExternal("rowResizing", row.getComponent());
 
 			if(self.table.options.resizableRowGuide){
 				guideEl = document.createElement("span");
@@ -24586,7 +24597,7 @@
 		return el;
 	}
 
-	var extensions = {
+	var extensions$1 = {
 		format:{
 			formatters:{
 				responsiveCollapse:responsiveCollapse,
@@ -24597,7 +24608,7 @@
 	class ResponsiveLayout extends Module{
 
 		static moduleName = "responsiveLayout";
-		static moduleExtensions = extensions;
+		static moduleExtensions = extensions$1;
 
 		constructor(table){
 			super(table);
@@ -24999,7 +25010,7 @@
 		return checkbox;
 	}
 
-	var extensions$1 = {
+	var extensions = {
 		format:{
 			formatters:{
 				rowSelection:rowSelection,
@@ -25010,7 +25021,7 @@
 	class SelectRow extends Module{
 
 		static moduleName = "selectRow";
-		static moduleExtensions = extensions$1;
+		static moduleExtensions = extensions;
 		
 		constructor(table){
 			super(table);
@@ -25501,7 +25512,7 @@
 	}
 
 	//sort numbers
-	function number$1(a, b, aRow, bRow, column, dir, params){
+	function number(a, b, aRow, bRow, column, dir, params){
 		var alignEmptyValues = params.alignEmptyValues;
 		var decimal = params.decimalSeparator;
 		var thousand = params.thousandSeparator;
@@ -25577,7 +25588,7 @@
 	}
 
 	//sort datetime
-	function datetime$2(a, b, aRow, bRow, column, dir, params){
+	function datetime(a, b, aRow, bRow, column, dir, params){
 		var DT = window.DateTime || luxon.DateTime;
 		var format = params.format || "dd/MM/yyyy HH:mm:ss",
 		alignEmptyValues = params.alignEmptyValues,
@@ -25622,21 +25633,21 @@
 	}
 
 	//sort date
-	function date$1(a, b, aRow, bRow, column, dir, params){
+	function date(a, b, aRow, bRow, column, dir, params){
 		if(!params.format){
 			params.format = "dd/MM/yyyy";
 		}
 
-		return datetime$2.call(this, a, b, aRow, bRow, column, dir, params);
+		return datetime.call(this, a, b, aRow, bRow, column, dir, params);
 	}
 
 	//sort times
-	function time$1(a, b, aRow, bRow, column, dir, params){
+	function time(a, b, aRow, bRow, column, dir, params){
 		if(!params.format){
 			params.format = "HH:mm";
 		}
 
-		return datetime$2.call(this, a, b, aRow, bRow, column, dir, params);
+		return datetime.call(this, a, b, aRow, bRow, column, dir, params);
 	}
 
 	//sort booleans
@@ -25648,7 +25659,7 @@
 	}
 
 	//sort if element contains any data
-	function array$1(a, b, aRow, bRow, column, dir, params){
+	function array(a, b, aRow, bRow, column, dir, params){
 		var type = params.type || "length",
 		alignEmptyValues = params.alignEmptyValues,
 		emptyAlign = 0;
@@ -25756,13 +25767,13 @@
 	}
 
 	var defaultSorters = {
-		number:number$1,
+		number:number,
 		string:string,
-		date:date$1,
-		time:time$1,
-		datetime:datetime$2,
+		date:date,
+		time:time,
+		datetime:datetime,
 		boolean:boolean,
-		array:array$1,
+		array:array,
 		exists:exists,
 		alphanum:alphanum
 	};
@@ -28144,7 +28155,7 @@
 		ColumnCalcsModule: ColumnCalcs,
 		DataTreeModule: DataTree,
 		DownloadModule: Download,
-		EditModule: Edit$1,
+		EditModule: Edit,
 		ExportModule: Export,
 		FilterModule: Filter,
 		FormatModule: Format,
@@ -28162,16 +28173,16 @@
 		MutatorModule: Mutator,
 		PageModule: Page,
 		PersistenceModule: Persistence,
-		PopupModule: Popup$1,
+		PopupModule: Popup,
 		PrintModule: Print,
 		ReactiveDataModule: ReactiveData,
 		ResizeColumnsModule: ResizeColumns,
 		ResizeRowsModule: ResizeRows,
 		ResizeTableModule: ResizeTable,
 		ResponsiveLayoutModule: ResponsiveLayout,
+		SelectRangeModule: SelectRange,
 		SelectRowModule: SelectRow,
 		SortModule: Sort,
-		SelectRangeModule: SelectRange,
 		TooltipModule: Tooltip,
 		ValidateModule: Validate
 	});
@@ -28194,7 +28205,9 @@
 		}
 	}
 
-	return TabulatorFull;
+	var TabulatorFull$1 = TabulatorFull;
 
-})));
+	return TabulatorFull$1;
+
+}));
 //# sourceMappingURL=tabulator.js.map
