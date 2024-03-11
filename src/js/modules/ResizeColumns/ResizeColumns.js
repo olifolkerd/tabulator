@@ -166,7 +166,7 @@ export default class ResizeColumns extends Module{
 				
 				if(oldWidth !== nearestColumn.getWidth()){
 					self.dispatch("column-resized", nearestColumn);
-					self.table.externalEvents.dispatch("columnResized", nearestColumn.getComponent());
+					self.dispatchExternal("columnResized", nearestColumn.getComponent());
 				}
 			});
 			
@@ -278,6 +278,8 @@ export default class ResizeColumns extends Module{
 		var self = this,
 		guideEl;
 
+		this.dispatchExternal("columnResizing", column.getComponent());
+
 		if(self.table.options.resizableColumnGuide){
 			guideEl = document.createElement("span");
 			guideEl.classList.add('tabulator-col-resize-guide');
@@ -324,7 +326,7 @@ export default class ResizeColumns extends Module{
 				self.table.columnManager.verticalAlignHeaders();
 
 				self.dispatch("column-resized", column);
-				self.table.externalEvents.dispatch("columnResized", column.getComponent());
+				self.dispatchExternal("columnResized", column.getComponent());
 			}
 		}
 		
