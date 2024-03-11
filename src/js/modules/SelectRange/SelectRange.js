@@ -1,10 +1,13 @@
 import Module from "../../core/Module.js";
 import Range from "./Range.js";
+import extensions from './extensions/extensions.js';
+
 
 export default class SelectRange extends Module {
 	
 	static moduleName = "selectRange";
 	static moduleInitOrder = 1;
+	static moduleExtensions = extensions;
 	
 	constructor(table) {
 		super(table);

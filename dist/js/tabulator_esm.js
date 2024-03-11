@@ -1089,49 +1089,6 @@ var defaultPasteActions = {
 	insert:function(data){
 		return this.table.addData(data);
 	},
-	range:function(data){
-		var rows = [],
-		range = this.table.modules.selectRange.activeRange,
-		singleCell = false,
-		bounds, startCell, startRow, rowWidth, dataLength;
-
-		dataLength = data.length;
-		
-		if(range){
-			bounds = range.getBounds();
-			startCell = bounds.start;
-			
-			if(bounds.start === bounds.end){
-				singleCell = true;
-			}
-			
-			if(startCell){
-				rows = this.table.rowManager.activeRows.slice();
-				startRow = rows.indexOf(startCell.row);
-
-				if(singleCell){
-					rowWidth = data.length;
-				}else {
-					rowWidth = (rows.indexOf(bounds.end.row) - startRow) + 1;
-				}
-				
-				
-				if(startRow >-1){
-					this.table.blockRedraw();
-					
-					rows = rows.slice(startRow, startRow + rowWidth);
-					
-					rows.forEach((row, i) => {
-						row.updateData(data[i % dataLength]);
-					});
-					
-					this.table.restoreRedraw();
-				}
-			}
-		}
-		
-		return rows;
-	}
 };
 
 var defaultPasteParsers = {
@@ -1208,61 +1165,6 @@ var defaultPasteParsers = {
 			return false;
 		}
 	},
-	range:function(clipboard){
-		var data = [],
-		rows = [],
-		range = this.table.modules.selectRange.activeRange,
-		singleCell = false,
-		bounds, startCell, colWidth, columnMap, startCol;
-		
-		if(range){
-			bounds = range.getBounds();
-			startCell = bounds.start;
-
-			if(bounds.start === bounds.end){
-				singleCell = true;
-			}
-			
-			if(startCell){
-				//get data from clipboard into array of columns and rows.
-				clipboard = clipboard.split("\n");
-				
-				clipboard.forEach(function(row){
-					data.push(row.split("\t"));
-				});
-				
-				if(data.length){
-					columnMap = this.table.columnManager.getVisibleColumnsByIndex();
-					startCol = columnMap.indexOf(startCell.column);
-
-					if(startCol > -1){
-						if(singleCell){
-							colWidth = data[0].length;
-						}else {
-							colWidth = (columnMap.indexOf(bounds.end.column) - startCol) + 1;
-						}
-
-						columnMap = columnMap.slice(startCol, startCol + colWidth);
-
-						data.forEach((item) => {
-							var row = {};
-							var itemLength = item.length;
-
-							columnMap.forEach(function(col, i){
-								row[col.field] = item[i % itemLength];
-							});
-							
-							rows.push(row);	
-						});
-
-						return rows;
-					}				
-				}
-			}
-		}
-		
-		return false;
-	}
 };
 
 class Clipboard extends Module{
@@ -13775,19 +13677,6 @@ var defaultBindings = {
 	undo:["ctrl + 90", "meta + 90"],
 	redo:["ctrl + 89", "meta + 89"],
 	copyToClipboard:["ctrl + 67", "meta + 67"],
-
-	rangeJumpUp:["ctrl + 38", "meta + 38"],
-	rangeJumpDown:["ctrl + 40", "meta + 40"],
-	rangeJumpLeft:["ctrl + 37", "meta + 37"],
-	rangeJumpRight:["ctrl + 39", "meta + 39"],
-	rangeExpandUp:"shift + 38",
-	rangeExpandDown:"shift + 40",
-	rangeExpandLeft:"shift + 37",
-	rangeExpandRight:"shift + 39",
-	rangeExpandJumpUp:["ctrl + shift + 38", "meta + shift + 38"],
-	rangeExpandJumpDown:["ctrl + shift + 40", "meta + shift + 40"],
-	rangeExpandJumpLeft:["ctrl + shift + 37", "meta + shift + 37"],
-	rangeExpandJumpRight:["ctrl + shift + 39", "meta + shift + 39"],
 };
 
 var defaultActions = {
@@ -13874,44 +13763,6 @@ var defaultActions = {
 	navDown:function(e){
 		this.dispatch("keybinding-nav-down", e);
 	},
-
-	rangeJumpLeft: function(e){
-		this.dispatch("keybinding-nav-range", e, "left", true, false);
-	},
-	rangeJumpRight: function(e){
-		this.dispatch("keybinding-nav-range", e, "right", true, false);
-	},
-	rangeJumpUp: function(e){
-		this.dispatch("keybinding-nav-range", e, "up", true, false);
-	},
-	rangeJumpDown: function(e){
-		this.dispatch("keybinding-nav-range", e, "down", true, false);
-	},
-	rangeExpandLeft: function(e){
-		this.dispatch("keybinding-nav-range", e, "left", false, true);
-	},
-	rangeExpandRight: function(e){
-		this.dispatch("keybinding-nav-range", e, "right", false, true);
-	},
-	rangeExpandUp: function(e){
-		this.dispatch("keybinding-nav-range", e, "up", false, true);
-	},
-	rangeExpandDown: function(e){
-		this.dispatch("keybinding-nav-range", e, "down", false, true);
-	},
-	rangeExpandJumpLeft: function(e){
-		this.dispatch("keybinding-nav-range", e, "left", true, true);
-	},
-	rangeExpandJumpRight: function(e){
-		this.dispatch("keybinding-nav-range", e, "right", true, true);
-	},
-	rangeExpandJumpUp: function(e){
-		this.dispatch("keybinding-nav-range", e, "up", true, true);
-	},
-	rangeExpandJumpDown: function(e){
-		this.dispatch("keybinding-nav-range", e, "down", true, true);
-	},
-
 	undo:function(e){
 		var cell = false;
 		if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){
@@ -18434,7 +18285,7 @@ function responsiveCollapse(cell, formatterParams, onRendered){
 	return el;
 }
 
-var extensions$1 = {
+var extensions$2 = {
 	format:{
 		formatters:{
 			responsiveCollapse:responsiveCollapse,
@@ -18445,7 +18296,7 @@ var extensions$1 = {
 class ResponsiveLayout extends Module{
 
 	static moduleName = "responsiveLayout";
-	static moduleExtensions = extensions$1;
+	static moduleExtensions = extensions$2;
 
 	constructor(table){
 		super(table);
@@ -18847,7 +18698,7 @@ function rowSelection(cell, formatterParams, onRendered){
 	return checkbox;
 }
 
-var extensions = {
+var extensions$1 = {
 	format:{
 		formatters:{
 			rowSelection:rowSelection,
@@ -18858,7 +18709,7 @@ var extensions = {
 class SelectRow extends Module{
 
 	static moduleName = "selectRow";
-	static moduleExtensions = extensions;
+	static moduleExtensions = extensions$1;
 	
 	constructor(table){
 		super(table);
@@ -19794,10 +19645,180 @@ class Range extends CoreFeature{
 	}
 }
 
+var bindings = {
+	rangeJumpUp:["ctrl + 38", "meta + 38"],
+	rangeJumpDown:["ctrl + 40", "meta + 40"],
+	rangeJumpLeft:["ctrl + 37", "meta + 37"],
+	rangeJumpRight:["ctrl + 39", "meta + 39"],
+	rangeExpandUp:"shift + 38",
+	rangeExpandDown:"shift + 40",
+	rangeExpandLeft:"shift + 37",
+	rangeExpandRight:"shift + 39",
+	rangeExpandJumpUp:["ctrl + shift + 38", "meta + shift + 38"],
+	rangeExpandJumpDown:["ctrl + shift + 40", "meta + shift + 40"],
+	rangeExpandJumpLeft:["ctrl + shift + 37", "meta + shift + 37"],
+	rangeExpandJumpRight:["ctrl + shift + 39", "meta + shift + 39"],
+};
+
+var actions = {
+	rangeJumpLeft: function(e){
+		this.dispatch("keybinding-nav-range", e, "left", true, false);
+	},
+	rangeJumpRight: function(e){
+		this.dispatch("keybinding-nav-range", e, "right", true, false);
+	},
+	rangeJumpUp: function(e){
+		this.dispatch("keybinding-nav-range", e, "up", true, false);
+	},
+	rangeJumpDown: function(e){
+		this.dispatch("keybinding-nav-range", e, "down", true, false);
+	},
+	rangeExpandLeft: function(e){
+		this.dispatch("keybinding-nav-range", e, "left", false, true);
+	},
+	rangeExpandRight: function(e){
+		this.dispatch("keybinding-nav-range", e, "right", false, true);
+	},
+	rangeExpandUp: function(e){
+		this.dispatch("keybinding-nav-range", e, "up", false, true);
+	},
+	rangeExpandDown: function(e){
+		this.dispatch("keybinding-nav-range", e, "down", false, true);
+	},
+	rangeExpandJumpLeft: function(e){
+		this.dispatch("keybinding-nav-range", e, "left", true, true);
+	},
+	rangeExpandJumpRight: function(e){
+		this.dispatch("keybinding-nav-range", e, "right", true, true);
+	},
+	rangeExpandJumpUp: function(e){
+		this.dispatch("keybinding-nav-range", e, "up", true, true);
+	},
+	rangeExpandJumpDown: function(e){
+		this.dispatch("keybinding-nav-range", e, "down", true, true);
+	},
+};
+
+var pasteActions = {
+	range:function(data){
+		var rows = [],
+		range = this.table.modules.selectRange.activeRange,
+		singleCell = false,
+		bounds, startCell, startRow, rowWidth, dataLength;
+
+		dataLength = data.length;
+		
+		if(range){
+			bounds = range.getBounds();
+			startCell = bounds.start;
+			
+			if(bounds.start === bounds.end){
+				singleCell = true;
+			}
+			
+			if(startCell){
+				rows = this.table.rowManager.activeRows.slice();
+				startRow = rows.indexOf(startCell.row);
+
+				if(singleCell){
+					rowWidth = data.length;
+				}else {
+					rowWidth = (rows.indexOf(bounds.end.row) - startRow) + 1;
+				}
+				
+				
+				if(startRow >-1){
+					this.table.blockRedraw();
+					
+					rows = rows.slice(startRow, startRow + rowWidth);
+					
+					rows.forEach((row, i) => {
+						row.updateData(data[i % dataLength]);
+					});
+					
+					this.table.restoreRedraw();
+				}
+			}
+		}
+		
+		return rows;
+	}
+};
+
+var pasteParsers = {
+	range:function(clipboard){
+		var data = [],
+		rows = [],
+		range = this.table.modules.selectRange.activeRange,
+		singleCell = false,
+		bounds, startCell, colWidth, columnMap, startCol;
+		
+		if(range){
+			bounds = range.getBounds();
+			startCell = bounds.start;
+
+			if(bounds.start === bounds.end){
+				singleCell = true;
+			}
+			
+			if(startCell){
+				//get data from clipboard into array of columns and rows.
+				clipboard = clipboard.split("\n");
+				
+				clipboard.forEach(function(row){
+					data.push(row.split("\t"));
+				});
+				
+				if(data.length){
+					columnMap = this.table.columnManager.getVisibleColumnsByIndex();
+					startCol = columnMap.indexOf(startCell.column);
+
+					if(startCol > -1){
+						if(singleCell){
+							colWidth = data[0].length;
+						}else {
+							colWidth = (columnMap.indexOf(bounds.end.column) - startCol) + 1;
+						}
+
+						columnMap = columnMap.slice(startCol, startCol + colWidth);
+
+						data.forEach((item) => {
+							var row = {};
+							var itemLength = item.length;
+
+							columnMap.forEach(function(col, i){
+								row[col.field] = item[i % itemLength];
+							});
+							
+							rows.push(row);	
+						});
+
+						return rows;
+					}				
+				}
+			}
+		}
+		
+		return false;
+	}
+};
+
+var extensions = {
+	keybindings:{
+		bindings:bindings,
+		actions:actions
+	},
+	clipboard:{
+		pasteActions:pasteActions,
+		pasteParsers:pasteParsers
+	},
+};
+
 class SelectRange extends Module {
 	
 	static moduleName = "selectRange";
 	static moduleInitOrder = 1;
+	static moduleExtensions = extensions;
 	
 	constructor(table) {
 		super(table);
