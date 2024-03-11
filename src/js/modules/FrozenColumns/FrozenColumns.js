@@ -283,6 +283,10 @@ export default class FrozenColumns extends Module{
 			this.table.columnManager.getContentsElement().style.width = "calc(100% - " + width + "px)";
 		}
 	}
+
+	getFrozenColumns(){
+		return this.leftColumns.concat(this.rightColumns);
+	}
 	
 	_calcSpace(columns, index){
 		var width = 0;
