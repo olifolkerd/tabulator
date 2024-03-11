@@ -16,6 +16,8 @@ $sortArrowHover: #555 !default;
 $sortArrowActive: #666 !default;
 $sortArrowInactive: #bbb !default;
 
+$columnResizeGuideColor:#999 !default;
+
 //row theming
 $rowBackgroundColor:#fff !default; //table row background color
 $rowAltBackgroundColor:#EFEFEF !default; //table row background color
@@ -1580,4 +1582,24 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 			}
 		}
 	}
+}
+
+.tabulator-col-resize-guide {
+	position: absolute;
+	top: 0;
+	width: 4px;
+	height: 100%;
+	margin-left: -0.5px;
+	background-color: $columnResizeGuideColor;
+	opacity: .5;
+}
+
+.tabulator-row-resize-guide {
+	position: absolute;
+	left: 0;
+	width: 100%;
+	height: 4px;
+	margin-top: -0.5px;
+	background-color: $columnResizeGuideColor;
+	opacity: .5;
 }

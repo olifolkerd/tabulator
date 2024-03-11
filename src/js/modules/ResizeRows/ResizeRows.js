@@ -14,6 +14,7 @@ export default class ResizeRows extends Module{
 		this.prevHandle = null;
 
 		this.registerTableOption("resizableRows", false); //resizable rows
+		this.registerTableOption("resizableRowGuide", false);
 	}
 
 	initialize(){
@@ -64,16 +65,50 @@ export default class ResizeRows extends Module{
 		rowEl.appendChild(prevHandle);
 	}
 
+	resize(e, row) {
+		row.setHeight(self.startHeight + ((typeof e.clientY === "undefined" ? e.touches[0].clientY : e.clientY) - self.startY));
+	}
+
+	calcGuidePosition(e, row, handle) {
+		var mouseY = typeof e.clientY === "undefined" ? e.touches[0].clientY : e.clientY,
+		handleY = handle.getBoundingClientRect().y - this.table.element.getBoundingClientRect().y,
+		tableY = this.table.element.getBoundingClientRect().y,
+		rowY = row.element.getBoundingClientRect().top - tableY,
+		mouseDiff = mouseY - this.startY,
+		minHeight = row.calcMinHeight(),
+		maxHeight = row.calcMaxHeight();
+
+		return Math.min(Math.max(handleY + mouseDiff, rowY + minHeight), rowY + maxHeight);
+	}
+
 	_mouseDown(e, row, handle){
-		var self = this;
+		var self = this,
+		guideEl;
+
+		if(self.table.options.resizableRowGuide){
+			guideEl = document.createElement("span");
+			guideEl.classList.add('tabulator-row-resize-guide');
+			self.table.element.appendChild(guideEl);
+			setTimeout(() => {
+				guideEl.style.top = self.calcGuidePosition(e, row, handle) + "px";
+			})
+		}
 
 		self.table.element.classList.add("tabulator-block-select");
 
 		function mouseMove(e){
-			row.setHeight(self.startHeight + ((typeof e.screenY === "undefined" ? e.touches[0].screenY : e.screenY) - self.startY));
+			if(self.table.options.resizableRowGuide){
+				guideEl.style.top = self.calcGuidePosition(e, row, handle) + "px";
+			}else{
+				self.resize(e, row);
+			}
 		}
 
 		function mouseUp(e){
+			if(self.table.options.resizableRowGuide){
+				self.resize(e, row);
+				guideEl.remove();
+			}
 
 			// //block editor from taking action while resizing is taking place
 			// if(self.startColumn.modules.edit){
@@ -98,7 +133,7 @@ export default class ResizeRows extends Module{
 		// 	self.startColumn.modules.edit.blocked = true;
 		// }
 
-		self.startY = typeof e.screenY === "undefined" ? e.touches[0].screenY : e.screenY;
+		self.startY = typeof e.clientY === "undefined" ? e.touches[0].clientY : e.clientY;
 		self.startHeight = row.getHeight();
 
 		document.body.addEventListener("mousemove", mouseMove);

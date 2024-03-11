@@ -138,20 +138,11 @@ export default class Row extends CoreFeature{
 	
 	//get heights when doing bulk row style calcs in virtual DOM
 	calcHeight(force){
-		var maxHeight = 0,
-		minHeight;
-		
 		if(this.table.options.rowHeight){
 			this.height = this.table.options.rowHeight;
 		}else{
-			minHeight = this.table.options.resizableRows ? this.element.clientHeight : 0;
-			
-			this.cells.forEach(function(cell){
-				var height = cell.getHeight();
-				if(height > maxHeight){
-					maxHeight = height;
-				}
-			});
+			var minHeight = this.calcMinHeight(),
+			maxHeight = this.calcMaxHeight();
 			
 			if(force){
 				this.height = Math.max(maxHeight, minHeight);
@@ -162,6 +153,21 @@ export default class Row extends CoreFeature{
 		
 		this.heightStyled = this.height ? this.height + "px" : "";
 		this.outerHeight = this.element.offsetHeight;
+	}
+
+	calcMinHeight(){
+		return this.table.options.resizableRows ? this.element.clientHeight : 0;
+	}
+
+	calcMaxHeight(){
+		var maxHeight = 0;
+		this.cells.forEach(function(cell){
+			var height = cell.getHeight();
+			if(height > maxHeight){
+				maxHeight = height;
+			}
+		});
+		return maxHeight;
 	}
 	
 	//set of cells
