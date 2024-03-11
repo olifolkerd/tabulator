@@ -1167,11 +1167,11 @@ var defaultPasteParsers = {
 	},
 };
 
-var bindings$1 = {
+var bindings$2 = {
 	copyToClipboard:["ctrl + 67", "meta + 67"],
 };
 
-var actions$1 = {
+var actions$2 = {
 	copyToClipboard:function(e){
 		if(!this.table.modules.edit.currentCell){
 			if(this.table.modExists("clipboard", true)){
@@ -1181,17 +1181,17 @@ var actions$1 = {
 	},
 };
 
-var extensions$3 = {
+var extensions$4 = {
 	keybindings:{
-		bindings:bindings$1,
-		actions:actions$1
+		bindings:bindings$2,
+		actions:actions$2
 	},
 };
 
 class Clipboard extends Module{
 
 	static moduleName = "clipboard";
-	static moduleExtensions = extensions$3;
+	static moduleExtensions = extensions$4;
 
 	//load defaults
 	static pasteActions = defaultPasteActions;
@@ -12741,9 +12741,50 @@ var defaultRedoers = {
 	},
 };
 
+var bindings$1 = {
+	undo:["ctrl + 90", "meta + 90"],
+	redo:["ctrl + 89", "meta + 89"],
+};
+
+var actions$1 = {
+	undo:function(e){
+		var cell = false;
+		if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){
+
+			cell = this.table.modules.edit.currentCell;
+
+			if(!cell){
+				e.preventDefault();
+				this.table.modules.history.undo();
+			}
+		}
+	},
+
+	redo:function(e){
+		var cell = false;
+		if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){
+
+			cell = this.table.modules.edit.currentCell;
+
+			if(!cell){
+				e.preventDefault();
+				this.table.modules.history.redo();
+			}
+		}
+	},
+};
+
+var extensions$3 = {
+	keybindings:{
+		bindings:bindings$1,
+		actions:actions$1
+	},
+};
+
 class History extends Module{
 
 	static moduleName = "history";
+	static moduleExtensions = extensions$3;
 
 	//load defaults
 	static undoers = defaultUndoers;
@@ -13696,8 +13737,6 @@ var defaultBindings = {
 	scrollPageDown:34,
 	scrollToStart:36,
 	scrollToEnd:35,
-	undo:["ctrl + 90", "meta + 90"],
-	redo:["ctrl + 89", "meta + 89"],
 };
 
 var defaultActions = {
@@ -13705,7 +13744,7 @@ var defaultActions = {
 		e.stopPropagation();
 		e.preventDefault();
 	},
-	
+
 	scrollPageUp:function(e){
 		var rowManager = this.table.rowManager,
 		newPos = rowManager.scrollTop - rowManager.element.clientHeight;
@@ -13788,32 +13827,6 @@ var defaultActions = {
 
 	navDown:function(e){
 		this.dispatch("keybinding-nav-down", e);
-	},
-
-	undo:function(e){
-		var cell = false;
-		if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){
-
-			cell = this.table.modules.edit.currentCell;
-
-			if(!cell){
-				e.preventDefault();
-				this.table.modules.history.undo();
-			}
-		}
-	},
-
-	redo:function(e){
-		var cell = false;
-		if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){
-
-			cell = this.table.modules.edit.currentCell;
-
-			if(!cell){
-				e.preventDefault();
-				this.table.modules.history.redo();
-			}
-		}
 	},
 };
 

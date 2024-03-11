@@ -4,10 +4,12 @@ import Cell from '../../core/cell/Cell.js';
 
 import defaultUndoers from './defaults/undoers.js';
 import defaultRedoers from './defaults/redoers.js';
+import extensions from './extensions/extensions.js';
 
 export default class History extends Module{
 
 	static moduleName = "history";
+	static moduleExtensions = extensions;
 
 	//load defaults
 	static undoers = defaultUndoers;
