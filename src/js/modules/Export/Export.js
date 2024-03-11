@@ -34,17 +34,15 @@ export default class Export extends Module{
 	///////////////////////////////////
 	
 	generateExportList(config, style, range, colVisProp){
+		var headers, body;
+
 		this.cloneTableStyle = style;
 		this.config = config || {};
 		this.colVisProp = colVisProp;
-
-		var headers, body;
 		
 		if (range === 'range') {
 			var columns = this.table.modules.selectRange.selectedColumns();
-			headers = this.config.columnHeaders !== false
-				? this.headersToExportRows(this.generateColumnGroupHeaders(columns))
-				: [];
+			headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders(columns)) : [];
 			body = this.bodyToExportRows(this.rowLookup(range), this.table.modules.selectRange.selectedColumns(true));
 		} else {
 			headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders()) : [];
