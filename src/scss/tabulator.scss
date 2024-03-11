@@ -673,6 +673,28 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			margin-right:0;
 		}
 	}
+
+	//column resize guide
+	.tabulator-col-resize-guide {
+		position: absolute;
+		top: 0;
+		width: 4px;
+		height: 100%;
+		margin-left: -0.5px;
+		background-color: $columnResizeGuideColor;
+		opacity: .5;
+	}
+
+	//row resize guide
+	.tabulator-row-resize-guide {
+		position: absolute;
+		left: 0;
+		width: 100%;
+		height: 4px;
+		margin-top: -0.5px;
+		background-color: $columnResizeGuideColor;
+		opacity: .5;
+	}
 	
 	
 	//holding div that contains loader and covers tabulator element to prevent interaction
@@ -1582,24 +1604,4 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 			}
 		}
 	}
-}
-
-.tabulator-col-resize-guide {
-	position: absolute;
-	top: 0;
-	width: 4px;
-	height: 100%;
-	margin-left: -0.5px;
-	background-color: $columnResizeGuideColor;
-	opacity: .5;
-}
-
-.tabulator-row-resize-guide {
-	position: absolute;
-	left: 0;
-	width: 100%;
-	height: 4px;
-	margin-top: -0.5px;
-	background-color: $columnResizeGuideColor;
-	opacity: .5;
 }
