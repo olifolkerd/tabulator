@@ -650,6 +650,11 @@ class Module extends CoreFeature{
 var defaultAccessors = {};
 
 class Accessor extends Module{
+	
+	static moduleName = "accessor";
+
+	//load defaults
+	static accessors = defaultAccessors;
 
 	constructor(table){
 		super(table);
@@ -754,10 +759,6 @@ class Accessor extends Module{
 		return data;
 	}
 }
-
-//load defaults
-Accessor.moduleName = "accessor";
-Accessor.accessors = defaultAccessors;
 
 var defaultConfig = {
 	method: "GET",
@@ -943,6 +944,14 @@ var defaultContentTypeFormatters = {
 };
 
 class Ajax extends Module{
+
+	static moduleName = "ajax";
+
+	//load defaults
+	static defaultConfig = defaultConfig;
+	static defaultURLGenerator = urlBuilder;
+	static defaultLoaderPromise = defaultLoaderPromise;
+	static contentTypeFormatters = defaultContentTypeFormatters;
 	
 	constructor(table){
 		super(table);
@@ -1069,14 +1078,6 @@ class Ajax extends Module{
 		}
 	}
 }
-
-Ajax.moduleName = "ajax";
-
-//load defaults
-Ajax.defaultConfig = defaultConfig;
-Ajax.defaultURLGenerator = urlBuilder;
-Ajax.defaultLoaderPromise = defaultLoaderPromise;
-Ajax.contentTypeFormatters = defaultContentTypeFormatters;
 
 var defaultPasteActions = {
 	replace:function(data){
@@ -1265,6 +1266,12 @@ var defaultPasteParsers = {
 };
 
 class Clipboard extends Module{
+
+	static moduleName = "clipboard";
+
+	//load defaults
+	static pasteActions = defaultPasteActions;
+	static pasteParsers = defaultPasteParsers;
 
 	constructor(table){
 		super(table);
@@ -1533,12 +1540,6 @@ class Clipboard extends Module{
 		return data;
 	}
 }
-
-Clipboard.moduleName = "clipboard";
-
-//load defaults
-Clipboard.pasteActions = defaultPasteActions;
-Clipboard.pasteParsers = defaultPasteParsers;
 
 class CalcComponent{
 	constructor (row){
@@ -2052,7 +2053,7 @@ class ColumnComponent {
 	}
 
 	getParentColumn(){
-		return this._column.parent instanceof Column ? this._column.parent.getComponent() : false;
+		return this._column.getParentComponent();
 	}
 
 	_getSelf(){
@@ -2132,6 +2133,8 @@ var defaultColumnOptions = {
 };
 
 class Column extends CoreFeature{
+
+	static defaultOptionList = defaultColumnOptions;
 
 	constructor(def, parent){
 		super(parent.table);
@@ -3079,9 +3082,11 @@ class Column extends CoreFeature{
 	getPosition(){
 		return this.table.columnManager.getVisibleColumnsByIndex().indexOf(this) + 1;
 	}
-}
 
-Column.defaultOptionList = defaultColumnOptions;
+	getParentComponent(){
+		return this.parent instanceof Column ? this.parent.getComponent() : false;
+	}
+}
 
 //public row object
 class RowComponent {
@@ -3733,6 +3738,11 @@ var defaultCalculations = {
 };
 
 class ColumnCalcs extends Module{
+
+	static moduleName = "columnCalcs";
+
+	//load defaults
+	static calculations = defaultCalculations;
 	
 	constructor(table){
 		super(table);
@@ -4304,12 +4314,9 @@ class ColumnCalcs extends Module{
 	}
 }
 
-ColumnCalcs.moduleName = "columnCalcs";
-
-//load defaults
-ColumnCalcs.calculations = defaultCalculations;
-
 class DataTree extends Module{
+
+	static moduleName = "dataTree";
 
 	constructor(table){
 		super(table);
@@ -4907,8 +4914,6 @@ class DataTree extends Module{
 	}
 }
 
-DataTree.moduleName = "dataTree";
-
 function csv(list, options = {}, setFileContents){
 	var delimiter = options.delimiter ? options.delimiter : ",",
 	fileContents = [],
@@ -5269,6 +5274,11 @@ var defaultDownloaders = {
 
 class Download extends Module{
 
+	static moduleName = "download";
+
+	//load defaults
+	static downloaders = defaultDownloaders;
+
 	constructor(table){
 		super(table);
 
@@ -5405,11 +5415,6 @@ class Download extends Module{
 		}
 	}
 }
-
-Download.moduleName = "download";
-
-//load defaults
-Download.downloaders = defaultDownloaders;
 
 function maskInput(el, options){
 	var mask = options.mask,
@@ -6059,8 +6064,6 @@ function time(cell, onRendered, success, cancel, editorParams){
 			console.error("Editor Error - 'date' editor 'format' param is dependant on luxon.js");
 		}
 	}
-
-	console.log("val", cellValue);
 	
 	input.value = cellValue;
 	
@@ -7729,6 +7732,11 @@ var defaultEditors = {
 };
 
 class Edit$1 extends Module{
+
+	static moduleName = "edit";
+
+	//load defaults
+	static editors = defaultEditors;
 	
 	constructor(table){
 		super(table);
@@ -8495,11 +8503,6 @@ class Edit$1 extends Module{
 	}
 }
 
-Edit$1.moduleName = "edit";
-
-//load defaults
-Edit$1.editors = defaultEditors;
-
 class ExportRow{
 	constructor(type, columns, component, indent){
 		this.type = type;
@@ -8520,6 +8523,8 @@ class ExportColumn{
 }
 
 class Export extends Module{
+
+	static moduleName = "export";
 	
 	constructor(table){
 		super(table);
@@ -9157,8 +9162,6 @@ class Export extends Module{
 	}
 }
 
-Export.moduleName = "export";
-
 var defaultFilters = {
 
 	//equal to
@@ -9269,6 +9272,11 @@ var defaultFilters = {
 };
 
 class Filter extends Module{
+
+	static moduleName = "filter";
+
+	//load defaults
+	static filters = defaultFilters;
 
 	constructor(table){
 		super(table);
@@ -10162,11 +10170,6 @@ class Filter extends Module{
 	}
 }
 
-Filter.moduleName = "filter";
-
-//load defaults
-Filter.filters = defaultFilters;
-
 function plaintext(cell, formatterParams, onRendered){
 	return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 }
@@ -10712,110 +10715,6 @@ function handle(cell, formatterParams, onRendered){
 	return "<div class='tabulator-row-handle-box'><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div></div>";
 }
 
-function responsiveCollapse(cell, formatterParams, onRendered){
-	var el = document.createElement("div"),
-	config = cell.getRow()._row.modules.responsiveLayout;
-
-	el.classList.add("tabulator-responsive-collapse-toggle");
-	
-	el.innerHTML = `<svg class='tabulator-responsive-collapse-toggle-open' viewbox="0 0 24 24">
-  <line x1="7" y1="12" x2="17" y2="12" fill="none" stroke-width="3" stroke-linecap="round" />
-  <line y1="7" x1="12" y2="17" x2="12" fill="none" stroke-width="3" stroke-linecap="round" />
-</svg>
-
-<svg class='tabulator-responsive-collapse-toggle-close' viewbox="0 0 24 24">
-  <line x1="7" y1="12" x2="17" y2="12"  fill="none" stroke-width="3" stroke-linecap="round" />
-</svg>`;
-
-	cell.getElement().classList.add("tabulator-row-handle");
-
-	function toggleList(isOpen){
-		var collapseEl = config.element;
-
-		config.open = isOpen;
-
-		if(collapseEl){
-
-			if(config.open){
-				el.classList.add("open");
-				collapseEl.style.display = '';
-			}else {
-				el.classList.remove("open");
-				collapseEl.style.display = 'none';
-			}
-		}
-	}
-
-	el.addEventListener("click", function(e){
-		e.stopImmediatePropagation();
-		toggleList(!config.open);
-		cell.getTable().rowManager.adjustTableSize();
-	});
-
-	toggleList(config.open);
-
-	return el;
-}
-
-function rowSelection(cell, formatterParams, onRendered){
-	var checkbox = document.createElement("input");
-	var blocked = false;
-
-	checkbox.type = 'checkbox';
-
-	checkbox.setAttribute("aria-label", "Select Row");
-	
-	if(this.table.modExists("selectRow", true)){
-
-		checkbox.addEventListener("click", (e) => {
-			e.stopPropagation();
-		});
-
-		if(typeof cell.getRow == 'function'){
-			var row = cell.getRow();
-
-			if(row instanceof RowComponent){
-
-				checkbox.addEventListener("change", (e) => {
-					if(this.table.options.selectableRowsRangeMode === "click"){
-						if(!blocked){
-							row.toggleSelect();
-						}else {
-							blocked = false;
-						}
-					}else {
-						row.toggleSelect();
-					}
-				});
-
-				if(this.table.options.selectableRowsRangeMode === "click"){
-					checkbox.addEventListener("click", (e) => {
-						blocked = true;
-						this.table.modules.selectRow.handleComplexRowClick(row._row, e);
-					});
-				}
-
-				checkbox.checked = row.isSelected && row.isSelected();
-				this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
-			}else {
-				checkbox = "";
-			}
-		}else {
-			checkbox.addEventListener("change", (e) => {
-				if(this.table.modules.selectRow.selectedRows.length){
-					this.table.deselectRow();
-				}else {
-					this.table.selectRow(formatterParams.rowRange);
-				}
-			});
-
-			this.table.modules.selectRow.registerHeaderSelectCheckbox(checkbox);
-		}
-	}
-
-	return checkbox;
-}
-
 var defaultFormatters = {
 	plaintext:plaintext,
 	html:html$1,
@@ -10835,11 +10734,14 @@ var defaultFormatters = {
 	buttonCross:buttonCross,
 	rownum:rownum,
 	handle:handle,
-	responsiveCollapse:responsiveCollapse,
-	rowSelection:rowSelection,
 };
 
 class Format extends Module{
+
+	static moduleName = "format";
+
+	//load defaults
+	static formatters = defaultFormatters;
 	
 	constructor(table){
 		super(table);
@@ -11045,12 +10947,9 @@ class Format extends Module{
 	}
 }
 
-Format.moduleName = "format";
-
-//load defaults
-Format.formatters = defaultFormatters;
-
 class FrozenColumns extends Module{
+
+	static moduleName = "frozenColumns";
 	
 	constructor(table){
 		super(table);
@@ -11331,6 +11230,10 @@ class FrozenColumns extends Module{
 			this.table.columnManager.getContentsElement().style.width = "calc(100% - " + width + "px)";
 		}
 	}
+
+	getFrozenColumns(){
+		return this.leftColumns.concat(this.rightColumns);
+	}
 	
 	_calcSpace(columns, index){
 		var width = 0;
@@ -11345,9 +11248,9 @@ class FrozenColumns extends Module{
 	}
 }
 
-FrozenColumns.moduleName = "frozenColumns";
-
 class FrozenRows extends Module{
+
+	static moduleName = "frozenRows";
 
 	constructor(table){
 		super(table);
@@ -11516,8 +11419,6 @@ class FrozenRows extends Module{
 		});
 	}
 }
-
-FrozenRows.moduleName = "frozenRows";
 
 //public group object
 class GroupComponent {
@@ -12201,6 +12102,8 @@ class Group{
 }
 
 class GroupRows extends Module{
+
+	static moduleName = "groupRows";
 	
 	constructor(table){
 		super(table);
@@ -12832,8 +12735,6 @@ class GroupRows extends Module{
 	
 }
 
-GroupRows.moduleName = "groupRows";
-
 var defaultUndoers = {
 	cellEdit: function(action){
 		action.component.setValueProcessData(action.data.oldValue);
@@ -12901,6 +12802,12 @@ var defaultRedoers = {
 };
 
 class History extends Module{
+
+	static moduleName = "history";
+
+	//load defaults
+	static undoers = defaultUndoers;
+	static redoers = defaultRedoers;
 
 	constructor(table){
 		super(table);
@@ -13058,13 +12965,9 @@ class History extends Module{
 	}
 }
 
-History.moduleName = "history";
-
-//load defaults
-History.undoers = defaultUndoers;
-History.redoers = defaultRedoers;
-
 class HtmlTableImport extends Module{
+
+	static moduleName = "htmlTableImport";
 
 	constructor(table){
 		super(table);
@@ -13241,9 +13144,7 @@ class HtmlTableImport extends Module{
 	}
 }
 
-HtmlTableImport.moduleName = "htmlTableImport";
-
-function csvImporter(input){
+function csv$1(input){
 	var data = [],
 	row = 0, 
 	col = 0,
@@ -13314,17 +13215,22 @@ function json$1(input){
 	}
 }
 
-function arrayImporter(input){
+function array (input){
 	return input;
 }
 
 var defaultImporters = {
-	csv:csvImporter,
+	csv:csv$1,
 	json:json$1,
-	array:arrayImporter,
+	array:array,
 };
 
 class Import extends Module{
+
+	static moduleName = "import";
+
+	//load defaults
+	static importers = defaultImporters;
     
 	constructor(table){
 		super(table);
@@ -13508,12 +13414,9 @@ class Import extends Module{
 	}
 }
 
-Import.moduleName = "import";
-
-//load defaults
-Import.importers = defaultImporters;
-
 class Interaction extends Module{
+
+	static moduleName = "interaction";
 
 	constructor(table){
 		super(table);
@@ -13842,8 +13745,6 @@ class Interaction extends Module{
 	}
 }
 
-Interaction.moduleName = "interaction";
-
 var defaultBindings = {
 	navPrev:"shift + 9",
 	navNext:9,
@@ -14032,6 +13933,12 @@ var defaultActions = {
 
 class Keybindings extends Module{
 
+	static moduleName = "keybindings";
+
+	//load defaults
+	static bindings = defaultBindings;
+	static actions = defaultActions;
+
 	constructor(table){
 		super(table);
 
@@ -14191,13 +14098,9 @@ class Keybindings extends Module{
 	}
 }
 
-Keybindings.moduleName = "keybindings";
-
-//load defaults
-Keybindings.bindings = defaultBindings;
-Keybindings.actions = defaultActions;
-
 class Menu extends Module{
+
+	static moduleName = "menu";
 	
 	constructor(table){
 		super(table);
@@ -14496,9 +14399,9 @@ class Menu extends Module{
 	}
 }
 
-Menu.moduleName = "menu";
-
 class MoveColumns extends Module{
+
+	static moduleName = "moveColumn";
 	
 	constructor(table){
 		super(table);
@@ -14796,9 +14699,50 @@ class MoveColumns extends Module{
 	}
 }
 
-MoveColumns.moduleName = "moveColumn";
+var defaultSenders = {
+	delete:function(fromRow, toRow, toTable){
+		fromRow.delete();
+	}
+};
+
+var defaultReceivers = {
+	insert:function(fromRow, toRow, fromTable){
+		this.table.addRow(fromRow.getData(), undefined, toRow);
+		return true;
+	},
+
+	add:function(fromRow, toRow, fromTable){
+		this.table.addRow(fromRow.getData());
+		return true;
+	},
+
+	update:function(fromRow, toRow, fromTable){
+		if(toRow){
+			toRow.update(fromRow.getData());
+			return true;
+		}
+
+		return false;
+	},
+
+	replace:function(fromRow, toRow, fromTable){
+		if(toRow){
+			this.table.addRow(fromRow.getData(), undefined, toRow);
+			toRow.delete();
+			return true;
+		}
+
+		return false;
+	},
+};
 
 class MoveRows extends Module{
+
+	static moduleName = "moveRow";
+
+	//load defaults
+	static senders = defaultSenders;
+	static receivers = defaultReceivers;
 
 	constructor(table){
 		super(table);
@@ -15319,7 +15263,7 @@ class MoveRows extends Module{
 
 			switch(typeof this.table.options.movableRowsSender){
 				case "string":
-					sender = this.senders[this.table.options.movableRowsSender];
+					sender = MoveRows.senders[this.table.options.movableRowsSender];
 					break;
 
 				case "function":
@@ -15351,7 +15295,7 @@ class MoveRows extends Module{
 
 		switch(typeof this.table.options.movableRowsReceiver){
 			case "string":
-				receiver = this.receivers[this.table.options.movableRowsReceiver];
+				receiver = MoveRows.receivers[this.table.options.movableRowsReceiver];
 				break;
 
 			case "function":
@@ -15391,48 +15335,14 @@ class MoveRows extends Module{
 	}
 }
 
-MoveRows.prototype.receivers = {
-	insert:function(fromRow, toRow, fromTable){
-		this.table.addRow(fromRow.getData(), undefined, toRow);
-		return true;
-	},
-
-	add:function(fromRow, toRow, fromTable){
-		this.table.addRow(fromRow.getData());
-		return true;
-	},
-
-	update:function(fromRow, toRow, fromTable){
-		if(toRow){
-			toRow.update(fromRow.getData());
-			return true;
-		}
-
-		return false;
-	},
-
-	replace:function(fromRow, toRow, fromTable){
-		if(toRow){
-			this.table.addRow(fromRow.getData(), undefined, toRow);
-			toRow.delete();
-			return true;
-		}
-
-		return false;
-	},
-};
-
-MoveRows.prototype.senders = {
-	delete:function(fromRow, toRow, toTable){
-		fromRow.delete();
-	}
-};
-
-MoveRows.moduleName = "moveRow";
-
 var defaultMutators = {};
 
 class Mutator extends Module{
+
+	static moduleName = "mutator";
+
+	//load defaults
+	static mutators = defaultMutators;
 
 	constructor(table){
 		super(table);
@@ -15584,11 +15494,6 @@ class Mutator extends Module{
 	}
 }
 
-Mutator.moduleName = "mutator";
-
-//load defaults
-Mutator.mutators = defaultMutators;
-
 function rows(pageSize, currentRow, currentPage, totalRows, totalPages){
 	var el = document.createElement("span"),
 	showingEl = document.createElement("span"),
@@ -15670,6 +15575,11 @@ var defaultPageCounters = {
 };
 
 class Page extends Module{
+
+	static moduleName = "page";
+
+	//load defaults
+	static pageCounters = defaultPageCounters;
 	
 	constructor(table){
 		super(table);
@@ -16538,11 +16448,6 @@ class Page extends Module{
 	}
 }
 
-Page.moduleName = "page";
-
-//load defaults
-Page.pageCounters = defaultPageCounters;
-
 // read persistance information from storage
 var defaultReaders = {
 	local:function(id, type){
@@ -16588,6 +16493,14 @@ var defaultWriters = {
 };
 
 class Persistence extends Module{
+
+	static moduleName = "persistence";
+
+	static moduleInitOrder = -10;
+
+	//load defaults
+	static readers = defaultReaders;
+	static writers = defaultWriters;
 
 	constructor(table){
 		super(table);
@@ -17048,15 +16961,9 @@ class Persistence extends Module{
 	}
 }
 
-Persistence.moduleName = "persistence";
-
-Persistence.moduleInitOrder = -10;
-
-//load defaults
-Persistence.readers = defaultReaders;
-Persistence.writers = defaultWriters;
-
 class Popup$1 extends Module{
+	
+	static moduleName = "popup";
 	
 	constructor(table){
 		super(table);
@@ -17276,15 +17183,13 @@ class Popup$1 extends Module{
 			this.dispatchExternal("popupClosed", component.getComponent());
 		});
 
-
-
 		this.dispatchExternal("popupOpened", component.getComponent());
 	}
 }
 
-Popup$1.moduleName = "popup";
-
 class Print extends Module{
+
+	static moduleName = "print";
 
 	constructor(table){
 		super(table);
@@ -17417,9 +17322,9 @@ class Print extends Module{
 	}
 }
 
-Print.moduleName = "print";
-
 class ReactiveData extends Module{
+
+	static moduleName = "reactiveData";
 	
 	constructor(table){
 		super(table);
@@ -17819,10 +17724,10 @@ class ReactiveData extends Module{
 	}
 }
 
-ReactiveData.moduleName = "reactiveData";
-
 class ResizeColumns extends Module{
-	
+
+	static moduleName = "resizeColumns";
+
 	constructor(table){
 		super(table);
 		
@@ -18127,9 +18032,9 @@ class ResizeColumns extends Module{
 	}
 }
 
-ResizeColumns.moduleName = "resizeColumns";
-
 class ResizeRows extends Module{
+
+	static moduleName = "resizeRows";
 
 	constructor(table){
 		super(table);
@@ -18236,9 +18141,9 @@ class ResizeRows extends Module{
 	}
 }
 
-ResizeRows.moduleName = "resizeRows";
-
 class ResizeTable extends Module{
+
+	static moduleName = "resizeTable";
 	
 	constructor(table){
 		super(table);
@@ -18393,9 +18298,63 @@ class ResizeTable extends Module{
 	}
 }
 
-ResizeTable.moduleName = "resizeTable";
+function responsiveCollapse(cell, formatterParams, onRendered){
+	var el = document.createElement("div"),
+	config = cell.getRow()._row.modules.responsiveLayout;
+
+	el.classList.add("tabulator-responsive-collapse-toggle");
+	
+	el.innerHTML = `<svg class='tabulator-responsive-collapse-toggle-open' viewbox="0 0 24 24">
+  <line x1="7" y1="12" x2="17" y2="12" fill="none" stroke-width="3" stroke-linecap="round" />
+  <line y1="7" x1="12" y2="17" x2="12" fill="none" stroke-width="3" stroke-linecap="round" />
+</svg>
+
+<svg class='tabulator-responsive-collapse-toggle-close' viewbox="0 0 24 24">
+  <line x1="7" y1="12" x2="17" y2="12"  fill="none" stroke-width="3" stroke-linecap="round" />
+</svg>`;
+
+	cell.getElement().classList.add("tabulator-row-handle");
+
+	function toggleList(isOpen){
+		var collapseEl = config.element;
+
+		config.open = isOpen;
+
+		if(collapseEl){
+
+			if(config.open){
+				el.classList.add("open");
+				collapseEl.style.display = '';
+			}else {
+				el.classList.remove("open");
+				collapseEl.style.display = 'none';
+			}
+		}
+	}
+
+	el.addEventListener("click", function(e){
+		e.stopImmediatePropagation();
+		toggleList(!config.open);
+		cell.getTable().rowManager.adjustTableSize();
+	});
+
+	toggleList(config.open);
+
+	return el;
+}
+
+var extensions = {
+	format:{
+		formatters:{
+			responsiveCollapse:responsiveCollapse,
+		}
+	}
+};
 
 class ResponsiveLayout extends Module{
+
+	static moduleName = "responsiveLayout";
+	static moduleExtensions = extensions;
 
 	constructor(table){
 		super(table);
@@ -18738,9 +18697,77 @@ class ResponsiveLayout extends Module{
 	}
 }
 
-ResponsiveLayout.moduleName = "responsiveLayout";
+function rowSelection(cell, formatterParams, onRendered){
+	var checkbox = document.createElement("input");
+	var blocked = false;
+
+	checkbox.type = 'checkbox';
+
+	checkbox.setAttribute("aria-label", "Select Row");
+	
+	if(this.table.modExists("selectRow", true)){
+
+		checkbox.addEventListener("click", (e) => {
+			e.stopPropagation();
+		});
+
+		if(typeof cell.getRow == 'function'){
+			var row = cell.getRow();
+
+			if(row instanceof RowComponent){
+
+				checkbox.addEventListener("change", (e) => {
+					if(this.table.options.selectableRowsRangeMode === "click"){
+						if(!blocked){
+							row.toggleSelect();
+						}else {
+							blocked = false;
+						}
+					}else {
+						row.toggleSelect();
+					}
+				});
+
+				if(this.table.options.selectableRowsRangeMode === "click"){
+					checkbox.addEventListener("click", (e) => {
+						blocked = true;
+						this.table.modules.selectRow.handleComplexRowClick(row._row, e);
+					});
+				}
+
+				checkbox.checked = row.isSelected && row.isSelected();
+				this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
+			}else {
+				checkbox = "";
+			}
+		}else {
+			checkbox.addEventListener("change", (e) => {
+				if(this.table.modules.selectRow.selectedRows.length){
+					this.table.deselectRow();
+				}else {
+					this.table.selectRow(formatterParams.rowRange);
+				}
+			});
+
+			this.table.modules.selectRow.registerHeaderSelectCheckbox(checkbox);
+		}
+	}
+
+	return checkbox;
+}
+
+var extensions$1 = {
+	format:{
+		formatters:{
+			rowSelection:rowSelection,
+		}
+	}
+};
 
 class SelectRow extends Module{
+
+	static moduleName = "selectRow";
+	static moduleExtensions = extensions$1;
 	
 	constructor(table){
 		super(table);
@@ -19230,8 +19257,6 @@ class SelectRow extends Module{
 	}
 }
 
-SelectRow.moduleName = "selectRow";
-
 //sort numbers
 function number$1(a, b, aRow, bRow, column, dir, params){
 	var alignEmptyValues = params.alignEmptyValues;
@@ -19380,7 +19405,7 @@ function boolean(a, b, aRow, bRow, column, dir, params){
 }
 
 //sort if element contains any data
-function array(a, b, aRow, bRow, column, dir, params){
+function array$1(a, b, aRow, bRow, column, dir, params){
 	var type = params.type || "length",
 	alignEmptyValues = params.alignEmptyValues,
 	emptyAlign = 0;
@@ -19494,12 +19519,17 @@ var defaultSorters = {
 	time:time$1,
 	datetime:datetime$2,
 	boolean:boolean,
-	array:array,
+	array:array$1,
 	exists:exists,
 	alphanum:alphanum
 };
 
 class Sort extends Module{
+
+	static moduleName = "sort";
+
+	//load defaults
+	static sorters = defaultSorters;
 	
 	constructor(table){
 		super(table);
@@ -19966,11 +19996,6 @@ class Sort extends Module{
 	}
 }
 
-Sort.moduleName = "sort";
-
-//load defaults
-Sort.sorters = defaultSorters;
-
 class RangeComponent {
 	constructor(range) {
 		this._range = range;
@@ -20227,6 +20252,10 @@ class Range extends CoreFeature{
 		_vDomLeft = this.table.columnManager.renderer.leftCol,
 		_vDomRight = this.table.columnManager.renderer.rightCol,		
 		top, bottom, left, right, topLeftCell, bottomRightCell;
+
+		if(this.table.options.renderHorizontal === "virtual" && this.rangeManager.rowHeader) {
+			_vDomRight += 1;
+		}
 		
 		if (_vDomTop == null) {
 			_vDomTop = 0;
@@ -20414,6 +20443,9 @@ class Range extends CoreFeature{
 }
 
 class SelectRange extends Module {
+	
+	static moduleName = "selectRange";
+	
 	constructor(table) {
 		super(table);
 		
@@ -20437,11 +20469,11 @@ class SelectRange extends Module {
 		this.registerTableOption("selectableRangeRows", false); //enable selectable range
 		this.registerTableOption("selectableRangeClearCells", false); //allow clearing of active range
 		this.registerTableOption("selectableRangeClearCellsValue", undefined); //value for cleared active range
-
+		
 		this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
 		this.registerTableFunction("getRanges", this.getRanges.bind(this));
 		this.registerTableFunction("addRange", this.addRangeFromComponent.bind(this));
-
+		
 		this.registerComponentFunction("cell", "getRanges", this.cellGetRanges.bind(this));
 		this.registerComponentFunction("row", "getRanges", this.rowGetRanges.bind(this));
 		this.registerComponentFunction("column", "getRanges", this.colGetRanges.bind(this));
@@ -20454,7 +20486,6 @@ class SelectRange extends Module {
 	initialize() {
 		if (this.options("selectableRange")) {		
 			if(!this.options("selectableRows")){
-				
 				this.maxRanges = this.options("selectableRange");
 				
 				this.initializeTable();
@@ -20500,7 +20531,7 @@ class SelectRange extends Module {
 		this.subscribe("column-height", this.layoutChange.bind(this));
 		this.subscribe("column-resized", this.layoutChange.bind(this));
 		this.subscribe("columns-loaded", this.updateHeaderColumn.bind(this));
-
+		
 		this.subscribe("cell-height", this.layoutChange.bind(this));
 		this.subscribe("cell-rendered", this.renderCell.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
@@ -20509,7 +20540,7 @@ class SelectRange extends Module {
 		this.subscribe("cell-editing", this.handleEditingCell.bind(this));
 		
 		this.subscribe("page-changed", this.redraw.bind(this));
-
+		
 		this.subscribe("scroll-vertical", this.layoutChange.bind(this));
 		this.subscribe("scroll-horizontal", this.layoutChange.bind(this));
 		
@@ -20542,6 +20573,8 @@ class SelectRange extends Module {
 	}
 	
 	updateHeaderColumn(){
+		var frozenCols;
+
 		if(this.rowSelection){
 			this.rowHeader = this.table.columnManager.getVisibleColumnsByIndex()[0];
 			
@@ -20555,6 +20588,15 @@ class SelectRange extends Module {
 				if(this.rowHeader.definition.editor){
 					console.warn("Using column editor with selectableRangeRows option may result in unpredictable behavior");
 				}
+			}
+		}
+
+		//warn if invalid frozen column configuration detected
+		if(this.table.modules.frozenColumns && this.table.modules.frozenColumns.active){
+			frozenCols = this.table.modules.frozenColumns.getFrozenColumns();
+
+			if(frozenCols.length > 1 || (frozenCols.length === 1 && frozenCols[0] !== this.rowHeader)){
+				console.warn("Using frozen columns that are not the range header in combination with the selectRange option may result in unpredictable behavior");
 			}
 		}
 	}
@@ -20622,12 +20664,12 @@ class SelectRange extends Module {
 				if (this.table.modules.edit && this.table.modules.edit.currentCell) {
 					return;
 				}
-
+				
 				this.table.modules.edit.editCell(this.getActiveCell());
 				
 				e.preventDefault();
 			}
-
+			
 			if ((e.key === "Backspace" || e.key === "Delete") && this.options("selectableRangeClearCells")) {
 				if(this.activeRange){
 					this.activeRange.clearValues();
@@ -20754,7 +20796,7 @@ class SelectRange extends Module {
 	finishEditingCell() {
 		this.blockKeydown = true;
 		this.table.rowManager.element.focus();
-
+		
 		setTimeout(() => {
 			this.blockKeydown = false;
 		}, 10);
@@ -20806,17 +20848,17 @@ class SelectRange extends Module {
 		if(jump){
 			switch(dir){
 				case "left":
-					nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
-					break;
+				nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
+				break;
 				case "right":
-					nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
-					break;
+				nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
+				break;
 				case "up":
-					nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
-					break;
+				nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
+				break;
 				case "down":
-					nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
-					break;
+				nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
+				break;
 			}
 		}else {
 			if(expand){
@@ -20827,17 +20869,17 @@ class SelectRange extends Module {
 			
 			switch(dir){
 				case "left":
-					nextCol = Math.max(nextCol - 1, 0);
-					break;
+				nextCol = Math.max(nextCol - 1, 0);
+				break;
 				case "right":
-					nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 1);
-					break;
+				nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 1);
+				break;
 				case "up":
-					nextRow = Math.max(nextRow - 1, 0);
-					break;
+				nextRow = Math.max(nextRow - 1, 0);
+				break;
 				case "down":
-					nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
-					break;
+				nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
+				break;
 			}
 		}
 		
@@ -20998,7 +21040,7 @@ class SelectRange extends Module {
 				this.selecting = "all";
 				
 				var topLeftCell, bottomRightCell = this.getCell(-1, -1);
-
+				
 				if(this.rowHeader){
 					topLeftCell = this.getCell(0, 1);
 				}else {
@@ -21028,7 +21070,7 @@ class SelectRange extends Module {
 	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element,
 		rowHeader, rect, view, withinHorizontalView, withinVerticalView;
-
+		
 		if (typeof row === 'undefined') {
 			row = this.getRowByRangePos(range.end.row).getElement();
 		}
@@ -21036,7 +21078,7 @@ class SelectRange extends Module {
 		if (typeof column === 'undefined') {
 			column = this.getColumnByRangePos(range.end.col).getElement();
 		}
-
+		
 		if (this.rowHeader) {
 			rowHeader = this.rowHeader.getElement();
 		}
@@ -21054,7 +21096,7 @@ class SelectRange extends Module {
 			top: tableHolder.scrollTop,
 			bottom:	tableHolder.scrollTop +	tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth,
 		};
-
+		
 		if (rowHeader) {
 			view.left += rowHeader.offsetWidth;
 		}
@@ -21249,7 +21291,7 @@ class SelectRange extends Module {
 		
 		if(this.table.rowManager.activeRows.length){
 			cell = this.table.rowManager.activeRows[0].cells[this.rowHeader ? 1 : 0];
-
+			
 			if(cell){
 				range.setBounds(cell);
 				this.initializeFocus(cell);
@@ -21273,9 +21315,9 @@ class SelectRange extends Module {
 	}
 }
 
-SelectRange.moduleName = "selectRange";
-
 class Tooltip extends Module{
+
+	static moduleName = "tooltip";
 	
 	constructor(table){
 		super(table);
@@ -21398,8 +21440,6 @@ class Tooltip extends Module{
 		}
 	}
 }
-
-Tooltip.moduleName = "tooltip";
 
 var defaultValidators = {
 	//is integer
@@ -21553,6 +21593,11 @@ var defaultValidators = {
 };
 
 class Validate extends Module{
+
+	static moduleName = "validate";
+
+	//load defaults
+	static validators = defaultValidators;
 	
 	constructor(table){
 		super(table);
@@ -21847,12 +21892,7 @@ class Validate extends Module{
 	}
 }
 
-Validate.moduleName = "validate";
-
-//load defaults
-Validate.validators = defaultValidators;
-
-var modules = /*#__PURE__*/Object.freeze({
+var allModules = /*#__PURE__*/Object.freeze({
 	__proto__: null,
 	AccessorModule: Accessor,
 	AjaxModule: Ajax,
@@ -26318,65 +26358,6 @@ class DeprecationAdvisor extends CoreFeature{
 	}
 }
 
-class TableRegistry {
-
-	static register(table){
-		TableRegistry.tables.push(table);
-	}
-
-	static deregister(table){
-		var index = TableRegistry.tables.indexOf(table);
-
-		if(index > -1){
-			TableRegistry.tables.splice(index, 1);
-		}
-	}
-
-	static lookupTable(query, silent){
-		var results = [],
-		matches, match;
-
-		if(typeof query === "string"){
-			matches = document.querySelectorAll(query);
-
-			if(matches.length){
-				for(var i = 0; i < matches.length; i++){
-					match = TableRegistry.matchElement(matches[i]);
-
-					if(match){
-						results.push(match);
-					}
-				}
-			}
-
-		}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof Tabulator){
-			match = TableRegistry.matchElement(query);
-
-			if(match){
-				results.push(match);
-			}
-		}else if(Array.isArray(query)){
-			query.forEach(function(item){
-				results = results.concat(TableRegistry.lookupTable(item));
-			});
-		}else {
-			if(!silent){
-				console.warn("Table Connection Error - Invalid Selector", query);
-			}
-		}
-
-		return results;
-	}
-
-	static matchElement(element){
-		return TableRegistry.tables.find(function(table){
-			return element instanceof Tabulator ? table === element : table.element === element;
-		});
-	}
-}
-
-TableRegistry.tables = [];
-
 //resize columns to fit data they contain
 function fitData(columns, forced){
 	if(forced){
@@ -26622,6 +26603,11 @@ var defaultModes = {
 
 class Layout extends Module{
 
+	static moduleName = "layout";
+
+	//load defaults
+	static modes = defaultModes;
+
 	constructor(table){
 		super(table, "layout");
 
@@ -26670,11 +26656,6 @@ class Layout extends Module{
 	}
 }
 
-Layout.moduleName = "layout";
-
-//load defaults
-Layout.modes = defaultModes;
-
 var defaultLangs = {
 	"default":{ //hold default locale text
 		"groups":{
@@ -26714,6 +26695,11 @@ var defaultLangs = {
 };
 
 class Localize extends Module{
+
+	static moduleName = "localize";
+
+	//load defaults
+	static langs = defaultLangs;
 
 	constructor(table){
 		super(table);
@@ -26887,12 +26873,9 @@ class Localize extends Module{
 	}
 }
 
-Localize.moduleName = "localize";
-
-//load defaults
-Localize.langs = defaultLangs;
-
 class Comms extends Module{
+
+	static moduleName = "comms";
 
 	constructor(table){
 		super(table);
@@ -26906,7 +26889,7 @@ class Comms extends Module{
 		var connections = [],
 		connection;
 
-		connection = TableRegistry.lookupTable(selectors);
+		connection = this.table.constructor.registry.lookupTable(selectors);
 
 		connection.forEach((con) =>{
 			if(this.table !== con){
@@ -26938,8 +26921,6 @@ class Comms extends Module{
 	}
 }
 
-Comms.moduleName = "comms";
-
 var coreModules = /*#__PURE__*/Object.freeze({
 	__proto__: null,
 	LayoutModule: Layout,
@@ -26947,97 +26928,116 @@ var coreModules = /*#__PURE__*/Object.freeze({
 	CommsModule: Comms
 });
 
-class ModuleBinder {
-	
-	constructor(tabulator, modules){
-		this.bindStaticFunctionality(tabulator);
-		this.bindModules(tabulator, coreModules, true);
+class TableRegistry {
+	static registry = {
+		tables:[],
 		
-		if(modules){
-			this.bindModules(tabulator, modules);
+		register(table){
+			TableRegistry.registry.tables.push(table);
+		},
+		
+		deregister(table){
+			var index = TableRegistry.registry.tables.indexOf(table);
+			
+			if(index > -1){
+				TableRegistry.registry.tables.splice(index, 1);
+			}
+		},
+		
+		lookupTable(query, silent){
+			var results = [],
+			matches, match;
+			
+			if(typeof query === "string"){
+				matches = document.querySelectorAll(query);
+				
+				if(matches.length){
+					for(var i = 0; i < matches.length; i++){
+						match = TableRegistry.registry.matchElement(matches[i]);
+						
+						if(match){
+							results.push(match);
+						}
+					}
+				}
+				
+			}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof TableRegistry){
+				match = TableRegistry.registry.matchElement(query);
+				
+				if(match){
+					results.push(match);
+				}
+			}else if(Array.isArray(query)){
+				query.forEach(function(item){
+					results = results.concat(TableRegistry.registry.lookupTable(item));
+				});
+			}else {
+				if(!silent){
+					console.warn("Table Connection Error - Invalid Selector", query);
+				}
+			}
+			
+			return results;
+		},
+		
+		matchElement(element){
+			return TableRegistry.registry.tables.find(function(table){
+				return element instanceof TableRegistry ? table === element : table.element === element;
+			});
+		}
+	};
+
+		
+	static findTable(query){
+		var results = TableRegistry.registry.lookupTable(query, true);
+		return Array.isArray(results) && !results.length ? false : results;
+	}
+}
+
+class ModuleBinder extends TableRegistry {
+	
+	static moduleBindings = {};
+	static moduleExtensions = {};
+	static modulesRegistered = false;
+	
+	static defaultModules = false;
+	
+	constructor(){
+		super();
+	}
+	
+	static initializeModuleBinder(defaultModules){
+		if(!ModuleBinder.modulesRegistered){
+			ModuleBinder.modulesRegistered = true;
+			ModuleBinder._registerModules(coreModules, true);
+			
+			if(defaultModules){
+				ModuleBinder._registerModules(defaultModules);
+			}
 		}
 	}
 	
-	bindStaticFunctionality(tabulator){
-		tabulator.moduleBindings = {};
-		
-		tabulator.extendModule = function(name, property, values){
-			if(tabulator.moduleBindings[name]){
-				var source = tabulator.moduleBindings[name][property];
-				
-				if(source){
-					if(typeof values == "object"){
-						for(let key in values){
-							source[key] = values[key];
-						}
-					}else {
-						console.warn("Module Error - Invalid value type, it must be an object");
+	static _extendModule(name, property, values){
+		if(ModuleBinder.moduleBindings[name]){
+			var source = ModuleBinder.moduleBindings[name][property];
+			
+			if(source){
+				if(typeof values == "object"){
+					for(let key in values){
+						source[key] = values[key];
 					}
 				}else {
-					console.warn("Module Error - property does not exist:", property);
+					console.warn("Module Error - Invalid value type, it must be an object");
 				}
 			}else {
-				console.warn("Module Error - module does not exist:", name);
+				console.warn("Module Error - property does not exist:", property);
 			}
-		};
-		
-		tabulator.registerModule = function(modules){
-			if(!Array.isArray(modules)){
-				modules = [modules];
-			}
-			
-			modules.forEach((mod) => {
-				tabulator.registerModuleBinding(mod);
-			});
-		};
-		
-		tabulator.registerModuleBinding = function(mod){
-			tabulator.moduleBindings[mod.moduleName] = mod;
-		};
-		
-		tabulator.findTable = function(query){
-			var results = TableRegistry.lookupTable(query, true);
-			return Array.isArray(results) && !results.length ? false : results;
-		};
-		
-		//ensure that module are bound to instantiated function
-		tabulator.prototype.bindModules = function(){
-			var orderedStartMods = [],
-			orderedEndMods = [],
-			unOrderedMods = [];
-			
-			this.modules = {};
-			
-			for(var name in tabulator.moduleBindings){
-				let mod = tabulator.moduleBindings[name];
-				let module = new mod(this);
-				
-				this.modules[name] = module;
-				
-				if(mod.prototype.moduleCore){
-					this.modulesCore.push(module);
-				}else {
-					if(mod.moduleInitOrder){
-						if(mod.moduleInitOrder < 0){
-							orderedStartMods.push(module);
-						}else {
-							orderedEndMods.push(module);
-						}
-						
-					}else {
-						unOrderedMods.push(module);
-					}
-				}
-			}
-			
-			orderedStartMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
-			orderedEndMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
-			
-			this.modulesRegular = orderedStartMods.concat(unOrderedMods.concat(orderedEndMods));
-		};
+		}else {
+			console.warn("Module Error - module does not exist:", name);
+		}
 	}
 	
-	bindModules(tabulator, modules, core){
+	static _registerModules(modules, core){
 		var mods = Object.values(modules);
 		
 		if(core){
@@ -27046,7 +27046,100 @@ class ModuleBinder {
 			});
 		}
 		
-		tabulator.registerModule(mods);
+		ModuleBinder._registerModule(mods);
+	}
+	
+	static _registerModule(modules){
+		if(!Array.isArray(modules)){
+			modules = [modules];
+		}
+		
+		modules.forEach((mod) => {
+			ModuleBinder._registerModuleBinding(mod);
+			ModuleBinder._registerModuleExtensions(mod);
+		});
+	}
+	
+	static _registerModuleBinding(mod){
+		if(mod.moduleName){
+			ModuleBinder.moduleBindings[mod.moduleName] = mod;
+		}else {
+			console.error("Unable to bind module, no moduleName defined", mod.moduleName);
+		}
+	}
+	
+	static _registerModuleExtensions(mod){
+		var extensions = mod.moduleExtensions;
+		
+		if(mod.moduleExtensions){
+			for (let modKey in extensions) {
+				var ext = extensions[modKey];
+				
+				if(ModuleBinder.moduleBindings[modKey]){
+					for (let propKey in ext) {
+						ModuleBinder._extendModule(modKey, propKey, ext[propKey]);
+					}
+				}else {
+					if(!ModuleBinder.moduleExtensions[modKey]){
+						ModuleBinder.moduleExtensions[modKey] = {};
+					}
+					
+					for (let propKey in ext) {
+						ModuleBinder.moduleExtensions[modKey][propKey] = ext[propKey];
+					}
+				}
+			}
+		}
+
+		ModuleBinder._extendModuleFromQueue(mod);
+	}
+	
+	static _extendModuleFromQueue(mod){
+		var extensions = ModuleBinder.moduleExtensions[mod.moduleName];
+		
+		if(extensions){
+			for (let propKey in extensions) {
+				ModuleBinder._extendModule(mod.moduleName, propKey, extensions[propKey]);
+			}
+		}
+	}
+	
+	
+	
+	//ensure that module are bound to instantiated function
+	_bindModules(){
+		var orderedStartMods = [],
+		orderedEndMods = [],
+		unOrderedMods = [];
+		
+		this.modules = {};
+		
+		for(var name in ModuleBinder.moduleBindings){
+			let mod = ModuleBinder.moduleBindings[name];
+			let module = new mod(this);
+			
+			this.modules[name] = module;
+			
+			if(mod.prototype.moduleCore){
+				this.modulesCore.push(module);
+			}else {
+				if(mod.moduleInitOrder){
+					if(mod.moduleInitOrder < 0){
+						orderedStartMods.push(module);
+					}else {
+						orderedEndMods.push(module);
+					}
+					
+				}else {
+					unOrderedMods.push(module);
+				}
+			}
+		}
+		
+		orderedStartMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
+		orderedEndMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
+		
+		this.modulesRegular = orderedStartMods.concat(unOrderedMods.concat(orderedEndMods));
 	}
 }
 
@@ -27115,10 +27208,26 @@ class Alert extends CoreFeature{
 	}
 }
 
-class Tabulator {
-	
-	constructor(element, options){
-		
+class Tabulator extends ModuleBinder{
+
+	//default setup options
+	static defaultOptions = defaultOptions;
+
+	static extendModule(){
+		Tabulator.initializeModuleBinder();
+		Tabulator._extendModule(...arguments);
+	}
+
+	static registerModule(){
+		Tabulator.initializeModuleBinder();
+		Tabulator._registerModule(...arguments);
+	}
+
+	constructor(element, options, modules){
+		super();
+
+		Tabulator.initializeModuleBinder(modules);
+
 		this.options = {};
 		
 		this.columnManager = null; // hold Column Manager
@@ -27158,7 +27267,7 @@ class Tabulator {
 			});
 		}
 		
-		TableRegistry.register(this); //register table for inter-device communication
+		this.constructor.registry.register(this); //register table for inter-device communication
 	}
 	
 	initializeElement(element){
@@ -27187,7 +27296,7 @@ class Tabulator {
 		this.dataLoader = new DataLoader(this);
 		this.alertManager = new Alert(this);
 		
-		this.bindModules();
+		this._bindModules();
 		
 		this.options = this.optionsList.generate(Tabulator.defaultOptions, options);
 		
@@ -27379,7 +27488,7 @@ class Tabulator {
 		
 		this.destroyed = true;
 		
-		TableRegistry.deregister(this); //deregister table from inter-device communication
+		this.constructor.registry.deregister(this); //deregister table from inter-device communication
 		
 		this.eventBus.dispatch("table-destroy");
 		
@@ -27980,18 +28089,23 @@ class Tabulator {
 	}
 }
 
-//default setup options
-Tabulator.defaultOptions = defaultOptions;
-
-//bind modules and static functionality
-new ModuleBinder(Tabulator);
-
 //tabulator with all modules installed
 
-class TabulatorFull extends Tabulator {}
+class TabulatorFull extends Tabulator {
+	static extendModule(){
+		Tabulator.initializeModuleBinder(allModules);
+		Tabulator._extendModule(...arguments);
+	}
 
-//bind modules and static functionality
-new ModuleBinder(TabulatorFull, modules);
+	static registerModule(){
+		Tabulator.initializeModuleBinder(allModules);
+		Tabulator._registerModule(...arguments);
+	}
+
+	constructor(element, options, modules){
+		super(element, options, allModules);
+	}
+}
 
 class PseudoRow {
 

@@ -3,7 +3,9 @@ import Module from '../../core/Module.js';
 import Cell from '../../core/cell/Cell.js';
 import Column from '../../core/column/Column.js';
 
-class Interaction extends Module{
+export default class Interaction extends Module{
+
+	static moduleName = "interaction";
 
 	constructor(table){
 		super(table);
@@ -331,7 +333,3 @@ class Interaction extends Module{
 		this.dispatchExternal(action, e, componentObj);
 	}
 }
-
-Interaction.moduleName = "interaction";
-
-export default Interaction;

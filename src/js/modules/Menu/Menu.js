@@ -1,6 +1,8 @@
 import Module from '../../core/Module.js';
 
-class Menu extends Module{
+export default class Menu extends Module{
+
+	static moduleName = "menu";
 	
 	constructor(table){
 		super(table);
@@ -298,7 +300,3 @@ class Menu extends Module{
 		}
 	}
 }
-
-Menu.moduleName = "menu";
-
-export default Menu;

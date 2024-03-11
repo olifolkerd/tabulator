@@ -1,7 +1,9 @@
 import Module from '../../core/Module.js';
 import Cell from '../../core/cell/Cell.js';
 
-class Tooltip extends Module{
+export default class Tooltip extends Module{
+
+	static moduleName = "tooltip";
 	
 	constructor(table){
 		super(table);
@@ -124,7 +126,3 @@ class Tooltip extends Module{
 		}
 	}
 }
-
-Tooltip.moduleName = "tooltip";
-
-export default Tooltip;

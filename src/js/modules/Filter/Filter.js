@@ -2,7 +2,12 @@ import Module from '../../core/Module.js';
 
 import defaultFilters from './defaults/filters.js';
 
-class Filter extends Module{
+export default class Filter extends Module{
+
+	static moduleName = "filter";
+
+	//load defaults
+	static filters = defaultFilters;
 
 	constructor(table){
 		super(table);
@@ -895,10 +900,3 @@ class Filter extends Module{
 		return match;
 	}
 }
-
-Filter.moduleName = "filter";
-
-//load defaults
-Filter.filters = defaultFilters;
-
-export default Filter;

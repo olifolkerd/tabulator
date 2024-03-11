@@ -1,7 +1,10 @@
 import Module from "../../core/Module.js";
 import Range from "./Range.js";
 
-class SelectRange extends Module {
+export default class SelectRange extends Module {
+	
+	static moduleName = "selectRange";
+	
 	constructor(table) {
 		super(table);
 		
@@ -25,11 +28,11 @@ class SelectRange extends Module {
 		this.registerTableOption("selectableRangeRows", false); //enable selectable range
 		this.registerTableOption("selectableRangeClearCells", false); //allow clearing of active range
 		this.registerTableOption("selectableRangeClearCellsValue", undefined); //value for cleared active range
-
+		
 		this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
 		this.registerTableFunction("getRanges", this.getRanges.bind(this));
 		this.registerTableFunction("addRange", this.addRangeFromComponent.bind(this));
-
+		
 		this.registerComponentFunction("cell", "getRanges", this.cellGetRanges.bind(this));
 		this.registerComponentFunction("row", "getRanges", this.rowGetRanges.bind(this));
 		this.registerComponentFunction("column", "getRanges", this.colGetRanges.bind(this));
@@ -42,7 +45,6 @@ class SelectRange extends Module {
 	initialize() {
 		if (this.options("selectableRange")) {		
 			if(!this.options("selectableRows")){
-				
 				this.maxRanges = this.options("selectableRange");
 				
 				this.initializeTable();
@@ -88,7 +90,7 @@ class SelectRange extends Module {
 		this.subscribe("column-height", this.layoutChange.bind(this));
 		this.subscribe("column-resized", this.layoutChange.bind(this));
 		this.subscribe("columns-loaded", this.updateHeaderColumn.bind(this));
-
+		
 		this.subscribe("cell-height", this.layoutChange.bind(this));
 		this.subscribe("cell-rendered", this.renderCell.bind(this));
 		this.subscribe("cell-mousedown", this.handleCellMouseDown.bind(this));
@@ -97,7 +99,7 @@ class SelectRange extends Module {
 		this.subscribe("cell-editing", this.handleEditingCell.bind(this));
 		
 		this.subscribe("page-changed", this.redraw.bind(this));
-
+		
 		this.subscribe("scroll-vertical", this.layoutChange.bind(this));
 		this.subscribe("scroll-horizontal", this.layoutChange.bind(this));
 		
@@ -134,6 +136,8 @@ class SelectRange extends Module {
 	}
 	
 	updateHeaderColumn(){
+		var frozenCols;
+
 		if(this.rowSelection){
 			this.rowHeader = this.table.columnManager.getVisibleColumnsByIndex()[0];
 			
@@ -147,6 +151,15 @@ class SelectRange extends Module {
 				if(this.rowHeader.definition.editor){
 					console.warn("Using column editor with selectableRangeRows option may result in unpredictable behavior");
 				}
+			}
+		}
+
+		//warn if invalid frozen column configuration detected
+		if(this.table.modules.frozenColumns && this.table.modules.frozenColumns.active){
+			frozenCols = this.table.modules.frozenColumns.getFrozenColumns();
+
+			if(frozenCols.length > 1 || (frozenCols.length === 1 && frozenCols[0] !== this.rowHeader)){
+				console.warn("Using frozen columns that are not the range header in combination with the selectRange option may result in unpredictable behavior");
 			}
 		}
 	}
@@ -214,12 +227,12 @@ class SelectRange extends Module {
 				if (this.table.modules.edit && this.table.modules.edit.currentCell) {
 					return;
 				}
-
+				
 				this.table.modules.edit.editCell(this.getActiveCell());
 				
 				e.preventDefault();
 			}
-
+			
 			if ((e.key === "Backspace" || e.key === "Delete") && this.options("selectableRangeClearCells")) {
 				if(this.activeRange){
 					this.activeRange.clearValues();
@@ -346,7 +359,7 @@ class SelectRange extends Module {
 	finishEditingCell() {
 		this.blockKeydown = true;
 		this.table.rowManager.element.focus();
-
+		
 		setTimeout(() => {
 			this.blockKeydown = false;
 		}, 10);
@@ -398,17 +411,17 @@ class SelectRange extends Module {
 		if(jump){
 			switch(dir){
 				case "left":
-					nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
-					break;
+				nextCol = this.findJumpCellLeft(range.start.row, rangeEdge.col);
+				break;
 				case "right":
-					nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
-					break;
+				nextCol = this.findJumpCellRight(range.start.row, rangeEdge.col);
+				break;
 				case "up":
-					nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
-					break;
+				nextRow = this.findJumpCellUp(rangeEdge.row, range.start.col);
+				break;
 				case "down":
-					nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
-					break;
+				nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
+				break;
 			}
 		}else{
 			if(expand){
@@ -419,17 +432,17 @@ class SelectRange extends Module {
 			
 			switch(dir){
 				case "left":
-					nextCol = Math.max(nextCol - 1, 0);
-					break;
+				nextCol = Math.max(nextCol - 1, 0);
+				break;
 				case "right":
-					nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 1);
-					break;
+				nextCol = Math.min(nextCol + 1, this.getTableColumns().length - 1);
+				break;
 				case "up":
-					nextRow = Math.max(nextRow - 1, 0);
-					break;
+				nextRow = Math.max(nextRow - 1, 0);
+				break;
 				case "down":
-					nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
-					break;
+				nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
+				break;
 			}
 		}
 		
@@ -590,7 +603,7 @@ class SelectRange extends Module {
 				this.selecting = "all";
 				
 				var topLeftCell, bottomRightCell = this.getCell(-1, -1);
-
+				
 				if(this.rowHeader){
 					topLeftCell = this.getCell(0, 1);
 				}else{
@@ -620,7 +633,7 @@ class SelectRange extends Module {
 	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element,
 		rowHeader, rect, view, withinHorizontalView, withinVerticalView;
-
+		
 		if (typeof row === 'undefined') {
 			row = this.getRowByRangePos(range.end.row).getElement();
 		}
@@ -628,7 +641,7 @@ class SelectRange extends Module {
 		if (typeof column === 'undefined') {
 			column = this.getColumnByRangePos(range.end.col).getElement();
 		}
-
+		
 		if (this.rowHeader) {
 			rowHeader = this.rowHeader.getElement();
 		}
@@ -646,7 +659,7 @@ class SelectRange extends Module {
 			top: tableHolder.scrollTop,
 			bottom:	tableHolder.scrollTop +	tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth,
 		};
-
+		
 		if (rowHeader) {
 			view.left += rowHeader.offsetWidth;
 		}
@@ -832,7 +845,7 @@ class SelectRange extends Module {
 	}
 	
 	resetRanges() {
-		var range, cell;
+		var range, cell, visibleCells;
 		
 		this.ranges.forEach((range) => range.destroy());
 		this.ranges = [];
@@ -840,7 +853,7 @@ class SelectRange extends Module {
 		range = this.addRange();
 		
 		if(this.table.rowManager.activeRows.length){
-			var visibleCells = this.table.rowManager.activeRows[0].cells.filter((cell) => cell.column.visible);
+			visibleCells = this.table.rowManager.activeRows[0].cells.filter((cell) => cell.column.visible);
 			cell = visibleCells[this.rowHeader ? 1 : 0];
 
 			if(cell){
@@ -865,7 +878,3 @@ class SelectRange extends Module {
 		return component ? this.activeRange.getColumns().map((col) => col.getComponent()) : this.activeRange.getColumns();
 	}
 }
-
-SelectRange.moduleName = "selectRange";
-
-export default SelectRange;

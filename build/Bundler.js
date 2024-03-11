@@ -19,7 +19,6 @@ export default class Bundler{
 	_suppressUnnecessaryWarnings(warn, defaultHandler){
 		const ignoredCodes = {
 			"FILE_NAME_CONFLICT": true,
-			"CIRCULAR_DEPENDENCY": this._suppressCircularDependencyWarnings,
 		};
 		
 		var suppressed = false, 

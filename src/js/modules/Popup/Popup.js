@@ -1,6 +1,8 @@
 import Module from '../../core/Module.js';
 
-class Popup extends Module{
+export default class Popup extends Module{
+	
+	static moduleName = "popup";
 	
 	constructor(table){
 		super(table);
@@ -220,12 +222,6 @@ class Popup extends Module{
 			this.dispatchExternal("popupClosed", component.getComponent());
 		});
 
-
-
 		this.dispatchExternal("popupOpened", component.getComponent());
 	}
 }
-
-Popup.moduleName = "popup";
-
-export default Popup;

@@ -3,7 +3,13 @@ import Module from '../../core/Module.js';
 import defaultPasteActions from './defaults/pasteActions.js';
 import defaultPasteParsers from './defaults/pasteParsers.js';
 
-class Clipboard extends Module{
+export default class Clipboard extends Module{
+
+	static moduleName = "clipboard";
+
+	//load defaults
+	static pasteActions = defaultPasteActions;
+	static pasteParsers = defaultPasteParsers;
 
 	constructor(table){
 		super(table);
@@ -272,11 +278,3 @@ class Clipboard extends Module{
 		return data;
 	}
 }
-
-Clipboard.moduleName = "clipboard";
-
-//load defaults
-Clipboard.pasteActions = defaultPasteActions;
-Clipboard.pasteParsers = defaultPasteParsers;
-
-export default Clipboard;

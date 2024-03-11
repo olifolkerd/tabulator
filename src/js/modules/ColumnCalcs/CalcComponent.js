@@ -1,4 +1,4 @@
-class CalcComponent{
+export default class CalcComponent{
 	constructor (row){
 		this._row = row;
 
@@ -44,5 +44,3 @@ class CalcComponent{
 		return this._row;
 	}
 }
-
-export default CalcComponent;

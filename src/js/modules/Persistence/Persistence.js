@@ -3,7 +3,15 @@ import Module from '../../core/Module.js';
 import defaultReaders from './defaults/readers.js';
 import defaultWriters from './defaults/writers.js';
 
-class Persistence extends Module{
+export default class Persistence extends Module{
+
+	static moduleName = "persistence";
+
+	static moduleInitOrder = -10;
+
+	//load defaults
+	static readers = defaultReaders;
+	static writers = defaultWriters;
 
 	constructor(table){
 		super(table);
@@ -463,13 +471,3 @@ class Persistence extends Module{
 		return definitions;
 	}
 }
-
-Persistence.moduleName = "persistence";
-
-Persistence.moduleInitOrder = -10;
-
-//load defaults
-Persistence.readers = defaultReaders;
-Persistence.writers = defaultWriters;
-
-export default Persistence;

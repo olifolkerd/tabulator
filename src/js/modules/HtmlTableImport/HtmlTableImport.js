@@ -1,6 +1,8 @@
 import Module from '../../core/Module.js';
 
-class HtmlTableImport extends Module{
+export default class HtmlTableImport extends Module{
+
+	static moduleName = "htmlTableImport";
 
 	constructor(table){
 		super(table);
@@ -176,7 +178,3 @@ class HtmlTableImport extends Module{
 		}
 	}
 }
-
-HtmlTableImport.moduleName = "htmlTableImport";
-
-export default HtmlTableImport;

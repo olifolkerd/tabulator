@@ -1,6 +1,10 @@
 import Module from '../../core/Module.js';
+import extensions from './extensions/extensions.js';
 
-class SelectRow extends Module{
+export default class SelectRow extends Module{
+
+	static moduleName = "selectRow";
+	static moduleExtensions = extensions;
 	
 	constructor(table){
 		super(table);
@@ -489,7 +493,3 @@ class SelectRow extends Module{
 		}
 	}
 }
-
-SelectRow.moduleName = "selectRow";
-
-export default SelectRow;

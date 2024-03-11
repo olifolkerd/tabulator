@@ -1,11 +1,21 @@
 //tabulator with all modules installed
 import {default as Tabulator} from './Tabulator.js';
-import * as modules from '../core/modules/optional.js';
-import ModuleBinder from './tools/ModuleBinder.js';
+import * as allModules from '../core/modules/optional.js';
 
-class TabulatorFull extends Tabulator {}
+class TabulatorFull extends Tabulator {
+	static extendModule(){
+		Tabulator.initializeModuleBinder(allModules);
+		Tabulator._extendModule(...arguments);
+	}
 
-//bind modules and static functionality
-new ModuleBinder(TabulatorFull, modules);
+	static registerModule(){
+		Tabulator.initializeModuleBinder(allModules);
+		Tabulator._registerModule(...arguments);
+	}
+
+	constructor(element, options, modules){
+		super(element, options, allModules);
+	}
+}
 
 export default TabulatorFull;

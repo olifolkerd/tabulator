@@ -303,7 +303,7 @@
 		}
 
 		getParentColumn(){
-			return this._column.parent instanceof Column ? this._column.parent.getComponent() : false;
+			return this._column.getParentComponent();
 		}
 
 		_getSelf(){
@@ -756,6 +756,8 @@
 	}
 
 	class Column extends CoreFeature{
+
+		static defaultOptionList = defaultColumnOptions;
 
 		constructor(def, parent){
 			super(parent.table);
@@ -1703,9 +1705,11 @@
 		getPosition(){
 			return this.table.columnManager.getVisibleColumnsByIndex().indexOf(this) + 1;
 		}
-	}
 
-	Column.defaultOptionList = defaultColumnOptions;
+		getParentComponent(){
+			return this.parent instanceof Column ? this.parent.getComponent() : false;
+		}
+	}
 
 	class Helpers{
 
@@ -6689,65 +6693,6 @@
 		}
 	}
 
-	class TableRegistry {
-
-		static register(table){
-			TableRegistry.tables.push(table);
-		}
-
-		static deregister(table){
-			var index = TableRegistry.tables.indexOf(table);
-
-			if(index > -1){
-				TableRegistry.tables.splice(index, 1);
-			}
-		}
-
-		static lookupTable(query, silent){
-			var results = [],
-			matches, match;
-
-			if(typeof query === "string"){
-				matches = document.querySelectorAll(query);
-
-				if(matches.length){
-					for(var i = 0; i < matches.length; i++){
-						match = TableRegistry.matchElement(matches[i]);
-
-						if(match){
-							results.push(match);
-						}
-					}
-				}
-
-			}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof Tabulator){
-				match = TableRegistry.matchElement(query);
-
-				if(match){
-					results.push(match);
-				}
-			}else if(Array.isArray(query)){
-				query.forEach(function(item){
-					results = results.concat(TableRegistry.lookupTable(item));
-				});
-			}else {
-				if(!silent){
-					console.warn("Table Connection Error - Invalid Selector", query);
-				}
-			}
-
-			return results;
-		}
-
-		static matchElement(element){
-			return TableRegistry.tables.find(function(table){
-				return element instanceof Tabulator ? table === element : table.element === element;
-			});
-		}
-	}
-
-	TableRegistry.tables = [];
-
 	class Popup extends CoreFeature{
 		constructor(table, element, parent){
 			super(table);
@@ -7434,6 +7379,11 @@
 
 	class Layout extends Module{
 
+		static moduleName = "layout";
+
+		//load defaults
+		static modes = defaultModes;
+
 		constructor(table){
 			super(table, "layout");
 
@@ -7482,11 +7432,6 @@
 		}
 	}
 
-	Layout.moduleName = "layout";
-
-	//load defaults
-	Layout.modes = defaultModes;
-
 	var defaultLangs = {
 		"default":{ //hold default locale text
 			"groups":{
@@ -7526,6 +7471,11 @@
 	};
 
 	class Localize extends Module{
+
+		static moduleName = "localize";
+
+		//load defaults
+		static langs = defaultLangs;
 
 		constructor(table){
 			super(table);
@@ -7699,12 +7649,9 @@
 		}
 	}
 
-	Localize.moduleName = "localize";
-
-	//load defaults
-	Localize.langs = defaultLangs;
-
 	class Comms extends Module{
+
+		static moduleName = "comms";
 
 		constructor(table){
 			super(table);
@@ -7718,7 +7665,7 @@
 			var connections = [],
 			connection;
 
-			connection = TableRegistry.lookupTable(selectors);
+			connection = this.table.constructor.registry.lookupTable(selectors);
 
 			connection.forEach((con) =>{
 				if(this.table !== con){
@@ -7750,8 +7697,6 @@
 		}
 	}
 
-	Comms.moduleName = "comms";
-
 	var coreModules = /*#__PURE__*/Object.freeze({
 		__proto__: null,
 		LayoutModule: Layout,
@@ -7759,97 +7704,115 @@
 		CommsModule: Comms
 	});
 
-	class ModuleBinder {
-		
-		constructor(tabulator, modules){
-			this.bindStaticFunctionality(tabulator);
-			this.bindModules(tabulator, coreModules, true);
+	class TableRegistry {
+		static registry = {
+			tables:[],
 			
-			if(modules){
-				this.bindModules(tabulator, modules);
+			register(table){
+				TableRegistry.registry.tables.push(table);
+			},
+			
+			deregister(table){
+				var index = TableRegistry.registry.tables.indexOf(table);
+				
+				if(index > -1){
+					TableRegistry.registry.tables.splice(index, 1);
+				}
+			},
+			
+			lookupTable(query, silent){
+				var results = [],
+				matches, match;
+				
+				if(typeof query === "string"){
+					matches = document.querySelectorAll(query);
+					
+					if(matches.length){
+						for(var i = 0; i < matches.length; i++){
+							match = TableRegistry.registry.matchElement(matches[i]);
+							
+							if(match){
+								results.push(match);
+							}
+						}
+					}
+					
+				}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof TableRegistry){
+					match = TableRegistry.registry.matchElement(query);
+					
+					if(match){
+						results.push(match);
+					}
+				}else if(Array.isArray(query)){
+					query.forEach(function(item){
+						results = results.concat(TableRegistry.registry.lookupTable(item));
+					});
+				}else {
+					if(!silent){
+						console.warn("Table Connection Error - Invalid Selector", query);
+					}
+				}
+				
+				return results;
+			},
+			
+			matchElement(element){
+				return TableRegistry.registry.tables.find(function(table){
+					return element instanceof TableRegistry ? table === element : table.element === element;
+				});
+			}
+		};
+
+			
+		static findTable(query){
+			var results = TableRegistry.registry.lookupTable(query, true);
+			return Array.isArray(results) && !results.length ? false : results;
+		}
+	}
+
+	class ModuleBinder extends TableRegistry {
+		
+		static moduleBindings = {};
+		static modulesRegistered = false;
+
+		static defaultModules = false;
+
+		constructor(){
+			super();
+		}
+
+		static initializeModuleBinder(defaultModules){
+			if(!ModuleBinder.modulesRegistered){
+				ModuleBinder.modulesRegistered = true;
+				ModuleBinder._registerModules(coreModules, true);
+				
+				if(defaultModules){
+					ModuleBinder._registerModules(defaultModules);
+				}
 			}
 		}
 		
-		bindStaticFunctionality(tabulator){
-			tabulator.moduleBindings = {};
-			
-			tabulator.extendModule = function(name, property, values){
-				if(tabulator.moduleBindings[name]){
-					var source = tabulator.moduleBindings[name][property];
-					
-					if(source){
-						if(typeof values == "object"){
-							for(let key in values){
-								source[key] = values[key];
-							}
-						}else {
-							console.warn("Module Error - Invalid value type, it must be an object");
+		static _extendModule(name, property, values){
+			if(ModuleBinder.moduleBindings[name]){
+				var source = ModuleBinder.moduleBindings[name][property];
+				
+				if(source){
+					if(typeof values == "object"){
+						for(let key in values){
+							source[key] = values[key];
 						}
 					}else {
-						console.warn("Module Error - property does not exist:", property);
+						console.warn("Module Error - Invalid value type, it must be an object");
 					}
 				}else {
-					console.warn("Module Error - module does not exist:", name);
+					console.warn("Module Error - property does not exist:", property);
 				}
-			};
-			
-			tabulator.registerModule = function(modules){
-				if(!Array.isArray(modules)){
-					modules = [modules];
-				}
-				
-				modules.forEach((mod) => {
-					tabulator.registerModuleBinding(mod);
-				});
-			};
-			
-			tabulator.registerModuleBinding = function(mod){
-				tabulator.moduleBindings[mod.moduleName] = mod;
-			};
-			
-			tabulator.findTable = function(query){
-				var results = TableRegistry.lookupTable(query, true);
-				return Array.isArray(results) && !results.length ? false : results;
-			};
-			
-			//ensure that module are bound to instantiated function
-			tabulator.prototype.bindModules = function(){
-				var orderedStartMods = [],
-				orderedEndMods = [],
-				unOrderedMods = [];
-				
-				this.modules = {};
-				
-				for(var name in tabulator.moduleBindings){
-					let mod = tabulator.moduleBindings[name];
-					let module = new mod(this);
-					
-					this.modules[name] = module;
-					
-					if(mod.prototype.moduleCore){
-						this.modulesCore.push(module);
-					}else {
-						if(mod.moduleInitOrder){
-							if(mod.moduleInitOrder < 0){
-								orderedStartMods.push(module);
-							}else {
-								orderedEndMods.push(module);
-							}
-							
-						}else {
-							unOrderedMods.push(module);
-						}
-					}
-				}
-				
-				orderedStartMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
-				orderedEndMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
-				
-				this.modulesRegular = orderedStartMods.concat(unOrderedMods.concat(orderedEndMods));
-			};
+			}else {
+				console.warn("Module Error - module does not exist:", name);
+			}
 		}
-		
-		bindModules(tabulator, modules, core){
+
+		static _registerModules(modules, core){
 			var mods = Object.values(modules);
 			
 			if(core){
@@ -7858,7 +7821,58 @@
 				});
 			}
 			
-			tabulator.registerModule(mods);
+			ModuleBinder._registerModule(mods);
+		}
+		
+		static _registerModule(modules){
+			if(!Array.isArray(modules)){
+				modules = [modules];
+			}
+			
+			modules.forEach((mod) => {
+				ModuleBinder._registerModuleBinding(mod);
+			});
+		}
+
+		static _registerModuleBinding(mod){
+			ModuleBinder.moduleBindings[mod.moduleName] = mod;
+		}
+
+		
+		//ensure that module are bound to instantiated function
+		_bindModules(){
+			var orderedStartMods = [],
+			orderedEndMods = [],
+			unOrderedMods = [];
+			
+			this.modules = {};
+			
+			for(var name in ModuleBinder.moduleBindings){
+				let mod = ModuleBinder.moduleBindings[name];
+				let module = new mod(this);
+				
+				this.modules[name] = module;
+				
+				if(mod.prototype.moduleCore){
+					this.modulesCore.push(module);
+				}else {
+					if(mod.moduleInitOrder){
+						if(mod.moduleInitOrder < 0){
+							orderedStartMods.push(module);
+						}else {
+							orderedEndMods.push(module);
+						}
+						
+					}else {
+						unOrderedMods.push(module);
+					}
+				}
+			}
+			
+			orderedStartMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
+			orderedEndMods.sort((a, b) => a.moduleInitOrder > b.moduleInitOrder ? 1 : -1);
+			
+			this.modulesRegular = orderedStartMods.concat(unOrderedMods.concat(orderedEndMods));
 		}
 	}
 
@@ -7927,10 +7941,26 @@
 		}
 	}
 
-	class Tabulator {
-		
-		constructor(element, options){
-			
+	class Tabulator extends ModuleBinder{
+
+		//default setup options
+		static defaultOptions = defaultOptions;
+
+		static extendModule(){
+			Tabulator.initializeModuleBinder();
+			Tabulator._extendModule(...arguments);
+		}
+
+		static registerModule(){
+			Tabulator.initializeModuleBinder();
+			Tabulator._registerModule(...arguments);
+		}
+
+		constructor(element, options, modules){
+			super();
+
+			Tabulator.initializeModuleBinder(modules);
+
 			this.options = {};
 			
 			this.columnManager = null; // hold Column Manager
@@ -7970,7 +8000,7 @@
 				});
 			}
 			
-			TableRegistry.register(this); //register table for inter-device communication
+			this.constructor.registry.register(this); //register table for inter-device communication
 		}
 		
 		initializeElement(element){
@@ -7999,7 +8029,7 @@
 			this.dataLoader = new DataLoader(this);
 			this.alertManager = new Alert(this);
 			
-			this.bindModules();
+			this._bindModules();
 			
 			this.options = this.optionsList.generate(Tabulator.defaultOptions, options);
 			
@@ -8191,7 +8221,7 @@
 			
 			this.destroyed = true;
 			
-			TableRegistry.deregister(this); //deregister table from inter-device communication
+			this.constructor.registry.deregister(this); //deregister table from inter-device communication
 			
 			this.eventBus.dispatch("table-destroy");
 			
@@ -8792,15 +8822,14 @@
 		}
 	}
 
-	//default setup options
-	Tabulator.defaultOptions = defaultOptions;
-
-	//bind modules and static functionality
-	new ModuleBinder(Tabulator);
-
 	var defaultAccessors = {};
 
 	class Accessor extends Module{
+		
+		static moduleName = "accessor";
+
+		//load defaults
+		static accessors = defaultAccessors;
 
 		constructor(table){
 			super(table);
@@ -8905,10 +8934,6 @@
 			return data;
 		}
 	}
-
-	//load defaults
-	Accessor.moduleName = "accessor";
-	Accessor.accessors = defaultAccessors;
 
 	var defaultConfig = {
 		method: "GET",
@@ -9094,6 +9119,14 @@
 	};
 
 	class Ajax extends Module{
+
+		static moduleName = "ajax";
+
+		//load defaults
+		static defaultConfig = defaultConfig;
+		static defaultURLGenerator = urlBuilder;
+		static defaultLoaderPromise = defaultLoaderPromise;
+		static contentTypeFormatters = defaultContentTypeFormatters;
 		
 		constructor(table){
 			super(table);
@@ -9220,14 +9253,6 @@
 			}
 		}
 	}
-
-	Ajax.moduleName = "ajax";
-
-	//load defaults
-	Ajax.defaultConfig = defaultConfig;
-	Ajax.defaultURLGenerator = urlBuilder;
-	Ajax.defaultLoaderPromise = defaultLoaderPromise;
-	Ajax.contentTypeFormatters = defaultContentTypeFormatters;
 
 	var defaultPasteActions = {
 		replace:function(data){
@@ -9416,6 +9441,12 @@
 	};
 
 	class Clipboard extends Module{
+
+		static moduleName = "clipboard";
+
+		//load defaults
+		static pasteActions = defaultPasteActions;
+		static pasteParsers = defaultPasteParsers;
 
 		constructor(table){
 			super(table);
@@ -9685,12 +9716,6 @@
 		}
 	}
 
-	Clipboard.moduleName = "clipboard";
-
-	//load defaults
-	Clipboard.pasteActions = defaultPasteActions;
-	Clipboard.pasteParsers = defaultPasteParsers;
-
 	class CalcComponent{
 		constructor (row){
 			this._row = row;
@@ -9833,6 +9858,11 @@
 	};
 
 	class ColumnCalcs extends Module{
+
+		static moduleName = "columnCalcs";
+
+		//load defaults
+		static calculations = defaultCalculations;
 		
 		constructor(table){
 			super(table);
@@ -10404,12 +10434,9 @@
 		}
 	}
 
-	ColumnCalcs.moduleName = "columnCalcs";
-
-	//load defaults
-	ColumnCalcs.calculations = defaultCalculations;
-
 	class DataTree extends Module{
+
+		static moduleName = "dataTree";
 
 		constructor(table){
 			super(table);
@@ -11007,8 +11034,6 @@
 		}
 	}
 
-	DataTree.moduleName = "dataTree";
-
 	function csv(list, options = {}, setFileContents){
 		var delimiter = options.delimiter ? options.delimiter : ",",
 		fileContents = [],
@@ -11369,6 +11394,11 @@
 
 	class Download extends Module{
 
+		static moduleName = "download";
+
+		//load defaults
+		static downloaders = defaultDownloaders;
+
 		constructor(table){
 			super(table);
 
@@ -11505,11 +11535,6 @@
 			}
 		}
 	}
-
-	Download.moduleName = "download";
-
-	//load defaults
-	Download.downloaders = defaultDownloaders;
 
 	function maskInput(el, options){
 		var mask = options.mask,
@@ -13829,6 +13854,11 @@
 	};
 
 	class Edit$1 extends Module{
+
+		static moduleName = "edit";
+
+		//load defaults
+		static editors = defaultEditors;
 		
 		constructor(table){
 			super(table);
@@ -14595,11 +14625,6 @@
 		}
 	}
 
-	Edit$1.moduleName = "edit";
-
-	//load defaults
-	Edit$1.editors = defaultEditors;
-
 	class ExportRow{
 		constructor(type, columns, component, indent){
 			this.type = type;
@@ -14620,6 +14645,8 @@
 	}
 
 	class Export extends Module{
+
+		static moduleName = "export";
 		
 		constructor(table){
 			super(table);
@@ -15257,8 +15284,6 @@
 		}
 	}
 
-	Export.moduleName = "export";
-
 	var defaultFilters = {
 
 		//equal to
@@ -15369,6 +15394,11 @@
 	};
 
 	class Filter extends Module{
+
+		static moduleName = "filter";
+
+		//load defaults
+		static filters = defaultFilters;
 
 		constructor(table){
 			super(table);
@@ -16262,11 +16292,6 @@
 		}
 	}
 
-	Filter.moduleName = "filter";
-
-	//load defaults
-	Filter.filters = defaultFilters;
-
 	function plaintext(cell, formatterParams, onRendered){
 		return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 	}
@@ -16940,6 +16965,11 @@
 	};
 
 	class Format extends Module{
+
+		static moduleName = "format";
+
+		//load defaults
+		static formatters = defaultFormatters;
 		
 		constructor(table){
 			super(table);
@@ -17145,12 +17175,9 @@
 		}
 	}
 
-	Format.moduleName = "format";
-
-	//load defaults
-	Format.formatters = defaultFormatters;
-
 	class FrozenColumns extends Module{
+
+		static moduleName = "frozenColumns";
 		
 		constructor(table){
 			super(table);
@@ -17445,9 +17472,9 @@
 		}
 	}
 
-	FrozenColumns.moduleName = "frozenColumns";
-
 	class FrozenRows extends Module{
+
+		static moduleName = "frozenRows";
 
 		constructor(table){
 			super(table);
@@ -17616,8 +17643,6 @@
 			});
 		}
 	}
-
-	FrozenRows.moduleName = "frozenRows";
 
 	//public group object
 	class GroupComponent {
@@ -18301,6 +18326,8 @@
 	}
 
 	class GroupRows extends Module{
+
+		static moduleName = "groupRows";
 		
 		constructor(table){
 			super(table);
@@ -18932,8 +18959,6 @@
 		
 	}
 
-	GroupRows.moduleName = "groupRows";
-
 	var defaultUndoers = {
 		cellEdit: function(action){
 			action.component.setValueProcessData(action.data.oldValue);
@@ -19001,6 +19026,12 @@
 	};
 
 	class History extends Module{
+
+		static moduleName = "history";
+
+		//load defaults
+		static undoers = defaultUndoers;
+		static redoers = defaultRedoers;
 
 		constructor(table){
 			super(table);
@@ -19158,13 +19189,9 @@
 		}
 	}
 
-	History.moduleName = "history";
-
-	//load defaults
-	History.undoers = defaultUndoers;
-	History.redoers = defaultRedoers;
-
 	class HtmlTableImport extends Module{
+
+		static moduleName = "htmlTableImport";
 
 		constructor(table){
 			super(table);
@@ -19341,9 +19368,7 @@
 		}
 	}
 
-	HtmlTableImport.moduleName = "htmlTableImport";
-
-	function csvImporter(input){
+	function csv$1(input){
 		var data = [],
 		row = 0, 
 		col = 0,
@@ -19414,17 +19439,22 @@
 		}
 	}
 
-	function arrayImporter(input){
+	function array (input){
 		return input;
 	}
 
 	var defaultImporters = {
-		csv:csvImporter,
+		csv:csv$1,
 		json:json$1,
-		array:arrayImporter,
+		array:array,
 	};
 
 	class Import extends Module{
+
+		static moduleName = "import";
+
+		//load defaults
+		static importers = defaultImporters;
 	    
 		constructor(table){
 			super(table);
@@ -19608,12 +19638,9 @@
 		}
 	}
 
-	Import.moduleName = "import";
-
-	//load defaults
-	Import.importers = defaultImporters;
-
 	class Interaction extends Module{
+
+		static moduleName = "interaction";
 
 		constructor(table){
 			super(table);
@@ -19942,8 +19969,6 @@
 		}
 	}
 
-	Interaction.moduleName = "interaction";
-
 	var defaultBindings = {
 		navPrev:"shift + 9",
 		navNext:9,
@@ -20132,6 +20157,12 @@
 
 	class Keybindings extends Module{
 
+		static moduleName = "keybindings";
+
+		//load defaults
+		static bindings = defaultBindings;
+		static actions = defaultActions;
+
 		constructor(table){
 			super(table);
 
@@ -20291,13 +20322,9 @@
 		}
 	}
 
-	Keybindings.moduleName = "keybindings";
-
-	//load defaults
-	Keybindings.bindings = defaultBindings;
-	Keybindings.actions = defaultActions;
-
 	class Menu extends Module{
+
+		static moduleName = "menu";
 		
 		constructor(table){
 			super(table);
@@ -20596,9 +20623,9 @@
 		}
 	}
 
-	Menu.moduleName = "menu";
-
 	class MoveColumns extends Module{
+
+		static moduleName = "moveColumn";
 		
 		constructor(table){
 			super(table);
@@ -20896,9 +20923,50 @@
 		}
 	}
 
-	MoveColumns.moduleName = "moveColumn";
+	var defaultSenders = {
+		delete:function(fromRow, toRow, toTable){
+			fromRow.delete();
+		}
+	};
+
+	var defaultReceivers = {
+		insert:function(fromRow, toRow, fromTable){
+			this.table.addRow(fromRow.getData(), undefined, toRow);
+			return true;
+		},
+
+		add:function(fromRow, toRow, fromTable){
+			this.table.addRow(fromRow.getData());
+			return true;
+		},
+
+		update:function(fromRow, toRow, fromTable){
+			if(toRow){
+				toRow.update(fromRow.getData());
+				return true;
+			}
+
+			return false;
+		},
+
+		replace:function(fromRow, toRow, fromTable){
+			if(toRow){
+				this.table.addRow(fromRow.getData(), undefined, toRow);
+				toRow.delete();
+				return true;
+			}
+
+			return false;
+		},
+	};
 
 	class MoveRows extends Module{
+
+		static moduleName = "moveRow";
+
+		//load defaults
+		static senders = defaultSenders;
+		static receivers = defaultReceivers;
 
 		constructor(table){
 			super(table);
@@ -21419,7 +21487,7 @@
 
 				switch(typeof this.table.options.movableRowsSender){
 					case "string":
-						sender = this.senders[this.table.options.movableRowsSender];
+						sender = MoveRows.senders[this.table.options.movableRowsSender];
 						break;
 
 					case "function":
@@ -21451,7 +21519,7 @@
 
 			switch(typeof this.table.options.movableRowsReceiver){
 				case "string":
-					receiver = this.receivers[this.table.options.movableRowsReceiver];
+					receiver = MoveRows.receivers[this.table.options.movableRowsReceiver];
 					break;
 
 				case "function":
@@ -21491,48 +21559,14 @@
 		}
 	}
 
-	MoveRows.prototype.receivers = {
-		insert:function(fromRow, toRow, fromTable){
-			this.table.addRow(fromRow.getData(), undefined, toRow);
-			return true;
-		},
-
-		add:function(fromRow, toRow, fromTable){
-			this.table.addRow(fromRow.getData());
-			return true;
-		},
-
-		update:function(fromRow, toRow, fromTable){
-			if(toRow){
-				toRow.update(fromRow.getData());
-				return true;
-			}
-
-			return false;
-		},
-
-		replace:function(fromRow, toRow, fromTable){
-			if(toRow){
-				this.table.addRow(fromRow.getData(), undefined, toRow);
-				toRow.delete();
-				return true;
-			}
-
-			return false;
-		},
-	};
-
-	MoveRows.prototype.senders = {
-		delete:function(fromRow, toRow, toTable){
-			fromRow.delete();
-		}
-	};
-
-	MoveRows.moduleName = "moveRow";
-
 	var defaultMutators = {};
 
 	class Mutator extends Module{
+
+		static moduleName = "mutator";
+
+		//load defaults
+		static mutators = defaultMutators;
 
 		constructor(table){
 			super(table);
@@ -21684,11 +21718,6 @@
 		}
 	}
 
-	Mutator.moduleName = "mutator";
-
-	//load defaults
-	Mutator.mutators = defaultMutators;
-
 	function rows(pageSize, currentRow, currentPage, totalRows, totalPages){
 		var el = document.createElement("span"),
 		showingEl = document.createElement("span"),
@@ -21770,6 +21799,11 @@
 	};
 
 	class Page extends Module{
+
+		static moduleName = "page";
+
+		//load defaults
+		static pageCounters = defaultPageCounters;
 		
 		constructor(table){
 			super(table);
@@ -22638,11 +22672,6 @@
 		}
 	}
 
-	Page.moduleName = "page";
-
-	//load defaults
-	Page.pageCounters = defaultPageCounters;
-
 	// read persistance information from storage
 	var defaultReaders = {
 		local:function(id, type){
@@ -22688,6 +22717,14 @@
 	};
 
 	class Persistence extends Module{
+
+		static moduleName = "persistence";
+
+		static moduleInitOrder = -10;
+
+		//load defaults
+		static readers = defaultReaders;
+		static writers = defaultWriters;
 
 		constructor(table){
 			super(table);
@@ -23148,15 +23185,9 @@
 		}
 	}
 
-	Persistence.moduleName = "persistence";
-
-	Persistence.moduleInitOrder = -10;
-
-	//load defaults
-	Persistence.readers = defaultReaders;
-	Persistence.writers = defaultWriters;
-
 	class Popup$1 extends Module{
+		
+		static moduleName = "popup";
 		
 		constructor(table){
 			super(table);
@@ -23376,15 +23407,13 @@
 				this.dispatchExternal("popupClosed", component.getComponent());
 			});
 
-
-
 			this.dispatchExternal("popupOpened", component.getComponent());
 		}
 	}
 
-	Popup$1.moduleName = "popup";
-
 	class Print extends Module{
+
+		static moduleName = "print";
 
 		constructor(table){
 			super(table);
@@ -23517,9 +23546,9 @@
 		}
 	}
 
-	Print.moduleName = "print";
-
 	class ReactiveData extends Module{
+
+		static moduleName = "reactiveData";
 		
 		constructor(table){
 			super(table);
@@ -23919,10 +23948,10 @@
 		}
 	}
 
-	ReactiveData.moduleName = "reactiveData";
-
 	class ResizeColumns extends Module{
-		
+
+		static moduleName = "resizeColumns";
+
 		constructor(table){
 			super(table);
 			
@@ -24227,9 +24256,9 @@
 		}
 	}
 
-	ResizeColumns.moduleName = "resizeColumns";
-
 	class ResizeRows extends Module{
+
+		static moduleName = "resizeRows";
 
 		constructor(table){
 			super(table);
@@ -24336,9 +24365,9 @@
 		}
 	}
 
-	ResizeRows.moduleName = "resizeRows";
-
 	class ResizeTable extends Module{
+
+		static moduleName = "resizeTable";
 		
 		constructor(table){
 			super(table);
@@ -24493,9 +24522,9 @@
 		}
 	}
 
-	ResizeTable.moduleName = "resizeTable";
-
 	class ResponsiveLayout extends Module{
+
+		static moduleName = "responsiveLayout";
 
 		constructor(table){
 			super(table);
@@ -24838,9 +24867,9 @@
 		}
 	}
 
-	ResponsiveLayout.moduleName = "responsiveLayout";
-
 	class SelectRow extends Module{
+
+		static moduleName = "selectRow";
 		
 		constructor(table){
 			super(table);
@@ -25330,8 +25359,6 @@
 		}
 	}
 
-	SelectRow.moduleName = "selectRow";
-
 	//sort numbers
 	function number$1(a, b, aRow, bRow, column, dir, params){
 		var alignEmptyValues = params.alignEmptyValues;
@@ -25480,7 +25507,7 @@
 	}
 
 	//sort if element contains any data
-	function array(a, b, aRow, bRow, column, dir, params){
+	function array$1(a, b, aRow, bRow, column, dir, params){
 		var type = params.type || "length",
 		alignEmptyValues = params.alignEmptyValues,
 		emptyAlign = 0;
@@ -25594,12 +25621,17 @@
 		time:time$1,
 		datetime:datetime$2,
 		boolean:boolean,
-		array:array,
+		array:array$1,
 		exists:exists,
 		alphanum:alphanum
 	};
 
 	class Sort extends Module{
+
+		static moduleName = "sort";
+
+		//load defaults
+		static sorters = defaultSorters;
 		
 		constructor(table){
 			super(table);
@@ -26066,11 +26098,6 @@
 		}
 	}
 
-	Sort.moduleName = "sort";
-
-	//load defaults
-	Sort.sorters = defaultSorters;
-
 	class RangeComponent {
 		constructor(range) {
 			this._range = range;
@@ -26514,6 +26541,9 @@
 	}
 
 	class SelectRange extends Module {
+
+		static moduleName = "selectRange";
+
 		constructor(table) {
 			super(table);
 			
@@ -27373,9 +27403,9 @@
 		}
 	}
 
-	SelectRange.moduleName = "selectRange";
-
 	class Tooltip extends Module{
+
+		static moduleName = "tooltip";
 		
 		constructor(table){
 			super(table);
@@ -27498,8 +27528,6 @@
 			}
 		}
 	}
-
-	Tooltip.moduleName = "tooltip";
 
 	var defaultValidators = {
 		//is integer
@@ -27653,6 +27681,11 @@
 	};
 
 	class Validate extends Module{
+
+		static moduleName = "validate";
+
+		//load defaults
+		static validators = defaultValidators;
 		
 		constructor(table){
 			super(table);
@@ -27947,12 +27980,7 @@
 		}
 	}
 
-	Validate.moduleName = "validate";
-
-	//load defaults
-	Validate.validators = defaultValidators;
-
-	var modules = /*#__PURE__*/Object.freeze({
+	var allModules = /*#__PURE__*/Object.freeze({
 		__proto__: null,
 		AccessorModule: Accessor,
 		AjaxModule: Ajax,
@@ -27994,10 +28022,21 @@
 
 	//tabulator with all modules installed
 
-	class TabulatorFull extends Tabulator {}
+	class TabulatorFull extends Tabulator {
+		static extendModule(){
+			Tabulator.initializeModuleBinder(allModules);
+			Tabulator._extendModule(...arguments);
+		}
 
-	//bind modules and static functionality
-	new ModuleBinder(TabulatorFull, modules);
+		static registerModule(){
+			Tabulator.initializeModuleBinder(allModules);
+			Tabulator._registerModule(...arguments);
+		}
+
+		constructor(element, options, modules){
+			super(element, options, allModules);
+		}
+	}
 
 	return TabulatorFull;
 

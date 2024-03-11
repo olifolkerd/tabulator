@@ -1,7 +1,9 @@
 import Module from '../../core/Module.js';
 import Helpers from '../../core/tools/Helpers.js';
 
-class MoveColumns extends Module{
+export default class MoveColumns extends Module{
+
+	static moduleName = "moveColumn";
 	
 	constructor(table){
 		super(table);
@@ -298,7 +300,3 @@ class MoveColumns extends Module{
 		}
 	}
 }
-
-MoveColumns.moduleName = "moveColumn";
-
-export default MoveColumns;
