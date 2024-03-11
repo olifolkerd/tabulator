@@ -90,7 +90,7 @@ export default class ResizeRows extends Module{
 			self.table.element.appendChild(guideEl);
 			setTimeout(() => {
 				guideEl.style.top = self.calcGuidePosition(e, row, handle) + "px";
-			})
+			});
 		}
 
 		self.table.element.classList.add("tabulator-block-select");

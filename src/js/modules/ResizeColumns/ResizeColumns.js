@@ -237,7 +237,7 @@ export default class ResizeColumns extends Module{
 		if(this.table.options.resizableColumnFit && this.nextColumn && !(blockedBefore && blockedAfter)){
 			let colWidth = this.nextColumn.getWidth();
 
-		if(moveDiff > 0){
+			if(moveDiff > 0){
 				if(colWidth <= this.nextColumn.minWidth){
 					this.nextColumn = this.nextColumn.nextColumn();
 				}
@@ -284,7 +284,7 @@ export default class ResizeColumns extends Module{
 			self.table.element.appendChild(guideEl);
 			setTimeout(() => {
 				guideEl.style.left = self.calcGuidePosition(e, column, handle) + "px";
-			})
+			});
 		}
 
 		self.table.element.classList.add("tabulator-block-select");
