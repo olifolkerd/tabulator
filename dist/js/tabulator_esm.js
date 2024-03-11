@@ -18144,19 +18144,18 @@ class ResizeRows extends Module{
 	}
 
 	resize(e, row) {
-		row.setHeight(self.startHeight + ((typeof e.clientY === "undefined" ? e.touches[0].clientY : e.clientY) - self.startY));
+		row.setHeight(this.startHeight + ((typeof e.screenY === "undefined" ? e.touches[0].screenY : e.screenY) - this.startY));
 	}
 
 	calcGuidePosition(e, row, handle) {
-		var mouseY = typeof e.clientY === "undefined" ? e.touches[0].clientY : e.clientY,
+		var mouseY = typeof e.screenY === "undefined" ? e.touches[0].screenY : e.screenY,
 		handleY = handle.getBoundingClientRect().y - this.table.element.getBoundingClientRect().y,
 		tableY = this.table.element.getBoundingClientRect().y,
 		rowY = row.element.getBoundingClientRect().top - tableY,
 		mouseDiff = mouseY - this.startY,
-		minHeight = row.calcMinHeight(),
-		maxHeight = row.calcMaxHeight();
+		minHeight = row.calcMinHeight();
 
-		return Math.min(Math.max(handleY + mouseDiff, rowY + minHeight), rowY + maxHeight);
+		return Math.max(handleY + mouseDiff, rowY);
 	}
 
 	_mouseDown(e, row, handle){
@@ -18211,7 +18210,7 @@ class ResizeRows extends Module{
 		// 	self.startColumn.modules.edit.blocked = true;
 		// }
 
-		self.startY = typeof e.clientY === "undefined" ? e.touches[0].clientY : e.clientY;
+		self.startY = typeof e.screenY === "undefined" ? e.touches[0].screenY : e.screenY;
 		self.startHeight = row.getHeight();
 
 		document.body.addEventListener("mousemove", mouseMove);
