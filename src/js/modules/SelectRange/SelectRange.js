@@ -50,14 +50,6 @@ class SelectRange extends Module {
 			}else{
 				console.warn("SelectRange functionality cannot be used in conjunction with row selection");
 			}
-
-			if(this.options('columns').findIndex((column) => column.frozen) > 0) {
-				console.warn("Having frozen column in arbitrary position with selectRange option may result in unpredictable behavior.");
-			}
-
-			if(this.options('columns').filter((column) => column.frozen) > 1) {
-				console.warn("Having multiple frozen columns with selectRange option may result in unpredictable behavior.");
-			}
 		}
 	}
 	
