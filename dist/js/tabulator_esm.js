@@ -1167,9 +1167,31 @@ var defaultPasteParsers = {
 	},
 };
 
+var bindings$1 = {
+	copyToClipboard:["ctrl + 67", "meta + 67"],
+};
+
+var actions$1 = {
+	copyToClipboard:function(e){
+		if(!this.table.modules.edit.currentCell){
+			if(this.table.modExists("clipboard", true)){
+				this.table.modules.clipboard.copy(false, true);
+			}
+		}
+	},
+};
+
+var extensions$3 = {
+	keybindings:{
+		bindings:bindings$1,
+		actions:actions$1
+	},
+};
+
 class Clipboard extends Module{
 
 	static moduleName = "clipboard";
+	static moduleExtensions = extensions$3;
 
 	//load defaults
 	static pasteActions = defaultPasteActions;
@@ -13676,7 +13698,6 @@ var defaultBindings = {
 	scrollToEnd:35,
 	undo:["ctrl + 90", "meta + 90"],
 	redo:["ctrl + 89", "meta + 89"],
-	copyToClipboard:["ctrl + 67", "meta + 67"],
 };
 
 var defaultActions = {
@@ -13684,6 +13705,7 @@ var defaultActions = {
 		e.stopPropagation();
 		e.preventDefault();
 	},
+	
 	scrollPageUp:function(e){
 		var rowManager = this.table.rowManager,
 		newPos = rowManager.scrollTop - rowManager.element.clientHeight;
@@ -13700,6 +13722,7 @@ var defaultActions = {
 
 		this.table.element.focus();
 	},
+
 	scrollPageDown:function(e){
 		var rowManager = this.table.rowManager,
 		newPos = rowManager.scrollTop + rowManager.element.clientHeight,
@@ -13718,6 +13741,7 @@ var defaultActions = {
 		this.table.element.focus();
 
 	},
+
 	scrollToStart:function(e){
 		var rowManager = this.table.rowManager;
 
@@ -13729,6 +13753,7 @@ var defaultActions = {
 
 		this.table.element.focus();
 	},
+
 	scrollToEnd:function(e){
 		var rowManager = this.table.rowManager;
 
@@ -13740,6 +13765,7 @@ var defaultActions = {
 
 		this.table.element.focus();
 	},
+
 	navPrev:function(e){
 		this.dispatch("keybinding-nav-prev", e);
 	},
@@ -13763,6 +13789,7 @@ var defaultActions = {
 	navDown:function(e){
 		this.dispatch("keybinding-nav-down", e);
 	},
+
 	undo:function(e){
 		var cell = false;
 		if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){
@@ -13785,14 +13812,6 @@ var defaultActions = {
 			if(!cell){
 				e.preventDefault();
 				this.table.modules.history.redo();
-			}
-		}
-	},
-
-	copyToClipboard:function(e){
-		if(!this.table.modules.edit.currentCell){
-			if(this.table.modExists("clipboard", true)){
-				this.table.modules.clipboard.copy(false, true);
 			}
 		}
 	},

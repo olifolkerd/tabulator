@@ -2,10 +2,12 @@ import Module from '../../core/Module.js';
 
 import defaultPasteActions from './defaults/pasteActions.js';
 import defaultPasteParsers from './defaults/pasteParsers.js';
+import extensions from './extensions/extensions.js';
 
 export default class Clipboard extends Module{
 
 	static moduleName = "clipboard";
+	static moduleExtensions = extensions;
 
 	//load defaults
 	static pasteActions = defaultPasteActions;
