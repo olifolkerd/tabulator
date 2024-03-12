@@ -648,9 +648,9 @@ class Module extends CoreFeature{
 }
 
 var defaultAccessors = {
-    rownum:function(value, data, type, params, column, row){
-        return row.getPosition();
-    }
+	rownum:function(value, data, type, params, column, row){
+		return row.getPosition();
+	}
 };
 
 class Accessor extends Module{

@@ -8908,7 +8908,11 @@
 		}
 	}
 
-	var defaultAccessors = {};
+	var defaultAccessors = {
+		rownum:function(value, data, type, params, column, row){
+			return row.getPosition();
+		}
+	};
 
 	class Accessor extends Module{
 		
@@ -14688,6 +14692,8 @@
 			this.config = {};
 			this.cloneTableStyle = true;
 			this.colVisProp = "";
+			this.colVisPropAttach = "";
+			
 			
 			this.registerTableOption("htmlOutputConfig", false); //html output config
 			
@@ -14714,11 +14720,13 @@
 			this.cloneTableStyle = style;
 			this.config = config || {};
 			this.colVisProp = colVisProp;
+			this.colVisPropAttach = this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1);
 
 			colLookup = Export.columnLookups[range];
 
 			if(colLookup){
 				columns = colLookup.call(this.table);
+				columns = columns.filter(col => this.columnVisCheck(col));
 			}
 
 			headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders(columns)) : [];
@@ -14774,13 +14782,15 @@
 				}
 			});
 
+
+
 			return output;
 		}
 		
 		processColumnGroup(column){
 			var subGroups = column.columns,
 			maxDepth = 0,
-			title = column.definition["title" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))] || column.definition.title;
+			title = column.definition["title" + (this.colVisPropAttach)] || column.definition.title;
 			
 			var groupData = {
 				title:title,
@@ -14823,12 +14833,20 @@
 		
 		columnVisCheck(column){
 			var visProp = column.definition[this.colVisProp];
+			console.log("d", this.config.rowHeaders);
+			if(this.config.rowHeaders === false && column.isRowHeader){
+				return false;
+			}
 			
 			if(typeof visProp === "function"){
 				visProp = visProp.call(this.table, column.getComponent());
 			}
-			
-			return visProp !== false && (column.visible || (!column.visible && visProp));
+
+			if(visProp === false || visProp === true){
+				return visProp;
+			}
+
+			return column.visible && column.field;
 		}
 		
 		headersToExportRows(columns){
@@ -14971,7 +14989,7 @@
 			headerEl = document.createElement("thead"),
 			bodyEl = document.createElement("tbody"),
 			styles = this.lookupTableStyles(),
-			rowFormatter = this.table.options["rowFormatter" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))],
+			rowFormatter = this.table.options["rowFormatter" + (this.colVisPropAttach)],
 			setup = {};
 			
 			setup.rowFormatter = rowFormatter !== null ? rowFormatter : this.table.options.rowFormatter;
@@ -14981,7 +14999,7 @@
 			}
 			
 			//assign group header formatter
-			setup.groupHeader = this.table.options["groupHeader" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))];
+			setup.groupHeader = this.table.options["groupHeader" + (this.colVisPropAttach)];
 			
 			if(setup.groupHeader && !Array.isArray(setup.groupHeader)){
 				setup.groupHeader = [setup.groupHeader];
@@ -26034,7 +26052,13 @@
 
 	var columnLookups = {
 		range:function(){
-			return this.modules.selectRange.selectedColumns();
+			var columns = this.modules.selectRange.selectedColumns();
+
+			if(this.columnManager.rowHeader){
+				columns.unshift(this.columnManager.rowHeader);
+			}
+
+			return columns;
 		},
 	};
 
