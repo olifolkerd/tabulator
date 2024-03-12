@@ -335,8 +335,7 @@ export default class Export extends Module{
 		table.classList.add("tabulator-print-table");
 		
 		this.mapElementStyles(this.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
-		
-		
+
 		if(list.length > 1000){
 			console.warn("It may take a long time to render an HTML table with more than 1000 rows");
 		}
@@ -390,6 +389,7 @@ export default class Export extends Module{
 			
 			if(styles.firstRow){
 				styles.styleCells = styles.firstRow.getElementsByClassName("tabulator-cell");
+				styles.styleRowHeader = styles.firstRow.getElementsByClassName("tabulator-row-header")[0];
 				styles.firstCell = styles.styleCells[0];
 				styles.lastCell = styles.styleCells[styles.styleCells.length - 1];
 			}
@@ -419,9 +419,9 @@ export default class Export extends Module{
 					cellEl.classList.add(className);
 				});
 				
-				this.mapElementStyles(column.component.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+				this.mapElementStyles(column.component.getElement(), cellEl, ["text-align", "border-left", "border-right", "background-color", "color", "font-weight", "font-family", "font-size"]);
 				this.mapElementStyles(column.component._column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
-				
+		
 				if(column.component._column.visible){
 					this.mapElementStyles(column.component.getElement(), cellEl, ["width"]);
 				}else{
@@ -430,8 +430,16 @@ export default class Export extends Module{
 					}
 				}
 				
-				if(column.component._column.parent){
+				if(column.component._column.parent && column.component._column.parent.isGroup){
 					this.mapElementStyles(column.component._column.parent.groupElement, cellEl, ["border-top"]);
+				}else{
+					this.mapElementStyles(column.component.getElement(), cellEl, ["border-top"]);
+				}
+				
+				if(column.component._column.isGroup){
+					this.mapElementStyles(column.component.getElement(), cellEl, ["border-bottom"]);
+				}else{
+					this.mapElementStyles(this.table.columnManager.getElement(), cellEl, ["border-bottom"]);
 				}
 				
 				rowEl.appendChild(cellEl);
@@ -496,7 +504,7 @@ export default class Export extends Module{
 				table =  this.table,
 				index = table.columnManager.findColumnIndex(column),
 				value = col.value,
-				cellStyle;
+				cellStyle, styleProps;
 				
 				var cellWrapper = {
 					modules:{},
@@ -555,11 +563,18 @@ export default class Export extends Module{
 				}else{
 					cellEl.innerHTML = value;
 				}
-				
-				cellStyle = styles.styleCells && styles.styleCells[index] ? styles.styleCells[index] : styles.firstCell;
+
+				styleProps = ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"];
+
+				if(column.isRowHeader){
+					cellStyle = styles.styleRowHeader;
+					styleProps.push("background-color");
+				}else{
+					cellStyle = styles.styleCells && styles.styleCells[index] ? styles.styleCells[index] : styles.firstCell;
+				}
 				
 				if(cellStyle){
-					this.mapElementStyles(cellStyle, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
+					this.mapElementStyles(cellStyle, cellEl, styleProps);
 					
 					if(column.definition.align){
 						cellEl.style.textAlign = column.definition.align;
@@ -633,7 +648,7 @@ export default class Export extends Module{
 			
 			if(window.getComputedStyle){
 				var fromStyle = window.getComputedStyle(from);
-				
+
 				props.forEach(function(prop){
 					if(!to.style[lookup[prop]]){
 						to.style[lookup[prop]] = fromStyle.getPropertyValue(prop);
