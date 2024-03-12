@@ -1383,6 +1383,11 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   border-left: 10px solid #3759D7;
 }
 
+.tabulator-row .tabulator-cell.tabulator-row-header {
+  background-color: #3759D7;
+  color: #fff;
+}
+
 .tabulator-row:nth-child(even) {
   background-color: #627ce0;
 }
@@ -1393,6 +1398,10 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 
 .tabulator-row:nth-child(even) .tabulator-cell:first-child {
   border-left: 10px solid #627ce0;
+}
+
+.tabulator-row:nth-child(even) .tabulator-cell.tabulator-row-header {
+  background-color: #627ce0;
 }
 
 @media (hover: hover) and (pointer: fine) {

@@ -469,6 +469,12 @@ $table-cell-padding-sm: 5px;
 			border-right: none;
 		}
 
+		&.tabulator-row-header{
+			border-right:1px solid $borderColor;
+			border-bottom:none;
+			background:$headerBackgroundColor;
+		}
+
 		.tabulator-data-tree-control{
 			border:1px solid #ccc;
 

@@ -1030,7 +1030,7 @@
 }
 
 .tabulator-row .tabulator-cell.tabulator-row-header {
-  border-right: 1px solid #ddd;
+  border-right: 1px solid rgba(34, 36, 38, 0.15);
   border-bottom: 1px solid #ddd;
   background: #F9FAFB;
 }
@@ -2071,6 +2071,10 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 
 .tabulator-row .tabulator-cell:last-of-type {
   border-right: none;
+}
+
+.tabulator-row .tabulator-cell.tabulator-row-header {
+  border-bottom: none;
 }
 
 .tabulator-row .tabulator-cell .tabulator-responsive-collapse-toggle {

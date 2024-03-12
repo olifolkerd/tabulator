@@ -202,6 +202,12 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		padding:$cellPadding;
 		border-right:none;
 
+		&.tabulator-row-header{
+			border-right:1px solid $borderColor;
+			border-bottom:none;
+			background:$headerBackgroundColor;
+		}
+
 		&:last-of-type{
 			border-right: none;
 		}

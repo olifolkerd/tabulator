@@ -82,6 +82,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		&:last-of-type{
 			border-right: none;
 		}
+
+		&.tabulator-row-header{
+			border-bottom:none;
+		}
 	}
 
 	&.tabulator-group{

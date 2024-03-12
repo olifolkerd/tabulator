@@ -868,7 +868,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		outline:none;
 
 		&.tabulator-row-header{
-			border-right:1px solid $headerBorderColor;
+			border-right:1px solid $borderColor;
 			border-bottom:1px solid $rowBorderColor;
 			background:$headerBackgroundColor;
 		}

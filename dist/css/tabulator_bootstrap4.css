@@ -684,7 +684,7 @@
 }
 
 .tabulator-row .tabulator-cell.tabulator-row-header {
-  border-right: 1px solid #aaa;
+  border-right: 1px solid #dee2e6;
   border-bottom: 1px solid #dee2e6;
   background: #fff;
 }
@@ -1686,6 +1686,12 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 
 .tabulator-row .tabulator-cell:last-of-type {
   border-right: none;
+}
+
+.tabulator-row .tabulator-cell.tabulator-row-header {
+  border-right: 1px solid #dee2e6;
+  border-bottom: none;
+  background: #fff;
 }
 
 .tabulator-row .tabulator-cell .tabulator-data-tree-control {

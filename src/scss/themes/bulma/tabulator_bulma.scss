@@ -227,6 +227,13 @@ $rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when select
 		padding:$table-cell-padding;
 		border:$table-cell-border;
 		border-width:$table-cell-border-width;
+
+		&.tabulator-row-header{
+			border:$table-cell-border;
+			border-width:$table-cell-border-width;
+			border-right-width: 1px;
+			background:$headerBackgroundColor;
+		}
 	}
 	
 	&.tabulator-group{

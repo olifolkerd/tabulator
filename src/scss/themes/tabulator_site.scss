@@ -161,6 +161,10 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 				}
 			}
 		}
+
+		&.tabulator-row-header{
+			color:#fff;
+		}
 	}
 
 	&.tabulator-group{

@@ -160,6 +160,11 @@ $rangeHeaderTextHighlightBackground: #fff !default; //header text color when hig
 		&:first-child{
 			border-left: $handleWidth solid $handleColor;
 		}
+
+		&.tabulator-row-header{
+			background-color: $handleColor;
+			color:#fff;
+		}
 	}
 
 
@@ -171,6 +176,10 @@ $rangeHeaderTextHighlightBackground: #fff !default; //header text color when hig
 
 			&:first-child{
 				border-left: $handleWidth solid $handleColorAlt;
+			}
+
+			&.tabulator-row-header{
+				background-color: $handleColorAlt;
 			}
 		}
 	}
