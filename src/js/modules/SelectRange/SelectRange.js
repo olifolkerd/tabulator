@@ -765,7 +765,7 @@ export default class SelectRange extends Module {
 	}
 	
 	layoutRanges() {
-		var activeCell;
+		var activeCell, activeCellEl, activeRowEl;
 		
 		if (!this.table.initialized) {
 			return;
@@ -776,11 +776,14 @@ export default class SelectRange extends Module {
 		if (!activeCell) {
 			return;
 		}
+
+		activeCellEl = activeCell.getElement();
+		activeRowEl = activeCell.row.getElement();
 		
-		this.activeRangeCellElement.style.left = activeCell.row.getElement().offsetLeft + activeCell.getElement().offsetLeft + "px";
-		this.activeRangeCellElement.style.top =	activeCell.row.getElement().offsetTop + "px";
-		this.activeRangeCellElement.style.width = activeCell.getElement().offsetLeft + activeCell.getElement().offsetWidth - activeCell.getElement().offsetLeft + "px";
-		this.activeRangeCellElement.style.height = activeCell.row.getElement().offsetTop + activeCell.row.getElement().offsetHeight - activeCell.row.getElement().offsetTop + "px";
+		this.activeRangeCellElement.style.left = activeRowEl.offsetLeft + activeCellEl.offsetLeft + "px";
+		this.activeRangeCellElement.style.top =	activeRowEl.offsetTop + "px";
+		this.activeRangeCellElement.style.width = activeCellEl.offsetWidth + "px";
+		this.activeRangeCellElement.style.height =  activeRowEl.offsetHeight  + "px";
 		
 		this.ranges.forEach((range) => range.layout());
 		
