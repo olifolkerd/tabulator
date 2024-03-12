@@ -51,8 +51,8 @@ export default class MoveColumns extends Module{
 		var self = this,
 		config = {},
 		colEl;
-		
-		if(!column.modules.frozen && !column.isGroup){
+
+		if(!column.modules.frozen && !column.isGroup && !column.isRowHeader){
 			colEl = column.getElement();
 			
 			config.mousemove = function(e){
