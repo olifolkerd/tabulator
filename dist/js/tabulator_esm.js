@@ -8507,6 +8507,8 @@ class Export extends Module{
 		this.config = {};
 		this.cloneTableStyle = true;
 		this.colVisProp = "";
+		this.colVisPropAttach = "";
+		
 		
 		this.registerTableOption("htmlOutputConfig", false); //html output config
 		
@@ -8533,6 +8535,7 @@ class Export extends Module{
 		this.cloneTableStyle = style;
 		this.config = config || {};
 		this.colVisProp = colVisProp;
+		this.colVisPropAttach = this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1);
 
 		colLookup = Export.columnLookups[range];
 
@@ -8593,13 +8596,15 @@ class Export extends Module{
 			}
 		});
 
+
+
 		return output;
 	}
 	
 	processColumnGroup(column){
 		var subGroups = column.columns,
 		maxDepth = 0,
-		title = column.definition["title" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))] || column.definition.title;
+		title = column.definition["title" + (this.colVisPropAttach)] || column.definition.title;
 		
 		var groupData = {
 			title:title,
@@ -8642,12 +8647,20 @@ class Export extends Module{
 	
 	columnVisCheck(column){
 		var visProp = column.definition[this.colVisProp];
+
+		if(this.config.rowHeaders === false && column.isRowHeader){
+			return false;
+		}
 		
 		if(typeof visProp === "function"){
 			visProp = visProp.call(this.table, column.getComponent());
 		}
-		
-		return visProp !== false && (column.visible || (!column.visible && visProp));
+
+		if(visProp === false || visProp === true){
+			return visProp;
+		}
+
+		return column.visible && column.field;
 	}
 	
 	headersToExportRows(columns){
@@ -8730,10 +8743,6 @@ class Export extends Module{
 				}
 			});
 		}
-
-		if(this.config.rowHeaders === false){
-			columns = columns.filter(col => !col._column.isRowHeader);
-		}
 		
 		if(this.config.columnCalcs !== false && this.table.modExists("columnCalcs")){
 			if(this.table.modules.columnCalcs.topInitialized){
@@ -8794,7 +8803,7 @@ class Export extends Module{
 		headerEl = document.createElement("thead"),
 		bodyEl = document.createElement("tbody"),
 		styles = this.lookupTableStyles(),
-		rowFormatter = this.table.options["rowFormatter" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))],
+		rowFormatter = this.table.options["rowFormatter" + (this.colVisPropAttach)],
 		setup = {};
 		
 		setup.rowFormatter = rowFormatter !== null ? rowFormatter : this.table.options.rowFormatter;
@@ -8804,7 +8813,7 @@ class Export extends Module{
 		}
 		
 		//assign group header formatter
-		setup.groupHeader = this.table.options["groupHeader" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))];
+		setup.groupHeader = this.table.options["groupHeader" + (this.colVisPropAttach)];
 		
 		if(setup.groupHeader && !Array.isArray(setup.groupHeader)){
 			setup.groupHeader = [setup.groupHeader];
