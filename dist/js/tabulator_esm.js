@@ -2072,15 +2072,15 @@ class Column extends CoreFeature{
 		this.type = "column"; //type of element
 		this.columns = []; //child columns
 		this.cells = []; //cells bound to this column
+		this.isGroup = false;
+		this.isRowHeader = rowHeader;
 		this.element = this.createElement(); //column header element
 		this.contentElement = false;
 		this.titleHolderElement = false;
 		this.titleElement = false;
 		this.groupElement = this.createGroupElement(); //column group holder element
-		this.isGroup = false;
 		this.hozAlign = ""; //horizontal text alignment
 		this.vertAlign = ""; //vert text alignment
-		this.isRowHeader = rowHeader;
 		
 		//multi dimensional filed handling
 		this.field ="";

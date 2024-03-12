@@ -24,6 +24,7 @@
 
 		columns:[],//store for colum header info
 		columnDefaults:{}, //store column default props
+		rowHeader:false,
 
 		data:false, //default starting data
 
@@ -504,6 +505,10 @@
 			this.element = document.createElement('div');
 			this.element.className = "tabulator-cell";
 			this.element.setAttribute("role", "gridcell");
+
+			if(this.column.isRowHeader){
+				this.element.classList.add("tabulator-row-header");
+			}
 		}
 
 		_configureCell(){
@@ -759,7 +764,7 @@
 		
 		static defaultOptionList = defaultColumnOptions;
 		
-		constructor(def, parent){
+		constructor(def, parent, rowHeader){
 			super(parent.table);
 			
 			this.definition = def; //column definition
@@ -767,12 +772,13 @@
 			this.type = "column"; //type of element
 			this.columns = []; //child columns
 			this.cells = []; //cells bound to this column
+			this.isGroup = false;
+			this.isRowHeader = rowHeader;
 			this.element = this.createElement(); //column header element
 			this.contentElement = false;
 			this.titleHolderElement = false;
 			this.titleElement = false;
 			this.groupElement = this.createGroupElement(); //column group holder element
-			this.isGroup = false;
 			this.hozAlign = ""; //horizontal text alignment
 			this.vertAlign = ""; //vert text alignment
 			
@@ -828,6 +834,10 @@
 			el.classList.add("tabulator-col");
 			el.setAttribute("role", "columnheader");
 			el.setAttribute("aria-sort", "none");
+
+			if(this.isRowHeader){
+				el.classList.add("tabulator-row-header");
+			}
 			
 			switch(this.table.options.columnHeaderVertAlign){
 				case "middle":
@@ -871,7 +881,7 @@
 				}
 			});
 		}
-		
+
 		setField(field){
 			this.field = field;
 			this.fieldStructure = field ? (this.table.options.nestedFieldSeparator ? field.split(this.table.options.nestedFieldSeparator) : [field]) : [];
@@ -2646,6 +2656,7 @@
 			this.blockHozScrollEvent = false;
 			this.headersElement = null;
 			this.contentsElement = null;
+			this.rowHeader = null;
 			this.element = null ; //containing element
 			this.columns = []; // column definition object
 			this.columnsByIndex = []; //columns by index
@@ -2876,6 +2887,13 @@
 			this.columnsByField = {};
 			
 			this.dispatch("columns-loading");
+
+			if(this.table.options.rowHeader){
+				this.rowHeader = new Column(this.table.options.rowHeader === true ? {} : this.table.options.rowHeader, this, true);
+				this.columns.push(this.rowHeader);
+				this.headersElement.appendChild(this.rowHeader.getElement());
+				this.rowHeader.columnRendered();
+			}
 			
 			cols.forEach((def, i) => {
 				this._addColumn(def);
@@ -2894,6 +2912,13 @@
 			var column = new Column(definition, this),
 			colEl = column.getElement(),
 			index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
+
+			//prevent adding of rows in front of row header
+			if(before && this.rowHeader && (!nextToColumn || nextToColumn === this.rowHeader)){
+				before = false;
+				nextToColumn = this.rowHeader;
+				index = 0;
+			}
 			
 			if(nextToColumn && index > -1){
 				var topColumn = nextToColumn.getTopColumn();
@@ -7865,7 +7890,7 @@
 			
 			if(mod.moduleExtensions){
 				for (let modKey in extensions) {
-					var ext = extensions[modKey];
+					let ext = extensions[modKey];
 					
 					if(ModuleBinder.moduleBindings[modKey]){
 						for (let propKey in ext) {
@@ -7877,7 +7902,11 @@
 						}
 						
 						for (let propKey in ext) {
-							ModuleBinder.moduleExtensions[modKey][propKey] = ext[propKey];
+							if(!ModuleBinder.moduleExtensions[modKey][propKey]){
+								ModuleBinder.moduleExtensions[modKey][propKey] = {};
+							}
+
+							Object.assign(ModuleBinder.moduleExtensions[modKey][propKey], ext[propKey]);
 						}
 					}
 				}
@@ -7895,8 +7924,6 @@
 				}
 			}
 		}
-		
-		
 		
 		//ensure that module are bound to instantiated function
 		_bindModules(){
@@ -9323,49 +9350,6 @@
 		insert:function(data){
 			return this.table.addData(data);
 		},
-		range:function(data){
-			var rows = [],
-			range = this.table.modules.selectRange.activeRange,
-			singleCell = false,
-			bounds, startCell, startRow, rowWidth, dataLength;
-
-			dataLength = data.length;
-			
-			if(range){
-				bounds = range.getBounds();
-				startCell = bounds.start;
-				
-				if(bounds.start === bounds.end){
-					singleCell = true;
-				}
-				
-				if(startCell){
-					rows = this.table.rowManager.activeRows.slice();
-					startRow = rows.indexOf(startCell.row);
-
-					if(singleCell){
-						rowWidth = data.length;
-					}else {
-						rowWidth = (rows.indexOf(bounds.end.row) - startRow) + 1;
-					}
-					
-					
-					if(startRow >-1){
-						this.table.blockRedraw();
-						
-						rows = rows.slice(startRow, startRow + rowWidth);
-						
-						rows.forEach((row, i) => {
-							row.updateData(data[i % dataLength]);
-						});
-						
-						this.table.restoreRedraw();
-					}
-				}
-			}
-			
-			return rows;
-		}
 	};
 
 	var defaultPasteParsers = {
@@ -9442,66 +9426,33 @@
 				return false;
 			}
 		},
-		range:function(clipboard){
-			var data = [],
-			rows = [],
-			range = this.table.modules.selectRange.activeRange,
-			singleCell = false,
-			bounds, startCell, colWidth, columnMap, startCol;
-			
-			if(range){
-				bounds = range.getBounds();
-				startCell = bounds.start;
+	};
 
-				if(bounds.start === bounds.end){
-					singleCell = true;
-				}
-				
-				if(startCell){
-					//get data from clipboard into array of columns and rows.
-					clipboard = clipboard.split("\n");
-					
-					clipboard.forEach(function(row){
-						data.push(row.split("\t"));
-					});
-					
-					if(data.length){
-						columnMap = this.table.columnManager.getVisibleColumnsByIndex();
-						startCol = columnMap.indexOf(startCell.column);
+	var bindings$2 = {
+		copyToClipboard:["ctrl + 67", "meta + 67"],
+	};
 
-						if(startCol > -1){
-							if(singleCell){
-								colWidth = data[0].length;
-							}else {
-								colWidth = (columnMap.indexOf(bounds.end.column) - startCol) + 1;
-							}
-
-							columnMap = columnMap.slice(startCol, startCol + colWidth);
-
-							data.forEach((item) => {
-								var row = {};
-								var itemLength = item.length;
-
-								columnMap.forEach(function(col, i){
-									row[col.field] = item[i % itemLength];
-								});
-								
-								rows.push(row);	
-							});
-
-							return rows;
-						}				
-					}
+	var actions$2 = {
+		copyToClipboard:function(e){
+			if(!this.table.modules.edit.currentCell){
+				if(this.table.modExists("clipboard", true)){
+					this.table.modules.clipboard.copy(false, true);
 				}
 			}
-			
-			return false;
-		}
+		},
+	};
+
+	var extensions$4 = {
+		keybindings:{
+			bindings:bindings$2,
+			actions:actions$2
+		},
 	};
 
 	class Clipboard extends Module{
 
 		static moduleName = "clipboard";
+		static moduleExtensions = extensions$4;
 
 		//load defaults
 		static pasteActions = defaultPasteActions;
@@ -14701,9 +14652,35 @@
 		}
 	}
 
+	var columnLookups$1 = {
+
+	};
+
+	var rowLookups$1 = {
+		visible:function(){
+			return this.rowManager.getVisibleRows(false, true);
+		},
+		all:function(){
+			return this.rowManager.rows;
+		},
+		selected:function(){
+			return this.modules.selectRow.selectedRows;
+		},
+		active:function(){
+			if(this.options.pagination){
+				return this.rowManager.getDisplayRows(this.rowManager.displayRows.length - 2);
+			}else {
+				return this.rowManager.getDisplayRows();
+			}
+		},
+	};
+
 	class Export extends Module{
 
 		static moduleName = "export";
+
+		static columnLookups = columnLookups$1;
+		static rowLookups = rowLookups$1;
 		
 		constructor(table){
 			super(table);
@@ -14732,22 +14709,25 @@
 		///////////////////////////////////
 		
 		generateExportList(config, style, range, colVisProp){
+			var headers, body, columns, colLookup;
+
 			this.cloneTableStyle = style;
 			this.config = config || {};
 			this.colVisProp = colVisProp;
 
-			var headers, body;
-			
-			if (range === 'range') {
-				var columns = this.table.modules.selectRange.selectedColumns();
-				headers = this.config.columnHeaders !== false
-					? this.headersToExportRows(this.generateColumnGroupHeaders(columns))
-					: [];
-				body = this.bodyToExportRows(this.rowLookup(range), this.table.modules.selectRange.selectedColumns(true));
-			} else {
-				headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders()) : [];
-				body = this.bodyToExportRows(this.rowLookup(range));
+			colLookup = Export.columnLookups[range];
+
+			if(colLookup){
+				columns = colLookup.call(this.table);
 			}
+
+			headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders(columns)) : [];
+
+			if(columns){
+				columns = columns.map(col => col.getComponent());
+			}
+			
+			body = this.bodyToExportRows(this.rowLookup(range), columns);
 
 			return headers.concat(body);
 		}
@@ -14759,7 +14739,8 @@
 		}
 		
 		rowLookup(range){
-			var rows = [];
+			var rows = [], 
+			rowLookup;
 			
 			if(typeof range == "function"){
 				range.call(this.table).forEach((row) =>{
@@ -14770,32 +14751,9 @@
 					}
 				});
 			}else {
-				switch(range){
-					case true:
-					case "visible":
-						rows = this.table.rowManager.getVisibleRows(false, true);
-						break;
-					
-					case "all":
-						rows = this.table.rowManager.rows;
-						break;
-					
-					case "selected":
-						rows = this.table.modules.selectRow.selectedRows;
-						break;
+				rowLookup = Export.rowLookups[range] || Export.rowLookups["active"];
 
-					case "range":
-						rows = this.table.modules.selectRange.selectedRows();
-						break;
-
-					case "active":
-					default:
-						if(this.table.options.pagination){
-							rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
-						}else {
-							rows = this.table.rowManager.getDisplayRows();
-						}
-				}
+				rows = rowLookup.call(this.table);
 			}
 			
 			return Object.assign([], rows);
@@ -18980,9 +18938,50 @@
 		},
 	};
 
+	var bindings$1 = {
+		undo:["ctrl + 90", "meta + 90"],
+		redo:["ctrl + 89", "meta + 89"],
+	};
+
+	var actions$1 = {
+		undo:function(e){
+			var cell = false;
+			if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){
+
+				cell = this.table.modules.edit.currentCell;
+
+				if(!cell){
+					e.preventDefault();
+					this.table.modules.history.undo();
+				}
+			}
+		},
+
+		redo:function(e){
+			var cell = false;
+			if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){
+
+				cell = this.table.modules.edit.currentCell;
+
+				if(!cell){
+					e.preventDefault();
+					this.table.modules.history.redo();
+				}
+			}
+		},
+	};
+
+	var extensions$3 = {
+		keybindings:{
+			bindings:bindings$1,
+			actions:actions$1
+		},
+	};
+
 	class History extends Module{
 
 		static moduleName = "history";
+		static moduleExtensions = extensions$3;
 
 		//load defaults
 		static undoers = defaultUndoers;
@@ -19935,22 +19934,6 @@
 		scrollPageDown:34,
 		scrollToStart:36,
 		scrollToEnd:35,
-		undo:["ctrl + 90", "meta + 90"],
-		redo:["ctrl + 89", "meta + 89"],
-		copyToClipboard:["ctrl + 67", "meta + 67"],
-
-		rangeJumpUp:["ctrl + 38", "meta + 38"],
-		rangeJumpDown:["ctrl + 40", "meta + 40"],
-		rangeJumpLeft:["ctrl + 37", "meta + 37"],
-		rangeJumpRight:["ctrl + 39", "meta + 39"],
-		rangeExpandUp:"shift + 38",
-		rangeExpandDown:"shift + 40",
-		rangeExpandLeft:"shift + 37",
-		rangeExpandRight:"shift + 39",
-		rangeExpandJumpUp:["ctrl + shift + 38", "meta + shift + 38"],
-		rangeExpandJumpDown:["ctrl + shift + 40", "meta + shift + 40"],
-		rangeExpandJumpLeft:["ctrl + shift + 37", "meta + shift + 37"],
-		rangeExpandJumpRight:["ctrl + shift + 39", "meta + shift + 39"],
 	};
 
 	var defaultActions = {
@@ -19958,6 +19941,7 @@
 			e.stopPropagation();
 			e.preventDefault();
 		},
+
 		scrollPageUp:function(e){
 			var rowManager = this.table.rowManager,
 			newPos = rowManager.scrollTop - rowManager.element.clientHeight;
@@ -19974,6 +19958,7 @@
 
 			this.table.element.focus();
 		},
+
 		scrollPageDown:function(e){
 			var rowManager = this.table.rowManager,
 			newPos = rowManager.scrollTop + rowManager.element.clientHeight,
@@ -19992,6 +19977,7 @@
 			this.table.element.focus();
 
 		},
+
 		scrollToStart:function(e){
 			var rowManager = this.table.rowManager;
 
@@ -20003,6 +19989,7 @@
 
 			this.table.element.focus();
 		},
+
 		scrollToEnd:function(e){
 			var rowManager = this.table.rowManager;
 
@@ -20014,6 +20001,7 @@
 
 			this.table.element.focus();
 		},
+
 		navPrev:function(e){
 			this.dispatch("keybinding-nav-prev", e);
 		},
@@ -20036,77 +20024,6 @@
 
 		navDown:function(e){
 			this.dispatch("keybinding-nav-down", e);
-		},
-
-		rangeJumpLeft: function(e){
-			this.dispatch("keybinding-nav-range", e, "left", true, false);
-		},
-		rangeJumpRight: function(e){
-			this.dispatch("keybinding-nav-range", e, "right", true, false);
-		},
-		rangeJumpUp: function(e){
-			this.dispatch("keybinding-nav-range", e, "up", true, false);
-		},
-		rangeJumpDown: function(e){
-			this.dispatch("keybinding-nav-range", e, "down", true, false);
-		},
-		rangeExpandLeft: function(e){
-			this.dispatch("keybinding-nav-range", e, "left", false, true);
-		},
-		rangeExpandRight: function(e){
-			this.dispatch("keybinding-nav-range", e, "right", false, true);
-		},
-		rangeExpandUp: function(e){
-			this.dispatch("keybinding-nav-range", e, "up", false, true);
-		},
-		rangeExpandDown: function(e){
-			this.dispatch("keybinding-nav-range", e, "down", false, true);
-		},
-		rangeExpandJumpLeft: function(e){
-			this.dispatch("keybinding-nav-range", e, "left", true, true);
-		},
-		rangeExpandJumpRight: function(e){
-			this.dispatch("keybinding-nav-range", e, "right", true, true);
-		},
-		rangeExpandJumpUp: function(e){
-			this.dispatch("keybinding-nav-range", e, "up", true, true);
-		},
-		rangeExpandJumpDown: function(e){
-			this.dispatch("keybinding-nav-range", e, "down", true, true);
-		},
-
-		undo:function(e){
-			var cell = false;
-			if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){
-
-				cell = this.table.modules.edit.currentCell;
-
-				if(!cell){
-					e.preventDefault();
-					this.table.modules.history.undo();
-				}
-			}
-		},
-
-		redo:function(e){
-			var cell = false;
-			if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){
-
-				cell = this.table.modules.edit.currentCell;
-
-				if(!cell){
-					e.preventDefault();
-					this.table.modules.history.redo();
-				}
-			}
-		},
-
-		copyToClipboard:function(e){
-			if(!this.table.modules.edit.currentCell){
-				if(this.table.modExists("clipboard", true)){
-					this.table.modules.clipboard.copy(false, true);
-				}
-			}
 		},
 	};
 
@@ -20628,8 +20545,8 @@
 			var self = this,
 			config = {},
 			colEl;
-			
-			if(!column.modules.frozen && !column.isGroup){
+
+			if(!column.modules.frozen && !column.isGroup && !column.isRowHeader){
 				colEl = column.getElement();
 				
 				config.mousemove = function(e){
@@ -24597,7 +24514,7 @@
 		return el;
 	}
 
-	var extensions$1 = {
+	var extensions$2 = {
 		format:{
 			formatters:{
 				responsiveCollapse:responsiveCollapse,
@@ -24608,7 +24525,7 @@
 	class ResponsiveLayout extends Module{
 
 		static moduleName = "responsiveLayout";
-		static moduleExtensions = extensions$1;
+		static moduleExtensions = extensions$2;
 
 		constructor(table){
 			super(table);
@@ -25010,7 +24927,7 @@
 		return checkbox;
 	}
 
-	var extensions = {
+	var extensions$1 = {
 		format:{
 			formatters:{
 				rowSelection:rowSelection,
@@ -25021,7 +24938,7 @@
 	class SelectRow extends Module{
 
 		static moduleName = "selectRow";
-		static moduleExtensions = extensions;
+		static moduleExtensions = extensions$1;
 		
 		constructor(table){
 			super(table);
@@ -25511,745 +25428,6 @@
 		}
 	}
 
-	//sort numbers
-	function number(a, b, aRow, bRow, column, dir, params){
-		var alignEmptyValues = params.alignEmptyValues;
-		var decimal = params.decimalSeparator;
-		var thousand = params.thousandSeparator;
-		var emptyAlign = 0;
-
-		a = String(a);
-		b = String(b);
-
-		if(thousand){
-			a = a.split(thousand).join("");
-			b = b.split(thousand).join("");
-		}
-
-		if(decimal){
-			a = a.split(decimal).join(".");
-			b = b.split(decimal).join(".");
-		}
-
-		a = parseFloat(a);
-		b = parseFloat(b);
-
-		//handle non numeric values
-		if(isNaN(a)){
-			emptyAlign =  isNaN(b) ? 0 : -1;
-		}else if(isNaN(b)){
-			emptyAlign =  1;
-		}else {
-			//compare valid values
-			return a - b;
-		}
-
-		//fix empty values in position
-		if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
-			emptyAlign *= -1;
-		}
-
-		return emptyAlign;
-	}
-
-	//sort strings
-	function string(a, b, aRow, bRow, column, dir, params){
-		var alignEmptyValues = params.alignEmptyValues;
-		var emptyAlign = 0;
-		var locale;
-
-		//handle empty values
-		if(!a){
-			emptyAlign =  !b ? 0 : -1;
-		}else if(!b){
-			emptyAlign =  1;
-		}else {
-			//compare valid values
-			switch(typeof params.locale){
-				case "boolean":
-					if(params.locale){
-						locale = this.langLocale();
-					}
-					break;
-				case "string":
-					locale = params.locale;
-					break;
-			}
-
-			return String(a).toLowerCase().localeCompare(String(b).toLowerCase(), locale);
-		}
-
-		//fix empty values in position
-		if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
-			emptyAlign *= -1;
-		}
-
-		return emptyAlign;
-	}
-
-	//sort datetime
-	function datetime(a, b, aRow, bRow, column, dir, params){
-		var DT = window.DateTime || luxon.DateTime;
-		var format = params.format || "dd/MM/yyyy HH:mm:ss",
-		alignEmptyValues = params.alignEmptyValues,
-		emptyAlign = 0;
-
-		if(typeof DT != "undefined"){
-			if(!DT.isDateTime(a)){
-				if(format === "iso"){
-					a = DT.fromISO(String(a));
-				}else {
-					a = DT.fromFormat(String(a), format);
-				}
-			}
-
-			if(!DT.isDateTime(b)){
-				if(format === "iso"){
-					b = DT.fromISO(String(b));
-				}else {
-					b = DT.fromFormat(String(b), format);
-				}
-			}
-
-			if(!a.isValid){
-				emptyAlign = !b.isValid ? 0 : -1;
-			}else if(!b.isValid){
-				emptyAlign =  1;
-			}else {
-				//compare valid values
-				return a - b;
-			}
-
-			//fix empty values in position
-			if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
-				emptyAlign *= -1;
-			}
-
-			return emptyAlign;
-
-		}else {
-			console.error("Sort Error - 'datetime' sorter is dependant on luxon.js");
-		}
-	}
-
-	//sort date
-	function date(a, b, aRow, bRow, column, dir, params){
-		if(!params.format){
-			params.format = "dd/MM/yyyy";
-		}
-
-		return datetime.call(this, a, b, aRow, bRow, column, dir, params);
-	}
-
-	//sort times
-	function time(a, b, aRow, bRow, column, dir, params){
-		if(!params.format){
-			params.format = "HH:mm";
-		}
-
-		return datetime.call(this, a, b, aRow, bRow, column, dir, params);
-	}
-
-	//sort booleans
-	function boolean(a, b, aRow, bRow, column, dir, params){
-		var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
-		var el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
-
-		return el1 - el2;
-	}
-
-	//sort if element contains any data
-	function array(a, b, aRow, bRow, column, dir, params){
-		var type = params.type || "length",
-		alignEmptyValues = params.alignEmptyValues,
-		emptyAlign = 0;
-
-		function calc(value){
-			var result;
-
-			switch(type){
-				case "length":
-					result = value.length;
-					break;
-
-				case "sum":
-					result = value.reduce(function(c, d){
-						return c + d;
-					});
-					break;
-
-				case "max":
-					result = Math.max.apply(null, value) ;
-					break;
-
-				case "min":
-					result = Math.min.apply(null, value) ;
-					break;
-
-				case "avg":
-					result = value.reduce(function(c, d){
-						return c + d;
-					}) / value.length;
-					break;
-			}
-
-			return result;
-		}
-
-		//handle non array values
-		if(!Array.isArray(a)){
-			emptyAlign = !Array.isArray(b) ? 0 : -1;
-		}else if(!Array.isArray(b)){
-			emptyAlign = 1;
-		}else {
-			return calc(b) - calc(a);
-		}
-
-		//fix empty values in position
-		if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
-			emptyAlign *= -1;
-		}
-
-		return emptyAlign;
-	}
-
-	//sort if element contains any data
-	function exists(a, b, aRow, bRow, column, dir, params){
-		var el1 = typeof a == "undefined" ? 0 : 1;
-		var el2 = typeof b == "undefined" ? 0 : 1;
-
-		return el1 - el2;
-	}
-
-	//sort alpha numeric strings
-	function alphanum(as, bs, aRow, bRow, column, dir, params){
-		var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
-		var alignEmptyValues = params.alignEmptyValues;
-		var emptyAlign = 0;
-
-		//handle empty values
-		if(!as && as!== 0){
-			emptyAlign =  !bs && bs!== 0 ? 0 : -1;
-		}else if(!bs && bs!== 0){
-			emptyAlign =  1;
-		}else {
-
-			if(isFinite(as) && isFinite(bs)) return as - bs;
-			a = String(as).toLowerCase();
-			b = String(bs).toLowerCase();
-			if(a === b) return 0;
-			if(!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
-			a = a.match(rx);
-			b = b.match(rx);
-			L = a.length > b.length ? b.length : a.length;
-			while(i < L){
-				a1= a[i];
-				b1= b[i++];
-				if(a1 !== b1){
-					if(isFinite(a1) && isFinite(b1)){
-						if(a1.charAt(0) === "0") a1 = "." + a1;
-						if(b1.charAt(0) === "0") b1 = "." + b1;
-						return a1 - b1;
-					}
-					else return a1 > b1 ? 1 : -1;
-				}
-			}
-
-			return a.length > b.length;
-		}
-
-		//fix empty values in position
-		if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
-			emptyAlign *= -1;
-		}
-
-		return emptyAlign;
-	}
-
-	var defaultSorters = {
-		number:number,
-		string:string,
-		date:date,
-		time:time,
-		datetime:datetime,
-		boolean:boolean,
-		array:array,
-		exists:exists,
-		alphanum:alphanum
-	};
-
-	class Sort extends Module{
-
-		static moduleName = "sort";
-
-		//load defaults
-		static sorters = defaultSorters;
-		
-		constructor(table){
-			super(table);
-			
-			this.sortList = []; //holder current sort
-			this.changed = false; //has the sort changed since last render
-			
-			this.registerTableOption("sortMode", "local"); //local or remote sorting
-			
-			this.registerTableOption("initialSort", false); //initial sorting criteria
-			this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
-			this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
-			this.registerTableOption("headerSortElement", "<div class='tabulator-arrow'></div>"); //header sort element
-			this.registerTableOption("headerSortClickElement", "header"); //element which triggers sort when clicked
-			
-			this.registerColumnOption("sorter");
-			this.registerColumnOption("sorterParams");
-			
-			this.registerColumnOption("headerSort", true);
-			this.registerColumnOption("headerSortStartingDir");
-			this.registerColumnOption("headerSortTristate");
-			
-		}
-		
-		initialize(){
-			this.subscribe("column-layout", this.initializeColumn.bind(this));
-			this.subscribe("table-built", this.tableBuilt.bind(this));
-			this.registerDataHandler(this.sort.bind(this), 20);
-			
-			this.registerTableFunction("setSort", this.userSetSort.bind(this));
-			this.registerTableFunction("getSorters", this.getSort.bind(this));
-			this.registerTableFunction("clearSort", this.clearSort.bind(this));
-			
-			if(this.table.options.sortMode === "remote"){
-				this.subscribe("data-params", this.remoteSortParams.bind(this));
-			}
-		}
-		
-		tableBuilt(){
-			if(this.table.options.initialSort){
-				this.setSort(this.table.options.initialSort);
-			}
-		}
-		
-		remoteSortParams(data, config, silent, params){
-			var sorters = this.getSort();
-			
-			sorters.forEach((item) => {
-				delete item.column;
-			});
-			
-			params.sort = sorters;
-			
-			return params;
-		}
-		
-		
-		///////////////////////////////////
-		///////// Table Functions /////////
-		///////////////////////////////////
-		
-		userSetSort(sortList, dir){
-			this.setSort(sortList, dir);
-			// this.table.rowManager.sorterRefresh();
-			this.refreshSort();
-		}
-		
-		clearSort(){
-			this.clear();
-			// this.table.rowManager.sorterRefresh();
-			this.refreshSort();
-		}
-		
-		
-		///////////////////////////////////
-		///////// Internal Logic //////////
-		///////////////////////////////////
-		
-		//initialize column header for sorting
-		initializeColumn(column){
-			var sorter = false,
-			colEl,
-			arrowEl;
-			
-			switch(typeof column.definition.sorter){
-				case "string":
-					if(Sort.sorters[column.definition.sorter]){
-						sorter = Sort.sorters[column.definition.sorter];
-					}else {
-						console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
-					}
-					break;
-				
-				case "function":
-					sorter = column.definition.sorter;
-					break;
-			}
-			
-			column.modules.sort = {
-				sorter:sorter, dir:"none",
-				params:column.definition.sorterParams || {},
-				startingDir:column.definition.headerSortStartingDir || "asc",
-				tristate: column.definition.headerSortTristate,
-			};
-			
-			if(column.definition.headerSort !== false){
-				
-				colEl = column.getElement();
-				
-				colEl.classList.add("tabulator-sortable");
-				
-				arrowEl = document.createElement("div");
-				arrowEl.classList.add("tabulator-col-sorter");
-				
-				switch(this.table.options.headerSortClickElement){
-					case "icon":
-						arrowEl.classList.add("tabulator-col-sorter-element");
-						break;
-					case "header":
-						colEl.classList.add("tabulator-col-sorter-element");
-						break;
-					default:
-						colEl.classList.add("tabulator-col-sorter-element");
-						break;
-				}
-				
-				switch(this.table.options.headerSortElement){
-					case "function":
-					//do nothing
-						break;
-					
-					case "object":
-						arrowEl.appendChild(this.table.options.headerSortElement);
-						break;
-					
-					default:
-						arrowEl.innerHTML = this.table.options.headerSortElement;
-				}
-				
-				//create sorter arrow
-				column.titleHolderElement.appendChild(arrowEl);
-				
-				column.modules.sort.element = arrowEl;
-				
-				this.setColumnHeaderSortIcon(column, "none");
-				
-				if(this.table.options.headerSortClickElement === "icon"){
-					arrowEl.addEventListener("mousedown", (e) => {
-						e.stopPropagation();
-					});
-				}
-				
-				//sort on click
-				(this.table.options.headerSortClickElement === "icon" ? arrowEl : colEl).addEventListener("click", (e) => {
-					var dir = "",
-					sorters=[],
-					match = false;
-					
-					if(column.modules.sort){
-						if(column.modules.sort.tristate){
-							if(column.modules.sort.dir == "none"){
-								dir = column.modules.sort.startingDir;
-							}else {
-								if(column.modules.sort.dir == column.modules.sort.startingDir){
-									dir = column.modules.sort.dir == "asc" ? "desc" : "asc";
-								}else {
-									dir = "none";
-								}
-							}
-						}else {
-							switch(column.modules.sort.dir){
-								case "asc":
-									dir = "desc";
-									break;
-								
-								case "desc":
-									dir = "asc";
-									break;
-								
-								default:
-									dir = column.modules.sort.startingDir;
-							}
-						}
-						
-						if (this.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
-							sorters = this.getSort();
-							
-							match = sorters.findIndex((sorter) => {
-								return sorter.field === column.getField();
-							});
-							
-							if(match > -1){
-								sorters[match].dir = dir;
-								
-								match = sorters.splice(match, 1)[0];
-								if(dir != "none"){
-									sorters.push(match);
-								}
-							}else {
-								if(dir != "none"){
-									sorters.push({column:column, dir:dir});
-								}
-							}
-							
-							//add to existing sort
-							this.setSort(sorters);
-						}else {
-							if(dir == "none"){
-								this.clear();
-							}else {
-								//sort by column only
-								this.setSort(column, dir);
-							}
-							
-						}
-						
-						// this.table.rowManager.sorterRefresh(!this.sortList.length);
-						this.refreshSort();
-					}
-				});
-			}
-		}
-		
-		refreshSort(){
-			if(this.table.options.sortMode === "remote"){
-				this.reloadData(null, false, false);
-			}else {
-				this.refreshData(true);
-			}
-			
-			//TODO - Persist left position of row manager
-			// left = this.scrollLeft;
-			// this.scrollHorizontal(left);
-		}
-		
-		//check if the sorters have changed since last use
-		hasChanged(){
-			var changed = this.changed;
-			this.changed = false;
-			return changed;
-		}
-		
-		//return current sorters
-		getSort(){
-			var self = this,
-			sorters = [];
-			
-			self.sortList.forEach(function(item){
-				if(item.column){
-					sorters.push({column:item.column.getComponent(), field:item.column.getField(), dir:item.dir});
-				}
-			});
-			
-			return sorters;
-		}
-		
-		//change sort list and trigger sort
-		setSort(sortList, dir){
-			var self = this,
-			newSortList = [];
-			
-			if(!Array.isArray(sortList)){
-				sortList = [{column: sortList, dir:dir}];
-			}
-			
-			sortList.forEach(function(item){
-				var column;
-				
-				column = self.table.columnManager.findColumn(item.column);
-				
-				if(column){
-					item.column = column;
-					newSortList.push(item);
-					self.changed = true;
-				}else {
-					console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
-				}
-				
-			});
-			
-			self.sortList = newSortList;
-			
-			this.dispatch("sort-changed");
-		}
-		
-		//clear sorters
-		clear(){
-			this.setSort([]);
-		}
-		
-		//find appropriate sorter for column
-		findSorter(column){
-			var row = this.table.rowManager.activeRows[0],
-			sorter = "string",
-			field, value;
-			
-			if(row){
-				row = row.getData();
-				field = column.getField();
-				
-				if(field){
-					
-					value = column.getFieldValue(row);
-					
-					switch(typeof value){
-						case "undefined":
-							sorter = "string";
-							break;
-						
-						case "boolean":
-							sorter = "boolean";
-							break;
-						
-						default:
-							if(!isNaN(value) && value !== ""){
-								sorter = "number";
-							}else {
-								if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
-									sorter = "alphanum";
-								}
-							}
-							break;
-					}
-				}
-			}
-			
-			return Sort.sorters[sorter];
-		}
-		
-		//work through sort list sorting data
-		sort(data){
-			var self = this,
-			sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
-			sortListActual = [],
-			rowComponents = [];
-			
-			if(this.subscribedExternal("dataSorting")){
-				this.dispatchExternal("dataSorting", self.getSort());
-			}
-			
-			self.clearColumnHeaders();
-			
-			if(this.table.options.sortMode !== "remote"){
-				
-				//build list of valid sorters and trigger column specific callbacks before sort begins
-				sortList.forEach(function(item, i){
-					var sortObj;
-					
-					if(item.column){
-						sortObj = item.column.modules.sort;
-						
-						if(sortObj){
-							
-							//if no sorter has been defined, take a guess
-							if(!sortObj.sorter){
-								sortObj.sorter = self.findSorter(item.column);
-							}
-							
-							item.params = typeof sortObj.params === "function" ? sortObj.params(item.column.getComponent(), item.dir) : sortObj.params;
-							
-							sortListActual.push(item);
-						}
-						
-						self.setColumnHeader(item.column, item.dir);
-					}
-				});
-				
-				//sort data
-				if (sortListActual.length) {
-					self._sortItems(data, sortListActual);
-				}
-				
-			}else {
-				sortList.forEach(function(item, i){
-					self.setColumnHeader(item.column, item.dir);
-				});
-			}
-			
-			if(this.subscribedExternal("dataSorted")){
-				data.forEach((row) => {
-					rowComponents.push(row.getComponent());
-				});
-				
-				this.dispatchExternal("dataSorted", self.getSort(), rowComponents);
-			}
-			
-			return data;
-		}
-		
-		//clear sort arrows on columns
-		clearColumnHeaders(){
-			this.table.columnManager.getRealColumns().forEach((column) => {
-				if(column.modules.sort){
-					column.modules.sort.dir = "none";
-					column.getElement().setAttribute("aria-sort", "none");
-					this.setColumnHeaderSortIcon(column, "none");
-				}
-			});
-		}
-		
-		//set the column header sort direction
-		setColumnHeader(column, dir){
-			column.modules.sort.dir = dir;
-			column.getElement().setAttribute("aria-sort", dir === "asc" ? "ascending" : "descending");
-			this.setColumnHeaderSortIcon(column, dir);
-		}
-		
-		setColumnHeaderSortIcon(column, dir){
-			var sortEl = column.modules.sort.element,
-			arrowEl;
-			
-			if(column.definition.headerSort && typeof this.table.options.headerSortElement === "function"){
-				while(sortEl.firstChild) sortEl.removeChild(sortEl.firstChild);
-				
-				arrowEl = this.table.options.headerSortElement.call(this.table, column.getComponent(), dir);
-				
-				if(typeof arrowEl === "object"){
-					sortEl.appendChild(arrowEl);
-				}else {
-					sortEl.innerHTML = arrowEl;
-				}
-			}
-		}
-		
-		//sort each item in sort list
-		_sortItems(data, sortList){
-			var sorterCount = sortList.length - 1;
-			
-			data.sort((a, b) => {
-				var result;
-				
-				for(var i = sorterCount; i>= 0; i--){
-					let sortItem = sortList[i];
-					
-					result = this._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
-					
-					if(result !== 0){
-						break;
-					}
-				}
-				
-				return result;
-			});
-		}
-		
-		//process individual rows for a sort function on active data
-		_sortRow(a, b, column, dir, params){
-			var el1Comp, el2Comp;
-			
-			//switch elements depending on search direction
-			var el1 = dir == "asc" ? a : b;
-			var el2 = dir == "asc" ? b : a;
-			
-			a = column.getFieldValue(el1.getData());
-			b = column.getFieldValue(el2.getData());
-			
-			a = typeof a !== "undefined" ? a : "";
-			b = typeof b !== "undefined" ? b : "";
-			
-			el1Comp = el1.getComponent();
-			el2Comp = el2.getComponent();
-			
-			return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
-		}
-	}
-
 	class RangeComponent {
 		constructor(range) {
 			this._range = range;
@@ -26696,9 +25874,196 @@
 		}
 	}
 
+	var bindings = {
+		rangeJumpUp:["ctrl + 38", "meta + 38"],
+		rangeJumpDown:["ctrl + 40", "meta + 40"],
+		rangeJumpLeft:["ctrl + 37", "meta + 37"],
+		rangeJumpRight:["ctrl + 39", "meta + 39"],
+		rangeExpandUp:"shift + 38",
+		rangeExpandDown:"shift + 40",
+		rangeExpandLeft:"shift + 37",
+		rangeExpandRight:"shift + 39",
+		rangeExpandJumpUp:["ctrl + shift + 38", "meta + shift + 38"],
+		rangeExpandJumpDown:["ctrl + shift + 40", "meta + shift + 40"],
+		rangeExpandJumpLeft:["ctrl + shift + 37", "meta + shift + 37"],
+		rangeExpandJumpRight:["ctrl + shift + 39", "meta + shift + 39"],
+	};
+
+	var actions = {
+		rangeJumpLeft: function(e){
+			this.dispatch("keybinding-nav-range", e, "left", true, false);
+		},
+		rangeJumpRight: function(e){
+			this.dispatch("keybinding-nav-range", e, "right", true, false);
+		},
+		rangeJumpUp: function(e){
+			this.dispatch("keybinding-nav-range", e, "up", true, false);
+		},
+		rangeJumpDown: function(e){
+			this.dispatch("keybinding-nav-range", e, "down", true, false);
+		},
+		rangeExpandLeft: function(e){
+			this.dispatch("keybinding-nav-range", e, "left", false, true);
+		},
+		rangeExpandRight: function(e){
+			this.dispatch("keybinding-nav-range", e, "right", false, true);
+		},
+		rangeExpandUp: function(e){
+			this.dispatch("keybinding-nav-range", e, "up", false, true);
+		},
+		rangeExpandDown: function(e){
+			this.dispatch("keybinding-nav-range", e, "down", false, true);
+		},
+		rangeExpandJumpLeft: function(e){
+			this.dispatch("keybinding-nav-range", e, "left", true, true);
+		},
+		rangeExpandJumpRight: function(e){
+			this.dispatch("keybinding-nav-range", e, "right", true, true);
+		},
+		rangeExpandJumpUp: function(e){
+			this.dispatch("keybinding-nav-range", e, "up", true, true);
+		},
+		rangeExpandJumpDown: function(e){
+			this.dispatch("keybinding-nav-range", e, "down", true, true);
+		},
+	};
+
+	var pasteActions = {
+		range:function(data){
+			var rows = [],
+			range = this.table.modules.selectRange.activeRange,
+			singleCell = false,
+			bounds, startCell, startRow, rowWidth, dataLength;
+
+			dataLength = data.length;
+			
+			if(range){
+				bounds = range.getBounds();
+				startCell = bounds.start;
+				
+				if(bounds.start === bounds.end){
+					singleCell = true;
+				}
+				
+				if(startCell){
+					rows = this.table.rowManager.activeRows.slice();
+					startRow = rows.indexOf(startCell.row);
+
+					if(singleCell){
+						rowWidth = data.length;
+					}else {
+						rowWidth = (rows.indexOf(bounds.end.row) - startRow) + 1;
+					}
+					
+					
+					if(startRow >-1){
+						this.table.blockRedraw();
+						
+						rows = rows.slice(startRow, startRow + rowWidth);
+						
+						rows.forEach((row, i) => {
+							row.updateData(data[i % dataLength]);
+						});
+						
+						this.table.restoreRedraw();
+					}
+				}
+			}
+			
+			return rows;
+		}
+	};
+
+	var pasteParsers = {
+		range:function(clipboard){
+			var data = [],
+			rows = [],
+			range = this.table.modules.selectRange.activeRange,
+			singleCell = false,
+			bounds, startCell, colWidth, columnMap, startCol;
+			
+			if(range){
+				bounds = range.getBounds();
+				startCell = bounds.start;
+
+				if(bounds.start === bounds.end){
+					singleCell = true;
+				}
+				
+				if(startCell){
+					//get data from clipboard into array of columns and rows.
+					clipboard = clipboard.split("\n");
+					
+					clipboard.forEach(function(row){
+						data.push(row.split("\t"));
+					});
+					
+					if(data.length){
+						columnMap = this.table.columnManager.getVisibleColumnsByIndex();
+						startCol = columnMap.indexOf(startCell.column);
+
+						if(startCol > -1){
+							if(singleCell){
+								colWidth = data[0].length;
+							}else {
+								colWidth = (columnMap.indexOf(bounds.end.column) - startCol) + 1;
+							}
+
+							columnMap = columnMap.slice(startCol, startCol + colWidth);
+
+							data.forEach((item) => {
+								var row = {};
+								var itemLength = item.length;
+
+								columnMap.forEach(function(col, i){
+									row[col.field] = item[i % itemLength];
+								});
+								
+								rows.push(row);	
+							});
+
+							return rows;
+						}				
+					}
+				}
+			}
+			
+			return false;
+		}
+	};
+
+	var columnLookups = {
+		range:function(){
+			return this.modules.selectRange.selectedColumns();
+		},
+	};
+
+	var rowLookups = {
+		range:function(){
+			return this.modules.selectRange.selectedRows();
+		},
+	};
+
+	var extensions = {
+		keybindings:{
+			bindings:bindings,
+			actions:actions
+		},
+		clipboard:{
+			pasteActions:pasteActions,
+			pasteParsers:pasteParsers
+		},
+		export:{
+			columnLookups:columnLookups,
+			rowLookups:rowLookups,
+		}
+	};
+
 	class SelectRange extends Module {
 		
 		static moduleName = "selectRange";
+		static moduleInitOrder = 1;
+		static moduleExtensions = extensions;
 		
 		constructor(table) {
 			super(table);
@@ -26738,7 +26103,7 @@
 		///////////////////////////////////
 		
 		initialize() {
-			if (this.options("selectableRange")) {		
+			if (this.options("selectableRange")) {	
 				if(!this.options("selectableRows")){
 					this.maxRanges = this.options("selectableRange");
 					
@@ -27567,6 +26932,745 @@
 		
 		selectedColumns(component) {
 			return component ? this.activeRange.getColumns().map((col) => col.getComponent()) : this.activeRange.getColumns();
+		}
+	}
+
+	//sort numbers
+	function number(a, b, aRow, bRow, column, dir, params){
+		var alignEmptyValues = params.alignEmptyValues;
+		var decimal = params.decimalSeparator;
+		var thousand = params.thousandSeparator;
+		var emptyAlign = 0;
+
+		a = String(a);
+		b = String(b);
+
+		if(thousand){
+			a = a.split(thousand).join("");
+			b = b.split(thousand).join("");
+		}
+
+		if(decimal){
+			a = a.split(decimal).join(".");
+			b = b.split(decimal).join(".");
+		}
+
+		a = parseFloat(a);
+		b = parseFloat(b);
+
+		//handle non numeric values
+		if(isNaN(a)){
+			emptyAlign =  isNaN(b) ? 0 : -1;
+		}else if(isNaN(b)){
+			emptyAlign =  1;
+		}else {
+			//compare valid values
+			return a - b;
+		}
+
+		//fix empty values in position
+		if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
+			emptyAlign *= -1;
+		}
+
+		return emptyAlign;
+	}
+
+	//sort strings
+	function string(a, b, aRow, bRow, column, dir, params){
+		var alignEmptyValues = params.alignEmptyValues;
+		var emptyAlign = 0;
+		var locale;
+
+		//handle empty values
+		if(!a){
+			emptyAlign =  !b ? 0 : -1;
+		}else if(!b){
+			emptyAlign =  1;
+		}else {
+			//compare valid values
+			switch(typeof params.locale){
+				case "boolean":
+					if(params.locale){
+						locale = this.langLocale();
+					}
+					break;
+				case "string":
+					locale = params.locale;
+					break;
+			}
+
+			return String(a).toLowerCase().localeCompare(String(b).toLowerCase(), locale);
+		}
+
+		//fix empty values in position
+		if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
+			emptyAlign *= -1;
+		}
+
+		return emptyAlign;
+	}
+
+	//sort datetime
+	function datetime(a, b, aRow, bRow, column, dir, params){
+		var DT = window.DateTime || luxon.DateTime;
+		var format = params.format || "dd/MM/yyyy HH:mm:ss",
+		alignEmptyValues = params.alignEmptyValues,
+		emptyAlign = 0;
+
+		if(typeof DT != "undefined"){
+			if(!DT.isDateTime(a)){
+				if(format === "iso"){
+					a = DT.fromISO(String(a));
+				}else {
+					a = DT.fromFormat(String(a), format);
+				}
+			}
+
+			if(!DT.isDateTime(b)){
+				if(format === "iso"){
+					b = DT.fromISO(String(b));
+				}else {
+					b = DT.fromFormat(String(b), format);
+				}
+			}
+
+			if(!a.isValid){
+				emptyAlign = !b.isValid ? 0 : -1;
+			}else if(!b.isValid){
+				emptyAlign =  1;
+			}else {
+				//compare valid values
+				return a - b;
+			}
+
+			//fix empty values in position
+			if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
+				emptyAlign *= -1;
+			}
+
+			return emptyAlign;
+
+		}else {
+			console.error("Sort Error - 'datetime' sorter is dependant on luxon.js");
+		}
+	}
+
+	//sort date
+	function date(a, b, aRow, bRow, column, dir, params){
+		if(!params.format){
+			params.format = "dd/MM/yyyy";
+		}
+
+		return datetime.call(this, a, b, aRow, bRow, column, dir, params);
+	}
+
+	//sort times
+	function time(a, b, aRow, bRow, column, dir, params){
+		if(!params.format){
+			params.format = "HH:mm";
+		}
+
+		return datetime.call(this, a, b, aRow, bRow, column, dir, params);
+	}
+
+	//sort booleans
+	function boolean(a, b, aRow, bRow, column, dir, params){
+		var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
+		var el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
+
+		return el1 - el2;
+	}
+
+	//sort if element contains any data
+	function array(a, b, aRow, bRow, column, dir, params){
+		var type = params.type || "length",
+		alignEmptyValues = params.alignEmptyValues,
+		emptyAlign = 0;
+
+		function calc(value){
+			var result;
+
+			switch(type){
+				case "length":
+					result = value.length;
+					break;
+
+				case "sum":
+					result = value.reduce(function(c, d){
+						return c + d;
+					});
+					break;
+
+				case "max":
+					result = Math.max.apply(null, value) ;
+					break;
+
+				case "min":
+					result = Math.min.apply(null, value) ;
+					break;
+
+				case "avg":
+					result = value.reduce(function(c, d){
+						return c + d;
+					}) / value.length;
+					break;
+			}
+
+			return result;
+		}
+
+		//handle non array values
+		if(!Array.isArray(a)){
+			emptyAlign = !Array.isArray(b) ? 0 : -1;
+		}else if(!Array.isArray(b)){
+			emptyAlign = 1;
+		}else {
+			return calc(b) - calc(a);
+		}
+
+		//fix empty values in position
+		if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
+			emptyAlign *= -1;
+		}
+
+		return emptyAlign;
+	}
+
+	//sort if element contains any data
+	function exists(a, b, aRow, bRow, column, dir, params){
+		var el1 = typeof a == "undefined" ? 0 : 1;
+		var el2 = typeof b == "undefined" ? 0 : 1;
+
+		return el1 - el2;
+	}
+
+	//sort alpha numeric strings
+	function alphanum(as, bs, aRow, bRow, column, dir, params){
+		var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
+		var alignEmptyValues = params.alignEmptyValues;
+		var emptyAlign = 0;
+
+		//handle empty values
+		if(!as && as!== 0){
+			emptyAlign =  !bs && bs!== 0 ? 0 : -1;
+		}else if(!bs && bs!== 0){
+			emptyAlign =  1;
+		}else {
+
+			if(isFinite(as) && isFinite(bs)) return as - bs;
+			a = String(as).toLowerCase();
+			b = String(bs).toLowerCase();
+			if(a === b) return 0;
+			if(!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
+			a = a.match(rx);
+			b = b.match(rx);
+			L = a.length > b.length ? b.length : a.length;
+			while(i < L){
+				a1= a[i];
+				b1= b[i++];
+				if(a1 !== b1){
+					if(isFinite(a1) && isFinite(b1)){
+						if(a1.charAt(0) === "0") a1 = "." + a1;
+						if(b1.charAt(0) === "0") b1 = "." + b1;
+						return a1 - b1;
+					}
+					else return a1 > b1 ? 1 : -1;
+				}
+			}
+
+			return a.length > b.length;
+		}
+
+		//fix empty values in position
+		if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
+			emptyAlign *= -1;
+		}
+
+		return emptyAlign;
+	}
+
+	var defaultSorters = {
+		number:number,
+		string:string,
+		date:date,
+		time:time,
+		datetime:datetime,
+		boolean:boolean,
+		array:array,
+		exists:exists,
+		alphanum:alphanum
+	};
+
+	class Sort extends Module{
+
+		static moduleName = "sort";
+
+		//load defaults
+		static sorters = defaultSorters;
+		
+		constructor(table){
+			super(table);
+			
+			this.sortList = []; //holder current sort
+			this.changed = false; //has the sort changed since last render
+			
+			this.registerTableOption("sortMode", "local"); //local or remote sorting
+			
+			this.registerTableOption("initialSort", false); //initial sorting criteria
+			this.registerTableOption("columnHeaderSortMulti", true); //multiple or single column sorting
+			this.registerTableOption("sortOrderReverse", false); //reverse internal sort ordering
+			this.registerTableOption("headerSortElement", "<div class='tabulator-arrow'></div>"); //header sort element
+			this.registerTableOption("headerSortClickElement", "header"); //element which triggers sort when clicked
+			
+			this.registerColumnOption("sorter");
+			this.registerColumnOption("sorterParams");
+			
+			this.registerColumnOption("headerSort", true);
+			this.registerColumnOption("headerSortStartingDir");
+			this.registerColumnOption("headerSortTristate");
+			
+		}
+		
+		initialize(){
+			this.subscribe("column-layout", this.initializeColumn.bind(this));
+			this.subscribe("table-built", this.tableBuilt.bind(this));
+			this.registerDataHandler(this.sort.bind(this), 20);
+			
+			this.registerTableFunction("setSort", this.userSetSort.bind(this));
+			this.registerTableFunction("getSorters", this.getSort.bind(this));
+			this.registerTableFunction("clearSort", this.clearSort.bind(this));
+			
+			if(this.table.options.sortMode === "remote"){
+				this.subscribe("data-params", this.remoteSortParams.bind(this));
+			}
+		}
+		
+		tableBuilt(){
+			if(this.table.options.initialSort){
+				this.setSort(this.table.options.initialSort);
+			}
+		}
+		
+		remoteSortParams(data, config, silent, params){
+			var sorters = this.getSort();
+			
+			sorters.forEach((item) => {
+				delete item.column;
+			});
+			
+			params.sort = sorters;
+			
+			return params;
+		}
+		
+		
+		///////////////////////////////////
+		///////// Table Functions /////////
+		///////////////////////////////////
+		
+		userSetSort(sortList, dir){
+			this.setSort(sortList, dir);
+			// this.table.rowManager.sorterRefresh();
+			this.refreshSort();
+		}
+		
+		clearSort(){
+			this.clear();
+			// this.table.rowManager.sorterRefresh();
+			this.refreshSort();
+		}
+		
+		
+		///////////////////////////////////
+		///////// Internal Logic //////////
+		///////////////////////////////////
+		
+		//initialize column header for sorting
+		initializeColumn(column){
+			var sorter = false,
+			colEl,
+			arrowEl;
+			
+			switch(typeof column.definition.sorter){
+				case "string":
+					if(Sort.sorters[column.definition.sorter]){
+						sorter = Sort.sorters[column.definition.sorter];
+					}else {
+						console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
+					}
+					break;
+				
+				case "function":
+					sorter = column.definition.sorter;
+					break;
+			}
+			
+			column.modules.sort = {
+				sorter:sorter, dir:"none",
+				params:column.definition.sorterParams || {},
+				startingDir:column.definition.headerSortStartingDir || "asc",
+				tristate: column.definition.headerSortTristate,
+			};
+			
+			if(column.definition.headerSort !== false){
+				
+				colEl = column.getElement();
+				
+				colEl.classList.add("tabulator-sortable");
+				
+				arrowEl = document.createElement("div");
+				arrowEl.classList.add("tabulator-col-sorter");
+				
+				switch(this.table.options.headerSortClickElement){
+					case "icon":
+						arrowEl.classList.add("tabulator-col-sorter-element");
+						break;
+					case "header":
+						colEl.classList.add("tabulator-col-sorter-element");
+						break;
+					default:
+						colEl.classList.add("tabulator-col-sorter-element");
+						break;
+				}
+				
+				switch(this.table.options.headerSortElement){
+					case "function":
+					//do nothing
+						break;
+					
+					case "object":
+						arrowEl.appendChild(this.table.options.headerSortElement);
+						break;
+					
+					default:
+						arrowEl.innerHTML = this.table.options.headerSortElement;
+				}
+				
+				//create sorter arrow
+				column.titleHolderElement.appendChild(arrowEl);
+				
+				column.modules.sort.element = arrowEl;
+				
+				this.setColumnHeaderSortIcon(column, "none");
+				
+				if(this.table.options.headerSortClickElement === "icon"){
+					arrowEl.addEventListener("mousedown", (e) => {
+						e.stopPropagation();
+					});
+				}
+				
+				//sort on click
+				(this.table.options.headerSortClickElement === "icon" ? arrowEl : colEl).addEventListener("click", (e) => {
+					var dir = "",
+					sorters=[],
+					match = false;
+					
+					if(column.modules.sort){
+						if(column.modules.sort.tristate){
+							if(column.modules.sort.dir == "none"){
+								dir = column.modules.sort.startingDir;
+							}else {
+								if(column.modules.sort.dir == column.modules.sort.startingDir){
+									dir = column.modules.sort.dir == "asc" ? "desc" : "asc";
+								}else {
+									dir = "none";
+								}
+							}
+						}else {
+							switch(column.modules.sort.dir){
+								case "asc":
+									dir = "desc";
+									break;
+								
+								case "desc":
+									dir = "asc";
+									break;
+								
+								default:
+									dir = column.modules.sort.startingDir;
+							}
+						}
+						
+						if (this.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
+							sorters = this.getSort();
+							
+							match = sorters.findIndex((sorter) => {
+								return sorter.field === column.getField();
+							});
+							
+							if(match > -1){
+								sorters[match].dir = dir;
+								
+								match = sorters.splice(match, 1)[0];
+								if(dir != "none"){
+									sorters.push(match);
+								}
+							}else {
+								if(dir != "none"){
+									sorters.push({column:column, dir:dir});
+								}
+							}
+							
+							//add to existing sort
+							this.setSort(sorters);
+						}else {
+							if(dir == "none"){
+								this.clear();
+							}else {
+								//sort by column only
+								this.setSort(column, dir);
+							}
+							
+						}
+						
+						// this.table.rowManager.sorterRefresh(!this.sortList.length);
+						this.refreshSort();
+					}
+				});
+			}
+		}
+		
+		refreshSort(){
+			if(this.table.options.sortMode === "remote"){
+				this.reloadData(null, false, false);
+			}else {
+				this.refreshData(true);
+			}
+			
+			//TODO - Persist left position of row manager
+			// left = this.scrollLeft;
+			// this.scrollHorizontal(left);
+		}
+		
+		//check if the sorters have changed since last use
+		hasChanged(){
+			var changed = this.changed;
+			this.changed = false;
+			return changed;
+		}
+		
+		//return current sorters
+		getSort(){
+			var self = this,
+			sorters = [];
+			
+			self.sortList.forEach(function(item){
+				if(item.column){
+					sorters.push({column:item.column.getComponent(), field:item.column.getField(), dir:item.dir});
+				}
+			});
+			
+			return sorters;
+		}
+		
+		//change sort list and trigger sort
+		setSort(sortList, dir){
+			var self = this,
+			newSortList = [];
+			
+			if(!Array.isArray(sortList)){
+				sortList = [{column: sortList, dir:dir}];
+			}
+			
+			sortList.forEach(function(item){
+				var column;
+				
+				column = self.table.columnManager.findColumn(item.column);
+				
+				if(column){
+					item.column = column;
+					newSortList.push(item);
+					self.changed = true;
+				}else {
+					console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
+				}
+				
+			});
+			
+			self.sortList = newSortList;
+			
+			this.dispatch("sort-changed");
+		}
+		
+		//clear sorters
+		clear(){
+			this.setSort([]);
+		}
+		
+		//find appropriate sorter for column
+		findSorter(column){
+			var row = this.table.rowManager.activeRows[0],
+			sorter = "string",
+			field, value;
+			
+			if(row){
+				row = row.getData();
+				field = column.getField();
+				
+				if(field){
+					
+					value = column.getFieldValue(row);
+					
+					switch(typeof value){
+						case "undefined":
+							sorter = "string";
+							break;
+						
+						case "boolean":
+							sorter = "boolean";
+							break;
+						
+						default:
+							if(!isNaN(value) && value !== ""){
+								sorter = "number";
+							}else {
+								if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
+									sorter = "alphanum";
+								}
+							}
+							break;
+					}
+				}
+			}
+			
+			return Sort.sorters[sorter];
+		}
+		
+		//work through sort list sorting data
+		sort(data){
+			var self = this,
+			sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
+			sortListActual = [],
+			rowComponents = [];
+			
+			if(this.subscribedExternal("dataSorting")){
+				this.dispatchExternal("dataSorting", self.getSort());
+			}
+			
+			self.clearColumnHeaders();
+			
+			if(this.table.options.sortMode !== "remote"){
+				
+				//build list of valid sorters and trigger column specific callbacks before sort begins
+				sortList.forEach(function(item, i){
+					var sortObj;
+					
+					if(item.column){
+						sortObj = item.column.modules.sort;
+						
+						if(sortObj){
+							
+							//if no sorter has been defined, take a guess
+							if(!sortObj.sorter){
+								sortObj.sorter = self.findSorter(item.column);
+							}
+							
+							item.params = typeof sortObj.params === "function" ? sortObj.params(item.column.getComponent(), item.dir) : sortObj.params;
+							
+							sortListActual.push(item);
+						}
+						
+						self.setColumnHeader(item.column, item.dir);
+					}
+				});
+				
+				//sort data
+				if (sortListActual.length) {
+					self._sortItems(data, sortListActual);
+				}
+				
+			}else {
+				sortList.forEach(function(item, i){
+					self.setColumnHeader(item.column, item.dir);
+				});
+			}
+			
+			if(this.subscribedExternal("dataSorted")){
+				data.forEach((row) => {
+					rowComponents.push(row.getComponent());
+				});
+				
+				this.dispatchExternal("dataSorted", self.getSort(), rowComponents);
+			}
+			
+			return data;
+		}
+		
+		//clear sort arrows on columns
+		clearColumnHeaders(){
+			this.table.columnManager.getRealColumns().forEach((column) => {
+				if(column.modules.sort){
+					column.modules.sort.dir = "none";
+					column.getElement().setAttribute("aria-sort", "none");
+					this.setColumnHeaderSortIcon(column, "none");
+				}
+			});
+		}
+		
+		//set the column header sort direction
+		setColumnHeader(column, dir){
+			column.modules.sort.dir = dir;
+			column.getElement().setAttribute("aria-sort", dir === "asc" ? "ascending" : "descending");
+			this.setColumnHeaderSortIcon(column, dir);
+		}
+		
+		setColumnHeaderSortIcon(column, dir){
+			var sortEl = column.modules.sort.element,
+			arrowEl;
+			
+			if(column.definition.headerSort && typeof this.table.options.headerSortElement === "function"){
+				while(sortEl.firstChild) sortEl.removeChild(sortEl.firstChild);
+				
+				arrowEl = this.table.options.headerSortElement.call(this.table, column.getComponent(), dir);
+				
+				if(typeof arrowEl === "object"){
+					sortEl.appendChild(arrowEl);
+				}else {
+					sortEl.innerHTML = arrowEl;
+				}
+			}
+		}
+		
+		//sort each item in sort list
+		_sortItems(data, sortList){
+			var sorterCount = sortList.length - 1;
+			
+			data.sort((a, b) => {
+				var result;
+				
+				for(var i = sorterCount; i>= 0; i--){
+					let sortItem = sortList[i];
+					
+					result = this._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
+					
+					if(result !== 0){
+						break;
+					}
+				}
+				
+				return result;
+			});
+		}
+		
+		//process individual rows for a sort function on active data
+		_sortRow(a, b, column, dir, params){
+			var el1Comp, el2Comp;
+			
+			//switch elements depending on search direction
+			var el1 = dir == "asc" ? a : b;
+			var el2 = dir == "asc" ? b : a;
+			
+			a = column.getFieldValue(el1.getData());
+			b = column.getFieldValue(el2.getData());
+			
+			a = typeof a !== "undefined" ? a : "";
+			b = typeof b !== "undefined" ? b : "";
+			
+			el1Comp = el1.getComponent();
+			el2Comp = el2.getComponent();
+			
+			return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
 		}
 	}
 
