@@ -8652,7 +8652,7 @@ class Export extends Module{
 	
 	columnVisCheck(column){
 		var visProp = column.definition[this.colVisProp];
-		console.log("d", this.config.rowHeaders);
+
 		if(this.config.rowHeaders === false && column.isRowHeader){
 			return false;
 		}
