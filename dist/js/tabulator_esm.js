@@ -19572,10 +19572,16 @@ class Range extends CoreFeature{
 			
 			this.element.classList.add("tabulator-range-active");
 			// this.element.classList.toggle("tabulator-range-active", this === this.rangeManager.activeRange);
+
+			if(this.table.rtl){
+				this.element.style.right = topLeftRowEl.offsetWidth - topLeftCellEl.offsetLeft - topLeftCellEl.offsetWidth + "px";
+				this.element.style.width = topLeftCellEl.offsetLeft + topLeftCellEl.offsetWidth - bottomRightCellEl.offsetLeft + "px";
+			}else {
+				this.element.style.left = topLeftRowEl.offsetLeft + topLeftCellEl.offsetLeft + "px";
+				this.element.style.width = bottomRightCellEl.offsetLeft + bottomRightCellEl.offsetWidth - topLeftCellEl.offsetLeft + "px";
+			}
 			
-			this.element.style.left = topLeftRowEl.offsetLeft + topLeftCellEl.offsetLeft + "px";
 			this.element.style.top = topLeftRowEl.offsetTop + "px";
-			this.element.style.width = bottomRightCellEl.offsetLeft + bottomRightCellEl.offsetWidth - topLeftCellEl.offsetLeft + "px";
 			this.element.style.height = bottomRightRowEl.offsetTop + bottomRightRowEl.offsetHeight - topLeftRowEl.offsetTop + "px";
 		}
 	}
@@ -20693,8 +20699,13 @@ class SelectRange extends Module {
 
 		activeCellEl = activeCell.getElement();
 		activeRowEl = activeCell.row.getElement();
-		
-		this.activeRangeCellElement.style.left = activeRowEl.offsetLeft + activeCellEl.offsetLeft + "px";
+
+		if(this.table.rtl){
+			this.activeRangeCellElement.style.right = activeRowEl.offsetWidth - activeCellEl.offsetLeft - activeCellEl.offsetWidth + "px";
+		}else {
+			this.activeRangeCellElement.style.left = activeRowEl.offsetLeft + activeCellEl.offsetLeft + "px";
+		}
+
 		this.activeRangeCellElement.style.top =	activeRowEl.offsetTop + "px";
 		this.activeRangeCellElement.style.width = activeCellEl.offsetWidth + "px";
 		this.activeRangeCellElement.style.height =  activeRowEl.offsetHeight  + "px";

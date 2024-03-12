@@ -503,7 +503,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			z-index: 10;
 			pointer-events: none;
 			
-			& .tabulator-range {
+			.tabulator-range {
 				position: absolute;
 				box-sizing: border-box;
 				border: 1px solid $rangeBorderColor;
@@ -520,7 +520,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 				}
 			}
 			
-			& .tabulator-range-cell-active {
+			.tabulator-range-cell-active {
 				position: absolute;
 				box-sizing: border-box;
 				border: 2px solid $rangeBorderColor;
@@ -1363,6 +1363,24 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 				.tabulator-col-sorter{
 					left:8px;
 					right:initial;
+				}
+			}
+		}
+	}
+
+	.tabulator-tableholder{
+		.tabulator-range-overlay {
+			.tabulator-range {
+				&.tabulator-range-active::after {
+					content: '';
+					position: absolute;
+					left: -3px;
+					right:initial;
+					bottom: -3px;
+					width: 6px;
+					height: 6px;
+					background-color: $rangeHandleColor;
+					border-radius: 999px;
 				}
 			}
 		}

@@ -1109,6 +1109,18 @@
   right: initial;
 }
 
+.tabulator.tabulator-rtl .tabulator-tableholder .tabulator-range-overlay .tabulator-range.tabulator-range-active::after {
+  content: '';
+  position: absolute;
+  left: -3px;
+  right: initial;
+  bottom: -3px;
+  width: 6px;
+  height: 6px;
+  background-color: #e94047;
+  border-radius: 999px;
+}
+
 .tabulator.tabulator-rtl .tabulator-row .tabulator-cell {
   border-right: initial;
   border-left: 1px solid rgba(0, 0, 0, 0.12);

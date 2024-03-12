@@ -779,8 +779,13 @@ export default class SelectRange extends Module {
 
 		activeCellEl = activeCell.getElement();
 		activeRowEl = activeCell.row.getElement();
-		
-		this.activeRangeCellElement.style.left = activeRowEl.offsetLeft + activeCellEl.offsetLeft + "px";
+
+		if(this.table.rtl){
+			this.activeRangeCellElement.style.right = activeRowEl.offsetWidth - activeCellEl.offsetLeft - activeCellEl.offsetWidth + "px";
+		}else{
+			this.activeRangeCellElement.style.left = activeRowEl.offsetLeft + activeCellEl.offsetLeft + "px";
+		}
+
 		this.activeRangeCellElement.style.top =	activeRowEl.offsetTop + "px";
 		this.activeRangeCellElement.style.width = activeCellEl.offsetWidth + "px";
 		this.activeRangeCellElement.style.height =  activeRowEl.offsetHeight  + "px";
