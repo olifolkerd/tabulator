@@ -19535,7 +19535,7 @@ class Range extends CoreFeature{
 		_vDomBottom = this.table.rowManager.renderer.vDomBottom,
 		_vDomLeft = this.table.columnManager.renderer.leftCol,
 		_vDomRight = this.table.columnManager.renderer.rightCol,		
-		top, bottom, left, right, topLeftCell, bottomRightCell;
+		top, bottom, left, right, topLeftCell, bottomRightCell, topLeftCellEl, bottomRightCellEl, topLeftRowEl, bottomRightRowEl;
 
 		if(this.table.options.renderHorizontal === "virtual" && this.rangeManager.rowHeader) {
 			_vDomRight += 1;
@@ -19565,14 +19565,18 @@ class Range extends CoreFeature{
 			
 			topLeftCell = this.rangeManager.getCell(top, left);
 			bottomRightCell = this.rangeManager.getCell(bottom, right);
+			topLeftCellEl = topLeftCell.getElement();
+			bottomRightCellEl = bottomRightCell.getElement();
+			topLeftRowEl = topLeftCell.row.getElement();
+			bottomRightRowEl = bottomRightCell.row.getElement();
 			
 			this.element.classList.add("tabulator-range-active");
 			// this.element.classList.toggle("tabulator-range-active", this === this.rangeManager.activeRange);
 			
-			this.element.style.left = topLeftCell.row.getElement().offsetLeft + topLeftCell.getElement().offsetLeft + "px";
-			this.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
-			this.element.style.width = bottomRightCell.getElement().offsetLeft + bottomRightCell.getElement().offsetWidth - topLeftCell.getElement().offsetLeft + "px";
-			this.element.style.height = bottomRightCell.row.getElement().offsetTop + bottomRightCell.row.getElement().offsetHeight - topLeftCell.row.getElement().offsetTop + "px";
+			this.element.style.left = topLeftRowEl.offsetLeft + topLeftCellEl.offsetLeft + "px";
+			this.element.style.top = topLeftRowEl.offsetTop + "px";
+			this.element.style.width = bottomRightCellEl.offsetLeft + bottomRightCellEl.offsetWidth - topLeftCellEl.offsetLeft + "px";
+			this.element.style.height = bottomRightRowEl.offsetTop + bottomRightRowEl.offsetHeight - topLeftRowEl.offsetTop + "px";
 		}
 	}
 	
