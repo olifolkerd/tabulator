@@ -21,7 +21,6 @@ export default class Export extends Module{
 		this.colVisProp = "";
 		this.colVisPropAttach = "";
 		
-		
 		this.registerTableOption("htmlOutputConfig", false); //html output config
 		
 		this.registerColumnOption("htmlOutput");
@@ -31,11 +30,6 @@ export default class Export extends Module{
 	initialize(){
 		this.registerTableFunction("getHtml", this.getHtml.bind(this));
 	}
-	
-	///////////////////////////////////
-	///////// Table Functions /////////
-	///////////////////////////////////
-	
 	
 	///////////////////////////////////
 	///////// Internal Logic //////////
