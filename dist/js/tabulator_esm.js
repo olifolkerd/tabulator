@@ -8730,6 +8730,10 @@ class Export extends Module{
 				}
 			});
 		}
+
+		if(this.config.rowHeaders === false){
+			columns = columns.filter(col => !col._column.isRowHeader);
+		}
 		
 		if(this.config.columnCalcs !== false && this.table.modExists("columnCalcs")){
 			if(this.table.modules.columnCalcs.topInitialized){
