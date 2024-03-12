@@ -1634,6 +1634,10 @@ class Cell extends CoreFeature{
 		this.element = document.createElement('div');
 		this.element.className = "tabulator-cell";
 		this.element.setAttribute("role", "gridcell");
+
+		if(this.column.isRowHeader){
+			this.element.classList.add("tabulator-row-header");
+		}
 	}
 
 	_configureCell(){
@@ -2060,7 +2064,7 @@ class Column extends CoreFeature{
 	
 	static defaultOptionList = defaultColumnOptions;
 	
-	constructor(def, parent){
+	constructor(def, parent, rowHeader){
 		super(parent.table);
 		
 		this.definition = def; //column definition
@@ -2076,6 +2080,7 @@ class Column extends CoreFeature{
 		this.isGroup = false;
 		this.hozAlign = ""; //horizontal text alignment
 		this.vertAlign = ""; //vert text alignment
+		this.isRowHeader = rowHeader;
 		
 		//multi dimensional filed handling
 		this.field ="";
@@ -2129,6 +2134,10 @@ class Column extends CoreFeature{
 		el.classList.add("tabulator-col");
 		el.setAttribute("role", "columnheader");
 		el.setAttribute("aria-sort", "none");
+
+		if(this.isRowHeader){
+			el.classList.add("tabulator-row-header");
+		}
 		
 		switch(this.table.options.columnHeaderVertAlign){
 			case "middle":
@@ -2172,7 +2181,7 @@ class Column extends CoreFeature{
 			}
 		});
 	}
-	
+
 	setField(field){
 		this.field = field;
 		this.fieldStructure = field ? (this.table.options.nestedFieldSeparator ? field.split(this.table.options.nestedFieldSeparator) : [field]) : [];
@@ -14355,8 +14364,8 @@ class MoveColumns extends Module{
 		var self = this,
 		config = {},
 		colEl;
-		
-		if(!column.modules.frozen && !column.isGroup){
+
+		if(!column.modules.frozen && !column.isGroup && !column.isRowHeader){
 			colEl = column.getElement();
 			
 			config.mousemove = function(e){
@@ -22120,6 +22129,7 @@ var defaultOptions = {
 
 	columns:[],//store for colum header info
 	columnDefaults:{}, //store column default props
+	rowHeader:false,
 
 	data:false, //default starting data
 
@@ -23031,6 +23041,7 @@ class ColumnManager extends CoreFeature {
 		this.blockHozScrollEvent = false;
 		this.headersElement = null;
 		this.contentsElement = null;
+		this.rowHeader = null;
 		this.element = null ; //containing element
 		this.columns = []; // column definition object
 		this.columnsByIndex = []; //columns by index
@@ -23261,6 +23272,13 @@ class ColumnManager extends CoreFeature {
 		this.columnsByField = {};
 		
 		this.dispatch("columns-loading");
+
+		if(this.table.options.rowHeader){
+			this.rowHeader = new Column(this.table.options.rowHeader === true ? {} : this.table.options.rowHeader, this, true);
+			this.columns.push(this.rowHeader);
+			this.headersElement.appendChild(this.rowHeader.getElement());
+			this.rowHeader.columnRendered();
+		}
 		
 		cols.forEach((def, i) => {
 			this._addColumn(def);
@@ -23279,6 +23297,13 @@ class ColumnManager extends CoreFeature {
 		var column = new Column(definition, this),
 		colEl = column.getElement(),
 		index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
+
+		//prevent adding of rows in front of row header
+		if(before && this.rowHeader && (!nextToColumn || nextToColumn === this.rowHeader)){
+			before = false;
+			nextToColumn = this.rowHeader;
+			index = 0;
+		}
 		
 		if(nextToColumn && index > -1){
 			var topColumn = nextToColumn.getTopColumn();

@@ -866,6 +866,12 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		overflow:hidden;
 		text-overflow:ellipsis;
 		outline:none;
+
+		&.tabulator-row-header{
+			border-right:1px solid $headerBorderColor;
+			border-bottom:1px solid $rowBorderColor;
+			background:$headerBackgroundColor;
+		}
 		
 		&.tabulator-frozen{
 			display: inline-block;

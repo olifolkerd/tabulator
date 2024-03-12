@@ -8,7 +8,7 @@ export default class Column extends CoreFeature{
 	
 	static defaultOptionList = defaultOptions;
 	
-	constructor(def, parent){
+	constructor(def, parent, rowHeader){
 		super(parent.table);
 		
 		this.definition = def; //column definition
@@ -24,6 +24,7 @@ export default class Column extends CoreFeature{
 		this.isGroup = false;
 		this.hozAlign = ""; //horizontal text alignment
 		this.vertAlign = ""; //vert text alignment
+		this.isRowHeader = rowHeader;
 		
 		//multi dimensional filed handling
 		this.field ="";
@@ -77,6 +78,10 @@ export default class Column extends CoreFeature{
 		el.classList.add("tabulator-col");
 		el.setAttribute("role", "columnheader");
 		el.setAttribute("aria-sort", "none");
+
+		if(this.isRowHeader){
+			el.classList.add("tabulator-row-header");
+		}
 		
 		switch(this.table.options.columnHeaderVertAlign){
 			case "middle":
@@ -120,7 +125,7 @@ export default class Column extends CoreFeature{
 			}
 		});
 	}
-	
+
 	setField(field){
 		this.field = field;
 		this.fieldStructure = field ? (this.table.options.nestedFieldSeparator ? field.split(this.table.options.nestedFieldSeparator) : [field]) : [];

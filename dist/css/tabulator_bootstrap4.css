@@ -683,6 +683,12 @@
   outline: none;
 }
 
+.tabulator-row .tabulator-cell.tabulator-row-header {
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #dee2e6;
+  background: #fff;
+}
+
 .tabulator-row .tabulator-cell.tabulator-frozen {
   display: inline-block;
   position: sticky;
