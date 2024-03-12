@@ -53,6 +53,7 @@ export default class Export extends Module{
 
 		if(colLookup){
 			columns = colLookup.call(this.table);
+			columns = columns.filter(col => this.columnVisCheck(col));
 		}
 
 		headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders(columns)) : [];
@@ -159,7 +160,7 @@ export default class Export extends Module{
 	
 	columnVisCheck(column){
 		var visProp = column.definition[this.colVisProp];
-
+		console.log("d", this.config.rowHeaders)
 		if(this.config.rowHeaders === false && column.isRowHeader){
 			return false;
 		}
