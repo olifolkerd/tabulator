@@ -21557,6 +21557,9 @@ class GridCalculator{
 	genColumns(data){
 		var colCount = Math.max(this.columnCount, Math.max(...data.map(item => item.length)));
 
+		this.columnString = [];
+		this.columns = [];
+
 		for(let i = 1; i <= colCount; i++){
 			this.incrementChar(this.columnString.length - 1);
 			this.columns.push(this.columnString.join(""));
@@ -21567,6 +21570,8 @@ class GridCalculator{
 
 	genRows(data){
 		var rowCount = Math.max(this.columnCount, data.length);
+
+		this.rows = [];
 
 		for(let i = 1; i <= rowCount; i++){
 			this.rows.push(i);
@@ -21628,6 +21633,7 @@ class Sheet extends CoreFeature{
 		this.definition = definition;
 		
 		this.title = this.definition.title || "New Sheet";
+		this.key = this.definition.key || this.definition.title;
 		this.rowCount = this.definition.rows;
 		this.columnCount = this.definition.columns;
 		this.data = this.definition.data || [];
@@ -21820,8 +21826,6 @@ class Spreadsheet extends Module{
 	initializeTabset(){
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-spreadsheet-tabs");
-
-		console.log("footer");
 		
 		this.footerAppend(this.element);
 	}
@@ -21885,14 +21889,20 @@ class Spreadsheet extends Module{
 		sheet = new Sheet(this, definition);
 		
 		this.sheets.push(sheet);
-
-		console.log("new", this.element);
 		
 		if(this.element){
 			this.element.appendChild(sheet.element);
 		}
 		
 		return sheet;
+	}
+
+	lookupSheet(key){
+		if(!key){
+			return this.activeSheet;
+		}else {
+			return this.sheets.find(sheet => sheet.key === key) || false;
+		}
 	}
 	
 	
@@ -21904,16 +21914,27 @@ class Spreadsheet extends Module{
 		return this.sheets.map(sheet => sheet.getComponent());
 	}
 	
-	getSheet(title){
-		return this.activeSheet.getComponent();
+	getSheet(key){
+		var sheet = this.lookupSheet(key);
+
+		return sheet ? sheet.getComponent() : false;
 	}
 	
-	getSheetData(title){
-		return this.activeSheet.getData();	
+	getSheetData(key){
+		var sheet = this.lookupSheet(key);
+
+		return sheet ? sheet.getData() : false;	
 	}
 	
-	setSheetData(data){
-		return this.activeSheet.setData(data);	
+	setSheetData(key, data){
+		if (key && !data){
+			data = key;
+			key = false;
+		}
+		
+		var sheet = this.lookupSheet(key);
+
+		return sheet ? sheet.setData(data) : false;	
 	}
 }
 

@@ -10,6 +10,7 @@ export default class Sheet extends CoreFeature{
 		this.definition = definition;
 		
 		this.title = this.definition.title || "New Sheet";
+		this.key = this.definition.key || this.definition.title;
 		this.rowCount = this.definition.rows;
 		this.columnCount = this.definition.columns;
 		this.data = this.definition.data || [];

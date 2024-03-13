@@ -122,6 +122,14 @@ export default class Spreadsheet extends Module{
 		
 		return sheet;
 	}
+
+	lookupSheet(key){
+		if(!key){
+			return this.activeSheet;
+		}else{
+			return this.sheets.find(sheet => sheet.key === key) || false;
+		}
+	}
 	
 	
 	///////////////////////////////////
@@ -132,15 +140,26 @@ export default class Spreadsheet extends Module{
 		return this.sheets.map(sheet => sheet.getComponent());
 	}
 	
-	getSheet(title){
-		return this.activeSheet.getComponent();
+	getSheet(key){
+		var sheet = this.lookupSheet(key);
+
+		return sheet ? sheet.getComponent() : false;
 	}
 	
-	getSheetData(title){
-		return this.activeSheet.getData();	
+	getSheetData(key){
+		var sheet = this.lookupSheet(key);
+
+		return sheet ? sheet.getData() : false;	
 	}
 	
-	setSheetData(data){
-		return this.activeSheet.setData(data);	
+	setSheetData(key, data){
+		if (key && !data){
+			data = key;
+			key = false;
+		}
+		
+		var sheet = this.lookupSheet(key);
+
+		return sheet ? sheet.setData(data) : false;	
 	}
 }
