@@ -22035,6 +22035,10 @@ class Spreadsheet extends Module{
 	lookupSheet(key){
 		if(!key){
 			return this.activeSheet;
+		}else if(key instanceof Sheet){
+			return key;
+		}else if(key instanceof SheetComponent){
+			return key._sheet;
 		}else {
 			return this.sheets.find(sheet => sheet.key === key) || false;
 		}
