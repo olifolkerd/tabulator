@@ -21544,23 +21544,104 @@ class Sort extends Module{
 	}
 }
 
+// import SheetComponent from "./SheetComponent";
+
+class Sheet extends CoreFeature{
+	constructor(spreadsheetManager, definition) {
+		super(spreadsheetManager.table);
+
+		this.spreadsheetManager = spreadsheetManager;
+		this.definition = definition;
+
+		this.title = this.definition.title || "New Sheet";
+		this.rowCount = this.definition.rows;
+		this.columnCount = this.definition.columns;
+		this.data = this.definition.data || [];
+
+		this.columns = [];
+		this.rows = [];
+
+		this.initialize();
+	}
+
+	initialize(){
+		this.initializeColumns();
+		this.initializeRows();
+	}
+
+	initializeColumns(){
+
+	}
+
+	initializeRows(){
+
+	}
+
+	load(){
+		this.table.blockRedraw();
+		this.table.setData([]);
+		this.table.setColumns(this.columns);
+		this.table.setData(this.rows);
+		this.table.restoreRedraw();
+	}
+}
+
 class Spreadsheet extends Module{
 	
 	static moduleName = "spreadsheet";
 	
 	constructor(table){
 		super(table);
+
+		this.sheets = [];
 		
 		this.registerTableOption("spreadsheet", false); 
+		this.registerTableOption("spreadsheetRows", 50); 
+		this.registerTableOption("spreadsheetColumns", 50); 
+		this.registerTableOption("spreadsheetDefinition", {}); 
 	}
 	
 	
 	initialize(){
-		
 		if(this.options("spreadsheet")){
 			console.log("Woop! Spreadsheets");
+
+			this.subscribe("table-initialized", this.tableInitialized.bind(this));
 		}
 	}
+
+	tableInitialized(){
+		if(this.sheets.length){
+			this.loadSheet(this.sheets[0]);
+		}else {
+			this.loadSheet(this.newSheet());
+		}
+	}
+
+	loadSheet(sheet){
+		this.activeSheet = sheet;
+		sheet.load();
+	}
+
+	newSheet(definition = {}){
+		var sheet;
+
+		if(!definition.rows){
+			definition.rows = this.options("spreadsheetRows");
+		}
+
+		if(!definition.columns){
+			definition.columns = this.options("spreadsheetColumns");
+		}
+
+		sheet = new Sheet(this, definition);
+
+		this.sheets.push(sheet);
+
+		return sheet;
+	}
+
+
 }
 
 class Tooltip extends Module{
@@ -27618,7 +27699,8 @@ class Tabulator extends ModuleBinder{
 		this._loadInitialData();
 		
 		this.initialized = true;
-		
+
+		this.eventBus.dispatch("table-initialized");
 		this.externalEvents.dispatch("tableBuilt");
 	}
 	
