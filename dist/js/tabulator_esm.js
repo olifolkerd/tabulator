@@ -21740,6 +21740,16 @@ class Sheet extends CoreFeature{
 	getComponent(){
 		return new SheetComponent(this);
 	}
+
+	getDefinition(){
+		return {
+			title:this.title,
+			key:this.key,
+			rows:this.rowCount,
+			columns:this.columnCount,
+			data:this.getData(),
+		};
+	}
 	
 	getData(full){
 		var output = [], 
@@ -21817,6 +21827,7 @@ class Spreadsheet extends Module{
 		
 		this.registerTableFunction("setSheets", this.setSheets.bind(this));
 		this.registerTableFunction("getSheets", this.getSheets.bind(this));
+		this.registerTableFunction("getSheetDefinitions", this.getSheetDefinitions.bind(this));
 		this.registerTableFunction("setSheetData", this.setSheetData.bind(this));
 		this.registerTableFunction("getSheet", this.getSheet.bind(this));
 		this.registerTableFunction("getSheetData", this.getSheetData.bind(this));
@@ -21967,6 +21978,10 @@ class Spreadsheet extends Module{
 	
 	setSheets(sheets){
 		this.loadSheets(sheets);
+	}
+
+	getSheetDefinitions(){
+		return this.sheets.map(sheet => sheet.getDefinition());
 	}
 	
 	getSheets(){

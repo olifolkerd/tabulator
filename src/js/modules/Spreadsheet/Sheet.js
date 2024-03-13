@@ -109,6 +109,16 @@ export default class Sheet extends CoreFeature{
 	getComponent(){
 		return new SheetComponent(this);
 	}
+
+	getDefinition(){
+		return {
+			title:this.title,
+			key:this.key,
+			rows:this.rowCount,
+			columns:this.columnCount,
+			data:this.getData(),
+		};
+	}
 	
 	getData(full){
 		var output = [], 
