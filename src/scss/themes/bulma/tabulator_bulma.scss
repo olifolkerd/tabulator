@@ -127,6 +127,23 @@ $rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when select
 				}
 			}
 		}
+
+		.tabulator-spreadsheet-tabs{
+			margin-top: calc( -0.5em - 5px);
+
+			.tabulator-spreadsheet-tab{
+				// background-color: $spreadsheetActiveTabColor;
+				border-color: $button-border-color;
+				font-weight: normal;
+
+				&.tabulator-spreadsheet-tab-active{
+					// background-color:$pagination-active-bg;
+					border-color:$button-active-border-color;
+					color:$button-active-color;
+					font-weight:bold;
+				}
+			}
+		}
 		
 		.tabulator-page{
 			margin:0 0.1875em;

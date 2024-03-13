@@ -1403,6 +1403,21 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   border-bottom-width: 0;
 }
 
+.tabulator .tabulator-footer .tabulator-spreadsheet-tabs {
+  margin-top: calc( -0.5em - 5px);
+}
+
+.tabulator .tabulator-footer .tabulator-spreadsheet-tabs .tabulator-spreadsheet-tab {
+  border-color: #dbdbdb;
+  font-weight: normal;
+}
+
+.tabulator .tabulator-footer .tabulator-spreadsheet-tabs .tabulator-spreadsheet-tab.tabulator-spreadsheet-tab-active {
+  border-color: #4a4a4a;
+  color: #363636;
+  font-weight: bold;
+}
+
 .tabulator .tabulator-footer .tabulator-page {
   margin: 0 0.1875em;
   padding: calc(0.375em - 1px) 0.75em;

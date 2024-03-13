@@ -1765,6 +1765,14 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   border-bottom: none;
 }
 
+.tabulator .tabulator-footer .tabulator-spreadsheet-tabs {
+  margin-top: calc( -0.78571em - 5px);
+}
+
+.tabulator .tabulator-footer .tabulator-spreadsheet-tabs .tabulator-spreadsheet-tab.tabulator-spreadsheet-tab-active {
+  color: #d00;
+}
+
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row.positive,
 .tabulator .tabulator-tableholder .tabulator-table .tabulator-row .tabulator-cell.positive {
   box-shadow: 0px 0px 0px #A3C293 inset;

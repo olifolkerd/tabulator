@@ -149,6 +149,20 @@ $rangeHeaderTextHighlightBackground: #fff !default; //header text color when hig
 				border-bottom:none !important;
 			}
 		}
+
+		.tabulator-spreadsheet-tabs{
+			.tabulator-spreadsheet-tab{
+				border-color:$footerBorderColor;
+				
+				color:$rowTextColor;
+				font-weight: normal;
+				
+				&.tabulator-spreadsheet-tab-active{
+					font-weight: bold;
+					color:$footerTextColor;
+				}
+			}
+		}
 	}
 }
 

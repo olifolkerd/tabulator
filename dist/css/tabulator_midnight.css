@@ -1370,6 +1370,16 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   background: #262626 !important;
 }
 
+.tabulator .tabulator-footer .tabulator-spreadsheet-tabs .tabulator-spreadsheet-tab {
+  border-color: #aaa;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.tabulator .tabulator-footer .tabulator-spreadsheet-tabs .tabulator-spreadsheet-tab.tabulator-spreadsheet-tab-active {
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+}
+
 .tabulator .tabulator-footer .tabulator-paginator label {
   color: #fff;
 }

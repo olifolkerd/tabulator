@@ -1362,6 +1362,15 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   background: #f2f2f2 !important;
 }
 
+.tabulator .tabulator-footer .tabulator-spreadsheet-tabs .tabulator-spreadsheet-tab {
+  font-weight: normal;
+}
+
+.tabulator .tabulator-footer .tabulator-spreadsheet-tabs .tabulator-spreadsheet-tab.tabulator-spreadsheet-tab-active {
+  color: #d00;
+  font-weight: bold;
+}
+
 .tabulator-row {
   border-bottom: 1px solid #ddd;
 }
