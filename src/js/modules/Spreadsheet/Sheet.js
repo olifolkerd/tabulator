@@ -13,6 +13,7 @@ export default class Sheet extends CoreFeature{
 		this.rowCount = this.definition.rows;
 		this.columnCount = this.definition.columns;
 		this.data = this.definition.data || [];
+		this.element = null;
 		
 		this.grid = new GridCalculator(this.columnCount, this.rowCount);
 		
@@ -33,8 +34,19 @@ export default class Sheet extends CoreFeature{
 	///////////////////////////////////
 	
 	initialize(){
+		this.initializeElement();
 		this.initializeColumns();
 		this.initializeRows();
+	}
+
+	initializeElement(){
+		this.element = document.createElement("div");
+		this.element.classList.add("tabulator-spreadsheet-tab");
+		this.element.innerText = this.title;
+
+		this.element.addEventListener("click", () => {
+			this.spreadsheetManager.loadSheet(this);
+		});
 	}
 	
 	initializeColumns(){
@@ -74,15 +86,19 @@ export default class Sheet extends CoreFeature{
 		});
 	}
 
-	hide(){
+	unload(){
 		this.data = this.getData(true);
+		this.element.classList.remove("tabulator-spreadsheet-tab-active")
 	}
 	
 	load(){
 		this.table.blockRedraw();
+		this.table.setData([]);
 		this.table.setColumns(this.columnDefs);
 		this.table.setData(this.rowDefs);
 		this.table.restoreRedraw();
+		
+		this.element.classList.add("tabulator-spreadsheet-tab-active")
 	}
 
 	///////////////////////////////////

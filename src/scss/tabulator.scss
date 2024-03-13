@@ -38,6 +38,7 @@ $footerBorderColor:#aaa !default; //footer border color
 $footerSeparatorColor:#999 !default; //footer bottom separator color
 $footerActiveColor:#d00 !default; //footer bottom active text color
 
+$spreadsheetActiveTabColor:#fff !default; //color for the active spreadsheet tab
 
 //range selection
 $rangeBorderColor: #2975DD !default; //range border color
@@ -553,6 +554,31 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			
 			&:empty{
 				display: none;
+			}
+		}
+
+		.tabulator-spreadsheet-tabs{
+			margin-top:-5px;
+
+			.tabulator-spreadsheet-tab{
+				display: inline-block;
+				padding:5px;
+
+				border:$borderColor 1px solid;
+				border-top: none;
+				border-bottom-left-radius: 5px;
+				border-bottom-right-radius: 5px;
+
+				font-size: .9em;
+			
+				&:hover{
+					cursor:pointer;
+					opacity: .7;
+				}
+
+				&.tabulator-spreadsheet-tab-active{
+					background: $spreadsheetActiveTabColor;
+				}
 			}
 		}
 		
