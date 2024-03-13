@@ -1404,6 +1404,7 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 
 .tabulator .tabulator-footer .tabulator-spreadsheet-tabs {
   margin-top: -13px;
+  margin-bottom: -8px;
 }
 
 .tabulator .tabulator-footer .tabulator-spreadsheet-tabs .tabulator-spreadsheet-tab {

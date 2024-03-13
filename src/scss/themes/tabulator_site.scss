@@ -130,14 +130,15 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		}
 
 		.tabulator-spreadsheet-tabs{
-			margin-top:-13px;
+			margin-top: -13px;
+			margin-bottom: -8px;
 
 			.tabulator-spreadsheet-tab{
-				padding:8px;
-				margin:0 2px;
+				padding: 8px;
+				margin: 0 2px;
 
-				border-color:$footerActiveColor;
-				border-width:0 2px 2px 2px;
+				border-color: $footerActiveColor;
+				border-width: 0 2px 2px 2px;
 				background-color: #333;
 
 				color: #fff;
