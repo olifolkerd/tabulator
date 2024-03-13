@@ -21616,6 +21616,10 @@ class SheetComponent {
 		});
 	}
 
+	getDefinition(){
+		return this._sheet.getDefinition();
+	}
+
 	getData() {
 		return this._sheet.getData();
 	}
