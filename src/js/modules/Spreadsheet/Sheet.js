@@ -20,12 +20,17 @@ export default class Sheet extends CoreFeature{
 		this.columnDefinition = Object.assign(this.defaultColumnDefinition, this.options("spreadsheetDefinition"));
 		
 		this.columnDefs = [];
+		this.rowDefs = [];
 		this.columnFields = [];
 		this.columns = [];
 		this.rows = [];
 		
 		this.initialize();
 	}
+
+	///////////////////////////////////
+	///////// Initialization //////////
+	///////////////////////////////////
 	
 	initialize(){
 		this.initializeColumns();
@@ -60,8 +65,8 @@ export default class Sheet extends CoreFeature{
 					}
 				});
 			}
-			
-			this.rows.push(def);
+		
+			this.rowDefs.push(def);
 		});
 	}
 	
@@ -69,7 +74,47 @@ export default class Sheet extends CoreFeature{
 		this.table.blockRedraw();
 		this.table.setData([]);
 		this.table.setColumns(this.columnDefs);
-		this.table.setData(this.rows);
+		this.table.setData(this.rowDefs);
 		this.table.restoreRedraw();
 	}
+
+	///////////////////////////////////
+	//////// Helper Functions /////////
+	///////////////////////////////////
+
+	getComponent(){
+
+	}
+
+	getData(){
+		var output = [], 
+		rowWidths,
+		outputWidth, outputHeight;
+
+		//map data to array format
+		this.rowDefs.forEach((rowData) => {
+			var row = [];
+
+			this.columnFields.forEach((field) => {
+				row.push(rowData[field]);
+			});
+
+			output.push(row);
+		});
+
+		//trim output
+		if(!this.options("spreadsheetOutputFull")){
+
+			//calculate used area of data
+			rowWidths = output.map(row => row.findLastIndex(val => typeof val !== 'undefined') + 1);
+			outputWidth = Math.max(...rowWidths);
+			outputHeight = rowWidths.findLastIndex(width => width > 0) + 1;
+			
+			output = output.slice(0, outputHeight);
+			output = output.map(row => row.slice(0, outputWidth));
+		}
+
+		return output;
+	}
+
 }
