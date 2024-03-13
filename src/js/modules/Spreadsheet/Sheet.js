@@ -1,6 +1,6 @@
 import CoreFeature from '../../core/CoreFeature.js';
 import GridCalculator from "./GridCalculator";
-// import SheetComponent from "./SheetComponent";
+import SheetComponent from "./SheetComponent";
 
 export default class Sheet extends CoreFeature{
 	constructor(spreadsheetManager, definition) {
@@ -83,7 +83,7 @@ export default class Sheet extends CoreFeature{
 	///////////////////////////////////
 
 	getComponent(){
-
+		return new SheetComponent(this);
 	}
 
 	getData(){
