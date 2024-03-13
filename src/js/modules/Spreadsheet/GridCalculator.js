@@ -8,8 +8,11 @@ export default class GridCalculator{
 		this.rows = [];
 	}
 
-	genColumns(){
-		for(let i = 1; i <= this.columnCount; i++){
+	genColumns(data){
+		var colCount = Math.max(this.columnCount, data.length);
+		console.log("col max", colCount, data)
+
+		for(let i = 1; i <= colCount; i++){
 			this.incrementChar(this.columnString.length - 1);
 			this.columns.push(this.columnString.join(""));
 		}
@@ -17,8 +20,10 @@ export default class GridCalculator{
 		return this.columns;
 	}
 
-	genRows(){
-		for(let i = 1; i <= this.rowCount; i++){
+	genRows(data){
+		var rowCount = Math.max(this.columnCount, Math.max(...data.map(item => item.length)));
+
+		for(let i = 1; i <= rowCount; i++){
 			this.rows.push(i);
 		}
 		

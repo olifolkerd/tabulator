@@ -21554,8 +21554,11 @@ class GridCalculator{
 		this.rows = [];
 	}
 
-	genColumns(){
-		for(let i = 1; i <= this.columnCount; i++){
+	genColumns(data){
+		var colCount = Math.max(this.columnCount, data.length);
+		console.log("col max", colCount, data);
+
+		for(let i = 1; i <= colCount; i++){
 			this.incrementChar(this.columnString.length - 1);
 			this.columns.push(this.columnString.join(""));
 		}
@@ -21563,8 +21566,10 @@ class GridCalculator{
 		return this.columns;
 	}
 
-	genRows(){
-		for(let i = 1; i <= this.rowCount; i++){
+	genRows(data){
+		var rowCount = Math.max(this.columnCount, Math.max(...data.map(item => item.length)));
+
+		for(let i = 1; i <= rowCount; i++){
 			this.rows.push(i);
 		}
 		
@@ -21619,13 +21624,12 @@ class Sheet extends CoreFeature{
 	}
 
 	initialize(){
-		
 		this.initializeColumns();
 		this.initializeRows();
 	}
 
 	initializeColumns(){
-		var refs = this.grid.genColumns();
+		var refs = this.grid.genColumns(this.data);
 
 		refs.forEach((ref) => {
 			var def = Object.assign({}, this.columnDefinition);
@@ -21637,7 +21641,7 @@ class Sheet extends CoreFeature{
 	}
 
 	initializeRows(){
-		var refs = this.grid.genRows();
+		var refs = this.grid.genRows(this.data);
 
 		refs.forEach((ref) => {
 			this.rows.push({"_id":ref});
@@ -21659,7 +21663,7 @@ class Spreadsheet extends Module{
 	
 	constructor(table){
 		super(table);
-
+		
 		this.sheets = [];
 		
 		this.registerTableOption("spreadsheet", false); 
@@ -21672,45 +21676,52 @@ class Spreadsheet extends Module{
 	initialize(){
 		if(this.options("spreadsheet")){
 			console.log("Woop! Spreadsheets");
-
+			
 			this.subscribe("table-initialized", this.tableInitialized.bind(this));
-
+			
 			this.table.options.index = "_id";
 		}
 	}
-
+	
 	tableInitialized(){
+		var def = {};
+		
 		if(this.sheets.length){
 			this.loadSheet(this.sheets[0]);
 		}else {
-			this.loadSheet(this.newSheet());
+			
+			if(this.options("spreadsheetData")){
+				def.data = this.options("spreadsheetData");
+			}
+			
+			this.loadSheet(this.newSheet(def));
 		}
 	}
-
+	
 	loadSheet(sheet){
 		this.activeSheet = sheet;
 		sheet.load();
 	}
-
+	
 	newSheet(definition = {}){
 		var sheet;
-
+		
 		if(!definition.rows){
 			definition.rows = this.options("spreadsheetRows");
 		}
-
+		
 		if(!definition.columns){
 			definition.columns = this.options("spreadsheetColumns");
 		}
-
+		
 		sheet = new Sheet(this, definition);
-
+		
 		this.sheets.push(sheet);
-
+		
 		return sheet;
 	}
-
-
+	
+	
 }
 
 class Tooltip extends Module{
