@@ -21652,7 +21652,7 @@ class Sheet extends CoreFeature{
 		
 		this.initialize();
 	}
-
+	
 	///////////////////////////////////
 	///////// Initialization //////////
 	///////////////////////////////////
@@ -21662,12 +21662,12 @@ class Sheet extends CoreFeature{
 		this.initializeColumns();
 		this.initializeRows();
 	}
-
+	
 	initializeElement(){
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-spreadsheet-tab");
 		this.element.innerText = this.title;
-
+		
 		this.element.addEventListener("click", () => {
 			this.spreadsheetManager.loadSheet(this);
 		});
@@ -21675,7 +21675,7 @@ class Sheet extends CoreFeature{
 	
 	initializeColumns(){
 		this.columnFields = this.grid.genColumns(this.data);
-
+		
 		this.columnDefs = [];
 		
 		this.columnFields.forEach((ref) => {
@@ -21689,7 +21689,7 @@ class Sheet extends CoreFeature{
 	
 	initializeRows(){
 		var refs = this.grid.genRows(this.data);
-
+		
 		this.rowDefs = [];
 		
 		refs.forEach((ref, i) => {
@@ -21705,11 +21705,11 @@ class Sheet extends CoreFeature{
 					}
 				});
 			}
-		
+			
 			this.rowDefs.push(def);
 		});
 	}
-
+	
 	unload(){
 		this.data = this.getData(true);
 		this.element.classList.remove("tabulator-spreadsheet-tab-active");
@@ -21724,34 +21724,34 @@ class Sheet extends CoreFeature{
 		
 		this.element.classList.add("tabulator-spreadsheet-tab-active");
 	}
-
+	
 	///////////////////////////////////
 	//////// Helper Functions /////////
 	///////////////////////////////////
-
+	
 	getComponent(){
 		return new SheetComponent(this);
 	}
-
+	
 	getData(full){
 		var output = [], 
 		rowWidths,
 		outputWidth, outputHeight;
-
+		
 		//map data to array format
 		this.rowDefs.forEach((rowData) => {
 			var row = [];
-
+			
 			this.columnFields.forEach((field) => {
 				row.push(rowData[field]);
 			});
-
+			
 			output.push(row);
 		});
-
+		
 		//trim output
 		if(!full && !this.options("spreadsheetOutputFull")){
-
+			
 			//calculate used area of data
 			rowWidths = output.map(row => row.findLastIndex(val => typeof val !== 'undefined') + 1);
 			outputWidth = Math.max(...rowWidths);
@@ -21760,19 +21760,24 @@ class Sheet extends CoreFeature{
 			output = output.slice(0, outputHeight);
 			output = output.map(row => row.slice(0, outputWidth));
 		}
-
+		
 		return output;
 	}
-
+	
 	setData(data){
 		this.data = data;
 		this.initialize();
-
+		
 		if(this.spreadsheetManager.activeSheet === this){
 			this.load();
 		}
 	}
-
+	
+	destroy(){
+		if(this.element.parentNode){
+			this.element.parentNode.removeChild(this.element);
+		}
+	}
 }
 
 class Spreadsheet extends Module{
@@ -21794,10 +21799,11 @@ class Spreadsheet extends Module{
 		this.registerTableOption("spreadsheetSheets", false); 
 		this.registerTableOption("spreadsheetSheetTabs", false); 
 		
+		this.registerTableFunction("setSheets", this.setSheets.bind(this));
 		this.registerTableFunction("getSheets", this.getSheets.bind(this));
+		this.registerTableFunction("setSheetData", this.setSheetData.bind(this));
 		this.registerTableFunction("getSheet", this.getSheet.bind(this));
 		this.registerTableFunction("getSheetData", this.getSheetData.bind(this));
-		this.registerTableFunction("setSheetData", this.setSheetData.bind(this));
 	}
 	
 	///////////////////////////////////
@@ -21836,7 +21842,7 @@ class Spreadsheet extends Module{
 		}else {
 			
 			if(this.options("spreadsheetSheets")){
-				this.loadSheets();
+				this.loadSheets(this.options("spreadsheetSheets"));
 			}else if(this.options("spreadsheetData")){
 				this.loadData();
 			}
@@ -21850,13 +21856,23 @@ class Spreadsheet extends Module{
 		
 		this.loadSheet(this.newSheet(def));
 	}
+
+	destroySheets(){
+		this.sheets.forEach((sheet) => {
+			sheet.destroy();
+			console.log("sheettt", sheet.key);
+		});
+
+		this.sheets = [];
+		this.activeSheet = null;
+	}
 	
-	loadSheets(){
-		var sheets = this.options("spreadsheetSheets");
-		
+	loadSheets(sheets){	
 		if(!Array.isArray(sheets)){
 			sheets = [];
 		}
+
+		this.destroySheets();
 		
 		sheets.forEach((def) => {
 			this.newSheet(def);
@@ -21909,6 +21925,10 @@ class Spreadsheet extends Module{
 	///////////////////////////////////
 	//////// Public Functions /////////
 	///////////////////////////////////
+
+	setSheets(sheets){
+		this.loadSheets(sheets);
+	}
 	
 	getSheets(){
 		return this.sheets.map(sheet => sheet.getComponent());
@@ -21920,12 +21940,6 @@ class Spreadsheet extends Module{
 		return sheet ? sheet.getComponent() : false;
 	}
 	
-	getSheetData(key){
-		var sheet = this.lookupSheet(key);
-
-		return sheet ? sheet.getData() : false;	
-	}
-	
 	setSheetData(key, data){
 		if (key && !data){
 			data = key;
@@ -21935,6 +21949,12 @@ class Spreadsheet extends Module{
 		var sheet = this.lookupSheet(key);
 
 		return sheet ? sheet.setData(data) : false;	
+	}
+
+	getSheetData(key){
+		var sheet = this.lookupSheet(key);
+
+		return sheet ? sheet.getData() : false;	
 	}
 }
 

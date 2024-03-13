@@ -29,7 +29,7 @@ export default class Sheet extends CoreFeature{
 		
 		this.initialize();
 	}
-
+	
 	///////////////////////////////////
 	///////// Initialization //////////
 	///////////////////////////////////
@@ -39,12 +39,12 @@ export default class Sheet extends CoreFeature{
 		this.initializeColumns();
 		this.initializeRows();
 	}
-
+	
 	initializeElement(){
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-spreadsheet-tab");
 		this.element.innerText = this.title;
-
+		
 		this.element.addEventListener("click", () => {
 			this.spreadsheetManager.loadSheet(this);
 		});
@@ -52,7 +52,7 @@ export default class Sheet extends CoreFeature{
 	
 	initializeColumns(){
 		this.columnFields = this.grid.genColumns(this.data);
-
+		
 		this.columnDefs = [];
 		
 		this.columnFields.forEach((ref) => {
@@ -66,7 +66,7 @@ export default class Sheet extends CoreFeature{
 	
 	initializeRows(){
 		var refs = this.grid.genRows(this.data);
-
+		
 		this.rowDefs = [];
 		
 		refs.forEach((ref, i) => {
@@ -82,11 +82,11 @@ export default class Sheet extends CoreFeature{
 					}
 				});
 			}
-		
+			
 			this.rowDefs.push(def);
 		});
 	}
-
+	
 	unload(){
 		this.data = this.getData(true);
 		this.element.classList.remove("tabulator-spreadsheet-tab-active")
@@ -101,34 +101,34 @@ export default class Sheet extends CoreFeature{
 		
 		this.element.classList.add("tabulator-spreadsheet-tab-active")
 	}
-
+	
 	///////////////////////////////////
 	//////// Helper Functions /////////
 	///////////////////////////////////
-
+	
 	getComponent(){
 		return new SheetComponent(this);
 	}
-
+	
 	getData(full){
 		var output = [], 
 		rowWidths,
 		outputWidth, outputHeight;
-
+		
 		//map data to array format
 		this.rowDefs.forEach((rowData) => {
 			var row = [];
-
+			
 			this.columnFields.forEach((field) => {
 				row.push(rowData[field]);
 			});
-
+			
 			output.push(row);
 		});
-
+		
 		//trim output
 		if(!full && !this.options("spreadsheetOutputFull")){
-
+			
 			//calculate used area of data
 			rowWidths = output.map(row => row.findLastIndex(val => typeof val !== 'undefined') + 1);
 			outputWidth = Math.max(...rowWidths);
@@ -137,17 +137,22 @@ export default class Sheet extends CoreFeature{
 			output = output.slice(0, outputHeight);
 			output = output.map(row => row.slice(0, outputWidth));
 		}
-
+		
 		return output;
 	}
-
+	
 	setData(data){
 		this.data = data;
 		this.initialize();
-
+		
 		if(this.spreadsheetManager.activeSheet === this){
 			this.load();
 		}
 	}
-
+	
+	destroy(){
+		if(this.element.parentNode){
+			this.element.parentNode.removeChild(this.element);
+		}
+	}
 }

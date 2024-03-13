@@ -20,10 +20,11 @@ export default class Spreadsheet extends Module{
 		this.registerTableOption("spreadsheetSheets", false); 
 		this.registerTableOption("spreadsheetSheetTabs", false); 
 		
+		this.registerTableFunction("setSheets", this.setSheets.bind(this));
 		this.registerTableFunction("getSheets", this.getSheets.bind(this));
+		this.registerTableFunction("setSheetData", this.setSheetData.bind(this));
 		this.registerTableFunction("getSheet", this.getSheet.bind(this));
 		this.registerTableFunction("getSheetData", this.getSheetData.bind(this));
-		this.registerTableFunction("setSheetData", this.setSheetData.bind(this));
 	}
 	
 	///////////////////////////////////
@@ -62,7 +63,7 @@ export default class Spreadsheet extends Module{
 		}else{
 			
 			if(this.options("spreadsheetSheets")){
-				this.loadSheets();
+				this.loadSheets(this.options("spreadsheetSheets"));
 			}else if(this.options("spreadsheetData")){
 				this.loadData();
 			}
@@ -76,13 +77,23 @@ export default class Spreadsheet extends Module{
 		
 		this.loadSheet(this.newSheet(def));
 	}
+
+	destroySheets(){
+		this.sheets.forEach((sheet) => {
+			sheet.destroy();
+			console.log("sheettt", sheet.key)
+		});
+
+		this.sheets = [];
+		this.activeSheet = null;
+	}
 	
-	loadSheets(){
-		var sheets = this.options("spreadsheetSheets");
-		
+	loadSheets(sheets){	
 		if(!Array.isArray(sheets)){
 			sheets = [];
 		}
+
+		this.destroySheets();
 		
 		sheets.forEach((def) => {
 			this.newSheet(def);
@@ -135,6 +146,10 @@ export default class Spreadsheet extends Module{
 	///////////////////////////////////
 	//////// Public Functions /////////
 	///////////////////////////////////
+
+	setSheets(sheets){
+		this.loadSheets(sheets);
+	}
 	
 	getSheets(){
 		return this.sheets.map(sheet => sheet.getComponent());
@@ -146,12 +161,6 @@ export default class Spreadsheet extends Module{
 		return sheet ? sheet.getComponent() : false;
 	}
 	
-	getSheetData(key){
-		var sheet = this.lookupSheet(key);
-
-		return sheet ? sheet.getData() : false;	
-	}
-	
 	setSheetData(key, data){
 		if (key && !data){
 			data = key;
@@ -161,5 +170,11 @@ export default class Spreadsheet extends Module{
 		var sheet = this.lookupSheet(key);
 
 		return sheet ? sheet.setData(data) : false;	
+	}
+
+	getSheetData(key){
+		var sheet = this.lookupSheet(key);
+
+		return sheet ? sheet.getData() : false;	
 	}
 }
