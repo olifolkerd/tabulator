@@ -84,6 +84,8 @@ class SelectRange extends Module {
 		this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 		this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
 		this.subscribe("column-resized", this.handleColumnResized.bind(this));
+		this.subscribe("column-start-move", this.handleColumnStartMove.bind(this));
+		this.subscribe("column-end-move", this.handleColumnEndMove.bind(this));
 		this.subscribe("column-width", this.layoutChange.bind(this));
 		this.subscribe("column-height", this.layoutChange.bind(this));
 		this.subscribe("column-resized", this.layoutChange.bind(this));
@@ -279,8 +281,24 @@ class SelectRange extends Module {
 		});
 	}
 	
+	handleColumnStartMove(_event, column) {
+		this.resetRanges().setBounds(column);
+		this.overlay.style.visibility = "hidden";
+	}
+
+	handleColumnEndMove(_event, column) {
+		this.activeRange.setBounds(column);
+		this.layoutElement();
+	}
+
 	handleColumnMouseDown(event, column) {
 		if (event.button === 2 && (this.selecting === "column" || this.selecting === "all") && this.activeRange.occupiesColumn(column)) {
+			return;
+		}
+
+		//If columns are movable, allow dragging columns only if they are not
+		//selected. Dragging selected columns should move the columns instead.
+		if(this.table.options.movableColumns && this.selecting === "column" && this.activeRange.occupiesColumn(column)){
 			return;
 		}
 		
