@@ -21892,6 +21892,7 @@ class Spreadsheet extends Module{
 		this.registerTableOption("spreadsheetData", false); 
 		this.registerTableOption("spreadsheetSheets", false); 
 		this.registerTableOption("spreadsheetSheetTabs", false); 
+		this.registerTableOption("spreadsheetSheetTabsElement", false); 
 		
 		this.registerTableFunction("setSheets", this.setSheets.bind(this));
 		this.registerTableFunction("getSheets", this.getSheets.bind(this));
@@ -21930,8 +21931,21 @@ class Spreadsheet extends Module{
 	initializeTabset(){
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-spreadsheet-tabs");
+		var altContainer = this.options("spreadsheetSheetTabsElement");
 		
-		this.footerAppend(this.element);
+		if(altContainer && !(altContainer instanceof HTMLElement)){
+			altContainer = document.querySelector(altContainer);
+
+			if(!altContainer){
+				console.warn("Unable to find element matching spreadsheetSheetTabsElement selector:", this.options("spreadsheetSheetTabsElement"));
+			}
+		}
+		
+		if(altContainer){
+			altContainer.appendChild(this.element);
+		}else {
+			this.footerAppend(this.element);
+		}
 	}
 	
 	tableInitialized(){
