@@ -16,4 +16,8 @@ export default class SheetComponent {
 	getData() {
 		return this._sheet.getData();
 	}
+
+	setData(data) {
+		return this._sheet.setData(data);
+	}
 }

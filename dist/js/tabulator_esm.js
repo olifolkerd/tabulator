@@ -21614,6 +21614,10 @@ class SheetComponent {
 	getData() {
 		return this._sheet.getData();
 	}
+
+	setData(data) {
+		return this._sheet.setData(data);
+	}
 }
 
 class Sheet extends CoreFeature{
@@ -21653,6 +21657,8 @@ class Sheet extends CoreFeature{
 	
 	initializeColumns(){
 		this.columnFields = this.grid.genColumns(this.data);
+
+		this.columnDefs = [];
 		
 		this.columnFields.forEach((ref) => {
 			var def = Object.assign({}, this.columnDefinition);
@@ -21665,6 +21671,8 @@ class Sheet extends CoreFeature{
 	
 	initializeRows(){
 		var refs = this.grid.genRows(this.data);
+
+		this.rowDefs = [];
 		
 		refs.forEach((ref, i) => {
 			var def = {"_id":ref};
@@ -21734,6 +21742,15 @@ class Sheet extends CoreFeature{
 		return output;
 	}
 
+	setData(data){
+		this.data = data;
+		this.initialize();
+
+		if(this.spreadsheetManager.activeSheet === this){
+			this.load();
+		}
+	}
+
 }
 
 class Spreadsheet extends Module{
@@ -21753,6 +21770,7 @@ class Spreadsheet extends Module{
 
 		this.registerTableFunction("getSheet", this.getSheet.bind(this));
 		this.registerTableFunction("getSheetData", this.getSheetData.bind(this));
+		this.registerTableFunction("setSheetData", this.setSheetData.bind(this));
 	}
 
 	///////////////////////////////////
@@ -21817,11 +21835,15 @@ class Spreadsheet extends Module{
 	///////////////////////////////////
 
 	getSheet(title){
-		return this.sheets[0].getComponent();
+		return this.activeSheet.getComponent();
 	}
 
 	getSheetData(title){
-		return this.sheets[0].getData();	
+		return this.activeSheet.getData();	
+	}
+
+	setSheetData(data){
+		return this.activeSheet.setData(data);	
 	}
 }
 

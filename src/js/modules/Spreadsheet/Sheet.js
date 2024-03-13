@@ -39,6 +39,8 @@ export default class Sheet extends CoreFeature{
 	
 	initializeColumns(){
 		this.columnFields = this.grid.genColumns(this.data);
+
+		this.columnDefs = [];
 		
 		this.columnFields.forEach((ref) => {
 			var def = Object.assign({}, this.columnDefinition);
@@ -51,6 +53,8 @@ export default class Sheet extends CoreFeature{
 	
 	initializeRows(){
 		var refs = this.grid.genRows(this.data);
+
+		this.rowDefs = [];
 		
 		refs.forEach((ref, i) => {
 			var def = {"_id":ref};
@@ -118,6 +122,15 @@ export default class Sheet extends CoreFeature{
 		}
 
 		return output;
+	}
+
+	setData(data){
+		this.data = data;
+		this.initialize();
+
+		if(this.spreadsheetManager.activeSheet === this){
+			this.load();
+		}
 	}
 
 }

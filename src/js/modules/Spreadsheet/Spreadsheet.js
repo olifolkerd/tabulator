@@ -18,6 +18,7 @@ export default class Spreadsheet extends Module{
 
 		this.registerTableFunction("getSheet", this.getSheet.bind(this));
 		this.registerTableFunction("getSheetData", this.getSheetData.bind(this));
+		this.registerTableFunction("setSheetData", this.setSheetData.bind(this));
 	}
 
 	///////////////////////////////////
@@ -82,10 +83,14 @@ export default class Spreadsheet extends Module{
 	///////////////////////////////////
 
 	getSheet(title){
-		return this.sheets[0].getComponent();
+		return this.activeSheet.getComponent();
 	}
 
 	getSheetData(title){
-		return this.sheets[0].getData();	
+		return this.activeSheet.getData();	
+	}
+
+	setSheetData(data){
+		return this.activeSheet.setData(data);	
 	}
 }
