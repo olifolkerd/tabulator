@@ -28,4 +28,8 @@ export default class SheetComponent {
 	remove(){
 		return this._sheet.remove();
 	}
+	
+	active(){
+		return this._sheet.active();
+	}
 }

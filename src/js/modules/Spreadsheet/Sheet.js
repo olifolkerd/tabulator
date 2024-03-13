@@ -173,4 +173,8 @@ export default class Sheet extends CoreFeature{
 			this.element.parentNode.removeChild(this.element);
 		}
 	}
+	
+	active(){
+		this.spreadsheetManager.loadSheet(this);
+	}
 }
