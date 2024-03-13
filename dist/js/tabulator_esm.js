@@ -8513,7 +8513,6 @@ class Export extends Module{
 		this.colVisProp = "";
 		this.colVisPropAttach = "";
 		
-		
 		this.registerTableOption("htmlOutputConfig", false); //html output config
 		
 		this.registerColumnOption("htmlOutput");
@@ -8523,11 +8522,6 @@ class Export extends Module{
 	initialize(){
 		this.registerTableFunction("getHtml", this.getHtml.bind(this));
 	}
-	
-	///////////////////////////////////
-	///////// Table Functions /////////
-	///////////////////////////////////
-	
 	
 	///////////////////////////////////
 	///////// Internal Logic //////////
@@ -21550,6 +21544,25 @@ class Sort extends Module{
 	}
 }
 
+class Spreadsheet extends Module{
+	
+	static moduleName = "spreadsheet";
+	
+	constructor(table){
+		super(table);
+		
+		this.registerTableOption("spreadsheet", false); 
+	}
+	
+	
+	initialize(){
+		
+		if(this.options("spreadsheet")){
+			console.log("Woop! Spreadsheets");
+		}
+	}
+}
+
 class Tooltip extends Module{
 
 	static moduleName = "tooltip";
@@ -22163,6 +22176,7 @@ var allModules = /*#__PURE__*/Object.freeze({
 	SelectRangeModule: SelectRange,
 	SelectRowModule: SelectRow,
 	SortModule: Sort,
+	SpreadsheetModule: Spreadsheet,
 	TooltipModule: Tooltip,
 	ValidateModule: Validate
 });
@@ -28412,5 +28426,5 @@ class PseudoRow {
 	rendered(){}
 }
 
-export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent, SelectRange as SelectRangeModule, SelectRow as SelectRowModule, Sort as SortModule, Tabulator$1 as Tabulator, TabulatorFull$1 as TabulatorFull, Tooltip as TooltipModule, Validate as ValidateModule };
+export { Accessor as AccessorModule, Ajax as AjaxModule, CalcComponent, CellComponent, Clipboard as ClipboardModule, ColumnCalcs as ColumnCalcsModule, ColumnComponent, DataTree as DataTreeModule, Download as DownloadModule, Edit as EditModule, Export as ExportModule, Filter as FilterModule, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, GroupRows as GroupRowsModule, History as HistoryModule, HtmlTableImport as HtmlTableImportModule, Import as ImportModule, Interaction as InteractionModule, Keybindings as KeybindingsModule, Menu as MenuModule, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Mutator as MutatorModule, Page as PageModule, Persistence as PersistenceModule, Popup as PopupModule, Print as PrintModule, PseudoRow, ReactiveData as ReactiveDataModule, Renderer, ResizeColumns as ResizeColumnsModule, ResizeRows as ResizeRowsModule, ResizeTable as ResizeTableModule, ResponsiveLayout as ResponsiveLayoutModule, RowComponent, SelectRange as SelectRangeModule, SelectRow as SelectRowModule, Sort as SortModule, Spreadsheet as SpreadsheetModule, Tabulator$1 as Tabulator, TabulatorFull$1 as TabulatorFull, Tooltip as TooltipModule, Validate as ValidateModule };
 //# sourceMappingURL=tabulator_esm.js.map
