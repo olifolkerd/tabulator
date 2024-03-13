@@ -21569,7 +21569,7 @@ class GridCalculator{
 	}
 
 	genRows(data){
-		var rowCount = Math.max(this.columnCount, data.length);
+		var rowCount = Math.max(this.rowCount, data.length);
 
 		this.rows = [];
 
@@ -21598,6 +21598,14 @@ class GridCalculator{
 		}else {
 			this.columnString.push("A");
 		}
+	}
+
+	setRowCount(count){
+		this.rowCount = count;
+	}
+
+	setColumnCount(count){
+		this.columnCount = count;
 	}
 }
 
@@ -21639,6 +21647,22 @@ class SheetComponent {
 	active(){
 		return this._sheet.active();
 	}
+
+	setTitle(title){
+		return this._sheet.setTitle(title);
+	}
+
+	setRows(rows){
+		return this._sheet.setRows(rows);
+	}
+
+	setColumns(columns){
+		return this._sheet.setColumns(columns);
+	}
+
+	getKey(){
+		return this._sheet.key;
+	}
 }
 
 class Sheet extends CoreFeature{
@@ -21654,6 +21678,7 @@ class Sheet extends CoreFeature{
 		this.columnCount = this.definition.columns;
 		this.data = this.definition.data || [];
 		this.element = null;
+		this.isActive = false;
 		
 		this.grid = new GridCalculator(this.columnCount, this.rowCount);
 		
@@ -21690,6 +21715,7 @@ class Sheet extends CoreFeature{
 	}
 	
 	initializeColumns(){
+		this.grid.setColumnCount(this.columnCount);
 		this.columnFields = this.grid.genColumns(this.data);
 		
 		this.columnDefs = [];
@@ -21704,7 +21730,11 @@ class Sheet extends CoreFeature{
 	}
 	
 	initializeRows(){
-		var refs = this.grid.genRows(this.data);
+		var refs;
+
+		this.grid.setRowCount(this.rowCount);
+
+		refs = this.grid.genRows(this.data);
 		
 		this.rowDefs = [];
 		
@@ -21727,11 +21757,13 @@ class Sheet extends CoreFeature{
 	}
 	
 	unload(){
+		this.isActive = false;
 		this.data = this.getData(true);
 		this.element.classList.remove("tabulator-spreadsheet-tab-active");
 	}
 	
 	load(){
+		this.isActive = true;
 		this.table.blockRedraw();
 		this.table.setData([]);
 		this.table.setColumns(this.columnDefs);
@@ -21801,6 +21833,30 @@ class Sheet extends CoreFeature{
 
 	clear(){
 		this.setData([]);
+	}
+
+	setTitle(title){
+		this.title = title;
+		this.element.innerText = title;
+	}
+
+	setRows(rows){
+		this.rowCount = rows;
+		this.initializeRows();
+
+		if(this.isActive){
+			this.load();
+		}
+	}
+
+	setColumns(columns){
+		this.columnCount = columns;
+		this.initializeColumns();
+		this.initializeRows();
+
+		if(this.isActive){
+			this.load();
+		}
 	}
 
 	remove(){

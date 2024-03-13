@@ -15,6 +15,7 @@ export default class Sheet extends CoreFeature{
 		this.columnCount = this.definition.columns;
 		this.data = this.definition.data || [];
 		this.element = null;
+		this.isActive = false;
 		
 		this.grid = new GridCalculator(this.columnCount, this.rowCount);
 		
@@ -51,6 +52,7 @@ export default class Sheet extends CoreFeature{
 	}
 	
 	initializeColumns(){
+		this.grid.setColumnCount(this.columnCount);
 		this.columnFields = this.grid.genColumns(this.data);
 		
 		this.columnDefs = [];
@@ -65,7 +67,11 @@ export default class Sheet extends CoreFeature{
 	}
 	
 	initializeRows(){
-		var refs = this.grid.genRows(this.data);
+		var refs;
+
+		this.grid.setRowCount(this.rowCount);
+
+		refs = this.grid.genRows(this.data);
 		
 		this.rowDefs = [];
 		
@@ -88,11 +94,13 @@ export default class Sheet extends CoreFeature{
 	}
 	
 	unload(){
+		this.isActive = false;
 		this.data = this.getData(true);
 		this.element.classList.remove("tabulator-spreadsheet-tab-active")
 	}
 	
 	load(){
+		this.isActive = true;
 		this.table.blockRedraw();
 		this.table.setData([]);
 		this.table.setColumns(this.columnDefs);
@@ -162,6 +170,30 @@ export default class Sheet extends CoreFeature{
 
 	clear(){
 		this.setData([]);
+	}
+
+	setTitle(title){
+		this.title = title;
+		this.element.innerText = title;
+	}
+
+	setRows(rows){
+		this.rowCount = rows;
+		this.initializeRows();
+
+		if(this.isActive){
+			this.load();
+		}
+	}
+
+	setColumns(columns){
+		this.columnCount = columns;
+		this.initializeColumns();
+		this.initializeRows();
+
+		if(this.isActive){
+			this.load();
+		}
 	}
 
 	remove(){

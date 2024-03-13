@@ -36,4 +36,20 @@ export default class SheetComponent {
 	active(){
 		return this._sheet.active();
 	}
+
+	setTitle(title){
+		return this._sheet.setTitle(title);
+	}
+
+	setRows(rows){
+		return this._sheet.setRows(rows);
+	}
+
+	setColumns(columns){
+		return this._sheet.setColumns(columns);
+	}
+
+	getKey(){
+		return this._sheet.key;
+	}
 }

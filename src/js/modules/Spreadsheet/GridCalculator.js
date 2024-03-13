@@ -23,7 +23,7 @@ export default class GridCalculator{
 	}
 
 	genRows(data){
-		var rowCount = Math.max(this.columnCount, data.length);
+		var rowCount = Math.max(this.rowCount, data.length);
 
 		this.rows = [];
 
@@ -52,5 +52,13 @@ export default class GridCalculator{
 		}else{
 			this.columnString.push("A");
 		}
+	}
+
+	setRowCount(count){
+		this.rowCount = count;
+	}
+
+	setColumnCount(count){
+		this.columnCount = count;
 	}
 }
