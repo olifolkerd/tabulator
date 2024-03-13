@@ -9,7 +9,7 @@ export default class Sheet extends CoreFeature{
 		this.spreadsheetManager = spreadsheetManager;
 		this.definition = definition;
 		
-		this.title = this.definition.title || "New Sheet";
+		this.title = this.definition.title || "";
 		this.key = this.definition.key || this.definition.title;
 		this.rowCount = this.definition.rows;
 		this.columnCount = this.definition.columns;
