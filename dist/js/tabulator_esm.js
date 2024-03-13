@@ -21683,10 +21683,13 @@ class Sheet extends CoreFeature{
 			this.rowDefs.push(def);
 		});
 	}
+
+	hide(){
+		this.data = this.getData(true);
+	}
 	
 	load(){
 		this.table.blockRedraw();
-		this.table.setData([]);
 		this.table.setColumns(this.columnDefs);
 		this.table.setData(this.rowDefs);
 		this.table.restoreRedraw();
@@ -21700,7 +21703,7 @@ class Sheet extends CoreFeature{
 		return new SheetComponent(this);
 	}
 
-	getData(){
+	getData(full){
 		var output = [], 
 		rowWidths,
 		outputWidth, outputHeight;
@@ -21717,7 +21720,7 @@ class Sheet extends CoreFeature{
 		});
 
 		//trim output
-		if(!this.options("spreadsheetOutputFull")){
+		if(!full && !this.options("spreadsheetOutputFull")){
 
 			//calculate used area of data
 			rowWidths = output.map(row => row.findLastIndex(val => typeof val !== 'undefined') + 1);
@@ -21781,7 +21784,12 @@ class Spreadsheet extends Module{
 	}
 	
 	loadSheet(sheet){
+		if(this.activeSheet){
+			this.activeSheet.hide();
+		}
+
 		this.activeSheet = sheet;
+
 		sheet.load();
 	}
 	
