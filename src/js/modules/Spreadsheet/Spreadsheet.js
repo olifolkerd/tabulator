@@ -49,7 +49,12 @@ export default class Spreadsheet extends Module{
 	}
 	
 	loadSheet(sheet){
+		if(this.activeSheet){
+			this.activeSheet.hide();
+		}
+
 		this.activeSheet = sheet;
+
 		sheet.load();
 	}
 	
