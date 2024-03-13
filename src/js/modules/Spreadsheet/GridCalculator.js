@@ -10,7 +10,6 @@ export default class GridCalculator{
 
 	genColumns(data){
 		var colCount = Math.max(this.columnCount, data.length);
-		console.log("col max", colCount, data)
 
 		for(let i = 1; i <= colCount; i++){
 			this.incrementChar(this.columnString.length - 1);

@@ -18,9 +18,7 @@ export default class Spreadsheet extends Module{
 	
 	
 	initialize(){
-		if(this.options("spreadsheet")){
-			console.log("Woop! Spreadsheets");
-			
+		if(this.options("spreadsheet")){	
 			this.subscribe("table-initialized", this.tableInitialized.bind(this));
 			
 			this.table.options.index = "_id";
@@ -37,7 +35,7 @@ export default class Spreadsheet extends Module{
 			if(this.options("spreadsheetData")){
 				def.data = this.options("spreadsheetData");
 			}
-			
+
 			this.loadSheet(this.newSheet(def));
 		}
 	}

@@ -21556,7 +21556,6 @@ class GridCalculator{
 
 	genColumns(data){
 		var colCount = Math.max(this.columnCount, data.length);
-		console.log("col max", colCount, data);
 
 		for(let i = 1; i <= colCount; i++){
 			this.incrementChar(this.columnString.length - 1);
@@ -21674,9 +21673,7 @@ class Spreadsheet extends Module{
 	
 	
 	initialize(){
-		if(this.options("spreadsheet")){
-			console.log("Woop! Spreadsheets");
-			
+		if(this.options("spreadsheet")){	
 			this.subscribe("table-initialized", this.tableInitialized.bind(this));
 			
 			this.table.options.index = "_id";
@@ -21693,7 +21690,7 @@ class Spreadsheet extends Module{
 			if(this.options("spreadsheetData")){
 				def.data = this.options("spreadsheetData");
 			}
-			
+
 			this.loadSheet(this.newSheet(def));
 		}
 	}
