@@ -21544,6 +21544,54 @@ class Sort extends Module{
 	}
 }
 
+class GridCalculator{
+	constructor(columns, rows){
+		this.columnCount = columns;
+		this.rowCount = rows;
+
+		this.columnString = [];
+		this.columns = [];
+		this.rows = [];
+	}
+
+	genColumns(){
+		for(let i = 1; i <= this.columnCount; i++){
+			this.incrementChar(this.columnString.length - 1);
+			this.columns.push(this.columnString.join(""));
+		}
+
+		return this.columns;
+	}
+
+	genRows(){
+		for(let i = 1; i <= this.rowCount; i++){
+			this.rows.push(i);
+		}
+		
+		return this.rows;
+	}
+
+	incrementChar(i){
+		let char = this.columnString[i];
+
+		if(char){
+			if(char !== "Z"){
+				this.columnString[i] = String.fromCharCode(this.columnString[i].charCodeAt(0) + 1);
+			}else {
+				this.columnString[i] = "A";
+				
+				if(i){
+					this.incrementChar(i-1);
+				}else {
+					this.columnString.push("A");
+				}
+			}
+		}else {
+			this.columnString.push("A");
+		}
+	}
+}
+
 // import SheetComponent from "./SheetComponent";
 
 class Sheet extends CoreFeature{
@@ -21558,6 +21606,12 @@ class Sheet extends CoreFeature{
 		this.columnCount = this.definition.columns;
 		this.data = this.definition.data || [];
 
+		this.grid = new GridCalculator(this.columnCount, this.rowCount);
+
+		this.defaultColumnDefinition = {width:100, headerHozAlign:"center", headerSort:false};
+		this.columnDefinition = Object.assign(this.defaultColumnDefinition, this.options("spreadsheetDefinition"));
+
+		this.columnDefs = [];
 		this.columns = [];
 		this.rows = [];
 
@@ -21565,22 +21619,35 @@ class Sheet extends CoreFeature{
 	}
 
 	initialize(){
+		
 		this.initializeColumns();
 		this.initializeRows();
 	}
 
 	initializeColumns(){
+		var refs = this.grid.genColumns();
 
+		refs.forEach((ref) => {
+			var def = Object.assign({}, this.columnDefinition);
+			def.field = ref;
+			def.title = ref;
+
+			this.columnDefs.push(def);
+		});
 	}
 
 	initializeRows(){
+		var refs = this.grid.genRows();
 
+		refs.forEach((ref) => {
+			this.rows.push({"_id":ref});
+		});
 	}
 
 	load(){
 		this.table.blockRedraw();
 		this.table.setData([]);
-		this.table.setColumns(this.columns);
+		this.table.setColumns(this.columnDefs);
 		this.table.setData(this.rows);
 		this.table.restoreRedraw();
 	}
@@ -21607,6 +21674,8 @@ class Spreadsheet extends Module{
 			console.log("Woop! Spreadsheets");
 
 			this.subscribe("table-initialized", this.tableInitialized.bind(this));
+
+			this.table.options.index = "_id";
 		}
 	}
 

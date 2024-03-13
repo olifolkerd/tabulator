@@ -8,12 +8,21 @@ export default class GridCalculator{
 		this.rows = [];
 	}
 
-
 	genColumns(){
 		for(let i = 1; i <= this.columnCount; i++){
 			this.incrementChar(this.columnString.length - 1);
 			this.columns.push(this.columnString.join(""));
 		}
+
+		return this.columns;
+	}
+
+	genRows(){
+		for(let i = 1; i <= this.rowCount; i++){
+			this.rows.push(i);
+		}
+		
+		return this.rows;
 	}
 
 	incrementChar(i){

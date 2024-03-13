@@ -22,6 +22,8 @@ export default class Spreadsheet extends Module{
 			console.log("Woop! Spreadsheets");
 
 			this.subscribe("table-initialized", this.tableInitialized.bind(this));
+
+			this.table.options.index = "_id";
 		}
 	}
 
