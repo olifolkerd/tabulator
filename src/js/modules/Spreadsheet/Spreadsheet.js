@@ -63,7 +63,7 @@ export default class Spreadsheet extends Module{
 		
 		if(altContainer && !(altContainer instanceof HTMLElement)){
 			altContainer = document.querySelector(altContainer)
-
+			
 			if(!altContainer){
 				console.warn("Unable to find element matching spreadsheetSheetTabsElement selector:", this.options("spreadsheetSheetTabsElement"));
 			}
@@ -100,7 +100,6 @@ export default class Spreadsheet extends Module{
 	destroySheets(){
 		this.sheets.forEach((sheet) => {
 			sheet.destroy();
-			console.log("sheettt", sheet.key)
 		});
 		
 		this.sheets = [];
@@ -157,20 +156,24 @@ export default class Spreadsheet extends Module{
 		var index = this.sheets.indexOf(sheet),
 		prevSheet;
 		
-		if(index > -1){
-			this.sheets.splice(index, 1);
-			sheet.destroy();
-			
-			if(this.activeSheet === sheet){
-
-				prevSheet = this.sheets[index - 1] || this.sheets[0];
+		if(this.sheets.length > 1){
+			if(index > -1){
+				this.sheets.splice(index, 1);
+				sheet.destroy();
 				
-				if(prevSheet){
-					this.loadSheet(prevSheet);
-				}else{
-					this.activeSheet = null;
+				if(this.activeSheet === sheet){
+					
+					prevSheet = this.sheets[index - 1] || this.sheets[0];
+					
+					if(prevSheet){
+						this.loadSheet(prevSheet);
+					}else{
+						this.activeSheet = null;
+					}
 				}
 			}
+		}else{
+			console.warn("Unable to remove sheet, at least one sheet must be active")
 		}
 	}
 	
@@ -194,7 +197,7 @@ export default class Spreadsheet extends Module{
 	setSheets(sheets){
 		this.loadSheets(sheets);
 	}
-
+	
 	getSheetDefinitions(){
 		return this.sheets.map(sheet => sheet.getDefinition());
 	}
@@ -234,12 +237,12 @@ export default class Spreadsheet extends Module{
 	
 	removeSheetFunc(key){
 		var sheet = this.lookupSheet(key);
-
+		
 		if(sheet){
 			this.removeSheet(sheet);
 		}
 	}
-
+	
 	activeSheet(key){
 		var sheet = this.lookupSheet(key);
 		

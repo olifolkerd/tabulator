@@ -21692,6 +21692,8 @@ class Sheet extends CoreFeature{
 		this.rows = [];
 		
 		this.initialize();
+
+		this.dispatchExternal("sheetAdded", this.getComponent());
 	}
 	
 	///////////////////////////////////
@@ -21700,6 +21702,11 @@ class Sheet extends CoreFeature{
 	
 	initialize(){
 		this.initializeElement();
+		this.initializeColumns();
+		this.initializeRows();
+	}
+
+	reinitialize(){
 		this.initializeColumns();
 		this.initializeRows();
 	}
@@ -21771,6 +21778,8 @@ class Sheet extends CoreFeature{
 		this.table.restoreRedraw();
 		
 		this.element.classList.add("tabulator-spreadsheet-tab-active");
+
+		this.dispatchExternal("sheetLoaded", this.getComponent());
 	}
 	
 	///////////////////////////////////
@@ -21824,9 +21833,11 @@ class Sheet extends CoreFeature{
 	
 	setData(data){
 		this.data = data;
-		this.initialize();
+		this.reinitialize();
+
+		this.dispatchExternal("sheetUpdated", this.getComponent());
 		
-		if(this.spreadsheetManager.activeSheet === this){
+		if(this.isActive){
 			this.load();
 		}
 	}
@@ -21838,11 +21849,15 @@ class Sheet extends CoreFeature{
 	setTitle(title){
 		this.title = title;
 		this.element.innerText = title;
+
+		this.dispatchExternal("sheetUpdated", this.getComponent());
 	}
 
 	setRows(rows){
 		this.rowCount = rows;
 		this.initializeRows();
+
+		this.dispatchExternal("sheetUpdated", this.getComponent());
 
 		if(this.isActive){
 			this.load();
@@ -21851,8 +21866,9 @@ class Sheet extends CoreFeature{
 
 	setColumns(columns){
 		this.columnCount = columns;
-		this.initializeColumns();
-		this.initializeRows();
+		this.reinitialize();
+
+		this.dispatchExternal("sheetUpdated", this.getComponent());
 
 		if(this.isActive){
 			this.load();
@@ -21867,6 +21883,8 @@ class Sheet extends CoreFeature{
 		if(this.element.parentNode){
 			this.element.parentNode.removeChild(this.element);
 		}
+
+		this.dispatchExternal("sheetRemoved", this.getComponent());
 	}
 	
 	active(){
@@ -21935,7 +21953,7 @@ class Spreadsheet extends Module{
 		
 		if(altContainer && !(altContainer instanceof HTMLElement)){
 			altContainer = document.querySelector(altContainer);
-
+			
 			if(!altContainer){
 				console.warn("Unable to find element matching spreadsheetSheetTabsElement selector:", this.options("spreadsheetSheetTabsElement"));
 			}
@@ -21972,7 +21990,6 @@ class Spreadsheet extends Module{
 	destroySheets(){
 		this.sheets.forEach((sheet) => {
 			sheet.destroy();
-			console.log("sheettt", sheet.key);
 		});
 		
 		this.sheets = [];
@@ -22029,20 +22046,24 @@ class Spreadsheet extends Module{
 		var index = this.sheets.indexOf(sheet),
 		prevSheet;
 		
-		if(index > -1){
-			this.sheets.splice(index, 1);
-			sheet.destroy();
-			
-			if(this.activeSheet === sheet){
-
-				prevSheet = this.sheets[index - 1] || this.sheets[0];
+		if(this.sheets.length > 1){
+			if(index > -1){
+				this.sheets.splice(index, 1);
+				sheet.destroy();
 				
-				if(prevSheet){
-					this.loadSheet(prevSheet);
-				}else {
-					this.activeSheet = null;
+				if(this.activeSheet === sheet){
+					
+					prevSheet = this.sheets[index - 1] || this.sheets[0];
+					
+					if(prevSheet){
+						this.loadSheet(prevSheet);
+					}else {
+						this.activeSheet = null;
+					}
 				}
 			}
+		}else {
+			console.warn("Unable to remove sheet, at least one sheet must be active");
 		}
 	}
 	
@@ -22066,7 +22087,7 @@ class Spreadsheet extends Module{
 	setSheets(sheets){
 		this.loadSheets(sheets);
 	}
-
+	
 	getSheetDefinitions(){
 		return this.sheets.map(sheet => sheet.getDefinition());
 	}
@@ -22106,12 +22127,12 @@ class Spreadsheet extends Module{
 	
 	removeSheetFunc(key){
 		var sheet = this.lookupSheet(key);
-
+		
 		if(sheet){
 			this.removeSheet(sheet);
 		}
 	}
-
+	
 	activeSheet(key){
 		var sheet = this.lookupSheet(key);
 		

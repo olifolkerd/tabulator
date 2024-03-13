@@ -29,6 +29,8 @@ export default class Sheet extends CoreFeature{
 		this.rows = [];
 		
 		this.initialize();
+
+		this.dispatchExternal("sheetAdded", this.getComponent());
 	}
 	
 	///////////////////////////////////
@@ -37,6 +39,11 @@ export default class Sheet extends CoreFeature{
 	
 	initialize(){
 		this.initializeElement();
+		this.initializeColumns();
+		this.initializeRows();
+	}
+
+	reinitialize(){
 		this.initializeColumns();
 		this.initializeRows();
 	}
@@ -96,7 +103,7 @@ export default class Sheet extends CoreFeature{
 	unload(){
 		this.isActive = false;
 		this.data = this.getData(true);
-		this.element.classList.remove("tabulator-spreadsheet-tab-active")
+		this.element.classList.remove("tabulator-spreadsheet-tab-active");
 	}
 	
 	load(){
@@ -107,7 +114,9 @@ export default class Sheet extends CoreFeature{
 		this.table.setData(this.rowDefs);
 		this.table.restoreRedraw();
 		
-		this.element.classList.add("tabulator-spreadsheet-tab-active")
+		this.element.classList.add("tabulator-spreadsheet-tab-active");
+
+		this.dispatchExternal("sheetLoaded", this.getComponent());
 	}
 	
 	///////////////////////////////////
@@ -161,9 +170,11 @@ export default class Sheet extends CoreFeature{
 	
 	setData(data){
 		this.data = data;
-		this.initialize();
+		this.reinitialize();
+
+		this.dispatchExternal("sheetUpdated", this.getComponent());
 		
-		if(this.spreadsheetManager.activeSheet === this){
+		if(this.isActive){
 			this.load();
 		}
 	}
@@ -175,11 +186,15 @@ export default class Sheet extends CoreFeature{
 	setTitle(title){
 		this.title = title;
 		this.element.innerText = title;
+
+		this.dispatchExternal("sheetUpdated", this.getComponent());
 	}
 
 	setRows(rows){
 		this.rowCount = rows;
 		this.initializeRows();
+
+		this.dispatchExternal("sheetUpdated", this.getComponent());
 
 		if(this.isActive){
 			this.load();
@@ -188,8 +203,9 @@ export default class Sheet extends CoreFeature{
 
 	setColumns(columns){
 		this.columnCount = columns;
-		this.initializeColumns();
-		this.initializeRows();
+		this.reinitialize();
+
+		this.dispatchExternal("sheetUpdated", this.getComponent());
 
 		if(this.isActive){
 			this.load();
@@ -197,13 +213,15 @@ export default class Sheet extends CoreFeature{
 	}
 
 	remove(){
-		this.spreadsheetManager.removeSheet(this)
+		this.spreadsheetManager.removeSheet(this);
 	}
 	
 	destroy(){
 		if(this.element.parentNode){
 			this.element.parentNode.removeChild(this.element);
 		}
+
+		this.dispatchExternal("sheetRemoved", this.getComponent());
 	}
 	
 	active(){
