@@ -21555,7 +21555,7 @@ class GridCalculator{
 	}
 
 	genColumns(data){
-		var colCount = Math.max(this.columnCount, data.length);
+		var colCount = Math.max(this.columnCount, Math.max(...data.map(item => item.length)));
 
 		for(let i = 1; i <= colCount; i++){
 			this.incrementChar(this.columnString.length - 1);
@@ -21566,7 +21566,7 @@ class GridCalculator{
 	}
 
 	genRows(data){
-		var rowCount = Math.max(this.columnCount, Math.max(...data.map(item => item.length)));
+		var rowCount = Math.max(this.columnCount, data.length);
 
 		for(let i = 1; i <= rowCount; i++){
 			this.rows.push(i);
@@ -21601,52 +21601,66 @@ class GridCalculator{
 class Sheet extends CoreFeature{
 	constructor(spreadsheetManager, definition) {
 		super(spreadsheetManager.table);
-
+		
 		this.spreadsheetManager = spreadsheetManager;
 		this.definition = definition;
-
+		
 		this.title = this.definition.title || "New Sheet";
 		this.rowCount = this.definition.rows;
 		this.columnCount = this.definition.columns;
 		this.data = this.definition.data || [];
-
+		
 		this.grid = new GridCalculator(this.columnCount, this.rowCount);
-
+		
 		this.defaultColumnDefinition = {width:100, headerHozAlign:"center", headerSort:false};
 		this.columnDefinition = Object.assign(this.defaultColumnDefinition, this.options("spreadsheetDefinition"));
-
+		
 		this.columnDefs = [];
+		this.columnFields = [];
 		this.columns = [];
 		this.rows = [];
-
+		
 		this.initialize();
 	}
-
+	
 	initialize(){
 		this.initializeColumns();
 		this.initializeRows();
 	}
-
+	
 	initializeColumns(){
-		var refs = this.grid.genColumns(this.data);
-
-		refs.forEach((ref) => {
+		this.columnFields = this.grid.genColumns(this.data);
+		
+		this.columnFields.forEach((ref) => {
 			var def = Object.assign({}, this.columnDefinition);
 			def.field = ref;
 			def.title = ref;
-
+			
 			this.columnDefs.push(def);
 		});
 	}
-
+	
 	initializeRows(){
 		var refs = this.grid.genRows(this.data);
-
-		refs.forEach((ref) => {
-			this.rows.push({"_id":ref});
+		
+		refs.forEach((ref, i) => {
+			var def = {"_id":ref};
+			var data = this.data[i];
+			
+			if(data){
+				data.forEach((val, j) => {
+					var field = this.columnFields[j];
+					
+					if(field){
+						def[field] = val;
+					}
+				});
+			}
+			
+			this.rows.push(def);
 		});
 	}
-
+	
 	load(){
 		this.table.blockRedraw();
 		this.table.setData([]);
