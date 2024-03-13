@@ -21939,10 +21939,30 @@ class Spreadsheet extends Module{
 				
 				this.table.options.spreadsheetData = false;
 			}
+
+			this.compatibilityCheck();
 			
 			if(this.options("spreadsheetSheetTabs")){
 				this.initializeTabset();
 			}
+		}
+	}
+
+	compatibilityCheck(){
+		if(this.options("data")){
+			console.warn("Do not use the data option when working with spreadsheets, use either spreadsheetData or spreadsheetSheets to pass data into the table");
+		}
+		
+		if(this.options("pagination")){
+			console.warn("The spreadsheet module is not compatible with the pagination module");
+		}
+
+		if(this.options("groupBy")){
+			console.warn("The spreadsheet module is not compatible with the row grouping module");
+		}
+
+		if(this.options("responsiveCollapse")){
+			console.warn("The spreadsheet module is not compatible with the responsive collapse module");
 		}
 	}
 	
