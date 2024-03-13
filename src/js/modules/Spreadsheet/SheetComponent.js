@@ -20,4 +20,12 @@ export default class SheetComponent {
 	setData(data) {
 		return this._sheet.setData(data);
 	}
+
+	clear(){
+		return this._sheet.clear();
+	}
+
+	remove(){
+		return this._sheet.remove();
+	}
 }

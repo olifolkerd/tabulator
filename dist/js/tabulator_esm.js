@@ -21623,6 +21623,14 @@ class SheetComponent {
 	setData(data) {
 		return this._sheet.setData(data);
 	}
+
+	clear(){
+		return this._sheet.clear();
+	}
+
+	remove(){
+		return this._sheet.remove();
+	}
 }
 
 class Sheet extends CoreFeature{
@@ -21772,6 +21780,14 @@ class Sheet extends CoreFeature{
 			this.load();
 		}
 	}
+
+	clear(){
+		this.setData([]);
+	}
+
+	remove(){
+		this.spreadsheetManager.removeSheet(this);
+	}
 	
 	destroy(){
 		if(this.element.parentNode){
@@ -21804,6 +21820,8 @@ class Spreadsheet extends Module{
 		this.registerTableFunction("setSheetData", this.setSheetData.bind(this));
 		this.registerTableFunction("getSheet", this.getSheet.bind(this));
 		this.registerTableFunction("getSheetData", this.getSheetData.bind(this));
+		this.registerTableFunction("clearSheet", this.clearSheet.bind(this));
+		this.registerTableFunction("removeSheet", this.removeSheetFunc.bind(this));
 	}
 	
 	///////////////////////////////////
@@ -21856,13 +21874,13 @@ class Spreadsheet extends Module{
 		
 		this.loadSheet(this.newSheet(def));
 	}
-
+	
 	destroySheets(){
 		this.sheets.forEach((sheet) => {
 			sheet.destroy();
 			console.log("sheettt", sheet.key);
 		});
-
+		
 		this.sheets = [];
 		this.activeSheet = null;
 	}
@@ -21871,7 +21889,7 @@ class Spreadsheet extends Module{
 		if(!Array.isArray(sheets)){
 			sheets = [];
 		}
-
+		
 		this.destroySheets();
 		
 		sheets.forEach((def) => {
@@ -21912,7 +21930,28 @@ class Spreadsheet extends Module{
 		
 		return sheet;
 	}
+	
+	removeSheet(sheet){
+		var index = this.sheets.indexOf(sheet),
+		prevSheet;
+		
+		if(index > -1){
+			this.sheets.splice(index, 1);
+			sheet.destroy();
+			
+			if(this.activeSheet === sheet){
 
+				prevSheet = this.sheets[index - 1] || this.sheets[0];
+				
+				if(prevSheet){
+					this.loadSheet(prevSheet);
+				}else {
+					this.activeSheet = null;
+				}
+			}
+		}
+	}
+	
 	lookupSheet(key){
 		if(!key){
 			return this.activeSheet;
@@ -21925,7 +21964,7 @@ class Spreadsheet extends Module{
 	///////////////////////////////////
 	//////// Public Functions /////////
 	///////////////////////////////////
-
+	
 	setSheets(sheets){
 		this.loadSheets(sheets);
 	}
@@ -21936,7 +21975,7 @@ class Spreadsheet extends Module{
 	
 	getSheet(key){
 		var sheet = this.lookupSheet(key);
-
+		
 		return sheet ? sheet.getComponent() : false;
 	}
 	
@@ -21947,14 +21986,28 @@ class Spreadsheet extends Module{
 		}
 		
 		var sheet = this.lookupSheet(key);
-
+		
 		return sheet ? sheet.setData(data) : false;	
 	}
-
+	
 	getSheetData(key){
 		var sheet = this.lookupSheet(key);
-
+		
 		return sheet ? sheet.getData() : false;	
+	}
+	
+	clearSheet(key){
+		var sheet = this.lookupSheet(key);
+		
+		return sheet ? sheet.clear() : false;
+	}
+	
+	removeSheetFunc(key){
+		var sheet = this.lookupSheet(key);
+
+		if(sheet){
+			this.removeSheet(sheet);
+		}
 	}
 }
 

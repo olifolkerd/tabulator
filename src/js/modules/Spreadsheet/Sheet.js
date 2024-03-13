@@ -149,6 +149,14 @@ export default class Sheet extends CoreFeature{
 			this.load();
 		}
 	}
+
+	clear(){
+		this.setData([]);
+	}
+
+	remove(){
+		this.spreadsheetManager.removeSheet(this)
+	}
 	
 	destroy(){
 		if(this.element.parentNode){
