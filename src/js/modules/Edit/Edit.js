@@ -18,18 +18,21 @@ export default class Edit extends Module{
 		this.recursionBlock = false; //prevent focus recursion
 		this.invalidEdit = false;
 		this.editedCells = [];
+		this.convertEmptyValues = false;
 		
 		this.editors = Edit.editors;
 		
 		this.registerColumnOption("editable");
 		this.registerColumnOption("editor");
 		this.registerColumnOption("editorParams");
+		this.registerColumnOption("editorEmptyValue");
 		
 		this.registerColumnOption("cellEditing");
 		this.registerColumnOption("cellEdited");
 		this.registerColumnOption("cellEditCancelled");
 		
 		this.registerTableOption("editTriggerEvent", "focus");
+		this.registerTableOption("editorEmptyValue");
 		
 		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
 		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
@@ -67,11 +70,14 @@ export default class Edit extends Module{
 		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
 		
-		
 		// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
 		// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
 		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
 		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
+
+		if(Object.keys(this.table.options).includes("editorEmptyValue")){
+			this.convertEmptyValues = true;
+		}
 	}
 	
 	
@@ -383,11 +389,15 @@ export default class Edit extends Module{
 	
 	//initialize column editor
 	initializeColumn(column){
+		var convertEmpty = Object.keys(column.definition).includes("editorEmptyValue");
+
 		var config = {
 			editor:false,
 			blocked:false,
 			check:column.definition.editable,
-			params:column.definition.editorParams || {}
+			params:column.definition.editorParams || {},
+			convertEmptyValues:convertEmpty,
+			editorEmptyValue:column.definition.editorEmptyValue,
 		};
 		
 		//set column editor
@@ -633,6 +643,8 @@ export default class Edit extends Module{
 					if(self.editedCells.indexOf(cell) == -1){
 						self.editedCells.push(cell);
 					}
+
+					value = self.transformEmptyValues(value, cell);
 					
 					cell.setValue(value, true);
 
@@ -744,6 +756,20 @@ export default class Edit extends Module{
 			this.blur(element);
 			return false;
 		}
+	}
+
+	transformEmptyValues(value, cell){
+		if(cell.column.modules.edit.convertEmptyValues){
+			if(value === "" || value === null || typeof value === "undefined"){
+				value = cell.column.modules.edit.editorEmptyValue;
+			}
+		}else if(this.convertEmptyValues){
+			if(value === "" || value === null || typeof value === "undefined"){
+				value = this.options("editorEmptyValue");
+			}
+		}
+
+		return value;
 	}
 	
 	blur(element){
