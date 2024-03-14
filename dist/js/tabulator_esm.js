@@ -21965,7 +21965,7 @@ class Spreadsheet extends Module{
 				
 				this.table.options.spreadsheetData = false;
 			}
-
+			
 			this.compatibilityCheck();
 			
 			if(this.options("spreadsheetSheetTabs")){
@@ -21973,7 +21973,7 @@ class Spreadsheet extends Module{
 			}
 		}
 	}
-
+	
 	compatibilityCheck(){
 		if(this.options("data")){
 			console.warn("Do not use the data option when working with spreadsheets, use either spreadsheetData or spreadsheetSheets to pass data into the table");
@@ -21982,11 +21982,11 @@ class Spreadsheet extends Module{
 		if(this.options("pagination")){
 			console.warn("The spreadsheet module is not compatible with the pagination module");
 		}
-
+		
 		if(this.options("groupBy")){
 			console.warn("The spreadsheet module is not compatible with the row grouping module");
 		}
-
+		
 		if(this.options("responsiveCollapse")){
 			console.warn("The spreadsheet module is not compatible with the responsive collapse module");
 		}
@@ -22057,13 +22057,15 @@ class Spreadsheet extends Module{
 	}
 	
 	loadSheet(sheet){
-		if(this.activeSheet){
-			this.activeSheet.unload();
+		if(this.activeSheet !== sheet){
+			if(this.activeSheet){
+				this.activeSheet.unload();
+			}
+			
+			this.activeSheet = sheet;
+			
+			sheet.load();
 		}
-		
-		this.activeSheet = sheet;
-		
-		sheet.load();
 	}
 	
 	newSheet(definition = {}){

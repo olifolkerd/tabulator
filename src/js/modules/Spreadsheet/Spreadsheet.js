@@ -49,7 +49,7 @@ export default class Spreadsheet extends Module{
 				
 				this.table.options.spreadsheetData = false;
 			}
-
+			
 			this.compatibilityCheck();
 			
 			if(this.options("spreadsheetSheetTabs")){
@@ -57,7 +57,7 @@ export default class Spreadsheet extends Module{
 			}
 		}
 	}
-
+	
 	compatibilityCheck(){
 		if(this.options("data")){
 			console.warn("Do not use the data option when working with spreadsheets, use either spreadsheetData or spreadsheetSheets to pass data into the table");
@@ -66,11 +66,11 @@ export default class Spreadsheet extends Module{
 		if(this.options("pagination")){
 			console.warn("The spreadsheet module is not compatible with the pagination module");
 		}
-
+		
 		if(this.options("groupBy")){
 			console.warn("The spreadsheet module is not compatible with the row grouping module");
 		}
-
+		
 		if(this.options("responsiveCollapse")){
 			console.warn("The spreadsheet module is not compatible with the responsive collapse module");
 		}
@@ -79,10 +79,10 @@ export default class Spreadsheet extends Module{
 	initializeTabset(){
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-spreadsheet-tabs");
-		var altContainer = this.options("spreadsheetSheetTabsElement")
+		var altContainer = this.options("spreadsheetSheetTabsElement");
 		
 		if(altContainer && !(altContainer instanceof HTMLElement)){
-			altContainer = document.querySelector(altContainer)
+			altContainer = document.querySelector(altContainer);
 			
 			if(!altContainer){
 				console.warn("Unable to find element matching spreadsheetSheetTabsElement selector:", this.options("spreadsheetSheetTabsElement"));
@@ -141,13 +141,15 @@ export default class Spreadsheet extends Module{
 	}
 	
 	loadSheet(sheet){
-		if(this.activeSheet){
-			this.activeSheet.unload();
+		if(this.activeSheet !== sheet){
+			if(this.activeSheet){
+				this.activeSheet.unload();
+			}
+			
+			this.activeSheet = sheet;
+			
+			sheet.load();
 		}
-		
-		this.activeSheet = sheet;
-		
-		sheet.load();
 	}
 	
 	newSheet(definition = {}){
@@ -193,7 +195,7 @@ export default class Spreadsheet extends Module{
 				}
 			}
 		}else{
-			console.warn("Unable to remove sheet, at least one sheet must be active")
+			console.warn("Unable to remove sheet, at least one sheet must be active");
 		}
 	}
 	
