@@ -30,7 +30,7 @@ export default class Spreadsheet extends Module{
 		this.registerTableFunction("getSheetData", this.getSheetData.bind(this));
 		this.registerTableFunction("clearSheet", this.clearSheet.bind(this));
 		this.registerTableFunction("removeSheet", this.removeSheetFunc.bind(this));
-		this.registerTableFunction("activeSheet", this.activeSheet.bind(this));
+		this.registerTableFunction("activeSheet", this.activeSheetFunc.bind(this));
 	}
 	
 	///////////////////////////////////
@@ -263,7 +263,7 @@ export default class Spreadsheet extends Module{
 		}
 	}
 	
-	activeSheet(key){
+	activeSheetFunc(key){
 		var sheet = this.lookupSheet(key);
 		
 		return sheet ? this.loadSheet(sheet) : false;
