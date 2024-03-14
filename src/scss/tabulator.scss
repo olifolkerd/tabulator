@@ -560,6 +560,8 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		.tabulator-spreadsheet-tabs{
 			margin-top:-5px;
 
+			overflow-x: auto;
+
 			.tabulator-spreadsheet-tab{
 				display: inline-block;
 				padding:5px;

@@ -767,6 +767,7 @@
 
 .tabulator .tabulator-footer .tabulator-spreadsheet-tabs {
   margin-top: -5px;
+  overflow-x: auto;
 }
 
 .tabulator .tabulator-footer .tabulator-spreadsheet-tabs .tabulator-spreadsheet-tab {
