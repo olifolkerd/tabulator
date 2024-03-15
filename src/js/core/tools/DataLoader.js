@@ -44,7 +44,7 @@ export default class DataLoader extends CoreFeature{
 						response = this.mapParams(response, this.objectInvert(this.table.options.dataReceiveParams));
 					}
 					
-					var rowData = this.chain("data-loaded", response, null, response);
+					var rowData = this.chain("data-loaded", [response], null, response);
 					
 					if(requestNo == this.requestOrder){
 						this.clearAlert();
