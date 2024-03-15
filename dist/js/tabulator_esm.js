@@ -21693,10 +21693,6 @@ class SheetComponent {
 	setColumns(columns){
 		return this._sheet.setColumns(columns);
 	}
-
-	getKey(){
-		return this._sheet.key;
-	}
 }
 
 class Sheet extends CoreFeature{
