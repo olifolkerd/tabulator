@@ -21650,6 +21650,14 @@ class SheetComponent {
 		});
 	}
 
+	getTitle(){
+		return this._sheet.title;
+	}
+
+	getKey(){
+		return this._sheet.key;
+	}
+
 	getDefinition(){
 		return this._sheet.getDefinition();
 	}
