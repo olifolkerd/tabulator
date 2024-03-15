@@ -23,6 +23,7 @@ export default class Spreadsheet extends Module{
 		this.registerTableOption("spreadsheetSheetTabsElement", false); 
 		
 		this.registerTableFunction("setSheets", this.setSheets.bind(this));
+		this.registerTableFunction("addSheet", this.addSheet.bind(this));
 		this.registerTableFunction("getSheets", this.getSheets.bind(this));
 		this.registerTableFunction("getSheetDefinitions", this.getSheetDefinitions.bind(this));
 		this.registerTableFunction("setSheetData", this.setSheetData.bind(this));
@@ -218,6 +219,12 @@ export default class Spreadsheet extends Module{
 	
 	setSheets(sheets){
 		this.loadSheets(sheets);
+
+		return this.getSheets();
+	}
+
+	addSheet(sheet){
+		return this.newSheet(sheet).getComponent();
 	}
 	
 	getSheetDefinitions(){
