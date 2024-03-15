@@ -128,7 +128,7 @@ export default class Spreadsheet extends Module{
 				this.loadSheets(data);
 			}
 		}else{
-			console.error("Spreadsheet Loading Error - Unable to process remote data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data)
+			console.error("Spreadsheet Loading Error - Unable to process remote data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
 
 		return false;

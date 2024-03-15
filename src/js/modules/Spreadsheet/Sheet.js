@@ -123,8 +123,8 @@ export default class Sheet extends CoreFeature{
 		this.table.restoreRedraw();
 		
 		if(wasInactive && this.scrollTop !== null){
-			this.table.rowManager.element.scrollLeft = this.scrollLeft
-			this.table.rowManager.element.scrollTop = this.scrollTop
+			this.table.rowManager.element.scrollLeft = this.scrollLeft;
+			this.table.rowManager.element.scrollTop = this.scrollTop;
 		}
 		
 		this.element.classList.add("tabulator-spreadsheet-tab-active");

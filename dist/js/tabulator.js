@@ -6332,7 +6332,7 @@
 							response = this.mapParams(response, this.objectInvert(this.table.options.dataReceiveParams));
 						}
 						
-						var rowData = this.chain("data-loaded", response, null, response);
+						var rowData = this.chain("data-loaded", [response], null, response);
 						
 						if(requestNo == this.requestOrder){
 							this.clearAlert();
@@ -8170,7 +8170,8 @@
 			this._loadInitialData();
 			
 			this.initialized = true;
-			
+
+			this.eventBus.dispatch("table-initialized");
 			this.externalEvents.dispatch("tableBuilt");
 		}
 		
@@ -13880,18 +13881,23 @@
 			this.recursionBlock = false; //prevent focus recursion
 			this.invalidEdit = false;
 			this.editedCells = [];
+			this.convertEmptyValues = false;
 			
 			this.editors = Edit.editors;
-			
+		
+			this.registerTableOption("editTriggerEvent", "focus");
+			this.registerTableOption("editorEmptyValue");
+			this.registerTableOption("editorEmptyValueFunc", this.emptyValueCheck.bind(this));
+
 			this.registerColumnOption("editable");
 			this.registerColumnOption("editor");
 			this.registerColumnOption("editorParams");
+			this.registerColumnOption("editorEmptyValue");
+			this.registerColumnOption("editorEmptyValueFunc");
 			
 			this.registerColumnOption("cellEditing");
 			this.registerColumnOption("cellEdited");
 			this.registerColumnOption("cellEditCancelled");
-			
-			this.registerTableOption("editTriggerEvent", "focus");
 			
 			this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
 			this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
@@ -13929,11 +13935,14 @@
 			this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 			this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
 			
-			
 			// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
 			// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
 			this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
 			this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
+
+			if(Object.keys(this.table.options).includes("editorEmptyValue")){
+				this.convertEmptyValues = true;
+			}
 		}
 		
 		
@@ -14245,11 +14254,16 @@
 		
 		//initialize column editor
 		initializeColumn(column){
+			var convertEmpty = Object.keys(column.definition).includes("editorEmptyValue");
+
 			var config = {
 				editor:false,
 				blocked:false,
 				check:column.definition.editable,
-				params:column.definition.editorParams || {}
+				params:column.definition.editorParams || {},
+				convertEmptyValues:convertEmpty,
+				editorEmptyValue:column.definition.editorEmptyValue,
+				editorEmptyValueFunc:column.definition.editorEmptyValueFunc,
 			};
 			
 			//set column editor
@@ -14495,6 +14509,8 @@
 						if(self.editedCells.indexOf(cell) == -1){
 							self.editedCells.push(cell);
 						}
+
+						value = self.transformEmptyValues(value, cell);
 						
 						cell.setValue(value, true);
 
@@ -14603,6 +14619,26 @@
 				return false;
 			}
 		}
+
+		emptyValueCheck(value){
+			return value === "" || value === null || typeof value === "undefined";
+		}
+
+		transformEmptyValues(value, cell){
+			var mod = cell.column.modules.edit, 
+			convert = mod.convertEmptyValues || this.convertEmptyValues,
+			checkFunc;
+			
+			if(convert){
+				checkFunc = mod.editorEmptyValueFunc || this.options("editorEmptyValueFunc");
+
+				if(checkFunc && checkFunc(value)){
+					value = mod.convertEmptyValues ? mod.editorEmptyValue : this.options("editorEmptyValue");
+				}
+			}
+			
+			return value;
+		}
 		
 		blur(element){
 			if(!this.confirm("edit-blur", [element]) ){
@@ -14694,7 +14730,6 @@
 			this.colVisProp = "";
 			this.colVisPropAttach = "";
 			
-			
 			this.registerTableOption("htmlOutputConfig", false); //html output config
 			
 			this.registerColumnOption("htmlOutput");
@@ -14704,11 +14739,6 @@
 		initialize(){
 			this.registerTableFunction("getHtml", this.getHtml.bind(this));
 		}
-		
-		///////////////////////////////////
-		///////// Table Functions /////////
-		///////////////////////////////////
-		
 		
 		///////////////////////////////////
 		///////// Internal Logic //////////
@@ -14833,7 +14863,7 @@
 		
 		columnVisCheck(column){
 			var visProp = column.definition[this.colVisProp];
-			console.log("d", this.config.rowHeaders);
+
 			if(this.config.rowHeaders === false && column.isRowHeader){
 				return false;
 			}
@@ -15008,8 +15038,7 @@
 			table.classList.add("tabulator-print-table");
 			
 			this.mapElementStyles(this.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
-			
-			
+
 			if(list.length > 1000){
 				console.warn("It may take a long time to render an HTML table with more than 1000 rows");
 			}
@@ -15063,6 +15092,7 @@
 				
 				if(styles.firstRow){
 					styles.styleCells = styles.firstRow.getElementsByClassName("tabulator-cell");
+					styles.styleRowHeader = styles.firstRow.getElementsByClassName("tabulator-row-header")[0];
 					styles.firstCell = styles.styleCells[0];
 					styles.lastCell = styles.styleCells[styles.styleCells.length - 1];
 				}
@@ -15092,9 +15122,9 @@
 						cellEl.classList.add(className);
 					});
 					
-					this.mapElementStyles(column.component.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+					this.mapElementStyles(column.component.getElement(), cellEl, ["text-align", "border-left", "border-right", "background-color", "color", "font-weight", "font-family", "font-size"]);
 					this.mapElementStyles(column.component._column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
-					
+			
 					if(column.component._column.visible){
 						this.mapElementStyles(column.component.getElement(), cellEl, ["width"]);
 					}else {
@@ -15103,8 +15133,16 @@
 						}
 					}
 					
-					if(column.component._column.parent){
+					if(column.component._column.parent && column.component._column.parent.isGroup){
 						this.mapElementStyles(column.component._column.parent.groupElement, cellEl, ["border-top"]);
+					}else {
+						this.mapElementStyles(column.component.getElement(), cellEl, ["border-top"]);
+					}
+					
+					if(column.component._column.isGroup){
+						this.mapElementStyles(column.component.getElement(), cellEl, ["border-bottom"]);
+					}else {
+						this.mapElementStyles(this.table.columnManager.getElement(), cellEl, ["border-bottom"]);
 					}
 					
 					rowEl.appendChild(cellEl);
@@ -15169,7 +15207,7 @@
 					table =  this.table,
 					index = table.columnManager.findColumnIndex(column),
 					value = col.value,
-					cellStyle;
+					cellStyle, styleProps;
 					
 					var cellWrapper = {
 						modules:{},
@@ -15228,11 +15266,18 @@
 					}else {
 						cellEl.innerHTML = value;
 					}
-					
-					cellStyle = styles.styleCells && styles.styleCells[index] ? styles.styleCells[index] : styles.firstCell;
+
+					styleProps = ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"];
+
+					if(column.isRowHeader){
+						cellStyle = styles.styleRowHeader;
+						styleProps.push("background-color");
+					}else {
+						cellStyle = styles.styleCells && styles.styleCells[index] ? styles.styleCells[index] : styles.firstCell;
+					}
 					
 					if(cellStyle){
-						this.mapElementStyles(cellStyle, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
+						this.mapElementStyles(cellStyle, cellEl, styleProps);
 						
 						if(column.definition.align){
 							cellEl.style.textAlign = column.definition.align;
@@ -15306,7 +15351,7 @@
 				
 				if(window.getComputedStyle){
 					var fromStyle = window.getComputedStyle(from);
-					
+
 					props.forEach(function(prop){
 						if(!to.style[lookup[prop]]){
 							to.style[lookup[prop]] = fromStyle.getPropertyValue(prop);
@@ -25701,7 +25746,7 @@
 			_vDomBottom = this.table.rowManager.renderer.vDomBottom,
 			_vDomLeft = this.table.columnManager.renderer.leftCol,
 			_vDomRight = this.table.columnManager.renderer.rightCol,		
-			top, bottom, left, right, topLeftCell, bottomRightCell;
+			top, bottom, left, right, topLeftCell, bottomRightCell, topLeftCellEl, bottomRightCellEl, topLeftRowEl, bottomRightRowEl;
 
 			if(this.table.options.renderHorizontal === "virtual" && this.rangeManager.rowHeader) {
 				_vDomRight += 1;
@@ -25731,14 +25776,24 @@
 				
 				topLeftCell = this.rangeManager.getCell(top, left);
 				bottomRightCell = this.rangeManager.getCell(bottom, right);
+				topLeftCellEl = topLeftCell.getElement();
+				bottomRightCellEl = bottomRightCell.getElement();
+				topLeftRowEl = topLeftCell.row.getElement();
+				bottomRightRowEl = bottomRightCell.row.getElement();
 				
 				this.element.classList.add("tabulator-range-active");
 				// this.element.classList.toggle("tabulator-range-active", this === this.rangeManager.activeRange);
+
+				if(this.table.rtl){
+					this.element.style.right = topLeftRowEl.offsetWidth - topLeftCellEl.offsetLeft - topLeftCellEl.offsetWidth + "px";
+					this.element.style.width = topLeftCellEl.offsetLeft + topLeftCellEl.offsetWidth - bottomRightCellEl.offsetLeft + "px";
+				}else {
+					this.element.style.left = topLeftRowEl.offsetLeft + topLeftCellEl.offsetLeft + "px";
+					this.element.style.width = bottomRightCellEl.offsetLeft + bottomRightCellEl.offsetWidth - topLeftCellEl.offsetLeft + "px";
+				}
 				
-				this.element.style.left = topLeftCell.row.getElement().offsetLeft + topLeftCell.getElement().offsetLeft + "px";
-				this.element.style.top = topLeftCell.row.getElement().offsetTop + "px";
-				this.element.style.width = bottomRightCell.getElement().offsetLeft + bottomRightCell.getElement().offsetWidth - topLeftCell.getElement().offsetLeft + "px";
-				this.element.style.height = bottomRightCell.row.getElement().offsetTop + bottomRightCell.row.getElement().offsetHeight - topLeftCell.row.getElement().offsetTop + "px";
+				this.element.style.top = topLeftRowEl.offsetTop + "px";
+				this.element.style.height = bottomRightRowEl.offsetTop + bottomRightRowEl.offsetHeight - topLeftRowEl.offsetTop + "px";
 			}
 		}
 		
@@ -26841,7 +26896,7 @@
 		}
 		
 		layoutRanges() {
-			var activeCell;
+			var activeCell, activeCellEl, activeRowEl;
 			
 			if (!this.table.initialized) {
 				return;
@@ -26852,11 +26907,19 @@
 			if (!activeCell) {
 				return;
 			}
-			
-			this.activeRangeCellElement.style.left = activeCell.row.getElement().offsetLeft + activeCell.getElement().offsetLeft + "px";
-			this.activeRangeCellElement.style.top =	activeCell.row.getElement().offsetTop + "px";
-			this.activeRangeCellElement.style.width = activeCell.getElement().offsetLeft + activeCell.getElement().offsetWidth - activeCell.getElement().offsetLeft + "px";
-			this.activeRangeCellElement.style.height = activeCell.row.getElement().offsetTop + activeCell.row.getElement().offsetHeight - activeCell.row.getElement().offsetTop + "px";
+
+			activeCellEl = activeCell.getElement();
+			activeRowEl = activeCell.row.getElement();
+
+			if(this.table.rtl){
+				this.activeRangeCellElement.style.right = activeRowEl.offsetWidth - activeCellEl.offsetLeft - activeCellEl.offsetWidth + "px";
+			}else {
+				this.activeRangeCellElement.style.left = activeRowEl.offsetLeft + activeCellEl.offsetLeft + "px";
+			}
+
+			this.activeRangeCellElement.style.top =	activeRowEl.offsetTop + "px";
+			this.activeRangeCellElement.style.width = activeCellEl.offsetWidth + "px";
+			this.activeRangeCellElement.style.height =  activeRowEl.offsetHeight  + "px";
 			
 			this.ranges.forEach((range) => range.layout());
 			
@@ -27698,6 +27761,677 @@
 		}
 	}
 
+	class GridCalculator{
+		constructor(columns, rows){
+			this.columnCount = columns;
+			this.rowCount = rows;
+
+			this.columnString = [];
+			this.columns = [];
+			this.rows = [];
+		}
+
+		genColumns(data){
+			var colCount = Math.max(this.columnCount, Math.max(...data.map(item => item.length)));
+
+			this.columnString = [];
+			this.columns = [];
+
+			for(let i = 1; i <= colCount; i++){
+				this.incrementChar(this.columnString.length - 1);
+				this.columns.push(this.columnString.join(""));
+			}
+
+			return this.columns;
+		}
+
+		genRows(data){
+			var rowCount = Math.max(this.rowCount, data.length);
+
+			this.rows = [];
+
+			for(let i = 1; i <= rowCount; i++){
+				this.rows.push(i);
+			}
+			
+			return this.rows;
+		}
+
+		incrementChar(i){
+			let char = this.columnString[i];
+
+			if(char){
+				if(char !== "Z"){
+					this.columnString[i] = String.fromCharCode(this.columnString[i].charCodeAt(0) + 1);
+				}else {
+					this.columnString[i] = "A";
+					
+					if(i){
+						this.incrementChar(i-1);
+					}else {
+						this.columnString.push("A");
+					}
+				}
+			}else {
+				this.columnString.push("A");
+			}
+		}
+
+		setRowCount(count){
+			this.rowCount = count;
+		}
+
+		setColumnCount(count){
+			this.columnCount = count;
+		}
+	}
+
+	class SheetComponent {
+		constructor(sheet) {
+			this._sheet = sheet;
+
+			return new Proxy(this, {
+				get: function (target, name, receiver) {
+					if (typeof target[name] !== "undefined") {
+						return target[name];
+					} else {
+						return target._sheet.table.componentFunctionBinder.handle("sheet", target._sheet, name);
+					}
+				},
+			});
+		}
+
+		getTitle(){
+			return this._sheet.title;
+		}
+
+		getKey(){
+			return this._sheet.key;
+		}
+
+		getDefinition(){
+			return this._sheet.getDefinition();
+		}
+
+		getData() {
+			return this._sheet.getData();
+		}
+
+		setData(data) {
+			return this._sheet.setData(data);
+		}
+
+		clear(){
+			return this._sheet.clear();
+		}
+
+		remove(){
+			return this._sheet.remove();
+		}
+		
+		active(){
+			return this._sheet.active();
+		}
+
+		setTitle(title){
+			return this._sheet.setTitle(title);
+		}
+
+		setRows(rows){
+			return this._sheet.setRows(rows);
+		}
+
+		setColumns(columns){
+			return this._sheet.setColumns(columns);
+		}
+	}
+
+	class Sheet extends CoreFeature{
+		constructor(spreadsheetManager, definition) {
+			super(spreadsheetManager.table);
+			
+			this.spreadsheetManager = spreadsheetManager;
+			this.definition = definition;
+			
+			this.title = this.definition.title || "";
+			this.key = this.definition.key || this.definition.title;
+			this.rowCount = this.definition.rows;
+			this.columnCount = this.definition.columns;
+			this.data = this.definition.data || [];
+			this.element = null;
+			this.isActive = false;
+			
+			this.grid = new GridCalculator(this.columnCount, this.rowCount);
+			
+			this.defaultColumnDefinition = {width:100, headerHozAlign:"center", headerSort:false};
+			this.columnDefinition = Object.assign(this.defaultColumnDefinition, this.options("spreadsheetColumnDefinition"));
+			
+			this.columnDefs = [];
+			this.rowDefs = [];
+			this.columnFields = [];
+			this.columns = [];
+			this.rows = [];
+			
+			this.scrollTop = null;
+			this.scrollLeft = null;
+			
+			this.initialize();
+			
+			this.dispatchExternal("sheetAdded", this.getComponent());
+		}
+		
+		///////////////////////////////////
+		///////// Initialization //////////
+		///////////////////////////////////
+		
+		initialize(){
+			this.initializeElement();
+			this.initializeColumns();
+			this.initializeRows();
+		}
+		
+		reinitialize(){
+			this.initializeColumns();
+			this.initializeRows();
+		}
+		
+		initializeElement(){
+			this.element = document.createElement("div");
+			this.element.classList.add("tabulator-spreadsheet-tab");
+			this.element.innerText = this.title;
+			
+			this.element.addEventListener("click", () => {
+				this.spreadsheetManager.loadSheet(this);
+			});
+		}
+		
+		initializeColumns(){
+			this.grid.setColumnCount(this.columnCount);
+			this.columnFields = this.grid.genColumns(this.data);
+			
+			this.columnDefs = [];
+			
+			this.columnFields.forEach((ref) => {
+				var def = Object.assign({}, this.columnDefinition);
+				def.field = ref;
+				def.title = ref;
+				
+				this.columnDefs.push(def);
+			});
+		}
+		
+		initializeRows(){
+			var refs;
+			
+			this.grid.setRowCount(this.rowCount);
+			
+			refs = this.grid.genRows(this.data);
+			
+			this.rowDefs = [];
+			
+			refs.forEach((ref, i) => {
+				var def = {"_id":ref};
+				var data = this.data[i];
+				
+				if(data){
+					data.forEach((val, j) => {
+						var field = this.columnFields[j];
+						
+						if(field){
+							def[field] = val;
+						}
+					});
+				}
+				
+				this.rowDefs.push(def);
+			});
+		}
+		
+		unload(){
+			this.isActive = false;
+			this.scrollTop = this.table.rowManager.scrollTop;
+			this.scrollLeft = this.table.rowManager.scrollLeft;
+			this.data = this.getData(true);
+			this.element.classList.remove("tabulator-spreadsheet-tab-active");
+		}
+		
+		load(){
+			
+			var wasInactive = !this.isActive;
+			
+			this.isActive = true;
+			this.table.blockRedraw();
+			this.table.setData([]);
+			this.table.setColumns(this.columnDefs);
+			this.table.setData(this.rowDefs);
+			this.table.restoreRedraw();
+			
+			if(wasInactive && this.scrollTop !== null){
+				this.table.rowManager.element.scrollLeft = this.scrollLeft;
+				this.table.rowManager.element.scrollTop = this.scrollTop;
+			}
+			
+			this.element.classList.add("tabulator-spreadsheet-tab-active");
+			
+			this.dispatchExternal("sheetLoaded", this.getComponent());
+		}
+		
+		///////////////////////////////////
+		//////// Helper Functions /////////
+		///////////////////////////////////
+		
+		getComponent(){
+			return new SheetComponent(this);
+		}
+		
+		getDefinition(){
+			return {
+				title:this.title,
+				key:this.key,
+				rows:this.rowCount,
+				columns:this.columnCount,
+				data:this.getData(),
+			};
+		}
+		
+		getData(full){
+			var output = [], 
+			rowWidths,
+			outputWidth, outputHeight;
+			
+			//map data to array format
+			this.rowDefs.forEach((rowData) => {
+				var row = [];
+				
+				this.columnFields.forEach((field) => {
+					row.push(rowData[field]);
+				});
+				
+				output.push(row);
+			});
+			
+			//trim output
+			if(!full && !this.options("spreadsheetOutputFull")){
+				
+				//calculate used area of data
+				rowWidths = output.map(row => row.findLastIndex(val => typeof val !== 'undefined') + 1);
+				outputWidth = Math.max(...rowWidths);
+				outputHeight = rowWidths.findLastIndex(width => width > 0) + 1;
+				
+				output = output.slice(0, outputHeight);
+				output = output.map(row => row.slice(0, outputWidth));
+			}
+			
+			return output;
+		}
+		
+		setData(data){
+			this.data = data;
+			this.reinitialize();
+			
+			this.dispatchExternal("sheetUpdated", this.getComponent());
+			
+			if(this.isActive){
+				this.load();
+			}
+		}
+		
+		clear(){
+			this.setData([]);
+		}
+		
+		setTitle(title){
+			this.title = title;
+			this.element.innerText = title;
+			
+			this.dispatchExternal("sheetUpdated", this.getComponent());
+		}
+		
+		setRows(rows){
+			this.rowCount = rows;
+			this.initializeRows();
+			
+			this.dispatchExternal("sheetUpdated", this.getComponent());
+			
+			if(this.isActive){
+				this.load();
+			}
+		}
+		
+		setColumns(columns){
+			this.columnCount = columns;
+			this.reinitialize();
+			
+			this.dispatchExternal("sheetUpdated", this.getComponent());
+			
+			if(this.isActive){
+				this.load();
+			}
+		}
+		
+		remove(){
+			this.spreadsheetManager.removeSheet(this);
+		}
+		
+		destroy(){
+			if(this.element.parentNode){
+				this.element.parentNode.removeChild(this.element);
+			}
+			
+			this.dispatchExternal("sheetRemoved", this.getComponent());
+		}
+		
+		active(){
+			this.spreadsheetManager.loadSheet(this);
+		}
+	}
+
+	class Spreadsheet extends Module{
+		
+		static moduleName = "spreadsheet";
+		
+		constructor(table){
+			super(table);
+			
+			this.sheets = [];
+			this.element = null;
+			
+			this.registerTableOption("spreadsheet", false); 
+			this.registerTableOption("spreadsheetRows", 50); 
+			this.registerTableOption("spreadsheetColumns", 50); 
+			this.registerTableOption("spreadsheetColumnDefinition", {}); 
+			this.registerTableOption("spreadsheetOutputFull", false); 
+			this.registerTableOption("spreadsheetData", false); 
+			this.registerTableOption("spreadsheetSheets", false); 
+			this.registerTableOption("spreadsheetSheetTabs", false); 
+			this.registerTableOption("spreadsheetSheetTabsElement", false); 
+			
+			this.registerTableFunction("setSheets", this.setSheets.bind(this));
+			this.registerTableFunction("addSheet", this.addSheet.bind(this));
+			this.registerTableFunction("getSheets", this.getSheets.bind(this));
+			this.registerTableFunction("getSheetDefinitions", this.getSheetDefinitions.bind(this));
+			this.registerTableFunction("setSheetData", this.setSheetData.bind(this));
+			this.registerTableFunction("getSheet", this.getSheet.bind(this));
+			this.registerTableFunction("getSheetData", this.getSheetData.bind(this));
+			this.registerTableFunction("clearSheet", this.clearSheet.bind(this));
+			this.registerTableFunction("removeSheet", this.removeSheetFunc.bind(this));
+			this.registerTableFunction("activeSheet", this.activeSheetFunc.bind(this));
+		}
+		
+		///////////////////////////////////
+		////// Module Initialization //////
+		///////////////////////////////////
+		
+		
+		initialize(){
+			if(this.options("spreadsheet")){	
+				this.subscribe("table-initialized", this.tableInitialized.bind(this));
+				this.subscribe("data-loaded", this.loadRemoteData.bind(this));
+				
+				this.table.options.index = "_id";
+				
+				if(this.options("spreadsheetData") && this.options("spreadsheetSheets")){
+					console.warn("You cannot use spreadsheetData and spreadsheetSheets at the same time, ignoring spreadsheetData");
+					
+					this.table.options.spreadsheetData = false;
+				}
+				
+				this.compatibilityCheck();
+				
+				if(this.options("spreadsheetSheetTabs")){
+					this.initializeTabset();
+				}
+			}
+		}
+		
+		compatibilityCheck(){
+			if(this.options("data")){
+				console.warn("Do not use the data option when working with spreadsheets, use either spreadsheetData or spreadsheetSheets to pass data into the table");
+			}
+			
+			if(this.options("pagination")){
+				console.warn("The spreadsheet module is not compatible with the pagination module");
+			}
+			
+			if(this.options("groupBy")){
+				console.warn("The spreadsheet module is not compatible with the row grouping module");
+			}
+			
+			if(this.options("responsiveCollapse")){
+				console.warn("The spreadsheet module is not compatible with the responsive collapse module");
+			}
+		}
+		initializeTabset(){
+			this.element = document.createElement("div");
+			this.element.classList.add("tabulator-spreadsheet-tabs");
+			var altContainer = this.options("spreadsheetSheetTabsElement");
+			
+			if(altContainer && !(altContainer instanceof HTMLElement)){
+				altContainer = document.querySelector(altContainer);
+				
+				if(!altContainer){
+					console.warn("Unable to find element matching spreadsheetSheetTabsElement selector:", this.options("spreadsheetSheetTabsElement"));
+				}
+			}
+			
+			if(altContainer){
+				altContainer.appendChild(this.element);
+			}else {
+				this.footerAppend(this.element);
+			}
+		}
+		
+		tableInitialized(){
+			if(this.sheets.length){
+				this.loadSheet(this.sheets[0]);
+			}else {
+				
+				if(this.options("spreadsheetSheets")){
+					this.loadSheets(this.options("spreadsheetSheets"));
+				}else if(this.options("spreadsheetData")){
+					this.loadData(this.options("spreadsheetData"));
+				}
+			}
+		}
+
+		///////////////////////////////////
+		/////////// Ajax Parsing //////////
+		///////////////////////////////////
+
+		loadRemoteData(data, data1, data2){
+			console.log("data", data, data1, data2);
+
+			if(Array.isArray(data)){
+
+				this.table.dataLoader.clearAlert();
+				this.dispatchExternal("dataLoaded", data);
+
+				if(!data.length || Array.isArray(data[0])){
+					this.loadData(data);
+				}else {
+					this.loadSheets(data);
+				}
+			}else {
+				console.error("Spreadsheet Loading Error - Unable to process remote data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
+			}
+
+			return false;
+		}
+
+		///////////////////////////////////
+		///////// Sheet Management ////////
+		///////////////////////////////////
+		
+		
+		loadData(data){
+			var def = {
+				data:data,
+			};
+			
+			this.loadSheet(this.newSheet(def));
+		}
+		
+		destroySheets(){
+			this.sheets.forEach((sheet) => {
+				sheet.destroy();
+			});
+			
+			this.sheets = [];
+			this.activeSheet = null;
+		}
+		
+		loadSheets(sheets){	
+			if(!Array.isArray(sheets)){
+				sheets = [];
+			}
+			
+			this.destroySheets();
+			
+			sheets.forEach((def) => {
+				this.newSheet(def);
+			});
+			
+			this.loadSheet(this.sheets[0]);
+		}
+		
+		loadSheet(sheet){
+			if(this.activeSheet !== sheet){
+				if(this.activeSheet){
+					this.activeSheet.unload();
+				}
+				
+				this.activeSheet = sheet;
+				
+				sheet.load();
+			}
+		}
+		
+		newSheet(definition = {}){
+			var sheet;
+			
+			if(!definition.rows){
+				definition.rows = this.options("spreadsheetRows");
+			}
+			
+			if(!definition.columns){
+				definition.columns = this.options("spreadsheetColumns");
+			}
+			
+			sheet = new Sheet(this, definition);
+			
+			this.sheets.push(sheet);
+			
+			if(this.element){
+				this.element.appendChild(sheet.element);
+			}
+			
+			return sheet;
+		}
+		
+		removeSheet(sheet){
+			var index = this.sheets.indexOf(sheet),
+			prevSheet;
+			
+			if(this.sheets.length > 1){
+				if(index > -1){
+					this.sheets.splice(index, 1);
+					sheet.destroy();
+					
+					if(this.activeSheet === sheet){
+						
+						prevSheet = this.sheets[index - 1] || this.sheets[0];
+						
+						if(prevSheet){
+							this.loadSheet(prevSheet);
+						}else {
+							this.activeSheet = null;
+						}
+					}
+				}
+			}else {
+				console.warn("Unable to remove sheet, at least one sheet must be active");
+			}
+		}
+		
+		lookupSheet(key){
+			if(!key){
+				return this.activeSheet;
+			}else if(key instanceof Sheet){
+				return key;
+			}else if(key instanceof SheetComponent){
+				return key._sheet;
+			}else {
+				return this.sheets.find(sheet => sheet.key === key) || false;
+			}
+		}
+		
+		
+		///////////////////////////////////
+		//////// Public Functions /////////
+		///////////////////////////////////
+		
+		setSheets(sheets){
+			this.loadSheets(sheets);
+
+			return this.getSheets();
+		}
+
+		addSheet(sheet){
+			return this.newSheet(sheet).getComponent();
+		}
+		
+		getSheetDefinitions(){
+			return this.sheets.map(sheet => sheet.getDefinition());
+		}
+		
+		getSheets(){
+			return this.sheets.map(sheet => sheet.getComponent());
+		}
+		
+		getSheet(key){
+			var sheet = this.lookupSheet(key);
+			
+			return sheet ? sheet.getComponent() : false;
+		}
+		
+		setSheetData(key, data){
+			if (key && !data){
+				data = key;
+				key = false;
+			}
+			
+			var sheet = this.lookupSheet(key);
+			
+			return sheet ? sheet.setData(data) : false;	
+		}
+		
+		getSheetData(key){
+			var sheet = this.lookupSheet(key);
+			
+			return sheet ? sheet.getData() : false;	
+		}
+		
+		clearSheet(key){
+			var sheet = this.lookupSheet(key);
+			
+			return sheet ? sheet.clear() : false;
+		}
+		
+		removeSheetFunc(key){
+			var sheet = this.lookupSheet(key);
+			
+			if(sheet){
+				this.removeSheet(sheet);
+			}
+		}
+		
+		activeSheetFunc(key){
+			var sheet = this.lookupSheet(key);
+			
+			return sheet ? this.loadSheet(sheet) : false;
+		}
+	}
+
 	class Tooltip extends Module{
 
 		static moduleName = "tooltip";
@@ -28311,6 +29045,7 @@
 		SelectRangeModule: SelectRange,
 		SelectRowModule: SelectRow,
 		SortModule: Sort,
+		SpreadsheetModule: Spreadsheet,
 		TooltipModule: Tooltip,
 		ValidateModule: Validate
 	});
