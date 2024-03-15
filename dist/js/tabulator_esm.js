@@ -7702,18 +7702,20 @@ class Edit extends Module{
 		this.convertEmptyValues = false;
 		
 		this.editors = Edit.editors;
-		
+	
+		this.registerTableOption("editTriggerEvent", "focus");
+		this.registerTableOption("editorEmptyValue");
+		this.registerTableOption("editorEmptyValueFunc", this.emptyValueCheck.bind(this));
+
 		this.registerColumnOption("editable");
 		this.registerColumnOption("editor");
 		this.registerColumnOption("editorParams");
 		this.registerColumnOption("editorEmptyValue");
+		this.registerColumnOption("editorEmptyValueFunc");
 		
 		this.registerColumnOption("cellEditing");
 		this.registerColumnOption("cellEdited");
 		this.registerColumnOption("cellEditCancelled");
-		
-		this.registerTableOption("editTriggerEvent", "focus");
-		this.registerTableOption("editorEmptyValue");
 		
 		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
 		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
@@ -8079,6 +8081,7 @@ class Edit extends Module{
 			params:column.definition.editorParams || {},
 			convertEmptyValues:convertEmpty,
 			editorEmptyValue:column.definition.editorEmptyValue,
+			editorEmptyValueFunc:column.definition.editorEmptyValueFunc,
 		};
 		
 		//set column editor
@@ -8435,17 +8438,23 @@ class Edit extends Module{
 		}
 	}
 
+	emptyValueCheck(value){
+		return value === "" || value === null || typeof value === "undefined";
+	}
+
 	transformEmptyValues(value, cell){
-		if(cell.column.modules.edit.convertEmptyValues){
-			if(value === "" || value === null || typeof value === "undefined"){
-				value = cell.column.modules.edit.editorEmptyValue;
-			}
-		}else if(this.convertEmptyValues){
-			if(value === "" || value === null || typeof value === "undefined"){
-				value = this.options("editorEmptyValue");
+		var mod = cell.column.modules.edit, 
+		convert = mod.convertEmptyValues || this.convertEmptyValues,
+		checkFunc;
+		
+		if(convert){
+			checkFunc = mod.editorEmptyValueFunc || this.options("editorEmptyValueFunc");
+
+			if(checkFunc && checkFunc(value)){
+				value = mod.convertEmptyValues ? mod.editorEmptyValue : this.options("editorEmptyValue");
 			}
 		}
-
+		
 		return value;
 	}
 	
