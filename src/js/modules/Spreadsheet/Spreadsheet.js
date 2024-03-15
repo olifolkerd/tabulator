@@ -42,6 +42,7 @@ export default class Spreadsheet extends Module{
 	initialize(){
 		if(this.options("spreadsheet")){	
 			this.subscribe("table-initialized", this.tableInitialized.bind(this));
+			this.subscribe("data-loaded", this.loadRemoteData.bind(this));
 			
 			this.table.options.index = "_id";
 			
@@ -76,7 +77,6 @@ export default class Spreadsheet extends Module{
 			console.warn("The spreadsheet module is not compatible with the responsive collapse module");
 		}
 	}
-	
 	initializeTabset(){
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-spreadsheet-tabs");
@@ -105,14 +105,43 @@ export default class Spreadsheet extends Module{
 			if(this.options("spreadsheetSheets")){
 				this.loadSheets(this.options("spreadsheetSheets"));
 			}else if(this.options("spreadsheetData")){
-				this.loadData();
+				this.loadData(this.options("spreadsheetData"));
 			}
 		}
 	}
+
+	///////////////////////////////////
+	/////////// Ajax Parsing //////////
+	///////////////////////////////////
+
+	loadRemoteData(data, data1, data2){
+		console.log("data", data, data1, data2);
+
+		if(Array.isArray(data)){
+
+			this.table.dataLoader.clearAlert();
+			this.dispatchExternal("dataLoaded", data);
+
+			if(!data.length || Array.isArray(data[0])){
+				this.loadData(data);
+			}else{
+				this.loadSheets(data);
+			}
+		}else{
+			console.error("Spreadsheet Loading Error - Unable to process remote data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data)
+		}
+
+		return false;
+	}
+
+	///////////////////////////////////
+	///////// Sheet Management ////////
+	///////////////////////////////////
 	
-	loadData(){
+	
+	loadData(data){
 		var def = {
-			data:this.options("spreadsheetData")
+			data:data,
 		};
 		
 		this.loadSheet(this.newSheet(def));
