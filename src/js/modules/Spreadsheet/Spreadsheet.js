@@ -15,7 +15,7 @@ export default class Spreadsheet extends Module{
 		this.registerTableOption("spreadsheet", false); 
 		this.registerTableOption("spreadsheetRows", 50); 
 		this.registerTableOption("spreadsheetColumns", 50); 
-		this.registerTableOption("spreadsheetDefinition", {}); 
+		this.registerTableOption("spreadsheetColumnDefinition", {}); 
 		this.registerTableOption("spreadsheetOutputFull", false); 
 		this.registerTableOption("spreadsheetData", false); 
 		this.registerTableOption("spreadsheetSheets", false); 

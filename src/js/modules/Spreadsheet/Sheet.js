@@ -20,7 +20,7 @@ export default class Sheet extends CoreFeature{
 		this.grid = new GridCalculator(this.columnCount, this.rowCount);
 		
 		this.defaultColumnDefinition = {width:100, headerHozAlign:"center", headerSort:false};
-		this.columnDefinition = Object.assign(this.defaultColumnDefinition, this.options("spreadsheetDefinition"));
+		this.columnDefinition = Object.assign(this.defaultColumnDefinition, this.options("spreadsheetColumnDefinition"));
 		
 		this.columnDefs = [];
 		this.rowDefs = [];

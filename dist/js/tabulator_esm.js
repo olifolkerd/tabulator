@@ -21713,7 +21713,7 @@ class Sheet extends CoreFeature{
 		this.grid = new GridCalculator(this.columnCount, this.rowCount);
 		
 		this.defaultColumnDefinition = {width:100, headerHozAlign:"center", headerSort:false};
-		this.columnDefinition = Object.assign(this.defaultColumnDefinition, this.options("spreadsheetDefinition"));
+		this.columnDefinition = Object.assign(this.defaultColumnDefinition, this.options("spreadsheetColumnDefinition"));
 		
 		this.columnDefs = [];
 		this.rowDefs = [];
@@ -21935,7 +21935,7 @@ class Spreadsheet extends Module{
 		this.registerTableOption("spreadsheet", false); 
 		this.registerTableOption("spreadsheetRows", 50); 
 		this.registerTableOption("spreadsheetColumns", 50); 
-		this.registerTableOption("spreadsheetDefinition", {}); 
+		this.registerTableOption("spreadsheetColumnDefinition", {}); 
 		this.registerTableOption("spreadsheetOutputFull", false); 
 		this.registerTableOption("spreadsheetData", false); 
 		this.registerTableOption("spreadsheetSheets", false); 
