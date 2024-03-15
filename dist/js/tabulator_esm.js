@@ -21721,8 +21721,11 @@ class Sheet extends CoreFeature{
 		this.columns = [];
 		this.rows = [];
 		
+		this.scrollTop = null;
+		this.scrollLeft = null;
+		
 		this.initialize();
-
+		
 		this.dispatchExternal("sheetAdded", this.getComponent());
 	}
 	
@@ -21735,7 +21738,7 @@ class Sheet extends CoreFeature{
 		this.initializeColumns();
 		this.initializeRows();
 	}
-
+	
 	reinitialize(){
 		this.initializeColumns();
 		this.initializeRows();
@@ -21768,9 +21771,9 @@ class Sheet extends CoreFeature{
 	
 	initializeRows(){
 		var refs;
-
+		
 		this.grid.setRowCount(this.rowCount);
-
+		
 		refs = this.grid.genRows(this.data);
 		
 		this.rowDefs = [];
@@ -21795,11 +21798,16 @@ class Sheet extends CoreFeature{
 	
 	unload(){
 		this.isActive = false;
+		this.scrollTop = this.table.rowManager.scrollTop;
+		this.scrollLeft = this.table.rowManager.scrollLeft;
 		this.data = this.getData(true);
 		this.element.classList.remove("tabulator-spreadsheet-tab-active");
 	}
 	
 	load(){
+		
+		var wasInactive = !this.isActive;
+		
 		this.isActive = true;
 		this.table.blockRedraw();
 		this.table.setData([]);
@@ -21807,8 +21815,13 @@ class Sheet extends CoreFeature{
 		this.table.setData(this.rowDefs);
 		this.table.restoreRedraw();
 		
+		if(wasInactive && this.scrollTop !== null){
+			this.table.rowManager.element.scrollLeft = this.scrollLeft;
+			this.table.rowManager.element.scrollTop = this.scrollTop;
+		}
+		
 		this.element.classList.add("tabulator-spreadsheet-tab-active");
-
+		
 		this.dispatchExternal("sheetLoaded", this.getComponent());
 	}
 	
@@ -21819,7 +21832,7 @@ class Sheet extends CoreFeature{
 	getComponent(){
 		return new SheetComponent(this);
 	}
-
+	
 	getDefinition(){
 		return {
 			title:this.title,
@@ -21864,47 +21877,47 @@ class Sheet extends CoreFeature{
 	setData(data){
 		this.data = data;
 		this.reinitialize();
-
+		
 		this.dispatchExternal("sheetUpdated", this.getComponent());
 		
 		if(this.isActive){
 			this.load();
 		}
 	}
-
+	
 	clear(){
 		this.setData([]);
 	}
-
+	
 	setTitle(title){
 		this.title = title;
 		this.element.innerText = title;
-
+		
 		this.dispatchExternal("sheetUpdated", this.getComponent());
 	}
-
+	
 	setRows(rows){
 		this.rowCount = rows;
 		this.initializeRows();
-
+		
 		this.dispatchExternal("sheetUpdated", this.getComponent());
-
+		
 		if(this.isActive){
 			this.load();
 		}
 	}
-
+	
 	setColumns(columns){
 		this.columnCount = columns;
 		this.reinitialize();
-
+		
 		this.dispatchExternal("sheetUpdated", this.getComponent());
-
+		
 		if(this.isActive){
 			this.load();
 		}
 	}
-
+	
 	remove(){
 		this.spreadsheetManager.removeSheet(this);
 	}
@@ -21913,7 +21926,7 @@ class Sheet extends CoreFeature{
 		if(this.element.parentNode){
 			this.element.parentNode.removeChild(this.element);
 		}
-
+		
 		this.dispatchExternal("sheetRemoved", this.getComponent());
 	}
 	
