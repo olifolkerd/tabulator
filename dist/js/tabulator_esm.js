@@ -18639,6 +18639,7 @@ class ResponsiveLayout extends Module{
 			if(contents){
 				el.appendChild(contents);
 			}
+			row.calcHeight(true);
 		}
 	}
 
