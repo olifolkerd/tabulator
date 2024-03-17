@@ -15,7 +15,7 @@ export default class Menu extends Module{
 		
 		this.columnSubscribers = {};
 		
-		this.registerTableOption("menuContainer", undefined); //deprecated
+		// this.registerTableOption("menuContainer", undefined); //deprecated
 		
 		this.registerTableOption("rowContextMenu", false);
 		this.registerTableOption("rowClickMenu", false);
@@ -44,9 +44,9 @@ export default class Menu extends Module{
 	}
 	
 	deprecatedOptionsCheck(){
-		if(!this.deprecationCheck("menuContainer", "popupContainer")){
-			this.table.options.popupContainer = this.table.options.menuContainer;
-		}
+		// if(!this.deprecationCheck("menuContainer", "popupContainer")){
+		// 	this.table.options.popupContainer = this.table.options.menuContainer;
+		// }
 	}	
 	
 	initializeRowWatchers(){

@@ -5238,7 +5238,7 @@ class Download extends Module{
 		this.registerTableOption("downloadEncoder", function(data, mimeType){
 			return new Blob([data],{type:mimeType});
 		}); //function to manipulate download data
-		this.registerTableOption("downloadReady", undefined); //warn of function deprecation
+		// this.registerTableOption("downloadReady", undefined); //warn of function deprecation
 		this.registerTableOption("downloadConfig", {}); //download config
 		this.registerTableOption("downloadRowRange", "active"); //restrict download to active rows only
 
@@ -5254,7 +5254,7 @@ class Download extends Module{
 	}
 
 	deprecatedOptionsCheck(){
-		this.deprecationCheck("downloadReady", "downloadEncoder");
+		// this.deprecationCheck("downloadReady", "downloadEncoder");
 	}	
 
 	///////////////////////////////////
@@ -6270,21 +6270,21 @@ let Edit$1 = class Edit{
 	}
 	
 	_deprecatedOptionsCheck(){
-		if(this.params.listItemFormatter){
-			this.cell.getTable().deprecationAdvisor.msg("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
-		}
+		// if(this.params.listItemFormatter){
+		// 	this.cell.getTable().deprecationAdvisor.msg("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
+		// }
 		
-		if(this.params.sortValuesList){
-			this.cell.getTable().deprecationAdvisor.msg("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
-		}
+		// if(this.params.sortValuesList){
+		// 	this.cell.getTable().deprecationAdvisor.msg("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
+		// }
 		
-		if(this.params.searchFunc){
-			this.cell.getTable().deprecationAdvisor.msg("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
-		}
+		// if(this.params.searchFunc){
+		// 	this.cell.getTable().deprecationAdvisor.msg("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
+		// }
 		
-		if(this.params.searchingPlaceholder){
-			this.cell.getTable().deprecationAdvisor.msg("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
-		}
+		// if(this.params.searchingPlaceholder){
+		// 	this.cell.getTable().deprecationAdvisor.msg("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
+		// }
 	}
 	
 	_initializeValue(){
@@ -7271,27 +7271,7 @@ let Edit$1 = class Edit{
 	
 };
 
-function select(cell, onRendered, success, cancel, editorParams){
-
-	this.deprecationMsg("The select editor has been deprecated, please use the new list editor");
-
-	var list = new Edit$1(this, cell, onRendered, success, cancel, editorParams);
-
-	return list.input;
-}
-
 function list(cell, onRendered, success, cancel, editorParams){
-	var list = new Edit$1(this, cell, onRendered, success, cancel, editorParams);
-
-	return list.input;
-}
-
-function autocomplete(cell, onRendered, success, cancel, editorParams){
-
-	this.deprecationMsg("The autocomplete editor has been deprecated, please use the new list editor with the 'autocomplete' editorParam");
-
-	editorParams.autocomplete = true;
-
 	var list = new Edit$1(this, cell, onRendered, success, cancel, editorParams);
 
 	return list.input;
@@ -7676,9 +7656,7 @@ var defaultEditors = {
 	date:date$1,
 	time:time$1,
 	datetime:datetime$2,
-	select:select,
 	list:list,
-	autocomplete:autocomplete,
 	star:star$1,
 	progress:progress$1,
 	tickCross:tickCross$1,
@@ -14090,7 +14068,7 @@ class Menu extends Module{
 		
 		this.columnSubscribers = {};
 		
-		this.registerTableOption("menuContainer", undefined); //deprecated
+		// this.registerTableOption("menuContainer", undefined); //deprecated
 		
 		this.registerTableOption("rowContextMenu", false);
 		this.registerTableOption("rowClickMenu", false);
@@ -14119,9 +14097,9 @@ class Menu extends Module{
 	}
 	
 	deprecatedOptionsCheck(){
-		if(!this.deprecationCheck("menuContainer", "popupContainer")){
-			this.table.options.popupContainer = this.table.options.menuContainer;
-		}
+		// if(!this.deprecationCheck("menuContainer", "popupContainer")){
+		// 	this.table.options.popupContainer = this.table.options.menuContainer;
+		// }
 	}	
 	
 	initializeRowWatchers(){
@@ -18870,11 +18848,11 @@ class SelectRow extends Module{
 	}
 
 	deprecatedOptionsCheck(){
-		this.deprecationCheck("selectable", "selectableRows", true);
-		this.deprecationCheck("selectableRollingSelection", "selectableRowsRollingSelection", true);
-		this.deprecationCheck("selectableRangeMode", "selectableRowsRangeMode", true);
-		this.deprecationCheck("selectablePersistence", "selectableRowsPersistence", true);
-		this.deprecationCheck("selectableCheck", "selectableRowsCheck", true);
+		// this.deprecationCheck("selectable", "selectableRows", true);
+		// this.deprecationCheck("selectableRollingSelection", "selectableRowsRollingSelection", true);
+		// this.deprecationCheck("selectableRangeMode", "selectableRowsRangeMode", true);
+		// this.deprecationCheck("selectablePersistence", "selectableRowsPersistence", true);
+		// this.deprecationCheck("selectableCheck", "selectableRowsCheck", true);
 	}
 	
 	rowRetrieve(type, prevValue){
@@ -22263,7 +22241,7 @@ class Tooltip extends Module{
 		this.timeout = null;
 		this.popupInstance = null;
 		
-		this.registerTableOption("tooltipGenerationMode", undefined);  //deprecated
+		// this.registerTableOption("tooltipGenerationMode", undefined);  //deprecated
 		this.registerTableOption("tooltipDelay", 300); 
 		
 		this.registerColumnOption("tooltip");
@@ -22277,7 +22255,7 @@ class Tooltip extends Module{
 	}
 	
 	deprecatedOptionsCheck(){
-		this.deprecationCheckMsg("tooltipGenerationMode", "This option is no longer needed as tooltips are always generated on hover now");
+		// this.deprecationCheckMsg("tooltipGenerationMode", "This option is no longer needed as tooltips are always generated on hover now");
 	}	
 	
 	initializeColumn(column){
@@ -28271,7 +28249,7 @@ class Tabulator extends ModuleBinder{
 	
 	//convert deprecated functionality to new functions
 	_mapDeprecatedFunctionality(){
-		//all previously deprecated functionality removed in the 5.0 release
+		//all previously deprecated functionality removed in the 6.0 release
 	}
 	
 	_clearSelection(){

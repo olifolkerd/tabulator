@@ -55,11 +55,11 @@ export default class SelectRow extends Module{
 	}
 
 	deprecatedOptionsCheck(){
-		this.deprecationCheck("selectable", "selectableRows", true);
-		this.deprecationCheck("selectableRollingSelection", "selectableRowsRollingSelection", true);
-		this.deprecationCheck("selectableRangeMode", "selectableRowsRangeMode", true);
-		this.deprecationCheck("selectablePersistence", "selectableRowsPersistence", true);
-		this.deprecationCheck("selectableCheck", "selectableRowsCheck", true);
+		// this.deprecationCheck("selectable", "selectableRows", true);
+		// this.deprecationCheck("selectableRollingSelection", "selectableRowsRollingSelection", true);
+		// this.deprecationCheck("selectableRangeMode", "selectableRowsRangeMode", true);
+		// this.deprecationCheck("selectablePersistence", "selectableRowsPersistence", true);
+		// this.deprecationCheck("selectableCheck", "selectableRowsCheck", true);
 	}
 	
 	rowRetrieve(type, prevValue){

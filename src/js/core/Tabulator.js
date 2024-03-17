@@ -130,7 +130,7 @@ class Tabulator extends ModuleBinder{
 	
 	//convert deprecated functionality to new functions
 	_mapDeprecatedFunctionality(){
-		//all previously deprecated functionality removed in the 5.0 release
+		//all previously deprecated functionality removed in the 6.0 release
 	}
 	
 	_clearSelection(){
