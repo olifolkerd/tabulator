@@ -4084,19 +4084,19 @@ class ColumnCalcs extends Module{
 	}
 	
 	rowsToData(rows){
-		var data = [];
-		
+		var data = [],
+		hasDataTreeColumnCalcs = this.table.options.dataTree && this.table.options.dataTreeChildColumnCalcs,
+		dataTree = this.table.modules.dataTree;
+
 		rows.forEach((row) => {
 			data.push(row.getData());
-			
-			if(this.table.options.dataTree && this.table.options.dataTreeChildColumnCalcs){
-				if(row.modules.dataTree && row.modules.dataTree.open){
-					var children = this.rowsToData(this.table.modules.dataTree.getFilteredTreeChildren(row));
-					data = data.concat(children);
-				}
+
+			if(hasDataTreeColumnCalcs && row.modules.dataTree?.open){
+				this.rowsToData(dataTree.getFilteredTreeChildren(row)).forEach(dataRow =>{
+					data.push(row);
+				});
 			}
 		});
-		
 		return data;
 	}
 	
@@ -4576,7 +4576,7 @@ class DataTree extends Module{
 				config = row.modules.dataTree;
 
 				if(!config.index && config.children !== false){
-					children = this.getChildren(row);
+					children = this.getChildren(row, false, true);
 
 					children.forEach((child) => {
 						child.create();
@@ -4589,7 +4589,7 @@ class DataTree extends Module{
 		return output;
 	}
 
-	getChildren(row, allChildren){
+	getChildren(row, allChildren, sortOnly){
 		var config = row.modules.dataTree,
 		children = [],
 		output = [];
@@ -4606,13 +4606,13 @@ class DataTree extends Module{
 			}
 
 			if(this.table.modExists("sort") && this.table.options.dataTreeSort){
-				this.table.modules.sort.sort(children);
+				this.table.modules.sort.sort(children, sortOnly);
 			}
 
 			children.forEach((child) => {
 				output.push(child);
 
-				var subChildren = this.getChildren(child);
+				var subChildren = this.getChildren(child, false, true);
 
 				subChildren.forEach((sub) => {
 					output.push(sub);
@@ -4849,7 +4849,9 @@ class DataTree extends Module{
 					output.push(component ? childRow.getComponent() : childRow);
 
 					if(recurse){
-						output = output.concat(this.getTreeChildren(childRow, component, recurse));
+						this.getTreeChildren(childRow, component, recurse).forEach(child => {
+							output.push(child);
+						});
 					}
 				}
 			});
@@ -19273,7 +19275,7 @@ class SelectRow extends Module{
 	}
 	
 	childRowSelection(row, select){
-		var children = this.table.modules.dataTree.getChildren(row, true);
+		var children = this.table.modules.dataTree.getChildren(row, true, true);
 		
 		if(select){
 			for(let child of children){
@@ -21421,7 +21423,7 @@ class Sort extends Module{
 	}
 	
 	//work through sort list sorting data
-	sort(data){
+	sort(data, sortOnly){
 		var self = this,
 		sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
 		sortListActual = [],
@@ -21431,7 +21433,9 @@ class Sort extends Module{
 			this.dispatchExternal("dataSorting", self.getSort());
 		}
 		
-		self.clearColumnHeaders();
+		if(!sortOnly) {
+			self.clearColumnHeaders();
+		}
 		
 		if(this.table.options.sortMode !== "remote"){
 			
@@ -21454,7 +21458,9 @@ class Sort extends Module{
 						sortListActual.push(item);
 					}
 					
-					self.setColumnHeader(item.column, item.dir);
+					if(!sortOnly) {
+						self.setColumnHeader(item.column, item.dir);
+					}
 				}
 			});
 			
@@ -21463,11 +21469,12 @@ class Sort extends Module{
 				self._sortItems(data, sortListActual);
 			}
 			
-		}else {
+		}else if(!sortOnly) {
 			sortList.forEach(function(item, i){
 				self.setColumnHeader(item.column, item.dir);
 			});
 		}
+
 		
 		if(this.subscribedExternal("dataSorted")){
 			data.forEach((row) => {
@@ -28280,12 +28287,13 @@ class Tabulator extends ModuleBinder{
 		
 		this._initializeTable();
 		
-		this._loadInitialData();
-		
-		this.initialized = true;
+		this._loadInitialData()
+			.finally(() => {
+				this.initialized = true;
 
-		this.eventBus.dispatch("table-initialized");
-		this.externalEvents.dispatch("tableBuilt");
+				this.eventBus.dispatch("table-initialized");
+				this.externalEvents.dispatch("tableBuilt");
+			});	
 	}
 	
 	_rtlCheck(){
@@ -28411,8 +28419,10 @@ class Tabulator extends ModuleBinder{
 	}
 	
 	_loadInitialData(){
-		this.dataLoader.load(this.options.data);
-		this.columnManager.verticalAlignHeaders();
+		return this.dataLoader.load(this.options.data)
+			.finally(() => {
+				this.columnManager.verticalAlignHeaders();
+			});		
 	}
 	
 	//deconstructor

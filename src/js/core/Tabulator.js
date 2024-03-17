@@ -161,12 +161,13 @@ class Tabulator extends ModuleBinder{
 		
 		this._initializeTable();
 		
-		this._loadInitialData();
-		
-		this.initialized = true;
+		this._loadInitialData()
+			.finally(() => {
+				this.initialized = true;
 
-		this.eventBus.dispatch("table-initialized");
-		this.externalEvents.dispatch("tableBuilt");
+				this.eventBus.dispatch("table-initialized");
+				this.externalEvents.dispatch("tableBuilt");
+			});	
 	}
 	
 	_rtlCheck(){
@@ -292,8 +293,10 @@ class Tabulator extends ModuleBinder{
 	}
 	
 	_loadInitialData(){
-		this.dataLoader.load(this.options.data);
-		this.columnManager.verticalAlignHeaders();
+		return this.dataLoader.load(this.options.data)
+			.finally(() => {
+				this.columnManager.verticalAlignHeaders();
+			});		
 	}
 	
 	//deconstructor
