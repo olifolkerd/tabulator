@@ -53,12 +53,12 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 //Tabulator Containing Element
 .tabulator{
 	background-color: $backgroundColor;
-
+	
 	.tabulator-header{
-
+		
 		.tabulator-col{
 			background-color: $headerBackgroundColor;
-
+			
 			.tabulator-col-content{
 				.tabulator-col-title{
 					.tabulator-title-editor{
@@ -66,7 +66,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 					}
 				}
 			}
-
+			
 			.tabulator-header-filter{
 				input, select{
 					border:1px solid #999;
@@ -75,38 +75,51 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 				}
 			}
 		}
-
+		
 		.tabulator-calcs-holder{
 			background:darken($headerBackgroundColor, 10%) !important;
-
+			
 			.tabulator-row{
 				background:darken($headerBackgroundColor, 10%) !important;
 			}
 		}
 	}
-
+	
 	//footer element
 	.tabulator-footer{
-
+		
 		.tabulator-calcs-holder{
 			background:darken($footerBackgroundColor, 5%) !important;
-
+			
 			.tabulator-row{
 				background:darken($footerBackgroundColor, 5%) !important;
 			}
 		}
-
+		
+		.tabulator-spreadsheet-tabs{
+			.tabulator-spreadsheet-tab{
+				border-color: $footerBorderColor;
+				
+				background:rgba(255,255,255,.2);
+				
+				&.tabulator-spreadsheet-tab-active{
+					background:rgba(0,0,0,.2);
+					color:#fff;
+				}
+			}
+		}
+		
 		//pagination container element
 		.tabulator-paginator{
 			label{
 				color:#fff;
 			}
 		}
-
+		
 		.tabulator-page-counter {
 			color: #fff;
 		}
-
+		
 		//pagination button
 		.tabulator-page{
 			color: $footerTextColor;
@@ -119,20 +132,20 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 
 //row element
 .tabulator-row{
-
+	
 	//row grouping element
 	&.tabulator-group{
 		min-width: 100%;
-
+		
 		color:#333;
-
+		
 		@media (hover:hover) and (pointer:fine){
 			&:hover{
 				cursor:pointer;
 				background-color:rgba(0,0,0,.1);
 			}
 		}
-
+		
 		span{
 			color:#666;
 		}
@@ -141,23 +154,23 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 
 .tabulator-edit-select-list{
 	background:$rowTextColor;
-
+	
 	.tabulator-edit-select-list-item{
 		color:$rowBackgroundColor;
-
+		
 		&.active{
 			color:$editBoxColor;
 			background:$rowAltBackgroundColor;
-
+			
 			&.focused{
 				outline:1px solid rgba($editBoxColor, .5);
 			}
 		}
-
+		
 		&.focused{
 			outline:1px solid $rowAltBackgroundColor;
 		}
-
+		
 		@media (hover:hover) and (pointer:fine){
 			&:hover{
 				color:$editBoxColor;

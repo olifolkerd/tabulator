@@ -1,4 +1,4 @@
-class ExportColumn{
+export default class ExportColumn{
 	constructor(value, component, width, height, depth){
 		this.value = value;
 		this.component = component || false;
@@ -7,5 +7,3 @@ class ExportColumn{
 		this.depth = depth;
 	}
 }
-
-export default ExportColumn;

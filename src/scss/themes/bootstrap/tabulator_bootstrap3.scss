@@ -90,6 +90,14 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			border-top:1px solid $rowBorderColor;
 		}
 
+		.tabulator-spreadsheet-tabs{
+			.tabulator-spreadsheet-tab{
+				&.tabulator-spreadsheet-tab-active{
+					color:$footerActiveColor;
+				}
+			}
+		}
+
 		.tabulator-paginator{
 			color:inherit;
 		}
@@ -201,6 +209,12 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	.tabulator-cell{
 		padding:$cellPadding;
 		border-right:none;
+
+		&.tabulator-row-header{
+			border-right:1px solid $borderColor;
+			border-bottom:none;
+			background:$headerBackgroundColor;
+		}
 
 		&:last-of-type{
 			border-right: none;

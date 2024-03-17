@@ -1,7 +1,9 @@
 import Module from '../../core/Module.js';
 import Cell from '../../core/cell/Cell.js';
 
-class Tooltip extends Module{
+export default class Tooltip extends Module{
+
+	static moduleName = "tooltip";
 	
 	constructor(table){
 		super(table);
@@ -12,7 +14,7 @@ class Tooltip extends Module{
 		this.timeout = null;
 		this.popupInstance = null;
 		
-		this.registerTableOption("tooltipGenerationMode", undefined);  //deprecated
+		// this.registerTableOption("tooltipGenerationMode", undefined);  //deprecated
 		this.registerTableOption("tooltipDelay", 300); 
 		
 		this.registerColumnOption("tooltip");
@@ -26,7 +28,7 @@ class Tooltip extends Module{
 	}
 	
 	deprecatedOptionsCheck(){
-		this.deprecationCheckMsg("tooltipGenerationMode", "This option is no longer needed as tooltips are always generated on hover now");
+		// this.deprecationCheckMsg("tooltipGenerationMode", "This option is no longer needed as tooltips are always generated on hover now");
 	}	
 	
 	initializeColumn(column){
@@ -124,7 +126,3 @@ class Tooltip extends Module{
 		}
 	}
 }
-
-Tooltip.moduleName = "tooltip";
-
-export default Tooltip;

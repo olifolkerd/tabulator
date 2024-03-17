@@ -1,5 +1,3 @@
-import Column from './Column.js';
-
 //public column object
 export default class ColumnComponent {
 	constructor (column){
@@ -92,7 +90,7 @@ export default class ColumnComponent {
 	}
 
 	getParentColumn(){
-		return this._column.parent instanceof Column ? this._column.parent.getComponent() : false;
+		return this._column.getParentComponent();
 	}
 
 	_getSelf(){

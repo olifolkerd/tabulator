@@ -17,6 +17,7 @@ export default {
 
 	columns:[],//store for colum header info
 	columnDefaults:{}, //store column default props
+	rowHeader:false,
 
 	data:false, //default starting data
 

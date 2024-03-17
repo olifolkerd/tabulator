@@ -1,7 +1,7 @@
 import CoreFeature from './CoreFeature.js';
 import Popup from './tools/Popup.js';
 
-class Module extends CoreFeature{
+export default class Module extends CoreFeature{
 	
 	constructor(table, name){
 		super(table);
@@ -138,5 +138,3 @@ class Module extends CoreFeature{
 	}
 	
 }
-
-export default Module;

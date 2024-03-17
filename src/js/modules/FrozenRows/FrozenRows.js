@@ -1,6 +1,8 @@
 import Module from '../../core/Module.js';
 
-class FrozenRows extends Module{
+export default class FrozenRows extends Module{
+
+	static moduleName = "frozenRows";
 
 	constructor(table){
 		super(table);
@@ -169,7 +171,3 @@ class FrozenRows extends Module{
 		});
 	}
 }
-
-FrozenRows.moduleName = "frozenRows";
-
-export default FrozenRows;

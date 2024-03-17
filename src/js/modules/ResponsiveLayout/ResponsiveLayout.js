@@ -1,6 +1,10 @@
 import Module from '../../core/Module.js';
+import extensions from './extensions/extensions.js';
 
-class ResponsiveLayout extends Module{
+export default class ResponsiveLayout extends Module{
+
+	static moduleName = "responsiveLayout";
+	static moduleExtensions = extensions;
 
 	constructor(table){
 		super(table);
@@ -57,6 +61,10 @@ class ResponsiveLayout extends Module{
 		this.collapseFormatter = this.table.options.responsiveLayoutCollapseFormatter || this.formatCollapsedData;
 		this.collapseStartOpen = this.table.options.responsiveLayoutCollapseStartOpen;
 		this.hiddenColumns = [];
+
+		if(this.collapseFormatter){
+			this.collapseFormatter = this.collapseFormatter.bind(this.table);
+		}
 
 		//determine level of responsivity for each column
 		this.table.columnManager.columnsByIndex.forEach((column, i) => {
@@ -249,6 +257,7 @@ class ResponsiveLayout extends Module{
 			if(contents){
 				el.appendChild(contents);
 			}
+			row.calcHeight(true);
 		}
 	}
 
@@ -314,7 +323,7 @@ class ResponsiveLayout extends Module{
 	formatCollapsedData(data){
 		var list = document.createElement("table");
 
-		data.forEach(function(item){
+		data.forEach((item) => {
 			var row = document.createElement("tr");
 			var titleData = document.createElement("td");
 			var valueData = document.createElement("td");
@@ -322,7 +331,8 @@ class ResponsiveLayout extends Module{
 
 			var titleHighlight = document.createElement("strong");
 			titleData.appendChild(titleHighlight);
-			this.langBind("columns|" + item.field, function(text){
+			
+			this.modules.localize.bind("columns|" + item.field, function(text){
 				titleHighlight.innerHTML = text || item.title;
 			});
 
@@ -337,12 +347,8 @@ class ResponsiveLayout extends Module{
 			row.appendChild(titleData);
 			row.appendChild(valueData);
 			list.appendChild(row);
-		}, this);
+		});
 
 		return Object.keys(data).length ? list : "";
 	}
 }
-
-ResponsiveLayout.moduleName = "responsiveLayout";
-
-export default ResponsiveLayout;

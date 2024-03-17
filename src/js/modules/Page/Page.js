@@ -2,7 +2,12 @@ import Module from '../../core/Module.js';
 
 import defaultPageCounters from './defaults/pageCounters.js';
 
-class Page extends Module{
+export default class Page extends Module{
+
+	static moduleName = "page";
+
+	//load defaults
+	static pageCounters = defaultPageCounters;
 	
 	constructor(table){
 		super(table);
@@ -872,10 +877,3 @@ class Page extends Module{
 		}
 	}
 }
-
-Page.moduleName = "page";
-
-//load defaults
-Page.pageCounters = defaultPageCounters;
-
-export default Page;

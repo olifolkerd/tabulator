@@ -43,6 +43,10 @@ export default class Cell extends CoreFeature{
 		this.element = document.createElement('div');
 		this.element.className = "tabulator-cell";
 		this.element.setAttribute("role", "gridcell");
+
+		if(this.column.isRowHeader){
+			this.element.classList.add("tabulator-row-header");
+		}
 	}
 
 	_configureCell(){

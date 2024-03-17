@@ -1,9 +1,12 @@
-import { nodeResolve } from "@rollup/plugin-node-resolve";
-import { terser } from "rollup-plugin-terser";
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
 
-const license = require("rollup-plugin-license");
-const globby = require("globby");
-const fs  = require("fs-extra");
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+import terser from "@rollup/plugin-terser";
+
+import license from 'rollup-plugin-license';
+import {globbySync} from 'globby';
+import fs from 'fs-extra';
 
 import postcss from "rollup-plugin-postcss";
 
@@ -19,7 +22,6 @@ export default class Bundler{
 	_suppressUnnecessaryWarnings(warn, defaultHandler){
 		const ignoredCodes = {
 			"FILE_NAME_CONFLICT": true,
-			"CIRCULAR_DEPENDENCY": this._suppressCircularDependencyWarnings,
 		};
 		
 		var suppressed = false, 
@@ -113,7 +115,7 @@ export default class Bundler{
 	}
 	
 	bundleCSS(minify){
-		this.bundles = this.bundles.concat(globby.sync("./src/scss/**/tabulator*.scss").map(inputFile => {
+		this.bundles = this.bundles.concat(globbySync("./src/scss/**/tabulator*.scss").map(inputFile => {
 			
 			var file = inputFile.split("/");
 			file = file.pop().replace(".scss", (minify ? ".min" : "") + ".css");

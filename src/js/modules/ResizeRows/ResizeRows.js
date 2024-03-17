@@ -1,6 +1,8 @@
 import Module from '../../core/Module.js';
 
-class ResizeRows extends Module{
+export default class ResizeRows extends Module{
+
+	static moduleName = "resizeRows";
 
 	constructor(table){
 		super(table);
@@ -12,6 +14,7 @@ class ResizeRows extends Module{
 		this.prevHandle = null;
 
 		this.registerTableOption("resizableRows", false); //resizable rows
+		this.registerTableOption("resizableRowGuide", false);
 	}
 
 	initialize(){
@@ -62,16 +65,50 @@ class ResizeRows extends Module{
 		rowEl.appendChild(prevHandle);
 	}
 
+	resize(e, row) {
+		row.setHeight(this.startHeight + ((typeof e.screenY === "undefined" ? e.touches[0].screenY : e.screenY) - this.startY));
+	}
+
+	calcGuidePosition(e, row, handle) {
+		var mouseY = typeof e.screenY === "undefined" ? e.touches[0].screenY : e.screenY,
+		handleY = handle.getBoundingClientRect().y - this.table.element.getBoundingClientRect().y,
+		tableY = this.table.element.getBoundingClientRect().y,
+		rowY = row.element.getBoundingClientRect().top - tableY,
+		mouseDiff = mouseY - this.startY;
+
+		return Math.max(handleY + mouseDiff, rowY);
+	}
+
 	_mouseDown(e, row, handle){
-		var self = this;
+		var self = this,
+		guideEl;
+
+		self.dispatchExternal("rowResizing", row.getComponent());
+
+		if(self.table.options.resizableRowGuide){
+			guideEl = document.createElement("span");
+			guideEl.classList.add('tabulator-row-resize-guide');
+			self.table.element.appendChild(guideEl);
+			setTimeout(() => {
+				guideEl.style.top = self.calcGuidePosition(e, row, handle) + "px";
+			});
+		}
 
 		self.table.element.classList.add("tabulator-block-select");
 
 		function mouseMove(e){
-			row.setHeight(self.startHeight + ((typeof e.screenY === "undefined" ? e.touches[0].screenY : e.screenY) - self.startY));
+			if(self.table.options.resizableRowGuide){
+				guideEl.style.top = self.calcGuidePosition(e, row, handle) + "px";
+			}else{
+				self.resize(e, row);
+			}
 		}
 
 		function mouseUp(e){
+			if(self.table.options.resizableRowGuide){
+				self.resize(e, row);
+				guideEl.remove();
+			}
 
 			// //block editor from taking action while resizing is taking place
 			// if(self.startColumn.modules.edit){
@@ -106,7 +143,3 @@ class ResizeRows extends Module{
 		handle.addEventListener("touchend", mouseUp);
 	}
 }
-
-ResizeRows.moduleName = "resizeRows";
-
-export default ResizeRows;

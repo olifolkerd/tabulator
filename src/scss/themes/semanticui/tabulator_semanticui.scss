@@ -115,6 +115,16 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				border-bottom:none;
 			}
 		}
+
+		.tabulator-spreadsheet-tabs{
+			margin-top: calc( -0.78571em - 5px);
+			
+			.tabulator-spreadsheet-tab{
+				&.tabulator-spreadsheet-tab-active{
+					color:$footerActiveColor;
+				}
+			}
+		}
 	}
 
 	.tabulator-tableholder{
@@ -525,6 +535,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 		&:last-of-type{
 			border-right: none;
+		}
+
+		&.tabulator-row-header{
+			border-bottom:none;
 		}
 
 		.tabulator-responsive-collapse-toggle{

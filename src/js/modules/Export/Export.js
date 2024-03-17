@@ -3,7 +3,15 @@ import Module from '../../core/Module.js';
 import ExportRow from './ExportRow.js';
 import ExportColumn from './ExportColumn.js';
 
-class Export extends Module{
+import columnLookups from './defaults/columnLookups.js';
+import rowLookups from './defaults/rowLookups.js';
+
+export default class Export extends Module{
+
+	static moduleName = "export";
+
+	static columnLookups = columnLookups;
+	static rowLookups = rowLookups;
 	
 	constructor(table){
 		super(table);
@@ -11,6 +19,7 @@ class Export extends Module{
 		this.config = {};
 		this.cloneTableStyle = true;
 		this.colVisProp = "";
+		this.colVisPropAttach = "";
 		
 		this.registerTableOption("htmlOutputConfig", false); //html output config
 		
@@ -23,31 +32,31 @@ class Export extends Module{
 	}
 	
 	///////////////////////////////////
-	///////// Table Functions /////////
-	///////////////////////////////////
-	
-	
-	///////////////////////////////////
 	///////// Internal Logic //////////
 	///////////////////////////////////
 	
 	generateExportList(config, style, range, colVisProp){
+		var headers, body, columns, colLookup;
+
 		this.cloneTableStyle = style;
 		this.config = config || {};
 		this.colVisProp = colVisProp;
+		this.colVisPropAttach = this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1);
 
-		var headers, body;
-		
-		if (range === 'range') {
-			var columns = this.table.modules.selectRange.selectedColumns();
-			headers = this.config.columnHeaders !== false
-				? this.headersToExportRows(this.generateColumnGroupHeaders(columns))
-				: [];
-			body = this.bodyToExportRows(this.rowLookup(range), this.table.modules.selectRange.selectedColumns(true));
-		} else {
-			headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders()) : [];
-			body = this.bodyToExportRows(this.rowLookup(range));
+		colLookup = Export.columnLookups[range];
+
+		if(colLookup){
+			columns = colLookup.call(this.table);
+			columns = columns.filter(col => this.columnVisCheck(col));
 		}
+
+		headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders(columns)) : [];
+
+		if(columns){
+			columns = columns.map(col => col.getComponent());
+		}
+		
+		body = this.bodyToExportRows(this.rowLookup(range), columns);
 
 		return headers.concat(body);
 	}
@@ -59,7 +68,8 @@ class Export extends Module{
 	}
 	
 	rowLookup(range){
-		var rows = [];
+		var rows = [], 
+		rowLookup;
 		
 		if(typeof range == "function"){
 			range.call(this.table).forEach((row) =>{
@@ -70,32 +80,9 @@ class Export extends Module{
 				}
 			});
 		}else{
-			switch(range){
-				case true:
-				case "visible":
-					rows = this.table.rowManager.getVisibleRows(false, true);
-					break;
-				
-				case "all":
-					rows = this.table.rowManager.rows;
-					break;
-				
-				case "selected":
-					rows = this.table.modules.selectRow.selectedRows;
-					break;
+			rowLookup = Export.rowLookups[range] || Export.rowLookups["active"];
 
-				case "range":
-					rows = this.table.modules.selectRange.selectedRows();
-					break;
-
-				case "active":
-				default:
-					if(this.table.options.pagination){
-						rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
-					}else{
-						rows = this.table.rowManager.getDisplayRows();
-					}
-			}
+			rows = rowLookup.call(this.table);
 		}
 		
 		return Object.assign([], rows);
@@ -116,13 +103,15 @@ class Export extends Module{
 			}
 		});
 
+
+
 		return output;
 	}
 	
 	processColumnGroup(column){
 		var subGroups = column.columns,
 		maxDepth = 0,
-		title = column.definition["title" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))] || column.definition.title;
+		title = column.definition["title" + (this.colVisPropAttach)] || column.definition.title;
 		
 		var groupData = {
 			title:title,
@@ -165,12 +154,20 @@ class Export extends Module{
 	
 	columnVisCheck(column){
 		var visProp = column.definition[this.colVisProp];
+
+		if(this.config.rowHeaders === false && column.isRowHeader){
+			return false;
+		}
 		
 		if(typeof visProp === "function"){
 			visProp = visProp.call(this.table, column.getComponent());
 		}
-		
-		return visProp !== false && (column.visible || (!column.visible && visProp));
+
+		if(visProp === false || visProp === true){
+			return visProp;
+		}
+
+		return column.visible && column.field;
 	}
 	
 	headersToExportRows(columns){
@@ -313,7 +310,7 @@ class Export extends Module{
 		headerEl = document.createElement("thead"),
 		bodyEl = document.createElement("tbody"),
 		styles = this.lookupTableStyles(),
-		rowFormatter = this.table.options["rowFormatter" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))],
+		rowFormatter = this.table.options["rowFormatter" + (this.colVisPropAttach)],
 		setup = {};
 		
 		setup.rowFormatter = rowFormatter !== null ? rowFormatter : this.table.options.rowFormatter;
@@ -323,7 +320,7 @@ class Export extends Module{
 		}
 		
 		//assign group header formatter
-		setup.groupHeader = this.table.options["groupHeader" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))];
+		setup.groupHeader = this.table.options["groupHeader" + (this.colVisPropAttach)];
 		
 		if(setup.groupHeader && !Array.isArray(setup.groupHeader)){
 			setup.groupHeader = [setup.groupHeader];
@@ -332,8 +329,7 @@ class Export extends Module{
 		table.classList.add("tabulator-print-table");
 		
 		this.mapElementStyles(this.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
-		
-		
+
 		if(list.length > 1000){
 			console.warn("It may take a long time to render an HTML table with more than 1000 rows");
 		}
@@ -387,6 +383,7 @@ class Export extends Module{
 			
 			if(styles.firstRow){
 				styles.styleCells = styles.firstRow.getElementsByClassName("tabulator-cell");
+				styles.styleRowHeader = styles.firstRow.getElementsByClassName("tabulator-row-header")[0];
 				styles.firstCell = styles.styleCells[0];
 				styles.lastCell = styles.styleCells[styles.styleCells.length - 1];
 			}
@@ -416,9 +413,9 @@ class Export extends Module{
 					cellEl.classList.add(className);
 				});
 				
-				this.mapElementStyles(column.component.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+				this.mapElementStyles(column.component.getElement(), cellEl, ["text-align", "border-left", "border-right", "background-color", "color", "font-weight", "font-family", "font-size"]);
 				this.mapElementStyles(column.component._column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
-				
+		
 				if(column.component._column.visible){
 					this.mapElementStyles(column.component.getElement(), cellEl, ["width"]);
 				}else{
@@ -427,8 +424,16 @@ class Export extends Module{
 					}
 				}
 				
-				if(column.component._column.parent){
+				if(column.component._column.parent && column.component._column.parent.isGroup){
 					this.mapElementStyles(column.component._column.parent.groupElement, cellEl, ["border-top"]);
+				}else{
+					this.mapElementStyles(column.component.getElement(), cellEl, ["border-top"]);
+				}
+				
+				if(column.component._column.isGroup){
+					this.mapElementStyles(column.component.getElement(), cellEl, ["border-bottom"]);
+				}else{
+					this.mapElementStyles(this.table.columnManager.getElement(), cellEl, ["border-bottom"]);
 				}
 				
 				rowEl.appendChild(cellEl);
@@ -493,7 +498,7 @@ class Export extends Module{
 				table =  this.table,
 				index = table.columnManager.findColumnIndex(column),
 				value = col.value,
-				cellStyle;
+				cellStyle, styleProps;
 				
 				var cellWrapper = {
 					modules:{},
@@ -552,11 +557,18 @@ class Export extends Module{
 				}else{
 					cellEl.innerHTML = value;
 				}
-				
-				cellStyle = styles.styleCells && styles.styleCells[index] ? styles.styleCells[index] : styles.firstCell;
+
+				styleProps = ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"];
+
+				if(column.isRowHeader){
+					cellStyle = styles.styleRowHeader;
+					styleProps.push("background-color");
+				}else{
+					cellStyle = styles.styleCells && styles.styleCells[index] ? styles.styleCells[index] : styles.firstCell;
+				}
 				
 				if(cellStyle){
-					this.mapElementStyles(cellStyle, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
+					this.mapElementStyles(cellStyle, cellEl, styleProps);
 					
 					if(column.definition.align){
 						cellEl.style.textAlign = column.definition.align;
@@ -630,7 +642,7 @@ class Export extends Module{
 			
 			if(window.getComputedStyle){
 				var fromStyle = window.getComputedStyle(from);
-				
+
 				props.forEach(function(prop){
 					if(!to.style[lookup[prop]]){
 						to.style[lookup[prop]] = fromStyle.getPropertyValue(prop);
@@ -640,7 +652,3 @@ class Export extends Module{
 		}
 	}
 }
-
-Export.moduleName = "export";
-
-export default Export;

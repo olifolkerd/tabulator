@@ -1,6 +1,10 @@
 import Module from '../../core/Module.js';
+import extensions from './extensions/extensions.js';
 
-class SelectRow extends Module{
+export default class SelectRow extends Module{
+
+	static moduleName = "selectRow";
+	static moduleExtensions = extensions;
 	
 	constructor(table){
 		super(table);
@@ -51,11 +55,11 @@ class SelectRow extends Module{
 	}
 
 	deprecatedOptionsCheck(){
-		this.deprecationCheck("selectable", "selectableRows", true);
-		this.deprecationCheck("selectableRollingSelection", "selectableRowsRollingSelection", true);
-		this.deprecationCheck("selectableRangeMode", "selectableRowsRangeMode", true);
-		this.deprecationCheck("selectablePersistence", "selectableRowsPersistence", true);
-		this.deprecationCheck("selectableCheck", "selectableRowsCheck", true);
+		// this.deprecationCheck("selectable", "selectableRows", true);
+		// this.deprecationCheck("selectableRollingSelection", "selectableRowsRollingSelection", true);
+		// this.deprecationCheck("selectableRangeMode", "selectableRowsRangeMode", true);
+		// this.deprecationCheck("selectablePersistence", "selectableRowsPersistence", true);
+		// this.deprecationCheck("selectableCheck", "selectableRowsCheck", true);
 	}
 	
 	rowRetrieve(type, prevValue){
@@ -476,7 +480,7 @@ class SelectRow extends Module{
 	}
 	
 	childRowSelection(row, select){
-		var children = this.table.modules.dataTree.getChildren(row, true);
+		var children = this.table.modules.dataTree.getChildren(row, true, true);
 		
 		if(select){
 			for(let child of children){
@@ -489,7 +493,3 @@ class SelectRow extends Module{
 		}
 	}
 }
-
-SelectRow.moduleName = "selectRow";
-
-export default SelectRow;

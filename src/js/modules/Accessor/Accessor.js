@@ -3,7 +3,12 @@ import Helpers from '../../core/tools/Helpers.js';
 
 import defaultAccessors from './defaults/accessors.js';
 
-class Accessor extends Module{
+export default class Accessor extends Module{
+	
+	static moduleName = "accessor";
+
+	//load defaults
+	static accessors = defaultAccessors;
 
 	constructor(table){
 		super(table);
@@ -108,9 +113,3 @@ class Accessor extends Module{
 		return data;
 	}
 }
-
-//load defaults
-Accessor.moduleName = "accessor";
-Accessor.accessors = defaultAccessors;
-
-export default Accessor;

@@ -2,7 +2,12 @@ import Module from '../../core/Module.js';
 
 import defaultFormatters from './defaults/formatters.js';
 
-class Format extends Module{
+export default class Format extends Module{
+
+	static moduleName = "format";
+
+	//load defaults
+	static formatters = defaultFormatters;
 	
 	constructor(table){
 		super(table);
@@ -207,10 +212,3 @@ class Format extends Module{
 		return formatter;
 	}
 }
-
-Format.moduleName = "format";
-
-//load defaults
-Format.formatters = defaultFormatters;
-
-export default Format;

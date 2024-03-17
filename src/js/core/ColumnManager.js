@@ -17,6 +17,7 @@ export default class ColumnManager extends CoreFeature {
 		this.blockHozScrollEvent = false;
 		this.headersElement = null;
 		this.contentsElement = null;
+		this.rowHeader = null;
 		this.element = null ; //containing element
 		this.columns = []; // column definition object
 		this.columnsByIndex = []; //columns by index
@@ -247,6 +248,13 @@ export default class ColumnManager extends CoreFeature {
 		this.columnsByField = {};
 		
 		this.dispatch("columns-loading");
+
+		if(this.table.options.rowHeader){
+			this.rowHeader = new Column(this.table.options.rowHeader === true ? {} : this.table.options.rowHeader, this, true);
+			this.columns.push(this.rowHeader);
+			this.headersElement.appendChild(this.rowHeader.getElement());
+			this.rowHeader.columnRendered();
+		}
 		
 		cols.forEach((def, i) => {
 			this._addColumn(def);
@@ -265,6 +273,13 @@ export default class ColumnManager extends CoreFeature {
 		var column = new Column(definition, this),
 		colEl = column.getElement(),
 		index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
+
+		//prevent adding of rows in front of row header
+		if(before && this.rowHeader && (!nextToColumn || nextToColumn === this.rowHeader)){
+			before = false;
+			nextToColumn = this.rowHeader;
+			index = 0;
+		}
 		
 		if(nextToColumn && index > -1){
 			var topColumn = nextToColumn.getTopColumn();

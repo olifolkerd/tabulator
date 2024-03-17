@@ -4,7 +4,9 @@ import Row from '../../core/row/Row.js';
 
 import RowComponent from '../../core/row/RowComponent.js';
 
-class DataTree extends Module{
+export default class DataTree extends Module{
+
+	static moduleName = "dataTree";
 
 	constructor(table){
 		super(table);
@@ -311,7 +313,7 @@ class DataTree extends Module{
 				config = row.modules.dataTree;
 
 				if(!config.index && config.children !== false){
-					children = this.getChildren(row);
+					children = this.getChildren(row, false, true);
 
 					children.forEach((child) => {
 						child.create();
@@ -324,7 +326,7 @@ class DataTree extends Module{
 		return output;
 	}
 
-	getChildren(row, allChildren){
+	getChildren(row, allChildren, sortOnly){
 		var config = row.modules.dataTree,
 		children = [],
 		output = [];
@@ -341,13 +343,13 @@ class DataTree extends Module{
 			}
 
 			if(this.table.modExists("sort") && this.table.options.dataTreeSort){
-				this.table.modules.sort.sort(children);
+				this.table.modules.sort.sort(children, sortOnly);
 			}
 
 			children.forEach((child) => {
 				output.push(child);
 
-				var subChildren = this.getChildren(child);
+				var subChildren = this.getChildren(child, false, true);
 
 				subChildren.forEach((sub) => {
 					output.push(sub);
@@ -584,7 +586,9 @@ class DataTree extends Module{
 					output.push(component ? childRow.getComponent() : childRow);
 
 					if(recurse){
-						output = output.concat(this.getTreeChildren(childRow, component, recurse));
+						this.getTreeChildren(childRow, component, recurse).forEach(child => {
+							output.push(child);
+						});
 					}
 				}
 			});
@@ -601,7 +605,3 @@ class DataTree extends Module{
 		return (this.field ? typeof data[this.field] !== "undefined" : false) || (this.elementField ? typeof data[this.elementField] !== "undefined" : false);
 	}
 }
-
-DataTree.moduleName = "dataTree";
-
-export default DataTree;

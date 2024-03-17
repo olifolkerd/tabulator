@@ -4,7 +4,12 @@ import Helpers from '../../core/tools/Helpers.js';
 
 import defaultLangs from './defaults/langs.js';
 
-class Localize extends Module{
+export default class Localize extends Module{
+
+	static moduleName = "localize";
+
+	//load defaults
+	static langs = defaultLangs;
 
 	constructor(table){
 		super(table);
@@ -177,10 +182,3 @@ class Localize extends Module{
 		}
 	}
 }
-
-Localize.moduleName = "localize";
-
-//load defaults
-Localize.langs = defaultLangs;
-
-export default Localize;

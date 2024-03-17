@@ -43,8 +43,6 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			console.error("Editor Error - 'date' editor 'format' param is dependant on luxon.js");
 		}
 	}
-
-	console.log("val", cellValue);
 	
 	input.value = cellValue;
 	

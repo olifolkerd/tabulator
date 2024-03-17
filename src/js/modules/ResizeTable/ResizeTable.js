@@ -1,6 +1,8 @@
 import Module from '../../core/Module.js';
 
-class ResizeTable extends Module{
+export default class ResizeTable extends Module{
+
+	static moduleName = "resizeTable";
 	
 	constructor(table){
 		super(table);
@@ -154,7 +156,3 @@ class ResizeTable extends Module{
 		}
 	}
 }
-
-ResizeTable.moduleName = "resizeTable";
-
-export default ResizeTable;

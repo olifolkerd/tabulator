@@ -72,6 +72,17 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 			border-bottom:1px solid $footerBackgroundColor;
 		}
+
+		.tabulator-spreadsheet-tabs{
+			.tabulator-spreadsheet-tab{
+				font-weight: normal;
+				
+				&.tabulator-spreadsheet-tab-active{
+					color:$footerActiveColor;
+					font-weight: bold;
+				}
+			}
+		}
 	}
 }
 
@@ -81,6 +92,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	.tabulator-cell{
 		&:last-of-type{
 			border-right: none;
+		}
+
+		&.tabulator-row-header{
+			border-bottom:none;
 		}
 	}
 

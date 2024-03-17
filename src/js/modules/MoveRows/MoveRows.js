@@ -1,7 +1,16 @@
 import Module from '../../core/Module.js';
 import Helpers from '../../core/tools/Helpers.js';
 
-class MoveRows extends Module{
+import defaultSenders from './defaults/senders.js';
+import defaultReceivers from './defaults/receivers.js';
+
+export default class MoveRows extends Module{
+
+	static moduleName = "moveRow";
+
+	//load defaults
+	static senders = defaultSenders;
+	static receivers = defaultReceivers;
 
 	constructor(table){
 		super(table);
@@ -522,7 +531,7 @@ class MoveRows extends Module{
 
 			switch(typeof this.table.options.movableRowsSender){
 				case "string":
-					sender = this.senders[this.table.options.movableRowsSender];
+					sender = MoveRows.senders[this.table.options.movableRowsSender];
 					break;
 
 				case "function":
@@ -554,7 +563,7 @@ class MoveRows extends Module{
 
 		switch(typeof this.table.options.movableRowsReceiver){
 			case "string":
-				receiver = this.receivers[this.table.options.movableRowsReceiver];
+				receiver = MoveRows.receivers[this.table.options.movableRowsReceiver];
 				break;
 
 			case "function":
@@ -593,44 +602,3 @@ class MoveRows extends Module{
 		}
 	}
 }
-
-MoveRows.prototype.receivers = {
-	insert:function(fromRow, toRow, fromTable){
-		this.table.addRow(fromRow.getData(), undefined, toRow);
-		return true;
-	},
-
-	add:function(fromRow, toRow, fromTable){
-		this.table.addRow(fromRow.getData());
-		return true;
-	},
-
-	update:function(fromRow, toRow, fromTable){
-		if(toRow){
-			toRow.update(fromRow.getData());
-			return true;
-		}
-
-		return false;
-	},
-
-	replace:function(fromRow, toRow, fromTable){
-		if(toRow){
-			this.table.addRow(fromRow.getData(), undefined, toRow);
-			toRow.delete();
-			return true;
-		}
-
-		return false;
-	},
-};
-
-MoveRows.prototype.senders = {
-	delete:function(fromRow, toRow, toTable){
-		fromRow.delete();
-	}
-};
-
-MoveRows.moduleName = "moveRow";
-
-export default MoveRows;

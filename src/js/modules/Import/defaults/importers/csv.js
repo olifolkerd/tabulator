@@ -1,4 +1,4 @@
-function csvImporter(input){
+export default function(input){
 	var data = [],
 	row = 0, 
 	col = 0,
@@ -59,5 +59,3 @@ function csvImporter(input){
 
 	return data;
 }
-
-export default csvImporter;

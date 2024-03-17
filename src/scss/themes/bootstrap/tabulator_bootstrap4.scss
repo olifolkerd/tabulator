@@ -115,6 +115,18 @@ $table-cell-padding-sm: 5px;
 	.tabulator-footer{
 		color:inherit;
 
+		.tabulator-spreadsheet-tabs{
+			.tabulator-spreadsheet-tab{
+				background-color: $spreadsheetActiveTabColor;
+				font-weight: normal;
+
+				&.tabulator-spreadsheet-tab-active{
+					background-color:$pagination-active-bg;
+					color:$footerActiveColor;
+				}
+			}
+		}
+
 		.tabulator-paginator{
 			color:inherit;
 		}
@@ -457,6 +469,12 @@ $table-cell-padding-sm: 5px;
 
 		&:last-of-type{
 			border-right: none;
+		}
+
+		&.tabulator-row-header{
+			border-right:1px solid $borderColor;
+			border-bottom:none;
+			background:$headerBackgroundColor;
 		}
 
 		.tabulator-data-tree-control{

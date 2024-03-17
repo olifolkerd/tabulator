@@ -1,5 +1,3 @@
-function arrayImporter(input){
+export default function (input){
 	return input;
 }
-
-export default arrayImporter;

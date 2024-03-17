@@ -149,6 +149,20 @@ $rangeHeaderTextHighlightBackground: #fff !default; //header text color when hig
 				border-bottom:none !important;
 			}
 		}
+
+		.tabulator-spreadsheet-tabs{
+			.tabulator-spreadsheet-tab{
+				border-color:$footerBorderColor;
+				
+				color:$rowTextColor;
+				font-weight: normal;
+				
+				&.tabulator-spreadsheet-tab-active{
+					font-weight: bold;
+					color:$footerTextColor;
+				}
+			}
+		}
 	}
 }
 
@@ -159,6 +173,11 @@ $rangeHeaderTextHighlightBackground: #fff !default; //header text color when hig
 	.tabulator-cell{
 		&:first-child{
 			border-left: $handleWidth solid $handleColor;
+		}
+
+		&.tabulator-row-header{
+			background-color: $handleColor;
+			color:#fff;
 		}
 	}
 
@@ -171,6 +190,10 @@ $rangeHeaderTextHighlightBackground: #fff !default; //header text color when hig
 
 			&:first-child{
 				border-left: $handleWidth solid $handleColorAlt;
+			}
+
+			&.tabulator-row-header{
+				background-color: $handleColorAlt;
 			}
 		}
 	}

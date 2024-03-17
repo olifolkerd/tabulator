@@ -1,6 +1,8 @@
 import Module from '../../core/Module.js';
 
-class FrozenColumns extends Module{
+export default class FrozenColumns extends Module{
+
+	static moduleName = "frozenColumns";
 	
 	constructor(table){
 		super(table);
@@ -281,6 +283,10 @@ class FrozenColumns extends Module{
 			this.table.columnManager.getContentsElement().style.width = "calc(100% - " + width + "px)";
 		}
 	}
+
+	getFrozenColumns(){
+		return this.leftColumns.concat(this.rightColumns);
+	}
 	
 	_calcSpace(columns, index){
 		var width = 0;
@@ -294,7 +300,3 @@ class FrozenColumns extends Module{
 		return width;
 	}
 }
-
-FrozenColumns.moduleName = "frozenColumns";
-
-export default FrozenColumns;

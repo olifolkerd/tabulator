@@ -3,7 +3,12 @@ import Helpers from '../../core/tools/Helpers.js';
 
 import defaultEditors from './defaults/editors.js';
 
-class Edit extends Module{
+export default class Edit extends Module{
+
+	static moduleName = "edit";
+
+	//load defaults
+	static editors = defaultEditors;
 	
 	constructor(table){
 		super(table);
@@ -13,18 +18,23 @@ class Edit extends Module{
 		this.recursionBlock = false; //prevent focus recursion
 		this.invalidEdit = false;
 		this.editedCells = [];
+		this.convertEmptyValues = false;
 		
 		this.editors = Edit.editors;
-		
+	
+		this.registerTableOption("editTriggerEvent", "focus");
+		this.registerTableOption("editorEmptyValue");
+		this.registerTableOption("editorEmptyValueFunc", this.emptyValueCheck.bind(this));
+
 		this.registerColumnOption("editable");
 		this.registerColumnOption("editor");
 		this.registerColumnOption("editorParams");
+		this.registerColumnOption("editorEmptyValue");
+		this.registerColumnOption("editorEmptyValueFunc");
 		
 		this.registerColumnOption("cellEditing");
 		this.registerColumnOption("cellEdited");
 		this.registerColumnOption("cellEditCancelled");
-		
-		this.registerTableOption("editTriggerEvent", "focus");
 		
 		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
 		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
@@ -62,11 +72,14 @@ class Edit extends Module{
 		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
 		
-		
 		// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
 		// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
 		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
 		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
+
+		if(Object.keys(this.table.options).includes("editorEmptyValue")){
+			this.convertEmptyValues = true;
+		}
 	}
 	
 	
@@ -378,11 +391,16 @@ class Edit extends Module{
 	
 	//initialize column editor
 	initializeColumn(column){
+		var convertEmpty = Object.keys(column.definition).includes("editorEmptyValue");
+
 		var config = {
 			editor:false,
 			blocked:false,
 			check:column.definition.editable,
-			params:column.definition.editorParams || {}
+			params:column.definition.editorParams || {},
+			convertEmptyValues:convertEmpty,
+			editorEmptyValue:column.definition.editorEmptyValue,
+			editorEmptyValueFunc:column.definition.editorEmptyValueFunc,
 		};
 		
 		//set column editor
@@ -628,6 +646,8 @@ class Edit extends Module{
 					if(self.editedCells.indexOf(cell) == -1){
 						self.editedCells.push(cell);
 					}
+
+					value = self.transformEmptyValues(value, cell);
 					
 					cell.setValue(value, true);
 
@@ -740,6 +760,26 @@ class Edit extends Module{
 			return false;
 		}
 	}
+
+	emptyValueCheck(value){
+		return value === "" || value === null || typeof value === "undefined";
+	}
+
+	transformEmptyValues(value, cell){
+		var mod = cell.column.modules.edit, 
+		convert = mod.convertEmptyValues || this.convertEmptyValues,
+		checkFunc;
+		
+		if(convert){
+			checkFunc = mod.editorEmptyValueFunc || this.options("editorEmptyValueFunc");
+
+			if(checkFunc && checkFunc(value)){
+				value = mod.convertEmptyValues ? mod.editorEmptyValue : this.options("editorEmptyValue");
+			}
+		}
+		
+		return value;
+	}
 	
 	blur(element){
 		if(!this.confirm("edit-blur", [element]) ){
@@ -773,11 +813,3 @@ class Edit extends Module{
 		}
 	}
 }
-
-Edit.moduleName = "edit";
-
-//load defaults
-Edit.editors = defaultEditors;
-
-
-export default Edit;

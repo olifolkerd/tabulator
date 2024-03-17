@@ -2,7 +2,7 @@ import Helpers from '../../core/tools/Helpers.js';
 import GroupComponent from './GroupComponent.js';
 
 //Group functions
-class Group{
+export default class Group{
 	
 	constructor(groupManager, parent, level, key, field, generator, oldGroup){
 		this.groupManager = groupManager;
@@ -611,5 +611,3 @@ class Group{
 		return this.component;
 	}
 }
-
-export default Group;

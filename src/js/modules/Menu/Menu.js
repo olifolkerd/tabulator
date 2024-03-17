@@ -1,6 +1,8 @@
 import Module from '../../core/Module.js';
 
-class Menu extends Module{
+export default class Menu extends Module{
+
+	static moduleName = "menu";
 	
 	constructor(table){
 		super(table);
@@ -13,7 +15,7 @@ class Menu extends Module{
 		
 		this.columnSubscribers = {};
 		
-		this.registerTableOption("menuContainer", undefined); //deprecated
+		// this.registerTableOption("menuContainer", undefined); //deprecated
 		
 		this.registerTableOption("rowContextMenu", false);
 		this.registerTableOption("rowClickMenu", false);
@@ -42,9 +44,9 @@ class Menu extends Module{
 	}
 	
 	deprecatedOptionsCheck(){
-		if(!this.deprecationCheck("menuContainer", "popupContainer")){
-			this.table.options.popupContainer = this.table.options.menuContainer;
-		}
+		// if(!this.deprecationCheck("menuContainer", "popupContainer")){
+		// 	this.table.options.popupContainer = this.table.options.menuContainer;
+		// }
 	}	
 	
 	initializeRowWatchers(){
@@ -298,7 +300,3 @@ class Menu extends Module{
 		}
 	}
 }
-
-Menu.moduleName = "menu";
-
-export default Menu;

@@ -2,7 +2,12 @@ import Module from '../../core/Module.js';
 
 import defaultDownloaders from './defaults/downloaders.js';
 
-class Download extends Module{
+export default class Download extends Module{
+
+	static moduleName = "download";
+
+	//load defaults
+	static downloaders = defaultDownloaders;
 
 	constructor(table){
 		super(table);
@@ -10,7 +15,7 @@ class Download extends Module{
 		this.registerTableOption("downloadEncoder", function(data, mimeType){
 			return new Blob([data],{type:mimeType});
 		}); //function to manipulate download data
-		this.registerTableOption("downloadReady", undefined); //warn of function deprecation
+		// this.registerTableOption("downloadReady", undefined); //warn of function deprecation
 		this.registerTableOption("downloadConfig", {}); //download config
 		this.registerTableOption("downloadRowRange", "active"); //restrict download to active rows only
 
@@ -26,7 +31,7 @@ class Download extends Module{
 	}
 
 	deprecatedOptionsCheck(){
-		this.deprecationCheck("downloadReady", "downloadEncoder");
+		// this.deprecationCheck("downloadReady", "downloadEncoder");
 	}	
 
 	///////////////////////////////////
@@ -140,10 +145,3 @@ class Download extends Module{
 		}
 	}
 }
-
-Download.moduleName = "download";
-
-//load defaults
-Download.downloaders = defaultDownloaders;
-
-export default Download;

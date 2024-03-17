@@ -2,7 +2,9 @@ import Module from '../../core/Module.js';
 
 import Group from './Group.js';
 
-class GroupRows extends Module{
+export default class GroupRows extends Module{
+
+	static moduleName = "groupRows";
 	
 	constructor(table){
 		super(table);
@@ -634,7 +636,3 @@ class GroupRows extends Module{
 	}
 	
 }
-
-GroupRows.moduleName = "groupRows";
-
-export default GroupRows;

@@ -1,6 +1,8 @@
 import Module from '../../core/Module.js';
 
-class ReactiveData extends Module{
+export default class ReactiveData extends Module{
+
+	static moduleName = "reactiveData";
 	
 	constructor(table){
 		super(table);
@@ -399,10 +401,3 @@ class ReactiveData extends Module{
 		}
 	}
 }
-
-ReactiveData.moduleName = "reactiveData";
-
-export default ReactiveData;
-
-
-

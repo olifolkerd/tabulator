@@ -102,6 +102,18 @@ $rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when select
 		background-color:transparent;
 		color:inherit;
 
+		.tabulator-spreadsheet-tabs{
+			.tabulator-spreadsheet-tab{
+				padding:8px 12px;
+
+				font-weight: normal;
+
+				&.tabulator-spreadsheet-tab-active{
+					color:$footerActiveColor;
+				}
+			}
+		}
+
 		.tabulator-paginator{
 			color:inherit;
 		}
@@ -174,6 +186,12 @@ $rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when select
 
 		&:last-of-type{
 			border-right: none;
+		}
+
+		&.tabulator-row-header{
+			border-right:1px solid $borderColor;
+			border-bottom:none;
+			background:$headerBackgroundColor;
 		}
 
 		.tabulator-data-tree-control{

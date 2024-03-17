@@ -1,4 +1,4 @@
-class ExportRow{
+export default class ExportRow{
 	constructor(type, columns, component, indent){
 		this.type = type;
 		this.columns = columns;
@@ -6,5 +6,3 @@ class ExportRow{
 		this.indent = indent || 0;
 	}
 }
-
-export default ExportRow;

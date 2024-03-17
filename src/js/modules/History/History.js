@@ -4,8 +4,16 @@ import Cell from '../../core/cell/Cell.js';
 
 import defaultUndoers from './defaults/undoers.js';
 import defaultRedoers from './defaults/redoers.js';
+import extensions from './extensions/extensions.js';
 
-class History extends Module{
+export default class History extends Module{
+
+	static moduleName = "history";
+	static moduleExtensions = extensions;
+
+	//load defaults
+	static undoers = defaultUndoers;
+	static redoers = defaultRedoers;
 
 	constructor(table){
 		super(table);
@@ -162,11 +170,3 @@ class History extends Module{
 		});
 	}
 }
-
-History.moduleName = "history";
-
-//load defaults
-History.undoers = defaultUndoers;
-History.redoers = defaultRedoers;
-
-export default History;

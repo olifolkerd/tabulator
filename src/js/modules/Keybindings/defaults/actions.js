@@ -3,6 +3,7 @@ export default {
 		e.stopPropagation();
 		e.preventDefault();
 	},
+
 	scrollPageUp:function(e){
 		var rowManager = this.table.rowManager,
 		newPos = rowManager.scrollTop - rowManager.element.clientHeight;
@@ -19,6 +20,7 @@ export default {
 
 		this.table.element.focus();
 	},
+
 	scrollPageDown:function(e){
 		var rowManager = this.table.rowManager,
 		newPos = rowManager.scrollTop + rowManager.element.clientHeight,
@@ -37,6 +39,7 @@ export default {
 		this.table.element.focus();
 
 	},
+
 	scrollToStart:function(e){
 		var rowManager = this.table.rowManager;
 
@@ -48,6 +51,7 @@ export default {
 
 		this.table.element.focus();
 	},
+
 	scrollToEnd:function(e){
 		var rowManager = this.table.rowManager;
 
@@ -59,6 +63,7 @@ export default {
 
 		this.table.element.focus();
 	},
+
 	navPrev:function(e){
 		this.dispatch("keybinding-nav-prev", e);
 	},
@@ -81,76 +86,5 @@ export default {
 
 	navDown:function(e){
 		this.dispatch("keybinding-nav-down", e);
-	},
-
-	rangeJumpLeft: function(e){
-		this.dispatch("keybinding-nav-range", e, "left", true, false);
-	},
-	rangeJumpRight: function(e){
-		this.dispatch("keybinding-nav-range", e, "right", true, false);
-	},
-	rangeJumpUp: function(e){
-		this.dispatch("keybinding-nav-range", e, "up", true, false);
-	},
-	rangeJumpDown: function(e){
-		this.dispatch("keybinding-nav-range", e, "down", true, false);
-	},
-	rangeExpandLeft: function(e){
-		this.dispatch("keybinding-nav-range", e, "left", false, true);
-	},
-	rangeExpandRight: function(e){
-		this.dispatch("keybinding-nav-range", e, "right", false, true);
-	},
-	rangeExpandUp: function(e){
-		this.dispatch("keybinding-nav-range", e, "up", false, true);
-	},
-	rangeExpandDown: function(e){
-		this.dispatch("keybinding-nav-range", e, "down", false, true);
-	},
-	rangeExpandJumpLeft: function(e){
-		this.dispatch("keybinding-nav-range", e, "left", true, true);
-	},
-	rangeExpandJumpRight: function(e){
-		this.dispatch("keybinding-nav-range", e, "right", true, true);
-	},
-	rangeExpandJumpUp: function(e){
-		this.dispatch("keybinding-nav-range", e, "up", true, true);
-	},
-	rangeExpandJumpDown: function(e){
-		this.dispatch("keybinding-nav-range", e, "down", true, true);
-	},
-
-	undo:function(e){
-		var cell = false;
-		if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){
-
-			cell = this.table.modules.edit.currentCell;
-
-			if(!cell){
-				e.preventDefault();
-				this.table.modules.history.undo();
-			}
-		}
-	},
-
-	redo:function(e){
-		var cell = false;
-		if(this.table.options.history && this.table.modExists("history") && this.table.modExists("edit")){
-
-			cell = this.table.modules.edit.currentCell;
-
-			if(!cell){
-				e.preventDefault();
-				this.table.modules.history.redo();
-			}
-		}
-	},
-
-	copyToClipboard:function(e){
-		if(!this.table.modules.edit.currentCell){
-			if(this.table.modExists("clipboard", true)){
-				this.table.modules.clipboard.copy(false, true);
-			}
-		}
 	},
 };

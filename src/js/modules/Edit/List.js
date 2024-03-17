@@ -46,21 +46,21 @@ export default class Edit{
 	}
 	
 	_deprecatedOptionsCheck(){
-		if(this.params.listItemFormatter){
-			this.cell.getTable().deprecationAdvisor.msg("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
-		}
+		// if(this.params.listItemFormatter){
+		// 	this.cell.getTable().deprecationAdvisor.msg("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
+		// }
 		
-		if(this.params.sortValuesList){
-			this.cell.getTable().deprecationAdvisor.msg("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
-		}
+		// if(this.params.sortValuesList){
+		// 	this.cell.getTable().deprecationAdvisor.msg("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
+		// }
 		
-		if(this.params.searchFunc){
-			this.cell.getTable().deprecationAdvisor.msg("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
-		}
+		// if(this.params.searchFunc){
+		// 	this.cell.getTable().deprecationAdvisor.msg("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
+		// }
 		
-		if(this.params.searchingPlaceholder){
-			this.cell.getTable().deprecationAdvisor.msg("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
-		}
+		// if(this.params.searchingPlaceholder){
+		// 	this.cell.getTable().deprecationAdvisor.msg("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
+		// }
 	}
 	
 	_initializeValue(){
