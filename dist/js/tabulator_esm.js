@@ -1,4 +1,4 @@
-/* Tabulator v5.6.1 (c) Oliver Folkerd 2024 */
+/* Tabulator v6.0.0 (c) Oliver Folkerd 2024 */
 class CoreFeature{
 
 	constructor(table){
@@ -19995,6 +19995,14 @@ class SelectRange extends Module {
 			}else {
 				console.warn("SelectRange functionality cannot be used in conjunction with row selection");
 			}
+
+			if(this.options('columns').findIndex((column) => column.frozen) > 0) {
+				console.warn("Having frozen column in arbitrary position with selectRange option may result in unpredictable behavior.");
+			}
+
+			if(this.options('columns').filter((column) => column.frozen) > 1) {
+				console.warn("Having multiple frozen columns with selectRange option may result in unpredictable behavior.");
+			}
 		}
 	}
 	
@@ -25461,7 +25469,7 @@ class RowManager extends CoreFeature{
 	
 	getRowFromPosition(position){
 		return this.getDisplayRows().find((row) => {
-			return row.getPosition() === position && row.isDisplayed();
+			return row.type === "row" && row.getPosition() === position && row.isDisplayed();
 		});
 	}
 	

@@ -1,4 +1,4 @@
-/* Tabulator v5.6.1 (c) Oliver Folkerd 2024 */
+/* Tabulator v6.0.0 (c) Oliver Folkerd 2024 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -4894,7 +4894,7 @@
 		
 		getRowFromPosition(position){
 			return this.getDisplayRows().find((row) => {
-				return row.getPosition() === position && row.isDisplayed();
+				return row.type === "row" && row.getPosition() === position && row.isDisplayed();
 			});
 		}
 		
@@ -8136,7 +8136,7 @@
 		
 		//convert deprecated functionality to new functions
 		_mapDeprecatedFunctionality(){
-			//all previously deprecated functionality removed in the 5.0 release
+			//all previously deprecated functionality removed in the 6.0 release
 		}
 		
 		_clearSelection(){
@@ -8167,12 +8167,13 @@
 			
 			this._initializeTable();
 			
-			this._loadInitialData();
-			
-			this.initialized = true;
+			this._loadInitialData()
+				.finally(() => {
+					this.initialized = true;
 
-			this.eventBus.dispatch("table-initialized");
-			this.externalEvents.dispatch("tableBuilt");
+					this.eventBus.dispatch("table-initialized");
+					this.externalEvents.dispatch("tableBuilt");
+				});	
 		}
 		
 		_rtlCheck(){
@@ -8298,8 +8299,10 @@
 		}
 		
 		_loadInitialData(){
-			this.dataLoader.load(this.options.data);
-			this.columnManager.verticalAlignHeaders();
+			return this.dataLoader.load(this.options.data)
+				.finally(() => {
+					this.columnManager.verticalAlignHeaders();
+				});		
 		}
 		
 		//deconstructor
@@ -10266,19 +10269,19 @@
 		}
 		
 		rowsToData(rows){
-			var data = [];
-			
+			var data = [],
+			hasDataTreeColumnCalcs = this.table.options.dataTree && this.table.options.dataTreeChildColumnCalcs,
+			dataTree = this.table.modules.dataTree;
+
 			rows.forEach((row) => {
 				data.push(row.getData());
-				
-				if(this.table.options.dataTree && this.table.options.dataTreeChildColumnCalcs){
-					if(row.modules.dataTree && row.modules.dataTree.open){
-						var children = this.rowsToData(this.table.modules.dataTree.getFilteredTreeChildren(row));
-						data = data.concat(children);
-					}
+
+				if(hasDataTreeColumnCalcs && row.modules.dataTree?.open){
+					this.rowsToData(dataTree.getFilteredTreeChildren(row)).forEach(dataRow =>{
+						data.push(row);
+					});
 				}
 			});
-			
 			return data;
 		}
 		
@@ -10758,7 +10761,7 @@
 					config = row.modules.dataTree;
 
 					if(!config.index && config.children !== false){
-						children = this.getChildren(row);
+						children = this.getChildren(row, false, true);
 
 						children.forEach((child) => {
 							child.create();
@@ -10771,7 +10774,7 @@
 			return output;
 		}
 
-		getChildren(row, allChildren){
+		getChildren(row, allChildren, sortOnly){
 			var config = row.modules.dataTree,
 			children = [],
 			output = [];
@@ -10788,13 +10791,13 @@
 				}
 
 				if(this.table.modExists("sort") && this.table.options.dataTreeSort){
-					this.table.modules.sort.sort(children);
+					this.table.modules.sort.sort(children, sortOnly);
 				}
 
 				children.forEach((child) => {
 					output.push(child);
 
-					var subChildren = this.getChildren(child);
+					var subChildren = this.getChildren(child, false, true);
 
 					subChildren.forEach((sub) => {
 						output.push(sub);
@@ -11031,7 +11034,9 @@
 						output.push(component ? childRow.getComponent() : childRow);
 
 						if(recurse){
-							output = output.concat(this.getTreeChildren(childRow, component, recurse));
+							this.getTreeChildren(childRow, component, recurse).forEach(child => {
+								output.push(child);
+							});
 						}
 					}
 				});
@@ -11420,7 +11425,7 @@
 			this.registerTableOption("downloadEncoder", function(data, mimeType){
 				return new Blob([data],{type:mimeType});
 			}); //function to manipulate download data
-			this.registerTableOption("downloadReady", undefined); //warn of function deprecation
+			// this.registerTableOption("downloadReady", undefined); //warn of function deprecation
 			this.registerTableOption("downloadConfig", {}); //download config
 			this.registerTableOption("downloadRowRange", "active"); //restrict download to active rows only
 
@@ -11436,7 +11441,7 @@
 		}
 
 		deprecatedOptionsCheck(){
-			this.deprecationCheck("downloadReady", "downloadEncoder");
+			// this.deprecationCheck("downloadReady", "downloadEncoder");
 		}	
 
 		///////////////////////////////////
@@ -12452,21 +12457,21 @@
 		}
 		
 		_deprecatedOptionsCheck(){
-			if(this.params.listItemFormatter){
-				this.cell.getTable().deprecationAdvisor.msg("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
-			}
+			// if(this.params.listItemFormatter){
+			// 	this.cell.getTable().deprecationAdvisor.msg("The listItemFormatter editor param has been deprecated, please see the latest editor documentation for updated options");
+			// }
 			
-			if(this.params.sortValuesList){
-				this.cell.getTable().deprecationAdvisor.msg("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
-			}
+			// if(this.params.sortValuesList){
+			// 	this.cell.getTable().deprecationAdvisor.msg("The sortValuesList editor param has been deprecated, please see the latest editor documentation for updated options");
+			// }
 			
-			if(this.params.searchFunc){
-				this.cell.getTable().deprecationAdvisor.msg("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
-			}
+			// if(this.params.searchFunc){
+			// 	this.cell.getTable().deprecationAdvisor.msg("The searchFunc editor param has been deprecated, please see the latest editor documentation for updated options");
+			// }
 			
-			if(this.params.searchingPlaceholder){
-				this.cell.getTable().deprecationAdvisor.msg("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
-			}
+			// if(this.params.searchingPlaceholder){
+			// 	this.cell.getTable().deprecationAdvisor.msg("The searchingPlaceholder editor param has been deprecated, please see the latest editor documentation for updated options");
+			// }
 		}
 		
 		_initializeValue(){
@@ -13453,27 +13458,7 @@
 		
 	};
 
-	function select(cell, onRendered, success, cancel, editorParams){
-
-		this.deprecationMsg("The select editor has been deprecated, please use the new list editor");
-
-		var list = new Edit$1(this, cell, onRendered, success, cancel, editorParams);
-
-		return list.input;
-	}
-
 	function list(cell, onRendered, success, cancel, editorParams){
-		var list = new Edit$1(this, cell, onRendered, success, cancel, editorParams);
-
-		return list.input;
-	}
-
-	function autocomplete(cell, onRendered, success, cancel, editorParams){
-
-		this.deprecationMsg("The autocomplete editor has been deprecated, please use the new list editor with the 'autocomplete' editorParam");
-
-		editorParams.autocomplete = true;
-
 		var list = new Edit$1(this, cell, onRendered, success, cancel, editorParams);
 
 		return list.input;
@@ -13858,9 +13843,7 @@
 		date:date$1,
 		time:time$1,
 		datetime:datetime$2,
-		select:select,
 		list:list,
-		autocomplete:autocomplete,
 		star:star$1,
 		progress:progress$1,
 		tickCross:tickCross$1,
@@ -20272,7 +20255,7 @@
 			
 			this.columnSubscribers = {};
 			
-			this.registerTableOption("menuContainer", undefined); //deprecated
+			// this.registerTableOption("menuContainer", undefined); //deprecated
 			
 			this.registerTableOption("rowContextMenu", false);
 			this.registerTableOption("rowClickMenu", false);
@@ -20301,9 +20284,9 @@
 		}
 		
 		deprecatedOptionsCheck(){
-			if(!this.deprecationCheck("menuContainer", "popupContainer")){
-				this.table.options.popupContainer = this.table.options.menuContainer;
-			}
+			// if(!this.deprecationCheck("menuContainer", "popupContainer")){
+			// 	this.table.options.popupContainer = this.table.options.menuContainer;
+			// }
 		}	
 		
 		initializeRowWatchers(){
@@ -24646,6 +24629,10 @@
 			this.collapseStartOpen = this.table.options.responsiveLayoutCollapseStartOpen;
 			this.hiddenColumns = [];
 
+			if(this.collapseFormatter){
+				this.collapseFormatter = this.collapseFormatter.bind(this.table);
+			}
+
 			//determine level of responsivity for each column
 			this.table.columnManager.columnsByIndex.forEach((column, i) => {
 				if(column.modules.responsive){
@@ -24837,6 +24824,7 @@
 				if(contents){
 					el.appendChild(contents);
 				}
+				row.calcHeight(true);
 			}
 		}
 
@@ -24902,7 +24890,7 @@
 		formatCollapsedData(data){
 			var list = document.createElement("table");
 
-			data.forEach(function(item){
+			data.forEach((item) => {
 				var row = document.createElement("tr");
 				var titleData = document.createElement("td");
 				var valueData = document.createElement("td");
@@ -24910,7 +24898,8 @@
 
 				var titleHighlight = document.createElement("strong");
 				titleData.appendChild(titleHighlight);
-				this.langBind("columns|" + item.field, function(text){
+				
+				this.modules.localize.bind("columns|" + item.field, function(text){
 					titleHighlight.innerHTML = text || item.title;
 				});
 
@@ -24925,7 +24914,7 @@
 				row.appendChild(titleData);
 				row.appendChild(valueData);
 				list.appendChild(row);
-			}, this);
+			});
 
 			return Object.keys(data).length ? list : "";
 		}
@@ -25052,11 +25041,11 @@
 		}
 
 		deprecatedOptionsCheck(){
-			this.deprecationCheck("selectable", "selectableRows", true);
-			this.deprecationCheck("selectableRollingSelection", "selectableRowsRollingSelection", true);
-			this.deprecationCheck("selectableRangeMode", "selectableRowsRangeMode", true);
-			this.deprecationCheck("selectablePersistence", "selectableRowsPersistence", true);
-			this.deprecationCheck("selectableCheck", "selectableRowsCheck", true);
+			// this.deprecationCheck("selectable", "selectableRows", true);
+			// this.deprecationCheck("selectableRollingSelection", "selectableRowsRollingSelection", true);
+			// this.deprecationCheck("selectableRangeMode", "selectableRowsRangeMode", true);
+			// this.deprecationCheck("selectablePersistence", "selectableRowsPersistence", true);
+			// this.deprecationCheck("selectableCheck", "selectableRowsCheck", true);
 		}
 		
 		rowRetrieve(type, prevValue){
@@ -25477,7 +25466,7 @@
 		}
 		
 		childRowSelection(row, select){
-			var children = this.table.modules.dataTree.getChildren(row, true);
+			var children = this.table.modules.dataTree.getChildren(row, true, true);
 			
 			if(select){
 				for(let child of children){
@@ -26190,6 +26179,14 @@
 					this.initializeWatchers();
 				}else {
 					console.warn("SelectRange functionality cannot be used in conjunction with row selection");
+				}
+
+				if(this.options('columns').findIndex((column) => column.frozen) > 0) {
+					console.warn("Having frozen column in arbitrary position with selectRange option may result in unpredictable behavior.");
+				}
+
+				if(this.options('columns').filter((column) => column.frozen) > 1) {
+					console.warn("Having multiple frozen columns with selectRange option may result in unpredictable behavior.");
 				}
 			}
 		}
@@ -27625,7 +27622,7 @@
 		}
 		
 		//work through sort list sorting data
-		sort(data){
+		sort(data, sortOnly){
 			var self = this,
 			sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
 			sortListActual = [],
@@ -27635,7 +27632,9 @@
 				this.dispatchExternal("dataSorting", self.getSort());
 			}
 			
-			self.clearColumnHeaders();
+			if(!sortOnly) {
+				self.clearColumnHeaders();
+			}
 			
 			if(this.table.options.sortMode !== "remote"){
 				
@@ -27658,7 +27657,9 @@
 							sortListActual.push(item);
 						}
 						
-						self.setColumnHeader(item.column, item.dir);
+						if(!sortOnly) {
+							self.setColumnHeader(item.column, item.dir);
+						}
 					}
 				});
 				
@@ -27667,11 +27668,12 @@
 					self._sortItems(data, sortListActual);
 				}
 				
-			}else {
+			}else if(!sortOnly) {
 				sortList.forEach(function(item, i){
 					self.setColumnHeader(item.column, item.dir);
 				});
 			}
+
 			
 			if(this.subscribedExternal("dataSorted")){
 				data.forEach((row) => {
@@ -28445,7 +28447,7 @@
 			this.timeout = null;
 			this.popupInstance = null;
 			
-			this.registerTableOption("tooltipGenerationMode", undefined);  //deprecated
+			// this.registerTableOption("tooltipGenerationMode", undefined);  //deprecated
 			this.registerTableOption("tooltipDelay", 300); 
 			
 			this.registerColumnOption("tooltip");
@@ -28459,7 +28461,7 @@
 		}
 		
 		deprecatedOptionsCheck(){
-			this.deprecationCheckMsg("tooltipGenerationMode", "This option is no longer needed as tooltips are always generated on hover now");
+			// this.deprecationCheckMsg("tooltipGenerationMode", "This option is no longer needed as tooltips are always generated on hover now");
 		}	
 		
 		initializeColumn(column){
