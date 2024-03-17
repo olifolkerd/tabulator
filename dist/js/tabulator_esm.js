@@ -18444,6 +18444,10 @@ class ResponsiveLayout extends Module{
 		this.collapseStartOpen = this.table.options.responsiveLayoutCollapseStartOpen;
 		this.hiddenColumns = [];
 
+		if(this.collapseFormatter){
+			this.collapseFormatter = this.collapseFormatter.bind(this.table);
+		}
+
 		//determine level of responsivity for each column
 		this.table.columnManager.columnsByIndex.forEach((column, i) => {
 			if(column.modules.responsive){
@@ -18700,7 +18704,7 @@ class ResponsiveLayout extends Module{
 	formatCollapsedData(data){
 		var list = document.createElement("table");
 
-		data.forEach(function(item){
+		data.forEach((item) => {
 			var row = document.createElement("tr");
 			var titleData = document.createElement("td");
 			var valueData = document.createElement("td");
@@ -18708,7 +18712,8 @@ class ResponsiveLayout extends Module{
 
 			var titleHighlight = document.createElement("strong");
 			titleData.appendChild(titleHighlight);
-			this.langBind("columns|" + item.field, function(text){
+			
+			this.modules.localize.bind("columns|" + item.field, function(text){
 				titleHighlight.innerHTML = text || item.title;
 			});
 
@@ -18723,7 +18728,7 @@ class ResponsiveLayout extends Module{
 			row.appendChild(titleData);
 			row.appendChild(valueData);
 			list.appendChild(row);
-		}, this);
+		});
 
 		return Object.keys(data).length ? list : "";
 	}
