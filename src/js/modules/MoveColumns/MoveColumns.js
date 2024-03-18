@@ -209,7 +209,7 @@ class MoveColumns extends Module{
 		
 		this.moveHover(e);
 
-		this.dispatch("column-start-move", e, this.moving);
+		this.dispatch("column-moving", e, this.moving);
 	}
 	
 	_bindMouseMove(){
@@ -267,8 +267,6 @@ class MoveColumns extends Module{
 				this.table.columnManager.moveColumnActual(this.moving, this.toCol, this.toColAfter);
 			}
 
-			this.dispatch("column-end-move", e, this.moving);
-			
 			this.moving = false;
 			this.toCol = false;
 			this.toColAfter = false;
