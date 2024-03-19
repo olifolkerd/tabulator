@@ -1,4 +1,4 @@
-/* Tabulator v6.0.0 (c) Oliver Folkerd 2024 */
+/* Tabulator v6.0.1 (c) Oliver Folkerd 2024 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -8166,11 +8166,11 @@
 			this._buildElement();
 			
 			this._initializeTable();
+
+			this.initialized = true;
 			
 			this._loadInitialData()
 				.finally(() => {
-					this.initialized = true;
-
 					this.eventBus.dispatch("table-initialized");
 					this.externalEvents.dispatch("tableBuilt");
 				});	

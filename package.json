@@ -1,6 +1,6 @@
 {
   "name": "tabulator-tables",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Interactive table generation JavaScript library",
   "style": "dist/css/tabulator.css",
   "main": "dist/js/tabulator.js",
