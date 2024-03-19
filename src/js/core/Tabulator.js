@@ -160,11 +160,11 @@ class Tabulator extends ModuleBinder{
 		this._buildElement();
 		
 		this._initializeTable();
+
+		this.initialized = true;
 		
 		this._loadInitialData()
 			.finally(() => {
-				this.initialized = true;
-
 				this.eventBus.dispatch("table-initialized");
 				this.externalEvents.dispatch("tableBuilt");
 			});	
