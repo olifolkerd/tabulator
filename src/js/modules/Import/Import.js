@@ -58,11 +58,11 @@ export default class Import extends Module{
 		return importer;
 	}
     
-	importFromFile(importFormat, extension){
+	importFromFile(importFormat, extension, importReader){
 		var importer = this.lookupImporter(importFormat);
         
 		if(importer){
-			return this.pickFile(extension)
+			return this.pickFile(extension, importReader)
 				.then(this.importData.bind(this, importer))
 				.then(this.structureData.bind(this))
 				.then(this.setData.bind(this))
@@ -73,7 +73,7 @@ export default class Import extends Module{
 		}
 	}
     
-	pickFile(extensions){
+	pickFile(extensions, importReader){
 		return new Promise((resolve, reject) => {
 			var input = document.createElement("input");
 			input.type = "file";
@@ -83,7 +83,7 @@ export default class Import extends Module{
 				var file = input.files[0],
 				reader = new FileReader();
                 
-				switch(this.table.options.importReader){
+				switch(importReader || this.table.options.importReader){
 					case "buffer":
 						reader.readAsArrayBuffer(file);
 						break;
