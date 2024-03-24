@@ -1,4 +1,4 @@
-/* Tabulator v6.0.1 (c) Oliver Folkerd 2024 */
+/* Tabulator v6.1.0 (c) Oliver Folkerd 2024 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -11263,7 +11263,7 @@
 		setFileContents(doc.output("arraybuffer"), "application/pdf");
 	}
 
-	function xlsx(list, options, setFileContents){
+	function xlsx$1(list, options, setFileContents){
 		var self = this,
 		sheetName = options.sheetName || "Sheet1",
 		workbook = XLSX.utils.book_new(),
@@ -11408,7 +11408,7 @@
 		json:json$1,
 		jsonLines:jsonLines,
 		pdf:pdf,
-		xlsx:xlsx,
+		xlsx:xlsx$1,
 		html:html$1,
 	};
 
@@ -19443,10 +19443,18 @@
 		return input;
 	}
 
+	function xlsx(input, floop){
+		var workbook2 = XLSX.read(input);
+		var sheet = workbook2.Sheets[workbook2.SheetNames[0]];
+		
+		return XLSX.utils.sheet_to_json(sheet, {});
+	}
+
 	var defaultImporters = {
 		csv:csv,
 		json:json,
 		array:array$1,
+		xlsx:xlsx,
 	};
 
 	class Import extends Module{
@@ -19505,11 +19513,11 @@
 			return importer;
 		}
 	    
-		importFromFile(importFormat, extension){
+		importFromFile(importFormat, extension, importReader){
 			var importer = this.lookupImporter(importFormat);
 	        
 			if(importer){
-				return this.pickFile(extension)
+				return this.pickFile(extension, importReader)
 					.then(this.importData.bind(this, importer))
 					.then(this.structureData.bind(this))
 					.then(this.setData.bind(this))
@@ -19520,7 +19528,7 @@
 			}
 		}
 	    
-		pickFile(extensions){
+		pickFile(extensions, importReader){
 			return new Promise((resolve, reject) => {
 				var input = document.createElement("input");
 				input.type = "file";
@@ -19530,7 +19538,7 @@
 					var file = input.files[0],
 					reader = new FileReader();
 	                
-					switch(this.table.options.importReader){
+					switch(importReader || this.table.options.importReader){
 						case "buffer":
 							reader.readAsArrayBuffer(file);
 							break;
