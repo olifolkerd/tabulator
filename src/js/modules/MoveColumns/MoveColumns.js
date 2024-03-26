@@ -174,6 +174,13 @@ export default class MoveColumns extends Module{
 		headerElement = this.table.columnManager.getContentsElement(),
 		headersElement = this.table.columnManager.getHeadersElement();
 		
+		//Prevent moving columns when range selection is active
+		if(this.table.modules.selectRange && this.table.modules.selectRange.columnSelection){
+			if(this.table.modules.selectRange.mousedown && this.table.modules.selectRange.selecting === "column"){
+				return;
+			}
+		}
+
 		this.moving = column;
 		this.startX = (this.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(element).left;
 		
@@ -203,6 +210,8 @@ export default class MoveColumns extends Module{
 		}
 		
 		this.moveHover(e);
+
+		this.dispatch("column-moving", e, this.moving);
 	}
 	
 	_bindMouseMove(){
@@ -259,7 +268,7 @@ export default class MoveColumns extends Module{
 			if(this.toCol){
 				this.table.columnManager.moveColumnActual(this.moving, this.toCol, this.toColAfter);
 			}
-			
+
 			this.moving = false;
 			this.toCol = false;
 			this.toColAfter = false;
