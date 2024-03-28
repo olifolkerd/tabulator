@@ -55,7 +55,11 @@ export default {
 
 	//contains the keywords
 	"keywords":function(filterVal, rowVal, rowData, filterParams){
-		var keywords = filterVal.toLowerCase().split(typeof filterParams.separator === "undefined" ? " " : filterParams.separator),
+		var keywords = filterVal.toLowerCase()
+			.replace(/\s+/g, ' ')
+			.trimEnd()
+			.trimStart()
+			.split(typeof filterParams.separator === "undefined" ? " " : filterParams.separator),
 		value = String(rowVal === null || typeof rowVal === "undefined" ? "" : rowVal).toLowerCase(),
 		matches = [];
 
