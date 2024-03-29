@@ -1313,6 +1313,24 @@
   color: #d00;
 }
 
+.tabulator-toggle {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #ccc;
+  background: #dcdcdc;
+}
+
+.tabulator-toggle.tabulator-toggle-on {
+  background: #1c6cc2;
+}
+
+.tabulator-toggle .tabulator-toggle-switch {
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
 .tabulator-popup-container {
   position: absolute;
   display: inline-block;

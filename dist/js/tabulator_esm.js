@@ -10693,6 +10693,55 @@ function buttonCross(cell, formatterParams, onRendered){
 	return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 }
 
+function toggle(cell, formatterParams, onRendered){
+	var value = cell.getValue(),
+	size = formatterParams.size ||15,
+	sizePx = size + "px",
+	containEl, switchEl,
+	onValue = formatterParams.hasOwnProperty("onValue") ? formatterParams.onValue : true,
+	offValue = formatterParams.hasOwnProperty("offValue") ? formatterParams.offValue : false,
+
+
+	state = formatterParams.onTruthy ? value : value === onValue;
+
+	
+	containEl = document.createElement("div");
+	containEl.classList.add("tabulator-toggle");
+
+	if(state){
+		containEl.classList.add("tabulator-toggle-on");
+		containEl.style.flexDirection = "row-reverse";
+
+		if(formatterParams.onColor){
+			containEl.style.background = formatterParams.onColor;
+		}
+	}else {
+		if(formatterParams.offColor){
+			containEl.style.background = formatterParams.offColor;
+		}
+	}
+
+	containEl.style.width = (2.5 * size) + "px";
+	containEl.style.borderRadius = sizePx;
+
+	if(formatterParams.clickable){
+		containEl.addEventListener("click", (e) => {
+			cell.setValue(state ? offValue : onValue);
+		});
+	}
+
+	switchEl = document.createElement("div");
+	switchEl.classList.add("tabulator-toggle-switch");
+
+	switchEl.style.height = sizePx;
+	switchEl.style.width = sizePx;
+	switchEl.style.borderRadius = sizePx;
+	
+	containEl.appendChild(switchEl);
+	
+	return containEl;
+}
+
 function rownum(cell, formatterParams, onRendered){
 	var content = document.createElement("span");
 	var row = cell.getRow();
@@ -10730,6 +10779,7 @@ var defaultFormatters = {
 	color:color,
 	buttonTick:buttonTick,
 	buttonCross:buttonCross,
+	toggle:toggle,
 	rownum:rownum,
 	handle:handle,
 };

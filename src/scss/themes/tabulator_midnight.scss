@@ -152,6 +152,21 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 	}
 }
 
+.tabulator-toggle{
+	border-color:#000;
+	background:$headerBackgroundColor;
+	
+	&.tabulator-toggle-on{
+		// background:#25682b;
+	}
+
+	.tabulator-toggle-switch{
+		border-color:#000;
+		background:#232323;
+	}
+}
+
+
 .tabulator-edit-select-list{
 	background:$rowTextColor;
 	

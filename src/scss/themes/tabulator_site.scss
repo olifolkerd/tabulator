@@ -171,6 +171,12 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 	}
 }
 
+.tabulator-toggle{
+	&.tabulator-toggle-on{
+		background:$headerSeparatorColor;
+	}
+}
+
 .tabulator-row{
 	.tabulator-cell{
 		padding:6px;

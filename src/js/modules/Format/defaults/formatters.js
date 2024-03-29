@@ -14,6 +14,7 @@ import progress from './formatters/progress.js';
 import color from './formatters/color.js';
 import buttonTick from './formatters/buttonTick.js';
 import buttonCross from './formatters/buttonCross.js';
+import toggle from './formatters/toggle.js';
 import rownum from './formatters/rownum.js';
 import handle from './formatters/handle.js';
 
@@ -34,6 +35,7 @@ export default {
 	color:color,
 	buttonTick:buttonTick,
 	buttonCross:buttonCross,
+	toggle:toggle,
 	rownum:rownum,
 	handle:handle,
 };
