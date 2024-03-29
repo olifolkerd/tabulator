@@ -1,4 +1,4 @@
-/* Tabulator v6.1.0 (c) Oliver Folkerd 2024 */
+/* Tabulator v6.2.0 (c) Oliver Folkerd 2024 */
 class CoreFeature{
 
 	constructor(table){
@@ -24465,12 +24465,12 @@ class ColumnManager extends CoreFeature {
 				switch(position){
 					case "middle":
 					case "center":
-					adjust = -this.element.clientWidth / 2;
-					break;
+						adjust = -this.element.clientWidth / 2;
+						break;
 					
 					case "right":
-					adjust = colEl.clientWidth - this.headersElement.clientWidth;
-					break;
+						adjust = colEl.clientWidth - this.headersElement.clientWidth;
+						break;
 				}
 				
 				//check column visibility

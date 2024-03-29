@@ -615,12 +615,12 @@ export default class ColumnManager extends CoreFeature {
 				switch(position){
 					case "middle":
 					case "center":
-					adjust = -this.element.clientWidth / 2;
-					break;
+						adjust = -this.element.clientWidth / 2;
+						break;
 					
 					case "right":
-					adjust = colEl.clientWidth - this.headersElement.clientWidth;
-					break;
+						adjust = colEl.clientWidth - this.headersElement.clientWidth;
+						break;
 				}
 				
 				//check column visibility
