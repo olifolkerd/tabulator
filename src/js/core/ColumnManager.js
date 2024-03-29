@@ -268,6 +268,7 @@ export default class ColumnManager extends CoreFeature {
 		this.columnsByField = {};
 		
 		this.dispatch("columns-loading");
+		this.dispatchExternal("columnsLoading");
 		
 		if(this.table.options.rowHeader){
 			this.rowHeader = new Column(this.table.options.rowHeader === true ? {} : this.table.options.rowHeader, this, true);
@@ -283,6 +284,10 @@ export default class ColumnManager extends CoreFeature {
 		this._reIndexColumns();
 		
 		this.dispatch("columns-loaded");
+
+		if(this.subscribedExternal("columnsLoaded")){
+			this.dispatchExternal("columnsLoaded", this.getComponents());
+		}
 		
 		this.rerenderColumns(false, true);
 		
