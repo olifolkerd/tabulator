@@ -13337,6 +13337,9 @@ class Import extends Module{
 				.then(this.structureData.bind(this))
 				.then(this.setData.bind(this))
 				.catch((err) => {
+					this.dispatch("import-error", err);
+					this.dispatchExternal("importError", err);
+
 					console.error("Import Error:", err || "Unable to import file");
 					return Promise.reject(err);
 				});
@@ -13352,6 +13355,9 @@ class Import extends Module{
 			input.addEventListener("change", (e) => {
 				var file = input.files[0],
 				reader = new FileReader();
+
+				this.dispatch("import-importing", input.files);
+				this.dispatchExternal("importImporting", input.files);
                 
 				switch(importReader || this.table.options.importReader){
 					case "buffer":
@@ -13380,7 +13386,9 @@ class Import extends Module{
 					reject();
 				};
 			});
-            
+			
+			this.dispatch("import-choose");
+			this.dispatchExternal("importChoose");
 			input.click();
 		});
 	}
@@ -13457,6 +13465,9 @@ class Import extends Module{
 	}
     
 	setData(data){
+		this.dispatch("import-imported", data);
+		this.dispatchExternal("importImported", data);
+		
 		return this.table.setData(data);
 	}
 }
