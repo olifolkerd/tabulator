@@ -967,6 +967,24 @@
   color: #d00;
 }
 
+.tabulator-toggle {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #ccc;
+  background: #dcdcdc;
+}
+
+.tabulator-toggle.tabulator-toggle-on {
+  background: #1c6cc2;
+}
+
+.tabulator-toggle .tabulator-toggle-switch {
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
 .tabulator-popup-container {
   position: absolute;
   display: inline-block;
@@ -1410,6 +1428,16 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 
 .tabulator-row.tabulator-group span {
   color: #666;
+}
+
+.tabulator-toggle {
+  border-color: #000;
+  background: #333;
+}
+
+.tabulator-toggle .tabulator-toggle-switch {
+  border-color: #000;
+  background: #232323;
 }
 
 .tabulator-edit-select-list {

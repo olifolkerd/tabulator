@@ -1,4 +1,4 @@
-/* Tabulator v6.1.0 (c) Oliver Folkerd 2024 */
+/* Tabulator v6.2.0 (c) Oliver Folkerd 2024 */
 class CoreFeature{
 
 	constructor(table){
@@ -10693,6 +10693,55 @@ function buttonCross(cell, formatterParams, onRendered){
 	return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 }
 
+function toggle(cell, formatterParams, onRendered){
+	var value = cell.getValue(),
+	size = formatterParams.size ||15,
+	sizePx = size + "px",
+	containEl, switchEl,
+	onValue = formatterParams.hasOwnProperty("onValue") ? formatterParams.onValue : true,
+	offValue = formatterParams.hasOwnProperty("offValue") ? formatterParams.offValue : false,
+
+
+	state = formatterParams.onTruthy ? value : value === onValue;
+
+	
+	containEl = document.createElement("div");
+	containEl.classList.add("tabulator-toggle");
+
+	if(state){
+		containEl.classList.add("tabulator-toggle-on");
+		containEl.style.flexDirection = "row-reverse";
+
+		if(formatterParams.onColor){
+			containEl.style.background = formatterParams.onColor;
+		}
+	}else {
+		if(formatterParams.offColor){
+			containEl.style.background = formatterParams.offColor;
+		}
+	}
+
+	containEl.style.width = (2.5 * size) + "px";
+	containEl.style.borderRadius = sizePx;
+
+	if(formatterParams.clickable){
+		containEl.addEventListener("click", (e) => {
+			cell.setValue(state ? offValue : onValue);
+		});
+	}
+
+	switchEl = document.createElement("div");
+	switchEl.classList.add("tabulator-toggle-switch");
+
+	switchEl.style.height = sizePx;
+	switchEl.style.width = sizePx;
+	switchEl.style.borderRadius = sizePx;
+	
+	containEl.appendChild(switchEl);
+	
+	return containEl;
+}
+
 function rownum(cell, formatterParams, onRendered){
 	var content = document.createElement("span");
 	var row = cell.getRow();
@@ -10730,6 +10779,7 @@ var defaultFormatters = {
 	color:color,
 	buttonTick:buttonTick,
 	buttonCross:buttonCross,
+	toggle:toggle,
 	rownum:rownum,
 	handle:handle,
 };
@@ -13337,6 +13387,9 @@ class Import extends Module{
 				.then(this.structureData.bind(this))
 				.then(this.setData.bind(this))
 				.catch((err) => {
+					this.dispatch("import-error", err);
+					this.dispatchExternal("importError", err);
+
 					console.error("Import Error:", err || "Unable to import file");
 					return Promise.reject(err);
 				});
@@ -13352,6 +13405,9 @@ class Import extends Module{
 			input.addEventListener("change", (e) => {
 				var file = input.files[0],
 				reader = new FileReader();
+
+				this.dispatch("import-importing", input.files);
+				this.dispatchExternal("importImporting", input.files);
                 
 				switch(importReader || this.table.options.importReader){
 					case "buffer":
@@ -13380,7 +13436,9 @@ class Import extends Module{
 					reject();
 				};
 			});
-            
+			
+			this.dispatch("import-choose");
+			this.dispatchExternal("importChoose");
 			input.click();
 		});
 	}
@@ -13457,6 +13515,9 @@ class Import extends Module{
 	}
     
 	setData(data){
+		this.dispatch("import-imported", data);
+		this.dispatchExternal("importImported", data);
+		
 		return this.table.setData(data);
 	}
 }
@@ -23831,13 +23892,13 @@ class ColumnManager extends CoreFeature {
 		
 		this.contentsElement.insertBefore(this.headersElement, this.contentsElement.firstChild);
 		this.element.insertBefore(this.contentsElement, this.element.firstChild);
-
+		
 		this.initializeScrollWheelWatcher();
 		
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 		this.subscribe("scrollbar-vertical", this.padVerticalScrollbar.bind(this));
 	}
-
+	
 	padVerticalScrollbar(width){
 		if(this.table.rtl){
 			this.headersElement.style.marginLeft = width + "px";
@@ -23877,7 +23938,7 @@ class ColumnManager extends CoreFeature {
 		
 		return el;
 	}
-
+	
 	createHeaderContentsElement (){
 		var el = document.createElement("div");
 		
@@ -23904,7 +23965,7 @@ class ColumnManager extends CoreFeature {
 	getElement(){
 		return this.element;
 	}
-
+	
 	//return containing contents element
 	getContentsElement(){
 		return this.contentsElement;
@@ -23919,19 +23980,19 @@ class ColumnManager extends CoreFeature {
 	//scroll horizontally to match table body
 	scrollHorizontal(left){
 		this.contentsElement.scrollLeft = left;
-
+		
 		this.scrollLeft = left;
 		
 		this.renderer.scrollColumns(left);
 	}
-
+	
 	initializeScrollWheelWatcher(){
 		this.contentsElement.addEventListener("wheel", (e) => {
 			var left;
-
+			
 			if(e.deltaX){
 				left = this.contentsElement.scrollLeft + e.deltaX;
-
+				
 				this.table.rowManager.scrollHorizontal(left);
 				this.table.columnManager.scrollHorizontal(left);
 			}
@@ -23941,55 +24002,35 @@ class ColumnManager extends CoreFeature {
 	///////////// Column Setup Functions /////////////
 	generateColumnsFromRowData(data){
 		var cols = [],
-		definitions = this.table.options.autoColumnsDefinitions,
-		row, sorter;
+		collProgress = {},
+		rowSample = this.table.options.autoColumns === "full" ? data : [data[0]],
+		definitions = this.table.options.autoColumnsDefinitions;
 		
 		if(data && data.length){
 			
-			row = data[0];
-			
-			for(var key in row){
-				let col = {
-					field:key,
-					title:key,
-				};
+			rowSample.forEach((row) => {
 				
-				let value = row[key];
-				
-				switch(typeof value){
-					case "undefined":
-						sorter = "string";
-						break;
+				Object.keys(row).forEach((key, index) => {
+					let value = row[key],
+					col;
 					
-					case "boolean":
-						sorter = "boolean";
-						break;
-					
-					case "object":
-						if(Array.isArray(value)){
-							sorter = "array";
-						}else {
-							sorter = "string";
+					if(!collProgress[key]){
+						col = {
+							field:key,
+							title:key,
+							sorter:this.calculateSorterFromValue(value),
+						};
+
+						cols.splice(index, 0, col);
+						collProgress[key] = typeof value === "undefined" ? col : true;
+					}else if(collProgress[key] !== true){
+						if(typeof value !== "undefined"){
+							collProgress[key].sorter = this.calculateSorterFromValue(value);
+							collProgress[key] = true;
 						}
-						break;
-					
-					default:
-						if(!isNaN(value) && value !== ""){
-							sorter = "number";
-						}else {
-							if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
-								sorter = "alphanum";
-							}else {
-								sorter = "string";
-							}
-						}
-						break;
-				}
-				
-				col.sorter = sorter;
-				
-				cols.push(col);
-			}
+					}
+				});
+			});
 			
 			if(definitions){
 				
@@ -24029,6 +24070,46 @@ class ColumnManager extends CoreFeature {
 		}
 	}
 	
+	calculateSorterFromValue(value){
+		var sorter;
+		
+		switch(typeof value){
+			case "undefined":
+				sorter = "string";
+				break;
+			
+			case "boolean":
+				sorter = "boolean";
+				break;
+			
+			case "number":
+				sorter = "number";
+				break;
+			
+			case "object":
+				if(Array.isArray(value)){
+					sorter = "array";
+				}else {
+					sorter = "string";
+				}
+				break;
+			
+			default:
+				if(!isNaN(value) && value !== ""){
+					sorter = "number";
+				}else {
+					if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
+						sorter = "alphanum";
+					}else {
+						sorter = "string";
+					}
+				}
+				break;
+		}
+		
+		return sorter;
+	}
+	
 	setColumns(cols, row){
 		while(this.headersElement.firstChild) this.headersElement.removeChild(this.headersElement.firstChild);
 		
@@ -24037,7 +24118,8 @@ class ColumnManager extends CoreFeature {
 		this.columnsByField = {};
 		
 		this.dispatch("columns-loading");
-
+		this.dispatchExternal("columnsLoading");
+		
 		if(this.table.options.rowHeader){
 			this.rowHeader = new Column(this.table.options.rowHeader === true ? {} : this.table.options.rowHeader, this, true);
 			this.columns.push(this.rowHeader);
@@ -24052,6 +24134,10 @@ class ColumnManager extends CoreFeature {
 		this._reIndexColumns();
 		
 		this.dispatch("columns-loaded");
+
+		if(this.subscribedExternal("columnsLoaded")){
+			this.dispatchExternal("columnsLoaded", this.getComponents());
+		}
 		
 		this.rerenderColumns(false, true);
 		
@@ -24062,7 +24148,7 @@ class ColumnManager extends CoreFeature {
 		var column = new Column(definition, this),
 		colEl = column.getElement(),
 		index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
-
+		
 		//prevent adding of rows in front of row header
 		if(before && this.rowHeader && (!nextToColumn || nextToColumn === this.rowHeader)){
 			before = false;
@@ -24120,7 +24206,7 @@ class ColumnManager extends CoreFeature {
 		var minHeight = 0;
 		
 		if(!this.redrawBlock){
-
+			
 			this.headersElement.style.height="";
 			
 			this.columns.forEach((column) => {
@@ -24134,9 +24220,9 @@ class ColumnManager extends CoreFeature {
 					minHeight = height;
 				}
 			});
-
+			
 			this.headersElement.style.height = minHeight + "px";
-
+			
 			this.columns.forEach((column) => {
 				column.verticalAlign(this.table.options.columnHeaderVertAlign, minHeight);
 			});
@@ -24148,7 +24234,7 @@ class ColumnManager extends CoreFeature {
 	//////////////// Column Details /////////////////
 	findColumn(subject){
 		var columns;
-
+		
 		if(typeof subject == "object"){
 			
 			if(subject instanceof Column){
@@ -24158,14 +24244,14 @@ class ColumnManager extends CoreFeature {
 				//subject is public column component
 				return subject._getSelf() || false;
 			}else if(typeof HTMLElement !== "undefined" && subject instanceof HTMLElement){
-
+				
 				columns = [];
-
+				
 				this.columns.forEach((column) => {
 					columns.push(column);
 					columns = columns.concat(column.getColumns(true));
 				});
-
+				
 				//subject is a HTML element of the column header
 				let match = columns.find((column) => {
 					return column.element === subject;
@@ -24211,7 +24297,7 @@ class ColumnManager extends CoreFeature {
 		
 		return index > -1 ? this.columnsByIndex[index] : false;
 	}
-
+	
 	getVisibleColumnsByIndex() {
 		return this.columnsByIndex.filter((col) => col.visible);
 	}
@@ -24293,7 +24379,7 @@ class ColumnManager extends CoreFeature {
 		}
 		
 		this.moveColumnActual(from, to, after);
-
+		
 		this.verticalAlignHeaders();
 		
 		this.table.rowManager.reinitialize();

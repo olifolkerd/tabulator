@@ -251,6 +251,12 @@ $rangeHeaderTextHighlightBackground: #fff !default; //header text color when hig
 	}
 }
 
+.tabulator-toggle{
+	&.tabulator-toggle-on{
+		background:$primary;
+	}
+}
+
 .tabulator-edit-select-list{
 	border:1px solid $editBoxColor;
 }

@@ -556,28 +556,28 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 				display: none;
 			}
 		}
-
+		
 		.tabulator-spreadsheet-tabs{
 			margin-top:-5px;
-
+			
 			overflow-x: auto;
-
+			
 			.tabulator-spreadsheet-tab{
 				display: inline-block;
 				padding:5px;
-
+				
 				border:$borderColor 1px solid;
 				border-top: none;
 				border-bottom-left-radius: 5px;
 				border-bottom-right-radius: 5px;
-
+				
 				font-size: .9em;
-			
+				
 				&:hover{
 					cursor:pointer;
 					opacity: .7;
 				}
-
+				
 				&.tabulator-spreadsheet-tab-active{
 					background: $spreadsheetActiveTabColor;
 				}
@@ -701,7 +701,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			margin-right:0;
 		}
 	}
-
+	
 	//column resize guide
 	.tabulator-col-resize-guide {
 		position: absolute;
@@ -712,7 +712,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		background-color: $columnResizeGuideColor;
 		opacity: .5;
 	}
-
+	
 	//row resize guide
 	.tabulator-row-resize-guide {
 		position: absolute;
@@ -826,7 +826,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			}	
 		}
 	}
-
+	
 	
 	&.tabulator-range-selected{
 		.tabulator-cell.tabulator-range-row-header{
@@ -894,7 +894,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		overflow:hidden;
 		text-overflow:ellipsis;
 		outline:none;
-
+		
 		&.tabulator-row-header{
 			border-right:1px solid $borderColor;
 			border-bottom:1px solid $rowBorderColor;
@@ -1197,6 +1197,27 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 	
 }
 
+.tabulator-toggle{
+	box-sizing: border-box;
+
+	display: flex;
+	flex-direction: row;
+
+	border:1px solid #ccc;
+	background:#dcdcdc;
+
+	&.tabulator-toggle-on{
+		background:#1c6cc2;
+	}
+	
+	.tabulator-toggle-switch{
+		box-sizing: border-box;
+		border:1px solid #ccc;
+		
+		background:#fff;
+	}
+}
+
 .tabulator-popup-container{
 	position: absolute;
 	display:inline-block;
@@ -1395,7 +1416,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			}
 		}
 	}
-
+	
 	.tabulator-tableholder{
 		.tabulator-range-overlay {
 			.tabulator-range {
