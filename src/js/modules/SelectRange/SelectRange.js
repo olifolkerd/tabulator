@@ -255,6 +255,8 @@ export default class SelectRange extends Module {
 	
 	initializeFocus(cell){
 		var range;
+
+		this.restoreFocus();
 		
 		try{
 			if (document.selection) { // IE
