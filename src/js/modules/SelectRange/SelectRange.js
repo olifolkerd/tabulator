@@ -457,6 +457,10 @@ export default class SelectRange extends Module {
 					break;
 			}
 		}
+
+		if(this.rowHeader && nextCol === 0) {
+			nextCol = 1;
+		}
 		
 		moved = nextCol !== rangeEdge.col || nextRow !== rangeEdge.row;
 		

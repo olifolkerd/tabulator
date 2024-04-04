@@ -23,13 +23,6 @@ export default class Range extends CoreFeature{
 		this.start = {row:0, col:0};
 		this.end = {row:0, col:0};
 
-		if(this.rangeManager.rowHeader){
-			this.left = 1;
-			this.right = 1;
-			this.start.col = 1;
-			this.end.col = 1;
-		}
-		
 		this.initElement();
 		
 		setTimeout(() => {
@@ -84,21 +77,12 @@ export default class Range extends CoreFeature{
 	}
 	
 	setStartBound(element){
-		var row, col;
-		
 		if (element.type === "column") {
 			if(this.rangeManager.columnSelection){
 				this.setStart(0, element.getPosition() - 1);
 			}
 		}else{
-			row = element.row.position - 1;
-			col = element.column.getPosition() - 1;
-			
-			if (element.column === this.rangeManager.rowHeader) {
-				this.setStart(row, 1);
-			} else {
-				this.setStart(row, col);
-			}
+			this.setStart(element.row.position - 1, element.column.getPosition() - 1);
 		}
 	}
 	
