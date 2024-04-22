@@ -395,7 +395,8 @@ export default class SelectRange extends Module {
 	
 	navigate(jump, expand, dir) {
 		var moved = false,
-		range, rangeEdge, nextRow, nextCol, row, column;
+		range, rangeEdge, prevRect, nextRow, nextCol, row, column,
+		rowRect, rowManagerRect, columnRect, columnManagerRect;
 		
 		// Don't navigate while editing
 		if (this.table.modules.edit && this.table.modules.edit.currentCell) {
@@ -415,6 +416,12 @@ export default class SelectRange extends Module {
 		}
 		
 		range = this.activeRange;
+		prevRect = {
+			top: range.top,
+			bottom: range.bottom,
+			left: range.left,
+			right: range.right
+		};
 		
 		rangeEdge = expand ? range.end : range.start;
 		nextRow = rangeEdge.row;
@@ -458,8 +465,6 @@ export default class SelectRange extends Module {
 			}
 		}
 		
-		moved = nextCol !== rangeEdge.col || nextRow !== rangeEdge.row;
-		
 		if(!expand){
 			range.setStart(nextRow, nextCol);
 		}
@@ -469,20 +474,35 @@ export default class SelectRange extends Module {
 		if(!expand){
 			this.selecting = "cell";
 		}
-		
+
+		moved = prevRect.top !== range.top || prevRect.bottom !== range.bottom || prevRect.left !== range.left || prevRect.right !== range.right;
+
 		if (moved) {
 			row = this.getRowByRangePos(range.end.row);
 			column = this.getColumnByRangePos(range.end.col);
+			rowRect = row.getElement().getBoundingClientRect();
+			columnRect = column.getElement().getBoundingClientRect();
+			rowManagerRect = this.table.rowManager.getElement().getBoundingClientRect();
+			columnManagerRect = this.table.columnManager.getElement().getBoundingClientRect();
 			
-			if ((dir === 'left' || dir === 'right') && column.getElement().parentNode === null) {
-				column.getComponent().scrollTo(undefined, false);
-			} else if ((dir === 'up' || dir === 'down') && row.getElement().parentNode === null) {
-				row.getComponent().scrollTo(undefined, false);
-			} else {
-				// Use faster autoScroll when the elements are on the DOM
-				this.autoScroll(range, row.getElement(), column.getElement());
+			if(!(rowRect.top >= rowManagerRect.top && rowRect.bottom <= rowManagerRect.bottom)){
+				if(row.getElement().parentNode && column.getElement().parentNode){
+					// Use faster autoScroll when the elements are on the DOM
+					this.autoScroll(range, row.getElement(), column.getElement());
+				}else{
+					row.getComponent().scrollTo(undefined, false);
+				}
 			}
-			
+
+			if(!(columnRect.left >= columnManagerRect.left + this.rowHeaderWidth && columnRect.right <= columnManagerRect.right)){
+				if(row.getElement().parentNode && column.getElement().parentNode){
+					// Use faster autoScroll when the elements are on the DOM
+					this.autoScroll(range, row.getElement(), column.getElement());
+				}else{
+					column.getComponent().scrollTo(undefined, false);
+				}
+			}
+
 			this.layoutElement();
 			
 			return true;
@@ -896,5 +916,12 @@ export default class SelectRange extends Module {
 	
 	selectedColumns(component) {
 		return component ? this.activeRange.getColumns().map((col) => col.getComponent()) : this.activeRange.getColumns();
+	}
+
+	get rowHeaderWidth(){
+		if(!this.rowHeader){
+			return 0;
+		}
+		return this.rowHeader.getElement().offsetWidth;
 	}
 }
