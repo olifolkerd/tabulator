@@ -640,6 +640,9 @@ export default class Column extends CoreFeature{
 			});
 			
 			this.contentElement.style.maxWidth = (childWidth - 1) + "px";
+			if (this.table.initialized) {
+				this.element.style.width = childWidth + "px";
+			}
 			
 			if(this.parent.isGroup){
 				this.parent.matchChildWidths();
