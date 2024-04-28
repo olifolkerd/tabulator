@@ -527,100 +527,108 @@ export default class SelectRange extends Module {
 		this.layoutElement();
 	}
 	
-	findJumpCell(cells, reverse, emptyStart, emptySide){
-		var nextCell;
-		
+	findJumpRow(column, rows, reverse, emptyStart, emptySide){
 		if(reverse){
-			cells = cells.reverse();
+			rows = rows.reverse();
 		}
-		
-		for(let currentCell of cells){
-			let currentValue = currentCell.getValue();
+
+		return this.findJumpItem(emptyStart, emptySide, rows, function(row){return row.getData()[column.getField()]});
+	}
+	
+	findJumpCol(row, columns, reverse, emptyStart, emptySide){
+		if(reverse){
+			columns = columns.reverse();
+		}
+
+		return this.findJumpItem(emptyStart, emptySide, columns, function(column){return row.getData()[column.getField()]});
+	}
+
+	findJumpItem(emptyStart, emptySide, items, valueResolver){
+		var nextItem;
+
+		for(let currentItem of items){
+			let currentValue = valueResolver(currentItem);
 			
 			if(emptyStart){
-				nextCell = currentCell;
+				nextItem = currentItem;
 				if(currentValue){
 					break;
 				}
 			}else{
 				if(emptySide){
-					nextCell = currentCell;
+					nextItem = currentItem;
 					
 					if(currentValue){
 						break;
 					}
 				}else{
 					if(currentValue){
-						nextCell = currentCell;
+						nextItem = currentItem;
 					}else{
 						break;
 					}
 				}
 			}
 		}
-		
-		return nextCell;
+
+		return nextItem;
 	}
-	
+
 	findJumpCellLeft(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos),
-		cells = row.cells.filter((cell) => cell.column.visible),
-		isStartingCellEmpty = !cells[colPos].getValue(),
-		isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false,
-		jumpCol = colPos,
-		targetCells = this.rowHeader ? cells.slice(1, colPos) : cells.slice(0, colPos),
-		nextCell = this.findJumpCell(targetCells, true, isStartingCellEmpty, isLeftOfStartingCellEmpty);
+		columns = this.getTableColumns(),
+		isStartingCellEmpty = this.isEmpty(row.getData()[columns[colPos].getField()]),
+		isLeftOfStartingCellEmpty = columns[colPos - 1] ? this.isEmpty(row.getData()[columns[colPos - 1].getField()]) : false,
+		targetCols = this.rowHeader ? columns.slice(1, colPos) : columns.slice(0, colPos),
+		jumpCol = this.findJumpCol(row, targetCols, true, isStartingCellEmpty, isLeftOfStartingCellEmpty);
 		
-		if(nextCell){
-			jumpCol = nextCell.column.getPosition() - 1;
+		if(jumpCol){
+			return jumpCol.getPosition() - 1;
 		}
 		
-		return jumpCol;
+		return colPos;
 	}
 	
 	findJumpCellRight(rowPos, colPos){
 		var row = this.getRowByRangePos(rowPos),
-		cells = row.cells.filter((cell) => cell.column.visible),
-		isStartingCellEmpty = !cells[colPos].getValue(),
-		isRightOfStartingCellEmpty = cells[colPos + 1] ? !cells[colPos + 1].getValue() : false,
-		jumpCol = colPos,
-		nextCell = this.findJumpCell(cells.slice(colPos + 1, cells.length), false, isStartingCellEmpty, isRightOfStartingCellEmpty);
+		columns = this.getTableColumns(),
+		isStartingCellEmpty = this.isEmpty(row.getData()[columns[colPos].getField()]),
+		isRightOfStartingCellEmpty = columns[colPos + 1] ? this.isEmpty(row.getData()[columns[colPos + 1].getField()]) : false,
+		jumpCol = this.findJumpCol(row, columns.slice(colPos + 1, columns.length), false, isStartingCellEmpty, isRightOfStartingCellEmpty);
 		
-		if(nextCell){
-			jumpCol = nextCell.column.getPosition() - 1;
+		if(jumpCol){
+			return jumpCol.getPosition() - 1;
 		}
 		
-		return jumpCol;
+		return colPos;
 	}
 	
 	findJumpCellUp(rowPos, colPos) {
 		var column = this.getColumnByRangePos(colPos),
-		cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row)),
-		isStartingCellEmpty = !cells[rowPos].getValue(),
-		isTopOfStartingCellEmpty = cells[rowPos - 1] ? !cells[rowPos - 1].getValue() : false,
-		jumpRow = rowPos,
-		nextCell = this.findJumpCell(cells.slice(0, jumpRow), true, isStartingCellEmpty, isTopOfStartingCellEmpty);
+		rows = this.getTableRows(),
+		isStartingCellEmpty = this.isEmpty(rows[rowPos].getData()[column.getField()]),
+		isTopOfStartingCellEmpty = rows[rowPos - 1] ? this.isEmpty(rows[rowPos - 1].getData()[column.getField()]) : false,
+		jumpRow = this.findJumpRow(column, rows.slice(0, rowPos), true, isStartingCellEmpty, isTopOfStartingCellEmpty);
 		
-		if(nextCell){
-			jumpRow = nextCell.row.position - 1;
+		if(jumpRow){
+			return jumpRow.position - 1;
 		}
 		
-		return jumpRow;
+		return rowPos;
 	}
 	
 	findJumpCellDown(rowPos, colPos) {
 		var column = this.getColumnByRangePos(colPos),
-		cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row)),
-		isStartingCellEmpty = !cells[rowPos].getValue(),
-		isBottomOfStartingCellEmpty = cells[rowPos + 1] ? !cells[rowPos + 1].getValue() : false,
-		jumpRow = rowPos,
-		nextCell = this.findJumpCell(cells.slice(jumpRow + 1, cells.length), false, isStartingCellEmpty, isBottomOfStartingCellEmpty);
+		rows = this.getTableRows(),
+		isStartingCellEmpty = this.isEmpty(rows[rowPos].getData()[column.getField()]),
+		isBottomOfStartingCellEmpty = rows[rowPos + 1] ? this.isEmpty(rows[rowPos + 1].getData()[column.getField()]) : false,
+		jumpRow = this.findJumpRow(column, rows.slice(rowPos + 1, rows.length), false, isStartingCellEmpty, isBottomOfStartingCellEmpty);
 		
-		if(nextCell){
-			jumpRow = nextCell.row.position - 1;
+		if(jumpRow){
+			return jumpRow.position - 1;
 		}
 		
-		return jumpRow;
+		return rowPos;
 	}
 	
 	///////////////////////////////////
@@ -920,5 +928,9 @@ export default class SelectRange extends Module {
 	
 	selectedColumns(component) {
 		return component ? this.activeRange.getColumns().map((col) => col.getComponent()) : this.activeRange.getColumns();
+	}
+
+	isEmpty(value) {
+		return value === null || value === undefined || value === "";
 	}
 }
