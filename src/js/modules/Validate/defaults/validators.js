@@ -126,6 +126,10 @@ export default {
 			return true;
 		}
 
+		var equals = parameters === "ignorecase"
+			? (x, y) => x.toLowerCase() == y.toLowerCase()
+			: (x, y) => x == y;
+
 		var cellData = cell.getData();
 		var column = cell.getColumn()._getSelf();
 
@@ -133,7 +137,7 @@ export default {
 			var data = row.getData();
 
 			if(data !== cellData){
-				return value == column.getFieldValue(data);
+				return equals(value, column.getFieldValue(data));
 			}
 		});
 	},
