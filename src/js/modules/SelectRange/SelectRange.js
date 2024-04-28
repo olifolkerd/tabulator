@@ -534,7 +534,7 @@ export default class SelectRange extends Module {
 			rows = rows.reverse();
 		}
 
-		return this.findJumpItem(emptyStart, emptySide, rows, function(row){return row.getData()[column.getField()]});
+		return this.findJumpItem(emptyStart, emptySide, rows, function(row){return row.getData()[column.getField()];});
 	}
 	
 	findJumpCol(row, columns, reverse, emptyStart, emptySide){
@@ -542,7 +542,7 @@ export default class SelectRange extends Module {
 			columns = columns.reverse();
 		}
 
-		return this.findJumpItem(emptyStart, emptySide, columns, function(column){return row.getData()[column.getField()]});
+		return this.findJumpItem(emptyStart, emptySide, columns, function(column){return row.getData()[column.getField()];});
 	}
 
 	findJumpItem(emptyStart, emptySide, items, valueResolver){
