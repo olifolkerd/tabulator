@@ -403,14 +403,16 @@ export default class SelectRange extends Module {
 	
 	keyNavigate(dir, e){
 		if(this.navigate(false, false, dir)){
-			e.preventDefault();
+			// e.preventDefault();
 		}
+		e.preventDefault();
 	}
 	
 	keyNavigateRange(e, dir, jump, expand){
 		if(this.navigate(jump, expand, dir)){
-			e.preventDefault();
+			// e.preventDefault();
 		}
+		e.preventDefault();
 	}
 	
 	navigate(jump, expand, dir) {
