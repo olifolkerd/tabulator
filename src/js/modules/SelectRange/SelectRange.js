@@ -494,7 +494,7 @@ export default class SelectRange extends Module {
 				}
 			}
 
-			if(!(columnRect.left >= columnManagerRect.left + this.rowHeaderWidth && columnRect.right <= columnManagerRect.right)){
+			if(!(columnRect.left >= columnManagerRect.left + this.getRowHeaderWidth() && columnRect.right <= columnManagerRect.right)){
 				if(row.getElement().parentNode && column.getElement().parentNode){
 					// Use faster autoScroll when the elements are on the DOM
 					this.autoScroll(range, row.getElement(), column.getElement());
@@ -918,7 +918,7 @@ export default class SelectRange extends Module {
 		return component ? this.activeRange.getColumns().map((col) => col.getComponent()) : this.activeRange.getColumns();
 	}
 
-	get rowHeaderWidth(){
+	getRowHeaderWidth(){
 		if(!this.rowHeader){
 			return 0;
 		}
