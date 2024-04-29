@@ -1,4 +1,4 @@
-/* Tabulator v6.2.0 (c) Oliver Folkerd 2024 */
+/* Tabulator v6.2.1 (c) Oliver Folkerd 2024 */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -6954,7 +6954,8 @@
 			}
 			
 			//move menu to start on bottom edge if it is too close to the edge of the screen
-			if((y + this.element.offsetHeight) > Math.max(this.container.offsetHeight, scrollTop ? this.container.scrollHeight : 0)) {
+			let offsetHeight = Math.max(this.container.offsetHeight, scrollTop ? this.container.scrollHeight : 0);
+			if((y + this.element.offsetHeight) > offsetHeight) {
 				if(parentEl){
 					switch(position){
 						case "bottom":
@@ -6966,7 +6967,7 @@
 					}
 					
 				}else {
-					this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight) + "px";
+					this.element.style.height = offsetHeight + "px";
 				}
 			}
 		}
@@ -20808,6 +20809,13 @@
 			headerElement = this.table.columnManager.getContentsElement(),
 			headersElement = this.table.columnManager.getHeadersElement();
 			
+			//Prevent moving columns when range selection is active
+			if(this.table.modules.selectRange && this.table.modules.selectRange.columnSelection){
+				if(this.table.modules.selectRange.mousedown && this.table.modules.selectRange.selecting === "column"){
+					return;
+				}
+			}
+
 			this.moving = column;
 			this.startX = (this.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(element).left;
 			
@@ -20837,6 +20845,8 @@
 			}
 			
 			this.moveHover(e);
+
+			this.dispatch("column-moving", e, this.moving);
 		}
 		
 		_bindMouseMove(){
@@ -20893,7 +20903,7 @@
 				if(this.toCol){
 					this.table.columnManager.moveColumnActual(this.moving, this.toCol, this.toColAfter);
 				}
-				
+
 				this.moving = false;
 				this.toCol = false;
 				this.toColAfter = false;
@@ -25598,7 +25608,7 @@
 		}
 
 		getCells() {
-			return this._range.getCells(true);
+			return this._range.getCells(true, true);
 		}
 
 		getStructuredCells() {
@@ -26316,6 +26326,8 @@
 			this.subscribe("column-mousedown", this.handleColumnMouseDown.bind(this));
 			this.subscribe("column-mousemove", this.handleColumnMouseMove.bind(this));
 			this.subscribe("column-resized", this.handleColumnResized.bind(this));
+			this.subscribe("column-moving", this.handleColumnMoving.bind(this));
+			this.subscribe("column-moved", this.handleColumnMoved.bind(this));
 			this.subscribe("column-width", this.layoutChange.bind(this));
 			this.subscribe("column-height", this.layoutChange.bind(this));
 			this.subscribe("column-resized", this.layoutChange.bind(this));
@@ -26469,6 +26481,8 @@
 		
 		initializeFocus(cell){
 			var range;
+
+			this.restoreFocus();
 			
 			try{
 				if (document.selection) { // IE
@@ -26518,8 +26532,24 @@
 			});
 		}
 		
+		handleColumnMoving(_event, column) {
+			this.resetRanges().setBounds(column);
+			this.overlay.style.visibility = "hidden";
+		}
+
+		handleColumnMoved(from, _to, _after) {
+			this.activeRange.setBounds(from);
+			this.layoutElement();
+		}
+
 		handleColumnMouseDown(event, column) {
 			if (event.button === 2 && (this.selecting === "column" || this.selecting === "all") && this.activeRange.occupiesColumn(column)) {
+				return;
+			}
+
+			//If columns are movable, allow dragging columns only if they are not
+			//selected. Dragging selected columns should move the columns instead.
+			if(this.table.options.movableColumns && this.selecting === "column" && this.activeRange.occupiesColumn(column)){
 				return;
 			}
 			
@@ -26596,15 +26626,13 @@
 		///////////////////////////////////
 		
 		keyNavigate(dir, e){
-			if(this.navigate(false, false, dir)){
-				e.preventDefault();
-			}
+			if(this.navigate(false, false, dir));
+			e.preventDefault();
 		}
 		
 		keyNavigateRange(e, dir, jump, expand){
-			if(this.navigate(jump, expand, dir)){
-				e.preventDefault();
-			}
+			if(this.navigate(jump, expand, dir));
+			e.preventDefault();
 		}
 		
 		navigate(jump, expand, dir) {
@@ -26671,6 +26699,10 @@
 						break;
 				}
 			}
+
+			if(this.rowHeader && nextCol === 0) {
+				nextCol = 1;
+			}
 			
 			moved = nextCol !== rangeEdge.col || nextRow !== rangeEdge.row;
 			
@@ -26717,100 +26749,108 @@
 			this.layoutElement();
 		}
 		
-		findJumpCell(cells, reverse, emptyStart, emptySide){
-			var nextCell;
-			
+		findJumpRow(column, rows, reverse, emptyStart, emptySide){
 			if(reverse){
-				cells = cells.reverse();
+				rows = rows.reverse();
 			}
-			
-			for(let currentCell of cells){
-				let currentValue = currentCell.getValue();
+
+			return this.findJumpItem(emptyStart, emptySide, rows, function(row){return row.getData()[column.getField()];});
+		}
+		
+		findJumpCol(row, columns, reverse, emptyStart, emptySide){
+			if(reverse){
+				columns = columns.reverse();
+			}
+
+			return this.findJumpItem(emptyStart, emptySide, columns, function(column){return row.getData()[column.getField()];});
+		}
+
+		findJumpItem(emptyStart, emptySide, items, valueResolver){
+			var nextItem;
+
+			for(let currentItem of items){
+				let currentValue = valueResolver(currentItem);
 				
 				if(emptyStart){
-					nextCell = currentCell;
+					nextItem = currentItem;
 					if(currentValue){
 						break;
 					}
 				}else {
 					if(emptySide){
-						nextCell = currentCell;
+						nextItem = currentItem;
 						
 						if(currentValue){
 							break;
 						}
 					}else {
 						if(currentValue){
-							nextCell = currentCell;
+							nextItem = currentItem;
 						}else {
 							break;
 						}
 					}
 				}
 			}
-			
-			return nextCell;
+
+			return nextItem;
 		}
-		
+
 		findJumpCellLeft(rowPos, colPos){
 			var row = this.getRowByRangePos(rowPos),
-			cells = row.cells.filter((cell) => cell.column.visible),
-			isStartingCellEmpty = !cells[colPos].getValue(),
-			isLeftOfStartingCellEmpty = cells[colPos] ? !cells[colPos].getValue() : false,
-			jumpCol = colPos,
-			targetCells = this.rowHeader ? cells.slice(1, colPos) : cells.slice(0, colPos),
-			nextCell = this.findJumpCell(targetCells, true, isStartingCellEmpty, isLeftOfStartingCellEmpty);
+			columns = this.getTableColumns(),
+			isStartingCellEmpty = this.isEmpty(row.getData()[columns[colPos].getField()]),
+			isLeftOfStartingCellEmpty = columns[colPos - 1] ? this.isEmpty(row.getData()[columns[colPos - 1].getField()]) : false,
+			targetCols = this.rowHeader ? columns.slice(1, colPos) : columns.slice(0, colPos),
+			jumpCol = this.findJumpCol(row, targetCols, true, isStartingCellEmpty, isLeftOfStartingCellEmpty);
 			
-			if(nextCell){
-				jumpCol = nextCell.column.getPosition() - 1;
+			if(jumpCol){
+				return jumpCol.getPosition() - 1;
 			}
 			
-			return jumpCol;
+			return colPos;
 		}
 		
 		findJumpCellRight(rowPos, colPos){
 			var row = this.getRowByRangePos(rowPos),
-			cells = row.cells.filter((cell) => cell.column.visible),
-			isStartingCellEmpty = !cells[colPos].getValue(),
-			isRightOfStartingCellEmpty = cells[colPos + 1] ? !cells[colPos + 1].getValue() : false,
-			jumpCol = colPos,
-			nextCell = this.findJumpCell(cells.slice(colPos + 1, cells.length), false, isStartingCellEmpty, isRightOfStartingCellEmpty);
+			columns = this.getTableColumns(),
+			isStartingCellEmpty = this.isEmpty(row.getData()[columns[colPos].getField()]),
+			isRightOfStartingCellEmpty = columns[colPos + 1] ? this.isEmpty(row.getData()[columns[colPos + 1].getField()]) : false,
+			jumpCol = this.findJumpCol(row, columns.slice(colPos + 1, columns.length), false, isStartingCellEmpty, isRightOfStartingCellEmpty);
 			
-			if(nextCell){
-				jumpCol = nextCell.column.getPosition() - 1;
+			if(jumpCol){
+				return jumpCol.getPosition() - 1;
 			}
 			
-			return jumpCol;
+			return colPos;
 		}
 		
 		findJumpCellUp(rowPos, colPos) {
 			var column = this.getColumnByRangePos(colPos),
-			cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row)),
-			isStartingCellEmpty = !cells[rowPos].getValue(),
-			isTopOfStartingCellEmpty = cells[rowPos - 1] ? !cells[rowPos - 1].getValue() : false,
-			jumpRow = rowPos,
-			nextCell = this.findJumpCell(cells.slice(0, jumpRow), true, isStartingCellEmpty, isTopOfStartingCellEmpty);
+			rows = this.getTableRows(),
+			isStartingCellEmpty = this.isEmpty(rows[rowPos].getData()[column.getField()]),
+			isTopOfStartingCellEmpty = rows[rowPos - 1] ? this.isEmpty(rows[rowPos - 1].getData()[column.getField()]) : false,
+			jumpRow = this.findJumpRow(column, rows.slice(0, rowPos), true, isStartingCellEmpty, isTopOfStartingCellEmpty);
 			
-			if(nextCell){
-				jumpRow = nextCell.row.position - 1;
+			if(jumpRow){
+				return jumpRow.position - 1;
 			}
 			
-			return jumpRow;
+			return rowPos;
 		}
 		
 		findJumpCellDown(rowPos, colPos) {
 			var column = this.getColumnByRangePos(colPos),
-			cells = column.cells.filter((cell) => this.table.rowManager.activeRows.includes(cell.row)),
-			isStartingCellEmpty = !cells[rowPos].getValue(),
-			isBottomOfStartingCellEmpty = cells[rowPos + 1] ? !cells[rowPos + 1].getValue() : false,
-			jumpRow = rowPos,
-			nextCell = this.findJumpCell(cells.slice(jumpRow + 1, cells.length), false, isStartingCellEmpty, isBottomOfStartingCellEmpty);
+			rows = this.getTableRows(),
+			isStartingCellEmpty = this.isEmpty(rows[rowPos].getData()[column.getField()]),
+			isBottomOfStartingCellEmpty = rows[rowPos + 1] ? this.isEmpty(rows[rowPos + 1].getData()[column.getField()]) : false,
+			jumpRow = this.findJumpRow(column, rows.slice(rowPos + 1, rows.length), false, isStartingCellEmpty, isBottomOfStartingCellEmpty);
 			
-			if(nextCell){
-				jumpRow = nextCell.row.position - 1;
+			if(jumpRow){
+				return jumpRow.position - 1;
 			}
 			
-			return jumpRow;
+			return rowPos;
 		}
 		
 		///////////////////////////////////
@@ -27110,6 +27150,10 @@
 		
 		selectedColumns(component) {
 			return component ? this.activeRange.getColumns().map((col) => col.getComponent()) : this.activeRange.getColumns();
+		}
+
+		isEmpty(value) {
+			return value === null || value === undefined || value === "";
 		}
 	}
 
