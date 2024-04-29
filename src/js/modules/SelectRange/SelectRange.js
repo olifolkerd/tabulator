@@ -696,7 +696,7 @@ export default class SelectRange extends Module {
 		};
 		
 		view = {
-			left: tableHolder.scrollLeft + this.rowHeaderWidth,
+			left: tableHolder.scrollLeft + this.getRowHeaderWidth(),
 			right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
 			top: tableHolder.scrollTop,
 			bottom:	tableHolder.scrollTop +	tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth,
@@ -708,9 +708,9 @@ export default class SelectRange extends Module {
 		
 		if (!withinHorizontalView) {
 			if (rect.left < view.left) {
-				tableHolder.scrollLeft = rect.left - this.rowHeaderWidth;
+				tableHolder.scrollLeft = rect.left - this.getRowHeaderWidth();
 			} else if (rect.right > view.right) {
-				tableHolder.scrollLeft = Math.min(rect.right - tableHolder.clientWidth, rect.left - this.rowHeaderWidth);
+				tableHolder.scrollLeft = Math.min(rect.right - tableHolder.clientWidth, rect.left - this.getRowHeaderWidth());
 			}
 		}
 		
@@ -921,7 +921,7 @@ export default class SelectRange extends Module {
 		return component ? this.activeRange.getColumns().map((col) => col.getComponent()) : this.activeRange.getColumns();
 	}
 
-	get rowHeaderWidth(){
+	getRowHeaderWidth(){
 		if(!this.rowHeader){
 			return 0;
 		}
