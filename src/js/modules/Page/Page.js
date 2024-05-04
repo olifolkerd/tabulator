@@ -43,6 +43,7 @@ export default class Page extends Module{
 		// this.registerTableOption("paginationDataSent", {}); //pagination data sent to the server
 		// this.registerTableOption("paginationDataReceived", {}); //pagination data received from the server
 		this.registerTableOption("paginationAddRow", "page"); //add rows on table or page
+		this.registerTableOption("paginationOutOfRange", false); //reset the current page when the last page < this.page, values: false|function|any value accepted by setPage()
 		
 		this.registerTableOption("progressiveLoad", false); //progressive loading
 		this.registerTableOption("progressiveLoadDelay", 0); //delay between requests
@@ -849,6 +850,21 @@ export default class Page extends Module{
 				
 				return false;
 			}else{
+
+				if(this.page > this.max){
+					console.warn( "Remote Pagination Error - Server returned last page value lower than the current page" );
+
+					const paginationOutOfRange = this.options('paginationOutOfRange');
+
+					if(paginationOutOfRange){
+						return this.setPage(
+							typeof paginationOutOfRange === 'function' ?
+								paginationOutOfRange.call(this, this.page, this.max) :
+								paginationOutOfRange
+						);
+					}
+				}
+
 				// left = this.table.rowManager.scrollLeft;
 				this.dispatchExternal("pageLoaded",  this.getPage());
 				// this.table.rowManager.scrollHorizontal(left);
