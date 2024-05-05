@@ -155,7 +155,7 @@ export default class Bundler{
 			],
 			output: [
 				{
-					file: "dist/js/tabulator_esm" + (minify ? ".min" : "") + ".mjs",
+					file: "dist/js/tabulator_esm" + (minify ? ".min" : "") + ".js",
 					format: "esm",
 					exports: "named",
 					sourcemap: true,
