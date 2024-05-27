@@ -1,8 +1,8 @@
-import CoreFeature from '../CoreFeature.js';
-import CellComponent from './CellComponent.js';
+import CoreFeature from "../CoreFeature.js";
+import CellComponent from "./CellComponent.js";
 
-export default class Cell extends CoreFeature{
-	constructor(column, row){
+export default class Cell extends CoreFeature {
+	constructor(column, row) {
 		super(column.table);
 
 		this.table = column.table;
@@ -27,7 +27,7 @@ export default class Cell extends CoreFeature{
 
 	//////////////// Setup Functions /////////////////
 	//generate element
-	build(){
+	build() {
 		this.generateElement();
 
 		this.setWidth();
@@ -39,49 +39,49 @@ export default class Cell extends CoreFeature{
 		this.initialValue = this.value;
 	}
 
-	generateElement(){
-		this.element = document.createElement('div');
+	generateElement() {
+		this.element = document.createElement("div");
 		this.element.className = "tabulator-cell";
 		this.element.setAttribute("role", "gridcell");
 
-		if(this.column.isRowHeader){
+		if (this.column.isRowHeader) {
 			this.element.classList.add("tabulator-row-header");
 		}
 	}
 
-	_configureCell(){
+	_configureCell() {
 		var element = this.element,
-		field = this.column.getField(),
-		vertAligns = {
-			top:"flex-start",
-			bottom:"flex-end",
-			middle:"center",
-		},
-		hozAligns = {
-			left:"flex-start",
-			right:"flex-end",
-			center:"center",
-		};
+			field = this.column.getField(),
+			vertAligns = {
+				top: "flex-start",
+				bottom: "flex-end",
+				middle: "center",
+			},
+			hozAligns = {
+				left: "flex-start",
+				right: "flex-end",
+				center: "center",
+			};
 
 		//set text alignment
 		element.style.textAlign = this.column.hozAlign;
 
-		if(this.column.vertAlign){
+		if (this.column.vertAlign) {
 			element.style.display = "inline-flex";
 
 			element.style.alignItems = vertAligns[this.column.vertAlign] || "";
 
-			if(this.column.hozAlign){
+			if (this.column.hozAlign) {
 				element.style.justifyContent = hozAligns[this.column.hozAlign] || "";
 			}
 		}
 
-		if(field){
+		if (field) {
 			element.setAttribute("tabulator-field", field);
 		}
 
 		//add class to cell if needed
-		if(this.column.definition.cssClass){
+		if (this.column.definition.cssClass) {
 			var classNames = this.column.definition.cssClass.split(" ");
 			classNames.forEach((className) => {
 				element.classList.add(className);
@@ -91,32 +91,35 @@ export default class Cell extends CoreFeature{
 		this.dispatch("cell-init", this);
 
 		//hide cell if not visible
-		if(!this.column.visible){
+		if (!this.column.visible) {
 			this.hide();
 		}
 	}
 
 	//generate cell contents
-	_generateContents(){
+	_generateContents() {
 		var val;
 
 		val = this.chain("cell-format", this, null, () => {
-			return this.element.innerHTML = this.value;
+			return (this.element.innerHTML = this.value);
 		});
 
-		switch(typeof val){
+		switch (typeof val) {
 			case "object":
-				if(val instanceof Node){
-
+				if (val instanceof Node) {
 					//clear previous cell contents
-					while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
+					while (this.element.firstChild)
+						this.element.removeChild(this.element.firstChild);
 
 					this.element.appendChild(val);
-				}else{
+				} else {
 					this.element.innerHTML = "";
 
-					if(val != null){
-						console.warn("Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", val);
+					if (val != null) {
+						console.warn(
+							"Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:",
+							val
+						);
 					}
 				}
 				break;
@@ -128,15 +131,15 @@ export default class Cell extends CoreFeature{
 		}
 	}
 
-	cellRendered(){
+	cellRendered() {
 		this.dispatch("cell-rendered", this);
 	}
 
 	//////////////////// Getters ////////////////////
-	getElement(containerOnly){
-		if(!this.loaded){
+	getElement(containerOnly) {
+		if (!this.loaded) {
 			this.loaded = true;
-			if(!containerOnly){
+			if (!containerOnly) {
 				this.layoutElement();
 			}
 		}
@@ -144,57 +147,56 @@ export default class Cell extends CoreFeature{
 		return this.element;
 	}
 
-	getValue(){
+	getValue() {
 		return this.value;
 	}
 
-	getOldValue(){
+	getOldValue() {
 		return this.oldValue;
 	}
 
 	//////////////////// Actions ////////////////////
-	setValue(value, mutate, force){
+	setValue(value, mutate, force) {
 		var changed = this.setValueProcessData(value, mutate, force);
 
-		if(changed){
+		if (changed) {
 			this.dispatch("cell-value-updated", this);
 
 			this.cellRendered();
 
-			if(this.column.definition.cellEdited){
+			if (this.column.definition.cellEdited) {
 				this.column.definition.cellEdited.call(this.table, this.getComponent());
 			}
 
 			this.dispatchExternal("cellEdited", this.getComponent());
 
-			if(this.subscribedExternal("dataChanged")){
+			if (this.subscribedExternal("dataChanged")) {
 				this.dispatchExternal("dataChanged", this.table.rowManager.getData());
 			}
 		}
 	}
 
-	setValueProcessData(value, mutate, force){
+	setValueProcessData(value, mutate, force) {
 		var changed = false;
 
-		if(this.value !== value || force){
-
+		if (this.value !== value || force) {
 			changed = true;
 
-			if(mutate){
+			if (mutate) {
 				value = this.chain("cell-value-changing", [this, value], null, value);
 			}
 		}
 
 		this.setValueActual(value);
 
-		if(changed){
+		if (changed) {
 			this.dispatch("cell-value-changed", this);
 		}
 
 		return changed;
 	}
 
-	setValueActual(value){
+	setValueActual(value) {
 		this.oldValue = this.value;
 
 		this.value = value;
@@ -205,76 +207,92 @@ export default class Cell extends CoreFeature{
 
 		this.dispatch("cell-value-save-after", this);
 
-		if(this.loaded){
+		if (this.loaded) {
 			this.layoutElement();
 		}
 	}
 
-	layoutElement(){
+	setInitialValue(value) {
+		//this.oldValue = this.value;
+
+		this.initialValue = value;
+
+		//this.dispatch("cell-value-save-before", this);
+
+		//this.column.setFieldValue(this.row.data, value);
+
+		//this.dispatch("cell-value-save-after", this);
+
+		//if (this.loaded) {
+		//this.layoutElement();
+		//}
+	}
+
+	layoutElement() {
 		this._generateContents();
 
 		this.dispatch("cell-layout", this);
 	}
 
-	setWidth(){
+	setWidth() {
 		this.width = this.column.width;
 		this.element.style.width = this.column.widthStyled;
 	}
 
-	clearWidth(){
+	clearWidth() {
 		this.width = "";
 		this.element.style.width = "";
 	}
 
-	getWidth(){
+	getWidth() {
 		return this.width || this.element.offsetWidth;
 	}
 
-	setMinWidth(){
+	setMinWidth() {
 		this.minWidth = this.column.minWidth;
 		this.element.style.minWidth = this.column.minWidthStyled;
 	}
 
-	setMaxWidth(){
+	setMaxWidth() {
 		this.maxWidth = this.column.maxWidth;
 		this.element.style.maxWidth = this.column.maxWidthStyled;
 	}
 
-	checkHeight(){
+	checkHeight() {
 		// var height = this.element.css("height");
 		this.row.reinitializeHeight();
 	}
 
-	clearHeight(){
+	clearHeight() {
 		this.element.style.height = "";
 		this.height = null;
 
 		this.dispatch("cell-height", this, "");
 	}
 
-	setHeight(){
+	setHeight() {
 		this.height = this.row.height;
 		this.element.style.height = this.row.heightStyled;
 
 		this.dispatch("cell-height", this, this.row.heightStyled);
 	}
 
-	getHeight(){
+	getHeight() {
 		return this.height || this.element.offsetHeight;
 	}
 
-	show(){
+	show() {
 		this.element.style.display = this.column.vertAlign ? "inline-flex" : "";
 	}
 
-	hide(){
+	hide() {
 		this.element.style.display = "none";
 	}
 
-	delete(){
+	delete() {
 		this.dispatch("cell-delete", this);
 
-		if(!this.table.rowManager.redrawBlock && this.element.parentNode){
+		if (!this.table.rowManager.redrawBlock && this.element.parentNode) {
 			this.element.parentNode.removeChild(this.element);
 		}
 
@@ -284,13 +302,13 @@ export default class Cell extends CoreFeature{
 		this.calcs = {};
 	}
 
-	getIndex(){
+	getIndex() {
 		return this.row.getCellIndex(this);
 	}
 
 	//////////////// Object Generation /////////////////
-	getComponent(){
-		if(!this.component){
+	getComponent() {
+		if (!this.component) {
 			this.component = new CellComponent(this);
 		}
 

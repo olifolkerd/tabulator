@@ -1,79 +1,86 @@
 //public cell object
 export default class CellComponent {
-
-	constructor (cell){
+	constructor(cell) {
 		this._cell = cell;
 
 		return new Proxy(this, {
-			get: function(target, name, receiver) {
+			get: function (target, name, receiver) {
 				if (typeof target[name] !== "undefined") {
 					return target[name];
-				}else{
-					return target._cell.table.componentFunctionBinder.handle("cell", target._cell, name);
+				} else {
+					return target._cell.table.componentFunctionBinder.handle(
+						"cell",
+						target._cell,
+						name
+					);
 				}
-			}
+			},
 		});
 	}
 
-	getValue(){
+	getValue() {
 		return this._cell.getValue();
 	}
 
-	getOldValue(){
+	getOldValue() {
 		return this._cell.getOldValue();
 	}
 
-	getInitialValue(){
+	getInitialValue() {
 		return this._cell.initialValue;
 	}
 
-	getElement(){
+	getElement() {
 		return this._cell.getElement();
 	}
 
-	getRow(){
+	getRow() {
 		return this._cell.row.getComponent();
 	}
 
-	getData(transform){
+	getData(transform) {
 		return this._cell.row.getData(transform);
 	}
-	getType(){
+	getType() {
 		return "cell";
 	}
-	getField(){
+	getField() {
 		return this._cell.column.getField();
 	}
 
-	getColumn(){
+	getColumn() {
 		return this._cell.column.getComponent();
 	}
 
-	setValue(value, mutate){
-		if(typeof mutate == "undefined"){
+	setValue(value, mutate) {
+		if (typeof mutate == "undefined") {
 			mutate = true;
 		}
 
 		this._cell.setValue(value, mutate);
 	}
 
-	restoreOldValue(){
+	restoreOldValue() {
 		this._cell.setValueActual(this._cell.getOldValue());
 	}
 
-	restoreInitialValue(){
+	restoreInitialValue() {
 		this._cell.setValueActual(this._cell.initialValue);
 	}
 
-	checkHeight(){
+	setInitialValue(value) {
+		this._cell.setInitialValue(value);
+	}
+
+	checkHeight() {
 		this._cell.checkHeight();
 	}
 
-	getTable(){
+	getTable() {
 		return this._cell.table;
 	}
 
-	_getSelf(){
+	_getSelf() {
 		return this._cell;
 	}
 }
