@@ -155,6 +155,12 @@ export default class Cell extends CoreFeature {
 		return this.oldValue;
 	}
 
+	update() {
+		if (this.loaded) {
+			this.layoutElement();
+		}
+	}
+
 	//////////////////// Actions ////////////////////
 	setValue(value, mutate, force) {
 		var changed = this.setValueProcessData(value, mutate, force);

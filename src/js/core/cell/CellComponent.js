@@ -83,4 +83,8 @@ export default class CellComponent {
 	_getSelf() {
 		return this._cell;
 	}
+
+	update() {
+		this._cell.update();
+	}
 }
