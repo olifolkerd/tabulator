@@ -127,8 +127,8 @@ export default class SelectRange extends Module {
 		this.subscribe("edit-editor-clear", this.finishEditingCell.bind(this));
 		this.subscribe("edit-blur", this.restoreFocus.bind(this));
 		
-		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "left"));
-		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "right"));
+		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "prev"));
+		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "next"));
 		this.subscribe("keybinding-nav-left", this.keyNavigate.bind(this, "left"));
 		this.subscribe("keybinding-nav-right", this.keyNavigate.bind(this, "right"));
 		this.subscribe("keybinding-nav-up", this.keyNavigate.bind(this, "up"));
@@ -401,29 +401,38 @@ export default class SelectRange extends Module {
 	///////     Navigation      ///////
 	///////////////////////////////////
 	
-	keyNavigate(dir, e){
-		if(this.navigate(false, false, dir)){
-			// e.preventDefault();
+	keyNavigate(dir, e, jump = false, expand = false){
+		if(this.table.modules.edit && this.table.modules.edit.currentCell){
+			if(dir === 'next' || dir === 'prev'){
+				// Cancel edit and move to the next cell if editing
+				this.table.modules.edit.currentCell.getComponent().cancelEdit();
+			}else{
+				// Prevent navigating while editing except for next/prev
+				return false;
+			}
 		}
+
+		if (dir === 'prev') {
+			dir = 'left';
+		} else if (dir === 'next') {
+			dir = 'right';
+		}
+		
+		this.navigate(jump, expand, dir);
+
+		// Trap keyboard events here to avoid triggering keybindings outside of 
+		// tabulator. E.g. Pressing arrow can trigger page scrolling.
 		e.preventDefault();
 	}
 	
 	keyNavigateRange(e, dir, jump, expand){
-		if(this.navigate(jump, expand, dir)){
-			// e.preventDefault();
-		}
-		e.preventDefault();
+		this.keyNavigate(dir, e, jump, expand);
 	}
 	
 	navigate(jump, expand, dir) {
 		var moved = false,
 		range, rangeEdge, nextRow, nextCol, row, column;
-		
-		// Don't navigate while editing
-		if (this.table.modules.edit && this.table.modules.edit.currentCell) {
-			return false;
-		}
-		
+
 		// If there are more than 1 range, use the active range and destroy the others
 		if (this.ranges.length > 1) {
 			this.ranges = this.ranges.filter((range) => {
