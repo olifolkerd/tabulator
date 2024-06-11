@@ -146,6 +146,7 @@ export default class SelectRange extends Module {
 			// Block editor from taking action so we can trigger edit by
 			// double clicking.
 			// column.modules.edit.blocked = true;
+			column.modules.edit.navigationBlocked = true;
 		}
 	}
 	
