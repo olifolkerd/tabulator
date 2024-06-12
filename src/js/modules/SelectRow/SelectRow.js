@@ -26,6 +26,8 @@ export default class SelectRow extends Module {
 		this.registerTableFunction("deselectRow", this.deselectRows.bind(this));
 		this.registerTableFunction("toggleSelectRow", this.toggleRow.bind(this));
 		this.registerTableFunction("getSelectedRows", this.getSelectedRows.bind(this));
+		this.registerTableFunction("getSelectedRows_mode2", this.getSelectedRows_mode2.bind(this));
+
 		this.registerTableFunction("getSelectedData", this.getSelectedData.bind(this));
 
 		//register component functions
@@ -716,6 +718,8 @@ export default class SelectRow extends Module {
 			}
 		}
 	}
+
+	
 
 
 
