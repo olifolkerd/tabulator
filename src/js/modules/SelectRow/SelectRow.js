@@ -33,6 +33,7 @@ export default class SelectRow extends Module {
 		//register component functions
 		this.registerComponentFunction("row", "select", this.selectRows.bind(this));
 		this.registerComponentFunction("row", "deselect", this.deselectRows.bind(this));
+		this.registerComponentFunction("row", "deselect_mode2", this.deselectRows_mode2.bind(this));
 		this.registerComponentFunction("row", "toggleSelect", this.toggleRow.bind(this));
 		this.registerComponentFunction("row", "toggleSelect_mode2", this.toggleRow_mode2.bind(this));
 		this.registerComponentFunction("row", "isSelected", this.isRowSelected.bind(this));
@@ -516,52 +517,6 @@ export default class SelectRow extends Module {
 		}
 	}
 
-	//deselect an individual row
-	_deselectRow2(rowInfo, silent) {
-		var self = this,
-			row = self.table.rowManager.findRow(rowInfo),
-			index, element;
-
-		if (row) {
-			index = self.selectedRows_mode2.findIndex(function (selectedRow) {
-				return selectedRow == row;
-			});
-
-			if (index > -1) {
-
-				element = row.getElement();
-
-				if (element) {
-					element.classList.remove("tabulator-selected-mode2");
-				}
-
-				if (!row.modules.select) {
-					row.modules.select = {};
-				}
-
-				row.modules.select.selected_mode2 = false;
-				if (row.modules.select.checkboxEl_mode2) {
-					row.modules.select.checkboxEl_mode2.checked = false;
-				}
-				self.selectedRows.splice(index, 1);
-
-				if (this.table.options.dataTreeSelectPropagate) {
-					this.childRowSelection(row, false);
-				}
-
-				this.dispatchExternal("rowDeselected_mode2", row.getComponent());
-
-				self._rowSelectionChanged_mode2(silent, undefined, row);
-
-				return row;
-			}
-		} else {
-			if (!silent) {
-				console.warn("Deselection Error - No such row found, ignoring selection:" + rowInfo);
-			}
-		}
-	}
-
 	childRowSelection_mode2(row, select) {
 		var children = this.table.modules.dataTree.getChildren(row, true, true);
 
@@ -719,7 +674,53 @@ export default class SelectRow extends Module {
 		}
 	}
 
-	
+	//deselect a number of rows
+	deselectRows_mode2(rows, silent) {
+		var changes = [],
+			rowMatch, change;
+
+		switch (typeof rows) {
+			case "undefined":
+				rowMatch = Object.assign([], this.selectedRows);
+				break;
+
+			case "number":
+				rowMatch = this.table.rowManager.findRow(rows);
+				break;
+
+			case "string":
+				rowMatch = this.table.rowManager.findRow(rows);
+
+				if (!rowMatch) {
+					rowMatch = this.table.rowManager.getRows(rows);
+				}
+				break;
+
+			default:
+				rowMatch = rows;
+				break;
+		}
+
+		if (Array.isArray(rowMatch)) {
+			if (rowMatch.length) {
+				rowMatch.forEach((row) => {
+					change = this._deselectRow_mode2(row, true, true);
+
+					if (change) {
+						changes.push(change);
+					}
+				});
+
+				this._rowSelectionChanged_mode2(silent, [], changes);
+			}
+		} else {
+			if (rowMatch) {
+				this._deselectRow_mode2(rowMatch, silent, true);
+			}
+		}
+	}
+
+
 
 
 
