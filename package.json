@@ -55,7 +55,6 @@
     "eslint-plugin-only-warn": "^1.1.0",
     "fs-extra": "^11.2.0",
     "globby": "^14.0.1",
-    "node-sass": "^9.0.0",
     "postcss": "^8.4.35",
     "postcss-prettify": "^0.3.4",
     "rollup": "^4.12.1",
