@@ -4,7 +4,7 @@
 /// @return {Number} - Unitless number
 @function strip-unit($number) {
   @if type-of($number) == 'number' and not unitless($number) {
-    @return $number / ($number * 0 + 1);
+    @return $number;
   }
 
   @return $number;
@@ -56,15 +56,15 @@ $fontSize : 14px !default;
 */
 
 
-$a1px  : strip-unit(1 / $emSize) + rem !default;
-$a4px  : strip-unit(4 / $emSize) + rem !default;
-$a11px  : strip-unit(11 / $emSize) + rem !default;
-$a14px  : strip-unit(14 / $emSize) + rem !default;
+$a1px  : strip-unit(calc(1px / $emSize)) + rem !default;
+$a4px  : strip-unit(calc(4px / $emSize)) + rem !default;
+$a11px  : strip-unit(calc(11px / $emSize)) + rem !default;
+$a14px  : strip-unit(calc(14px / $emSize)) + rem !default;
 
-$relative1px  : strip-unit(1 / $emSize) + em !default;
-$relative4px  : strip-unit(4 / $emSize) + em !default;
-$relative11px  : strip-unit(11 / $emSize) + em !default;
-$relative14px  : strip-unit(14 / $emSize) + em !default;
+$relative1px  : strip-unit(calc(1px / $emSize)) + em !default;
+$relative4px  : strip-unit(calc(4px / $emSize)) + em !default;
+$relative11px  : strip-unit(calc(11px / $emSize)) + em !default;
+$relative14px  : strip-unit(calc(14px / $emSize)) + em !default;
 
 
 
@@ -205,13 +205,13 @@ $lightSecondaryColor : $lightBlack !default;
 ---------------*/
 
 $headerFontWeight : bold !default;
-$headerLineHeight : (18 / 14) * 1em !default;
+$headerLineHeight : calc(18 / 14) * 1em !default;
 
-$h1 : (28 / 14) * 1rem !default;
-$h2 : (24 / 14) * 1rem !default;
-$h3 : (18 / 14) * 1rem !default;
-$h4 : (15 / 14) * 1rem !default;
-$h5 : (14 / 14) * 1rem !default;
+$h1 : calc(28 / 14) * 1rem !default;
+$h2 : calc(24 / 14) * 1rem !default;
+$h3 : calc(18 / 14) * 1rem !default;
+$h4 : calc(15 / 14) * 1rem !default;
+$h5 : calc(14 / 14) * 1rem !default;
 
 
 /*-------------------
@@ -241,7 +241,7 @@ $inputPlaceholderColor: lighten($inputColor, 75) !default;
 $inputPlaceholderFocusColor: lighten($inputColor, 45) !default;
 
 /* Line Height Default For Inputs in Browser (Descendors are 17px at 14px base em) */
-$inputLineHeight: (17 / 14) * 1em !default;
+$inputLineHeight: calc(17 / 14) * 1em !default;
 
 /*-------------------
     Focused Input
@@ -262,14 +262,14 @@ $focusedFormMutedBorderColor: #96C8DA !default;
   This ensures these "ratios" remain constant despite changes in EM
 */
 
-$miniSize        : (11 / 14) !default;
-$tinySize        : (12 / 14) !default;
-$smallSize       : (13 / 14) !default;
-$mediumSize      : (14 / 14) !default;
-$largeSize       : (16 / 14) !default;
-$bigSize         : (18 / 14) !default;
-$hugeSize        : (20 / 14) !default;
-$massiveSize     : (24 / 14) !default;
+$miniSize        : calc(11 / 14) !default;
+$tinySize        : calc(12 / 14) !default;
+$smallSize       : calc(13 / 14) !default;
+$mediumSize      : calc(14 / 14) !default;
+$largeSize       : calc(16 / 14) !default;
+$bigSize         : calc(18 / 14) !default;
+$hugeSize        : calc(20 / 14) !default;
+$massiveSize     : calc(24 / 14) !default;
 
 
 /*-------------------
@@ -306,34 +306,34 @@ $inputHighlightColor      : $textColor !default;
   This rounds $size values to the closest pixel then expresses that value in (r)em.
   This ensures all size values round to exact pixels
 */
-$mini            : (round($miniSize * $emSize) / $emSize) * 1rem !default;
-$tiny            : (round($tinySize * $emSize) / $emSize) * 1rem !default;
-$small           : (round($smallSize * $emSize) / $emSize) * 1rem !default;
-$medium          : (round($mediumSize * $emSize) / $emSize) * 1rem !default;
-$large           : (round($largeSize * $emSize) / $emSize) * 1rem !default;
-$big             : (round($bigSize * $emSize) / $emSize) * 1rem !default;
-$huge            : (round($hugeSize * $emSize) / $emSize) * 1rem !default;
-$massive         : (round($massiveSize * $emSize) / $emSize) * 1rem !default;
+$mini            : calc(round($miniSize * $emSize) / $emSize) * 1rem !default;
+$tiny            : calc(round($tinySize * $emSize) / $emSize) * 1rem !default;
+$small           : calc(round($smallSize * $emSize) / $emSize) * 1rem !default;
+$medium          : calc(round($mediumSize * $emSize) / $emSize) * 1rem !default;
+$large           : calc(round($largeSize * $emSize) / $emSize) * 1rem !default;
+$big             : calc(round($bigSize * $emSize) / $emSize) * 1rem !default;
+$huge            : calc(round($hugeSize * $emSize) / $emSize) * 1rem !default;
+$massive         : calc(round($massiveSize * $emSize) / $emSize) * 1rem !default;
 
 /* em */
-$relativeMini    : (round($miniSize * $emSize) / $emSize) * 1em !default;
-$relativeTiny    : (round($tinySize * $emSize) / $emSize) * 1em !default;
-$relativeSmall   : (round($smallSize * $emSize) / $emSize) * 1em !default;
-$relativeMedium  : (round($mediumSize * $emSize) / $emSize) * 1em !default;
-$relativeLarge   : (round($largeSize * $emSize) / $emSize) * 1em !default;
-$relativeBig     : (round($bigSize * $emSize) / $emSize) * 1em !default;
-$relativeHuge    : (round($hugeSize * $emSize) / $emSize) * 1em !default;
-$relativeMassive : (round($massiveSize * $emSize) / $emSize) * 1em !default;
+$relativeMini    : calc(round($miniSize * $emSize) / $emSize) * 1em !default;
+$relativeTiny    : calc(round($tinySize * $emSize) / $emSize) * 1em !default;
+$relativeSmall   : calc(round($smallSize * $emSize) / $emSize) * 1em !default;
+$relativeMedium  : calc(round($mediumSize * $emSize) / $emSize) * 1em !default;
+$relativeLarge   : calc(round($largeSize * $emSize) / $emSize) * 1em !default;
+$relativeBig     : calc(round($bigSize * $emSize) / $emSize) * 1em !default;
+$relativeHuge    : calc(round($hugeSize * $emSize) / $emSize) * 1em !default;
+$relativeMassive : calc(round($massiveSize * $emSize) / $emSize) * 1em !default;
 
 /* rem */
-$absoluteMini    : (round($miniSize * $emSize) / $emSize) * 1rem !default;
-$absoluteTiny    : (round($tinySize * $emSize) / $emSize) * 1rem !default;
-$absoluteSmall   : (round($smallSize * $emSize) / $emSize) * 1rem !default;
-$absoluteMedium  : (round($mediumSize * $emSize) / $emSize) * 1rem !default;
-$absoluteLarge   : (round($largeSize * $emSize) / $emSize) * 1rem !default;
-$absoluteBig     : (round($bigSize * $emSize) / $emSize) * 1rem !default;
-$absoluteHuge    : (round($hugeSize * $emSize) / $emSize) * 1rem !default;
-$absoluteMassive : (round($massiveSize * $emSize) / $emSize) * 1rem !default;
+$absoluteMini    : calc(round($miniSize * $emSize) / $emSize) * 1rem !default;
+$absoluteTiny    : calc(round($tinySize * $emSize) / $emSize) * 1rem !default;
+$absoluteSmall   : calc(round($smallSize * $emSize) / $emSize) * 1rem !default;
+$absoluteMedium  : calc(round($mediumSize * $emSize) / $emSize) * 1rem !default;
+$absoluteLarge   : calc(round($largeSize * $emSize) / $emSize) * 1rem !default;
+$absoluteBig     : calc(round($bigSize * $emSize) / $emSize) * 1rem !default;
+$absoluteHuge    : calc(round($hugeSize * $emSize) / $emSize) * 1rem !default;
+$absoluteMassive : calc(round($massiveSize * $emSize) / $emSize) * 1rem !default;
 
 
 /*-------------------
@@ -375,39 +375,39 @@ $widescreenMonitorBreakpoint : 1920px !default;
 
 
 /* Columns */
-$oneWide        : (1 / $columnCount * 100%) !default;
-$twoWide        : (2 / $columnCount * 100%) !default;
-$threeWide      : (3 / $columnCount * 100%) !default;
-$fourWide       : (4 / $columnCount * 100%) !default;
-$fiveWide       : (5 / $columnCount * 100%) !default;
-$sixWide        : (6 / $columnCount * 100%) !default;
-$sevenWide      : (7 / $columnCount * 100%) !default;
-$eightWide      : (8 / $columnCount * 100%) !default;
-$nineWide       : (9 / $columnCount * 100%) !default;
-$tenWide        : (10 / $columnCount * 100%) !default;
-$elevenWide     : (11 / $columnCount * 100%) !default;
-$twelveWide     : (12 / $columnCount * 100%) !default;
-$thirteenWide   : (13 / $columnCount * 100%) !default;
-$fourteenWide   : (14 / $columnCount * 100%) !default;
-$fifteenWide    : (15 / $columnCount * 100%) !default;
-$sixteenWide    : (16 / $columnCount * 100%) !default;
+$oneWide        : calc(1 / $columnCount * 100%) !default;
+$twoWide        : calc(2 / $columnCount * 100%) !default;
+$threeWide      : calc(3 / $columnCount * 100%) !default;
+$fourWide       : calc(4 / $columnCount * 100%) !default;
+$fiveWide       : calc(5 / $columnCount * 100%) !default;
+$sixWide        : calc(6 / $columnCount * 100%) !default;
+$sevenWide      : calc(7 / $columnCount * 100%) !default;
+$eightWide      : calc(8 / $columnCount * 100%) !default;
+$nineWide       : calc(9 / $columnCount * 100%) !default;
+$tenWide        : calc(10 / $columnCount * 100%) !default;
+$elevenWide     : calc(11 / $columnCount * 100%) !default;
+$twelveWide     : calc(12 / $columnCount * 100%) !default;
+$thirteenWide   : calc(13 / $columnCount * 100%) !default;
+$fourteenWide   : calc(14 / $columnCount * 100%) !default;
+$fifteenWide    : calc(15 / $columnCount * 100%) !default;
+$sixteenWide    : calc(16 / $columnCount * 100%) !default;
 
-$oneColumn      : (1 / 1 * 100%) !default;
-$twoColumn      : (1 / 2 * 100%) !default;
-$threeColumn    : (1 / 3 * 100%) !default;
-$fourColumn     : (1 / 4 * 100%) !default;
-$fiveColumn     : (1 / 5 * 100%) !default;
-$sixColumn      : (1 / 6 * 100%) !default;
-$sevenColumn    : (1 / 7 * 100%) !default;
-$eightColumn    : (1 / 8 * 100%) !default;
-$nineColumn     : (1 / 9 * 100%) !default;
-$tenColumn      : (1 / 10 * 100%) !default;
-$elevenColumn   : (1 / 11 * 100%) !default;
-$twelveColumn   : (1 / 12 * 100%) !default;
-$thirteenColumn : (1 / 13 * 100%) !default;
-$fourteenColumn : (1 / 14 * 100%) !default;
-$fifteenColumn  : (1 / 15 * 100%) !default;
-$sixteenColumn  : (1 / 16 * 100%) !default;
+$oneColumn      : calc(1 / 1 * 100%) !default;
+$twoColumn      : calc(1 / 2 * 100%) !default;
+$threeColumn    : calc(1 / 3 * 100%) !default;
+$fourColumn     : calc(1 / 4 * 100%) !default;
+$fiveColumn     : calc(1 / 5 * 100%) !default;
+$sixColumn      : calc(1 / 6 * 100%) !default;
+$sevenColumn    : calc(1 / 7 * 100%) !default;
+$eightColumn    : calc(1 / 8 * 100%) !default;
+$nineColumn     : calc(1 / 9 * 100%) !default;
+$tenColumn      : calc(1 / 10 * 100%) !default;
+$elevenColumn   : calc(1 / 11 * 100%) !default;
+$twelveColumn   : calc(1 / 12 * 100%) !default;
+$thirteenColumn : calc(1 / 13 * 100%) !default;
+$fourteenColumn : calc(1 / 14 * 100%) !default;
+$fifteenColumn  : calc(1 / 15 * 100%) !default;
+$sixteenColumn  : calc(1 / 16 * 100%) !default;
 
 
 /*******************************
@@ -544,7 +544,7 @@ $floatingShadow:
 --------------------*/
 
 /* Loaders Position Offset */
-$loaderOffset : -($loaderSize / 2) !default;
+$loaderOffset : calc($loaderSize / 2) * -1 !default;
 $loaderMargin : $loaderOffset 0em 0em $loaderOffset !default;
 
 /* Rendered Scrollbar Width */
@@ -554,8 +554,8 @@ $scrollbarWidth: 17px !default;
 $glyphWidth: 1.1em !default;
 
 /* Used to match floats with text */
-$lineHeightOffset       : (($lineHeight - 1em) / 2) !default;
-$headerLineHeightOffset : ($headerLineHeight - 1em) / 2 !default;
+$lineHeightOffset       : calc(($lineHeight - 1em) / 2) !default;
+$headerLineHeightOffset : calc(($headerLineHeight - 1em) / 2) !default;
 
 /* Header Spacing */
 $headerTopMargin    : calc(2rem - #{$headerLineHeightOffset}) !default;

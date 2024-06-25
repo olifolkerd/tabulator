@@ -55,11 +55,12 @@
     "eslint-plugin-only-warn": "^1.1.0",
     "fs-extra": "^11.2.0",
     "globby": "^14.0.1",
-    "node-sass": "^9.0.0",
     "postcss": "^8.4.35",
     "postcss-prettify": "^0.3.4",
     "rollup": "^4.12.1",
     "rollup-plugin-license": "^3.3.1",
-    "rollup-plugin-postcss": "^4.0.2"
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-sass": "^1.12.22",
+    "sass": "^1.77.6"
   }
 }
