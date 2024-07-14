@@ -1,4 +1,4 @@
-/* Tabulator v6.2.1 (c) Oliver Folkerd 2024 */
+/* Tabulator v6.2.2 (c) Oliver Folkerd 2024 */
 class CoreFeature{
 
 	constructor(table){
@@ -2701,6 +2701,9 @@ class Column extends CoreFeature{
 			});
 			
 			this.contentElement.style.maxWidth = (childWidth - 1) + "px";
+			if (this.table.initialized) {
+				this.element.style.width = childWidth + "px";
+			}
 			
 			if(this.parent.isGroup){
 				this.parent.matchChildWidths();
