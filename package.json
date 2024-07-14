@@ -4,7 +4,13 @@
   "description": "Interactive table generation JavaScript library",
   "style": "dist/css/tabulator.css",
   "main": "dist/js/tabulator.js",
-  "module": "dist/js/tabulator_esm.js",
+  "module": "dist/js/tabulator_esm.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/js/tabulator.js",
+      "import": "./dist/js/tabulator_esm.mjs"
+    }
+  },
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
