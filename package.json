@@ -10,11 +10,11 @@
       "require": "./dist/js/tabulator.js",
       "import": "./dist/js/tabulator_esm.mjs"
     },
-    "./dist/*.css": {
+    "./dist/css/*.css": {
       "import": "./dist/css/*.css",
       "require": "./dist/css/*.css"
     },
-    "./dist/*.js": {
+    "./dist/js/*.js": {
       "import": "./dist/js/*.js",
       "require": "./dist/js/*.js"
     }
