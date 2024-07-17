@@ -1,79 +1,73 @@
 {
-  "name": "tabulator-tables",
-  "version": "6.2.4",
-  "description": "Interactive table generation JavaScript library",
-  "style": "dist/css/tabulator.css",
-  "main": "dist/js/tabulator.js",
-  "module": "dist/js/tabulator_esm.mjs",
-  "exports": {
-    ".": {
-      "require": "./dist/js/tabulator.js",
-      "import": "./dist/js/tabulator_esm.mjs"
-    },
-    "./dist/css/*.css": {
-      "import": "./dist/css/*.css",
-      "require": "./dist/css/*.css"
-    },
-    "./dist/js/*.js": {
-      "import": "./dist/js/*.js",
-      "require": "./dist/js/*.js"
-    }
-  },
-  "sideEffects": [
-    "**/*.css",
-    "**/*.scss"
-  ],
-  "scripts": {
-    "lint": "eslint src --fix",
-    "prebuild": "eslint src --fix",
-    "build": "rollup -c build/rollup.mjs",
-    "dev": "rollup -c build/rollup.mjs -w --environment TARGET:dev",
-    "dev:css": "rollup -c build/rollup.mjs -w --environment TARGET:css",
-    "dev:esm": "rollup -c build/rollup.mjs -w --environment TARGET:esm",
-    "dev:umd": "rollup -c build/rollup.mjs -w --environment TARGET:umd",
-    "dev:wrappers": "rollup -c build/rollup.mjs -w --environment TARGET:wrappers "
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/olifolkerd/tabulator.git"
-  },
-  "keywords": [
-    "table",
-    "grid",
-    "datagrid",
-    "tabulator",
-    "editable",
-    "sort",
-    "format",
-    "resizable",
-    "list",
-    "scrollable",
-    "ajax",
-    "json",
-    "widget",
-    "jquery",
-    "react",
-    "angular",
-    "vue"
-  ],
-  "author": "Oli Folkerd",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/olifolkerd/tabulator/issues"
-  },
-  "homepage": "https://tabulator.info/",
-  "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-terser": "^0.4.4",
-    "eslint": "^8.57.0",
-    "eslint-plugin-only-warn": "^1.1.0",
-    "fs-extra": "^11.2.0",
-    "globby": "^14.0.1",
-    "node-sass": "^9.0.0",
-    "postcss": "^8.4.35",
-    "postcss-prettify": "^0.3.4",
-    "rollup": "^4.12.1",
-    "rollup-plugin-license": "^3.3.1",
-    "rollup-plugin-postcss": "^4.0.2"
-  }
+	"name": "tabulator-tables",
+	"version": "6.2.4",
+	"description": "Interactive table generation JavaScript library",
+	"style": "dist/css/tabulator.css",
+	"main": "dist/js/tabulator.js",
+	"module": "dist/js/tabulator_esm.mjs",
+	"exports": {
+		".": {
+			"require": "./dist/js/tabulator.js",
+			"import": "./dist/js/tabulator_esm.mjs"
+		},
+		"./dist/css/*.css": "./dist/css/*.css",
+		"./dist/js/*.js": "./dist/js/*.js"
+	},
+	"sideEffects": [
+		"**/*.css",
+		"**/*.scss"
+	],
+	"scripts": {
+		"lint": "eslint src --fix",
+		"prebuild": "eslint src --fix",
+		"build": "rollup -c build/rollup.mjs",
+		"dev": "rollup -c build/rollup.mjs -w --environment TARGET:dev",
+		"dev:css": "rollup -c build/rollup.mjs -w --environment TARGET:css",
+		"dev:esm": "rollup -c build/rollup.mjs -w --environment TARGET:esm",
+		"dev:umd": "rollup -c build/rollup.mjs -w --environment TARGET:umd",
+		"dev:wrappers": "rollup -c build/rollup.mjs -w --environment TARGET:wrappers "
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/olifolkerd/tabulator.git"
+	},
+	"keywords": [
+		"table",
+		"grid",
+		"datagrid",
+		"tabulator",
+		"editable",
+		"sort",
+		"format",
+		"resizable",
+		"list",
+		"scrollable",
+		"ajax",
+		"json",
+		"widget",
+		"jquery",
+		"react",
+		"angular",
+		"vue"
+	],
+	"author": "Oli Folkerd",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/olifolkerd/tabulator/issues"
+	},
+	"homepage": "https://tabulator.info/",
+	"devDependencies": {
+		"@rollup/plugin-node-resolve": "^15.2.3",
+		"@rollup/plugin-terser": "^0.4.4",
+		"eslint": "^8.57.0",
+		"eslint-plugin-only-warn": "^1.1.0",
+		"fs-extra": "^11.2.0",
+		"globby": "^14.0.1",
+		"node-sass": "^9.0.0",
+		"postcss": "^8.4.35",
+		"postcss-prettify": "^0.3.4",
+		"rollup": "^4.12.1",
+		"rollup-plugin-license": "^3.3.1",
+		"rollup-plugin-postcss": "^4.0.2"
+	}
 }
