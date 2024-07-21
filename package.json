@@ -10,14 +10,8 @@
       "require": "./dist/js/tabulator.js",
       "import": "./dist/js/tabulator_esm.mjs"
     },
-    "./dist/css/*.css": {
-      "import": "./dist/css/*.css",
-      "require": "./dist/css/*.css"
-    },
-    "./dist/js/*.js": {
-      "import": "./dist/js/*.js",
-      "require": "./dist/js/*.js"
-    }
+    "./dist/css/*.css": "./dist/css/*.css",
+    "./dist/js/*.js": "./dist/js/*.js"
   },
   "sideEffects": [
     "**/*.css",
