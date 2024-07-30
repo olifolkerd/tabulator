@@ -178,20 +178,6 @@ $table-cell-padding-sm: 5px;
 
 	//Bootstrap theming classes
 
-	&.thead-dark{
-		.tabulator-header{
-			border-color: $borderColor;
-			background-color: $backgroundColor;
-			color: $table-color;
-
-			.tabulator-col{
-				border-color: $borderColor;
-				background-color: $backgroundColor;
-				color: $table-color;
-			}
-		}
-	}
-
 	&.table{
 		background-color: $backgroundColor;
 
@@ -346,6 +332,113 @@ $table-cell-padding-sm: 5px;
 		}
 	}
 
+
+
+	&.thead-dark{
+		.tabulator-header{
+			border-color: $table-dark-border-color;
+			background-color: $table-dark-bg;
+			color: $table-dark-color;
+
+			.tabulator-col{
+				border-color: $table-dark-border-color;
+				background-color: $table-dark-bg;
+				color: $table-dark-color;
+			}
+		}
+	}
+
+	&.table-dark{
+		background-color: $table-dark-bg;
+
+		&:not(.thead-light) .tabulator-header{
+			border-color: $table-dark-border-color;
+			background-color: $table-dark-bg;
+			color: $table-dark-color;
+
+			.tabulator-col{
+				border-color: $table-dark-border-color;
+				background-color: $table-dark-bg;
+				color: $table-dark-color;
+			}
+		}
+
+		.tabulator-tableholder{
+			color: $table-dark-color;
+		}
+
+
+		.tabulator-row{
+			border-color: $table-dark-border-color;
+			background-color: $table-dark-bg;
+			color: $table-dark-color;
+
+			@media (hover:hover) and (pointer:fine){
+				&:hover{
+					background-color: $table-dark-border-color;
+
+					.tabulator-cell{
+						background-color: $table-dark-hover-bg;
+					}
+				}
+			}
+
+			&.tabulator-selected{
+				background-color:$rowSelectedBackground;
+			}
+		}
+
+		.tabulator-footer{
+			border-color: $table-dark-border-color !important;
+
+			.tabulator-calcs-holder{
+				border-color: $table-dark-border-color !important;
+				background:$table-dark-bg !important;
+
+				.tabulator-row{
+					border-color: $table-dark-border-color !important;
+					background-color: $table-dark-bg !important;
+					color: $table-dark-color !important;
+				}
+			}
+		}
+	}
+
+	&.table-striped{
+		&:not(.table-dark){
+			.tabulator-row{
+				&.tabulator-row-even{
+					background-color: $rowAltBackgroundColor;
+
+					&.tabulator-selected{
+						background-color:$rowSelectedBackground;
+					}
+
+					@media (hover:hover) and (pointer:fine){
+						&.tabulator-selectable:hover{
+							background-color:$rowHoverBackground;
+							cursor: pointer;
+						}
+						
+						&.tabulator-selected:hover{
+							background-color:$rowSelectedBackgroundHover;
+							cursor: pointer;
+						}
+					}
+				}
+			}
+		}
+
+		&.table-dark{
+			.tabulator-row{
+				&:nth-child(even){
+					.tabulator-cell{
+						background-color: $table-dark-accent-bg;
+					}
+				}
+			}
+		}
+	}
 
 	//row colors
 	.tabulator-tableholder{
