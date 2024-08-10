@@ -253,6 +253,7 @@ export default class ColumnCalcs extends Module{
 		
 		if(this.topInitialized){
 			this.topInitialized = false;
+			this.topElement.parentNode.removeChild(this.topElement.previousSibling);
 			this.topElement.parentNode.removeChild(this.topElement);
 			changed = true;
 		}
