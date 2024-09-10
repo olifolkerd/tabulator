@@ -1,10 +1,20 @@
 {
   "name": "tabulator-tables",
-  "version": "6.2.1",
+  "version": "6.2.5",
   "description": "Interactive table generation JavaScript library",
   "style": "dist/css/tabulator.css",
   "main": "dist/js/tabulator.js",
-  "module": "dist/js/tabulator_esm.js",
+  "module": "dist/js/tabulator_esm.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/js/tabulator.js",
+      "import": "./dist/js/tabulator_esm.mjs"
+    },
+    "./dist/css/*.css": "./dist/css/*.css",
+    "./dist/js/*.js": "./dist/js/*.js",
+    "./src/scss/*.scss": "./src/scss/*.scss",
+    "./src/js/*.js": "./src/js/*.js"
+  },
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
