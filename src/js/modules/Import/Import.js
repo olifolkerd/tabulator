@@ -66,6 +66,7 @@ export default class Import extends Module{
 			return this.pickFile(extension, importReader)
 				.then(this.importData.bind(this, importer))
 				.then(this.structureData.bind(this))
+				.then(this.mutateData.bind(this))
 				.then(this.setData.bind(this))
 				.catch((err) => {
 					this.dispatch("import-error", err);
@@ -159,6 +160,24 @@ export default class Import extends Module{
 		}else{
 			return parsedData;
 		}
+	}
+
+	mutateData(data){
+		var output = [];
+
+		if(Array.isArray(data)){
+			data.forEach((row) => {
+				output.push(this.table.modules.mutator.transformRow(row, "import"));
+			});
+		}else{
+			output = data;
+		}
+
+		return output;
+	}
+
+	transformData(data){
+
 	}
 	
 	structureArrayToObject(parsedData){
