@@ -17,6 +17,7 @@ import buttonCross from './formatters/buttonCross.js';
 import toggle from './formatters/toggle.js';
 import rownum from './formatters/rownum.js';
 import handle from './formatters/handle.js';
+import adaptable from './formatters/adaptable.js';
 
 export default {
 	plaintext:plaintext,
@@ -38,4 +39,5 @@ export default {
 	toggle:toggle,
 	rownum:rownum,
 	handle:handle,
+	adaptable:adaptable,
 };
