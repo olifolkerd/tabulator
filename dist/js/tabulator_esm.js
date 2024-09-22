@@ -4143,12 +4143,12 @@ class ColumnCalcs extends Module{
 				
 				if(column.definition[pos + "CalcFormatter"] && this.table.modExists("format")){
 					this.genColumn.modules.format = {
-						formatter: this.table.modules.format.getFormatter(column.definition[pos + "CalcFormatter"]),
+						formatter: this.table.modules.format.lookupFormatter(column.definition[pos + "CalcFormatter"]),
 						params: column.definition[pos + "CalcFormatterParams"] || {},
 					};
 				}else {
 					this.genColumn.modules.format = {
-						formatter: this.table.modules.format.getFormatter("plaintext"),
+						formatter: this.table.modules.format.lookupFormatter("plaintext"),
 						params:{}
 					};
 				}
@@ -7558,7 +7558,103 @@ function progress$1(cell, onRendered, success, cancel, editorParams){
 	return bar;
 }
 
-function adaptable(cell, onRendered, success, cancel, params){
+//checkbox
+function tickCross$1(cell, onRendered, success, cancel, editorParams){
+	var value = cell.getValue(),
+	input = document.createElement("input"),
+	tristate = editorParams.tristate,
+	indetermValue = typeof editorParams.indeterminateValue === "undefined" ? null : editorParams.indeterminateValue,
+	indetermState = false,
+	trueValueSet = Object.keys(editorParams).includes("trueValue"),
+	falseValueSet = Object.keys(editorParams).includes("falseValue");
+	
+	input.setAttribute("type", "checkbox");
+	input.style.marginTop = "5px";
+	input.style.boxSizing = "border-box";
+	
+	if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+		for (let key in editorParams.elementAttributes){
+			if(key.charAt(0) == "+"){
+				key = key.slice(1);
+				input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+			}else {
+				input.setAttribute(key, editorParams.elementAttributes[key]);
+			}
+		}
+	}
+	
+	input.value = value;
+	
+	if(tristate && (typeof value === "undefined" || value === indetermValue || value === "")){
+		indetermState = true;
+		input.indeterminate = true;
+	}
+	
+	if(this.table.browser != "firefox" && this.table.browser != "safari"){ //prevent blur issue on mac firefox
+		onRendered(function(){
+			if(cell.getType() === "cell"){
+				input.focus({preventScroll: true});
+			}
+		});
+	}
+	
+	input.checked = trueValueSet ? value === editorParams.trueValue : (value === true || value === "true" || value === "True" || value === 1);
+	
+	function setValue(blur){
+		var checkedValue = input.checked;
+		
+		if(trueValueSet && checkedValue){
+			checkedValue = editorParams.trueValue;
+		}else if(falseValueSet && !checkedValue){
+			checkedValue = editorParams.falseValue;
+		}
+		
+		if(tristate){
+			if(!blur){
+				if(input.checked && !indetermState){
+					input.checked = false;
+					input.indeterminate = true;
+					indetermState = true;
+					return indetermValue;
+				}else {
+					indetermState = false;
+					return checkedValue;
+				}
+			}else {
+				if(indetermState){
+					return indetermValue;
+				}else {
+					return checkedValue;
+				}
+			}
+		}else {
+			return checkedValue;
+		}
+	}
+	
+	//submit new value on blur
+	input.addEventListener("change", function(e){
+		success(setValue());
+	});
+
+	input.addEventListener("blur", function(e){
+		success(setValue(true));
+	});
+	
+	//submit new value on enter
+	input.addEventListener("keydown", function(e){
+		if(e.keyCode == 13){
+			success(setValue());
+		}
+		if(e.keyCode == 27){
+			cancel();
+		}
+	});
+	
+	return input;
+}
+
+function adaptable$1(cell, onRendered, success, cancel, params){
     var column = cell._getSelf().column,
     lookup, editorFunc, editorParams;
     
@@ -7607,7 +7703,8 @@ var defaultEditors = {
 	list:list,
 	star:star$1,
 	progress:progress$1,
-	adaptable:adaptable,
+	tickCross:tickCross$1,
+	adaptable:adaptable$1,
 };
 
 class Edit extends Module{
@@ -10716,6 +10813,39 @@ function handle(cell, formatterParams, onRendered){
 	return "<div class='tabulator-row-handle-box'><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div></div>";
 }
 
+function adaptable(cell, params, onRendered){
+    var lookup, formatterFunc, formatterParams;
+    
+    function defaultLookup(cell){
+        var value = cell.getValue(),
+        formatter = "plaintext";
+        
+        switch(typeof value){           
+            case "boolean":
+            formatter = "tickCross";
+            break;
+            
+            case "string":
+            if(value.includes("\n")){
+                formatter = "textarea";
+            }
+            break;
+        }
+        
+        return formatter;
+    }
+    
+    lookup = params.formatterLookup ? params.formatterLookup(cell) : defaultLookup(cell);
+
+    if(params.paramsLookup){
+        formatterParams = typeof params.paramsLookup === "function" ? params.paramsLookup(lookup, cell) : params.paramsLookup[lookup];
+    }
+
+    formatterFunc = this.table.modules.format.lookupFormatter(lookup);
+    
+    return  formatterFunc.call(this, cell, formatterParams || {}, onRendered);
+}
+
 var defaultFormatters = {
 	plaintext:plaintext,
 	html:html,
@@ -10736,12 +10866,13 @@ var defaultFormatters = {
 	toggle:toggle,
 	rownum:rownum,
 	handle:handle,
+	adaptable:adaptable,
 };
 
 class Format extends Module{
-
+	
 	static moduleName = "format";
-
+	
 	//load defaults
 	static formatters = defaultFormatters;
 	
@@ -10770,46 +10901,55 @@ class Format extends Module{
 	
 	//initialize column formatter
 	initializeColumn(column){
-		column.modules.format = this.lookupFormatter(column, "");
+		column.modules.format = this.lookupTypeFormatter(column, "");
 		
 		if(typeof column.definition.formatterPrint !== "undefined"){
-			column.modules.format.print = this.lookupFormatter(column, "Print");
+			column.modules.format.print = this.lookupTypeFormatter(column, "Print");
 		}
 		
 		if(typeof column.definition.formatterClipboard !== "undefined"){
-			column.modules.format.clipboard = this.lookupFormatter(column, "Clipboard");
+			column.modules.format.clipboard = this.lookupTypeFormatter(column, "Clipboard");
 		}
 		
 		if(typeof column.definition.formatterHtmlOutput !== "undefined"){
-			column.modules.format.htmlOutput = this.lookupFormatter(column, "HtmlOutput");
+			column.modules.format.htmlOutput = this.lookupTypeFormatter(column, "HtmlOutput");
 		}
 	}
 	
-	lookupFormatter(column, type){
+	lookupTypeFormatter(column, type){
 		var config = {params:column.definition["formatter" + type + "Params"] || {}},
 		formatter = column.definition["formatter" + type];
 		
+		config.formatter = this.lookupFormatter(formatter);
+		
+		return config;
+	}
+	
+	
+	lookupFormatter(formatter){
+		var formatterFunc;
+
 		//set column formatter
 		switch(typeof formatter){
 			case "string":
 				if(Format.formatters[formatter]){
-					config.formatter = Format.formatters[formatter];
+					formatterFunc = Format.formatters[formatter];
 				}else {
 					console.warn("Formatter Error - No such formatter found: ", formatter);
-					config.formatter = Format.formatters.plaintext;
+					formatterFunc = Format.formatters.plaintext;
 				}
 				break;
 			
 			case "function":
-				config.formatter = formatter;
+				formatterFunc = formatter;
 				break;
 			
 			default:
-				config.formatter = Format.formatters.plaintext;
+				formatterFunc = Format.formatters.plaintext;
 				break;
 		}
 		
-		return config;
+		return formatterFunc;
 	}
 	
 	cellRendered(cell){
@@ -10924,29 +11064,6 @@ class Format extends Module{
 		return value === null || typeof value === "undefined" || value === "" ? "&nbsp;" : value;
 	}
 	
-	//get formatter for cell
-	getFormatter(formatter){
-		switch(typeof formatter){
-			case "string":
-				if(Format.formatters[formatter]){
-					formatter = Format.formatters[formatter];
-				}else {
-					console.warn("Formatter Error - No such formatter found: ", formatter);
-					formatter = Format.formatters.plaintext;
-				}
-				break;
-			
-			case "function":
-			//Custom formatter Function, do nothing
-				break;
-			
-			default:
-				formatter = Format.formatters.plaintext;
-				break;
-		}
-		
-		return formatter;
-	}
 }
 
 class FrozenColumns extends Module{
