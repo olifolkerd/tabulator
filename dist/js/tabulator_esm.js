@@ -7558,100 +7558,42 @@ function progress$1(cell, onRendered, success, cancel, editorParams){
 	return bar;
 }
 
-//checkbox
-function tickCross$1(cell, onRendered, success, cancel, editorParams){
-	var value = cell.getValue(),
-	input = document.createElement("input"),
-	tristate = editorParams.tristate,
-	indetermValue = typeof editorParams.indeterminateValue === "undefined" ? null : editorParams.indeterminateValue,
-	indetermState = false,
-	trueValueSet = Object.keys(editorParams).includes("trueValue"),
-	falseValueSet = Object.keys(editorParams).includes("falseValue");
-	
-	input.setAttribute("type", "checkbox");
-	input.style.marginTop = "5px";
-	input.style.boxSizing = "border-box";
-	
-	if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
-		for (let key in editorParams.elementAttributes){
-			if(key.charAt(0) == "+"){
-				key = key.slice(1);
-				input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
-			}else {
-				input.setAttribute(key, editorParams.elementAttributes[key]);
-			}
-		}
-	}
-	
-	input.value = value;
-	
-	if(tristate && (typeof value === "undefined" || value === indetermValue || value === "")){
-		indetermState = true;
-		input.indeterminate = true;
-	}
-	
-	if(this.table.browser != "firefox" && this.table.browser != "safari"){ //prevent blur issue on mac firefox
-		onRendered(function(){
-			if(cell.getType() === "cell"){
-				input.focus({preventScroll: true});
-			}
-		});
-	}
-	
-	input.checked = trueValueSet ? value === editorParams.trueValue : (value === true || value === "true" || value === "True" || value === 1);
-	
-	function setValue(blur){
-		var checkedValue = input.checked;
-		
-		if(trueValueSet && checkedValue){
-			checkedValue = editorParams.trueValue;
-		}else if(falseValueSet && !checkedValue){
-			checkedValue = editorParams.falseValue;
-		}
-		
-		if(tristate){
-			if(!blur){
-				if(input.checked && !indetermState){
-					input.checked = false;
-					input.indeterminate = true;
-					indetermState = true;
-					return indetermValue;
-				}else {
-					indetermState = false;
-					return checkedValue;
-				}
-			}else {
-				if(indetermState){
-					return indetermValue;
-				}else {
-					return checkedValue;
-				}
-			}
-		}else {
-			return checkedValue;
-		}
-	}
-	
-	//submit new value on blur
-	input.addEventListener("change", function(e){
-		success(setValue());
-	});
+function adaptable(cell, onRendered, success, cancel, params){
+    var column = cell._getSelf().column,
+    lookup, editorFunc, editorParams;
+    
+    function defaultLookup(cell){
+        var value = cell.getValue(),
+        editor = "input";
+        
+        switch(typeof value){
+            case "number":
+            editor = "number";
+            break;
+            
+            case "boolean":
+            editor = "tickCross";
+            break;
+            
+            case "string":
+            if(value.includes("\n")){
+                editor = "textarea";
+            }
+            break;
+        }
+        
+        return editor;
+    }
+    
+    lookup = params.editorLookup ? params.editorLookup(cell) : defaultLookup(cell);
 
-	input.addEventListener("blur", function(e){
-		success(setValue(true));
-	});
-	
-	//submit new value on enter
-	input.addEventListener("keydown", function(e){
-		if(e.keyCode == 13){
-			success(setValue());
-		}
-		if(e.keyCode == 27){
-			cancel();
-		}
-	});
-	
-	return input;
+    if(params.paramsLookup){
+        editorParams = typeof params.paramsLookup === "function" ? params.paramsLookup(lookup, cell) : params.paramsLookup[lookup];
+    }
+
+    editorFunc = this.table.modules.edit.lookupEditor(lookup, column);
+    
+    return  editorFunc.call(this, cell, onRendered, success, cancel, editorParams || {});
 }
 
 var defaultEditors = {
@@ -7665,7 +7607,7 @@ var defaultEditors = {
 	list:list,
 	star:star$1,
 	progress:progress$1,
-	tickCross:tickCross$1,
+	adaptable:adaptable,
 };
 
 class Edit extends Module{
@@ -8069,26 +8011,36 @@ class Edit extends Module{
 		};
 		
 		//set column editor
-		switch(typeof column.definition.editor){
+		config.editor = this.lookupEditor(column.definition.editor, column);
+		
+		if(config.editor){
+			column.modules.edit = config;
+		}
+	}
+
+	lookupEditor(editor, column){
+		var editorFunc;
+
+		switch(typeof editor){
 			case "string":
-				if(this.editors[column.definition.editor]){
-					config.editor = this.editors[column.definition.editor];
+				if(this.editors[editor]){
+					editorFunc = this.editors[editor];
 				}else {
-					console.warn("Editor Error - No such editor found: ", column.definition.editor);
+					console.warn("Editor Error - No such editor found: ", editor);
 				}
 				break;
 			
 			case "function":
-				config.editor = column.definition.editor;
+				editorFunc = editor;
 				break;
 			
 			case "boolean":
-				if(column.definition.editor === true){
+				if(editor === true){
 					if(typeof column.definition.formatter !== "function"){
 						if(this.editors[column.definition.formatter]){
-							config.editor = this.editors[column.definition.formatter];
+							editorFunc = this.editors[column.definition.formatter];
 						}else {
-							config.editor = this.editors["input"];
+							editorFunc = this.editors["input"];
 						}
 					}else {
 						console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
@@ -8096,10 +8048,8 @@ class Edit extends Module{
 				}
 				break;
 		}
-		
-		if(config.editor){
-			column.modules.edit = config;
-		}
+
+		return editorFunc;
 	}
 	
 	getCurrentCell(){
