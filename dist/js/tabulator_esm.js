@@ -3289,12 +3289,15 @@ class Row extends CoreFeature{
 
 	calcMaxHeight(){
 		var maxHeight = 0;
+
 		this.cells.forEach(function(cell){
 			var height = cell.getHeight();
+
 			if(height > maxHeight){
 				maxHeight = height;
 			}
 		});
+
 		return maxHeight;
 	}
 	
@@ -26600,9 +26603,9 @@ class RowManager extends CoreFeature{
 	}
 	
 	//normalize height of active rows
-	normalizeHeight(){
+	normalizeHeight(force){
 		this.activeRows.forEach(function(row){
-			row.normalizeHeight();
+			row.normalizeHeight(force);
 		});
 	}
 	
@@ -27896,8 +27899,16 @@ class Layout extends Module{
 
 	//trigger table layout
 	layout(dataChanged){
+
+		var variableHeight = this.table.columnManager.columnsByIndex.find((column) => column.definition.variableHeight || column.definition.formatter === "textarea");
+		
 		this.dispatch("layout-refreshing");
 		Layout.modes[this.mode].call(this, this.table.columnManager.columnsByIndex, dataChanged);
+
+		if(variableHeight){
+			this.table.rowManager.normalizeHeight(true);
+		}
+
 		this.dispatch("layout-refreshed");
 	}
 }

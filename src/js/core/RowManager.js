@@ -1030,9 +1030,9 @@ export default class RowManager extends CoreFeature{
 	}
 	
 	//normalize height of active rows
-	normalizeHeight(){
+	normalizeHeight(force){
 		this.activeRows.forEach(function(row){
-			row.normalizeHeight();
+			row.normalizeHeight(force);
 		});
 	}
 	
