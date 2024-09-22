@@ -14,6 +14,7 @@ export default class Import extends Module{
 		
 		this.registerTableOption("importFormat");
 		this.registerTableOption("importReader", "text");
+		this.registerTableOption("importHeaderTransform");
 	}
 	
 	initialize(){
@@ -161,10 +162,10 @@ export default class Import extends Module{
 			return parsedData;
 		}
 	}
-
+	
 	mutateData(data){
 		var output = [];
-
+		
 		if(Array.isArray(data)){
 			data.forEach((row) => {
 				output.push(this.table.modules.mutator.transformRow(row, "import"));
@@ -172,16 +173,30 @@ export default class Import extends Module{
 		}else{
 			output = data;
 		}
-
+		
 		return output;
 	}
-
+	
+	transformHeader(headers){
+		var output = [];
+		
+		if(this.table.options.importHeaderTransform){
+			headers.forEach((item) => {
+				output.push(this.table.options.importHeaderTransform.call(this.table, item, headers));
+			});
+		}else{
+			return headers;
+		}
+		
+		return output;
+	}
+	
 	transformData(data){
-
+		
 	}
 	
 	structureArrayToObject(parsedData){
-		var columns = parsedData.shift();
+		var columns = this.transformHeader(parsedData.shift());	
 		
 		var data = parsedData.map((values) => {
 			var row = {};
@@ -198,11 +213,12 @@ export default class Import extends Module{
 	
 	structureArrayToColumns(parsedData){
 		var data = [],
+		firstRow = this.transformHeader(parsedData[0]),
 		columns = this.table.getColumns();
 		
 		//remove first row if it is the column names
-		if(columns[0] && parsedData[0][0]){
-			if(columns[0].getDefinition().title === parsedData[0][0]){
+		if(columns[0] && firstRow[0]){
+			if(columns[0].getDefinition().title === firstRow[0]){
 				parsedData.shift();
 			}
 		}
