@@ -22,5 +22,6 @@ export default {
 	list:list,
 	star:star,
 	progress:progress,
+	tickCross:tickCross,
 	adaptable:adaptable,
 };
