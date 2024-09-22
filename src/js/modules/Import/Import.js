@@ -37,7 +37,6 @@ export default class Import extends Module{
 			.then(this.structureData.bind(this))
 			.catch((err) => {
 				console.error("Import Error:", err || "Unable to import data");
-				this.table.dataLoader.alertError();
 				return Promise.reject(err);
 			});
 	}
@@ -79,6 +78,10 @@ export default class Import extends Module{
 					console.error("Import Error:", err || "Unable to import file");
 					
 					this.table.dataLoader.alertError();
+
+					setTimeout(() => {
+						this.table.dataLoader.clearAlert();
+					}, 3000);
 					
 					return Promise.reject(err);
 				});
