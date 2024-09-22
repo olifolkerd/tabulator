@@ -13339,6 +13339,7 @@ class Import extends Module{
 		this.registerTableOption("importFormat");
 		this.registerTableOption("importReader", "text");
 		this.registerTableOption("importHeaderTransform");
+		this.registerTableOption("importValueTransform");
 	}
 	
 	initialize(){
@@ -13515,8 +13516,18 @@ class Import extends Module{
 		return output;
 	}
 	
-	transformData(data){
+	transformData(row){
+		var output = [];
+
+		if(this.table.options.importValueTransform){
+			row.forEach((item) => {
+				output.push(this.table.options.importValueTransform.call(this.table, item, row));
+			});
+		}else {
+			return row;
+		}
 		
+		return output;
 	}
 	
 	structureArrayToObject(parsedData){
@@ -13524,6 +13535,8 @@ class Import extends Module{
 		
 		var data = parsedData.map((values) => {
 			var row = {};
+
+			values = this.transformData(values);
 			
 			columns.forEach((key, i) => {
 				row[key] = values[i];
@@ -13550,6 +13563,8 @@ class Import extends Module{
 		//convert row arrays to objects
 		parsedData.forEach((rowData) => {
 			var row = {};
+
+			rowData = this.transformData(rowData);
 			
 			rowData.forEach((value, index) => {
 				var column = columns[index];
