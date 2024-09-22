@@ -16,6 +16,7 @@ export default class Import extends Module{
 		this.registerTableOption("importReader", "text");
 		this.registerTableOption("importHeaderTransform");
 		this.registerTableOption("importValueTransform");
+		this.registerTableOption("importValidator");
 	}
 	
 	initialize(){
@@ -69,6 +70,7 @@ export default class Import extends Module{
 				.then(this.importData.bind(this, importer))
 				.then(this.structureData.bind(this))
 				.then(this.mutateData.bind(this))
+				.then(this.validateData.bind(this))
 				.then(this.setData.bind(this))
 				.catch((err) => {
 					this.dispatch("import-error", err);
@@ -254,6 +256,20 @@ export default class Import extends Module{
 		});
 		
 		return data;
+	}
+
+	validateData(data){
+		var result;
+
+		if(this.table.options.importValidator){
+			result = this.table.options.importValidator.call(this.table, data);
+
+			if(result === true){
+				return data;
+			}else{
+				return Promise.reject(result);
+			}
+		}
 	}
 	
 	setData(data){
