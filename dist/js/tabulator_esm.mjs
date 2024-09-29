@@ -4938,7 +4938,7 @@ function csv$1(list, options = {}, setFileContents){
 	setFileContents(fileContents, "text/csv");
 }
 
-function json$1(list, options, setFileContents){
+function json$2(list, options, setFileContents){
 	var fileContents = [];
 
 	list.forEach((row) => {
@@ -5227,7 +5227,7 @@ function jsonLines (list, options, setFileContents) {
 
 var defaultDownloaders = {
 	csv:csv$1,
-	json:json$1,
+	json:json$2,
 	jsonLines:jsonLines,
 	pdf:pdf,
 	xlsx:xlsx$1,
@@ -10867,6 +10867,19 @@ function array$2(cell, formatterParams, onRendered){
 	return Array.isArray(value) ? value.join(delimiter) : value;
 }
 
+function json$1(cell, formatterParams, onRendered){
+	var indent = formatterParams.indent || "\t",
+	multiline = typeof formatterParams.multiline === "undefined" ? true : formatterParams.multiline,
+	replacer = formatterParams.replacer || null,
+	value = cell.getValue();
+	
+	if(multiline){
+		cell.getElement().style.whiteSpace = "pre-wrap";
+	}
+
+	return JSON.stringify(value, replacer, indent);
+}
+
 var defaultFormatters = {
 	plaintext:plaintext,
 	html:html,
@@ -10889,6 +10902,7 @@ var defaultFormatters = {
 	handle:handle,
 	adaptable:adaptable,
 	array:array$2,
+	json:json$1,
 };
 
 class Format extends Module{

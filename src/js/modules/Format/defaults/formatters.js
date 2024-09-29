@@ -19,6 +19,7 @@ import rownum from './formatters/rownum.js';
 import handle from './formatters/handle.js';
 import adaptable from './formatters/adaptable.js';
 import array from './formatters/array.js';
+import json from './formatters/json.js';
 
 export default {
 	plaintext:plaintext,
@@ -42,4 +43,5 @@ export default {
 	handle:handle,
 	adaptable:adaptable,
 	array:array,
+	json:json,
 };
