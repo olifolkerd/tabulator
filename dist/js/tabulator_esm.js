@@ -6115,7 +6115,7 @@ function time$1(cell, onRendered, success, cancel, editorParams){
 function datetime$2(cell, onRendered, success, cancel, editorParams){
 	var inputFormat = editorParams.format,
 	vertNav = editorParams.verticalNavigation || "editor",
-	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
+	DT = inputFormat ? (this.table.dependencyRegistry.lookup(["luxon", "DateTime"], "DateTime")) : null, 
 	newDatetime;
 	
 	//create and style input
@@ -10440,7 +10440,7 @@ function tickCross(cell, formatterParams, onRendered){
 }
 
 function datetime$1(cell, formatterParams, onRendered){
-	var DT = window.DateTime || luxon.DateTime;
+	var DT = this.table.dependencyRegistry.lookup(["luxon", "DateTime"], "DateTime");
 	var inputFormat = formatterParams.inputFormat || "yyyy-MM-dd HH:mm:ss";
 	var	outputFormat = formatterParams.outputFormat || "dd/MM/yyyy HH:mm:ss";
 	var	invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";
@@ -10478,7 +10478,7 @@ function datetime$1(cell, formatterParams, onRendered){
 }
 
 function datetimediff (cell, formatterParams, onRendered) {
-	var DT = window.DateTime || luxon.DateTime;
+	var DT = this.table.dependencyRegistry.lookup(["luxon", "DateTime"], "DateTime");
 	var inputFormat = formatterParams.inputFormat || "yyyy-MM-dd HH:mm:ss";
 	var invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";
 	var suffix = typeof formatterParams.suffix !== "undefined" ? formatterParams.suffix : false;
@@ -21262,7 +21262,7 @@ function string(a, b, aRow, bRow, column, dir, params){
 
 //sort datetime
 function datetime(a, b, aRow, bRow, column, dir, params){
-	var DT = window.DateTime || luxon.DateTime;
+	var DT = this.table.dependencyRegistry.lookup(["luxon", "DateTime"], "DateTime");
 	var format = params.format || "dd/MM/yyyy HH:mm:ss",
 	alignEmptyValues = params.alignEmptyValues,
 	emptyAlign = 0;
@@ -27716,9 +27716,9 @@ class DependencyRegistry extends CoreFeature{
 		super(table);
 		
 		this.deps = {};
-
+		
 		this.props = {
-
+			
 		};
 	}
 	
@@ -27726,22 +27726,38 @@ class DependencyRegistry extends CoreFeature{
 		this.deps = Object.assign({}, this.options("dependencies"));
 	}
 	
-	lookup(key, prop){
-		if(prop){
-			return this.lookupProp(key, prop);
+	lookup(key, prop, silent){
+		if(Array.isArray(key)){
+			for (const item of key) {
+				var match = this.lookup(item, prop, true);
+
+				if(match){
+					break;
+				}
+			}
+
+			if(match){
+				return match;
+			}else {
+				this.error(key);
+			}
 		}else {
-			return this.lookupKey(key);
+			if(prop){
+				return this.lookupProp(key, prop, silent);
+			}else {
+				return this.lookupKey(key, silent);
+			}
 		}
 	}
-
-	lookupProp(key, prop){
+	
+	lookupProp(key, prop, silent){
 		var dependency;
-
+		
 		if(this.props[key] && this.props[key][prop]){
 			return this.props[key][prop];
 		}else {
-			dependency = this.lookupKey(key);
-
+			dependency = this.lookupKey(key, silent);
+			
 			if(dependency){
 				if(!this.props[key]){
 					this.props[key] = {};
@@ -27752,20 +27768,26 @@ class DependencyRegistry extends CoreFeature{
 			}
 		}
 	}
-
-	lookupKey(key){
+	
+	lookupKey(key, silent){
 		var dependency;
-
+		
 		if(this.deps[key]){
 			dependency = this.deps[key];
 		}else if(window[key]){
 			this.deps[key] = window[key];
 			dependency = this.deps[key];
 		}else {
-			console.error("Unable to find dependency", key, "Please check documentation and ensure you have imported the required library into your project");
+			if(!silent){
+				this.error(key);
+			}
 		}
-
+		
 		return dependency;
+	}
+
+	error(key){
+		console.error("Unable to find dependency", key, "Please check documentation and ensure you have imported the required library into your project");
 	}
 }
 
