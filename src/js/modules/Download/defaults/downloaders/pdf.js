@@ -83,8 +83,8 @@ export default function(list, options = {}, setFileContents){
 
 
 	//configure PDF
-	jspdfLib = this.dependencyRegistry.lookup("jspdf");
-	doc = new jspdfLib.jsPDF(jsPDFParams); //set document to landscape, better for most tables
+	jspdfLib = this.dependencyRegistry.lookup("jspdf", "jsPDF");
+	doc = new jspdfLib(jsPDFParams); //set document to landscape, better for most tables
 
 	if(options.autoTable){
 		if(typeof options.autoTable === "function"){
