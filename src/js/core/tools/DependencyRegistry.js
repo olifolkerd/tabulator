@@ -14,7 +14,7 @@ export default class DependencyRegistry extends CoreFeature{
 	
 	lookup(key){
 		if(this.deps[key]){
-			return this.key;
+			return this.deps[key];
 		}else if(window[key]){
 			this.deps[key] = window[key];
 			return this.deps[key];
