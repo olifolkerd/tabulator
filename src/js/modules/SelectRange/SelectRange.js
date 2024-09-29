@@ -678,7 +678,7 @@ export default class SelectRange extends Module {
 	
 	autoScroll(range, row, column) {
 		var tableHolder = this.table.rowManager.element,
-		rowHeader, rect, view, withinHorizontalView, withinVerticalView;
+		rect, view, withinHorizontalView, withinVerticalView;
 		
 		if (typeof row === 'undefined') {
 			row = this.getRowByRangePos(range.end.row).getElement();
@@ -686,10 +686,6 @@ export default class SelectRange extends Module {
 		
 		if (typeof column === 'undefined') {
 			column = this.getColumnByRangePos(range.end.col).getElement();
-		}
-		
-		if (this.rowHeader) {
-			rowHeader = this.rowHeader.getElement();
 		}
 		
 		rect = {
@@ -700,15 +696,11 @@ export default class SelectRange extends Module {
 		};
 		
 		view = {
-			left: tableHolder.scrollLeft,
+			left: tableHolder.scrollLeft + this.getRowHeaderWidth(),
 			right: Math.ceil(tableHolder.scrollLeft + tableHolder.clientWidth),
 			top: tableHolder.scrollTop,
 			bottom:	tableHolder.scrollTop +	tableHolder.offsetHeight - this.table.rowManager.scrollbarWidth,
 		};
-		
-		if (rowHeader) {
-			view.left += rowHeader.offsetWidth;
-		}
 		
 		withinHorizontalView = view.left < rect.left &&	rect.left < view.right && view.left < rect.right &&	rect.right < view.right;
 		
@@ -716,12 +708,9 @@ export default class SelectRange extends Module {
 		
 		if (!withinHorizontalView) {
 			if (rect.left < view.left) {
-				tableHolder.scrollLeft = rect.left;
-				if (rowHeader) {
-					tableHolder.scrollLeft -= rowHeader.offsetWidth;
-				}
+				tableHolder.scrollLeft = rect.left - this.getRowHeaderWidth();
 			} else if (rect.right > view.right) {
-				tableHolder.scrollLeft = rect.right - tableHolder.clientWidth;
+				tableHolder.scrollLeft = Math.min(rect.right - tableHolder.clientWidth, rect.left - this.getRowHeaderWidth());
 			}
 		}
 		
@@ -930,6 +919,13 @@ export default class SelectRange extends Module {
 	
 	selectedColumns(component) {
 		return component ? this.activeRange.getColumns().map((col) => col.getComponent()) : this.activeRange.getColumns();
+	}
+
+	getRowHeaderWidth(){
+		if(!this.rowHeader){
+			return 0;
+		}
+		return this.rowHeader.getElement().offsetWidth;
 	}
 
 	isEmpty(value) {
