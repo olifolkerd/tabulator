@@ -16,7 +16,8 @@ export default class Import extends Module{
 		this.registerTableOption("importReader", "text");
 		this.registerTableOption("importHeaderTransform");
 		this.registerTableOption("importValueTransform");
-		this.registerTableOption("importValidator");
+		this.registerTableOption("importDataValidator");
+		this.registerTableOption("importFileValidator");
 	}
 	
 	initialize(){
@@ -96,37 +97,43 @@ export default class Import extends Module{
 			
 			input.addEventListener("change", (e) => {
 				var file = input.files[0],
-				reader = new FileReader();
+				reader = new FileReader(),
+				valid = this.validateFile(file);
+
+				if(valid === true){
 				
-				this.dispatch("import-importing", input.files);
-				this.dispatchExternal("importImporting", input.files);
+					this.dispatch("import-importing", input.files);
+					this.dispatchExternal("importImporting", input.files);
 				
-				switch(importReader || this.table.options.importReader){
-					case "buffer":
-						reader.readAsArrayBuffer(file);
-						break;
+					switch(importReader || this.table.options.importReader){
+						case "buffer":
+							reader.readAsArrayBuffer(file);
+							break;
+						
+						case "binary":
+							reader.readAsBinaryString(file);
+							break;
+						
+						case "url":
+							reader.readAsDataURL(file);
+							break;
+						
+						case "text":
+						default:
+							reader.readAsText(file);
+					}
 					
-					case "binary":
-						reader.readAsBinaryString(file);
-						break;
+					reader.onload = (e) => {
+						resolve(reader.result);
+					};
 					
-					case "url":
-						reader.readAsDataURL(file);
-						break;
-					
-					case "text":
-					default:
-						reader.readAsText(file);
+					reader.onerror = (e) => {
+						console.warn("File Load Error - Unable to read file");
+						reject();
+					};
+				}else{
+					reject(valid);
 				}
-				
-				reader.onload = (e) => {
-					resolve(reader.result);
-				};
-				
-				reader.onerror = (e) => {
-					console.warn("File Load Error - Unable to read file");
-					reject();
-				};
 			});
 			
 			this.dispatch("import-choose");
@@ -261,11 +268,19 @@ export default class Import extends Module{
 		return data;
 	}
 
+	validateFile(file){
+		var result;
+
+		if(this.table.options.importFileValidator){
+			return this.table.options.importFileValidator.call(this.table, file);
+		}
+	}
+
 	validateData(data){
 		var result;
 
-		if(this.table.options.importValidator){
-			result = this.table.options.importValidator.call(this.table, data);
+		if(this.table.options.importDataValidator){
+			result = this.table.options.importDataValidator.call(this.table, data);
 
 			if(result === true){
 				return data;
