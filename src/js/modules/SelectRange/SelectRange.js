@@ -32,6 +32,7 @@ export default class SelectRange extends Module {
 		this.registerTableOption("selectableRangeRows", false); //enable selectable range
 		this.registerTableOption("selectableRangeClearCells", false); //allow clearing of active range
 		this.registerTableOption("selectableRangeClearCellsValue", undefined); //value for cleared active range
+		this.registerTableOption("selectableRangeAutoFocus", true); //focus on a cell after resetRanges
 		
 		this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
 		this.registerTableFunction("getRanges", this.getRanges.bind(this));
@@ -921,7 +922,9 @@ export default class SelectRange extends Module {
 
 			if(cell){
 				range.setBounds(cell);
-				this.initializeFocus(cell);
+				if(this.options("selectableRangeAutoFocus")){
+					this.initializeFocus(cell);
+				}
 			}
 		}
 		
