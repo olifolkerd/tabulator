@@ -129,7 +129,7 @@ export default class Import extends Module{
 					
 					reader.onerror = (e) => {
 						console.warn("File Load Error - Unable to read file");
-						reject();
+						reject(e);
 					};
 				}else{
 					reject(valid);
@@ -269,11 +269,11 @@ export default class Import extends Module{
 	}
 
 	validateFile(file){
-		var result;
-
 		if(this.table.options.importFileValidator){
 			return this.table.options.importFileValidator.call(this.table, file);
 		}
+
+		return true;
 	}
 
 	validateData(data){
