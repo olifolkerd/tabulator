@@ -13440,10 +13440,11 @@ function array$1 (input){
 }
 
 function xlsx(input){
-	var workbook2 = XLSX.read(input);
-	var sheet = workbook2.Sheets[workbook2.SheetNames[0]];
+	var XLSXLib = this.dependencyRegistry.lookup("XLSX"),
+	workbook2 = XLSXLib.read(input),
+	sheet = workbook2.Sheets[workbook2.SheetNames[0]];
 	
-	return XLSX.utils.sheet_to_json(sheet, {header: 1 });
+	return XLSXLib.utils.sheet_to_json(sheet, {header: 1 });
 }
 
 var defaultImporters = {
@@ -13580,7 +13581,7 @@ class Import extends Module{
 					
 					reader.onerror = (e) => {
 						console.warn("File Load Error - Unable to read file");
-						reject();
+						reject(e);
 					};
 				}else {
 					reject(valid);
@@ -13720,10 +13721,11 @@ class Import extends Module{
 	}
 
 	validateFile(file){
-
 		if(this.table.options.importFileValidator){
 			return this.table.options.importFileValidator.call(this.table, file);
 		}
+
+		return true;
 	}
 
 	validateData(data){
@@ -13738,6 +13740,8 @@ class Import extends Module{
 				return Promise.reject(result);
 			}
 		}
+
+		return data;
 	}
 	
 	setData(data){
