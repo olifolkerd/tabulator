@@ -18,6 +18,7 @@ import toggle from './formatters/toggle.js';
 import rownum from './formatters/rownum.js';
 import handle from './formatters/handle.js';
 import adaptable from './formatters/adaptable.js';
+import array from './formatters/array.js';
 
 export default {
 	plaintext:plaintext,
@@ -40,4 +41,5 @@ export default {
 	rownum:rownum,
 	handle:handle,
 	adaptable:adaptable,
+	array:array,
 };
