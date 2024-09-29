@@ -1,5 +1,5 @@
 export default function (cell, formatterParams, onRendered) {
-	var DT = window.DateTime || luxon.DateTime;
+	var DT = this.table.dependencyRegistry.lookup(["luxon", "DateTime"], "DateTime");
 	var inputFormat = formatterParams.inputFormat || "yyyy-MM-dd HH:mm:ss";
 	var invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";
 	var suffix = typeof formatterParams.suffix !== "undefined" ? formatterParams.suffix : false;

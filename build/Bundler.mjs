@@ -160,6 +160,12 @@ export default class Bundler{
 					exports: "named",
 					sourcemap: true,
 				},
+				{
+					file: "dist/js/tabulator_esm" + (minify ? ".min" : "") + ".mjs",
+					format: "esm",
+					exports: "named",
+					sourcemap: true,
+				},
 			],
 			onwarn:this._suppressUnnecessaryWarnings.bind(this),
 		});

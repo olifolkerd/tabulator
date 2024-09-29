@@ -601,8 +601,17 @@ export default class Edit{
 			data.forEach((row) => {
 				var val = column.getFieldValue(row);
 				
-				if(val !== null && typeof val !== "undefined" && val !== ""){
-					output[val] = true;
+				if(!this._emptyValueCheck(val)){
+					if(this.params.multiselect && Array.isArray(val)){
+						val.forEach((item) => {
+							if(!this._emptyValueCheck(item)){
+								output[item] = true;
+							}
+						});
+					}else{
+						output[val] = true;
+					}
+					
 				}
 			});
 		}else{
@@ -612,7 +621,10 @@ export default class Edit{
 		
 		return Object.keys(output);
 	}
-	
+
+	_emptyValueCheck(value){
+		return value === null || typeof value === "undefined" || value === "";
+	}
 	
 	_parseList(inputValues){
 		var data = [];

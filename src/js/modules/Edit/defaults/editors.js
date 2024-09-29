@@ -9,6 +9,7 @@ import list from './editors/list.js';
 import star from './editors/star.js';
 import progress from './editors/progress.js';
 import tickCross from './editors/tickCross.js';
+import adaptable from './editors/adaptable.js';
 
 export default {
 	input:input,
@@ -22,4 +23,5 @@ export default {
 	star:star,
 	progress:progress,
 	tickCross:tickCross,
+	adaptable:adaptable,
 };
