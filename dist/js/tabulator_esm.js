@@ -1,4 +1,4 @@
-/* Tabulator v6.2.5 (c) Oliver Folkerd 2024 */
+/* Tabulator v6.3.0 (c) Oliver Folkerd 2024 */
 class CoreFeature{
 
 	constructor(table){
@@ -7673,41 +7673,41 @@ function tickCross$1(cell, onRendered, success, cancel, editorParams){
 }
 
 function adaptable$1(cell, onRendered, success, cancel, params){
-    var column = cell._getSelf().column,
-    lookup, editorFunc, editorParams;
+	var column = cell._getSelf().column,
+	lookup, editorFunc, editorParams;
     
-    function defaultLookup(cell){
-        var value = cell.getValue(),
-        editor = "input";
+	function defaultLookup(cell){
+		var value = cell.getValue(),
+		editor = "input";
         
-        switch(typeof value){
-            case "number":
-            editor = "number";
-            break;
+		switch(typeof value){
+			case "number":
+				editor = "number";
+				break;
             
-            case "boolean":
-            editor = "tickCross";
-            break;
+			case "boolean":
+				editor = "tickCross";
+				break;
             
-            case "string":
-            if(value.includes("\n")){
-                editor = "textarea";
-            }
-            break;
-        }
+			case "string":
+				if(value.includes("\n")){
+					editor = "textarea";
+				}
+				break;
+		}
         
-        return editor;
-    }
+		return editor;
+	}
     
-    lookup = params.editorLookup ? params.editorLookup(cell) : defaultLookup(cell);
+	lookup = params.editorLookup ? params.editorLookup(cell) : defaultLookup(cell);
 
-    if(params.paramsLookup){
-        editorParams = typeof params.paramsLookup === "function" ? params.paramsLookup(lookup, cell) : params.paramsLookup[lookup];
-    }
+	if(params.paramsLookup){
+		editorParams = typeof params.paramsLookup === "function" ? params.paramsLookup(lookup, cell) : params.paramsLookup[lookup];
+	}
 
-    editorFunc = this.table.modules.edit.lookupEditor(lookup, column);
+	editorFunc = this.table.modules.edit.lookupEditor(lookup, column);
     
-    return  editorFunc.call(this, cell, onRendered, success, cancel, editorParams || {});
+	return  editorFunc.call(this, cell, onRendered, success, cancel, editorParams || {});
 }
 
 var defaultEditors = {
@@ -10832,36 +10832,36 @@ function handle(cell, formatterParams, onRendered){
 }
 
 function adaptable(cell, params, onRendered){
-    var lookup, formatterFunc, formatterParams;
+	var lookup, formatterFunc, formatterParams;
     
-    function defaultLookup(cell){
-        var value = cell.getValue(),
-        formatter = "plaintext";
+	function defaultLookup(cell){
+		var value = cell.getValue(),
+		formatter = "plaintext";
         
-        switch(typeof value){           
-            case "boolean":
-            formatter = "tickCross";
-            break;
+		switch(typeof value){           
+			case "boolean":
+				formatter = "tickCross";
+				break;
             
-            case "string":
-            if(value.includes("\n")){
-                formatter = "textarea";
-            }
-            break;
-        }
+			case "string":
+				if(value.includes("\n")){
+					formatter = "textarea";
+				}
+				break;
+		}
         
-        return formatter;
-    }
+		return formatter;
+	}
     
-    lookup = params.formatterLookup ? params.formatterLookup(cell) : defaultLookup(cell);
+	lookup = params.formatterLookup ? params.formatterLookup(cell) : defaultLookup(cell);
 
-    if(params.paramsLookup){
-        formatterParams = typeof params.paramsLookup === "function" ? params.paramsLookup(lookup, cell) : params.paramsLookup[lookup];
-    }
+	if(params.paramsLookup){
+		formatterParams = typeof params.paramsLookup === "function" ? params.paramsLookup(lookup, cell) : params.paramsLookup[lookup];
+	}
 
-    formatterFunc = this.table.modules.format.lookupFormatter(lookup);
+	formatterFunc = this.table.modules.format.lookupFormatter(lookup);
     
-    return  formatterFunc.call(this, cell, formatterParams || {}, onRendered);
+	return  formatterFunc.call(this, cell, formatterParams || {}, onRendered);
 }
 
 function array$2(cell, formatterParams, onRendered){
@@ -11026,7 +11026,7 @@ class Format extends Module{
 		var formatter, params, onRendered, mockCell;
 		
 		if(column.definition.titleFormatter){
-			formatter = this.getFormatter(column.definition.titleFormatter);
+			formatter = this.lookupFormatter(column.definition.titleFormatter);
 			
 			onRendered = (callback) => {
 				column.titleFormatterRendered = callback;
@@ -21208,7 +21208,7 @@ class SelectRange extends Module {
 			return 0;
 		}
 		return this.rowHeader.getElement().offsetWidth;
-  }
+	}
 
 	isEmpty(value) {
 		return value === null || value === undefined || value === "";

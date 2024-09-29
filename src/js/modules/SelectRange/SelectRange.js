@@ -949,7 +949,7 @@ export default class SelectRange extends Module {
 			return 0;
 		}
 		return this.rowHeader.getElement().offsetWidth;
-  }
+	}
 
 	isEmpty(value) {
 		return value === null || value === undefined || value === "";
