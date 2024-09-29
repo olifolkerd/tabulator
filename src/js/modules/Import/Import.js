@@ -288,6 +288,8 @@ export default class Import extends Module{
 				return Promise.reject(result);
 			}
 		}
+
+		return data;
 	}
 	
 	setData(data){
