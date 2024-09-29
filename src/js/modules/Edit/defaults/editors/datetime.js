@@ -2,7 +2,7 @@
 export default function(cell, onRendered, success, cancel, editorParams){
 	var inputFormat = editorParams.format,
 	vertNav = editorParams.verticalNavigation || "editor",
-	DT = inputFormat ? (window.DateTime || luxon.DateTime) : null, 
+	DT = inputFormat ? (this.table.dependencyRegistry.lookup(["luxon", "DateTime"], "DateTime")) : null, 
 	newDatetime;
 	
 	//create and style input

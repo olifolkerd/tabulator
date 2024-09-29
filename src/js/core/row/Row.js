@@ -163,12 +163,15 @@ export default class Row extends CoreFeature{
 
 	calcMaxHeight(){
 		var maxHeight = 0;
+
 		this.cells.forEach(function(cell){
 			var height = cell.getHeight();
+
 			if(height > maxHeight){
 				maxHeight = height;
 			}
 		});
+
 		return maxHeight;
 	}
 	

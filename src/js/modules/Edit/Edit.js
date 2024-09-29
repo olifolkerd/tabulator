@@ -404,26 +404,36 @@ export default class Edit extends Module{
 		};
 		
 		//set column editor
-		switch(typeof column.definition.editor){
+		config.editor = this.lookupEditor(column.definition.editor, column);
+		
+		if(config.editor){
+			column.modules.edit = config;
+		}
+	}
+
+	lookupEditor(editor, column){
+		var editorFunc;
+
+		switch(typeof editor){
 			case "string":
-				if(this.editors[column.definition.editor]){
-					config.editor = this.editors[column.definition.editor];
+				if(this.editors[editor]){
+					editorFunc = this.editors[editor];
 				}else{
-					console.warn("Editor Error - No such editor found: ", column.definition.editor);
+					console.warn("Editor Error - No such editor found: ", editor);
 				}
 				break;
 			
 			case "function":
-				config.editor = column.definition.editor;
+				editorFunc = editor;
 				break;
 			
 			case "boolean":
-				if(column.definition.editor === true){
+				if(editor === true){
 					if(typeof column.definition.formatter !== "function"){
 						if(this.editors[column.definition.formatter]){
-							config.editor = this.editors[column.definition.formatter];
+							editorFunc = this.editors[column.definition.formatter];
 						}else{
-							config.editor = this.editors["input"];
+							editorFunc = this.editors["input"];
 						}
 					}else{
 						console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
@@ -431,10 +441,8 @@ export default class Edit extends Module{
 				}
 				break;
 		}
-		
-		if(config.editor){
-			column.modules.edit = config;
-		}
+
+		return editorFunc;
 	}
 	
 	getCurrentCell(){

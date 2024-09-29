@@ -59,8 +59,8 @@ export default {
 	dataLoaderLoading:false,
 	dataLoaderError:false,
 	dataLoaderErrorTimeout:3000,
-
 	dataSendParams:{},
-
 	dataReceiveParams:{},
+
+	dependencies:{},
 };

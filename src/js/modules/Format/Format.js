@@ -3,9 +3,9 @@ import Module from '../../core/Module.js';
 import defaultFormatters from './defaults/formatters.js';
 
 export default class Format extends Module{
-
+	
 	static moduleName = "format";
-
+	
 	//load defaults
 	static formatters = defaultFormatters;
 	
@@ -34,46 +34,55 @@ export default class Format extends Module{
 	
 	//initialize column formatter
 	initializeColumn(column){
-		column.modules.format = this.lookupFormatter(column, "");
+		column.modules.format = this.lookupTypeFormatter(column, "");
 		
 		if(typeof column.definition.formatterPrint !== "undefined"){
-			column.modules.format.print = this.lookupFormatter(column, "Print");
+			column.modules.format.print = this.lookupTypeFormatter(column, "Print");
 		}
 		
 		if(typeof column.definition.formatterClipboard !== "undefined"){
-			column.modules.format.clipboard = this.lookupFormatter(column, "Clipboard");
+			column.modules.format.clipboard = this.lookupTypeFormatter(column, "Clipboard");
 		}
 		
 		if(typeof column.definition.formatterHtmlOutput !== "undefined"){
-			column.modules.format.htmlOutput = this.lookupFormatter(column, "HtmlOutput");
+			column.modules.format.htmlOutput = this.lookupTypeFormatter(column, "HtmlOutput");
 		}
 	}
 	
-	lookupFormatter(column, type){
+	lookupTypeFormatter(column, type){
 		var config = {params:column.definition["formatter" + type + "Params"] || {}},
 		formatter = column.definition["formatter" + type];
 		
+		config.formatter = this.lookupFormatter(formatter);
+		
+		return config;
+	}
+	
+	
+	lookupFormatter(formatter){
+		var formatterFunc;
+
 		//set column formatter
 		switch(typeof formatter){
 			case "string":
 				if(Format.formatters[formatter]){
-					config.formatter = Format.formatters[formatter];
+					formatterFunc = Format.formatters[formatter];
 				}else{
 					console.warn("Formatter Error - No such formatter found: ", formatter);
-					config.formatter = Format.formatters.plaintext;
+					formatterFunc = Format.formatters.plaintext;
 				}
 				break;
 			
 			case "function":
-				config.formatter = formatter;
+				formatterFunc = formatter;
 				break;
 			
 			default:
-				config.formatter = Format.formatters.plaintext;
+				formatterFunc = Format.formatters.plaintext;
 				break;
 		}
 		
-		return config;
+		return formatterFunc;
 	}
 	
 	cellRendered(cell){
@@ -88,7 +97,7 @@ export default class Format extends Module{
 		var formatter, params, onRendered, mockCell;
 		
 		if(column.definition.titleFormatter){
-			formatter = this.getFormatter(column.definition.titleFormatter);
+			formatter = this.lookupFormatter(column.definition.titleFormatter);
 			
 			onRendered = (callback) => {
 				column.titleFormatterRendered = callback;
@@ -188,27 +197,4 @@ export default class Format extends Module{
 		return value === null || typeof value === "undefined" || value === "" ? "&nbsp;" : value;
 	}
 	
-	//get formatter for cell
-	getFormatter(formatter){
-		switch(typeof formatter){
-			case "string":
-				if(Format.formatters[formatter]){
-					formatter = Format.formatters[formatter];
-				}else{
-					console.warn("Formatter Error - No such formatter found: ", formatter);
-					formatter = Format.formatters.plaintext;
-				}
-				break;
-			
-			case "function":
-			//Custom formatter Function, do nothing
-				break;
-			
-			default:
-				formatter = Format.formatters.plaintext;
-				break;
-		}
-		
-		return formatter;
-	}
 }
