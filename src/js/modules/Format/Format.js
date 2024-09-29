@@ -97,7 +97,7 @@ export default class Format extends Module{
 		var formatter, params, onRendered, mockCell;
 		
 		if(column.definition.titleFormatter){
-			formatter = this.getFormatter(column.definition.titleFormatter);
+			formatter = this.lookupFormatter(column.definition.titleFormatter);
 			
 			onRendered = (callback) => {
 				column.titleFormatterRendered = callback;
