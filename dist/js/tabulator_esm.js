@@ -4990,7 +4990,8 @@ function pdf(list, options = {}, setFileContents){
 		fillColor: 232,
 	},
 	jsPDFParams = options.jsPDF || {},
-	title = options.title ? options.title : "";
+	title = options.title ? options.title : "",
+	jspdfLib, doc;
 
 	if(!jsPDFParams.orientation){
 		jsPDFParams.orientation = options.orientation || "landscape";
@@ -5057,7 +5058,8 @@ function pdf(list, options = {}, setFileContents){
 
 
 	//configure PDF
-	var doc = new jspdf.jsPDF(jsPDFParams); //set document to landscape, better for most tables
+	jspdfLib = this.dependencyRegistry.lookup("jspdf");
+	doc = new jspdfLib.jsPDF(jsPDFParams); //set document to landscape, better for most tables
 
 	if(options.autoTable){
 		if(typeof options.autoTable === "function"){
@@ -27722,7 +27724,7 @@ class DependencyRegistry extends CoreFeature{
 	
 	lookup(key){
 		if(this.deps[key]){
-			return this.key;
+			return this.deps[key];
 		}else if(window[key]){
 			this.deps[key] = window[key];
 			return this.deps[key];
