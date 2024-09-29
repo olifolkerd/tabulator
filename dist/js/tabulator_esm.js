@@ -16646,7 +16646,7 @@ class Page extends Module{
 	}
 	
 	_parseRemoteData(data){
-		var margin;
+		var margin, paginationOutOfRange;
 		
 		if(typeof data.last_page === "undefined"){
 			console.warn("Remote Pagination Error - Server response missing '" + (this.options("dataReceiveParams").last_page || "last_page") + "' property");
@@ -16697,14 +16697,10 @@ class Page extends Module{
 				if(this.page > this.max){
 					console.warn( "Remote Pagination Error - Server returned last page value lower than the current page" );
 
-					const paginationOutOfRange = this.options('paginationOutOfRange');
+					paginationOutOfRange = this.options('paginationOutOfRange');
 
 					if(paginationOutOfRange){
-						return this.setPage(
-							typeof paginationOutOfRange === 'function' ?
-								paginationOutOfRange.call(this, this.page, this.max) :
-								paginationOutOfRange
-						);
+						return this.setPage(typeof paginationOutOfRange === 'function' ? paginationOutOfRange.call(this, this.page, this.max) :	paginationOutOfRange);
 					}
 				}
 
