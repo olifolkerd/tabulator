@@ -5088,7 +5088,8 @@ function pdf(list, options = {}, setFileContents){
 function xlsx$1(list, options, setFileContents){
 	var self = this,
 	sheetName = options.sheetName || "Sheet1",
-	workbook = XLSX.utils.book_new(),
+	XLSXLib = this.dependencyRegistry.lookup("XLSX"),
+	workbook = XLSXLib.utils.book_new(),
 	tableFeatures = new CoreFeature(this),
 	compression =  'compress' in options ? options.compress : true,
 	writeOptions = options.writeOptions || {bookType:'xlsx', bookSST:true, compression},
@@ -5128,9 +5129,9 @@ function xlsx$1(list, options, setFileContents){
 		});
 
 		//convert rows to worksheet
-		XLSX.utils.sheet_add_aoa(worksheet, rows);
+		XLSXLib.utils.sheet_add_aoa(worksheet, rows);
 
-		worksheet['!ref'] = XLSX.utils.encode_range(range);
+		worksheet['!ref'] = XLSXLib.utils.encode_range(range);
 
 		if(merges.length){
 			worksheet["!merges"] = merges;
@@ -5181,7 +5182,7 @@ function xlsx$1(list, options, setFileContents){
 		return buf;
 	}
 
-	output = XLSX.write(workbook, writeOptions);
+	output = XLSXLib.write(workbook, writeOptions);
 
 	setFileContents(s2ab(output), "application/octet-stream");
 }
@@ -23297,10 +23298,10 @@ var defaultOptions = {
 	dataLoaderLoading:false,
 	dataLoaderError:false,
 	dataLoaderErrorTimeout:3000,
-
 	dataSendParams:{},
-
 	dataReceiveParams:{},
+
+	dependencies:{},
 };
 
 class OptionsList {
@@ -27703,6 +27704,30 @@ class DeprecationAdvisor extends CoreFeature{
 	}
 }
 
+class DependencyRegistry extends CoreFeature{
+	
+	constructor(table){
+		super(table);
+		
+		this.deps = {};
+	}
+	
+	initialize(){
+		this.deps = Object.assign({}, this.options("dependencies"));
+	}
+	
+	lookup(key){
+		if(this.deps[key]){
+			return this.key;
+		}else if(window[key]){
+			this.deps[key] = window[key];
+			return this.deps[key];
+		}
+		
+		console.error("Unable to find dependency", key, "Please check documentation and ensure you have imported the required library into your project");
+	}
+}
+
 //resize columns to fit data they contain
 function fitData(columns, forced){
 	if(forced){
@@ -28608,6 +28633,8 @@ class Tabulator extends ModuleBinder{
 		
 		this.deprecationAdvisor = new DeprecationAdvisor(this);
 		this.optionsList = new OptionsList(this, "table constructor");
+
+		this.dependencyRegistry = new DependencyRegistry(this);
 		
 		this.initialized = false;
 		this.destroyed = false;
@@ -28665,9 +28692,9 @@ class Tabulator extends ModuleBinder{
 		this.interactionMonitor = new InteractionManager(this);
 		
 		this.dataLoader.initialize();
-		// this.columnManager.initialize();
-		// this.rowManager.initialize();
 		this.footerManager.initialize();
+
+		this.dependencyRegistry.initialize();
 	}
 	
 	//convert deprecated functionality to new functions
