@@ -21334,6 +21334,9 @@ function array(a, b, aRow, bRow, column, dir, params){
 					return c + d;
 				}) / value.length;
 				break;
+			case "string":
+				result = value.join("");
+				break;
 		}
 
 		return result;
@@ -21345,7 +21348,11 @@ function array(a, b, aRow, bRow, column, dir, params){
 	}else if(!Array.isArray(b)){
 		emptyAlign = 1;
 	}else {
-		return calc(b) - calc(a);
+		if(type === "string"){
+			return calc(b) - calc(a);
+		}else {
+			return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+		}
 	}
 
 	//fix empty values in position
