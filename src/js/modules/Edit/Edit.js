@@ -178,6 +178,10 @@ export default class Edit extends Module{
 		
 		if(cell){
 			
+			if(cell.column.modules.edit.navigationBlocked){
+				return false;
+			}
+
 			if(e){
 				e.preventDefault();
 			}
@@ -208,6 +212,10 @@ export default class Edit extends Module{
 		
 		if(cell){
 			
+			if(cell.column.modules.edit.navigationBlocked){
+				return false;
+			}
+		
 			if(e){
 				e.preventDefault();
 			}
@@ -238,6 +246,10 @@ export default class Edit extends Module{
 		
 		if(cell){
 			
+			if(cell.column.modules.edit.navigationBlocked){
+				return false;
+			}
+		
 			if(e){
 				e.preventDefault();
 			}
@@ -259,6 +271,10 @@ export default class Edit extends Module{
 		
 		if(cell){
 			
+			if(cell.column.modules.edit.navigationBlocked){
+				return false;
+			}
+		
 			if(e){
 				e.preventDefault();
 			}
@@ -280,6 +296,10 @@ export default class Edit extends Module{
 		
 		if(cell){
 			
+			if(cell.column.modules.edit.navigationBlocked){
+				return false;
+			}
+		
 			if(e){
 				e.preventDefault();
 			}
@@ -301,6 +321,10 @@ export default class Edit extends Module{
 		
 		if(cell){
 			
+			if(cell.column.modules.edit.navigationBlocked){
+				return false;
+			}
+
 			if(e){
 				e.preventDefault();
 			}
@@ -401,6 +425,7 @@ export default class Edit extends Module{
 			convertEmptyValues:convertEmpty,
 			editorEmptyValue:column.definition.editorEmptyValue,
 			editorEmptyValueFunc:column.definition.editorEmptyValueFunc,
+			navigationBlocked: false,
 		};
 		
 		//set column editor
