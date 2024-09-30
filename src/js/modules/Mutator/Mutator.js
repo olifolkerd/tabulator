@@ -12,7 +12,7 @@ export default class Mutator extends Module{
 	constructor(table){
 		super(table);
 
-		this.allowedTypes = ["", "data", "edit", "clipboard"]; //list of mutation types
+		this.allowedTypes = ["", "data", "edit", "clipboard", "import"]; //list of mutation types
 		this.enabled = true;
 
 		this.registerColumnOption("mutator");
@@ -23,6 +23,8 @@ export default class Mutator extends Module{
 		this.registerColumnOption("mutatorEditParams");
 		this.registerColumnOption("mutatorClipboard");
 		this.registerColumnOption("mutatorClipboardParams");
+		this.registerColumnOption("mutatorImport");
+		this.registerColumnOption("mutatorImportParams");
 		this.registerColumnOption("mutateLink");
 	}
 
@@ -91,6 +93,8 @@ export default class Mutator extends Module{
 	transformRow(data, type, updatedData){
 		var key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
 		value;
+
+		// console.log("key", key)
 
 		if(this.enabled){
 
