@@ -76,12 +76,12 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		.tabulator-calcs-holder{
 			background:lighten($headerBackgroundColor, 10%) !important;
 
+			border-top:1px solid $rowBorderColor;
+			border-bottom:none;
+
 			.tabulator-row{
 				background:lighten($headerBackgroundColor, 10%) !important;
 			}
-
-			border-top:1px solid $rowBorderColor;
-			border-bottom:none;
 		}
 	}
 
@@ -120,13 +120,13 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 
 			background:lighten($footerBackgroundColor, 10%) !important;
 
+			border-top:none;
+			border-bottom:1px solid $rowBorderColor;
+
 			.tabulator-row{
 				background:lighten($footerBackgroundColor, 10%) !important;
 				color:$headerTextColor !important;
 			}
-
-			border-top:none;
-			border-bottom:1px solid $rowBorderColor;
 		}
 
 		.tabulator-spreadsheet-tabs{

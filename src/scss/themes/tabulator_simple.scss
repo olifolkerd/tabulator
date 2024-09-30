@@ -46,11 +46,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		.tabulator-calcs-holder{
 			background:darken($headerBackgroundColor, 5%) !important;
 
+			border-bottom:1px solid $headerSeparatorColor;
+
 			.tabulator-row{
 				background:darken($headerBackgroundColor, 5%) !important;
 			}
-
-			border-bottom:1px solid $headerSeparatorColor;
 		}
 	}
 
@@ -66,11 +66,11 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		.tabulator-calcs-holder{
 			background:darken($footerBackgroundColor, 5%) !important;
 
+			border-bottom:1px solid $footerBackgroundColor;
+
 			.tabulator-row{
 				background:darken($footerBackgroundColor, 5%) !important;
 			}
-
-			border-bottom:1px solid $footerBackgroundColor;
 		}
 
 		.tabulator-spreadsheet-tabs{
