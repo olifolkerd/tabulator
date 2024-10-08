@@ -14,6 +14,7 @@ import ExternalEventBus from './tools/ExternalEventBus.js';
 import InternalEventBus from './tools/InternalEventBus.js';
 
 import DeprecationAdvisor from './tools/DeprecationAdvisor.js';
+import DependencyRegistry from './tools/DependencyRegistry.js';
 
 import ModuleBinder from './tools/ModuleBinder.js';
 
@@ -66,6 +67,8 @@ class Tabulator extends ModuleBinder{
 		
 		this.deprecationAdvisor = new DeprecationAdvisor(this);
 		this.optionsList = new OptionsList(this, "table constructor");
+
+		this.dependencyRegistry = new DependencyRegistry(this);
 		
 		this.initialized = false;
 		this.destroyed = false;
@@ -123,9 +126,9 @@ class Tabulator extends ModuleBinder{
 		this.interactionMonitor = new InteractionMonitor(this);
 		
 		this.dataLoader.initialize();
-		// this.columnManager.initialize();
-		// this.rowManager.initialize();
 		this.footerManager.initialize();
+
+		this.dependencyRegistry.initialize();
 	}
 	
 	//convert deprecated functionality to new functions
