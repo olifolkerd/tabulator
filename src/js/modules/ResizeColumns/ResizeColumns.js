@@ -174,6 +174,8 @@ export default class ResizeColumns extends Module{
 				handle.style.position = "sticky";
 				handle.style[column.modules.frozen.position] = this.frozenColumnOffset(column);
 			}
+
+			handle.style.height = component.row?.heightStyled;
 			
 			config.handleEl = handle;
 			
