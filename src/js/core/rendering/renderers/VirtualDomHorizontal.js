@@ -190,9 +190,11 @@ export default class VirtualDomHorizontal extends Renderer{
 	}
 	
 	reinitializeColumnWidths(columns){
-		for(let i = this.leftCol; i <= this.rightCol; i++){
-			this.columns[i].reinitializeWidth();
-		}
+		columns.forEach(column => {
+			if(column.visible) {
+				column.reinitializeWidth();
+			}
+		});
 	}
 	
 	//////////////////////////////////////
