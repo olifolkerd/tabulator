@@ -1063,7 +1063,7 @@ export default class RowManager extends CoreFeature{
 			//check if the table has changed size when dealing with variable height tables
 			if(!this.fixedHeight && initialHeight != this.element.clientHeight){
 				resized = true;
-				if(!this.redrawing) { // prevent recursive redraws		
+				if(!this.redrawing){ // prevent recursive redraws		
 					this.redrawing = true;
 					if(this.subscribed("table-resize")){
 						this.dispatch("table-resize");
