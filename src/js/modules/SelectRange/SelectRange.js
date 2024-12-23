@@ -33,7 +33,8 @@ export default class SelectRange extends Module {
 		this.registerTableOption("selectableRangeClearCells", false); //allow clearing of active range
 		this.registerTableOption("selectableRangeClearCellsValue", undefined); //value for cleared active range
 		this.registerTableOption("selectableRangeAutoFocus", true); //focus on a cell after resetRanges
-		
+		this.registerTableOption("selectableRangeInitializeDefault", true); //initializes default range on cell [0,0]
+
 		this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
 		this.registerTableFunction("getRanges", this.getRanges.bind(this));
 		this.registerTableFunction("addRange", this.addRangeFromComponent.bind(this));
@@ -84,7 +85,7 @@ export default class SelectRange extends Module {
 		
 		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
 		
-		this.resetRanges();
+		this.setDefaultRange();
 		
 		this.table.rowManager.element.appendChild(this.overlay);
 		this.table.columnManager.element.setAttribute("tabindex", 0);
@@ -119,7 +120,7 @@ export default class SelectRange extends Module {
 		this.subscribe("scroll-horizontal", this.layoutChange.bind(this));
 		
 		this.subscribe("data-destroy", this.tableDestroyed.bind(this));
-		this.subscribe("data-processed", this.resetRanges.bind(this));
+		this.subscribe("data-processed", this.setDefaultRange.bind(this));
 		
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 		this.subscribe("table-redraw", this.redraw.bind(this));
@@ -242,9 +243,15 @@ export default class SelectRange extends Module {
 				if (this.table.modules.edit && this.table.modules.edit.currentCell) {
 					return;
 				}
-				
-				this.table.modules.edit.editCell(this.getActiveCell());
-				
+
+				var activeCell = this.getActiveCell();
+				// no range is selected
+				if(activeCell) {
+					return;
+				}
+
+				this.table.modules.edit.editCell(activeCell);
+
 				e.preventDefault();
 			}
 			
@@ -758,7 +765,7 @@ export default class SelectRange extends Module {
 	redraw(force) {
 		if (force) {
 			this.selecting = 'cell';
-			this.resetRanges();
+			this.setDefaultRange();
 			this.layoutElement();
 		}
 	}
@@ -873,6 +880,7 @@ export default class SelectRange extends Module {
 	
 	
 	getActiveCell() {
+		if(!this.activeRange) return;
 		return this.getCell(this.activeRange.start.row, this.activeRange.start.col);
 	}
 	
@@ -907,28 +915,41 @@ export default class SelectRange extends Module {
 		
 		return range;
 	}
-	
-	resetRanges() {
+
+	createDefaultRange() {
 		var range, cell, visibleCells;
-		
-		this.ranges.forEach((range) => range.destroy());
-		this.ranges = [];
-		
 		range = this.addRange();
-		
-		if(this.table.rowManager.activeRows.length){
+
+		if(this.table.rowManager.activeRows.length) {
 			visibleCells = this.table.rowManager.activeRows[0].cells.filter((cell) => cell.column.visible);
 			cell = visibleCells[this.rowHeader ? 1 : 0];
 
-			if(cell){
+			if (cell) {
 				range.setBounds(cell);
-				if(this.options("selectableRangeAutoFocus")){
+				if (this.options("selectableRangeAutoFocus")) {
 					this.initializeFocus(cell);
 				}
 			}
 		}
-		
+
 		return range;
+	}
+
+	clearRanges() {
+		this.ranges.forEach((range) => range.destroy());
+		this.ranges = [];
+	}
+
+	setDefaultRange() {
+		this.clearRanges();
+		if(this.options("selectableRangeInitializeDefault")) {
+			this.createDefaultRange();
+		}
+	}
+
+	resetRanges() {
+		this.clearRanges();
+		return this.createDefaultRange();
 	}
 	
 	tableDestroyed(){
