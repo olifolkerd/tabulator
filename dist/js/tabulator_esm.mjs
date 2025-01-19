@@ -2968,10 +2968,15 @@ class Column extends CoreFeature{
 			
 			if(maxWidth){
 				var setTo = maxWidth + 1;
-				if (this.maxInitialWidth && !force) {
-					setTo = Math.min(setTo, this.maxInitialWidth);
+				
+				if(force){
+					this.setWidth(setTo);
+				}else {
+					if (this.maxInitialWidth && !force) {
+						setTo = Math.min(setTo, this.maxInitialWidth);
+					}
+					this.setWidthActual(setTo);
 				}
-				this.setWidthActual(setTo);
 			}
 		}
 	}
@@ -5263,7 +5268,6 @@ class Download extends Module{
 		this.registerTableOption("downloadEncoder", function(data, mimeType){
 			return new Blob([data],{type:mimeType});
 		}); //function to manipulate download data
-		// this.registerTableOption("downloadReady", undefined); //warn of function deprecation
 		this.registerTableOption("downloadConfig", {}); //download config
 		this.registerTableOption("downloadRowRange", "active"); //restrict download to active rows only
 
@@ -5279,7 +5283,7 @@ class Download extends Module{
 	}
 
 	deprecatedOptionsCheck(){
-		// this.deprecationCheck("downloadReady", "downloadEncoder");
+
 	}	
 
 	///////////////////////////////////
