@@ -420,15 +420,14 @@ export default class SelectRange extends Module {
 			dir = 'right';
 		}
 		
-		this.navigate(jump, expand, dir);
-
-		// Trap keyboard events here to avoid triggering keybindings outside of 
-		// tabulator. E.g. Pressing arrow can trigger page scrolling.
-		e.preventDefault();
+		return this.navigate(jump, expand, dir);
 	}
 	
 	keyNavigateRange(e, dir, jump, expand){
-		this.keyNavigate(dir, e, jump, expand);
+		if(this.navigate(jump, expand, dir)){
+			// e.preventDefault();
+		}
+		e.preventDefault();
 	}
 	
 	navigate(jump, expand, dir) {
