@@ -318,6 +318,7 @@ class Tabulator extends ModuleBinder{
 		//clear DOM
 		while(element.firstChild) element.removeChild(element.firstChild);
 		element.classList.remove("tabulator");
+		element.removeAttribute("tabulator-layout");
 
 		this.externalEvents.dispatch("tableDestroyed");
 	}
