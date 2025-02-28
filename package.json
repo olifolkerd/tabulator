@@ -27,7 +27,8 @@
     "dev:css": "rollup -c build/rollup.mjs -w --environment TARGET:css",
     "dev:esm": "rollup -c build/rollup.mjs -w --environment TARGET:esm",
     "dev:umd": "rollup -c build/rollup.mjs -w --environment TARGET:umd",
-    "dev:wrappers": "rollup -c build/rollup.mjs -w --environment TARGET:wrappers "
+    "dev:wrappers": "rollup -c build/rollup.mjs -w --environment TARGET:wrappers ",
+    "test:e2e": "npm run build && npx playwright test"
   },
   "repository": {
     "type": "git",
@@ -59,8 +60,10 @@
   },
   "homepage": "https://tabulator.info/",
   "devDependencies": {
+    "@playwright/test": "^1.50.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
+    "@types/node": "^22.13.5",
     "eslint": "^8.57.0",
     "eslint-plugin-only-warn": "^1.1.0",
     "fs-extra": "^11.2.0",

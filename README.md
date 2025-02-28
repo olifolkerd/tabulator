@@ -74,3 +74,19 @@ To access Tabulator directly from the UNPKG CDN servers, include the following t
 <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
 <script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
 ```
+
+Testing
+================================
+Tabulator comes with both Unit and End-to-End (E2E) tests. Here’s how you can run them:
+
+```bash
+# Unit test
+npm run test:unit
+
+# E2E test
+npm run build # Make sure to build the project first
+npx playwright test # Run the tests
+# or
+npm run test:e2e
+```
+
