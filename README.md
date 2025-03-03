@@ -88,5 +88,8 @@ npm run build # Make sure to build the project first
 npx playwright test # Run the tests
 # or
 npm run test:e2e
+
+# Run all tests
+npm run test
 ```
 

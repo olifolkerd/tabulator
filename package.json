@@ -28,8 +28,9 @@
     "dev:esm": "rollup -c build/rollup.mjs -w --environment TARGET:esm",
     "dev:umd": "rollup -c build/rollup.mjs -w --environment TARGET:umd",
     "dev:wrappers": "rollup -c build/rollup.mjs -w --environment TARGET:wrappers ",
+    "test:unit": "jest",
     "test:e2e": "npm run build && npx playwright test",
-    "test": "jest"
+	"test": "npm run test:unit && npm run test:e2e"
   },
   "repository": {
     "type": "git",
