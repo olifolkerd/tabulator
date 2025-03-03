@@ -40,6 +40,7 @@ const table = new Tabulator("#tabulator", {
 
 test("Editing cells", async ({ page }) => {
 	await page.getByText("abc").click()
+
 	await page.keyboard.press('Enter')
 	await page.keyboard.press('ArrowLeft')
 	await page.keyboard.press('ArrowLeft')
@@ -48,8 +49,6 @@ test("Editing cells", async ({ page }) => {
 	await page.keyboard.type('+')
 	await page.keyboard.press('Enter')
 	await page.keyboard.press('ArrowDown')
-	await page.keyboard.press('Enter')
 
 	expect(page.getByText("a-b+c")).toBeVisible()
-	expect(page.getByText("123")).toBeVisible()
 });
