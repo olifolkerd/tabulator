@@ -141,13 +141,6 @@ export default class SelectRange extends Module {
 		if(this.columnSelection && column.definition.headerSort && this.options("headerSortClickElement") !== "icon"){
 			console.warn("Using column headerSort with selectableRangeColumns option may result in unpredictable behavior. Consider using headerSortClickElement: 'icon'.");
 		}
-		
-		if (column.modules.edit) {
-			// Block editor from taking action so we can trigger edit by
-			// double clicking.
-			// column.modules.edit.blocked = true;
-			column.modules.edit.navigationBlocked = true;
-		}
 	}
 	
 	updateHeaderColumn(){
