@@ -1,5 +1,6 @@
 import Module from "../../core/Module.js";
 import Range from "./Range.js";
+import RangeComponent from "./RangeComponent.js";
 import extensions from './extensions/extensions.js';
 
 
@@ -183,6 +184,7 @@ export default class SelectRange extends Module {
 	///////   Table Functions   ///////
 	///////////////////////////////////
 	
+	/** @returns {RangeComponent[]} */
 	getRanges(){
 		return this.ranges.map((range) => range.getComponent());
 	}
