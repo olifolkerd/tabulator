@@ -183,6 +183,7 @@ export default class SelectRange extends Module {
 	///////   Table Functions   ///////
 	///////////////////////////////////
 	
+	/** @returns {import("./RangeComponent.js").default[]} */
 	getRanges(){
 		return this.ranges.map((range) => range.getComponent());
 	}
