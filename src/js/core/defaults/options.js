@@ -15,7 +15,7 @@ export default {
 
 	popupContainer:false,
 
-	columns:[],//store for colum header info
+	columns:[],//store for column header info
 	columnDefaults:{}, //store column default props
 	rowHeader:false,
 

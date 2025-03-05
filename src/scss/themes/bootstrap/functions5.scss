@@ -65,7 +65,7 @@
 }
 // stylelint-enable scss/dollar-variable-pattern
 
-@function varify($list) {
+@function verify($list) {
   $result: null;
   @each $entry in $list {
     $result: append($result, var(--#{$variable-prefix}#{$entry}), space);
