@@ -26,7 +26,7 @@ export default class DataTree extends Module{
 		this.registerTableOption("dataTreeElementColumn", false);
 		this.registerTableOption("dataTreeBranchElement", true);//show data tree branch element
 		this.registerTableOption("dataTreeChildIndent", 9); //data tree child indent in px
-		this.registerTableOption("dataTreeChildField", "_children");//data tre column field to look for child rows
+		this.registerTableOption("dataTreeChildField", "_children");//data tree column field to look for child rows
 		this.registerTableOption("dataTreeCollapseElement", false);//data tree row collapse element
 		this.registerTableOption("dataTreeExpandElement", false);//data tree row expand element
 		this.registerTableOption("dataTreeStartExpanded", false);
