@@ -324,7 +324,7 @@ export default class Column extends CoreFeature{
 		this.element.setAttribute("role", "columngroup");
 		this.element.setAttribute("aria-title", this.definition.title);
 		
-		//asign additional css classes to column header
+		//assign additional css classes to column header
 		if(this.definition.cssClass){
 			var classNames = this.definition.cssClass.split(" ");
 			classNames.forEach((className) => {

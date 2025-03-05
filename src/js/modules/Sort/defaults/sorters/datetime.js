@@ -39,6 +39,6 @@ export default function(a, b, aRow, bRow, column, dir, params){
 		return emptyAlign;
 
 	}else{
-		console.error("Sort Error - 'datetime' sorter is dependant on luxon.js");
+		console.error("Sort Error - 'datetime' sorter is dependent on luxon.js");
 	}
 }
