@@ -239,8 +239,9 @@ export default class InteractionManager extends CoreFeature {
 		var keys = Object.keys(targets).reverse(),
 		listener = this.listeners[type],
 		matches = {},
+		output = {},
 		targetMatches = {};
-		
+	
 		for(let key of keys){
 			let component,
 			target = targets[key],
@@ -295,8 +296,14 @@ export default class InteractionManager extends CoreFeature {
 		}
 		
 		this.previousTargets = targetMatches;
+
+		//reverse order keys are set in so events trigger in correct sequence
+		Object.keys(targets).forEach((key) => {
+			let value = matches[key];
+			output[key] = value;
+		});
 		
-		return matches;
+		return output;
 	}
 	
 	triggerEvents(type, e, targets){
