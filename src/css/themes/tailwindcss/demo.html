@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Tabulator Tailwindcss Demo</title>
+		<!-- include the latest tabulator version -->
+		<script
+			type="text/javascript"
+			src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"
+		></script>
+		<!-- use alpine.js for simple manipulations -->
+		<script src="//unpkg.com/alpinejs" defer></script>
+		<!-- use the tailwind theme-->
+		<link href="./tabulator_tailwind.css" rel="stylesheet" />
+	</head>
+	<body
+		style="margin: 0px; padding: 24px; height: 100dvh; width: 100dvw"
+		data-server-no-reload
+	>
+		<div x-data="{ tab: 'demo-row-select'}">
+			<div
+				style="
+					cursor: pointer;
+					display: flex;
+					flex-wrap: wrap;
+					gap: 16px;
+					margin-bottom: 20px;
+				"
+			>
+				<div
+					x-on:click="tab = 'demo-row-select'"
+					x-bind:style="tab == 'demo-row-select' && { fontWeight: 'bold' }"
+				>
+					Demo Row-Select
+				</div>
+				<div
+					x-on:click="tab = 'demo-row-move'"
+					x-bind:style="tab == 'demo-row-move' && { fontWeight: 'bold' }"
+				>
+					Demo Row-Move
+				</div>
+				<div
+					x-on:click="tab = 'demo-menu'"
+					x-bind:style="tab == 'demo-menu' && { fontWeight: 'bold' }"
+				>
+					Demo Menu
+				</div>
+				<div
+					x-on:click="tab = 'demo-group'"
+					x-bind:style="tab == 'demo-group' && { fontWeight: 'bold' }"
+				>
+					Demo Group
+				</div>
+				<div
+					x-on:click="tab = 'demo-tree'"
+					x-bind:style="tab == 'demo-tree' && { fontWeight: 'bold' }"
+				>
+					Demo Tree
+				</div>
+				<div
+					x-on:click="tab = 'demo-editor'"
+					x-bind:style="tab == 'demo-editor' && { fontWeight: 'bold' }"
+				>
+					Demo Editor
+				</div>
+				<div
+					x-on:click="tab = 'demo-pagination'"
+					x-bind:style="tab == 'demo-pagination' && { fontWeight: 'bold' }"
+				>
+					Demo Pagination
+				</div>
+				<div
+					x-on:click="tab = 'demo-spreadsheet'"
+					x-bind:style="tab == 'demo-spreadsheet' && { fontWeight: 'bold' }"
+				>
+					Demo Spreadsheet
+				</div>
+			</div>
+
+			<div id="demo-row-select" x-show="tab == 'demo-row-select'"></div>
+			<div
+				id="demo-row-move"
+				style="margin-bottom: 24px"
+				x-show="tab == 'demo-row-move'"
+			></div>
+			<div
+				id="demo-menu"
+				style="margin-bottom: 24px"
+				x-show="tab == 'demo-menu'"
+			></div>
+			<div
+				id="demo-group"
+				style="margin-bottom: 24px"
+				x-show="tab == 'demo-group'"
+			></div>
+			<div
+				id="demo-tree"
+				style="margin-bottom: 24px"
+				x-show="tab == 'demo-tree'"
+			></div>
+			<div
+				id="demo-editor"
+				style="margin-bottom: 24px"
+				x-show="tab == 'demo-editor'"
+			></div>
+			<div
+				id="demo-pagination"
+				style="margin-bottom: 24px"
+				x-show="tab == 'demo-pagination'"
+			></div>
+			<div
+				id="demo-spreadsheet"
+				style="margin-bottom: 24px"
+				x-show="tab == 'demo-spreadsheet'"
+			></div>
+		</div>
+
+		<script>
+			var tableData = [
+				{
+					name: "Oli Bob",
+					location: "United Kingdom",
+					gender: "male",
+					col: "red",
+					dob: "14/04/1984",
+					_children: [
+						{
+							name: "Mary May",
+							location: "Germany",
+							gender: "female",
+							col: "blue",
+							dob: "14/05/1982",
+						},
+						{
+							name: "Christine Lobowski",
+							location: "France",
+							gender: "female",
+							col: "green",
+							dob: "22/05/1982",
+						},
+						{
+							name: "Brendon Philips",
+							location: "USA",
+							gender: "male",
+							col: "orange",
+							dob: "01/08/1980",
+							_children: [
+								{
+									name: "Margret Marmajuke",
+									location: "Canada",
+									gender: "female",
+									col: "yellow",
+									dob: "31/01/1999",
+								},
+								{
+									name: "Frank Harbours",
+									location: "Russia",
+									gender: "male",
+									col: "red",
+									dob: "12/05/1966",
+								},
+							],
+						},
+					],
+				},
+				{
+					name: "Jamie Newhart",
+					location: "India",
+					gender: "male",
+					col: "green",
+					dob: "14/05/1985",
+				},
+				{
+					name: "Gemma Jane",
+					location: "China",
+					gender: "female",
+					col: "red",
+					dob: "22/05/1982",
+					_children: [
+						{
+							name: "Emily Sykes",
+							location: "South Korea",
+							gender: "female",
+							col: "maroon",
+							dob: "11/11/1970",
+						},
+					],
+				},
+				{
+					name: "James Newman",
+					location: "Japan",
+					gender: "male",
+					col: "red",
+					dob: "22/03/1998",
+				},
+			];
+
+			var demoRowSelect = new Tabulator("#demo-row-select", {
+				height: "300px",
+				layout: "fitDataFill",
+				selectableRows: true,
+				data: tableData,
+				resizableRowGuide: true,
+				resizableColumnGuide: true,
+				columnDefaults: {
+					headerSort: true,
+					resizable: "header",
+				},
+				columns: [
+					{
+						title: "Name",
+						field: "name",
+						width: 200,
+						frozen: true,
+					},
+					{
+						title: "Location",
+						field: "location",
+						width: 150,
+						frozen: true,
+					},
+					{
+						title: "Gender",
+						field: "gender",
+						width: 1000,
+					},
+					{
+						title: "Favourite Color",
+						field: "col",
+						width: 120,
+						frozen: true,
+					},
+					{
+						title: "Date Of Birth",
+						field: "dob",
+						hozAlign: "left",
+						sorter: "string",
+						width: 120,
+						frozen: true,
+					},
+				],
+				footerElement: "<div>This is some custom footer information</div>",
+			});
+
+			var demoRowMove = new Tabulator("#demo-row-move", {
+				height: "300px",
+				layout: "fitDataFill",
+				data: tableData,
+				movableRows: true,
+				rowHeader: {
+					headerSort: false,
+					resizable: false,
+					minWidth: 30,
+					width: 30,
+					rowHandle: true,
+					formatter: "handle",
+				},
+				headerSortClickElement: "icon",
+				columnDefaults: {
+					headerSort: true,
+					resizable: "header",
+				},
+				columns: [
+					{
+						title: "Name",
+						field: "name",
+						width: 200,
+					},
+					{
+						title: "Location",
+						field: "location",
+						width: 150,
+					},
+					{
+						title: "Gender",
+						field: "gender",
+						width: 150,
+					},
+					{
+						title: "Favourite Color",
+						field: "col",
+						width: 150,
+					},
+					{
+						title: "Date Of Birth",
+						field: "dob",
+						hozAlign: "center",
+						sorter: "string",
+						width: 150,
+					},
+				],
+				footerElement: "<div>This is some custom footer information</div>",
+			});
+
+			var demoMenu = new Tabulator("#demo-menu", {
+				height: "300px",
+				layout: "fitDataFill",
+				selectableRows: true,
+				data: tableData,
+				headerSortClickElement: "icon",
+				columnDefaults: {
+					headerSort: true,
+					resizable: "header",
+				},
+				columns: [
+					{
+						title: "Name",
+						field: "name",
+						width: 200,
+					},
+					{
+						title: "Location",
+						field: "location",
+						width: 150,
+						headerMenu: [
+							{
+								label: "Tailwindcss testing",
+								action: () => {},
+							},
+						],
+					},
+					{
+						title: "Gender",
+						field: "gender",
+						width: 150,
+					},
+					{
+						title: "Favourite Color",
+						field: "col",
+						width: 150,
+					},
+					{
+						title: "Date Of Birth",
+						field: "dob",
+						hozAlign: "center",
+						sorter: "string",
+						width: 150,
+					},
+				],
+				footerElement: "<div>This is some custom footer information</div>",
+			});
+
+			var demoGroup = new Tabulator("#demo-group", {
+				height: "300px",
+				layout: "fitDataFill",
+				data: tableData,
+				columnDefaults: {
+					headerSort: true,
+					resizable: "header",
+				},
+				groupBy: "gender",
+				groupToggleElement: "header",
+				movableRows: true,
+				columns: [
+					{
+						title: "Name",
+						field: "name",
+						width: 200,
+					},
+					{
+						title: "Location",
+						field: "location",
+						width: 150,
+					},
+					{
+						title: "Gender",
+						field: "gender",
+						width: 150,
+					},
+					{
+						title: "Favourite Color",
+						field: "col",
+						width: 150,
+					},
+					{
+						title: "Date Of Birth",
+						field: "dob",
+						hozAlign: "center",
+						sorter: "string",
+						width: 150,
+					},
+				],
+				footerElement: "<div>This is some custom footer information</div>",
+			});
+
+			var demoTree = new Tabulator("#demo-tree", {
+				height: "300px",
+				layout: "fitDataFill",
+				data: tableData,
+				dataTree: true,
+				dataTreeStartExpanded: true,
+				columnDefaults: {
+					headerSort: true,
+					resizable: "header",
+				},
+				columns: [
+					{
+						title: "Name",
+						field: "name",
+						width: 200,
+					},
+					{
+						title: "Location",
+						field: "location",
+						width: 150,
+					},
+					{
+						title: "Gender",
+						field: "gender",
+						width: 150,
+					},
+					{
+						title: "Favourite Color",
+						field: "col",
+						width: 150,
+					},
+					{
+						title: "Date Of Birth",
+						field: "dob",
+						hozAlign: "center",
+						sorter: "string",
+						width: 150,
+					},
+				],
+			});
+
+			var demoEditor = new Tabulator("#demo-editor", {
+				height: "300px",
+				layout: "fitDataFill",
+				data: tableData,
+				headerSortClickElement: "icon",
+				columnDefaults: {
+					headerSort: true,
+					editor: "input",
+					resizable: "header",
+				},
+				rowHeader: {
+					resizable: false,
+					frozen: true,
+					width: 40,
+					hozAlign: "center",
+					formatter: "rownum",
+					cssClass: "range-header-col",
+					editor: false,
+					headerSort: false,
+				},
+
+				//enable range selection
+				selectableRange: 1,
+				selectableRangeColumns: true,
+				selectableRangeRows: true,
+				selectableRangeClearCells: true,
+
+				//change edit trigger mode to make cell navigation smoother
+				editTriggerEvent: "dblclick",
+
+				columns: [
+					{
+						title: "Name",
+						field: "name",
+						width: 200,
+					},
+					{
+						title: "Location",
+						field: "location",
+						width: 150,
+					},
+					{
+						title: "Gender",
+						field: "gender",
+						width: 150,
+					},
+					{
+						title: "Favourite Color",
+						field: "col",
+						width: 150,
+					},
+					{
+						title: "Date Of Birth",
+						field: "dob",
+						hozAlign: "center",
+						sorter: "string",
+						width: 150,
+					},
+				],
+			});
+
+			var demoPagination = new Tabulator("#demo-pagination", {
+				height: "300px",
+				layout: "fitDataFill",
+				data: tableData,
+				pagination: "local",
+				paginationSize: 2,
+				paginationCounter: "rows",
+				columnDefaults: {
+					headerSort: false,
+					resizable: "header",
+				},
+				columns: [
+					{
+						title: "Name",
+						field: "name",
+						width: 200,
+					},
+					{
+						title: "Location",
+						field: "location",
+						width: 150,
+					},
+					{
+						title: "Gender",
+						field: "gender",
+						width: 150,
+					},
+					{
+						title: "Favourite Color",
+						field: "col",
+						width: 150,
+					},
+					{
+						title: "Date Of Birth",
+						field: "dob",
+						hozAlign: "center",
+						sorter: "string",
+						width: 150,
+					},
+				],
+			});
+
+			var sheets = [
+				{
+					title: "First Sheet",
+					key: "first",
+					rows: 20,
+					columns: 20,
+					data: [
+						[9937, "", "", 7749, 9816, 4355, 8279, "", ""],
+						[2380, "", 6977, 8896, 4012, 3803, 5408, 3415, 3056],
+						[9180, "", 39, 9445, 3917, "", 18, 5239, 2516],
+						[1924, 8734, 1819, 1838, 2330, 7921, 9219, "", 3537],
+					],
+				},
+				{
+					title: "Second Sheet",
+					key: "second",
+					data: [
+						[2380, "", 6977, 8896, 4012, 3803, 5408, 3415, 3056],
+						[9180, "", 39, 9445, 3917, "", 18, 5239, 2516],
+						[1924, 8734, 1819, 1838, 2330, 7921, 9219, "", 3537],
+						["", 8665, 5875, 9732, 1926, "", 9743, 8388, ""],
+						[7040, 4861, 2988, 5584, 2344, 9749, 8872, 9177, 6246],
+						[6334, 1674, 2967, "", 9353, 396, 6006, 8572, ""],
+						[6359, "", 2580, 5723, 9801, 554, 1044, 5266, 8532],
+					],
+				},
+				{
+					title: "Third Sheet",
+					key: "third",
+					rows: 5,
+					columns: 5,
+					data: [
+						[1924, 8734, 1819, 1838, 2330, 7921, 9219, "", 3537],
+						["", 8665, 5875, 9732, 1926, "", 9743, 8388, ""],
+						[7040, 4861, 2988, 5584, 2344, 9749, 8872, 9177, 6246],
+						[6334, 1674, 2967, "", 9353, 396, 6006, 8572, ""],
+						[6359, "", 2580, 5723, 9801, 554, 1044, 5266, 8532],
+						[7278, 6971, 2232, 5720, 5665, 7231, 1165, "", 168],
+					],
+				},
+			];
+
+			var demoSpreadsheet = new Tabulator("#demo-spreadsheet", {
+				height: "300px",
+				layout: "fitDataFill",
+				spreadsheet: true,
+				spreadsheetRows: 10,
+				spreadsheetColumns: 10,
+				spreadsheetColumnDefinition: { editor: "input" },
+				spreadsheetSheets: sheets,
+				spreadsheetSheetTabs: true,
+				rowHeader: {
+					field: "_id",
+					hozAlign: "center",
+					headerSort: false,
+					frozen: true,
+				},
+				editorEmptyValue: undefined,
+			});
+		</script>
+	</body>
+</html>
