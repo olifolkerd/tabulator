@@ -1,6 +1,7 @@
 *.sublime-project
 *.sublime-workspace
-
+test-results/
+playwright-report/
 node_modules/
 examples/
 npm-debug.log

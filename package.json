@@ -27,7 +27,12 @@
     "dev:css": "rollup -c build/rollup.mjs -w --environment TARGET:css",
     "dev:esm": "rollup -c build/rollup.mjs -w --environment TARGET:esm",
     "dev:umd": "rollup -c build/rollup.mjs -w --environment TARGET:umd",
-    "dev:wrappers": "rollup -c build/rollup.mjs -w --environment TARGET:wrappers "
+    "dev:wrappers": "rollup -c build/rollup.mjs -w --environment TARGET:wrappers ",
+    "test": "playwright test",
+    "test:browser": "serve test",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:single": "playwright test -g"
   },
   "repository": {
     "type": "git",
@@ -59,17 +64,21 @@
   },
   "homepage": "https://tabulator.info/",
   "devDependencies": {
+    "@playwright/test": "^1.42.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
     "eslint": "^8.57.0",
     "eslint-plugin-only-warn": "^1.1.0",
     "fs-extra": "^11.2.0",
     "globby": "^14.0.1",
+    "jest": "^29.7.0",
+    "jsdom": "^24.0.0",
     "node-sass": "^9.0.0",
     "postcss": "^8.4.35",
     "postcss-prettify": "^0.3.4",
     "rollup": "^4.12.1",
     "rollup-plugin-license": "^3.3.1",
-    "rollup-plugin-postcss": "^4.0.2"
+    "rollup-plugin-postcss": "^4.0.2",
+    "serve": "^14.2.1"
   }
 }
