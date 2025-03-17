@@ -5,8 +5,6 @@ node_modules/
 examples/
 npm-debug.log
 
-dist/
-
 # Playwright
 /test-results/
 /playwright-report/
