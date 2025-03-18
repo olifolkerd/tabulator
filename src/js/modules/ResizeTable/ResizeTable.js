@@ -23,7 +23,7 @@ export default class ResizeTable extends Module{
 		
 		this.initialized = false;
 		this.initialRedraw = false;
-		
+		this.debouncedRedrawTable = this.debounce(this.redrawTable, 100);
 		this.registerTableOption("autoResize", true); //auto resize table
 	}
 	
@@ -60,8 +60,7 @@ export default class ResizeTable extends Module{
 								this.containerHeight = table.element.parentNode.clientHeight;
 								this.containerWidth = table.element.parentNode.clientWidth;
 							}
-							
-							this.redrawTable();
+							this.debouncedRedrawTable();
 						}
 					}
 				});
@@ -84,8 +83,8 @@ export default class ResizeTable extends Module{
 								this.tableHeight = table.element.clientHeight;
 								this.tableWidth = table.element.clientWidth;
 							}
-							
-							this.redrawTable();
+
+							this.debouncedRedrawTable();
 						}
 					});
 					
@@ -154,5 +153,15 @@ export default class ResizeTable extends Module{
 		if(this.containerObserver){
 			this.containerObserver.unobserve(this.table.element.parentNode);
 		}
+	}
+
+	debounce(func, delay) {
+		let timerId;
+		return function(...args) {
+			clearTimeout(timerId);
+			timerId = setTimeout(() => {
+				func.apply(this);
+			}, delay);
+		};
 	}
 }
