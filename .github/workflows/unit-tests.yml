@@ -7,11 +7,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v4
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
       with:
-        node-version: 20.15.1
+        node-version: ${{ matrix.node-version }}
     - name: Install modules
       run: npm install
     - name: Run tests
