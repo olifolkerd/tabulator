@@ -27,7 +27,8 @@
     "dev:css": "rollup -c build/rollup.mjs -w --environment TARGET:css",
     "dev:esm": "rollup -c build/rollup.mjs -w --environment TARGET:esm",
     "dev:umd": "rollup -c build/rollup.mjs -w --environment TARGET:umd",
-    "dev:wrappers": "rollup -c build/rollup.mjs -w --environment TARGET:wrappers "
+    "dev:wrappers": "rollup -c build/rollup.mjs -w --environment TARGET:wrappers ",
+    "dev:tailwind": "npm exec -- @tailwindcss/cli -i ./src/css/themes/tailwindcss/tailwind.css -o ./src/css/themes/tailwindcss/tabulator_tailwind.css --watch"
   },
   "repository": {
     "type": "git",
@@ -70,6 +71,8 @@
     "postcss-prettify": "^0.3.4",
     "rollup": "^4.12.1",
     "rollup-plugin-license": "^3.3.1",
-    "rollup-plugin-postcss": "^4.0.2"
+    "rollup-plugin-postcss": "^4.0.2",
+    "@tailwindcss/cli": "^4.0.9",
+    "tailwindcss": "^4.0.9"
   }
 }

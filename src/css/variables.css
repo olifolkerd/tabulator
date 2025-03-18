@@ -1,0 +1,84 @@
+:root {
+	/* -- main theme variables -- */
+
+	/* background color of tabulator */
+	--tabulator-backgroundColor: #888;
+	/* border to tabulator */
+	--tabulator-borderColor: #999;
+	/* table text size */
+	--tabulator-textSize: 14px;
+
+	/* -- header theming -- */
+
+	/*  border to tabulator */
+	--tabulator-headerBackgroundColor: #e6e6e6;
+	/* header text color */
+	--tabulator-headerTextColor: #555;
+	/* header border color */
+	--tabulator-headerBorderColor: #aaa;
+	/* header bottom separator color */
+	--tabulator-headerSeparatorColor: #999;
+	/* padding round header */
+	--tabulator-headerMargin: 4px;
+
+	/* -- column header arrows -- */
+	--tabulator-sortArrowHover: #555;
+	--tabulator-sortArrowActive: #666;
+	--tabulator-sortArrowInactive: #bbb;
+
+	--tabulator-columnResizeGuideColor: #999;
+
+	/* -- row theming -- */
+
+	/* table row background color */
+	--tabulator-rowBackgroundColor: #fff;
+	/* table row background color */
+	--tabulator-rowAltBackgroundColor: #efefef;
+	/* table border color */
+	--tabulator-rowBorderColor: #aaa;
+	/* table text color */
+	--tabulator-rowTextColor: #333;
+	/* row background color on hover */
+	--tabulator-rowHoverBackground: #bbb;
+
+	--tabulator-rowSelectedBackground: #9abcea;
+	/* row background color when selected */
+	/* row background color when selected and hovered */
+	--tabulator-rowSelectedBackgroundHover: #769bcc;
+
+	/* border color for edit boxes */
+	--tabulator-editBoxColor: #1d68cd;
+	/* error indication */
+	--tabulator-errorColor: #dd0000;
+
+	/* -- footer theming -- */
+
+	/* border to tabulator */
+	--tabulator-footerBackgroundColor: #e6e6e6;
+	/* footer text color */
+	--tabulator-footerTextColor: #555;
+	/* footer border color */
+	--tabulator-footerBorderColor: #aaa;
+	/* footer bottom separator color */
+	--tabulator-footerSeparatorColor: #999;
+	/* footer bottom active text color */
+	--tabulator-footerActiveColor: #d00;
+
+	/* color for the active spreadsheet tab */
+	--tabulator-spreadsheetActiveTabColor: #fff;
+
+	/* -- range selection -- */
+
+	/* range border color */
+	--tabulator-rangeBorderColor: #2975dd;
+	/* range handle color */
+	--tabulator-rangeHandleColor: var(--tabulator-rangeBorderColor);
+	/* header background color when selected */
+	--tabulator-rangeHeaderSelectedBackground: #3876ca;
+	/* header text color when selected */
+	--tabulator-rangeHeaderSelectedTextColor: #ffffff;
+	/* header background color when highlighted */
+	--tabulator-rangeHeaderHighlightBackground: #d6d6d6;
+	/* header text color when highlighted */
+	--tabulator-rangeHeaderTextHighlightBackground: #000000;
+}

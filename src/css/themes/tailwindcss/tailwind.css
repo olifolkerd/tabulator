@@ -1,0 +1,365 @@
+/* import the base definitions for tabulator */
+@import "../../tabulator.css";
+
+/* use tailwindcss for styling */
+@import "tailwindcss";
+
+:root {
+	/* -- main theme variables -- */
+
+	/* background color of tabulator */
+	--tabulator-backgroundColor: var(--color-white);
+	/* border to tabulator */
+	--tabulator-borderColor: var(--color-white);
+	/* table text size */
+	--tabulator-textSize: var(--text-sm);
+
+	/* -- header theming -- */
+
+	/*  border to tabulator */
+	--tabulator-headerBackgroundColor: var(--color-white);
+	/* header text color */
+	--tabulator-headerTextColor: var(--color-gray-900);
+	/* header border color */
+	--tabulator-headerBorderColor: var(--color-transparent);
+	/* header bottom separator color */
+	--tabulator-headerSeparatorColor: var(--color-gray-300);
+	/* padding round header */
+	--tabulator-headerMargin: calc(var(--spacing) * 3.5);
+
+	/* -- column header arrows -- */
+	--tabulator-sortArrowHover: var(--color-gray-400);
+	--tabulator-sortArrowActive: var(--color-violet-600);
+	--tabulator-sortArrowInactive: var(--color-gray-200);
+
+	--tabulator-columnResizeGuideColor: var(--color-gray-300);
+
+	/* -- row theming -- */
+
+	/* table row background color */
+	--tabulator-rowBackgroundColor: var(--tabulator-backgroundColor);
+	/* table row background color */
+	--tabulator-rowAltBackgroundColor: var(--color-gray-50);
+	/* table border color */
+	--tabulator-rowBorderColor: var(--color-transparent);
+	/* table text color */
+	--tabulator-rowTextColor: var(--color-gray-900);
+	/* row background color on hover */
+	--tabulator-rowHoverBackground: var(--color-gray-100);
+
+	/* row background color when selected */
+	--tabulator-rowSelectedBackground: var(--color-violet-100);
+	/* row background color when selected and hovered */
+	--tabulator-rowSelectedBackgroundHover: var(--color-violet-200);
+
+	/* border color for edit boxes */
+	--tabulator-editBoxColor: var(--color-violet-500);
+	/* error indication */
+	--tabulator-errorColor: var(--color-rose-500);
+
+	/* -- footer theming -- */
+
+	/* border to tabulator */
+	--tabulator-footerBackgroundColor: var(--tabulator-backgroundColor);
+	/* footer text color */
+	--tabulator-footerTextColor: var(--color-gray-900);
+	/* footer border color */
+	--tabulator-footerBorderColor: var(--color-gray-100);
+	/* footer bottom separator color */
+	--tabulator-footerSeparatorColor: var(--color-gray-300);
+	/* footer bottom active text color */
+	--tabulator-footerActiveColor: var(--color-violet-700);
+
+	/* color for the active spreadsheet tab */
+	--tabulator-spreadsheetActiveTabColor: var(--color-violet-100);
+
+	/* -- range selection -- */
+
+	/* range border color */
+	--tabulator-rangeBorderColor: var(--color-violet-500);
+	/* range handle color */
+	--tabulator-rangeHandleColor: var(--tabulator-rangeBorderColor);
+	/* header background color when selected */
+	--tabulator-rangeHeaderSelectedBackground: var(--color-violet-500);
+	/* header text color when selected */
+	--tabulator-rangeHeaderSelectedTextColor: var(--color-white);
+	/* header background color when highlighted */
+	--tabulator-rangeHeaderHighlightBackground: var(--color-violet-100);
+	/* header text color when highlighted */
+	--tabulator-rangeHeaderTextHighlightBackground: var(--color-violet-700);
+}
+
+/* row cell styling */
+.tabulator .tabulator-row .tabulator-cell {
+	@apply px-3 py-4;
+}
+
+/* improve styling for inputs and selects when editing cells */
+.tabulator .tabulator-row .tabulator-cell.tabulator-editing {
+	@apply px-0 py-0 bg-amber-500;
+
+	input,
+	select {
+		/* we need to apply some important styling to override styling set 
+        ** directly on the html dom element */
+		@apply !px-3 !py-4 !border-0 bg-violet-100;
+	}
+}
+
+/* add some text styling for selected cells */
+.tabulator .tabulator-row.tabulator-selected {
+	@apply text-violet-700;
+}
+
+/* header cell styling */
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+	@apply px-3 py-3.5;
+}
+
+/* range selection styling */
+.tabulator .tabulator-row .tabulator-cell.tabulator-range-selected {
+	@apply text-violet-700;
+}
+
+/* add data tree branch color */
+.tabulator .tabulator-row .tabulator-cell .tabulator-data-tree-control {
+	@apply bg-gray-100 mr-2 relative -top-0.5;
+}
+.tabulator .tabulator-row .tabulator-cell .tabulator-data-tree-branch {
+	/* we override the rowBorderColor, which is used as the color of the data tree branch */
+	--tabulator-rowBorderColor: var(--color-gray-300);
+}
+
+/* use semibold instead of bold font */
+.tabulator .tabulator-header,
+.tabulator
+	.tabulator
+	.tabulator-tablehoder
+	.tabulator-placeholder
+	.tabulator-placeholder-contents,
+.tabulator
+	.tabulator-tableholder
+	.tabulator-table
+	.tabulator-row.tabulator-calcs,
+.tabulator .tabulator-footer,
+.tabulator .tabulator-alert .tabulator-alert-msg,
+.tabulator .tabulator-row .tabulator-cell .tabulator-responsive-collapse-toggle,
+.tabulator .tabulator-row.tabulator.group,
+.tabulator .tabulator-edit-list .tabulator-edit-list-group,
+.tabulator .tabulator-print-table .tabulator-print-table-group {
+	font-weight: var(--font-weight-semibold);
+}
+
+/* add some spacing to the footer */
+.tabulator .tabulator-footer .tabulator-footer-contents {
+	@apply px-3 py-3.5;
+}
+
+/* custom arrows for sorting */
+.tabulator
+	.tabulator-header
+	.tabulator-col.tabulator-sortable[aria-sort="none"]
+	.tabulator-col-content
+	.tabulator-col-sorter
+	.tabulator-arrow {
+	border: none;
+	border-left: none;
+	border-right: none;
+	border-top: none;
+	border-bottom: none;
+	width: 12px;
+	height: 12px;
+	/* use a mask to display a custom icon, since current color does not work in svg backgrounds */
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='none'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M16 1L16 16.5858L18.2929 14.2929C18.6834 13.9024 19.3166 13.9024 19.7071 14.2929C20.0976 14.6834 20.0976 15.3166 19.7071 15.7071L15.7071 19.7071C15.3166 20.0976 14.6834 20.0976 14.2929 19.7071L10.2929 15.7071C9.90237 15.3166 9.90237 14.6834 10.2929 14.2929C10.6834 13.9024 11.3166 13.9024 11.7071 14.2929L14 16.5858L14 1C14 0.447716 14.4477 0 15 0C15.5523 0 16 0.447716 16 1ZM4 19L4 3.41421L1.70711 5.70711C1.31658 6.09763 0.683418 6.09763 0.292892 5.70711C-0.0976315 5.31658 -0.0976315 4.68342 0.292892 4.29289L4.29289 0.292892C4.68342 -0.0976315 5.31658 -0.0976315 5.70711 0.292892L9.70711 4.29289C10.0976 4.68342 10.0976 5.31658 9.70711 5.70711C9.31658 6.09763 8.68342 6.09763 8.29289 5.70711L6 3.41421L6 19C6 19.5523 5.55229 20 5 20C4.44771 20 4 19.5523 4 19Z' fill='black'/%3E%3C/svg%3E%0A");
+	background-color: var(--tabulator-sortArrowInactive);
+}
+
+.tabulator
+	.tabulator-header
+	.tabulator-col.tabulator-sortable[aria-sort="ascending"]
+	.tabulator-col-content
+	.tabulator-col-sorter
+	.tabulator-arrow {
+	border: none;
+	border-left: none;
+	border-right: none;
+	border-top: none;
+	border-bottom: none;
+	width: 6px;
+	height: 15px;
+	/* use a mask to display a custom icon, since current color does not work in svg backgrounds */
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='15' fill='black' viewBox='0 0 11 20'%3E%3Cpath d='M6.4 3.414V19a1 1 0 1 1-2 0V3.414L2.107 5.707A1 1 0 0 1 .693 4.293l4-4a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414z'%3E%3C/path%3E%3C/svg%3E");
+	background-color: var(--tabulator-sortArrowActive);
+}
+
+.tabulator
+	.tabulator-header
+	.tabulator-col.tabulator-sortable[aria-sort="descending"]
+	.tabulator-col-content
+	.tabulator-col-sorter
+	.tabulator-arrow {
+	border: none;
+	border-left: none;
+	border-right: none;
+	border-top: none;
+	border-bottom: none;
+	width: 6px;
+	height: 15px;
+	/* use a mask to display a custom icon, since current color does not work in svg backgrounds */
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='15' fill='black' viewBox='0 0 11 20'%3E%3Cpath d='M4.4 16.586V1a1 1 0 0 1 2 0v15.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414z'%3E%3C/path%3E%3C/svg%3E");
+	background-color: var(--tabulator-sortArrowActive);
+}
+
+.tabulator
+	.tabulator-header
+	.tabulator-col.tabulator-sortable
+	.tabulator-col-content
+	.tabulator-col-sorter.tabulator-col-sorter-element
+	.tabulator-arrow:hover {
+	border: none !important;
+}
+
+.tabulator
+	.tabulator-header
+	.tabulator-col.tabulator-sortable.tabulator-range-selected
+	.tabulator-col-content
+	.tabulator-col-sorter.tabulator-col-sorter-element
+	.tabulator-arrow {
+	background-color: var(--color-white);
+}
+
+/* header popup menu icon adaptions */
+.tabulator
+	.tabulator-header
+	.tabulator-col
+	.tabulator-col-content
+	.tabulator-header-popup-button {
+	padding: 0px;
+	@apply pr-2;
+}
+
+/* grouping support */
+.tabulator .tabulator-row.tabulator-group {
+	border-bottom: none;
+	border-right: none;
+	border-left: none;
+	padding: 0px;
+	background: none;
+	font-weight: var(--font-weight-semibold);
+	@apply bg-gray-200 px-3 py-4 border-t-gray-300 border-t-1 border-b-0 border-l-0 border-r-0;
+
+	.tabulator-arrow {
+		--tabulator-sortArrowActive: var(--tabulator-rowTextColor);
+	}
+
+	span {
+		color: var(--tabulator-rowTextColor);
+	}
+}
+
+/* fix for min-width not spanning full table, if all groups are closed */
+.tabulator .tabulator-table:has(.tabulator-row.tabulator-group) {
+	min-width: 100% !important;
+}
+
+@keyframes indicate-frozen-left {
+	0% {
+		box-shadow: 0px 0px 15px 2px rgba(0, 0, 0, 0);
+	}
+	1% {
+		box-shadow: 0px 0px 15px 2px rgba(0, 0, 0, 0.1);
+	}
+	100% {
+		box-shadow: 0px 0px 15px 2px rgba(0, 0, 0, 0.1);
+	}
+}
+
+@keyframes indicate-frozen-right {
+	0% {
+		box-shadow: 0px 0px 15px 2px rgba(0, 0, 0, 0.1);
+	}
+	98% {
+		box-shadow: 0px 0px 15px 2px rgba(0, 0, 0, 0.1);
+	}
+	99% {
+		box-shadow: 0px 0px 15px 2px rgba(0, 0, 0, 0);
+	}
+}
+
+/* add a border for frozen columns */
+.tabulator
+	.tabulator-table
+	.tabulator-cell.tabulator-frozen.tabulator-frozen-left,
+.tabulator
+	.tabulator-header
+	.tabulator-col.tabulator-frozen.tabulator-frozen-left {
+	/* display a simple line if scroll animations are not yet supported */
+	@supports not (animation-timeline: scroll()) {
+		@apply border-r-1 border-r-gray-200;
+	}
+
+	/* otherwise we show a nice drop shadow whan there is some scrolling */
+	@supports (animation-timeline: scroll()) {
+		box-shadow: 0px 0px 15px 2px rgba(0, 0, 0, 0);
+		clip-path: inset(1px -15px 1px 0px);
+		animation: indicate-frozen-left;
+		animation-timeline: scroll(nearest x);
+	}
+}
+
+.tabulator
+	.tabulator-table
+	.tabulator-cell.tabulator-frozen.tabulator-frozen-right,
+.tabulator
+	.tabulator-header
+	.tabulator-col.tabulator-frozen.tabulator-frozen-right {
+	/* display a simple line if scroll animations are not yet supported */
+	@supports not (animation-timeline: scroll()) {
+		@apply border-l-1 border-l-gray-200;
+	}
+
+	/* otherwise we show a nice drop shadow whan there is some scrolling */
+	@supports (animation-timeline: scroll()) {
+		box-shadow: 0px 0px 15px 2px rgba(0, 0, 0, 0);
+		clip-path: inset(1px 0px 1px -15px);
+		animation: indicate-frozen-right;
+		animation-timeline: scroll(nearest x);
+		/* we need a small offset to make it work correctly with the header, 
+		** which is scrolled programmatically via javascript */
+		animation-range: 0% calc(100% - 20px);
+	}
+}
+
+/* spreadsheet colors */
+.tabulator
+	.tabulator-footer
+	.tabulator-spreadsheet-tabs
+	.tabulator-spreadsheet-tab {
+	border: none;
+	border-radius: 2px;
+	@apply px-3 py-1;
+}
+
+.tabulator
+	.tabulator-footer
+	.tabulator-spreadsheet-tab.tabulator-spreadsheet-tab-active {
+	color: var(--tabulator-footerActiveColor);
+	background: var(--tabulator-rowSelectedBackground);
+}
+
+/* custom row handle icon */
+.tabulator
+	.tabulator-row
+	.tabulator-cell.tabulator-row-handle
+	.tabulator-row-handle-box {
+	/* hide the row handle lines */
+	display: none;
+}
+
+.tabulator .tabulator-cell.tabulator-row-handle {
+	/* use a custom svg as indicator */
+	background: var(--tabulator-editBoxColor);
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='13' viewBox='0 0 8 13'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.7 0.199951C0.313401 0.199951 0 0.513352 0 0.899951V2.29995C0 2.68655 0.313401 2.99995 0.7 2.99995H2.1C2.4866 2.99995 2.8 2.68655 2.8 2.29995V0.899951C2.8 0.513352 2.4866 0.199951 2.1 0.199951H0.7ZM5.60039 0.200012C5.21379 0.200012 4.90039 0.513413 4.90039 0.900012V2.30001C4.90039 2.68661 5.21379 3.00001 5.60039 3.00001H7.00039C7.38699 3.00001 7.70039 2.68661 7.70039 2.30001V0.900012C7.70039 0.513413 7.38699 0.200012 7.00039 0.200012H5.60039ZM0 5.79994C0 5.41334 0.313401 5.09994 0.7 5.09994H2.1C2.4866 5.09994 2.8 5.41334 2.8 5.79994V7.19994C2.8 7.58654 2.4866 7.89994 2.1 7.89994H0.7C0.313401 7.89994 0 7.58654 0 7.19994V5.79994ZM5.60039 5.10004C5.21379 5.10004 4.90039 5.41344 4.90039 5.80004V7.20004C4.90039 7.58664 5.21379 7.90004 5.60039 7.90004H7.00039C7.38699 7.90004 7.70039 7.58664 7.70039 7.20004V5.80004C7.70039 5.41344 7.38699 5.10004 7.00039 5.10004H5.60039ZM0 10.6999C0 10.3133 0.313401 9.99994 0.7 9.99994H2.1C2.4866 9.99994 2.8 10.3133 2.8 10.6999V12.0999C2.8 12.4865 2.4866 12.7999 2.1 12.7999H0.7C0.313401 12.7999 0 12.4865 0 12.0999V10.6999ZM5.60039 10.0001C5.21379 10.0001 4.90039 10.3135 4.90039 10.7001V12.1001C4.90039 12.4867 5.21379 12.8001 5.60039 12.8001H7.00039C7.38699 12.8001 7.70039 12.4867 7.70039 12.1001V10.7001C7.70039 10.3135 7.38699 10.0001 7.00039 10.0001H5.60039Z' fill='black'%3E%3C/path%3E%3C/svg%3E");
+	mask-repeat: no-repeat;
+	mask-position: center center;
+}
