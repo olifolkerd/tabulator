@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator Test</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	body {
+		padding: 20px;
+		font-family: Arial, sans-serif;
+	}
+	#test-table {
+		width: 100%;
+		height: 400px;
+		margin-bottom: 20px;
+	}
+	</style>
+</head>
+<body>
+	<h1>Tabulator Test</h1>
+	<div id="test-table"></div>
+
+	<script>
+	// Initialize table with test data
+	document.addEventListener("DOMContentLoaded", function () {
+		const testData = [
+			{ id: 1, name: "Alice", age: 25, gender: "Female" },
+			{ id: 2, name: "Bob", age: 32, gender: "Male" },
+			{ id: 3, name: "Charlie", age: 45, gender: "Male" },
+			{ id: 4, name: "Diana", age: 27, gender: "Female" },
+			{ id: 5, name: "Ethan", age: 35, gender: "Male" },
+		];
+
+		const columns = [
+			{ title: "ID", field: "id", sorter: "number" },
+			{ title: "Name", field: "name", sorter: "string" },
+			{ title: "Age", field: "age", sorter: "number" },
+			{ title: "Gender", field: "gender", sorter: "string" },
+		];
+
+		// Create global reference for tests to access
+		window.testTable = new Tabulator("#test-table", {
+			data: testData,
+			columns: columns,
+			layout: "fitColumns",
+		});
+	});
+	</script>
+</body>
+</html>
