@@ -280,9 +280,12 @@ describe("Print module", () => {
         expect(headerEl.innerHTML).toBe("Test Header");
     });
     
-    it.skip("should add header to print output if printHeader is provided as function", () => {
+    it("should add header to print output if printHeader is provided as function", () => {
         // Create header element
         const headerContent = document.createElement("h1");
+        
+        // Spy on document.createElement to capture calls
+        const createElementSpy = jest.spyOn(document, 'createElement');
         
         // Set header option as function
         mockTable.options.printHeader = jest.fn().mockReturnValue(headerContent);
@@ -294,10 +297,18 @@ describe("Print module", () => {
         // Verify header function is called
         expect(mockTable.options.printHeader).toHaveBeenCalled();
         
-        // Get the header element (first created div)
-        const headerEl = document.createElement.mock.results[0].value;
+        // Find the header element by looking at all created elements and finding the one
+        // that had the tabulator-print-header class added to it
+        let headerEl = null;
+        createElementSpy.mock.results.forEach(result => {
+            const el = result.value;
+            if (el.classList.add.mock.calls.some(call => call[0] === "tabulator-print-header")) {
+                headerEl = el;
+            }
+        });
         
         // Verify header setup
+        expect(headerEl).not.toBeNull();
         expect(headerEl.classList.add).toHaveBeenCalledWith("tabulator-print-header");
         expect(headerEl.appendChild).toHaveBeenCalledWith(headerContent);
     });
@@ -322,9 +333,12 @@ describe("Print module", () => {
         expect(footerEl.innerHTML).toBe("Test Footer");
     });
     
-    it.skip("should add footer to print output if printFooter is provided as function", () => {
+    it("should add footer to print output if printFooter is provided as function", () => {
         // Create footer element
         const footerContent = document.createElement("div");
+        
+        // Spy on document.createElement to capture calls
+        const createElementSpy = jest.spyOn(document, 'createElement');
         
         // Set footer option as function
         mockTable.options.printFooter = jest.fn().mockReturnValue(footerContent);
@@ -336,10 +350,18 @@ describe("Print module", () => {
         // Verify footer function is called
         expect(mockTable.options.printFooter).toHaveBeenCalled();
         
-        // Get the footer element (second created div)
-        const footerEl = document.createElement.mock.results[1].value;
+        // Find the footer element by looking at all created elements and finding the one
+        // that had the tabulator-print-footer class added to it
+        let footerEl = null;
+        createElementSpy.mock.results.forEach(result => {
+            const el = result.value;
+            if (el.classList.add.mock.calls.some(call => call[0] === "tabulator-print-footer")) {
+                footerEl = el;
+            }
+        });
         
         // Verify footer setup
+        expect(footerEl).not.toBeNull();
         expect(footerEl.classList.add).toHaveBeenCalledWith("tabulator-print-footer");
         expect(footerEl.appendChild).toHaveBeenCalledWith(footerContent);
     });
