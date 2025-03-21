@@ -700,35 +700,28 @@ describe("Popup module", () => {
         // Spy on dispatchExternal
         jest.spyOn(popup, 'dispatchExternal');
         
-        // Create mock component
+        // Create mock component using simplified structure
         const mockComponent = {
             getElement: jest.fn().mockReturnValue({}),
             getComponent: jest.fn().mockReturnValue({ component: true })
         };
         
-        // Mock the loadPopup method to avoid calling the actual implementation
+        // Create a mock event using our helper
+        const mockEvent = createMockEvent('click');
+        
+        // Mock the loadPopup method with a simpler approach
         const originalLoadPopup = Popup.prototype.loadPopup;
-        Popup.prototype.loadPopup = jest.fn().mockImplementation(function(e, component, contents, renderedCallback, position) {
-            // Get a mock popup object
-            const popup = this.table.popup(contents);
-            
-            // Setup popup callbacks
-            if (typeof renderedCallback === "function") {
-                popup.renderCallback(renderedCallback);
-            }
-            
-            popup.show(e);
-            
-            // Set up hideOnBlur
-            popup.hideOnBlur(() => {
+        Popup.prototype.loadPopup = jest.fn().mockImplementation(function(e, component, contents) {
+            const popupObj = this.table.popup(contents);
+            popupObj.show(e);
+            popupObj.hideOnBlur(() => {
                 this.dispatchExternal("popupClosed", component.getComponent());
             });
-            
             this.dispatchExternal("popupOpened", component.getComponent());
         });
         
-        // Call loadPopup with a mock event
-        popup.loadPopup({ preventDefault: jest.fn() }, mockComponent, "Content");
+        // Call loadPopup 
+        popup.loadPopup(mockEvent, mockComponent, "Content");
         
         // Simulate the hideOnBlur callback being called
         mockHideOnBlur.callback();

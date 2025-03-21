@@ -1,8 +1,12 @@
+import Tabulator from '../../../src/js/core/Tabulator.js';
 import TabulatorFull from '../../../src/js/core/TabulatorFull.js';
 import Accessor from '../../../src/js/modules/Accessor/Accessor.js';
 
 describe('Accessor', function(){
-	let table, accessor;
+	/** @type {Tabulator} */
+	let table;
+    /** @type {Accessor} */
+	let accessor;
 	let tableData = [
 		{id:1, name:"John", age:20},
 		{id:2, name:"Jane", age:25},
@@ -79,7 +83,8 @@ describe('Accessor', function(){
 		// Initialize the column
 		accessor.initializeColumn(mockColumn);
 
-		// Verify it was properly set up
+		// The nested structure: modules.accessor.accessor.accessor represents
+		// Container -> Type -> Function
 		expect(mockColumn.modules.accessor).toBeDefined();
 		expect(mockColumn.modules.accessor.accessor).toBeDefined();
 		expect(mockColumn.modules.accessor.accessor.accessor).toBeDefined();
@@ -93,6 +98,7 @@ describe('Accessor', function(){
 			modules: {
 				accessor: {
 					accessor: {
+						// This is the actual accessor function in the nested structure
 						accessor: function(value) { return value + " years"; },
 						params: {}
 					}
@@ -100,7 +106,7 @@ describe('Accessor', function(){
 			},
 			getFieldValue: function(data) { return data.age; },
 			setFieldValue: function(data, value) { data.age = value; },
-			getComponent: function() { return {}; }  // Add component getter
+			getComponent: function() { return {}; }
 		};
 
 		// Create mock row
@@ -109,8 +115,8 @@ describe('Accessor', function(){
 			getComponent: function() { return {}; }
 		};
 
-		// Use a simpler approach to transform the data
-		const transformedData = { ...mockRow.data }; // Make a copy to avoid modifying the original
+		// Simplified implementation of transformRow process
+		const transformedData = { ...mockRow.data };
 		const value = mockColumn.getFieldValue(transformedData);
 		const newValue = mockColumn.modules.accessor.accessor.accessor(value);
 		mockColumn.setFieldValue(transformedData, newValue);
@@ -125,6 +131,7 @@ describe('Accessor', function(){
 			field: "custom",
 			modules: {
 				accessor: {
+					// Using accessorDownload instead of accessor for download-specific transformations
 					accessorDownload: {
 						accessor: function(value) { return "downloaded-" + value; },
 						params: {}
@@ -133,7 +140,7 @@ describe('Accessor', function(){
 			},
 			getFieldValue: function(data) { return data.custom || ""; },
 			setFieldValue: function(data, value) { data.custom = value; },
-			getComponent: function() { return {}; }  // Add component getter
+			getComponent: function() { return {}; }
 		};
 
 		// Create mock row
@@ -142,8 +149,8 @@ describe('Accessor', function(){
 			getComponent: function() { return {}; }
 		};
 
-		// Use a simpler approach to transform the data
-		const transformedData = { ...mockRow.data }; // Make a copy to avoid modifying the original
+		// Using the type-specific accessor (accessorDownload)
+		const transformedData = { ...mockRow.data };
 		const value = mockColumn.getFieldValue(transformedData);
 		const newValue = mockColumn.modules.accessor.accessorDownload.accessor(value);
 		mockColumn.setFieldValue(transformedData, newValue);
