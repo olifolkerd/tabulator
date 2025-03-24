@@ -1,4 +1,3 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import ReactiveData from "../../../src/js/modules/ReactiveData/ReactiveData";
 
 describe("ReactiveData module", () => {

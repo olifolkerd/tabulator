@@ -1,4 +1,3 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import Mutator from "../../../src/js/modules/Mutator/Mutator";
 import defaultMutators from "../../../src/js/modules/Mutator/defaults/mutators";
 

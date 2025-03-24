@@ -1,6 +1,4 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import Keybindings from "../../../src/js/modules/Keybindings/Keybindings";
-import defaultBindings from "../../../src/js/modules/Keybindings/defaults/bindings.js";
 
 describe("Keybindings module", () => {
     /** @type {Keybindings} */

@@ -1,4 +1,3 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import MoveRows from "../../../src/js/modules/MoveRows/MoveRows";
 
 describe("MoveRows module", () => {

@@ -1,4 +1,3 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import HtmlTableImport from "../../../src/js/modules/HtmlTableImport/HtmlTableImport";
 
 describe("HtmlTableImport module", () => {

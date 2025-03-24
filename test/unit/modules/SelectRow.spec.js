@@ -1,4 +1,3 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import SelectRow from "../../../src/js/modules/SelectRow/SelectRow";
 
 describe("SelectRow module", () => {

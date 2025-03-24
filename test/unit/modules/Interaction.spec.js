@@ -1,7 +1,4 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import Interaction from "../../../src/js/modules/Interaction/Interaction";
-import Cell from "../../../src/js/core/cell/Cell";
-import Column from "../../../src/js/core/column/Column";
 
 describe("Interaction module", () => {
     /** @type {Interaction} */

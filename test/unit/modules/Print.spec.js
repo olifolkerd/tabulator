@@ -1,4 +1,3 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import Print from "../../../src/js/modules/Print/Print";
 
 describe("Print module", () => {

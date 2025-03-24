@@ -1,4 +1,3 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import Layout from "../../../src/js/modules/Layout/Layout";
 import defaultModes from "../../../src/js/modules/Layout/defaults/modes";
 

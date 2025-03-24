@@ -1,6 +1,5 @@
 import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import SelectRange from "../../../src/js/modules/SelectRange/SelectRange";
-import Range from "../../../src/js/modules/SelectRange/Range";
 
 describe("SelectRange module", () => {
     /** @type {TabulatorFull} */

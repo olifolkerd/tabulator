@@ -1,5 +1,4 @@
 import TabulatorFull from '../../../src/js/core/TabulatorFull.js';
-import Clipboard from '../../../src/js/modules/Clipboard/Clipboard.js';
 
 describe('Clipboard', function(){
 	let table, clipboard;

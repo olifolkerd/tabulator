@@ -1,6 +1,5 @@
 import Module from '../../../src/js/core/Module.js';
 import GroupRows from '../../../src/js/modules/GroupRows/GroupRows.js';
-import Group from '../../../src/js/modules/GroupRows/Group.js';
 
 // Override the Module methods that interact with the table to avoid dependency issues
 const originalRegisterTableOption = Module.prototype.registerTableOption;

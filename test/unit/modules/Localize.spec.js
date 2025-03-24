@@ -1,4 +1,3 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import Localize from "../../../src/js/modules/Localize/Localize";
 
 describe("Localize module", () => {

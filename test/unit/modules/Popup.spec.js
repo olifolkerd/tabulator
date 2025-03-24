@@ -1,4 +1,3 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import Popup from "../../../src/js/modules/Popup/Popup";
 
 describe("Popup module", () => {

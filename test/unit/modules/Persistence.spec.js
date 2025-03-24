@@ -1,4 +1,3 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import Persistence from "../../../src/js/modules/Persistence/Persistence";
 import defaultReaders from "../../../src/js/modules/Persistence/defaults/readers";
 import defaultWriters from "../../../src/js/modules/Persistence/defaults/writers";

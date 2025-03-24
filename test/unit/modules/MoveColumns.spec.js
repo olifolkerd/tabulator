@@ -1,4 +1,3 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import MoveColumns from "../../../src/js/modules/MoveColumns/MoveColumns";
 import Helpers from "../../../src/js/core/tools/Helpers";
 

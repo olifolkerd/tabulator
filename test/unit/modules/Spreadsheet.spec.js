@@ -1,6 +1,5 @@
 import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import Spreadsheet from "../../../src/js/modules/Spreadsheet/Spreadsheet";
-import Sheet from "../../../src/js/modules/Spreadsheet/Sheet";
 import SheetComponent from "../../../src/js/modules/Spreadsheet/SheetComponent";
 
 describe("Spreadsheet module", () => {

@@ -1,4 +1,3 @@
-import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import Import from "../../../src/js/modules/Import/Import";
 import defaultImporters from "../../../src/js/modules/Import/defaults/importers";
 

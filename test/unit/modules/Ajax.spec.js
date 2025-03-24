@@ -1,5 +1,4 @@
 import TabulatorFull from '../../../src/js/core/TabulatorFull.js';
-import Ajax from '../../../src/js/modules/Ajax/Ajax.js';
 
 describe('Ajax', function(){
 	let table, ajax;
