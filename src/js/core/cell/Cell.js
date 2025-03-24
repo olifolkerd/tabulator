@@ -107,11 +107,10 @@ export default class Cell extends CoreFeature{
 				if(val instanceof Node){
 
 					//clear previous cell contents
-					while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
-
+					this._clearCellContent();
 					this.element.appendChild(val);
 				}else{
-					this.element.innerHTML = "";
+					this._clearCellContent();
 
 					if(val != null){
 						console.warn("Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", val);
@@ -119,11 +118,15 @@ export default class Cell extends CoreFeature{
 				}
 				break;
 			case "undefined":
-				this.element.innerHTML = "";
+				this._clearCellContent();
 				break;
 			default:
 				this.element.innerHTML = val;
 		}
+	}
+
+	_clearCellContent(){
+		while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
 	}
 
 	cellRendered(){
