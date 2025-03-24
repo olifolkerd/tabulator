@@ -98,10 +98,8 @@ export default class Cell extends CoreFeature{
 
 	//generate cell contents
 	_generateContents(){
-		var val;
-
-		val = this.chain("cell-format", this, null, () => {
-			return this.element.innerHTML = this.value;
+		const val = this.chain("cell-format", this, null, () => {
+			return this.value;
 		});
 
 		switch(typeof val){
