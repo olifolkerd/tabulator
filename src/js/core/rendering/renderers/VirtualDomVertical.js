@@ -517,58 +517,70 @@ export default class VirtualDomVertical extends Renderer{
 
 	_addBottomRow(rows, fillableSpace){
 		var table = this.tableElement,
-		addedRows = [],
 		paddingAdjust = 0,
 		index = this.vDomBottom + 1,
 		i = 0,
 		working = true;
 
-		while(working){
-			let row = rows[index],
-			rowHeight, initialized;
-
-			if(row && i < this.vDomMaxRenderChain){
-				rowHeight = row.getHeight() || this.vDomRowHeight;
-				initialized = row.initialized;
-
-				if(fillableSpace >= rowHeight){
-
-					this.styleRow(row, index);
-					table.appendChild(row.getElement());
-
-					if(!row.initialized || !row.heightInitialized){
-						addedRows.push(row);
-					}
-
-					row.initialize();
-
-					if(!initialized){
-						rowHeight = row.getElement().offsetHeight;
-
-						if(rowHeight > this.vDomWindowBuffer){
-							this.vDomWindowBuffer = rowHeight * 2;
-						}
-					}
-
-					fillableSpace -= rowHeight;
-					paddingAdjust += rowHeight;
-
-					this.vDomBottom++;
-					index++;
-					i++;
-				}else{
+		let numRowsToAdd = Math.ceil(fillableSpace / this.vDomRowHeight);
+		while(working && numRowsToAdd && this.vDomTop && fillableSpace > 0 && i < this.vDomMaxRenderChain){
+			const docFrag = document.createDocumentFragment();
+			const addedRows = [];
+			const newInitRows = [];
+			while( i < numRowsToAdd){
+				let row = rows[index], rowHeight;
+				if(!row){
 					working = false;
+					break;
 				}
-			}else{
-				working = false;
+
+				rowHeight = row.getHeight() || this.vDomRowHeight;
+				if(fillableSpace < rowHeight){
+					working = false;
+					break;
+				}
+
+				this.styleRow(row, index);
+				if(!row.initialized){
+					newInitRows.push(row);
+				}else{
+					addedRows.push(row);
+				}
+
+				row.initialize(false, true);
+				docFrag.append(row.getElement());
+
+				this.vDomTop++;
+				index++;
+				i++;
 			}
-		}
+			table.append(docFrag);
 
-		for (let row of addedRows){
-			row.clearCellHeight();
-		}
+			for (let row of newInitRows){
+				row.clearCellHeight();
+			}
 
-		this._quickNormalizeRowHeight(addedRows);
+			this._quickNormalizeRowHeight(newInitRows);
+
+			for (let row of newInitRows){
+				const rowHeight = row.getElement().offsetHeight;
+				if(rowHeight > this.vDomWindowBuffer){
+					this.vDomWindowBuffer = rowHeight * 2;
+				}
+			}
+
+			let totalRowHeight = 0;
+			for (let row of addedRows){
+				const rowHeight = row.getHeight() ||  row.getElement().offsetHeight;
+				totalRowHeight += rowHeight;
+
+				fillableSpace -= rowHeight;
+				paddingAdjust += rowHeight;
+			}
+
+			const avgRowHeight = Math.max(totalRowHeight /  addedRows.length, 0);
+			numRowsToAdd = avgRowHeight > 0 ?  Math.ceil(fillableSpace / avgRowHeight) : 0;
+		}
 
 		if(paddingAdjust){
 			this.vDomBottomPad -= paddingAdjust;
