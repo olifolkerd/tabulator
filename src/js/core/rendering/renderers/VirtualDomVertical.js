@@ -287,9 +287,10 @@ export default class VirtualDomVertical extends Renderer{
 				rowFragment = document.createDocumentFragment();
 
 				i = 0;
+				index = this.vDomBottom;
 
-				while ((i < rowsToRender) && this.vDomBottom < rowsCount -1) {	
-					index = this.vDomBottom + 1,
+				while ((i < rowsToRender) && this.vDomBottom < rowsCount -1) {
+					index++;
 					row = rows[index];
 
 					this.styleRow(row, index);
@@ -310,9 +311,9 @@ export default class VirtualDomVertical extends Renderer{
 				}
 
 				element.appendChild(rowFragment);
-				
+
 				// NOTE: The next 3 loops are separate on purpose
-				// This is to batch up the dom writes and reads which drastically improves performance 
+				// This is to batch up the dom writes and reads which drastically improves performance
 
 				renderedRows.forEach((row) => {
 					row.rendered();
@@ -330,7 +331,7 @@ export default class VirtualDomVertical extends Renderer{
 
 				renderedRows.forEach((row) => {
 					rowHeight = row.getHeight();
-					
+
 					if(totalRowsRendered < topPad){
 						topPadHeight += rowHeight;
 					}else {
@@ -389,65 +390,70 @@ export default class VirtualDomVertical extends Renderer{
 
 	_addTopRow(rows, fillableSpace){
 		var table = this.tableElement,
-		addedRows = [],
 		paddingAdjust = 0,
 		index = this.vDomTop -1,
-		i = 0,
-		working = true;
+		i = 0
+		, working = true;
 
-		while(working){
-			if(this.vDomTop){
-				let row = rows[index],
-				rowHeight, initialized;
-
-				if(row && i < this.vDomMaxRenderChain){
-					rowHeight = row.getHeight() || this.vDomRowHeight;
-					initialized = row.initialized;
-
-					if(fillableSpace >= rowHeight){
-
-						this.styleRow(row, index);
-						table.insertBefore(row.getElement(), table.firstChild);
-
-						if(!row.initialized || !row.heightInitialized){
-							addedRows.push(row);
-						}
-
-						row.initialize();
-
-						if(!initialized){
-							rowHeight = row.getElement().offsetHeight;
-
-							if(rowHeight > this.vDomWindowBuffer){
-								this.vDomWindowBuffer = rowHeight * 2;
-							}
-						}
-
-						fillableSpace -= rowHeight;
-						paddingAdjust += rowHeight;
-
-						this.vDomTop--;
-						index--;
-						i++;
-
-					}else{
-						working = false;
-					}
-
-				}else{
+		let numRowsToAdd = Math.ceil(fillableSpace / this.vDomRowHeight);
+		while(working && numRowsToAdd && this.vDomTop && fillableSpace > 0 && i < this.vDomMaxRenderChain){
+			const docFrag = document.createDocumentFragment();
+			const addedRows = [];
+			const newInitRows = [];
+			while( i < numRowsToAdd){
+				let row = rows[index], rowHeight;
+				if(!row){
 					working = false;
+					break;
 				}
 
-			}else{
-				working = false;
+				rowHeight = row.getHeight() || this.vDomRowHeight;
+				if(fillableSpace < rowHeight){
+					working = false;
+					break;
+				}
+
+				this.styleRow(row, index);
+				if(!row.initialized){
+					newInitRows.push(row);
+				}else{
+					addedRows.push(row);
+				}
+
+				row.initialize(false, true);
+				docFrag.insertBefore(row.getElement(), docFrag.firstChild);
+
+				this.vDomTop--;
+				index--;
+				i++;
 			}
-		}
+			table.insertBefore(docFrag, table.firstChild);
 
-		for (let row of addedRows){
-			row.clearCellHeight();
-		}
+			for (let row of newInitRows){
+				row.clearCellHeight();
+			}
 
-		this._quickNormalizeRowHeight(addedRows);
+			this._quickNormalizeRowHeight(newInitRows);
+
+			for (let row of newInitRows){
+				const rowHeight = row.getElement().offsetHeight;
+				if(rowHeight > this.vDomWindowBuffer){
+					this.vDomWindowBuffer = rowHeight * 2;
+				}
+			}
+
+			let totalRowHeight = 0;
+			for (let row of addedRows){
+				const rowHeight = row.getHeight() ||  row.getElement().offsetHeight;
+				totalRowHeight += rowHeight;
+
+				fillableSpace -= rowHeight;
+				paddingAdjust += rowHeight;
+			}
+
+			const avgRowHeight = Math.max(totalRowHeight /  addedRows.length, 0);
+			numRowsToAdd = avgRowHeight > 0 ?  Math.ceil(fillableSpace / avgRowHeight) : 0;
+		}
 
 		if(paddingAdjust){
 			this.vDomTopPad -= paddingAdjust;
