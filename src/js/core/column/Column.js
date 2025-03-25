@@ -907,10 +907,15 @@ export default class Column extends CoreFeature{
 			
 			if(maxWidth){
 				var setTo = maxWidth + 1;
-				if (this.maxInitialWidth && !force) {
-					setTo = Math.min(setTo, this.maxInitialWidth);
+				
+				if(force){
+					this.setWidth(setTo);
+				}else{
+					if (this.maxInitialWidth && !force) {
+						setTo = Math.min(setTo, this.maxInitialWidth);
+					}
+					this.setWidthActual(setTo);
 				}
-				this.setWidthActual(setTo);
 			}
 		}
 	}

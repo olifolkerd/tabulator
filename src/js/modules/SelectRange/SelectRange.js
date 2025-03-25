@@ -403,7 +403,7 @@ export default class SelectRange extends Module {
 	///////     Navigation      ///////
 	///////////////////////////////////
 	
-	keyNavigate(dir, e, jump = false, expand = false){
+	keyNavigate(dir, e){
 		if(this.options("selectableRangeBlurEditOnNavigate") && this.table.modules.edit && this.table.modules.edit.currentCell){
 			if(dir === 'next' || dir === 'prev'){
 				// Cancel edit and move to the next cell if editing
@@ -419,15 +419,16 @@ export default class SelectRange extends Module {
 		} else if (dir === 'next') {
 			dir = 'right';
 		}
-		
-		return this.navigate(jump, expand, dir);
+
+		if(this.navigate(false, false, dir)){
+			e.preventDefault();
+		}
 	}
 	
 	keyNavigateRange(e, dir, jump, expand){
 		if(this.navigate(jump, expand, dir)){
-			// e.preventDefault();
+			e.preventDefault();
 		}
-		e.preventDefault();
 	}
 	
 	navigate(jump, expand, dir) {
@@ -545,9 +546,8 @@ export default class SelectRange extends Module {
 			}
 
 			this.layoutElement();
-			
-			return true;
 		}
+		return true;
 	}
 	
 	rangeRemoved(removed){

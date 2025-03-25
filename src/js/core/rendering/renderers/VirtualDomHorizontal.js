@@ -120,7 +120,7 @@ export default class VirtualDomHorizontal extends Renderer{
 			if(column.visible){
 				if(!column.modules.frozen){			
 					width = column.getWidth();
-
+					
 					config.leftPos = colPos;
 					config.rightPos = colPos + width;
 					
@@ -178,7 +178,7 @@ export default class VirtualDomHorizontal extends Renderer{
 				rowFrag.appendChild(cell.getElement());
 			});
 			row.element.appendChild(rowFrag);
-
+			
 			row.cells.forEach((cell) => {
 				cell.cellRendered();
 			});
@@ -191,7 +191,11 @@ export default class VirtualDomHorizontal extends Renderer{
 	
 	reinitializeColumnWidths(columns){
 		for(let i = this.leftCol; i <= this.rightCol; i++){
-			this.columns[i].reinitializeWidth();
+			let col = this.columns[i];
+			
+			if(col){
+				col.reinitializeWidth();
+			}
 		}
 	}
 	
@@ -279,11 +283,11 @@ export default class VirtualDomHorizontal extends Renderer{
 	reinitializeRows(){
 		var visibleRows = this.getVisibleRows(),
 		otherRows = this.table.rowManager.getRows().filter(row => !visibleRows.includes(row));
-
+		
 		visibleRows.forEach((row) => {
 			this.reinitializeRow(row, true);
 		});
-
+		
 		otherRows.forEach((row) =>{
 			row.deinitialize();
 		});
@@ -330,7 +334,7 @@ export default class VirtualDomHorizontal extends Renderer{
 		working = true;
 		
 		while(working){
-
+			
 			let column = this.columns[this.rightCol + 1];
 			
 			if(column){
@@ -348,7 +352,7 @@ export default class VirtualDomHorizontal extends Renderer{
 					this.fitDataColActualWidthCheck(column);
 					
 					this.rightCol++; // Don't move this below the >= check below
-
+					
 					this.getVisibleRows().forEach((row) => {
 						if(row.type !== "group"){
 							row.modules.vdomHoz.rightCol = this.rightCol;
@@ -393,7 +397,7 @@ export default class VirtualDomHorizontal extends Renderer{
 					});
 					
 					this.leftCol--; // don't move this below the <= check below
-
+					
 					this.getVisibleRows().forEach((row) => {
 						if(row.type !== "group"){
 							row.modules.vdomHoz.leftCol = this.leftCol;
@@ -451,7 +455,7 @@ export default class VirtualDomHorizontal extends Renderer{
 					
 					this.vDomPadRight += column.getWidth();
 					this.rightCol --;
-
+					
 					this.getVisibleRows().forEach((row) => {
 						if(row.type !== "group"){
 							row.modules.vdomHoz.rightCol = this.rightCol;
@@ -473,7 +477,7 @@ export default class VirtualDomHorizontal extends Renderer{
 	removeColLeft(){
 		var changes = false,
 		working = true;
-
+		
 		while(working){
 			let column = this.columns[this.leftCol];
 			
@@ -495,7 +499,7 @@ export default class VirtualDomHorizontal extends Renderer{
 					
 					this.vDomPadLeft += column.getWidth();
 					this.leftCol ++;
-
+					
 					this.getVisibleRows().forEach((row) => {
 						if(row.type !== "group"){
 							row.modules.vdomHoz.leftCol = this.leftCol;
@@ -541,17 +545,17 @@ export default class VirtualDomHorizontal extends Renderer{
 				leftCol:this.leftCol,
 				rightCol:this.rightCol,
 			};
-
+			
 			if(this.table.modules.frozenColumns){
 				this.table.modules.frozenColumns.leftColumns.forEach((column) => {
 					this.appendCell(row, column);
 				});
 			}
-
+			
 			for(let i = this.leftCol; i <= this.rightCol; i++){
 				this.appendCell(row, this.columns[i]);
 			}
-
+			
 			if(this.table.modules.frozenColumns){
 				this.table.modules.frozenColumns.rightColumns.forEach((column) => {
 					this.appendCell(row, column);
@@ -575,7 +579,7 @@ export default class VirtualDomHorizontal extends Renderer{
 				
 				var rowEl = row.getElement();
 				while(rowEl.firstChild) rowEl.removeChild(rowEl.firstChild);
-
+				
 				this.initializeRow(row);
 			}
 		}
