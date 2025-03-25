@@ -249,17 +249,20 @@ export default class DataTree extends Module{
 				config.branchEl = this.branchEl.cloneNode(true);
 				el.insertBefore(config.branchEl, el.firstChild);
 
+				let indentValue = (config.index * this.indent) + "px";
+	
 				if(this.table.rtl){
-					config.branchEl.style.marginRight = (((config.branchEl.offsetWidth + config.branchEl.style.marginLeft) * (config.index - 1)) + (config.index * this.indent)) + "px";
+					config.branchEl.style.marginRight = indentValue;
 				}else{
-					config.branchEl.style.marginLeft = (((config.branchEl.offsetWidth + config.branchEl.style.marginRight) * (config.index - 1)) + (config.index * this.indent)) + "px";
+					config.branchEl.style.marginLeft = indentValue;
 				}
 			}else{
-
+				let paddingValue = (config.index * this.indent) + "px";
+	
 				if(this.table.rtl){
-					el.style.paddingRight = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-right')) + (config.index * this.indent) + "px";
+					el.style.paddingRight = paddingValue;
 				}else{
-					el.style.paddingLeft = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) + (config.index * this.indent) + "px";
+					el.style.paddingLeft = paddingValue;
 				}
 			}
 		}
