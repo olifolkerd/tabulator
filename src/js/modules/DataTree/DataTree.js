@@ -125,6 +125,7 @@ export default class DataTree extends Module{
 
 			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-layout-after", this.layoutRow.bind(this));
+			this.subscribe("row-deleting", this.rowDeleting.bind(this));
 			this.subscribe("row-deleted", this.rowDelete.bind(this),0);
 			this.subscribe("row-data-changed", this.rowDataChanged.bind(this), 10);
 			this.subscribe("cell-value-updated", this.cellValueChanged.bind(this));
@@ -462,6 +463,18 @@ export default class DataTree extends Module{
 		}
 
 		return output;
+	}
+
+	rowDeleting(row){
+		var config = row.modules.dataTree;
+
+		if (config && config.children && Array.isArray(config.children)){
+			config.children.forEach((childRow) => {
+				if(childRow instanceof Row){
+					childRow.wipe();
+				}
+			});
+		}
 	}
 
 	rowDelete(row){

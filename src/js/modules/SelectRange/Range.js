@@ -20,8 +20,8 @@ export default class Range extends CoreFeature{
 		this.right = 0;
 		
 		this.table = table;
-		this.start = {row:0, col:0};
-		this.end = {row:0, col:0};
+		this.start = {row:undefined, col:undefined};
+		this.end = {row:undefined, col:undefined};
 
 		if(this.rangeManager.rowHeader){
 			this.left = 1;

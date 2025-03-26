@@ -51,8 +51,16 @@ export default class Layout extends Module{
 
 	//trigger table layout
 	layout(dataChanged){
+
+		var variableHeight = this.table.columnManager.columnsByIndex.find((column) => column.definition.variableHeight || column.definition.formatter === "textarea");
+		
 		this.dispatch("layout-refreshing");
 		Layout.modes[this.mode].call(this, this.table.columnManager.columnsByIndex, dataChanged);
+
+		if(variableHeight){
+			this.table.rowManager.normalizeHeight(true);
+		}
+
 		this.dispatch("layout-refreshed");
 	}
 }

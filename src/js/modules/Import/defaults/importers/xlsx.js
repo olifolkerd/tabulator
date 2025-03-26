@@ -1,6 +1,7 @@
-export default function(input, floop){
-	var workbook2 = XLSX.read(input);
-	var sheet = workbook2.Sheets[workbook2.SheetNames[0]];
+export default function(input){
+	var XLSXLib = this.dependencyRegistry.lookup("XLSX"),
+	workbook2 = XLSXLib.read(input),
+	sheet = workbook2.Sheets[workbook2.SheetNames[0]];
 	
-	return XLSX.utils.sheet_to_json(sheet, {});
+	return XLSXLib.utils.sheet_to_json(sheet, {header: 1 });
 }

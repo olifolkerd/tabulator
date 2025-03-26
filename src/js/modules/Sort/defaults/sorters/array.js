@@ -1,11 +1,31 @@
+import Helpers from '../../../../core/tools/Helpers.js';
+
 //sort if element contains any data
 export default function(a, b, aRow, bRow, column, dir, params){
 	var type = params.type || "length",
 	alignEmptyValues = params.alignEmptyValues,
-	emptyAlign = 0;
+	emptyAlign = 0,
+	table = this.table,
+	valueMap;
+
+	if(params.valueMap){
+		if(typeof params.valueMap === "string"){
+			valueMap = function(value){
+				return value.map((item) => {
+					return Helpers.retrieveNestedData(table.options.nestedFieldSeparator, params.valueMap, item);
+				});
+			};
+		}else{
+			valueMap = params.valueMap;
+		}
+	}
 
 	function calc(value){
 		var result;
+		
+		if(valueMap){
+			value = valueMap(value);
+		}
 
 		switch(type){
 			case "length":
@@ -31,6 +51,10 @@ export default function(a, b, aRow, bRow, column, dir, params){
 					return c + d;
 				}) / value.length;
 				break;
+
+			case "string":
+				result = value.join("");
+				break;
 		}
 
 		return result;
@@ -42,7 +66,11 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	}else if(!Array.isArray(b)){
 		emptyAlign = 1;
 	}else{
-		return calc(b) - calc(a);
+		if(type === "string"){
+			return String(calc(a)).toLowerCase().localeCompare(String(calc(b)).toLowerCase());
+		}else{
+			return calc(b) - calc(a);
+		}
 	}
 
 	//fix empty values in position

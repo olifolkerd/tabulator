@@ -1,6 +1,6 @@
 //sort datetime
 export default function(a, b, aRow, bRow, column, dir, params){
-	var DT = window.DateTime || luxon.DateTime;
+	var DT = this.table.dependencyRegistry.lookup(["luxon", "DateTime"], "DateTime");
 	var format = params.format || "dd/MM/yyyy HH:mm:ss",
 	alignEmptyValues = params.alignEmptyValues,
 	emptyAlign = 0;
