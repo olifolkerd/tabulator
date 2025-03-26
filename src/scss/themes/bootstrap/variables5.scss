@@ -695,11 +695,16 @@ $table-color:                 $body-color !default;
 $table-bg:                    #fff !default;
 $table-accent-bg:             transparent !default;
 
-$table-dark-bg:               $gray-900 !default;
-$table-dark-accent-bg:        rgba($white, .05) !default;
-$table-dark-hover-bg:         rgba($white, .075) !default;
-$table-dark-border-color:     lighten($gray-900, 7.5%) !default;
-$table-dark-color:            $body-bg !default;
+$table-dark-color:					 #fff;
+$table-dark-bg:							 #212529;
+$table-dark-border-color:    #4d5154;
+$table-dark-striped-bg:      #2c3034;
+$table-dark-striped-color:   #fff;
+$table-dark-active-bg:       #373b3e;
+$table-dark-active-color:    #fff;
+$table-dark-hover-bg:        #323539;
+$table-dark-hover-color:     #fff;
+
 
 $table-th-font-weight:        null !default;
 
