@@ -1,0 +1,712 @@
+@import "functions5.scss";
+@import "variables5.scss";
+
+// Style conversion file, bootstrap to tabulator
+
+//Main Theme Variables
+$backgroundColor: $table-bg !default; //background color of tabulator
+$borderColor:$table-border-color !default; //border to tabulator
+$textSize:16px !default; //table text size
+
+//header theming
+$headerBackgroundColor:$table-bg !default; //border to tabulator
+$headerForegroundColor:inherit !default; //border to tabulator
+$headerSeparatorColor:$table-border-color !default; //header bottom separator color
+
+$cellPadding:12px !default; //padding round header
+
+//column header arrows
+$sortArrowActive: #666 !default;
+$sortArrowInactive: #bbb !default;
+
+//row theming
+$rowBackgroundColor:$backgroundColor !default; //table row background color
+$rowAltBackgroundColor: $table-striped-bg !default; //table row background color
+$rowBorderColor:$table-border-color !default; //table border color
+$rowHoverBackground:$table-hover-bg !default; //row background color on hover
+
+$rowSelectedBackground: #9ABCEA !default; //row background color when selected
+$rowSelectedBackgroundHover: #769BCC !default;//row background color when selected and hovered
+
+
+$editBoxColor:#1D68CD !default; //border color for edit boxes
+$errorColor:#dd0000 !default; //error indication
+
+//footer theming
+$footerBorderColor:$pagination-border-color !default; //footer border color
+$footerSeparatorColor:$table-border-color !default; //footer bottom separator color
+$footerActiveColor:$pagination-active-color !default; //footer bottom active text color
+
+$table-cell-padding-sm: 5px;
+
+@import "../../tabulator.scss";
+
+.tabulator{
+	background-color: $backgroundColor;
+	border:none;
+
+	.tabulator-header{
+		border-top:1px solid $headerSeparatorColor;
+		border-bottom:2px solid $headerSeparatorColor;
+		color:$headerForegroundColor;
+
+		.tabulator-col{
+			border-right:none;
+			background-color: $headerBackgroundColor;
+
+			.tabulator-col-content{
+				padding:$cellPadding;
+
+				.tabulator-col-sorter{
+					right:0;
+				}
+			}
+
+			&.tabulator-col-group{
+				.tabulator-col-group-cols{
+					border-top:1px solid $borderColor;
+				}
+			}
+
+			.tabulator-header-filter{
+				input{
+					padding: .375rem .75rem;
+
+					background-color: #fff;
+					background-clip: padding-box;
+
+					border: 1px solid #ced4da;
+					border-radius: .25rem;
+
+					transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+
+					font-size: 1rem;
+					line-height: 1.5;
+					color: #495057;
+
+					&:focus {
+						color: #495057;
+						background-color: #fff;
+						border:1px solid  $editBoxColor;
+						outline: 0;
+					    // box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+					}
+				}
+			}
+		}
+
+		.tabulator-calcs-holder{
+			width:100%;
+			border-bottom:1px solid $headerSeparatorColor;
+		}
+	}
+
+	.tabulator-tableholder{
+		.tabulator-placeholder{
+			span{
+				color:#000;
+			}
+		}
+
+		.tabulator-table{
+			color:inherit;
+		}
+	}
+
+	.tabulator-footer{
+		color:inherit;
+
+		.tabulator-spreadsheet-tabs{
+			.tabulator-spreadsheet-tab{
+				background-color: $spreadsheetActiveTabColor;
+				font-weight: normal;
+
+				&.tabulator-spreadsheet-tab-active{
+					background-color:$pagination-active-bg;
+					color:$footerActiveColor;
+				}
+			}
+		}
+
+		.tabulator-paginator{
+			color:inherit;
+		}
+
+		.tabulator-pages{
+			margin:0;
+		}
+
+		.tabulator-page{
+			margin:0;
+			margin-top:5px;
+			padding:8px 12px;
+
+			&[data-page="first"]{
+				border-top-left-radius:4px;
+				border-bottom-left-radius:4px;
+			}
+
+			&[data-page="last"]{
+				border:1px solid $footerBorderColor;
+				border-top-right-radius:4px;
+				border-bottom-right-radius:4px;
+			}
+
+			&.active{
+				border-color:$pagination-active-border-color;
+				background-color:$pagination-active-bg;
+				color:$footerActiveColor;
+			}
+
+			&:disabled{
+				border-color:$pagination-disabled-border-color;
+				background:$pagination-disabled-bg;
+				color:$pagination-disabled-color;
+			}
+
+			&:not(.disabled){
+				@media (hover:hover) and (pointer:fine){
+					&:hover{
+						border-color:$pagination-hover-border-color;
+						background:$pagination-hover-bg;
+						color:$pagination-hover-color;
+					}
+				}
+			}
+		}
+	}
+
+	//Bootstrap theming classes
+
+	&.table{
+		background-color: $backgroundColor;
+
+		&:not(.thead-light) .tabulator-header{
+			border-color: $borderColor;
+			background-color: $backgroundColor;
+			color: $table-color;
+
+			.tabulator-col{
+				border-color: $borderColor;
+				background-color: $backgroundColor;
+				color: $table-color;
+			}
+		}
+
+		.tabulator-tableholder{
+			color: $table-color;
+		}
+
+
+		.tabulator-row{
+			border-color: $borderColor;
+			background-color: $backgroundColor;
+			color: $table-color;
+
+			@media (hover:hover) and (pointer:fine){
+				&:hover{
+					background-color: $borderColor;
+
+					.tabulator-cell{
+						background-color: $table-hover-bg;
+					}
+				}
+			}
+
+			&.tabulator-selected{
+				background-color:$rowSelectedBackground;
+			}
+		}
+
+		.tabulator-footer{
+			border-color: $borderColor !important;
+
+			.tabulator-calcs-holder{
+				border-color: $borderColor !important;
+				background:$backgroundColor !important;
+
+				.tabulator-row{
+					border-color: $borderColor !important;
+					background-color: $backgroundColor !important;
+					color: $table-color !important;
+				}
+			}
+		}
+	}
+
+	&.table-striped{
+		&:not(.table){
+			.tabulator-row{
+				&.tabulator-row-even{
+					background-color: $rowAltBackgroundColor;
+
+					&.tabulator-selected{
+						background-color:$rowSelectedBackground;
+					}
+
+					@media (hover:hover) and (pointer:fine){
+						&.tabulator-selectable:hover{
+							background-color:$rowHoverBackground;
+							cursor: pointer;
+						}
+
+						&.tabulator-selected:hover{
+							background-color:$rowSelectedBackgroundHover;
+							cursor: pointer;
+						}
+					}
+				}
+			}
+		}
+
+		&.table{
+			.tabulator-row{
+				&:nth-child(even){
+					.tabulator-cell{
+						background-color: $table-accent-bg;
+					}
+				}
+			}
+		}
+	}
+
+	&.table-bordered{
+		border:1px solid $borderColor;
+
+		.tabulator-header{
+			.tabulator-col{
+				border-right:1px solid $borderColor;
+			}
+		}
+
+		.tabulator-tableholder{
+			.tabulator-table{
+				.tabulator-row{
+					.tabulator-cell{
+						border-right:1px solid $borderColor;
+					}
+				}
+			}
+		}
+	}
+
+
+	&.table-borderless{
+		.tabulator-header{
+			border:none;
+		}
+
+		.tabulator-row{
+			border:none;
+		}
+	}
+
+	&.table-sm{
+		.tabulator-header{
+			.tabulator-col{
+				.tabulator-col-content{
+					padding:$table-cell-padding-sm !important;
+				}
+			}
+		}
+
+		.tabulator-tableholder{
+			.tabulator-table{
+				.tabulator-row{
+					min-height:$textSize + ($table-cell-padding-sm * 2);
+
+					.tabulator-cell{
+						padding:$table-cell-padding-sm !important;
+					}
+				}
+			}
+		}
+
+		.tabulator-row{
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
+		.tabulator-col-resize-handle{
+			padding:0;
+		}
+	}
+
+
+
+	&.thead-dark{
+		.tabulator-header{
+			border-color: $table-dark-border-color;
+			background-color: $table-dark-bg;
+			color: $table-dark-color;
+
+			.tabulator-col{
+				border-color: $table-dark-border-color;
+				background-color: $table-dark-bg;
+				color: $table-dark-color;
+			}
+		}
+	}
+
+	&.table-striped{
+		&:not(.table-dark),
+		html:not([data-bs-theme="dark"]) &{
+			.tabulator-row{
+				&.tabulator-row-even{
+					background-color: $rowAltBackgroundColor;
+
+					&.tabulator-selected{
+						background-color:$rowSelectedBackground;
+					}
+
+					@media (hover:hover) and (pointer:fine){
+						&.tabulator-selectable:hover{
+							background-color:$rowHoverBackground;
+							cursor: pointer;
+						}
+						
+						&.tabulator-selected:hover{
+							background-color:$rowSelectedBackgroundHover;
+							cursor: pointer;
+						}
+					}
+				}
+			}
+		}
+
+		&.table-dark, 
+		html[data-bs-theme="dark"] & {
+			.tabulator-row{
+				&:nth-child(even){
+					background-color: $table-dark-striped-bg !important;
+					.tabulator-cell{
+						background-color: inherit;
+					}
+				}
+			}
+		}
+	}
+
+	&.table-dark, 
+	html[data-bs-theme="dark"] &{
+		background-color: $table-dark-bg;
+
+		&:not(.thead-light) .tabulator-header{
+			border-color: $table-dark-border-color;
+			background-color: $table-dark-bg;
+			color: $table-dark-color;
+
+			.tabulator-col{
+				border-color: $table-dark-border-color;
+				background-color: $table-dark-bg;
+				color: $table-dark-color;
+			}
+		}
+
+		.tabulator-tableholder{
+			color: $table-dark-color;
+		}
+
+		.tabulator-cell {
+			color: $table-dark-color;
+			background-color: $table-dark-bg;
+			border-color: $table-dark-border-color;
+		}	
+
+		.tabulator-row{
+			border-color: $table-dark-border-color;
+			background-color: $table-dark-bg;
+			color: $table-dark-color;
+
+			@media (hover:hover) and (pointer:fine){
+				&:hover{
+					background-color: $table-dark-border-color;
+
+					.tabulator-cell{
+						background-color: $table-dark-hover-bg;
+					}
+				}
+			}
+
+			&.tabulator-selected{
+				background-color:$table-dark-active-bg;
+			}
+		}
+
+		.tabulator-footer{
+			border-color: $table-dark-border-color !important;
+			color: $table-dark-bg !important;
+
+			.tabulator-calcs-holder{
+				border-color: $table-dark-border-color !important;
+				background:$table-dark-bg !important;
+
+				.tabulator-row{
+					border-color: $table-dark-border-color !important;
+					background-color: $table-dark-bg !important;
+					color: $table-dark-color !important;
+				}
+			}
+		}
+
+		input {
+			color: $table-dark-color !important;
+			background-color: $table-active-bg !important;
+		  }
+		  
+	}
+
+	//row colors
+	.tabulator-tableholder{
+		.tabulator-table{
+			.tabulator-row{
+				&.table-primary{
+					background:map-get($table-variants, "primary") !important;
+				}
+				&.table-secondary{
+					background:map-get($table-variants, "secondary") !important;
+				}
+				&.table-success{
+					background:map-get($table-variants, "success") !important;
+				}
+				&.table-info{
+					background:map-get($table-variants, "info") !important;
+				}
+				&.table-warning{
+					background:map-get($table-variants, "warning") !important;
+				}
+				&.table-danger{
+					background:map-get($table-variants, "danger") !important;
+				}
+				&.table-light{
+					background:map-get($table-variants, "light") !important;
+				}
+				&.table{
+					background:map-get($table-variants, "dark") !important;
+				}
+				&.table-active{
+					background:$table-active-bg !important;
+				}
+
+				&.bg-primary{
+					background:map-get($table-variants, "primary") !important;
+				}
+				&.bg-secondary{
+					background:map-get($table-variants, "secondary") !important;
+				}
+				&.bg-success{
+					background:map-get($table-variants, "success") !important;
+				}
+				&.bg-info{
+					background:map-get($table-variants, "info") !important;
+				}
+				&.bg-warning{
+					background:map-get($table-variants, "warning") !important;
+				}
+				&.bg-danger{
+					background:map-get($table-variants, "danger") !important;
+				}
+				&.bg-light{
+					background:map-get($table-variants, "light") !important;
+				}
+				&.bg-dark{
+					background:map-get($table-variants, "dark") !important;
+				}
+				&.bg-active{
+					background:$table-active-bg !important;
+				}
+
+				.tabulator-cell{
+					&.table-primary{
+						background:map-get($table-variants, "primary") !important;
+					}
+					&.table-secondary{
+						background:map-get($table-variants, "secondary") !important;
+					}
+					&.table-success{
+						background:map-get($table-variants, "success") !important;
+					}
+					&.table-info{
+						background:map-get($table-variants, "info") !important;
+					}
+					&.table-warning{
+						background:map-get($table-variants, "warning") !important;
+					}
+					&.table-danger{
+						background:map-get($table-variants, "danger") !important;
+					}
+					&.table-light{
+						background:map-get($table-variants, "light") !important;
+					}
+					&.table{
+						background:map-get($table-variants, "dark") !important;
+					}
+					&.table-active{
+						background:$table-active-bg !important;
+					}
+
+					&.bg-primary{
+						background:map-get($table-variants, "primary") !important;
+					}
+					&.bg-secondary{
+						background:map-get($table-variants, "secondary") !important;
+					}
+					&.bg-success{
+						background:map-get($table-variants, "success") !important;
+					}
+					&.bg-info{
+						background:map-get($table-variants, "info") !important;
+					}
+					&.bg-warning{
+						background:map-get($table-variants, "warning") !important;
+					}
+					&.bg-danger{
+						background:map-get($table-variants, "danger") !important;
+					}
+					&.bg-light{
+						background:map-get($table-variants, "light") !important;
+					}
+					&.bg-dark{
+						background:map-get($table-variants, "dark") !important;
+					}
+					&.bg-active{
+						background:$table-active-bg !important;
+					}
+				}
+			}
+		}
+	}
+}
+
+.tabulator-row{
+	min-height:$textSize + ($cellPadding * 2);
+	border-bottom:1px solid $rowBorderColor;
+
+	.tabulator-cell{
+		padding:$cellPadding;
+		border-right:none;
+
+		&:last-of-type{
+			border-right: none;
+		}
+
+		&.tabulator-row-header{
+			border-right:1px solid $borderColor;
+			border-bottom:none;
+			background:$headerBackgroundColor;
+		}
+
+		.tabulator-data-tree-control{
+			border:1px solid #ccc;
+
+			.tabulator-data-tree-control-collapse{
+				&:after {
+					background: #ccc;
+				}
+			}
+
+			.tabulator-data-tree-control-expand{
+				background: #ccc;
+
+				&:after {
+					background: #ccc;
+				}
+			}
+		}
+	}
+
+	&.tabulator-group{
+		background:#fafafa;
+
+		span{
+			color:#666;
+		}
+	}
+}
+
+.tabulator-edit-select-list{
+	background:$headerBackgroundColor;
+
+	.tabulator-edit-select-list-item{
+		&.active{
+			color:$headerBackgroundColor;
+
+			&.focused{
+				outline:1px solid rgba($headerBackgroundColor, .5);
+			}
+		}
+
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				color:$headerBackgroundColor;
+			}
+		}
+	}
+
+	.tabulator-edit-select-list-notice{
+		color:inherit;
+	}
+
+	.tabulator-edit-select-list-group{
+		color:inherit;
+	}
+}
+
+.tabulator.tabulator-rtl{
+	.tabulator-header {
+		.tabulator-col{
+			text-align: initial;
+			border-left:initial;
+		}
+	}
+}
+
+.tabulator-print-table{
+	.tabulator-print-table-group{
+		background:#fafafa;
+
+		span{
+			color:#666;
+		}
+	}
+
+	.tabulator-data-tree-control{
+		color:inherit;
+
+		.tabulator-data-tree-control-collapse{
+			&:after {
+				background: #ccc;
+			}
+		}
+
+		.tabulator-data-tree-control-expand{
+			background: #ccc;
+
+			&:after {
+				background: #ccc;
+			}
+		}
+	}
+}
+
+.tabulator-popup-container{
+	background:#fff;
+}
+
+.tabulator-edit-list{
+	.tabulator-edit-list-item{
+		&.active{
+			color:#fff;
+
+			&.focused{
+				outline:1px solid rgba(#fff, .5);
+			}
+		}
+
+		@media (hover:hover) and (pointer:fine){
+			&:hover{
+				color:#fff;
+			}
+		}
+	}
+}
