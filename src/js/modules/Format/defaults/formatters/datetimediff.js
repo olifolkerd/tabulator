@@ -36,6 +36,6 @@ export default function (cell, formatterParams, onRendered) {
 			}
 		}
 	}else{
-		console.error("Format Error - 'datetimediff' formatter is dependant on luxon.js");
+		console.error("Format Error - 'datetimediff' formatter is dependent on luxon.js");
 	}
 }
