@@ -47,6 +47,7 @@ export default class Edit extends Module{
 		
 		this.registerComponentFunction("cell", "isEdited", this.cellIsEdited.bind(this));
 		this.registerComponentFunction("cell", "clearEdited", this.clearEdited.bind(this));
+		this.registerComponentFunction("cell", "setEdited", this.setEdited.bind(this));
 		this.registerComponentFunction("cell", "edit", this.editCell.bind(this));
 		this.registerComponentFunction("cell", "cancelEdit", this.cellCancelEdit.bind(this));
 		
@@ -170,6 +171,16 @@ export default class Edit extends Module{
 		
 		cells.forEach((cell) => {
 			this.table.modules.edit.clearEdited(cell._getSelf());
+		});
+	}
+
+	setCellEdited(cells){
+		if(!Array.isArray(cells)){
+			cells = [cells];
+		}
+		
+		cells.forEach((cell) => {
+			this.table.modules.edit.setEdited(cell._getSelf());
 		});
 	}
 	
@@ -818,6 +829,22 @@ export default class Edit extends Module{
 		
 		if(editIndex > -1){
 			this.editedCells.splice(editIndex, 1);
+		}
+	}
+
+	setEdited(cell){
+		var editIndex;
+		
+		if(cell.modules.edit && cell.modules.edit.edited){
+			cell.modules.edit.edited = true;
+			
+			this.dispatch("edit-success", cell);
+		}
+		
+		editIndex = this.editedCells.indexOf(cell);
+		
+		if(editIndex === -1){
+			this.editedCells.push(cell);
 		}
 	}
 }
