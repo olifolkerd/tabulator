@@ -404,13 +404,16 @@ export default class SelectRange extends Module {
 	///////////////////////////////////
 	
 	keyNavigate(dir, e){
-		if(this.options("selectableRangeBlurEditOnNavigate") && this.table.modules.edit && this.table.modules.edit.currentCell){
-			if(dir === 'next' || dir === 'prev'){
-				// Cancel edit and move to the next cell if editing
-				this.table.modules.edit.currentCell.getComponent().cancelEdit();
-			}else{
-				// Prevent navigating while editing except for next/prev
-				return false;
+		if(this.options("selectableRangeBlurEditOnNavigate")){
+			const isEditing = this.chain("edit-check-editing");
+			
+			if(isEditing){
+				if(dir === 'next' || dir === 'prev'){
+					this.dispatch("edit-cancel-cell");
+				}else{
+					// Prevent navigating while editing except for next/prev
+					return false;
+				}
 			}
 		}
 
