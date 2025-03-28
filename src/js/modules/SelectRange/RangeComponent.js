@@ -1,6 +1,5 @@
 export default class RangeComponent {
 	constructor(range) {
-		/** @type {import("./Range").default} */
 		this._range = range;
 
 		return new Proxy(this, {
