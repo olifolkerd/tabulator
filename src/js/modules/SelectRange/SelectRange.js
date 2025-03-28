@@ -65,6 +65,10 @@ export default class SelectRange extends Module {
 				console.warn("Having multiple frozen columns with selectRange option may result in unpredictable behavior.");
 			}
 		}
+		
+		this.subscribe("edit-nav-disabled", () => {
+			return true; // Disable navigation in edit module
+		});
 	}
 	
 	

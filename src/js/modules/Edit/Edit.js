@@ -69,7 +69,7 @@ export default class Edit extends Module{
 		this.subscribe("data-refreshing", this.cancelEdit.bind(this));
 		this.subscribe("clipboard-paste", this.pasteBlocker.bind(this));
 		
-		if (!this.table.modules.selectRange) {
+		if (!this.confirm("edit-nav-disabled")) {
 			this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
 			this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
 			
