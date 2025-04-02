@@ -183,6 +183,7 @@ export default class SelectRange extends Module {
 	///////   Table Functions   ///////
 	///////////////////////////////////
 	
+	/** @returns {import("./RangeComponent.js").default[]} */
 	getRanges(){
 		return this.ranges.map((range) => range.getComponent());
 	}
@@ -544,7 +545,7 @@ export default class SelectRange extends Module {
 			}
 		}
 		
-		this.layoutElement();
+		this.layoutElement(true);
 	}
 	
 	findJumpRow(column, rows, reverse, emptyStart, emptySide){
@@ -686,11 +687,11 @@ export default class SelectRange extends Module {
 		}
 		
 		if (event.shiftKey) {
-			this.activeRange.setBounds(false, element);
+			this.activeRange.setBounds(false, element, true);
 		} else if (event.ctrlKey) {
-			this.addRange().setBounds(element);
+			this.addRange().setBounds(element, undefined, true);
 		} else {
-			this.resetRanges().setBounds(element);
+			this.resetRanges().setBounds(element, undefined, true);
 		}
 	}
 	
