@@ -475,7 +475,7 @@ export default class MoveRows extends Module{
 		});
 	}
 
-	//accept incomming connection
+	//accept incoming connection
 	connect(table, row){
 		if(!this.connectedTable){
 			this.connectedTable = table;

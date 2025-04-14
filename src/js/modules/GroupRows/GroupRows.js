@@ -276,7 +276,7 @@ export default class GroupRows extends Module{
 			
 			this.trackChanges();
 		}else{
-			console.warn("Grouping Update - cant refresh view, no groups have been set");
+			console.warn("Grouping Update - can't refresh view, no groups have been set");
 		}
 	}
 	
@@ -289,7 +289,7 @@ export default class GroupRows extends Module{
 			
 			this.trackChanges();
 		}else{
-			console.warn("Grouping Update - cant refresh view, no groups have been set");
+			console.warn("Grouping Update - can't refresh view, no groups have been set");
 		}
 	}
 	
