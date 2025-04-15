@@ -125,22 +125,21 @@ export default {
 		if(value === "" || value === null || typeof value === "undefined"){
 			return true;
 		}
-		var unique = true;
+
+		var equals = parameters === "ignorecase"
+			? (x, y) => x.toLowerCase() == y.toLowerCase()
+			: (x, y) => x == y;
 
 		var cellData = cell.getData();
 		var column = cell.getColumn()._getSelf();
 
-		this.table.rowManager.rows.forEach(function(row){
+		return !this.table.rowManager.rows.some(function(row){
 			var data = row.getData();
 
 			if(data !== cellData){
-				if(value == column.getFieldValue(data)){
-					unique = false;
-				}
+				return equals(value, column.getFieldValue(data));
 			}
 		});
-
-		return unique;
 	},
 
 	//must have a value
