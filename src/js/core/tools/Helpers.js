@@ -1,30 +1,28 @@
-export default class Helpers{
-
-	static elVisible(el){
+export default class Helpers {
+	static elVisible(el) {
 		return !(el.offsetWidth <= 0 && el.offsetHeight <= 0);
 	}
 
-	static elOffset(el){
+	static elOffset(el) {
 		var box = el.getBoundingClientRect();
 
 		return {
 			top: box.top + window.pageYOffset - document.documentElement.clientTop,
-			left: box.left + window.pageXOffset - document.documentElement.clientLeft
+			left: box.left + window.pageXOffset - document.documentElement.clientLeft,
 		};
 	}
 
-	static retrieveNestedData(separator, field, data){
+	static retrieveNestedData(separator, field, data) {
 		var structure = separator ? field.split(separator) : [field],
-		length = structure.length,
-		output;
+			length = structure.length,
+			output;
 
-		for(let i = 0; i < length; i++){
-
+		for (let i = 0; i < length; i++) {
 			data = data[structure[i]];
 
 			output = data;
 
-			if(!data){
+			if (!data) {
 				break;
 			}
 		}
@@ -48,6 +46,8 @@ export default class Helpers{
 					clone[i] = match;
 				}else{
 					const copy = Object.assign(Array.isArray(subject) ? [] : {}, subject);
+					circularRefs.set(obj, copy);
+
 					clone[i] = this.deepClone(subject, copy, circularRefs);
 				}
 			}
