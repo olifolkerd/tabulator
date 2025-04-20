@@ -217,7 +217,7 @@ export default class ReactiveData extends Module{
 					enumerable: true,
 					configurable:true,
 					writable:true,
-					value: this.origFuncs.key,
+					value: this.origFuncs[key],
 				});
 			}
 		}
