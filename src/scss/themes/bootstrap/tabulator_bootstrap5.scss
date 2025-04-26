@@ -208,13 +208,13 @@ $table-cell-padding-sm: 5px;
 					background-color: $borderColor;
 
 					.tabulator-cell{
-						background-color: $table-hover-bg;
+						background-color: $rowSelectedBackgroundHover !important;
 					}
 				}
 			}
 
 			&.tabulator-selected{
-				background-color:$rowSelectedBackground;
+				background-color:$rowSelectedBackground !important;
 			}
 		}
 
@@ -241,7 +241,7 @@ $table-cell-padding-sm: 5px;
 					background-color: $rowAltBackgroundColor;
 
 					&.tabulator-selected{
-						background-color:$rowSelectedBackground;
+						background-color:$rowSelectedBackground !important;
 					}
 
 					@media (hover:hover) and (pointer:fine){
@@ -251,7 +251,7 @@ $table-cell-padding-sm: 5px;
 						}
 
 						&.tabulator-selected:hover{
-							background-color:$rowSelectedBackgroundHover;
+							background-color:$rowSelectedBackgroundHover !important;
 							cursor: pointer;
 						}
 					}
@@ -263,7 +263,7 @@ $table-cell-padding-sm: 5px;
 			.tabulator-row{
 				&:nth-child(even){
 					.tabulator-cell{
-						background-color: $table-accent-bg;
+						background-color: inherit !important;
 					}
 				}
 			}
@@ -356,17 +356,17 @@ $table-cell-padding-sm: 5px;
 					background-color: $rowAltBackgroundColor;
 
 					&.tabulator-selected{
-						background-color:$rowSelectedBackground;
+						background-color:$rowSelectedBackground !important;
 					}
 
 					@media (hover:hover) and (pointer:fine){
 						&.tabulator-selectable:hover{
-							background-color:$rowHoverBackground;
+							background-color:$rowHoverBackground !important;
 							cursor: pointer;
 						}
 						
 						&.tabulator-selected:hover{
-							background-color:$rowSelectedBackgroundHover;
+							background-color:$rowSelectedBackgroundHover !important;
 							cursor: pointer;
 						}
 					}
@@ -409,7 +409,7 @@ $table-cell-padding-sm: 5px;
 
 		.tabulator-cell {
 			color: $table-dark-color;
-			background-color: $table-dark-bg;
+			background-color: inherit !important;
 			border-color: $table-dark-border-color;
 		}	
 
@@ -423,13 +423,13 @@ $table-cell-padding-sm: 5px;
 					background-color: $table-dark-border-color;
 
 					.tabulator-cell{
-						background-color: $table-dark-hover-bg;
+						background-color: $rowSelectedBackgroundHover !important;
 					}
 				}
 			}
 
 			&.tabulator-selected{
-				background-color:$table-dark-active-bg;
+				background-color:$rowSelectedBackground !important;
 			}
 		}
 
@@ -583,6 +583,7 @@ $table-cell-padding-sm: 5px;
 	border-bottom:1px solid $rowBorderColor;
 
 	.tabulator-cell{
+		background-color:inherit !important;
 		padding:$cellPadding;
 		border-right:none;
 
