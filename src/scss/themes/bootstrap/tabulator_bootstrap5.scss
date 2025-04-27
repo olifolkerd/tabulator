@@ -177,7 +177,6 @@ $table-cell-padding-sm: 5px;
 	}
 
 	//Bootstrap theming classes
-
 	&.table{
 		background-color: $backgroundColor;
 
@@ -203,18 +202,23 @@ $table-cell-padding-sm: 5px;
 			background-color: $backgroundColor;
 			color: $table-color;
 
-			@media (hover:hover) and (pointer:fine){
-				&:hover{
-					background-color: $borderColor;
-
-					.tabulator-cell{
-						background-color: $rowSelectedBackgroundHover !important;
+			&.tabulator-selectable{
+				@media (hover:hover) and (pointer:fine){
+					&:hover{
+						background-color: $rowHoverBackground !important;
 					}
 				}
 			}
 
+
 			&.tabulator-selected{
 				background-color:$rowSelectedBackground !important;
+
+				@media (hover:hover) and (pointer:fine){
+					&:hover{
+						background-color: $rowSelectedBackgroundHover !important;
+					}
+				}
 			}
 		}
 
@@ -246,7 +250,7 @@ $table-cell-padding-sm: 5px;
 
 					@media (hover:hover) and (pointer:fine){
 						&.tabulator-selectable:hover{
-							background-color:$rowHoverBackground;
+							background-color:$rowHoverBackground !important;
 							cursor: pointer;
 						}
 
@@ -349,26 +353,26 @@ $table-cell-padding-sm: 5px;
 	}
 
 	&.table-striped{
-		&:not(.table-dark),
-		html:not([data-bs-theme="dark"]) &{
+		&:not(.table-dark) &,
+		html:not([data-bs-theme="dark"]) {
 			.tabulator-row{
 				&.tabulator-row-even{
 					background-color: $rowAltBackgroundColor;
+				}
 
-					&.tabulator-selected{
-						background-color:$rowSelectedBackground !important;
+				&.tabulator-selected{
+					background-color:$rowSelectedBackground !important;
+				}
+
+				@media (hover:hover) and (pointer:fine){
+					&.tabulator-selectable:hover{
+						background-color:$rowHoverBackground !important;
+						cursor: pointer;
 					}
-
-					@media (hover:hover) and (pointer:fine){
-						&.tabulator-selectable:hover{
-							background-color:$rowHoverBackground !important;
-							cursor: pointer;
-						}
-						
-						&.tabulator-selected:hover{
-							background-color:$rowSelectedBackgroundHover !important;
-							cursor: pointer;
-						}
+					
+					&.tabulator-selected:hover{
+						background-color:$rowSelectedBackgroundHover !important;
+						cursor: pointer;
 					}
 				}
 			}
@@ -380,9 +384,26 @@ $table-cell-padding-sm: 5px;
 				&:nth-child(even){
 					background-color: $table-dark-striped-bg !important;
 					.tabulator-cell{
-						background-color: inherit;
+						background-color: inherit !important;
+					}
+
+					&.tabulator-selected{
+						background-color:$rowSelectedBackground !important;
+					}
+
+					@media (hover:hover) and (pointer:fine){
+						&.tabulator-selectable:hover{
+							background-color:$table-dark-hover-bg !important;
+							cursor: pointer;
+						}
+						
+						&.tabulator-selected:hover{
+							background-color:$rowSelectedBackgroundHover !important;
+							cursor: pointer;
+						}
 					}
 				}
+
 			}
 		}
 	}
@@ -418,18 +439,31 @@ $table-cell-padding-sm: 5px;
 			background-color: $table-dark-bg;
 			color: $table-dark-color;
 
-			@media (hover:hover) and (pointer:fine){
-				&:hover{
-					background-color: $table-dark-border-color;
+			&.tabulator-selectable{
+				@media (hover:hover) and (pointer:fine){
+					&:hover{
+						background-color: $table-dark-hover-bg !important;
 
-					.tabulator-cell{
-						background-color: $rowSelectedBackgroundHover !important;
+						.tabulator-cell{
+							background-color: inherit !important;
+						}
 					}
 				}
 			}
 
+
 			&.tabulator-selected{
 				background-color:$rowSelectedBackground !important;
+
+				@media (hover:hover) and (pointer:fine){
+					&:hover{
+						background-color: $rowSelectedBackgroundHover !important;
+
+						.tabulator-cell{
+							background-color: inherit !important;
+						}
+					}
+				}
 			}
 		}
 
