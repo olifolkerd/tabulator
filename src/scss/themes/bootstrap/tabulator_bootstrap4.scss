@@ -218,26 +218,16 @@ $table-cell-padding-sm: 5px;
 
 			@media (hover:hover) and (pointer:fine){
 				&:hover{
-					background-color: $table-dark-hover-bg;
+					background-color: $table-dark-border-color;
 
 					.tabulator-cell{
-						background-color: inherit !important;
+						background-color: $table-dark-hover-bg;
 					}
 				}
 			}
 
 			&.tabulator-selected{
 				background-color:$rowSelectedBackground;
-
-				@media (hover:hover) and (pointer:fine){
-					&:hover{
-						background-color: $rowSelectedBackgroundHover;
-
-						.tabulator-cell{
-							background-color: inherit !important;
-						}
-					}
-				}
 			}
 		}
 
