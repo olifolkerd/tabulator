@@ -567,7 +567,7 @@ export default class VirtualDomVertical extends Renderer{
 		if(paddingAdjust){
 			this.vDomBottomPad -= paddingAdjust;
 
-			if(this.vDomBottomPad < 0 || index == rows.length -1){
+			if(this.vDomBottomPad < 0 || index >= rows.length -1){
 				this.vDomBottomPad = 0;
 			}
 
