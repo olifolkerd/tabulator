@@ -203,8 +203,13 @@ export default class SelectRow extends Module{
 			this.toggleRow(row);
 			this.lastClickedRow = row;
 		}else{
-			this.deselectRows(undefined, true);
-			this.selectRows(row);
+			// If the row is already selected, deselect it. Otherwise, select it and deselect others.
+			if (this.isRowSelected(row)) {
+				this.deselectRows(row, true);
+			} else {
+				this.deselectRows(undefined, true);
+				this.selectRows(row);
+			}
 			this.lastClickedRow = row;
 		}
 	}
