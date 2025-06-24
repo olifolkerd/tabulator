@@ -203,10 +203,6 @@ export default class SelectRow extends Module{
 			this.toggleRow(row);
 			this.lastClickedRow = row;
 		} else{
-			// Handle row clicked without SHIFT/CTRL:
-			// - If the clicked row is the only selected row: Deselect it.
-			// - If the clicked row is one of multiple selected rows: Make it the only selected row (deselect others).
-			// - If the clicked row is not currently selected: Deselect all others and select the clicked row.
 			this.deselectRows(undefined, true);
 
 			if (this.selectedRows.length === 1 && this.isRowSelected(row)) {
