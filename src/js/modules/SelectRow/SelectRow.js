@@ -202,9 +202,8 @@ export default class SelectRow extends Module{
 		else if(e.ctrlKey || e.metaKey){
 			this.toggleRow(row);
 			this.lastClickedRow = row;
-		} else{
+		}else{
 			this.deselectRows(undefined, true);
-
 			if (this.selectedRows.length === 1 && this.isRowSelected(row)) {
 				// do nothing
 			} else {
