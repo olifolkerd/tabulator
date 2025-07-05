@@ -312,7 +312,7 @@ export default class VirtualDomVertical extends Renderer{
 				element.appendChild(rowFragment);
 				
 				// NOTE: The next 3 loops are separate on purpose
-				// This is to batch up the dom writes and reads which drastically improves performance 
+				// This is to batch up the dom writes and reads which drastically improves performance
 
 				renderedRows.forEach((row) => {
 					row.rendered();
@@ -329,8 +329,8 @@ export default class VirtualDomVertical extends Renderer{
 				});
 
 				renderedRows.forEach((row) => {
-					rowHeight = row.getHeight();
-					
+					rowHeight = row.getHeight() || row.element.offsetHeight || this.vDomRowHeight;
+
 					if(totalRowsRendered < topPad){
 						topPadHeight += rowHeight;
 					}else {
@@ -567,7 +567,7 @@ export default class VirtualDomVertical extends Renderer{
 		if(paddingAdjust){
 			this.vDomBottomPad -= paddingAdjust;
 
-			if(this.vDomBottomPad < 0 || index == rows.length -1){
+			if(this.vDomBottomPad < 0 || index >= rows.length -1){
 				this.vDomBottomPad = 0;
 			}
 
