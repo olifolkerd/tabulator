@@ -111,7 +111,7 @@ export default class ResizeTable extends Module{
 	
 	initializeVisibilityObserver(){
 		this.visibilityObserver = new IntersectionObserver((entries) => {
-			this.visible = entries[0].isIntersecting;
+			this.visible = entries[entries.length - 1].isIntersecting;
 			
 			if(!this.initialized){
 				this.initialized = true;

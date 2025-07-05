@@ -100,4 +100,39 @@ describe("ResizeTable module", () => {
         // Clean up
         redrawSpy.mockRestore();
     });
+
+    it('should determine whether to redraw table or not using latest visibility state from batched IntersectionObserver entries', () => {
+		let observedElements = [];
+        let observerCallback;
+        let redrawTableCalled = false;
+
+		// mock intersectionObserver
+		global.IntersectionObserver = jest.fn((callback) => {
+			observerCallback = callback;
+			return {
+				observe: jest.fn((el) => observedElements.push(el)),
+				unobserve: jest.fn(),
+				disconnect: jest.fn()
+			};
+		});
+
+		// mock redrawTable
+		resizeTableMod.redrawTable = function() {
+			redrawTableCalled = true;
+		};
+
+        resizeTableMod.initializeVisibilityObserver();
+
+        // reproduce IntersectionObserver being called when table rendered for the first time
+		observerCallback([
+			{ target: tabulator.element, isIntersecting: true },
+		]);
+
+        observerCallback([
+            { target: tabulator.element, isIntersecting: false },
+            { target: tabulator.element, isIntersecting: true },
+        ]);
+
+        expect(redrawTableCalled).toBe(true);
+    });
 });
