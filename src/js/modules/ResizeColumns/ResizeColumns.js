@@ -212,14 +212,13 @@ export default class ResizeColumns extends Module{
 	}
 
 	getResizingClientX(e){
-		let x;
-		if (typeof e.clientX !== "undefined") return x = e.clientX;
+		if (typeof e.clientX !== "undefined") return e.clientX;
 
 		const touch = this.table.options.resizableColumnGuide
 			? e.changedTouches?.[0]
 			: e.touches?.[0];
 
-		return x = touch?.clientX;
+		return touch?.clientX;
 	}
 	
 	resize(e, column){
