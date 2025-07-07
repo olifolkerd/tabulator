@@ -1,30 +1,28 @@
-export default class Helpers{
-
-	static elVisible(el){
+export default class Helpers {
+	static elVisible(el) {
 		return !(el.offsetWidth <= 0 && el.offsetHeight <= 0);
 	}
 
-	static elOffset(el){
+	static elOffset(el) {
 		var box = el.getBoundingClientRect();
 
 		return {
 			top: box.top + window.pageYOffset - document.documentElement.clientTop,
-			left: box.left + window.pageXOffset - document.documentElement.clientLeft
+			left: box.left + window.pageXOffset - document.documentElement.clientLeft,
 		};
 	}
 
-	static retrieveNestedData(separator, field, data){
+	static retrieveNestedData(separator, field, data) {
 		var structure = separator ? field.split(separator) : [field],
-		length = structure.length,
-		output;
+			length = structure.length,
+			output;
 
-		for(let i = 0; i < length; i++){
-
+		for (let i = 0; i < length; i++) {
 			data = data[structure[i]];
 
 			output = data;
 
-			if(!data){
+			if (!data) {
 				break;
 			}
 		}
@@ -32,7 +30,7 @@ export default class Helpers{
 		return output;
 	}
 
-	static deepClone(obj, clone, list = []){
+	static deepClone(obj,clone, circularRefs = new WeakMap()){
 		var objectProto = {}.__proto__,
 		arrayProto = [].__proto__;
 
@@ -41,22 +39,16 @@ export default class Helpers{
 		}
 
 		for(var i in obj) {
-			let subject = obj[i],
-			match, copy;
-
+			let subject = obj[i];
 			if(subject != null && typeof subject === "object" && (subject.__proto__ === objectProto || subject.__proto__ === arrayProto)){
-				match = list.findIndex((item) => {
-					return item.subject === subject;
-				});
-
-				if(match > -1){
-					clone[i] = list[match].copy;
+				const match = circularRefs.get(subject);
+				if(match){
+					clone[i] = match;
 				}else{
-					copy = Object.assign(Array.isArray(subject) ? [] : {}, subject);
+					const copy = Object.assign(Array.isArray(subject) ? [] : {}, subject);
+					circularRefs.set(obj, copy);
 
-					list.unshift({subject, copy});
-
-					clone[i] = this.deepClone(subject, copy, list);
+					clone[i] = this.deepClone(subject, copy, circularRefs);
 				}
 			}
 		}
