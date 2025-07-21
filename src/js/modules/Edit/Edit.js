@@ -69,13 +69,15 @@ export default class Edit extends Module{
 		this.subscribe("data-refreshing", this.cancelEdit.bind(this));
 		this.subscribe("clipboard-paste", this.pasteBlocker.bind(this));
 		
-		this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
-		this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
-		
-		// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
-		// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
-		this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
-		this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
+		if (!this.confirm("edit-nav-disabled")) {
+			this.subscribe("keybinding-nav-prev", this.navigatePrev.bind(this, undefined));
+			this.subscribe("keybinding-nav-next", this.keybindingNavigateNext.bind(this));
+			
+			// this.subscribe("keybinding-nav-left", this.navigateLeft.bind(this, undefined));
+			// this.subscribe("keybinding-nav-right", this.navigateRight.bind(this, undefined));
+			this.subscribe("keybinding-nav-up", this.navigateUp.bind(this, undefined));
+			this.subscribe("keybinding-nav-down", this.navigateDown.bind(this, undefined));
+		}
 
 		if(Object.keys(this.table.options).includes("editorEmptyValue")){
 			this.convertEmptyValues = true;
