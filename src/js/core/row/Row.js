@@ -437,6 +437,11 @@ export default class Row extends CoreFeature{
 		
 		this.element = false;
 		this.modules = {};
+
+		this.initialized = false;
+		this.heightInitialized = false;
+		this.component = null;
+		this.created = false;
 	}
 
 	isDisplayed(){
