@@ -248,16 +248,26 @@ export default class DataTree extends Module{
 				config.branchEl = this.branchEl.cloneNode(true);
 				el.insertBefore(config.branchEl, el.firstChild);
 
-				let indentValue = (config.index * this.indent) + "px";
-	
+				let computed = window.getComputedStyle(config.branchEl);
+				let baseMargin = this.table.rtl 
+					? parseInt(computed.marginRight) || 0
+					: parseInt(computed.marginLeft) || 0;
+
+				let indentValue = baseMargin + (config.index * this.indent) + "px";
+
 				if(this.table.rtl){
 					config.branchEl.style.marginRight = indentValue;
 				}else{
 					config.branchEl.style.marginLeft = indentValue;
 				}
 			}else{
-				let paddingValue = (config.index * this.indent) + "px";
-	
+				let computed = window.getComputedStyle(el);
+				let basePadding = this.table.rtl 
+					? parseInt(computed.paddingRight) || 0
+					: parseInt(computed.paddingLeft) || 0;
+
+				let paddingValue = basePadding + (config.index * this.indent) + "px";
+
 				if(this.table.rtl){
 					el.style.paddingRight = paddingValue;
 				}else{
