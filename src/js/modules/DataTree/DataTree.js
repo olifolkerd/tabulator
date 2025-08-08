@@ -249,17 +249,30 @@ export default class DataTree extends Module{
 				config.branchEl = this.branchEl.cloneNode(true);
 				el.insertBefore(config.branchEl, el.firstChild);
 
-				if(this.table.rtl){
-					config.branchEl.style.marginRight = (((config.branchEl.offsetWidth + config.branchEl.style.marginLeft) * (config.index - 1)) + (config.index * this.indent)) + "px";
-				}else{
-					config.branchEl.style.marginLeft = (((config.branchEl.offsetWidth + config.branchEl.style.marginRight) * (config.index - 1)) + (config.index * this.indent)) + "px";
-				}
-			}else{
+				let computed = window.getComputedStyle(config.branchEl);
+				let baseMargin = this.table.rtl 
+					? parseInt(computed.marginRight) || 0
+					: parseInt(computed.marginLeft) || 0;
+
+				let indentValue = baseMargin + (config.index * this.indent) + "px";
 
 				if(this.table.rtl){
-					el.style.paddingRight = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-right')) + (config.index * this.indent) + "px";
+					config.branchEl.style.marginRight = indentValue;
 				}else{
-					el.style.paddingLeft = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) + (config.index * this.indent) + "px";
+					config.branchEl.style.marginLeft = indentValue;
+				}
+			}else{
+				let computed = window.getComputedStyle(el);
+				let basePadding = this.table.rtl 
+					? parseInt(computed.paddingRight) || 0
+					: parseInt(computed.paddingLeft) || 0;
+
+				let paddingValue = basePadding + (config.index * this.indent) + "px";
+
+				if(this.table.rtl){
+					el.style.paddingRight = paddingValue;
+				}else{
+					el.style.paddingLeft = paddingValue;
 				}
 			}
 		}
