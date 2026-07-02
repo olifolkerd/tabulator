@@ -509,6 +509,7 @@ export default class VirtualDomVertical extends Renderer{
 
 		if(paddingAdjust){
 			this.vDomTopPad += paddingAdjust;
+			this.vDomTopPad = Math.max(this.vDomTopPad, 0);
 			this.tableElement.style.paddingTop = this.vDomTopPad + "px";
 			this.vDomScrollPosTop += this.vDomTop ? paddingAdjust : paddingAdjust + this.vDomWindowBuffer;
 		}
