@@ -32,7 +32,7 @@ export default class Helpers{
 		return output;
 	}
 
-	static deepClone(obj, clone, list = []){
+	static deepClone(obj, clone, circularRefs = new WeakMap()){
 		var objectProto = {}.__proto__,
 		arrayProto = [].__proto__;
 
@@ -40,23 +40,22 @@ export default class Helpers{
 			clone = Object.assign(Array.isArray(obj) ? [] : {}, obj);
 		}
 
+		//map each source object to its clone so shared/circular references resolve
+		//to the same clone instead of being re-cloned (O(1) lookup vs a scanned list)
+		circularRefs.set(obj, clone);
+
 		for(var i in obj) {
-			let subject = obj[i],
-			match, copy;
+			let subject = obj[i];
 
 			if(subject != null && typeof subject === "object" && (subject.__proto__ === objectProto || subject.__proto__ === arrayProto)){
-				match = list.findIndex((item) => {
-					return item.subject === subject;
-				});
+				const existing = circularRefs.get(subject);
 
-				if(match > -1){
-					clone[i] = list[match].copy;
+				if(existing){
+					clone[i] = existing;
 				}else{
-					copy = Object.assign(Array.isArray(subject) ? [] : {}, subject);
+					let copy = Object.assign(Array.isArray(subject) ? [] : {}, subject);
 
-					list.unshift({subject, copy});
-
-					clone[i] = this.deepClone(subject, copy, list);
+					clone[i] = this.deepClone(subject, copy, circularRefs);
 				}
 			}
 		}
