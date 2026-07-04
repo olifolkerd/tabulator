@@ -410,7 +410,11 @@ export default class Edit{
 			this._resolveValue(true);
 		}else{
 			if(this.focusedItem){
-				this._chooseItem(this.focusedItem);
+				if(this.isFilter && !this.params.multiselect && this.focusedItem.selected){
+					this._resolveValue();
+				}else{
+					this._chooseItem(this.focusedItem);
+				}
 			}
 		}
 	}
@@ -655,6 +659,10 @@ export default class Edit{
 			this.lastAction = "typing";
 		}
 		
+		if(this.params.multiselect) {
+			this.initialValues = null;
+		}
+		
 		this.data = data;
 		
 		return data;    
@@ -678,7 +686,19 @@ export default class Edit{
 				original:option,
 			};
 			
-			if(this.initialValues && this.initialValues.indexOf(option.value) > -1){
+			if(this.params.multiselect){
+				var existingIndex = this.currentItems.findIndex(existing => existing.value === option.value);
+				if(existingIndex > -1){
+					if(this.focusedItem === this.currentItems[existingIndex]){
+						this.focusedItem = item;
+					}
+					
+					this.currentItems[existingIndex] = item;
+					item.selected = true;
+				}else if(this.initialValues && this.initialValues.indexOf(option.value) > -1){
+					this._chooseItem(item, true);
+				}
+			}else if(this.initialValues && this.initialValues.indexOf(option.value) > -1){
 				this._chooseItem(item, true);
 			}
 		}
@@ -997,6 +1017,12 @@ export default class Edit{
 			this._styleItem(item);
 			
 		}else{
+			if(this.isFilter && !silent && item.selected){
+				this._clearChoices();
+				this.input.value = "";
+				this._resolveValue();
+				return;
+			}
 			this.currentItems = [item];
 			item.selected = true;
 			
@@ -1032,6 +1058,8 @@ export default class Edit{
 			}else{
 				if(this.currentItems[0]){
 					output = this.currentItems[0].value;
+				}else if(this.isFilter && this.focusedItem && this.focusedItem.selected){
+					output = this.focusedItem.value;
 				}else{
 					initialValue = Array.isArray(this.initialValues) ? this.initialValues[0] : this.initialValues;
 					

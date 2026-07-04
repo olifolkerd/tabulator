@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tabulator Example — 04 Editing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../dist/css/tabulator_bootstrap5.css" />
+  <script src="../dist/js/tabulator.js"></script>
+</head>
+<body>
+  <main class="container py-4">
+    <h1>04 · Inline Editing &amp; Validation</h1>
+    <p>
+      Double-click (or click) a cell to edit it. This shows the <code>input</code>,
+      <code>number</code>, <code>list</code>, <code>star</code>, <code>tickCross</code>
+      and the built-in <code>date</code> editors, plus validators. Edits are logged below.
+      <a href="index.html">← back to index</a>
+    </p>
+
+    <div id="example-table"></div>
+
+    <h2>Edit log</h2>
+    <pre id="log" aria-live="polite">No edits yet — change a cell above.</pre>
+  </main>
+
+  <script>
+    var tabledata = [
+      { id: 1, name: "Oli Bob",   location: "United Kingdom", progress: 12, gender: "male",   rating: 1, dob: "2005-08-14", driver: true },
+      { id: 2, name: "Mary May",  location: "Germany",        progress: 90, gender: "female", rating: 4, dob: "1989-02-01", driver: false },
+      { id: 3, name: "Chris L.",  location: "France",         progress: 42, gender: "male",   rating: 0, dob: "1980-11-23", driver: true },
+      { id: 4, name: "Margret M.",location: "Sweden",         progress: 16, gender: "female", rating: 5, dob: "1998-06-30", driver: true },
+    ];
+
+    var logEl = document.getElementById("log");
+
+    var table = new Tabulator("#example-table", {
+      data: tabledata,
+      layout: "fitColumns",
+      columns: [
+        // Plain text input with a "required" validator.
+        { title: "Name", field: "name", editor: "input", validator: "required" },
+
+        // List editor that auto-populates its options from existing column values.
+        { title: "Location", field: "location", editor: "list",
+          editorParams: { autocomplete: true, allowEmpty: true, listOnEmpty: true, valuesLookup: true } },
+
+        // Number editor constrained to 0-100, shown as a progress bar.
+        { title: "Progress", field: "progress", sorter: "number", formatter: "progress",
+          editor: "number", editorParams: { min: 0, max: 100 },
+          validator: ["min:0", "max:100"] },
+
+        // List editor with an explicit value map.
+        { title: "Gender", field: "gender", editor: "list",
+          editorParams: { values: { male: "Male", female: "Female", unknown: "Unknown" } } },
+
+        // Star editor — click a star to set the rating.
+        { title: "Rating", field: "rating", formatter: "star", hozAlign: "center",
+          width: 130, editor: "star" },
+
+        // Built-in date editor using a native <input type="date"> (no external libs).
+        { title: "Date Of Birth", field: "dob", sorter: "date", hozAlign: "center",
+          editor: "date" },
+
+        // Boolean toggled with a tick/cross editor.
+        { title: "Driver", field: "driver", hozAlign: "center", formatter: "tickCross",
+          editor: "tickCross" },
+      ],
+    });
+
+    // In Tabulator 6 you bind event callbacks with table.on(...).
+    // cellEdited fires after a cell is successfully edited.
+    table.on("cellEdited", function (cell) {
+      var msg = cell.getField() + " (row " + cell.getRow().getIndex() + "): "
+        + JSON.stringify(cell.getOldValue()) + " → " + JSON.stringify(cell.getValue());
+      logEl.textContent = msg + "\n" + logEl.textContent;
+    });
+  </script>
+</body>
+</html>

@@ -9,6 +9,8 @@ export default function(a, b, aRow, bRow, column, dir, params){
 		if(!DT.isDateTime(a)){
 			if(format === "iso"){
 				a = DT.fromISO(String(a));
+			}else if(format === "x"){
+				a = DT.fromMillis(a);
 			}else{
 				a = DT.fromFormat(String(a), format);
 			}
@@ -17,6 +19,8 @@ export default function(a, b, aRow, bRow, column, dir, params){
 		if(!DT.isDateTime(b)){
 			if(format === "iso"){
 				b = DT.fromISO(String(b));
+			}else if(format === "x"){
+				b = DT.fromMillis(b);
 			}else{
 				b = DT.fromFormat(String(b), format);
 			}

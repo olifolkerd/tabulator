@@ -418,6 +418,10 @@ class Tabulator extends ModuleBinder{
 	getDataCount(active){
 		return this.rowManager.getDataCount(active);
 	}
+
+	getRedrawBlock() {
+		return this.rowManager.redrawBlock || this.columnManager.redrawBlock;
+	}
 	
 	//replace data, keeping table in position with same sort
 	replaceData(data, params, config){

@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator Menu Test</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	html, body {
+		margin: 0;
+		padding: 0;
+		height: 100%;
+		overflow: hidden;
+		font-family: Arial, sans-serif;
+	}
+	#test-table {
+		width: 100vw;
+		height: 100vh;
+	}
+	</style>
+</head>
+<body>
+	<div id="test-table"></div>
+
+	<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		const testData = [];
+		for (let i = 1; i <= 50; i++) {
+			testData.push({
+				id: i,
+				name: "Person " + i,
+				age: 20 + (i % 50),
+				gender: i % 2 ? "Male" : "Female",
+			});
+		}
+
+		const columns = [
+			{ title: "ID", field: "id", sorter: "number" },
+			{ title: "Name", field: "name", sorter: "string" },
+			{ title: "Age", field: "age", sorter: "number" },
+			{ title: "Gender", field: "gender", sorter: "string" },
+		];
+
+		const rowContextMenu = [];
+		for (let i = 1; i <= 12; i++) {
+			rowContextMenu.push({
+				label: "Long menu item number " + i,
+				action: function () {},
+			});
+		}
+
+		window.testTable = new Tabulator("#test-table", {
+			data: testData,
+			columns: columns,
+			layout: "fitColumns",
+			rowContextMenu: rowContextMenu,
+		});
+	});
+	</script>
+</body>
+</html>

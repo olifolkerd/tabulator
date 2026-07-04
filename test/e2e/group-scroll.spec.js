@@ -63,15 +63,28 @@ test.describe("Grouped table virtual scrolling (#4219, #4525)", () => {
 			groups[Math.floor(groups.length / 2) + 2].toggle();
 
 			return new Promise((resolve) => {
-				setTimeout(
-					() => resolve({ before, after: holder.scrollTop }),
-					200,
-				);
+				setTimeout(() => resolve({ before, after: holder.scrollTop }), 200);
 			});
 		}, holderSel);
 
 		// Before the fix expanding a group reset the scroll position to 0.
 		expect(result.before).toBeGreaterThan(0);
 		expect(result.after).toBeGreaterThan(result.before * 0.8);
+	});
+
+	test("should not shrink group rows and their content horizontally when scrolling down (#4877)", async ({ page }) => {
+		const borderOffset = 2;
+
+		await page.evaluate(() => window.testTable.getGroups()[0].toggle());
+		await page.waitForTimeout(200);
+
+		await page.mouse.wheel(0, 400);
+		await page.waitForTimeout(200);
+
+		const [tableWidth, groupWidth] = await page.evaluate(() => [
+			window.testTable.element.offsetWidth,
+			window.testTable.getGroups()[18].getElement().offsetWidth,
+		]);
+		expect(groupWidth).toBe(tableWidth - borderOffset);
 	});
 });

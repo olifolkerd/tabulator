@@ -38,19 +38,17 @@
 			return data;
 		}
 
-		document.addEventListener("DOMContentLoaded", () => {
-			window.testTable = new Tabulator("#test-table", {
-				data: generateData(),
-				columns: [
-					{ title: "Name", field: "name" },
-					{ title: "Category", field: "category" },
-					{ title: "Value", field: "value", sorter: "number" },
-				],
-				height: "300px",
-				layout: "fitColumns",
-				groupBy: "category",
-				groupStartOpen: false,
-			});
+		window.testTable = new Tabulator("#test-table", {
+			data: generateData(),
+			columns: [
+				{ title: "Name", field: "name" },
+				{ title: "Category", field: "category" },
+				{ title: "Value", field: "value", sorter: "number" },
+			],
+			height: "300px",
+			layout: "fitColumns",
+			groupBy: "category",
+			groupStartOpen: false,
 		});
 	</script>
 </body>

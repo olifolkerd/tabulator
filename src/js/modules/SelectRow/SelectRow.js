@@ -204,7 +204,11 @@ export default class SelectRow extends Module{
 			this.lastClickedRow = row;
 		}else{
 			this.deselectRows(undefined, true);
-			this.selectRows(row);
+			if (this.selectedRows.length === 1 && this.isRowSelected(row)) {
+				// do nothing
+			} else {
+				this.selectRows(row);
+			}
 			this.lastClickedRow = row;
 		}
 	}

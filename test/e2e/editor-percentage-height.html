@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator Percentage Height Editor Test</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	body {
+		font-family: Arial, sans-serif;
+	}
+	/*
+		NOTE: intentionally no fixed height on html/body, matching the issue's
+		jsfiddle. The "50%" table height therefore resolves against a
+		content-sized body, which is what triggers the ResizeObserver loop.
+	*/
+	</style>
+</head>
+<body>
+	<!--
+		Reproduction for https://github.com/tabulator-tables/tabulator/issues/4142
+		"Text area unclickable when tabulator height set to a percentage"
+
+		Matches the configuration from the issue's working example:
+		https://jsfiddle.net/kmtg6pf1/
+	-->
+	<div id="percent-table"></div>
+
+	<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		const tabledata = [
+			{
+				id: 1,
+				info: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+			},
+		];
+
+		// Create global reference for tests to access
+		window.testTable = new Tabulator("#percent-table", {
+			data: tabledata,
+			height: "50%",
+			layout: "fitColumns",
+			columns: [
+				{
+					title: "Info",
+					field: "info",
+					editor: "textarea",
+					formatter: "textarea",
+				},
+			],
+		});
+	});
+	</script>
+</body>
+</html>

@@ -210,10 +210,26 @@ export default class ResizeColumns extends Module{
 			component.modules.resize.handleEl.style.height = height;
 		}
 	}
+
+	getResizingClientX(e){
+		if (typeof e.clientX !== "undefined") return e.clientX;
+
+		const touch = this.table.options.resizableColumnGuide
+			? e.changedTouches?.[0]
+			: e.touches?.[0];
+
+		return touch?.clientX;
+	}
 	
 	resize(e, column){
-		var x = typeof e.clientX === "undefined" ? e.touches[0].clientX : e.clientX,
-		startDiff = x - this.startX,
+		var x = this.getResizingClientX(e);
+
+		if (typeof x !== "number" || !isFinite(x)) {
+			console.warn("ResizeColumns: could not resolve pointer X from event", e);
+			return;
+		}
+
+		var startDiff = x - this.startX,
 		moveDiff = x - this.latestX,
 		blockedBefore, blockedAfter;
 

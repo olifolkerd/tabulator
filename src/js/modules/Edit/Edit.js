@@ -489,6 +489,12 @@ export default class Edit extends Module{
 			
 			cell.table.element.classList.remove("tabulator-editing");
 		}
+
+		//release the redraw block taken when the editor opened, running any redraw
+		//(e.g. a resize) that was deferred while editing.
+		if(this.table.getRedrawBlock()){
+			this.table.restoreRedraw();
+		}
 	}
 	
 	cancelEdit(){
@@ -711,13 +717,16 @@ export default class Edit extends Module{
 		}
 		
 		if(!cell.column.modules.edit.blocked){
-			if(e){
-				e.stopPropagation();
-			}
-			
 			allowEdit = this.allowEdit(cell);
-			
+
 			if(allowEdit || forceEdit){
+				//only stop event propagation once we know the cell will be edited,
+				//otherwise non-editable cells would swallow clicks meant for other
+				//handlers such as the cellClick callback (#4421)
+				if(e){
+					e.stopPropagation();
+				}
+
 				self.cancelEdit();
 				
 				self.currentCell = cell;
@@ -753,7 +762,12 @@ export default class Edit extends Module{
 						cell.table.element.classList.add("tabulator-editing");
 						while(element.firstChild) element.removeChild(element.firstChild);
 						element.appendChild(cellEditor);
-						
+
+						//block table redraws while the editor is open so a redraw (e.g. a
+						//resize, or a % height editor growing the table, #4142) cannot
+						//re-render the rows and tear the editor down. Released in clearEditor.
+						this.table.blockRedraw();
+
 						//trigger onRendered Callback
 						rendered();
 						

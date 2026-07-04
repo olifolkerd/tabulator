@@ -31,6 +31,8 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		if(DT){
 			if(DT.isDateTime(cellValue)){
 				newDatetime = cellValue;
+			}else if(inputFormat === "x"){
+				newDatetime = DT.fromMillis(cellValue);
 			}else if(inputFormat === "iso"){
 				newDatetime = DT.fromISO(String(cellValue));
 			}else{
@@ -71,6 +73,10 @@ export default function(cell, onRendered, success, cancel, editorParams){
 						value = luxTime;
 						break;
 
+					case "x":
+						value = luxTime.toMillis();
+						break;
+					
 					case "iso":
 						value = luxTime.toISO();
 						break;

@@ -1,5 +1,6 @@
 import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import Format from "../../../src/js/modules/Format/Format";
+import { DateTime } from "luxon";
 
 describe("Format module", () => {
     /** @type {TabulatorFull} */
@@ -111,5 +112,99 @@ describe("Format module", () => {
         const printConfig = formatMod.lookupTypeFormatter(column, "Print");
         expect(printConfig.formatter).toBeDefined();
         expect(printConfig.params).toEqual({ prefix: "Print-" });
+    });
+});
+
+describe("Format module - 'x' (epoch milliseconds) input format", () => {
+    // 2021-05-10T00:00:00.000Z
+    const EPOCH_MS = 1620604800000;
+
+    /** @type {TabulatorFull} */
+    let tabulator;
+
+    // Builds a table with luxon injected as a dependency, the way a consumer
+    // would wire it in, then resolves once the table (and its cells) are rendered.
+    const buildTable = async (columns, data) => {
+        const el = document.createElement("div");
+        el.id = "tabulator";
+        document.body.appendChild(el);
+        tabulator = new TabulatorFull("#tabulator", {
+            dependencies: { luxon: { DateTime } },
+            data,
+            columns,
+        });
+        return new Promise((resolve) => {
+            tabulator.on("tableBuilt", () => resolve());
+        });
+    };
+
+    afterEach(() => {
+        tabulator.destroy();
+        document.getElementById("tabulator")?.remove();
+    });
+
+    it("datetime formatter parses an epoch-ms value via inputFormat 'x'", async () => {
+        await buildTable(
+            [{
+                title: "TS", field: "ts", formatter: "datetime",
+                formatterParams: { inputFormat: "x", outputFormat: "yyyy-MM-dd", timezone: "UTC" },
+            }],
+            [{ id: 1, ts: EPOCH_MS }]
+        );
+
+        const cellEl = tabulator.getRows()[0].getCell("ts").getElement();
+        expect(cellEl.innerHTML).toBe("2021-05-10");
+    });
+
+    it("datetimediff formatter measures the diff of an epoch-ms value via inputFormat 'x'", async () => {
+        await buildTable(
+            [{
+                title: "TS", field: "ts", formatter: "datetimediff",
+                formatterParams: { inputFormat: "x", unit: "days", date: DateTime.fromMillis(EPOCH_MS) },
+            }],
+            [{ id: 1, ts: EPOCH_MS + 3 * 24 * 60 * 60 * 1000 }]
+        );
+
+        const cellEl = tabulator.getRows()[0].getCell("ts").getElement();
+        expect(cellEl.innerHTML).toBe("3");
+    });
+});
+
+describe("Format module - formatters with BigInt values", () => {
+    // Fix https://github.com/tabulator-tables/tabulator/pull/4895
+    // The star formatter called isNaN() on the raw cell value, which throws
+    // "Cannot convert a BigInt value to a number" for BigInt values. Number.isNaN()
+    // never coerces its argument, so it is safe for BigInt (and any other type).
+
+    /** @type {TabulatorFull} */
+    let tabulator;
+
+    const buildTable = async (columns, data) => {
+        const el = document.createElement("div");
+        el.id = "tabulator";
+        document.body.appendChild(el);
+        tabulator = new TabulatorFull("#tabulator", { data, columns });
+        return new Promise((resolve) => {
+            tabulator.on("tableBuilt", () => resolve());
+        });
+    };
+
+    afterEach(() => {
+        tabulator?.destroy();
+        document.getElementById("tabulator")?.remove();
+    });
+
+    it("star formatter renders the correct number of stars for a BigInt value", async () => {
+        await buildTable(
+            [{ title: "Rating", field: "rating", formatter: "star", formatterParams: { stars: 5 } }],
+            [{ id: 1, rating: 3n }]
+        );
+
+        const cellEl = tabulator.getRows()[0].getCell("rating").getElement();
+        const stars = cellEl.querySelectorAll("svg");
+        const activeStars = cellEl.querySelectorAll('polygon[fill="#FFEA00"]');
+
+        expect(stars.length).toBe(5);
+        expect(activeStars.length).toBe(3);
     });
 });

@@ -192,17 +192,14 @@ export default class GroupRows extends Module{
 	}
 	
 	virtualRenderFill(){
-		var el = this.table.rowManager.tableElement;
-		var rows = this.table.rowManager.getVisibleRows();
-		
-		if(this.table.options.groupBy){
-			rows = rows.filter((row) => {
-				return row.type !== "group";
-			});
-			
-			el.style.minWidth = !rows.length ? this.table.columnManager.getWidth() + "px" : "";
-		}else{
-			return rows;
+		const layout = this.layoutMode();
+		if (
+			layout === "fitDataFill"
+				|| layout === "fitDataStretch"
+				|| layout === "fitColumns"
+		) {
+			this.table.rowManager.tableElement.style.minWidth = 
+				this.table.columnManager.getWidth() + "px";
 		}
 	}
 	

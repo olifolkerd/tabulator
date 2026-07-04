@@ -1,0 +1,42 @@
+name: Tabulator Build & Publish
+
+on:
+  push:
+    tags:
+      # Tabulator tags are not v-prefixed. Match x.y.z and x.y.z-channel.n (e.g. 6.4.1, 5.0.0-alpha.0)
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-*'
+
+permissions:
+  id-token: write # Required for OIDC
+  contents: write # Required for creating a release
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # for OIDC
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        with:
+          generate_release_notes: true
+
+      - name: Publish Package
+        run: npm publish --access public

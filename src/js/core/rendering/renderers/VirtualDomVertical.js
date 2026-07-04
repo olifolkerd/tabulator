@@ -320,7 +320,10 @@ export default class VirtualDomVertical extends Renderer{
 
 				const rowsNeedingHeightInit = [];
 				renderedRows.forEach((row) => {
-					if(!row.heightInitialized) {
+					//(re)calculate the height of any row that has not been sized yet, or
+					//whose cached height is invalid/zero (e.g. it was first measured while
+					//detached), otherwise its bad height poisons the padding calculations.
+					if(!row.heightInitialized || !row.getHeight()) {
 						row.calcHeight(true);
 						rowsNeedingHeightInit.push(row);
 					}
@@ -331,7 +334,7 @@ export default class VirtualDomVertical extends Renderer{
 				});
 
 				renderedRows.forEach((row) => {
-					rowHeight = row.getHeight();
+					rowHeight = row.getHeight() || this.vDomRowHeight;
 
 					if(totalRowsRendered < topPad){
 						topPadHeight += rowHeight;

@@ -144,6 +144,10 @@ export default class Interaction extends Module{
 		var types = Object.values(this.touchWatchers);
 
 		types.forEach((type) => {
+			//tapDbl and tapHold hold timer ids that must be cancelled (tap is just a boolean flag)
+			clearTimeout(type.tapDbl);
+			clearTimeout(type.tapHold);
+
 			for(let key in type){
 				type[key] = null;
 			}

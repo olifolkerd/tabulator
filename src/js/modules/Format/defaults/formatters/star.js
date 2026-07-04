@@ -17,7 +17,7 @@ export default function(cell, formatterParams, onRendered){
 	star.setAttribute("xml:space", "preserve");
 	star.style.padding = "0 1px";
 
-	value = value && !isNaN(value) ? parseInt(value) : 0;
+	value = value && !Number.isNaN(value) ? parseInt(value) : 0;
 
 	value = Math.max(0, Math.min(value, maxStars));
 

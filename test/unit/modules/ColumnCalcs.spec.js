@@ -147,6 +147,45 @@ describe('ColumnCalcs', function(){
 			expect(data[1].name).toBe("Jane");
 		});
 
+		test('rowsToData includes data tree child row data when child calcs are enabled', function(){
+			const childRows = [
+				{getData: function() { return {id: 2, value: 20}; }, modules: {}},
+				{getData: function() { return {id: 3, value: 30}; }, modules: {}},
+			];
+			const parentRow = {
+				getData: function() { return {id: 1, value: 10}; },
+				modules: {
+					dataTree: {
+						open: true,
+					},
+				},
+			};
+
+			const mockThis = {
+				rowsToData: ColumnCalcs.prototype.rowsToData,
+				table: {
+					options: {
+						dataTree: true,
+						dataTreeChildColumnCalcs: true,
+					},
+					modules: {
+						dataTree: {
+							getFilteredTreeChildren: jest.fn(() => childRows),
+						},
+					},
+				},
+			};
+
+			const data = ColumnCalcs.prototype.rowsToData.call(mockThis, [parentRow]);
+
+			expect(data).toEqual([
+				{id: 1, value: 10},
+				{id: 2, value: 20},
+				{id: 3, value: 30},
+			]);
+			expect(mockThis.table.modules.dataTree.getFilteredTreeChildren).toHaveBeenCalledWith(parentRow);
+		});
+
 		test('generateRowData creates calculation results', function(){
 			// Create mock data
 			const data = [

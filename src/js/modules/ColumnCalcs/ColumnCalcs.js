@@ -411,7 +411,7 @@ export default class ColumnCalcs extends Module{
 
 			if(hasDataTreeColumnCalcs && row.modules.dataTree?.open){
 				this.rowsToData(dataTree.getFilteredTreeChildren(row)).forEach(dataRow =>{
-					data.push(row);
+					data.push(dataRow);
 				});
 			}
 		});

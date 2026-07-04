@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tabulator Example — 07 Row Selection</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../dist/css/tabulator_bootstrap5.css" />
+  <script src="../dist/js/tabulator.js"></script>
+</head>
+<body>
+  <main class="container py-4">
+    <h1>07 · Row Selection</h1>
+    <p>
+      Tick the checkbox column to select rows (the header checkbox toggles all). The buttons
+      below select/deselect via the API, and the panel reflects the current selection live.
+      <a href="index.html">← back to index</a>
+    </p>
+
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <button id="select-all" class="btn btn-primary">Select all</button>
+      <button id="deselect-all" class="btn btn-secondary">Deselect all</button>
+      <button id="log-selected" class="btn btn-dark">Log selected data</button>
+    </div>
+
+    <div id="example-table"></div>
+
+    <p><strong>Selected:</strong> <span id="count">0</span> row(s)</p>
+    <pre id="log">—</pre>
+  </main>
+
+  <script>
+    var tabledata = [
+      { id: 1, name: "Oli Bob",    dept: "Engineering", age: 28 },
+      { id: 2, name: "Mary May",   dept: "Sales",       age: 41 },
+      { id: 3, name: "Chris L.",   dept: "Engineering", age: 22 },
+      { id: 4, name: "Brendon P.", dept: "Marketing",   age: 35 },
+      { id: 5, name: "Margret M.", dept: "Sales",       age: 26 },
+      { id: 6, name: "Van Ng",     dept: "Engineering", age: 51 },
+    ];
+
+    var countEl = document.getElementById("count");
+    var logEl = document.getElementById("log");
+
+    var table = new Tabulator("#example-table", {
+      data: tabledata,
+      layout: "fitColumns",
+      selectableRows: true,                 // allow row selection
+      columns: [
+        // Checkbox column: cell tickbox selects the row, header tickbox toggles all.
+        { formatter: "rowSelection", titleFormatter: "rowSelection", hozAlign: "center",
+          headerSort: false, width: 50, cellClick: function (e, cell) { cell.getRow().toggleSelect(); } },
+        { title: "Name", field: "name", sorter: "string" },
+        { title: "Department", field: "dept", sorter: "string" },
+        { title: "Age", field: "age", sorter: "number", hozAlign: "right" },
+      ],
+    });
+
+    // In Tabulator 6 you bind event callbacks with table.on(...).
+    // Keep the on-page summary in sync with selection state.
+    table.on("rowSelectionChanged", function (data, rows) {
+      countEl.textContent = data.length;
+    });
+
+    document.getElementById("select-all").addEventListener("click", function () {
+      table.selectRow();
+    });
+    document.getElementById("deselect-all").addEventListener("click", function () {
+      table.deselectRow();
+    });
+    document.getElementById("log-selected").addEventListener("click", function () {
+      logEl.textContent = JSON.stringify(table.getSelectedData(), null, 2);
+    });
+  </script>
+</body>
+</html>

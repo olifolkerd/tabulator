@@ -16,6 +16,8 @@ $headerMargin:4px !default; //padding round header
 $sortArrowHover: #555 !default;
 $sortArrowActive: #666 !default;
 $sortArrowInactive: #bbb !default;
+$tickColor: #2DC214 !default;
+$crossColor: #CE1515 !default;
 
 $columnResizeGuideColor:#999 !default;
 
@@ -424,9 +426,8 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			}
 		}
 		
-		.tabulator-frozen-rows-holder{	
-			padding-top: 1em;
-			display: inline-block;	
+		.tabulator-frozen-rows-holder{
+			display: inline-block;
 			&:empty{
 				display: none;
 			}
@@ -896,6 +897,14 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		overflow:hidden;
 		text-overflow:ellipsis;
 		outline:none;
+
+		.tabulator-tick{
+			fill:$tickColor;
+		}
+
+		.tabulator-cross{
+			fill:$crossColor;
+		}
 		
 		&.tabulator-row-header{
 			border-right:1px solid $borderColor;
@@ -1680,3 +1689,4 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		}
 	}
 }
+
