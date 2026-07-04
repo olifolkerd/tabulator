@@ -388,6 +388,39 @@ describe("SelectRow module", () => {
         expect(result).toBe(false);
     });
     
+    it("should enforce selectableRows limit when selectRows is called (issue #4881)", () => {
+        // Limit to a single selected row, no rolling reselection assumptions needed
+        mockTable.options.selectableRows = 1;
+        mockTable.options.selectableRowsRollingSelection = true;
+
+        selectRowMod.selectedRows = [];
+
+        // Call selectRow for each row individually, mirroring the jsfiddle in the issue
+        selectRowMod.selectRows(mockRows[0]);
+        selectRowMod.selectRows(mockRows[1]);
+        selectRowMod.selectRows(mockRows[2]);
+
+        // With selectableRows = 1, no more than one row should ever be selected
+        expect(selectRowMod.selectedRows.length).toBe(1);
+        // With rolling selection on, the most recently requested row should be the one selected
+        expect(selectRowMod.selectedRows).toContain(mockRows[2]);
+        expect(selectRowMod.selectedRows).not.toContain(mockRows[0]);
+        expect(selectRowMod.selectedRows).not.toContain(mockRows[1]);
+    });
+
+    it("should not exceed selectableRows limit when selectRows is passed an array (issue #4881)", () => {
+        mockTable.options.selectableRows = 2;
+        mockTable.options.selectableRowsRollingSelection = false;
+
+        selectRowMod.selectedRows = [];
+
+        // Pass all three rows at once; only the first two should be selected
+        selectRowMod.selectRows([mockRows[0], mockRows[1], mockRows[2]]);
+
+        expect(selectRowMod.selectedRows.length).toBe(2);
+        expect(selectRowMod.selectedRows).not.toContain(mockRows[2]);
+    });
+
     it("should handle rolling selection when max rows is reached", () => {
         // Set maximum of 2 selectable rows with rolling selection
         mockTable.options.selectableRows = 2;
