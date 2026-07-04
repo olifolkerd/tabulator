@@ -389,20 +389,11 @@ describe("SelectRow module", () => {
     });
     
     it("should enforce selectableRows limit when selectRows is called (issue #4881)", () => {
-        // Reproduces https://github.com/tabulator-tables/tabulator/issues/4881
-        // selectRow (public API) was ignoring the selectableRows limit because
-        // selectRows() passed force=true to _selectRow, bypassing the cap.
-
         // Limit to a single selected row, no rolling reselection assumptions needed
         mockTable.options.selectableRows = 1;
         mockTable.options.selectableRowsRollingSelection = true;
 
         selectRowMod.selectedRows = [];
-
-        mockTable.rowManager.findRow.mockImplementation((arg) => {
-            if (typeof arg === 'object' && arg !== null) return arg;
-            return mockRows.find(r => r.data.id === arg);
-        });
 
         // Call selectRow for each row individually, mirroring the jsfiddle in the issue
         selectRowMod.selectRows(mockRows[0]);
@@ -422,11 +413,6 @@ describe("SelectRow module", () => {
         mockTable.options.selectableRowsRollingSelection = false;
 
         selectRowMod.selectedRows = [];
-
-        mockTable.rowManager.findRow.mockImplementation((arg) => {
-            if (typeof arg === 'object' && arg !== null) return arg;
-            return mockRows.find(r => r.data.id === arg);
-        });
 
         // Pass all three rows at once; only the first two should be selected
         selectRowMod.selectRows([mockRows[0], mockRows[1], mockRows[2]]);
