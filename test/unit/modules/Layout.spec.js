@@ -227,4 +227,114 @@ describe("Layout module", () => {
         // Verify row height normalization was called (due to textarea formatter)
         expect(mockTable.rowManager.normalizeHeight).toHaveBeenCalledWith(true);
     });
+
+    it("should keep manually resized columns fixed during fitColumns layout", () => {
+        // https://github.com/tabulator-tables/tabulator/issues/4840
+        const userColumn = {
+            visible: true,
+            widthUser: true,
+            definition: {},
+            minWidth: 10,
+            getWidth: jest.fn(() => 180),
+            setWidth: jest.fn()
+        };
+        const flexColumn = {
+            visible: true,
+            widthUser: false,
+            definition: {},
+            minWidth: 10,
+            getWidth: jest.fn(() => 100),
+            setWidth: jest.fn()
+        };
+
+        defaultModes.fitColumns.call(layout, [userColumn, flexColumn]);
+
+        expect(userColumn.setWidth).not.toHaveBeenCalled();
+        expect(flexColumn.setWidth).toHaveBeenCalledWith(600);
+    });
+
+    it("should skip manually resized columns during fitDataFill layout", () => {
+        // https://github.com/tabulator-tables/tabulator/issues/4840
+        const userColumn = {
+            widthUser: true,
+            reinitializeWidth: jest.fn()
+        };
+        const autoColumn = {
+            widthUser: false,
+            reinitializeWidth: jest.fn()
+        };
+
+        defaultModes.fitDataFill.call(layout, [userColumn, autoColumn]);
+
+        expect(userColumn.reinitializeWidth).not.toHaveBeenCalled();
+        expect(autoColumn.reinitializeWidth).toHaveBeenCalled();
+    });
+
+    it("should not stretch a manually resized final column during fitDataStretch layout", () => {
+        // https://github.com/tabulator-tables/tabulator/issues/4840
+        const firstColumn = {
+            visible: true,
+            widthFixed: true,
+            widthUser: false,
+            modules: {},
+            getWidth: jest.fn(() => 100),
+            reinitializeWidth: jest.fn(),
+            setWidth: jest.fn()
+        };
+        const lastColumn = {
+            visible: true,
+            widthFixed: true,
+            widthUser: true,
+            modules: {},
+            getWidth: jest.fn(() => 150),
+            reinitializeWidth: jest.fn(),
+            setWidth: jest.fn()
+        };
+
+        defaultModes.fitDataStretch.call(layout, [firstColumn, lastColumn]);
+
+        expect(lastColumn.setWidth).not.toHaveBeenCalled();
+        expect(lastColumn.reinitializeWidth).not.toHaveBeenCalled();
+    });
+
+    it("should not reset a manually resized final column before responsive fitDataStretch updates", () => {
+        // https://github.com/tabulator-tables/tabulator/issues/4840
+        mockTable.options.responsiveLayout = true;
+        mockTable.modExists = jest.fn(() => true);
+        mockTable.modules.responsiveLayout = {
+            update: jest.fn()
+        };
+
+        const firstColumn = {
+            visible: true,
+            widthFixed: true,
+            widthUser: false,
+            modules: {
+                responsive: {
+                    visible: true
+                }
+            },
+            getWidth: jest.fn(() => 100),
+            reinitializeWidth: jest.fn(),
+            setWidth: jest.fn()
+        };
+        const lastColumn = {
+            visible: true,
+            widthFixed: true,
+            widthUser: true,
+            modules: {
+                responsive: {
+                    visible: true
+                }
+            },
+            getWidth: jest.fn(() => 150),
+            reinitializeWidth: jest.fn(),
+            setWidth: jest.fn()
+        };
+
+        defaultModes.fitDataStretch.call(layout, [firstColumn, lastColumn]);
+
+        expect(lastColumn.setWidth).not.toHaveBeenCalled();
+        expect(mockTable.modules.responsiveLayout.update).not.toHaveBeenCalled();
+    });
 });

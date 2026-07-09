@@ -76,7 +76,8 @@ describe("ResizeColumns module", () => {
         resizeColumnsMod.resize({ clientX: 150 }, mockColumn);
         
         // Verify column width was set
-        expect(mockColumn.setWidth).toHaveBeenCalledWith(150); // 100 + (150 - 100)
+        // https://github.com/tabulator-tables/tabulator/issues/4840
+        expect(mockColumn.setWidth).toHaveBeenCalledWith(150, true); // 100 + (150 - 100)
         
         // Clean up
         dispatchSpy.mockRestore();

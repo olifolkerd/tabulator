@@ -29,6 +29,8 @@ export default class ColumnManager extends CoreFeature {
 		this.redrawBlockUpdate = null; //store latest redraw update only status
 		
 		this.renderer = null;
+		this.tableMinWidthStyled = false;
+		this.columnWidthOverflowAdjustQueued = false;
 	}
 	
 	////////////// Setup Functions /////////////////
@@ -377,6 +379,8 @@ export default class ColumnManager extends CoreFeature {
 			});
 			
 			this.table.rowManager.adjustTableSize();
+			this.adjustForColumnWidthOverflow();
+			this.queueColumnWidthOverflowAdjustment();
 		}
 	}
 	
@@ -520,6 +524,34 @@ export default class ColumnManager extends CoreFeature {
 		return width;
 	}
 	
+	columnWidthOverflow(){
+		return this.getWidth() > this.table.rowManager.element.clientWidth;
+	}
+
+	adjustForColumnWidthOverflow(){
+		if(this.columnWidthOverflow()){
+			// https://github.com/tabulator-tables/tabulator/issues/4840
+			this.table.rowManager.tableElement.style.minWidth = this.getWidth() + "px";
+			this.tableMinWidthStyled = true;
+		}else if(this.tableMinWidthStyled){
+			this.table.rowManager.tableElement.style.minWidth = "";
+			this.tableMinWidthStyled = false;
+		}
+	}
+
+	queueColumnWidthOverflowAdjustment(){
+		if(this.columnWidthOverflowAdjustQueued || typeof requestAnimationFrame !== "function"){
+			return;
+		}
+
+		this.columnWidthOverflowAdjustQueued = true;
+
+		requestAnimationFrame(() => {
+			this.columnWidthOverflowAdjustQueued = false;
+			this.adjustForColumnWidthOverflow();
+		});
+	}
+
 	moveColumn(from, to, after){
 		to.element.parentNode.insertBefore(from.element, to.element);
 		
@@ -672,7 +704,7 @@ export default class ColumnManager extends CoreFeature {
 			
 			if(column.visible){
 				
-				width = column.definition.width || 0;
+				width = column.widthUser ? column.getWidth() : column.definition.width || 0;
 				
 				minWidth = parseInt(column.minWidth);
 				
@@ -747,7 +779,9 @@ export default class ColumnManager extends CoreFeature {
 	
 	rerenderColumns(update, silent){
 		if(!this.redrawBlock){
+			this.adjustForColumnWidthOverflow();
 			this.renderer.rerenderColumns(update, silent);
+			this.queueColumnWidthOverflowAdjustment();
 		}else{
 			if(update === false || (update === true && this.redrawBlockUpdate === null)){
 				this.redrawBlockUpdate = update;

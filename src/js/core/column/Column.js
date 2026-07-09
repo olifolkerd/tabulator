@@ -49,6 +49,7 @@ export default class Column extends CoreFeature{
 		this.minWidth = null; //column minimum width
 		this.minWidthStyled = ""; //column minimum pre-styled to improve render efficiency
 		this.widthFixed = false; //user has specified a width for this column
+		this.widthUser = false; //column width has been manually resized by the user
 		
 		this.visible = true; //default visible state
 		
@@ -662,8 +663,13 @@ export default class Column extends CoreFeature{
 		}
 	}
 	
-	setWidth(width){
+	setWidth(width, user){
 		this.widthFixed = true;
+
+		if(user){
+			this.widthUser = true;
+		}
+
 		this.setWidthActual(width);
 	}
 	
@@ -864,8 +870,13 @@ export default class Column extends CoreFeature{
 		return !column || column.visible ? column : this._prevVisibleColumn(index - 1);
 	}
 	
-	reinitializeWidth(force){
+	reinitializeWidth(force, user){
+		if(this.widthUser && !force){
+			return;
+		}
+
 		this.widthFixed = false;
+		this.widthUser = false;
 		
 		//set width if present
 		if(typeof this.definition.width !== "undefined" && !force){
@@ -875,13 +886,13 @@ export default class Column extends CoreFeature{
 		
 		this.dispatch("column-width-fit-before", this);
 		
-		this.fitToData(force);
+		this.fitToData(force, user);
 		
 		this.dispatch("column-width-fit-after", this);
 	}
 	
 	//set column width to maximum cell width for non group columns
-	fitToData(force){
+	fitToData(force, user){
 		if(this.isGroup){
 			return;
 		}
@@ -909,7 +920,7 @@ export default class Column extends CoreFeature{
 				var setTo = maxWidth + 1;
 				
 				if(force){
-					this.setWidth(setTo);
+					this.setWidth(setTo, user);
 				}else{
 					if (this.maxInitialWidth && !force) {
 						setTo = Math.min(setTo, this.maxInitialWidth);
