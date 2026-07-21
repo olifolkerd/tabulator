@@ -768,7 +768,7 @@ export default class RowManager extends CoreFeature{
 	}
 	
 	setActiveRows(activeRows){
-		this.activeRows = this.activeRows = Object.assign([], activeRows);
+		this.activeRows = activeRows.slice();
 		this.activeRowsCount = this.activeRows.length;
 	}
 	

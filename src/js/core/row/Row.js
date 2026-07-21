@@ -3,6 +3,9 @@ import RowComponent from './RowComponent.js';
 import Helpers from '../tools/Helpers.js';
 
 export default class Row extends CoreFeature{
+	
+	static rowTemplate = Row.createRowTemplate();
+	
 	constructor (data, parent, type = "row"){
 		super(parent.table);
 		
@@ -25,6 +28,7 @@ export default class Row extends CoreFeature{
 		
 		this.created = false;
 		
+		
 		this.setData(data);
 	}
 	
@@ -36,12 +40,7 @@ export default class Row extends CoreFeature{
 	}
 	
 	createElement (){
-		var el = document.createElement("div");
-		
-		el.classList.add("tabulator-row");
-		el.setAttribute("role", "row");
-		
-		this.element = el;
+		this.element = Row.rowTemplate.cloneNode(false) ;
 	}
 	
 	getElement(){
@@ -483,5 +482,12 @@ export default class Row extends CoreFeature{
 		}
 		
 		return this.component;
+	}
+	
+	static createRowTemplate(){
+		const rowTemplate = document.createElement("div");
+		rowTemplate.classList.add("tabulator-row");
+		rowTemplate.setAttribute("role", "row");
+		return rowTemplate;
 	}
 }
