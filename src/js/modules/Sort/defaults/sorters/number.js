@@ -1,15 +1,16 @@
 //sort numbers
 export default function(a, b, aRow, bRow, column, dir, params){
+	//fast-path: both already finite numbers, no separator/empty handling needed
+	if(typeof a === "number" && typeof b === "number" && isFinite(a) && isFinite(b)){
+		return a - b;
+	}
+
 	var alignEmptyValues = params.alignEmptyValues;
 	var decimal = params.decimalSeparator;
 	var thousand = params.thousandSeparator;
 	var emptyAlign = 0;
 	var aEmpty = a === "" || a === null || typeof a === "undefined";
 	var bEmpty = b === "" || b === null || typeof b === "undefined";
-
-	if(typeof a === "number" && typeof b === "number" && isFinite(a) && isFinite(b)){
-		return a - b;
-	}
 
 	if(aEmpty){
 		emptyAlign = bEmpty ? 0 : -1;

@@ -341,7 +341,7 @@ export default class Sort extends Module{
 	//work through sort list sorting data
 	sort(data, sortOnly){
 		var self = this,
-		sortList = this.table.options.sortOrderReverse ? self.sortList.toReversed(): self.sortList,
+		sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
 		sortListActual = [],
 		rowComponents = [];
 		
@@ -489,25 +489,5 @@ export default class Sort extends Module{
 		for(let k = 0; k < length; k++){
 			data[k] = decorated[k].row;
 		}
-	}
-	
-	//process individual rows for a sort function on active data
-	_sortRow(a, b, column, dir, params){
-		var el1Comp, el2Comp;
-		
-		//switch elements depending on search direction
-		var el1 = dir == "asc" ? a : b;
-		var el2 = dir == "asc" ? b : a;
-		
-		a = column.getFieldValue(el1.getData());
-		b = column.getFieldValue(el2.getData());
-		
-		a = typeof a !== "undefined" ? a : "";
-		b = typeof b !== "undefined" ? b : "";
-		
-		el1Comp = el1.getComponent();
-		el2Comp = el2.getComponent();
-		
-		return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
 	}
 }

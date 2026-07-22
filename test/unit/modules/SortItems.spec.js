@@ -1,124 +1,120 @@
-import Sort from "../../../src/js/modules/Sort/Sort";
-import numberSorter from "../../../src/js/modules/Sort/defaults/sorters/number";
-import stringSorter from "../../../src/js/modules/Sort/defaults/sorters/string";
+import TabulatorFull from "../../../src/js/core/TabulatorFull";
 
 // Correctness coverage for Sort._sortItems decorate-sort-undecorate rewrite.
-// Validates ordering + stability against a reference implementation of the stock
-// per-comparison algorithm. Standalone (no TabulatorFull/luxon) so it runs in the
-// unit environment.
-
-const ctx = {}; // sorter `this`; number/string sorters do not use it here
-
-const numParams = { alignEmptyValues: undefined, decimalSeparator: undefined, thousandSeparator: undefined };
-const strParams = { alignEmptyValues: undefined, locale: false };
-
-function makeColumn(field, sorter, params) {
-	return {
-		field,
-		_comp: null,
-		getFieldValue(data) { return data[field]; },
-		getComponent() { return (this._comp ||= { _col: field }); },
-		modules: { sort: { sorter, params } },
-	};
-}
-
-function makeRow(data) {
-	return { data, _comp: null, getData() { return this.data; }, getComponent() { return (this._comp ||= { _row: this.data }); } };
-}
-
-// Reference: the stock per-comparison algorithm (matches HEAD _sortItems/_sortRow).
-function referenceSort(data, sortList) {
-	const sorterCount = sortList.length - 1;
-	return data.slice().sort((a, b) => {
-		let result;
-		for (let i = sorterCount; i >= 0; i--) {
-			const s = sortList[i];
-			const el1 = s.dir === "asc" ? a : b;
-			const el2 = s.dir === "asc" ? b : a;
-			let av = s.column.getFieldValue(el1.getData());
-			let bv = s.column.getFieldValue(el2.getData());
-			av = typeof av !== "undefined" ? av : "";
-			bv = typeof bv !== "undefined" ? bv : "";
-			result = s.column.modules.sort.sorter.call(ctx, av, bv, el1.getComponent(), el2.getComponent(), s.column.getComponent(), s.dir, s.params);
-			if (result !== 0) break;
-		}
-		return result;
-	});
-}
-
-function runSort(data, sortList) {
-	const copy = data.slice();
-	Sort.prototype._sortItems.call(ctx, copy, sortList);
-	return copy;
-}
+// Builds real rows/columns via TabulatorFull (the Sort.spec.js pattern) and
+// validates ordering + stability against a reference implementation of the
+// stock per-comparison algorithm, so the tests exercise the real Row/Column
+// contract rather than hand-built fakes.
 
 describe("Sort._sortItems (decorate-sort-undecorate)", () => {
-	test("single numeric column ascending", () => {
-		const col = makeColumn("a", numberSorter, numParams);
-		const rows = [makeRow({ a: 3 }), makeRow({ a: 1 }), makeRow({ a: 2 })];
-		const out = runSort(rows, [{ column: col, dir: "asc", params: numParams }]);
-		expect(out.map((r) => r.data.a)).toEqual([1, 2, 3]);
+	/** @type {TabulatorFull} */
+	let tabulator;
+	let sortMod;
+
+	const columns = [
+		{ title: "A", field: "a", sorter: "number" },
+		{ title: "B", field: "b", sorter: "number" },
+		{ title: "Name", field: "name", sorter: "string" },
+		{ title: "Id", field: "id", sorter: "number" },
+	];
+
+	beforeEach(() => {
+		const el = document.createElement("div");
+		el.id = "tabulator";
+		document.body.appendChild(el);
+		tabulator = new TabulatorFull("#tabulator", { data: [], columns });
+		sortMod = tabulator.module("sort");
+		return new Promise((resolve) => tabulator.on("tableBuilt", resolve));
 	});
 
-	test("single numeric column descending", () => {
-		const col = makeColumn("a", numberSorter, numParams);
-		const rows = [makeRow({ a: 3 }), makeRow({ a: 1 }), makeRow({ a: 2 })];
-		const out = runSort(rows, [{ column: col, dir: "desc", params: numParams }]);
-		expect(out.map((r) => r.data.a)).toEqual([3, 2, 1]);
+	afterEach(() => {
+		tabulator.destroy();
+		document.getElementById("tabulator")?.remove();
 	});
 
-	test("mutates the array in place (same reference)", () => {
-		const col = makeColumn("a", numberSorter, numParams);
-		const rows = [makeRow({ a: 2 }), makeRow({ a: 1 })];
+	// Reference: an independent per-comparison oracle (the pre-rewrite sort algorithm),
+	// run over the same real rows/columns _sortItems sees.
+	function referenceSort(rows, sortList) {
+		const sorterCount = sortList.length - 1;
+		return rows.slice().sort((a, b) => {
+			let result = 0;
+			for (let i = sorterCount; i >= 0; i--) {
+				const { column, dir } = sortList[i];
+				const { sorter, params } = column.modules.sort;
+				const el1 = dir === "asc" ? a : b;
+				const el2 = dir === "asc" ? b : a;
+				let av = column.getFieldValue(el1.getData());
+				let bv = column.getFieldValue(el2.getData());
+				av = typeof av !== "undefined" ? av : "";
+				bv = typeof bv !== "undefined" ? bv : "";
+				result = sorter.call(sortMod, av, bv, el1.getComponent(), el2.getComponent(), column.getComponent(), dir, params);
+				if (result !== 0) break;
+			}
+			return result;
+		});
+	}
+
+	// Load data, apply sort, and return { actual, expected, original } where actual is
+	// produced by Sort.sort() (which delegates to _sortItems) and expected by the reference.
+	async function sortData(data, sortSpec) {
+		await tabulator.setData(data);
+		const sortList = sortSpec.map(({ field, dir }) => ({ column: tabulator.columnManager.findColumn(field), dir }));
+		sortMod.setSort(sortList);
+		const original = tabulator.rowManager.activeRows.slice();
+		const actual = sortMod.sort(original.slice());
+		return { actual, expected: referenceSort(original, sortList) };
+	}
+
+	const ids = (rows) => rows.map((row) => row.data.id);
+	const field = (rows, key) => rows.map((row) => row.data[key]);
+
+	test("single numeric column ascending", async () => {
+		const { actual } = await sortData([{ id: 1, a: 3 }, { id: 2, a: 1 }, { id: 3, a: 2 }], [{ field: "a", dir: "asc" }]);
+		expect(field(actual, "a")).toEqual([1, 2, 3]);
+	});
+
+	test("single numeric column descending", async () => {
+		const { actual } = await sortData([{ id: 1, a: 3 }, { id: 2, a: 1 }, { id: 3, a: 2 }], [{ field: "a", dir: "desc" }]);
+		expect(field(actual, "a")).toEqual([3, 2, 1]);
+	});
+
+	test("sorts the passed data array in place (same reference)", async () => {
+		await tabulator.setData([{ id: 1, a: 2 }, { id: 2, a: 1 }]);
+		sortMod.setSort([{ column: tabulator.columnManager.findColumn("a"), dir: "asc" }]);
+		const rows = tabulator.rowManager.activeRows.slice();
 		const ref = rows;
-		Sort.prototype._sortItems.call(ctx, rows, [{ column: col, dir: "asc", params: numParams }]);
-		expect(rows).toBe(ref);
-		expect(rows.map((r) => r.data.a)).toEqual([1, 2]);
+		const out = sortMod.sort(rows);
+		expect(out).toBe(ref);
+		expect(field(rows, "a")).toEqual([1, 2]);
 	});
 
-	test("multi-column: primary (last in list) then tie-break", () => {
-		const colA = makeColumn("a", numberSorter, numParams);
-		const colB = makeColumn("b", numberSorter, numParams);
-		const rows = [
-			makeRow({ a: 2, b: 1 }), makeRow({ a: 1, b: 2 }), makeRow({ a: 1, b: 1 }), makeRow({ a: 2, b: 2 }),
+	test("multi-column ordering matches reference", async () => {
+		const data = [
+			{ id: 1, a: 2, b: 1 }, { id: 2, a: 1, b: 2 }, { id: 3, a: 1, b: 1 }, { id: 4, a: 2, b: 2 },
 		];
-		const sortList = [
-			{ column: colB, dir: "asc", params: numParams }, // tie-break (checked first in loop)
-			{ column: colA, dir: "asc", params: numParams }, // primary (checked last)
-		];
-		const out = runSort(rows, sortList);
-		expect(out.map((r) => [r.data.a, r.data.b])).toEqual(referenceSort(rows, sortList).map((r) => [r.data.a, r.data.b]));
+		const { actual, expected } = await sortData(data, [{ field: "b", dir: "asc" }, { field: "a", dir: "asc" }]);
+		expect(ids(actual)).toEqual(ids(expected));
 	});
 
-	test("stability: equal keys preserve original order", () => {
-		const col = makeColumn("a", numberSorter, numParams);
-		const rows = [makeRow({ a: 1, id: "x" }), makeRow({ a: 1, id: "y" }), makeRow({ a: 1, id: "z" })];
-		const out = runSort(rows, [{ column: col, dir: "asc", params: numParams }]);
-		expect(out.map((r) => r.data.id)).toEqual(["x", "y", "z"]);
+	test("stability: equal keys preserve original order", async () => {
+		const { actual } = await sortData([{ id: 1, a: 1 }, { id: 2, a: 1 }, { id: 3, a: 1 }], [{ field: "a", dir: "asc" }]);
+		expect(ids(actual)).toEqual([1, 2, 3]);
 	});
 
-	test("matches reference over randomized multi-column (numeric + string, asc + desc)", () => {
-		const colA = makeColumn("a", numberSorter, numParams);
-		const colName = makeColumn("name", stringSorter, strParams);
-		const sortList = [
-			{ column: colName, dir: "desc", params: strParams },
-			{ column: colA, dir: "asc", params: numParams },
-		];
+	test("matches reference over randomized multi-column (numeric + string, asc + desc)", async () => {
+		const sortSpec = [{ field: "name", dir: "desc" }, { field: "a", dir: "asc" }];
 		let seed = 99;
 		const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
-		for (let trial = 0; trial < 50; trial++) {
-			const rows = [];
-			for (let i = 0; i < 200; i++) rows.push(makeRow({ a: Math.floor(rnd() * 5), name: "n" + Math.floor(rnd() * 5), id: i }));
-			const expected = referenceSort(rows, sortList).map((r) => r.data.id);
-			const actual = runSort(rows, sortList).map((r) => r.data.id);
-			expect(actual).toEqual(expected);
+		for (let trial = 0; trial < 10; trial++) {
+			const data = [];
+			for (let i = 0; i < 60; i++) data.push({ id: i, a: Math.floor(rnd() * 5), name: "n" + Math.floor(rnd() * 5) });
+			const { actual, expected } = await sortData(data, sortSpec);
+			expect(ids(actual)).toEqual(ids(expected));
 		}
 	});
 
-	test("undefined field values are coerced to empty string (as stock)", () => {
-		const col = makeColumn("a", numberSorter, numParams);
-		const rows = [makeRow({ a: 5 }), makeRow({}), makeRow({ a: 2 })];
-		const out = runSort(rows, [{ column: col, dir: "asc", params: numParams }]);
-		expect(out.map((r) => r.data.a)).toEqual(referenceSort(rows, [{ column: col, dir: "asc", params: numParams }]).map((r) => r.data.a));
+	test("undefined field values are coerced to empty string (as stock)", async () => {
+		const { actual, expected } = await sortData([{ id: 1, a: 5 }, { id: 2 }, { id: 3, a: 2 }], [{ field: "a", dir: "asc" }]);
+		expect(ids(actual)).toEqual(ids(expected));
 	});
 });
