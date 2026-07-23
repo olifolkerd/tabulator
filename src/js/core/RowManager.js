@@ -893,10 +893,19 @@ export default class RowManager extends CoreFeature{
 		}
 		
 		if(renderClass){
-			this.renderMode = this.table.options.renderVertical;
-			
 			this.renderer = new renderClass(this.table, this.element, this.tableElement);
 			this.renderer.initialize();
+
+			//renderMode must be a STRING: it is written into the
+			//tabulator-render-mode DOM attribute (see _showPlaceholder) and
+			//returned by getRenderMode(). options.renderVertical may be a custom
+			//renderer CLASS rather than a "virtual"/"basic" key; assigning it
+			//verbatim stringified the whole class source into the attribute.
+			//Prefer the resolved string key, else the renderer's own declared
+			//string renderMode, else fall back to "virtual".
+			this.renderMode = typeof this.table.options.renderVertical === "string"
+				? this.table.options.renderVertical
+				: (typeof this.renderer.renderMode === "string" ? this.renderer.renderMode : "virtual");
 			
 			if((this.table.element.clientHeight || this.table.options.height) && !(this.table.options.minHeight && this.table.options.maxHeight)){
 				this.fixedHeight = true;
