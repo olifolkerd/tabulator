@@ -101,7 +101,9 @@ export default class VirtualDomVertical extends Renderer{
 		}
 
 		if(this.rows().length){
-			this._virtualRenderFill((topRow === false ? this.rows.length - 1 : topRow), true, topOffset || 0);
+			//`this.rows` is the method (arity 0) — `this.rows.length - 1` was
+			//always -1. Fall back to the last display-row index.
+			this._virtualRenderFill((topRow === false ? this.rows().length - 1 : topRow), true, topOffset || 0);
 		}else{
 			this.clear();
 			this.table.rowManager.tableEmpty();
