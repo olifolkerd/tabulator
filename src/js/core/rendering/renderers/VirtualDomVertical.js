@@ -21,6 +21,8 @@ export default class VirtualDomVertical extends Renderer{
 		this.vDomTopPad = 0; //hold value of padding for top of virtual DOM
 		this.vDomBottomPad = 0; //hold value of padding for bottom of virtual DOM
 
+		this.vDomScrollHeight = 0; //cached scrollable height, set on a full fill; read by scrollRows before the first fill
+
 		this.vDomMaxRenderChain = 90; //the maximum number of dom elements that can be rendered in 1 go
 
 		this.vDomWindowBuffer = 0; //window row buffer before removing elements, to smooth scrolling
@@ -60,6 +62,7 @@ export default class VirtualDomVertical extends Renderer{
 		this.vDomBottomPad = 0;
 		this.vDomScrollPosTop = 0;
 		this.vDomScrollPosBottom = 0;
+		this.vDomScrollHeight = 0;
 	}
 
 	renderRows(){
