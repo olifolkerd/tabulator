@@ -16,10 +16,10 @@ export default class BasicVertical extends Renderer{
 	
 	clearRows(){
 		var element = this.tableElement;
-		
-		// element.children.detach();
-		while(element.firstChild) element.removeChild(element.firstChild);
-		
+
+		//single native clear instead of N removeChild calls
+		element.replaceChildren();
+
 		element.scrollTop = 0;
 		element.scrollLeft = 0;
 		
