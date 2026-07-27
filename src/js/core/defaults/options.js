@@ -39,6 +39,7 @@ export default {
 	renderVertical:"virtual",
 	renderHorizontal:"basic",
 	renderVerticalBuffer:0, // set virtual DOM buffer size
+	renderVerticalLegacy:false, // use the previous virtual renderer implementation (temporary escape hatch)
 
 	scrollToRowPosition:"top",
 	scrollToRowIfVisible:true,

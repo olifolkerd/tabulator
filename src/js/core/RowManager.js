@@ -5,6 +5,7 @@ import Helpers from './tools/Helpers.js';
 
 import RendererBasicVertical from './rendering/renderers/BasicVertical.js';
 import RendererVirtualDomVertical from './rendering/renderers/VirtualDomVertical.js';
+import RendererVirtualDomVerticalLegacy from './rendering/renderers/VirtualDomVerticalLegacy.js';
 
 export default class RowManager extends CoreFeature{
 	
@@ -882,7 +883,10 @@ export default class RowManager extends CoreFeature{
 		var renderClass;
 		
 		var renderers = {
-			"virtual": RendererVirtualDomVertical,
+			//renderVerticalLegacy selects the previous virtual renderer
+			//implementation as a temporary escape hatch; it is scheduled for removal
+			//once the current one has bedded in.
+			"virtual": this.table.options.renderVerticalLegacy ? RendererVirtualDomVerticalLegacy : RendererVirtualDomVertical,
 			"basic": RendererBasicVertical,
 		};
 		
