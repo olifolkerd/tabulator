@@ -590,12 +590,17 @@ export default class VirtualDomVertical extends Renderer{
 			}
 		}
 
-		this.renderedRange.top = newTop;
-		this.renderedRange.bottom = newBottom;
-
+		//_attachRanges routes each range to insertBefore-vs-append by comparing it
+		//against the range that is STILL rendered, so renderedRange must not be
+		//advanced until after the attach — otherwise an upward extension fails the
+		//prepend test and gets appended below the window, putting the DOM out of
+		//index order.
 		if(attachRanges.length){
 			this._attachRanges(rows, attachRanges, newTop);
 		}
+
+		this.renderedRange.top = newTop;
+		this.renderedRange.bottom = newBottom;
 
 		return wasFill;
 	}
@@ -724,7 +729,14 @@ export default class VirtualDomVertical extends Renderer{
 				continue;
 			}
 
-			let h = entry.row.getHeight();
+			//Read the height AFTER normalization. calcHeight(true) in phase C runs
+			//before setCellHeight() in phase D, and normalizing the cell heights
+			//changes the row's final height — so the value getHeight() cached in
+			//phase C is pre-normalization. Feeding that to the index leaves it
+			//systematically disagreeing with the DOM, which drifts the rendered
+			//block away from its computed position on every scroll. Rows that were
+			//not re-measured this pass keep their cached value (no new layout read).
+			let h = entry.needsMeasure ? entry.row.getElement().offsetHeight : entry.row.getHeight();
 
 			if(h > 0){
 				this._setHeight(entry.index, h, entry.row.data);
