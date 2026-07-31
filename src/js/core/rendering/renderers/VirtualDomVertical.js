@@ -676,6 +676,18 @@ export default class VirtualDomVertical extends Renderer{
 
 				if(wasUninitialized){
 					row.initialize(false, true); //inFragment: build cells off-DOM
+				}else{
+					//An already-initialized row falls straight through Row.initialize to
+					//rerenderRowCells, which is how renderHorizontal:"virtual" resyncs a
+					//row whose cached column window went stale while the row sat outside
+					//the vertical window: addColRight/addColLeft only update the rows that
+					//were visible at the time, so a row re-entering the window keeps the
+					//column set it had when it left. Deliberately no second argument —
+					//VirtualDomHorizontal.rerenderRowCells reads it as `force`, and a
+					//forced rebuild of every re-attached row on every scroll tick is the
+					//cost this diff path exists to avoid. Left falsy, reinitializeRow's
+					//leftCol/rightCol guard makes it a no-op unless the window really moved.
+					row.initialize();
 				}
 
 				let el = row.getElement();
