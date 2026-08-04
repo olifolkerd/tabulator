@@ -106,14 +106,14 @@ export default class VirtualDomVertical extends Renderer{
 			//The anchor scan above used the PRE-callback (e.g. pre-filter) window
 			//indices. If that window now points past the new row count, topRow/
 			//topOffset are stale and would inflate vDomTopPad into a blank strip
-			//across the top. In that case (or when no anchor row was found) do a
-			//fresh fill, which resets vDomTopPad to 0.
+			//across the top. In that case do a fresh fill, which resets
+			//vDomTopPad to 0.
 			var windowInvalid = this.vDomTop >= newRows.length || this.vDomBottom >= newRows.length;
 
-			if(topRow === false || windowInvalid){
+			if(windowInvalid){
 				this._virtualRenderFill();
 			}else{
-				this._virtualRenderFill(topRow, true, topOffset || 0);
+				this._virtualRenderFill((topRow === false ? newRows.length - 1 : topRow), true, topOffset || 0);
 			}
 		}else{
 			this.clear();

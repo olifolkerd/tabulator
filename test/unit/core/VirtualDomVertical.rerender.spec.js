@@ -34,10 +34,12 @@ describe("VirtualDomVertical rerenderRows fallback index", () => {
 		const table = await build();
 		const renderer = table.rowManager.renderer;
 
-		// Stale / out-of-range rendered window so the anchor scan finds no row and
-		// topRow stays false, exercising the fallback branch.
-		renderer.vDomTop = 99999;
-		renderer.vDomBottom = 99999;
+		// Inverted rendered window so the anchor scan never runs its body and
+		// topRow stays false, exercising the fallback branch. The indices stay
+		// in range on purpose: an out-of-range window is the separate
+		// windowInvalid case, which takes a fresh fill instead.
+		renderer.vDomTop = 5;
+		renderer.vDomBottom = 3;
 
 		const spy = jest.spyOn(renderer, "_virtualRenderFill");
 		renderer.rerenderRows(() => {});
