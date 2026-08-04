@@ -218,9 +218,12 @@ test.describe("Vertical scroll jumping with grouped variable height rows (#3654)
 		await page.waitForTimeout(50);
 
 		// Track data rows only, never the group header rows.
+		// The step must stay well under the ~275px viewport: a step that turns
+		// over the whole rendered window leaves no row present both before and
+		// after the scroll, so nothing can be measured.
 		const jumps = await scrollUpAndMeasure(
 			page,
-			250,
+			80,
 			40,
 			".tabulator-row:not(.tabulator-group)",
 		);
