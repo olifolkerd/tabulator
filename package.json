@@ -27,6 +27,7 @@
   ],
   "scripts": {
     "lint": "eslint src --fix",
+    "typecheck": "tsc --noEmit",
     "prebuild": "eslint src --fix",
     "build": "rollup -c build/rollup.mjs",
     "dev": "rollup -c build/rollup.mjs -w --environment TARGET:dev",
@@ -70,17 +71,19 @@
   "devDependencies": {
     "@babel/core": "^7.26.9",
     "@babel/preset-env": "^7.26.9",
+    "@babel/preset-typescript": "^7.29.7",
     "@playwright/test": "^1.60.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.13.5",
-    "babel-jest": "^29.7.0",
+    "babel-jest": "^30.4.1",
     "eslint": "^9.36.0",
     "eslint-plugin-only-warn": "^1.1.0",
     "fs-extra": "^11.2.0",
     "globby": "^14.0.1",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
     "luxon": "^3.4.4",
     "postcss": "^8.4.35",
     "postcss-prettify": "^0.3.4",
@@ -88,6 +91,7 @@
     "rollup-plugin-license": "^3.3.1",
     "rollup-plugin-postcss": "^4.0.2",
     "sass": "^1.93.2",
+    "typescript": "^7.0.2",
     "vue": "^3.5.35"
   }
 }

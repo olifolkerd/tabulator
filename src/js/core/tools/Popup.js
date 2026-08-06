@@ -2,11 +2,11 @@ import CoreFeature from '../CoreFeature.js';
 import Helpers from './Helpers.js';
 
 export default class Popup extends CoreFeature{
-	constructor(table, element, parent, container){
+	constructor(table, element, parent){
 		super(table);
 		
 		this.element = element;
-		this.container = container || this._lookupContainer();
+		this.container = this._lookupContainer();
 		
 		this.parent = parent;
 		
