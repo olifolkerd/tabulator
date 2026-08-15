@@ -200,6 +200,63 @@ test.describe("Vertical scroll jumping with variable height rows (#3654)", () =>
 	});
 });
 
+test.describe("Cell heights after virtual row recycling", () => {
+	test.beforeEach(async ({ page }) => {
+		await page.goto(`file://${join(__dirname, "cell-height-recycle.html")}`);
+		await page.waitForSelector(".tabulator-row");
+		await page.locator(".tabulator-tableholder").hover();
+	});
+
+	test("normalizes cells recreated after an offscreen column refit", async ({
+		page,
+	}) => {
+		await scrollToBottom(page, 900);
+		await expect(
+			page
+				.locator('.tabulator-cell[tabulator-field="id"]')
+				.filter({ hasText: /^1$/ }),
+		).toHaveCount(0);
+
+		// A column refit makes the horizontal virtual renderer discard cells for
+		// rows outside its current vertical window.
+		await page.evaluate(() => window.testTable.getColumn("name").setWidth(1200));
+
+		// A direct jump takes the vertical renderer's full-fill path when it
+		// recreates the discarded cells.
+		await page.locator(".tabulator-tableholder").evaluate((holder) => {
+			holder.scrollTop = 0;
+			holder.dispatchEvent(new Event("scroll"));
+		});
+
+		await expect
+			.poll(() =>
+				page
+					.locator(".tabulator-row")
+					.first()
+					.locator(".tabulator-cell")
+					.first()
+					.textContent(),
+			)
+			.toBe("1");
+
+		const geometry = await page.locator(".tabulator-row").first().evaluate((row) => ({
+			rowHeight: row.getBoundingClientRect().height,
+			cells: [...row.querySelectorAll(".tabulator-cell")].map((cell) => ({
+				field: cell.getAttribute("tabulator-field"),
+				height: cell.getBoundingClientRect().height,
+				styledHeight: Number.parseFloat((cell as HTMLElement).style.height),
+			})),
+		}));
+
+		expect(geometry.rowHeight).toBe(43);
+		expect(geometry.cells.length).toBeGreaterThan(0);
+		for (const cell of geometry.cells) {
+			expect(cell.height, cell.field).toBe(geometry.rowHeight);
+			expect(cell.styledHeight, cell.field).toBe(geometry.rowHeight);
+		}
+	});
+});
+
 test.describe("Vertical scroll jumping with grouped variable height rows (#3654)", () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto(`file://${join(__dirname, "scroll-jump-group.html")}`);
