@@ -22,6 +22,10 @@ export default function(columns, forced){
 	if(lastCol){
 		gap = tableWidth - colsWidth + lastCol.getWidth();
 
+		if(lastCol.widthUser){
+			return;
+		}
+
 		if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
 			lastCol.setWidth(0);
 			this.table.modules.responsiveLayout.update();

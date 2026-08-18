@@ -21,7 +21,9 @@ export default class BasicHorizontal extends Renderer{
 	
 	reinitializeColumnWidths(columns){
 		columns.forEach(function(column){
-			column.reinitializeWidth();
+			if(!column.widthUser){
+				column.reinitializeWidth();
+			}
 		});
 	}
 }

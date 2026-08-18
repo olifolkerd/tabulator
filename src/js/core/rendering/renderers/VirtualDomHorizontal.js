@@ -193,7 +193,7 @@ export default class VirtualDomHorizontal extends Renderer{
 		for(let i = this.leftCol; i <= this.rightCol; i++){
 			let col = this.columns[i];
 			
-			if(col){
+			if(col && !col.widthUser){
 				col.reinitializeWidth();
 			}
 		}
@@ -225,7 +225,7 @@ export default class VirtualDomHorizontal extends Renderer{
 		
 		if(this.isFitData){
 			this.table.columnManager.columnsByIndex.forEach((column) => {
-				if(!column.definition.width && column.visible){
+				if(!column.definition.width && !column.widthUser && column.visible){
 					change = true;
 				}
 			});
@@ -248,7 +248,9 @@ export default class VirtualDomHorizontal extends Renderer{
 						let cell = row.cells[colEnd];
 						rowEl.appendChild(cell.getElement());
 						
-						cell.column.reinitializeWidth();
+						if(!cell.column.widthUser){
+							cell.column.reinitializeWidth();
+						}
 					}
 					
 					rowEl.parentNode.removeChild(rowEl);
@@ -521,7 +523,7 @@ export default class VirtualDomHorizontal extends Renderer{
 	fitDataColActualWidthCheck(column){
 		var newWidth, widthDiff;
 		
-		if(column.modules.vdomHoz.fitDataCheck){
+		if(column.modules.vdomHoz.fitDataCheck && !column.widthUser){
 			column.reinitializeWidth();
 			
 			newWidth = column.getWidth();

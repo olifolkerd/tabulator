@@ -103,7 +103,7 @@ export default function(columns, forced){
 
 		if(column.visible){
 
-			width = column.definition.width;
+			width = column.widthUser ? column.getWidth() : column.definition.width;
 			minWidth =  parseInt(column.minWidth);
 
 			if(width){
@@ -112,7 +112,7 @@ export default function(columns, forced){
 
 				fixedWidth += colWidth > minWidth ? colWidth : minWidth;
 
-				if(column.definition.widthShrink){
+				if(column.definition.widthShrink && !column.widthUser){
 					fixedShrinkColumns.push({
 						column:column,
 						width:colWidth > minWidth ? colWidth : minWidth

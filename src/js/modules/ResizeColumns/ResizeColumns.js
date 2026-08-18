@@ -162,7 +162,8 @@ export default class ResizeColumns extends Module{
 				var oldWidth = nearestColumn.getWidth();
 				
 				e.stopPropagation();
-				nearestColumn.reinitializeWidth(true);
+				// https://github.com/tabulator-tables/tabulator/issues/4840
+				nearestColumn.reinitializeWidth(true, true);
 				
 				if(oldWidth !== nearestColumn.getWidth()){
 					self.dispatch("column-resized", nearestColumn);
@@ -242,7 +243,8 @@ export default class ResizeColumns extends Module{
 
 		blockedBefore = column.width == column.minWidth || column.width == column.maxWidth;
 
-		column.setWidth(this.startWidth + startDiff);
+		// https://github.com/tabulator-tables/tabulator/issues/4840
+		column.setWidth(this.startWidth + startDiff, true);
 
 		blockedAfter = column.width == column.minWidth || column.width == column.maxWidth;
 
@@ -260,7 +262,8 @@ export default class ResizeColumns extends Module{
 			}
 
 			if(this.nextColumn){
-				this.nextColumn.setWidth(this.nextColumn.getWidth() - moveDiff);
+				// https://github.com/tabulator-tables/tabulator/issues/4840
+				this.nextColumn.setWidth(this.nextColumn.getWidth() - moveDiff, true);
 			}
 		}
 
