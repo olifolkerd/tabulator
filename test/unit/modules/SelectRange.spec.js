@@ -218,4 +218,21 @@ describe("SelectRange with cell editing", () => {
         expect(cell.getElement().classList.contains("tabulator-editing")).toBe(true);
         expect(cell.getElement().querySelector("input")).toBeTruthy();
     });
+
+    // https://github.com/tabulator-tables/tabulator/issues/4563
+    it("should still close the editor when another cell is pressed", () => {
+        const cell = tabulator.getRows()[0].getCells()[1];
+        const otherCell = tabulator.getRows()[1].getCells()[2];
+        const editMod = tabulator.module("edit");
+
+        cell.edit(true);
+        expect(editMod.currentCell).toBeTruthy();
+
+        // pressing outside the edited cell starts a new range selection, whose
+        // focus transfer blurs the editor input and commits the edit
+        otherCell.getElement().dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+
+        expect(editMod.currentCell).toBeFalsy();
+        expect(cell.getElement().querySelector("input")).toBeNull();
+    });
 });

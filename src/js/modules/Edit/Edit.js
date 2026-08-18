@@ -789,11 +789,20 @@ export default class Edit extends Module{
 						//trigger onRendered Callback
 						rendered();
 						
-						//prevent editing from triggering rowClick event
+						//prevent editing from triggering rowClick event and, with
+						//selectableRange, from starting a range selection whose focus
+						//transfer would blur and close the editor
+						//https://github.com/tabulator-tables/tabulator/issues/4563
 						var children = element.children;
-						
+
 						for (var i = 0; i < children.length; i++) {
 							children[i].addEventListener("click", function(e){
+								e.stopPropagation();
+							});
+							children[i].addEventListener("mousedown", function(e){
+								e.stopPropagation();
+							});
+							children[i].addEventListener("mouseup", function(e){
 								e.stopPropagation();
 							});
 						}
