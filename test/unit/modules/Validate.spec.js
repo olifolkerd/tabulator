@@ -268,4 +268,36 @@ describe("Validate unique validator", () => {
         expect(result.map((cell) => cell.getValue()).sort()).toEqual(["STEVE", "Steve"]);
     });
 
+    // https://github.com/tabulator-tables/tabulator/pull/4486
+    it("should keep case sensitive comparison without the ignorecase parameter", async () => {
+        await buildTable(
+            [{ title: "Name", field: "name", validator: "unique" }],
+            [
+                { id: 1, name: "Steve" },
+                { id: 2, name: "STEVE" }
+            ]
+        );
+
+        expect(tabulator.validate()).toBe(true);
+    });
+
+    // https://github.com/tabulator-tables/tabulator/pull/4486
+    it("should not throw with the ignorecase parameter when the column holds non string values", async () => {
+        await buildTable(
+            [
+                { title: "Name", field: "name" },
+                { title: "Code", field: "code", validator: "unique:ignorecase" }
+            ],
+            [
+                { id: 1, name: "a", code: 10 },
+                { id: 2, name: "b", code: 20 },
+                { id: 3, name: "c" },
+                { id: 4, name: "d", code: null }
+            ]
+        );
+
+        let result;
+        expect(() => { result = tabulator.validate(); }).not.toThrow();
+        expect(result).toBe(true);
+    });
 });
