@@ -146,3 +146,76 @@ describe("SelectRange module", () => {
         consoleWarnSpy.mockRestore();
     });
 });
+
+describe("SelectRange with cell editing", () => {
+    /** @type {TabulatorFull} */
+    let tabulator;
+    let offsetSpies;
+
+    beforeAll(() => {
+        // jsdom computes no layout, so Tabulator's visibility check would skip
+        // rendering the table body, leaving cells detached from the document,
+        // which would stop mouse events from bubbling to the table element and
+        // stop the editor input from receiving focus
+        offsetSpies = [
+            jest.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockReturnValue(30),
+            jest.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(100),
+        ];
+    });
+
+    afterAll(() => {
+        offsetSpies.forEach((spy) => spy.mockRestore());
+    });
+
+    beforeEach(async () => {
+        const el = document.createElement("div");
+        el.id = "select-range-edit-test";
+        document.body.appendChild(el);
+        tabulator = new TabulatorFull("#select-range-edit-test", {
+            data: [
+                { id: 1, name: "John", age: 30 },
+                { id: 2, name: "Jane", age: 25 }
+            ],
+            columns: [
+                { title: "ID", field: "id" },
+                { title: "Name", field: "name", editor: "input" },
+                { title: "Age", field: "age" }
+            ],
+            selectableRange: true,
+            renderVertical: "basic"
+        });
+
+        return new Promise((resolve) => {
+            tabulator.on("renderComplete", () => {
+                resolve();
+            });
+        });
+    });
+
+    afterEach(() => {
+        tabulator.destroy();
+        document.getElementById("select-range-edit-test")?.remove();
+    });
+
+    // https://github.com/tabulator-tables/tabulator/issues/4563
+    it("should keep the editor open when the editor input is clicked", () => {
+        const cell = tabulator.getRows()[0].getCells()[1];
+        const editMod = tabulator.module("edit");
+
+        cell.edit(true);
+        expect(editMod.currentCell).toBeTruthy();
+
+        const input = cell.getElement().querySelector("input");
+        expect(input).toBeTruthy();
+
+        // clicking inside the editor to place the caret must not start a range
+        // selection, the focus transfer that follows would blur and close the editor
+        input.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+        input.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+        input.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+        expect(editMod.currentCell).toBeTruthy();
+        expect(cell.getElement().classList.contains("tabulator-editing")).toBe(true);
+        expect(cell.getElement().querySelector("input")).toBeTruthy();
+    });
+});

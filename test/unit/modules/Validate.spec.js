@@ -213,3 +213,59 @@ describe("Validate module", () => {
         expect(validateMod.getInvalidCells().length).toBe(0);
     });
 });
+
+describe("Validate unique validator", () => {
+    /** @type {TabulatorFull} */
+    let tabulator;
+    let offsetSpies;
+
+    beforeAll(() => {
+        // jsdom computes no layout, so Tabulator's visibility check would skip
+        // rendering the table body, rows would then have no cells and
+        // table.validate() would have nothing to check
+        offsetSpies = [
+            jest.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockReturnValue(30),
+            jest.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(100),
+        ];
+    });
+
+    afterAll(() => {
+        offsetSpies.forEach((spy) => spy.mockRestore());
+    });
+
+    const buildTable = async (columns, data) => {
+        const el = document.createElement("div");
+        el.id = "validate-unique-test";
+        document.body.appendChild(el);
+        tabulator = new TabulatorFull("#validate-unique-test", { data, columns, renderVertical: "basic" });
+
+        return new Promise((resolve) => {
+            tabulator.on("renderComplete", () => {
+                resolve();
+            });
+        });
+    };
+
+    afterEach(() => {
+        document.getElementById("validate-unique-test")?.remove();
+    });
+
+    // https://github.com/tabulator-tables/tabulator/pull/4486
+    it("should treat values differing only in case as duplicates with the ignorecase parameter", async () => {
+        await buildTable(
+            [{ title: "Name", field: "name", validator: "unique:ignorecase" }],
+            [
+                { id: 1, name: "Steve" },
+                { id: 2, name: "STEVE" },
+                { id: 3, name: "Jane" }
+            ]
+        );
+
+        const result = tabulator.validate();
+
+        expect(Array.isArray(result)).toBe(true);
+        expect(result.length).toBe(2);
+        expect(result.map((cell) => cell.getValue()).sort()).toEqual(["STEVE", "Steve"]);
+    });
+
+});
