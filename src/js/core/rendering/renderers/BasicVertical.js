@@ -71,6 +71,7 @@ export default class BasicVertical extends Renderer{
 	
 	
 	rerenderRows(callback){	
+		let origScrollTop = this.elementVertical.scrollTop;
 		this.clearRows();
 		
 		if(callback){
@@ -81,6 +82,9 @@ export default class BasicVertical extends Renderer{
 
 		if(!this.rows().length){
 			this.table.rowManager.tableEmpty();
+		} else {
+			//Restore existing scrolling position
+			this.elementVertical.scrollTop = origScrollTop;
 		}
 	}
 	

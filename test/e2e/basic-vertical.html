@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator Basic Renderer Scroll Position Test (#4469)</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	body {
+		padding: 20px;
+		font-family: Arial, sans-serif;
+	}
+	#test-table {
+		width: 500px;
+	}
+	</style>
+</head>
+<body>
+	<h1>Tabulator Basic Renderer Scroll Position Test (#4469)</h1>
+	<div id="test-table"></div>
+
+	<script>
+		function generateData(start, count) {
+			const data = [];
+			for (let i = 0; i < count; i++) {
+				data.push({
+					id: start + i,
+					name: "Row " + (start + i),
+					value: ((start + i) * 37) % 1000,
+				});
+			}
+			return data;
+		}
+
+		window.generateData = generateData;
+
+		document.addEventListener("DOMContentLoaded", () => {
+			// The renderer comes from the query string so this fixture can act
+			// as its own control against the virtual renderer.
+			const params = new URLSearchParams(location.search);
+
+			window.table = new Tabulator("#test-table", {
+				data: generateData(1, 200),
+				renderVertical: params.get("renderer-type"),
+				columns: [
+					{ title: "ID", field: "id", width: 120 },
+					{ title: "Name", field: "name", width: 200 },
+					{ title: "Value", field: "value", width: 200 },
+				],
+				height: "300px",
+			});
+		});
+	</script>
+</body>
+</html>
