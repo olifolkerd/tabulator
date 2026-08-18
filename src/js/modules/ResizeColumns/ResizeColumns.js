@@ -174,7 +174,15 @@ export default class ResizeColumns extends Module{
 				handle.style.position = "sticky";
 				handle.style[column.modules.frozen.position] = this.frozenColumnOffset(column);
 			}
-			
+
+			//seed the handle with the row height, cell handles are recreated when
+			//a cell is re-rendered (e.g. after editing) and the cell-height event
+			//that usually sizes them does not fire again unless the height changes
+			//https://github.com/tabulator-tables/tabulator/issues/4544
+			if(type === "cell"){
+				handle.style.height = component.row.heightStyled;
+			}
+
 			config.handleEl = handle;
 			
 			if(element.parentNode && column.visible){
