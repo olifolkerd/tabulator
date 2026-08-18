@@ -356,3 +356,76 @@ describe("Edit module - date editors with 'x' (epoch milliseconds) format", () =
 		expect(typeof cell.getValue()).toBe("number");
 	});
 });
+
+describe("Edit module programmatic edited state", () => {
+	let table;
+	
+	beforeEach(async () => {
+		document.body.innerHTML = '<div id="set-edited-table"></div>';
+		
+		table = new TabulatorFull("#set-edited-table", {
+			data: [
+				{ id: 1, name: "John" },
+				{ id: 2, name: "Jane" }
+			],
+			columns: [
+				{ title: "ID", field: "id" },
+				{ title: "Name", field: "name", editor: "input", validator: "required" }
+			]
+		});
+		
+		await new Promise(resolve => {
+			table.on("tableBuilt", resolve);
+		});
+	});
+	
+	afterEach(() => {
+		table.destroy();
+		document.body.innerHTML = "";
+	});
+	
+	// https://github.com/tabulator-tables/tabulator/issues/4443
+	it("should mark a cell as edited with cell.setEdited", () => {
+		const cell = table.getRows()[0].getCells()[1];
+		
+		expect(cell.isEdited()).toBe(false);
+		
+		cell.setEdited();
+		
+		expect(cell.isEdited()).toBe(true);
+		expect(table.getEditedCells().length).toBe(1);
+		expect(table.getEditedCells()[0].getField()).toBe("name");
+		
+		// marking twice must not duplicate the edited cell list entry
+		cell.setEdited();
+		expect(table.getEditedCells().length).toBe(1);
+		
+		// marking as edited must not run validation against an undefined value
+		expect(cell.getElement().classList.contains("tabulator-validation-fail")).toBe(false);
+		
+		// clearEdited mirrors setEdited
+		cell.clearEdited();
+		expect(cell.isEdited()).toBe(false);
+		expect(table.getEditedCells().length).toBe(0);
+	});
+	
+	// https://github.com/tabulator-tables/tabulator/issues/4443
+	it("should mark cells as edited with table.setCellEdited", () => {
+		const cellOne = table.getRows()[0].getCells()[1];
+		const cellTwo = table.getRows()[1].getCells()[1];
+		
+		table.setCellEdited([cellOne, cellTwo]);
+		
+		expect(cellOne.isEdited()).toBe(true);
+		expect(cellTwo.isEdited()).toBe(true);
+		expect(table.getEditedCells().length).toBe(2);
+		
+		table.clearCellEdited([cellOne, cellTwo]);
+		expect(table.getEditedCells().length).toBe(0);
+		
+		// a single cell component is accepted without an array wrapper
+		table.setCellEdited(cellOne);
+		expect(cellOne.isEdited()).toBe(true);
+		expect(table.getEditedCells().length).toBe(1);
+	});
+});

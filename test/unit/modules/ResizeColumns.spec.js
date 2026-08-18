@@ -146,3 +146,68 @@ describe("ResizeColumns module", () => {
         expect(mockColumn.setWidth).toHaveBeenCalledWith(120);
     });
 });
+
+describe("ResizeColumns cell handle height", () => {
+    /** @type {TabulatorFull} */
+    let tabulator;
+    let offsetSpies;
+
+    beforeAll(() => {
+        // jsdom computes no layout, so Tabulator's visibility check would skip
+        // rendering the table body and no cell resize handles would be created
+        offsetSpies = [
+            jest.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockReturnValue(30),
+            jest.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(100),
+        ];
+    });
+
+    afterAll(() => {
+        offsetSpies.forEach((spy) => spy.mockRestore());
+    });
+
+    beforeEach(async () => {
+        const el = document.createElement("div");
+        el.id = "resize-handle-test";
+        document.body.appendChild(el);
+        tabulator = new TabulatorFull("#resize-handle-test", {
+            data: [
+                { id: 1, name: "John" },
+                { id: 2, name: "Jane" }
+            ],
+            columns: [
+                { title: "ID", field: "id", resizable: true },
+                { title: "Name", field: "name", resizable: true, editor: "input" }
+            ],
+            renderVertical: "basic"
+        });
+
+        return new Promise((resolve) => {
+            tabulator.on("renderComplete", () => {
+                resolve();
+            });
+        });
+    });
+
+    afterEach(() => {
+        tabulator.destroy();
+        document.getElementById("resize-handle-test")?.remove();
+    });
+
+    // https://github.com/tabulator-tables/tabulator/issues/4544
+    it("should keep the handle height when a cell is re-rendered after an edit", () => {
+        const row = tabulator.rowManager.rows[0];
+        const cell = row.cells[1];
+
+        // jsdom computes no layout, so give the row its height through the API,
+        // which dispatches cell-height and sizes the existing handles
+        row.setHeight(42, true);
+
+        expect(cell.modules.resize.handleEl.style.height).toBe("42px");
+
+        // committing a new value re-renders the cell, which destroys and
+        // recreates the resize handle
+        cell.setValue("changed");
+
+        expect(cell.modules.resize.handleEl.style.height).toBe("42px");
+    });
+});
