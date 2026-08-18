@@ -38,6 +38,7 @@ export default class Edit extends Module{
 		
 		this.registerTableFunction("getEditedCells", this.getEditedCells.bind(this));
 		this.registerTableFunction("clearCellEdited", this.clearCellEdited.bind(this));
+		this.registerTableFunction("setCellEdited", this.setCellEdited.bind(this));
 		this.registerTableFunction("navigatePrev", this.navigatePrev.bind(this));
 		this.registerTableFunction("navigateNext", this.navigateNext.bind(this));
 		this.registerTableFunction("navigateLeft", this.navigateLeft.bind(this));
@@ -47,6 +48,7 @@ export default class Edit extends Module{
 		
 		this.registerComponentFunction("cell", "isEdited", this.cellIsEdited.bind(this));
 		this.registerComponentFunction("cell", "clearEdited", this.clearEdited.bind(this));
+		this.registerComponentFunction("cell", "setEdited", this.setEdited.bind(this));
 		this.registerComponentFunction("cell", "edit", this.editCell.bind(this));
 		this.registerComponentFunction("cell", "cancelEdit", this.cellCancelEdit.bind(this));
 		
@@ -176,6 +178,22 @@ export default class Edit extends Module{
 		
 		cells.forEach((cell) => {
 			this.table.modules.edit.clearEdited(cell._getSelf());
+		});
+	}
+	
+	//mark cells as edited programmatically, mirrors clearCellEdited
+	//https://github.com/tabulator-tables/tabulator/issues/4443
+	setCellEdited(cells){
+		if(!cells){
+			return;
+		}
+		
+		if(!Array.isArray(cells)){
+			cells = [cells];
+		}
+		
+		cells.forEach((cell) => {
+			this.table.modules.edit.setEdited(cell._getSelf());
 		});
 	}
 	
@@ -851,6 +869,24 @@ export default class Edit extends Module{
 		
 		if(editIndex > -1){
 			this.editedCells.splice(editIndex, 1);
+		}
+	}
+	
+	//mark a cell as edited without a user edit, mirrors clearEdited
+	//https://github.com/tabulator-tables/tabulator/issues/4443
+	setEdited(cell){
+		if(!cell.modules.edit){
+			cell.modules.edit = {};
+		}
+		
+		if(!cell.modules.edit.edited){
+			cell.modules.edit.edited = true;
+			
+			this.dispatch("edit-edited-set", cell);
+		}
+		
+		if(this.editedCells.indexOf(cell) == -1){
+			this.editedCells.push(cell);
 		}
 	}
 }
