@@ -16,6 +16,19 @@ export default class Popup extends CoreFeature{
 		this.blurCallback = null;
 		this.blurEventsBound = false;
 		this.renderedCallback = null;
+
+		/**
+		 * Corresponds to the css offset properties (`top`, `right`, `bottom`, `left`).
+		 * Values can be `null` if not set.
+		 *
+		 * @type {{ top: number|null, right: number|null, bottom: number|null, left: number|null }}
+		 **/
+		this.offset = {
+			top: null,
+			right: null,
+			bottom: null,
+			left: null,
+		};
 		
 		this.visible = false;
 		this.hideable = true;
@@ -130,7 +143,7 @@ export default class Popup extends CoreFeature{
 	}
 	
 	show(origin, position){
-		var x, y, parentEl, parentOffset, coords;
+		var parentEl, parentOffset;
 		
 		if(this.destroyed || this.table.destroyed){
 			return this;
@@ -138,27 +151,19 @@ export default class Popup extends CoreFeature{
 		
 		if(origin instanceof HTMLElement){
 			parentEl = origin;
-			coords = this.elementPositionCoords(origin, position);
-			
-			parentOffset = coords.offset;
-			x = coords.x;
-			y = coords.y;
-			
+			parentOffset = this.elementPositionCoords(origin, position).offset;
 		}else if(typeof origin === "number"){
 			parentOffset = {top:0, left:0};
-			x = origin;
-			y = position;
 		}else{
-			coords = this.containerEventCoords(origin);
-			
-			x = coords.x;
-			y = coords.y;
-			
 			this.reversedX = false;
 		}
-		
-		this.element.style.top = y + "px";
-		this.element.style.left = x + "px";
+
+		const coords = this.resolveCoordsByOrigin(origin, position);
+
+		this.offset.top = coords.y;
+		this.offset.left = coords.x;
+
+		this.applyOffset();
 		
 		this.container.appendChild(this.element);
 		
@@ -166,7 +171,7 @@ export default class Popup extends CoreFeature{
 			this.renderedCallback();
 		}
 		
-		this._fitToScreen(x, y, parentEl, parentOffset, position);
+		this._fitToScreen(coords.x, coords.y, parentEl, parentOffset, position);
 		
 		this.visible = true;
 		
@@ -178,18 +183,29 @@ export default class Popup extends CoreFeature{
 		
 		return this;
 	}
+
+	resolveCoordsByOrigin(origin, position) {
+		if (origin instanceof HTMLElement){
+			const coords = this.elementPositionCoords(origin, position);
+			return { x: coords.x, y: coords.y };
+		}
+		if (typeof origin === "number"){
+			return { x: origin, y: position };
+		}
+		return this.containerEventCoords(origin);
+	}
 	
 	_fitToScreen(x, y, parentEl, parentOffset, position){
 		var scrollTop = this.container === document.body ? document.documentElement.scrollTop : this.container.scrollTop;
 		
 		//move menu to start on right edge if it is too close to the edge of the screen
 		if((x + this.element.offsetWidth) >= this.container.offsetWidth || this.reversedX){
-			this.element.style.left = "";
+			this.offset.left = null;
 			
 			if(parentEl){
-				this.element.style.right = (this.container.offsetWidth - parentOffset.left) + "px";
+				this.offset.right = this.container.offsetWidth - parentOffset.left;
 			}else{
-				this.element.style.right = (this.container.offsetWidth - x) + "px";
+				this.offset.right = this.container.offsetWidth - x;
 			}
 			
 			this.reversedX = true;
@@ -201,27 +217,36 @@ export default class Popup extends CoreFeature{
 			if(parentEl){
 				switch(position){
 					case "bottom":
-						this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight - parentEl.offsetHeight - 1) + "px";
+						this.offset.top = this.offset.top - this.element.offsetHeight - parentEl.offsetHeight - 1;
 						break;
 
 					default:
-						this.element.style.top = (parseInt(this.element.style.top) - this.element.offsetHeight + parentEl.offsetHeight + 1) + "px";
+						this.offset.top = this.offset.top - this.element.offsetHeight + parentEl.offsetHeight + 1;
 				}
 
 			}else{
 				let menuHeight = this.element.offsetHeight;
 				if(menuHeight > offsetHeight){
-					this.element.style.top = "0px";
+					this.offset.top = 0;
 					this.element.style.height = offsetHeight + "px";
 				}else{
 					let newTop = y - menuHeight;
 					if(newTop < 0){
 						newTop = offsetHeight - menuHeight;
 					}
-					this.element.style.top = newTop + "px";
+					this.offset.top = newTop;
 				}
 			}
 		}
+
+		this.applyOffset();
+	}
+
+	applyOffset() {
+		this.element.style.top = this.offset.top == null ? "" : this.offset.top + "px";
+		this.element.style.right = this.offset.right == null ? "" : this.offset.right + "px";
+		this.element.style.bottom = this.offset.bottom == null ? "" : this.offset.bottom + "px";
+		this.element.style.left = this.offset.left == null ? "" : this.offset.left + "px";
 	}
 	
 	isVisible(){
