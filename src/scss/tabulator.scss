@@ -504,7 +504,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		.tabulator-range-overlay {
 			position: absolute;
 			inset: 0;
-			z-index: 10;
+			z-index: 11;
 			pointer-events: none;
 			
 			.tabulator-range {
