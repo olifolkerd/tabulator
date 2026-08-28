@@ -217,14 +217,6 @@ export default class Range extends CoreFeature{
 				}
 			});
 
-			if (occupiedFrozenColumnsWidth === 0) {
-				// - z-index 10: No frozen columns are occupied by the selection
-				this.rangeManager.overlay.style.zIndex = 10;
-			} else {
-				// - z-index 11: Selection occupies at least one frozen column (ensures visibility above other elements)
-				this.rangeManager.overlay.style.zIndex = 11;
-			}
-
 			if(this.table.rtl){
 				const calculatedRangeWidth = Math.max(
 					topLeftCellEl.offsetLeft + topLeftCellEl.offsetWidth - bottomRightCellEl.offsetLeft,
