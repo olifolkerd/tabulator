@@ -1,3 +1,4 @@
+@use "sass:color";
 
 //Main Theme Variables
 $backgroundColor: #222 !default; //background color of tabulator
@@ -48,7 +49,38 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 
 
 
-@import "../tabulator.scss";
+@use "../tabulator.scss" with (
+	$backgroundColor: $backgroundColor,
+	$borderColor: $borderColor,
+	$textSize: $textSize,
+	$headerBackgroundColor: $headerBackgroundColor,
+	$headerTextColor: $headerTextColor,
+	$headerBorderColor: $headerBorderColor,
+	$headerSeparatorColor: $headerSeparatorColor,
+	$headerMargin: $headerMargin,
+	$sortArrowActive: $sortArrowActive,
+	$sortArrowInactive: $sortArrowInactive,
+	$rowBackgroundColor: $rowBackgroundColor,
+	$rowAltBackgroundColor: $rowAltBackgroundColor,
+	$rowBorderColor: $rowBorderColor,
+	$rowTextColor: $rowTextColor,
+	$rowHoverBackground: $rowHoverBackground,
+	$rowSelectedBackground: $rowSelectedBackground,
+	$rowSelectedBackgroundHover: $rowSelectedBackgroundHover,
+	$editBoxColor: $editBoxColor,
+	$errorColor: $errorColor,
+	$footerBackgroundColor: $footerBackgroundColor,
+	$footerTextColor: $footerTextColor,
+	$footerBorderColor: $footerBorderColor,
+	$footerSeparatorColor: $footerSeparatorColor,
+	$footerActiveColor: $footerActiveColor,
+	$rangeBorderColor: $rangeBorderColor,
+	$rangeHandleColor: $rangeHandleColor,
+	$rangeHeaderSelectedBackground: $rangeHeaderSelectedBackground,
+	$rangeHeaderSelectedTextColor: $rangeHeaderSelectedTextColor,
+	$rangeHeaderHighlightBackground: $rangeHeaderHighlightBackground,
+	$rangeHeaderTextHighlightBackground: $rangeHeaderTextHighlightBackground
+);
 
 //Tabulator Containing Element
 .tabulator{
@@ -77,10 +109,10 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		}
 		
 		.tabulator-calcs-holder{
-			background:darken($headerBackgroundColor, 10%) !important;
+			background:color.adjust($headerBackgroundColor, $lightness: -10%) !important;
 			
 			.tabulator-row{
-				background:darken($headerBackgroundColor, 10%) !important;
+				background:color.adjust($headerBackgroundColor, $lightness: -10%) !important;
 			}
 		}
 	}
@@ -89,10 +121,10 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 	.tabulator-footer{
 		
 		.tabulator-calcs-holder{
-			background:darken($footerBackgroundColor, 5%) !important;
+			background:color.adjust($footerBackgroundColor, $lightness: -5%) !important;
 			
 			.tabulator-row{
-				background:darken($footerBackgroundColor, 5%) !important;
+				background:color.adjust($footerBackgroundColor, $lightness: -5%) !important;
 			}
 		}
 		

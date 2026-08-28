@@ -1,5 +1,6 @@
-
-@import "variables_table.scss";
+@use "sass:color";
+@use "variables.scss" as *;
+@use "variables_table.scss" as *;
 
 //Main Theme Variables
 $backgroundColor: $background !default; //background color of tabulator
@@ -34,7 +35,28 @@ $footerBorderColor:#aaa !default; //footer border color
 $footerSeparatorColor:#999 !default; //footer bottom separator color
 $footerActiveColor:#d00 !default; //footer bottom active text color
 
-@import "../../tabulator.scss";
+@use "../../tabulator.scss" with (
+	$backgroundColor: $backgroundColor,
+	$textSize: $textSize,
+	$headerBackgroundColor: $headerBackgroundColor,
+	$headerTextColor: $headerTextColor,
+	$headerBorderColor: $headerBorderColor,
+	$headerSeparatorColor: $headerSeparatorColor,
+	$headerMargin: $headerMargin,
+	$sortArrowActive: $sortArrowActive,
+	$sortArrowInactive: $sortArrowInactive,
+	$rowBorderColor: $rowBorderColor,
+	$rowTextColor: $rowTextColor,
+	$rowSelectedBackground: $rowSelectedBackground,
+	$rowSelectedBackgroundHover: $rowSelectedBackgroundHover,
+	$editBoxColor: $editBoxColor,
+	$errorColor: $errorColor,
+	$footerBackgroundColor: $footerBackgroundColor,
+	$footerTextColor: $footerTextColor,
+	$footerBorderColor: $footerBorderColor,
+	$footerSeparatorColor: $footerSeparatorColor,
+	$footerActiveColor: $footerActiveColor
+);
 
 .tabulator{
 	width: 100%;
@@ -72,7 +94,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			background-color:transparent;
 			.tabulator-row{
 				&.tabulator-calcs{
-					background:darken($background, 5%) !important;
+					background:color.adjust($background, $lightness: -5%) !important;
 
 					&.tabulator-calcs-top{
 						border-bottom:2px solid $rowBorderColor;
@@ -104,10 +126,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		.tabulator-calcs-holder{
 			margin:(-$footerVerticalPadding) (-$footerHorizontalPadding) $footerVerticalPadding (-$footerHorizontalPadding);
 
-			background:lighten($footerBackground, 5%) !important;
+			background:color.adjust($footerBackground, $lightness: 5%) !important;
 
 			.tabulator-row{
-				background:lighten($footerBackground, 5%) !important;
+				background:color.adjust($footerBackground, $lightness: 5%) !important;
 			}
 
 			&:only-child{
@@ -502,7 +524,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	border-bottom: $rowBorder;
 
 	&.tabulator-row-even{
-		background-color: $rowBackgroundColor;
+		background-color: tabulator.$rowBackgroundColor;
 	}
 
 	@media (hover:hover) and (pointer:fine){

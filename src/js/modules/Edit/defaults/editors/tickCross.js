@@ -83,10 +83,10 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
-		if(e.keyCode == 13){
+		if(e.key == "Enter"){
 			success(setValue());
 		}
-		if(e.keyCode == 27){
+		if(e.key == "Escape"){
 			cancel();
 		}
 	});

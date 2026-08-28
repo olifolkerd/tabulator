@@ -1,4 +1,4 @@
-@import "variables3.scss";
+@use "variables3.scss" as *;
 
 // Style conversion file, bootstrap to tabulator
 
@@ -36,7 +36,7 @@ $footerBorderColor:$table-border-color !default; //footer border color
 $footerSeparatorColor:$table-border-color !default; //footer bottom separator color
 $footerActiveColor:#d00 !default; //footer bottom active text color
 
-@import "../../tabulator.scss";
+@use "../../tabulator.scss";
 
 .tabulator{
 	background-color: $backgroundColor;

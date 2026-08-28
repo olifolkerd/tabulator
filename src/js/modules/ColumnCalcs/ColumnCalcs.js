@@ -27,6 +27,7 @@ export default class ColumnCalcs extends Module{
 		this.botRow = false;
 		this.topInitialized = false;
 		this.botInitialized = false;
+		this.topBreakElement = null; //structural <br> inserted alongside the top calc row
 		
 		this.blocked = false;
 		this.recalcAfterBlock = false;
@@ -253,6 +254,15 @@ export default class ColumnCalcs extends Module{
 		
 		if(this.topInitialized){
 			this.topInitialized = false;
+
+			//remove the structural <br> inserted alongside the calc row in
+			//initializeTopRow, otherwise it is orphaned and adds a blank line
+			//above the table on every group toggle
+			//https://github.com/tabulator-tables/tabulator/issues/4540
+			if(this.topBreakElement && this.topBreakElement.parentNode){
+				this.topBreakElement.parentNode.removeChild(this.topBreakElement);
+			}
+
 			this.topElement.parentNode.removeChild(this.topElement);
 			changed = true;
 		}
@@ -283,7 +293,12 @@ export default class ColumnCalcs extends Module{
 		
 		if(!this.topInitialized){
 
-			fragment.appendChild(document.createElement("br"));
+			//the headers and the calc row are both inline-block, the <br> forces
+			//the calc row onto its own line below the headers, removeCalcs
+			//removes it again by reference
+			this.topBreakElement = document.createElement("br");
+
+			fragment.appendChild(this.topBreakElement);
 			fragment.appendChild(this.topElement);
 
 			this.table.columnManager.getContentsElement().insertBefore(fragment, this.table.columnManager.headersElement.nextSibling);
@@ -411,7 +426,7 @@ export default class ColumnCalcs extends Module{
 
 			if(hasDataTreeColumnCalcs && row.modules.dataTree?.open){
 				this.rowsToData(dataTree.getFilteredTreeChildren(row)).forEach(dataRow =>{
-					data.push(row);
+					data.push(dataRow);
 				});
 			}
 		});

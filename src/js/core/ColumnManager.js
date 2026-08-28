@@ -93,7 +93,6 @@ export default class ColumnManager extends CoreFeature {
 		var el = document.createElement("div");
 		
 		el.classList.add("tabulator-header-contents");
-		el.setAttribute("role", "rowgroup");
 		
 		return el;
 	}
@@ -245,7 +244,7 @@ export default class ColumnManager extends CoreFeature {
 				break;
 			
 			default:
-				if(!isNaN(value) && value !== ""){
+				if(!isNaN(Number(value)) && value !== ""){
 					sorter = "number";
 				}else{
 					if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){

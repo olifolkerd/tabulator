@@ -204,7 +204,11 @@ export default class SelectRow extends Module{
 			this.lastClickedRow = row;
 		}else{
 			this.deselectRows(undefined, true);
-			this.selectRows(row);
+			if (this.selectedRows.length === 1 && this.isRowSelected(row)) {
+				// do nothing
+			} else {
+				this.selectRows(row);
+			}
 			this.lastClickedRow = row;
 		}
 	}
@@ -258,7 +262,7 @@ export default class SelectRow extends Module{
 		if(Array.isArray(rowMatch)){
 			if(rowMatch.length){
 				rowMatch.forEach((row) => {
-					change = this._selectRow(row, true, true);
+					change = this._selectRow(row, true);
 
 					if(change){
 						changes.push(change);
@@ -269,11 +273,11 @@ export default class SelectRow extends Module{
 			}
 		}else{
 			if(rowMatch){
-				this._selectRow(rowMatch, false, true);
+				this._selectRow(rowMatch, false);
 			}
-		}	
+		}
 	}
-	
+
 	//select an individual row
 	_selectRow(rowInfo, silent, force){
 		//handle max row count

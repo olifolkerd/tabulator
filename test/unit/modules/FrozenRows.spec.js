@@ -314,6 +314,56 @@ describe('FrozenRows', function(){
 			expect(visibleRows).toEqual([normalRow, frozenRow1, frozenRow2]);
 		});
 
+		// Regression test for https://github.com/tabulator-tables/tabulator/issues/4871
+		// PR #4809 removed `fragment.appendChild(document.createElement("br"));` from
+		// initialize(), which was the line-break that forced the inline-block
+		// frozen-rows-holder onto its own row below the column headers. Without it the
+		// holder collapses next to the headers and the "frozen" row is no longer
+		// visible/pinned above the scrollable body.
+		test('initialize inserts a line break before the frozen rows holder so it sits below the column headers', function(){
+			// Earlier tests in this file overwrite document.createDocumentFragment
+			// with a mock that never gets restored. Drop the instance-level override
+			// so we fall back to the real Document.prototype method.
+			delete document.createDocumentFragment;
+
+			const contents = document.createElement('div');
+			const headers = document.createElement('div');
+			headers.className = 'tabulator-headers';
+			contents.appendChild(headers);
+
+			const mockTable = {
+				rowManager: {
+					adjustTableSize: jest.fn(),
+					styleRow: jest.fn(),
+					getRows: jest.fn().mockReturnValue([]),
+				},
+				columnManager: {
+					getContentsElement: jest.fn().mockReturnValue(contents),
+					headersElement: headers,
+					element: contents,
+				},
+				options: {},
+			};
+
+			const frozenRows = new FrozenRows(mockTable);
+			frozenRows.subscribe = jest.fn();
+			frozenRows.registerDisplayHandler = jest.fn();
+
+			frozenRows.initialize();
+
+			const holder = contents.querySelector('.tabulator-frozen-rows-holder');
+			expect(holder).not.toBeNull();
+
+			// The holder must not be placed directly next to the headers element –
+			// there must be a structural separator (a <br>) between them so the
+			// inline-block holder renders on a new line.
+			const prev = holder.previousSibling;
+			expect(prev).not.toBe(headers);
+			expect(prev && prev.nodeName).toBe('BR');
+		});
+	});
+
+	describe('Functionality tests (continued)', function() {
 		test('initializeRow correctly handles different frozenRows options', function(){
 			// Create a mock table
 			const mockTable = {

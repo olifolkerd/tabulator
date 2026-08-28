@@ -312,6 +312,34 @@ describe("Interaction module", () => {
         interaction.clearTouchWatchers();
     });
     
+    it("should not dispatch tapHold after the table is scrolled (issue #4482)", () => {
+        // Replicates https://github.com/tabulator-tables/tabulator/issues/4482
+        // When scrolling a table on a touch device, the pending tapHold timer
+        // should be cancelled so the row context menu does not open mid-scroll.
+        jest.useFakeTimers();
+
+        jest.spyOn(interaction, 'dispatchEvent');
+
+        const mockEvent = { type: "touchstart" };
+        const mockComponent = { getComponent: jest.fn().mockReturnValue({}) };
+
+        // Finger touches a row, starting the tapHold timer.
+        interaction.handleTouch("row", "start", mockEvent, mockComponent);
+
+        // User scrolls the table, which fires the scroll watchers cleanup.
+        interaction.clearTouchWatchers();
+
+        // Let the original tapHold timeout (1000ms) elapse.
+        jest.advanceTimersByTime(1000);
+
+        // The tapHold event must NOT have been dispatched, because the gesture
+        // turned out to be a scroll rather than a hold.
+        expect(interaction.dispatchEvent).not.toHaveBeenCalledWith("rowTapHold", mockEvent, mockComponent);
+
+        jest.useRealTimers();
+        interaction.clearTouchWatchers();
+    });
+
     it("should dispatch events externally", () => {
         // Create a mock component
         const mockComponent = { comp: true };

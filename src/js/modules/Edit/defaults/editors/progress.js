@@ -96,23 +96,23 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 	//allow key based navigation
 	element.addEventListener("keydown", function(e){
-		switch(e.keyCode){
-			case 39: //right arrow
+		switch(e.key){
+			case "ArrowRight":
 				e.preventDefault();
 				bar.style.width = (bar.clientWidth + element.clientWidth/100) + "px";
 				break;
 
-			case 37: //left arrow
+			case "ArrowLeft":
 				e.preventDefault();
 				bar.style.width = (bar.clientWidth - element.clientWidth/100) + "px";
 				break;
 
-			case 9: //tab
-			case 13: //enter
+			case "Tab":
+			case "Enter":
 				updateValue();
 				break;
 
-			case 27: //escape
+			case "Escape":
 				cancel();
 				break;
 

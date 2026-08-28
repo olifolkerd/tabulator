@@ -125,22 +125,24 @@ export default {
 		if(value === "" || value === null || typeof value === "undefined"){
 			return true;
 		}
-		var unique = true;
+
+		//the "ignorecase" parameter enables case-insensitive comparison, other
+		//rows can hold non string values (numbers, empty cells), so only lower
+		//case when both sides are strings (https://github.com/tabulator-tables/tabulator/pull/4486)
+		var equals = parameters === "ignorecase"
+			? (x, y) => typeof x === "string" && typeof y === "string" ? x.toLowerCase() == y.toLowerCase() : x == y
+			: (x, y) => x == y;
 
 		var cellData = cell.getData();
 		var column = cell.getColumn()._getSelf();
 
-		this.table.rowManager.rows.forEach(function(row){
+		return !this.table.rowManager.rows.some(function(row){
 			var data = row.getData();
 
 			if(data !== cellData){
-				if(value == column.getFieldValue(data)){
-					unique = false;
-				}
+				return equals(value, column.getFieldValue(data));
 			}
 		});
-
-		return unique;
 	},
 
 	//must have a value

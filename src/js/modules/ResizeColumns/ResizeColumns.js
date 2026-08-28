@@ -174,7 +174,15 @@ export default class ResizeColumns extends Module{
 				handle.style.position = "sticky";
 				handle.style[column.modules.frozen.position] = this.frozenColumnOffset(column);
 			}
-			
+
+			//seed the handle with the row height, cell handles are recreated when
+			//a cell is re-rendered (e.g. after editing) and the cell-height event
+			//that usually sizes them does not fire again unless the height changes
+			//https://github.com/tabulator-tables/tabulator/issues/4544
+			if(type === "cell"){
+				handle.style.height = component.row.heightStyled;
+			}
+
 			config.handleEl = handle;
 			
 			if(element.parentNode && column.visible){
@@ -210,10 +218,26 @@ export default class ResizeColumns extends Module{
 			component.modules.resize.handleEl.style.height = height;
 		}
 	}
+
+	getResizingClientX(e){
+		if (typeof e.clientX !== "undefined") return e.clientX;
+
+		const touch = this.table.options.resizableColumnGuide
+			? e.changedTouches?.[0]
+			: e.touches?.[0];
+
+		return touch?.clientX;
+	}
 	
 	resize(e, column){
-		var x = typeof e.clientX === "undefined" ? e.touches[0].clientX : e.clientX,
-		startDiff = x - this.startX,
+		var x = this.getResizingClientX(e);
+
+		if (typeof x !== "number" || !isFinite(x)) {
+			console.warn("ResizeColumns: could not resolve pointer X from event", e);
+			return;
+		}
+
+		var startDiff = x - this.startX,
 		moveDiff = x - this.latestX,
 		blockedBefore, blockedAfter;
 

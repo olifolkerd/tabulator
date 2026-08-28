@@ -1,10 +1,14 @@
+@use "sass:meta";
+@use "sass:math";
+@use "sass:color";
+
 /// Remove the unit of a length
 /// @param {Number} $number - Number to remove unit from
 /// @author Hugo Giraudel
 /// @return {Number} - Unitless number
 @function strip-unit($number) {
-  @if type-of($number) == 'number' and not unitless($number) {
-    @return $number / ($number * 0 + 1);
+  @if meta.type-of($number) == 'number' and not math.is-unitless($number) {
+    @return math.div($number, $number * 0 + 1);
   }
 
   @return $number;
@@ -56,15 +60,15 @@ $fontSize : 14px !default;
 */
 
 
-$a1px  : strip-unit(1 / $emSize) + rem !default;
-$a4px  : strip-unit(4 / $emSize) + rem !default;
-$a11px  : strip-unit(11 / $emSize) + rem !default;
-$a14px  : strip-unit(14 / $emSize) + rem !default;
+$a1px  : calc(1 / strip-unit($emSize)) + rem !default;
+$a4px  : calc(4 / strip-unit($emSize)) + rem !default;
+$a11px  : calc(11 / strip-unit($emSize)) + rem !default;
+$a14px  : calc(14 / strip-unit($emSize)) + rem !default;
 
-$relative1px  : strip-unit(1 / $emSize) + em !default;
-$relative4px  : strip-unit(4 / $emSize) + em !default;
-$relative11px  : strip-unit(11 / $emSize) + em !default;
-$relative14px  : strip-unit(14 / $emSize) + em !default;
+$relative1px  : calc(1 / strip-unit($emSize)) + em !default;
+$relative4px  : calc(4 / strip-unit($emSize)) + em !default;
+$relative11px  : calc(11 / strip-unit($emSize)) + em !default;
+$relative14px  : calc(14 / strip-unit($emSize)) + em !default;
 
 
 
@@ -150,17 +154,17 @@ $pinkTextColor   : $pink !default;
 $brownTextColor  : $brown !default;
 
 /*--- Colored Headers ---*/
-$redHeaderColor    : darken($redTextColor, 5) !default;
-$oliveHeaderColor  : darken($oliveTextColor, 5) !default;
-$greenHeaderColor  : darken($greenTextColor, 5) !default;
-$yellowHeaderColor : darken($yellowTextColor, 5) !default;
-$blueHeaderColor   : darken($blueTextColor, 5) !default;
-$tealHeaderColor   : darken($tealTextColor, 5) !default;
-$pinkHeaderColor   : darken($pinkTextColor, 5) !default;
-$violetHeaderColor : darken($violetTextColor, 5) !default;
-$purpleHeaderColor : darken($purpleTextColor, 5) !default;
-$orangeHeaderColor : darken($orangeTextColor, 5) !default;
-$brownHeaderColor  : darken($brownTextColor, 5) !default;
+$redHeaderColor    : color.adjust($redTextColor, $lightness: -5%) !default;
+$oliveHeaderColor  : color.adjust($oliveTextColor, $lightness: -5%) !default;
+$greenHeaderColor  : color.adjust($greenTextColor, $lightness: -5%) !default;
+$yellowHeaderColor : color.adjust($yellowTextColor, $lightness: -5%) !default;
+$blueHeaderColor   : color.adjust($blueTextColor, $lightness: -5%) !default;
+$tealHeaderColor   : color.adjust($tealTextColor, $lightness: -5%) !default;
+$pinkHeaderColor   : color.adjust($pinkTextColor, $lightness: -5%) !default;
+$violetHeaderColor : color.adjust($violetTextColor, $lightness: -5%) !default;
+$purpleHeaderColor : color.adjust($purpleTextColor, $lightness: -5%) !default;
+$orangeHeaderColor : color.adjust($orangeTextColor, $lightness: -5%) !default;
+$brownHeaderColor  : color.adjust($brownTextColor, $lightness: -5%) !default;
 
 /*--- Colored Border ---*/
 $redBorderColor    : $redTextColor !default;
@@ -205,13 +209,13 @@ $lightSecondaryColor : $lightBlack !default;
 ---------------*/
 
 $headerFontWeight : bold !default;
-$headerLineHeight : (18 / 14) * 1em !default;
+$headerLineHeight : calc(18 / 14) * 1em !default;
 
-$h1 : (28 / 14) * 1rem !default;
-$h2 : (24 / 14) * 1rem !default;
-$h3 : (18 / 14) * 1rem !default;
-$h4 : (15 / 14) * 1rem !default;
-$h5 : (14 / 14) * 1rem !default;
+$h1 : calc(28 / 14) * 1rem !default;
+$h2 : calc(24 / 14) * 1rem !default;
+$h3 : calc(18 / 14) * 1rem !default;
+$h4 : calc(15 / 14) * 1rem !default;
+$h5 : calc(14 / 14) * 1rem !default;
 
 
 /*-------------------
@@ -237,11 +241,11 @@ $inputPadding           : $inputVerticalPadding $inputHorizontalPadding !default
 
 /* Input Text Color */
 $inputColor: $textColor !default;
-$inputPlaceholderColor: lighten($inputColor, 75) !default;
-$inputPlaceholderFocusColor: lighten($inputColor, 45) !default;
+$inputPlaceholderColor: color.adjust($inputColor, $lightness: 75%) !default;
+$inputPlaceholderFocusColor: color.adjust($inputColor, $lightness: 45%) !default;
 
 /* Line Height Default For Inputs in Browser (Descendors are 17px at 14px base em) */
-$inputLineHeight: (17 / 14) * 1em !default;
+$inputLineHeight: calc(17 / 14) * 1em !default;
 
 /*-------------------
     Focused Input
@@ -262,14 +266,14 @@ $focusedFormMutedBorderColor: #96C8DA !default;
   This ensures these "ratios" remain constant despite changes in EM
 */
 
-$miniSize        : (11 / 14) !default;
-$tinySize        : (12 / 14) !default;
-$smallSize       : (13 / 14) !default;
-$mediumSize      : (14 / 14) !default;
-$largeSize       : (16 / 14) !default;
-$bigSize         : (18 / 14) !default;
-$hugeSize        : (20 / 14) !default;
-$massiveSize     : (24 / 14) !default;
+$miniSize        : calc(11 / 14) !default;
+$tinySize        : calc(12 / 14) !default;
+$smallSize       : calc(13 / 14) !default;
+$mediumSize      : calc(14 / 14) !default;
+$largeSize       : calc(16 / 14) !default;
+$bigSize         : calc(18 / 14) !default;
+$hugeSize        : calc(20 / 14) !default;
+$massiveSize     : calc(24 / 14) !default;
 
 
 /*-------------------
@@ -285,7 +289,7 @@ $paragraphLineHeight : $lineHeight !default;
 
 $linkColor           : #4183C4 !default;
 $linkUnderline       : none !default;
-$linkHoverColor      : darken(saturate($linkColor, 20), 15) !default;
+$linkHoverColor      : color.adjust(color.adjust($linkColor, $saturation: 20%), $lightness: -15%) !default;
 $linkHoverUnderline  : $linkUnderline !default;
 
 /*-------------------
@@ -306,34 +310,34 @@ $inputHighlightColor      : $textColor !default;
   This rounds $size values to the closest pixel then expresses that value in (r)em.
   This ensures all size values round to exact pixels
 */
-$mini            : (round($miniSize * $emSize) / $emSize) * 1rem !default;
-$tiny            : (round($tinySize * $emSize) / $emSize) * 1rem !default;
-$small           : (round($smallSize * $emSize) / $emSize) * 1rem !default;
-$medium          : (round($mediumSize * $emSize) / $emSize) * 1rem !default;
-$large           : (round($largeSize * $emSize) / $emSize) * 1rem !default;
-$big             : (round($bigSize * $emSize) / $emSize) * 1rem !default;
-$huge            : (round($hugeSize * $emSize) / $emSize) * 1rem !default;
-$massive         : (round($massiveSize * $emSize) / $emSize) * 1rem !default;
+$mini            : calc(math.round($miniSize * $emSize) / $emSize) * 1rem !default;
+$tiny            : calc(math.round($tinySize * $emSize) / $emSize) * 1rem !default;
+$small           : calc(math.round($smallSize * $emSize) / $emSize) * 1rem !default;
+$medium          : calc(math.round($mediumSize * $emSize) / $emSize) * 1rem !default;
+$large           : calc(math.round($largeSize * $emSize) / $emSize) * 1rem !default;
+$big             : calc(math.round($bigSize * $emSize) / $emSize) * 1rem !default;
+$huge            : calc(math.round($hugeSize * $emSize) / $emSize) * 1rem !default;
+$massive         : calc(math.round($massiveSize * $emSize) / $emSize) * 1rem !default;
 
 /* em */
-$relativeMini    : (round($miniSize * $emSize) / $emSize) * 1em !default;
-$relativeTiny    : (round($tinySize * $emSize) / $emSize) * 1em !default;
-$relativeSmall   : (round($smallSize * $emSize) / $emSize) * 1em !default;
-$relativeMedium  : (round($mediumSize * $emSize) / $emSize) * 1em !default;
-$relativeLarge   : (round($largeSize * $emSize) / $emSize) * 1em !default;
-$relativeBig     : (round($bigSize * $emSize) / $emSize) * 1em !default;
-$relativeHuge    : (round($hugeSize * $emSize) / $emSize) * 1em !default;
-$relativeMassive : (round($massiveSize * $emSize) / $emSize) * 1em !default;
+$relativeMini    : calc(math.round($miniSize * $emSize) / $emSize) * 1em !default;
+$relativeTiny    : calc(math.round($tinySize * $emSize) / $emSize) * 1em !default;
+$relativeSmall   : calc(math.round($smallSize * $emSize) / $emSize) * 1em !default;
+$relativeMedium  : calc(math.round($mediumSize * $emSize) / $emSize) * 1em !default;
+$relativeLarge   : calc(math.round($largeSize * $emSize) / $emSize) * 1em !default;
+$relativeBig     : calc(math.round($bigSize * $emSize) / $emSize) * 1em !default;
+$relativeHuge    : calc(math.round($hugeSize * $emSize) / $emSize) * 1em !default;
+$relativeMassive : calc(math.round($massiveSize * $emSize) / $emSize) * 1em !default;
 
 /* rem */
-$absoluteMini    : (round($miniSize * $emSize) / $emSize) * 1rem !default;
-$absoluteTiny    : (round($tinySize * $emSize) / $emSize) * 1rem !default;
-$absoluteSmall   : (round($smallSize * $emSize) / $emSize) * 1rem !default;
-$absoluteMedium  : (round($mediumSize * $emSize) / $emSize) * 1rem !default;
-$absoluteLarge   : (round($largeSize * $emSize) / $emSize) * 1rem !default;
-$absoluteBig     : (round($bigSize * $emSize) / $emSize) * 1rem !default;
-$absoluteHuge    : (round($hugeSize * $emSize) / $emSize) * 1rem !default;
-$absoluteMassive : (round($massiveSize * $emSize) / $emSize) * 1rem !default;
+$absoluteMini    : calc(math.round($miniSize * $emSize) / $emSize) * 1rem !default;
+$absoluteTiny    : calc(math.round($tinySize * $emSize) / $emSize) * 1rem !default;
+$absoluteSmall   : calc(math.round($smallSize * $emSize) / $emSize) * 1rem !default;
+$absoluteMedium  : calc(math.round($mediumSize * $emSize) / $emSize) * 1rem !default;
+$absoluteLarge   : calc(math.round($largeSize * $emSize) / $emSize) * 1rem !default;
+$absoluteBig     : calc(math.round($bigSize * $emSize) / $emSize) * 1rem !default;
+$absoluteHuge    : calc(math.round($hugeSize * $emSize) / $emSize) * 1rem !default;
+$absoluteMassive : calc(math.round($massiveSize * $emSize) / $emSize) * 1rem !default;
 
 
 /*-------------------
@@ -375,39 +379,39 @@ $widescreenMonitorBreakpoint : 1920px !default;
 
 
 /* Columns */
-$oneWide        : (1 / $columnCount * 100%) !default;
-$twoWide        : (2 / $columnCount * 100%) !default;
-$threeWide      : (3 / $columnCount * 100%) !default;
-$fourWide       : (4 / $columnCount * 100%) !default;
-$fiveWide       : (5 / $columnCount * 100%) !default;
-$sixWide        : (6 / $columnCount * 100%) !default;
-$sevenWide      : (7 / $columnCount * 100%) !default;
-$eightWide      : (8 / $columnCount * 100%) !default;
-$nineWide       : (9 / $columnCount * 100%) !default;
-$tenWide        : (10 / $columnCount * 100%) !default;
-$elevenWide     : (11 / $columnCount * 100%) !default;
-$twelveWide     : (12 / $columnCount * 100%) !default;
-$thirteenWide   : (13 / $columnCount * 100%) !default;
-$fourteenWide   : (14 / $columnCount * 100%) !default;
-$fifteenWide    : (15 / $columnCount * 100%) !default;
-$sixteenWide    : (16 / $columnCount * 100%) !default;
+$oneWide        : calc(1 / $columnCount * 100%) !default;
+$twoWide        : calc(2 / $columnCount * 100%) !default;
+$threeWide      : calc(3 / $columnCount * 100%) !default;
+$fourWide       : calc(4 / $columnCount * 100%) !default;
+$fiveWide       : calc(5 / $columnCount * 100%) !default;
+$sixWide        : calc(6 / $columnCount * 100%) !default;
+$sevenWide      : calc(7 / $columnCount * 100%) !default;
+$eightWide      : calc(8 / $columnCount * 100%) !default;
+$nineWide       : calc(9 / $columnCount * 100%) !default;
+$tenWide        : calc(10 / $columnCount * 100%) !default;
+$elevenWide     : calc(11 / $columnCount * 100%) !default;
+$twelveWide     : calc(12 / $columnCount * 100%) !default;
+$thirteenWide   : calc(13 / $columnCount * 100%) !default;
+$fourteenWide   : calc(14 / $columnCount * 100%) !default;
+$fifteenWide    : calc(15 / $columnCount * 100%) !default;
+$sixteenWide    : calc(16 / $columnCount * 100%) !default;
 
-$oneColumn      : (1 / 1 * 100%) !default;
-$twoColumn      : (1 / 2 * 100%) !default;
-$threeColumn    : (1 / 3 * 100%) !default;
-$fourColumn     : (1 / 4 * 100%) !default;
-$fiveColumn     : (1 / 5 * 100%) !default;
-$sixColumn      : (1 / 6 * 100%) !default;
-$sevenColumn    : (1 / 7 * 100%) !default;
-$eightColumn    : (1 / 8 * 100%) !default;
-$nineColumn     : (1 / 9 * 100%) !default;
-$tenColumn      : (1 / 10 * 100%) !default;
-$elevenColumn   : (1 / 11 * 100%) !default;
-$twelveColumn   : (1 / 12 * 100%) !default;
-$thirteenColumn : (1 / 13 * 100%) !default;
-$fourteenColumn : (1 / 14 * 100%) !default;
-$fifteenColumn  : (1 / 15 * 100%) !default;
-$sixteenColumn  : (1 / 16 * 100%) !default;
+$oneColumn      : calc(1 / 1 * 100%) !default;
+$twoColumn      : calc(1 / 2 * 100%) !default;
+$threeColumn    : calc(1 / 3 * 100%) !default;
+$fourColumn     : calc(1 / 4 * 100%) !default;
+$fiveColumn     : calc(1 / 5 * 100%) !default;
+$sixColumn      : calc(1 / 6 * 100%) !default;
+$sevenColumn    : calc(1 / 7 * 100%) !default;
+$eightColumn    : calc(1 / 8 * 100%) !default;
+$nineColumn     : calc(1 / 9 * 100%) !default;
+$tenColumn      : calc(1 / 10 * 100%) !default;
+$elevenColumn   : calc(1 / 11 * 100%) !default;
+$twelveColumn   : calc(1 / 12 * 100%) !default;
+$thirteenColumn : calc(1 / 13 * 100%) !default;
+$fourteenColumn : calc(1 / 14 * 100%) !default;
+$fifteenColumn  : calc(1 / 15 * 100%) !default;
+$sixteenColumn  : calc(1 / 16 * 100%) !default;
 
 
 /*******************************
@@ -544,7 +548,7 @@ $floatingShadow:
 --------------------*/
 
 /* Loaders Position Offset */
-$loaderOffset : -($loaderSize / 2) !default;
+$loaderOffset : - calc($loaderSize / 2) !default;
 $loaderMargin : $loaderOffset 0em 0em $loaderOffset !default;
 
 /* Rendered Scrollbar Width */
@@ -554,8 +558,8 @@ $scrollbarWidth: 17px !default;
 $glyphWidth: 1.1em !default;
 
 /* Used to match floats with text */
-$lineHeightOffset       : (($lineHeight - 1em) / 2) !default;
-$headerLineHeightOffset : ($headerLineHeight - 1em) / 2 !default;
+$lineHeightOffset       : calc(($lineHeight - 1em) / 2) !default;
+$headerLineHeightOffset : calc(($headerLineHeight - 1em) / 2) !default;
 
 /* Header Spacing */
 $headerTopMargin    : calc(2rem - #{$headerLineHeightOffset}) !default;
@@ -609,116 +613,116 @@ $floatingShadowHover:
  !default;
 
 /*---  Colors  ---*/
-$primaryColorHover    : saturate(darken($primaryColor, 5), 10) !default;
-$secondaryColorHover  : saturate(lighten($secondaryColor, 5), 10) !default;
+$primaryColorHover    : color.adjust(color.adjust($primaryColor, $lightness: -5%), $saturation: 10%) !default;
+$secondaryColorHover  : color.adjust(color.adjust($secondaryColor, $lightness: 5%), $saturation: 10%) !default;
 
-$redHover             : saturate(darken($red, 5), 10) !default;
-$orangeHover          : saturate(darken($orange, 5), 10) !default;
-$yellowHover          : saturate(darken($yellow, 5), 10) !default;
-$oliveHover           : saturate(darken($olive, 5), 10) !default;
-$greenHover           : saturate(darken($green, 5), 10) !default;
-$tealHover            : saturate(darken($teal, 5), 10) !default;
-$blueHover            : saturate(darken($blue, 5), 10) !default;
-$violetHover          : saturate(darken($violet, 5), 10) !default;
-$purpleHover          : saturate(darken($purple, 5), 10) !default;
-$pinkHover            : saturate(darken($pink, 5), 10) !default;
-$brownHover           : saturate(darken($brown, 5), 10) !default;
+$redHover             : color.adjust(color.adjust($red, $lightness: -5%), $saturation: 10%) !default;
+$orangeHover          : color.adjust(color.adjust($orange, $lightness: -5%), $saturation: 10%) !default;
+$yellowHover          : color.adjust(color.adjust($yellow, $lightness: -5%), $saturation: 10%) !default;
+$oliveHover           : color.adjust(color.adjust($olive, $lightness: -5%), $saturation: 10%) !default;
+$greenHover           : color.adjust(color.adjust($green, $lightness: -5%), $saturation: 10%) !default;
+$tealHover            : color.adjust(color.adjust($teal, $lightness: -5%), $saturation: 10%) !default;
+$blueHover            : color.adjust(color.adjust($blue, $lightness: -5%), $saturation: 10%) !default;
+$violetHover          : color.adjust(color.adjust($violet, $lightness: -5%), $saturation: 10%) !default;
+$purpleHover          : color.adjust(color.adjust($purple, $lightness: -5%), $saturation: 10%) !default;
+$pinkHover            : color.adjust(color.adjust($pink, $lightness: -5%), $saturation: 10%) !default;
+$brownHover           : color.adjust(color.adjust($brown, $lightness: -5%), $saturation: 10%) !default;
 
-$lightRedHover        : saturate(darken($lightRed, 5), 10) !default;
-$lightOrangeHover     : saturate(darken($lightOrange, 5), 10) !default;
-$lightYellowHover     : saturate(darken($lightYellow, 5), 10) !default;
-$lightOliveHover      : saturate(darken($lightOlive, 5), 10) !default;
-$lightGreenHover      : saturate(darken($lightGreen, 5), 10) !default;
-$lightTealHover       : saturate(darken($lightTeal, 5), 10) !default;
-$lightBlueHover       : saturate(darken($lightBlue, 5), 10) !default;
-$lightVioletHover     : saturate(darken($lightViolet, 5), 10) !default;
-$lightPurpleHover     : saturate(darken($lightPurple, 5), 10) !default;
-$lightPinkHover       : saturate(darken($lightPink, 5), 10) !default;
-$lightBrownHover      : saturate(darken($lightBrown, 5), 10) !default;
-$lightGreyHover       : saturate(darken($lightGrey, 5), 10) !default;
-$lightBlackHover      : saturate(darken($fullBlack, 5), 10) !default;
+$lightRedHover        : color.adjust(color.adjust($lightRed, $lightness: -5%), $saturation: 10%) !default;
+$lightOrangeHover     : color.adjust(color.adjust($lightOrange, $lightness: -5%), $saturation: 10%) !default;
+$lightYellowHover     : color.adjust(color.adjust($lightYellow, $lightness: -5%), $saturation: 10%) !default;
+$lightOliveHover      : color.adjust(color.adjust($lightOlive, $lightness: -5%), $saturation: 10%) !default;
+$lightGreenHover      : color.adjust(color.adjust($lightGreen, $lightness: -5%), $saturation: 10%) !default;
+$lightTealHover       : color.adjust(color.adjust($lightTeal, $lightness: -5%), $saturation: 10%) !default;
+$lightBlueHover       : color.adjust(color.adjust($lightBlue, $lightness: -5%), $saturation: 10%) !default;
+$lightVioletHover     : color.adjust(color.adjust($lightViolet, $lightness: -5%), $saturation: 10%) !default;
+$lightPurpleHover     : color.adjust(color.adjust($lightPurple, $lightness: -5%), $saturation: 10%) !default;
+$lightPinkHover       : color.adjust(color.adjust($lightPink, $lightness: -5%), $saturation: 10%) !default;
+$lightBrownHover      : color.adjust(color.adjust($lightBrown, $lightness: -5%), $saturation: 10%) !default;
+$lightGreyHover       : color.adjust(color.adjust($lightGrey, $lightness: -5%), $saturation: 10%) !default;
+$lightBlackHover      : color.adjust(color.adjust($fullBlack, $lightness: -5%), $saturation: 10%) !default;
 
 /*---  Emotive  ---*/
-$positiveColorHover   : saturate(darken($positiveColor, 5), 10) !default;
-$negativeColorHover   : saturate(darken($negativeColor, 5), 10) !default;
+$positiveColorHover   : color.adjust(color.adjust($positiveColor, $lightness: -5%), $saturation: 10%) !default;
+$negativeColorHover   : color.adjust(color.adjust($negativeColor, $lightness: -5%), $saturation: 10%) !default;
 
 /*---  Brand   ---*/
-$facebookHoverColor   : saturate(darken($facebookColor, 5), 10) !default;
-$twitterHoverColor    : saturate(darken($twitterColor, 5), 10) !default;
-$googlePlusHoverColor : saturate(darken($googlePlusColor, 5), 10) !default;
-$linkedInHoverColor   : saturate(darken($linkedInColor, 5), 10) !default;
-$youtubeHoverColor    : saturate(darken($youtubeColor, 5), 10) !default;
-$instagramHoverColor  : saturate(darken($instagramColor, 5), 10) !default;
-$pinterestHoverColor  : saturate(darken($pinterestColor, 5), 10) !default;
-$vkHoverColor         : saturate(darken($vkColor, 5), 10) !default;
+$facebookHoverColor   : color.adjust(color.adjust($facebookColor, $lightness: -5%), $saturation: 10%) !default;
+$twitterHoverColor    : color.adjust(color.adjust($twitterColor, $lightness: -5%), $saturation: 10%) !default;
+$googlePlusHoverColor : color.adjust(color.adjust($googlePlusColor, $lightness: -5%), $saturation: 10%) !default;
+$linkedInHoverColor   : color.adjust(color.adjust($linkedInColor, $lightness: -5%), $saturation: 10%) !default;
+$youtubeHoverColor    : color.adjust(color.adjust($youtubeColor, $lightness: -5%), $saturation: 10%) !default;
+$instagramHoverColor  : color.adjust(color.adjust($instagramColor, $lightness: -5%), $saturation: 10%) !default;
+$pinterestHoverColor  : color.adjust(color.adjust($pinterestColor, $lightness: -5%), $saturation: 10%) !default;
+$vkHoverColor         : color.adjust(color.adjust($vkColor, $lightness: -5%), $saturation: 10%) !default;
 
 /*---  Dark Tones  ---*/
-$fullBlackHover       : lighten($fullBlack, 5) !default;
-$blackHover           : lighten($black, 5) !default;
-$greyHover            : lighten($grey, 5) !default;
+$fullBlackHover       : color.adjust($fullBlack, $lightness: 5%) !default;
+$blackHover           : color.adjust($black, $lightness: 5%) !default;
+$greyHover            : color.adjust($grey, $lightness: 5%) !default;
 
 /*---  Light Tones  ---*/
-$whiteHover           : darken($white, 5) !default;
-$offWhiteHover        : darken($offWhite, 5) !default;
-$darkWhiteHover       : darken($darkWhite, 5) !default;
+$whiteHover           : color.adjust($white, $lightness: -5%) !default;
+$offWhiteHover        : color.adjust($offWhite, $lightness: -5%) !default;
+$darkWhiteHover       : color.adjust($darkWhite, $lightness: -5%) !default;
 
 /*-------------------
         Focus
 --------------------*/
 
 /*---  Colors  ---*/
-$primaryColorFocus    : saturate(darken($primaryColor, 8), 20) !default;
-$secondaryColorFocus  : saturate(lighten($secondaryColor, 8), 20) !default;
+$primaryColorFocus    : color.adjust(color.adjust($primaryColor, $lightness: -8%), $saturation: 20%) !default;
+$secondaryColorFocus  : color.adjust(color.adjust($secondaryColor, $lightness: 8%), $saturation: 20%) !default;
 
-$redFocus             : saturate(darken($red, 8), 20) !default;
-$orangeFocus          : saturate(darken($orange, 8), 20) !default;
-$yellowFocus          : saturate(darken($yellow, 8), 20) !default;
-$oliveFocus           : saturate(darken($olive, 8), 20) !default;
-$greenFocus           : saturate(darken($green, 8), 20) !default;
-$tealFocus            : saturate(darken($teal, 8), 20) !default;
-$blueFocus            : saturate(darken($blue, 8), 20) !default;
-$violetFocus          : saturate(darken($violet, 8), 20) !default;
-$purpleFocus          : saturate(darken($purple, 8), 20) !default;
-$pinkFocus            : saturate(darken($pink, 8), 20) !default;
-$brownFocus           : saturate(darken($brown, 8), 20) !default;
+$redFocus             : color.adjust(color.adjust($red, $lightness: -8%), $saturation: 20%) !default;
+$orangeFocus          : color.adjust(color.adjust($orange, $lightness: -8%), $saturation: 20%) !default;
+$yellowFocus          : color.adjust(color.adjust($yellow, $lightness: -8%), $saturation: 20%) !default;
+$oliveFocus           : color.adjust(color.adjust($olive, $lightness: -8%), $saturation: 20%) !default;
+$greenFocus           : color.adjust(color.adjust($green, $lightness: -8%), $saturation: 20%) !default;
+$tealFocus            : color.adjust(color.adjust($teal, $lightness: -8%), $saturation: 20%) !default;
+$blueFocus            : color.adjust(color.adjust($blue, $lightness: -8%), $saturation: 20%) !default;
+$violetFocus          : color.adjust(color.adjust($violet, $lightness: -8%), $saturation: 20%) !default;
+$purpleFocus          : color.adjust(color.adjust($purple, $lightness: -8%), $saturation: 20%) !default;
+$pinkFocus            : color.adjust(color.adjust($pink, $lightness: -8%), $saturation: 20%) !default;
+$brownFocus           : color.adjust(color.adjust($brown, $lightness: -8%), $saturation: 20%) !default;
 
-$lightRedFocus        : saturate(darken($lightRed, 8), 20) !default;
-$lightOrangeFocus     : saturate(darken($lightOrange, 8), 20) !default;
-$lightYellowFocus     : saturate(darken($lightYellow, 8), 20) !default;
-$lightOliveFocus      : saturate(darken($lightOlive, 8), 20) !default;
-$lightGreenFocus      : saturate(darken($lightGreen, 8), 20) !default;
-$lightTealFocus       : saturate(darken($lightTeal, 8), 20) !default;
-$lightBlueFocus       : saturate(darken($lightBlue, 8), 20) !default;
-$lightVioletFocus     : saturate(darken($lightViolet, 8), 20) !default;
-$lightPurpleFocus     : saturate(darken($lightPurple, 8), 20) !default;
-$lightPinkFocus       : saturate(darken($lightPink, 8), 20) !default;
-$lightBrownFocus      : saturate(darken($lightBrown, 8), 20) !default;
-$lightGreyFocus       : saturate(darken($lightGrey, 8), 20) !default;
-$lightBlackFocus      : saturate(darken($fullBlack, 8), 20) !default;
+$lightRedFocus        : color.adjust(color.adjust($lightRed, $lightness: -8%), $saturation: 20%) !default;
+$lightOrangeFocus     : color.adjust(color.adjust($lightOrange, $lightness: -8%), $saturation: 20%) !default;
+$lightYellowFocus     : color.adjust(color.adjust($lightYellow, $lightness: -8%), $saturation: 20%) !default;
+$lightOliveFocus      : color.adjust(color.adjust($lightOlive, $lightness: -8%), $saturation: 20%) !default;
+$lightGreenFocus      : color.adjust(color.adjust($lightGreen, $lightness: -8%), $saturation: 20%) !default;
+$lightTealFocus       : color.adjust(color.adjust($lightTeal, $lightness: -8%), $saturation: 20%) !default;
+$lightBlueFocus       : color.adjust(color.adjust($lightBlue, $lightness: -8%), $saturation: 20%) !default;
+$lightVioletFocus     : color.adjust(color.adjust($lightViolet, $lightness: -8%), $saturation: 20%) !default;
+$lightPurpleFocus     : color.adjust(color.adjust($lightPurple, $lightness: -8%), $saturation: 20%) !default;
+$lightPinkFocus       : color.adjust(color.adjust($lightPink, $lightness: -8%), $saturation: 20%) !default;
+$lightBrownFocus      : color.adjust(color.adjust($lightBrown, $lightness: -8%), $saturation: 20%) !default;
+$lightGreyFocus       : color.adjust(color.adjust($lightGrey, $lightness: -8%), $saturation: 20%) !default;
+$lightBlackFocus      : color.adjust(color.adjust($fullBlack, $lightness: -8%), $saturation: 20%) !default;
 
 /*---  Emotive  ---*/
-$positiveColorFocus   : saturate(darken($positiveColor, 8), 20) !default;
-$negativeColorFocus   : saturate(darken($negativeColor, 8), 20) !default;
+$positiveColorFocus   : color.adjust(color.adjust($positiveColor, $lightness: -8%), $saturation: 20%) !default;
+$negativeColorFocus   : color.adjust(color.adjust($negativeColor, $lightness: -8%), $saturation: 20%) !default;
 
 /*---  Brand   ---*/
-$facebookFocusColor   : saturate(darken($facebookColor, 8), 20) !default;
-$twitterFocusColor    : saturate(darken($twitterColor, 8), 20) !default;
-$googlePlusFocusColor : saturate(darken($googlePlusColor, 8), 20) !default;
-$linkedInFocusColor   : saturate(darken($linkedInColor, 8), 20) !default;
-$youtubeFocusColor    : saturate(darken($youtubeColor, 8), 20) !default;
-$instagramFocusColor  : saturate(darken($instagramColor, 8), 20) !default;
-$pinterestFocusColor  : saturate(darken($pinterestColor, 8), 20) !default;
-$vkFocusColor         : saturate(darken($vkColor, 8), 20) !default;
+$facebookFocusColor   : color.adjust(color.adjust($facebookColor, $lightness: -8%), $saturation: 20%) !default;
+$twitterFocusColor    : color.adjust(color.adjust($twitterColor, $lightness: -8%), $saturation: 20%) !default;
+$googlePlusFocusColor : color.adjust(color.adjust($googlePlusColor, $lightness: -8%), $saturation: 20%) !default;
+$linkedInFocusColor   : color.adjust(color.adjust($linkedInColor, $lightness: -8%), $saturation: 20%) !default;
+$youtubeFocusColor    : color.adjust(color.adjust($youtubeColor, $lightness: -8%), $saturation: 20%) !default;
+$instagramFocusColor  : color.adjust(color.adjust($instagramColor, $lightness: -8%), $saturation: 20%) !default;
+$pinterestFocusColor  : color.adjust(color.adjust($pinterestColor, $lightness: -8%), $saturation: 20%) !default;
+$vkFocusColor         : color.adjust(color.adjust($vkColor, $lightness: -8%), $saturation: 20%) !default;
 
 /*---  Dark Tones  ---*/
-$fullBlackFocus       : lighten($fullBlack, 8) !default;
-$blackFocus           : lighten($black, 8) !default;
-$greyFocus            : lighten($grey, 8) !default;
+$fullBlackFocus       : color.adjust($fullBlack, $lightness: 8%) !default;
+$blackFocus           : color.adjust($black, $lightness: 8%) !default;
+$greyFocus            : color.adjust($grey, $lightness: 8%) !default;
 
 /*---  Light Tones  ---*/
-$whiteFocus           : darken($white, 8) !default;
-$offWhiteFocus        : darken($offWhite, 8) !default;
-$darkWhiteFocus       : darken($darkWhite, 8) !default;
+$whiteFocus           : color.adjust($white, $lightness: -8%) !default;
+$offWhiteFocus        : color.adjust($offWhite, $lightness: -8%) !default;
+$darkWhiteFocus       : color.adjust($darkWhite, $lightness: -8%) !default;
 
 
 /*-------------------
@@ -726,58 +730,58 @@ $darkWhiteFocus       : darken($darkWhite, 8) !default;
 --------------------*/
 
 /*---  Colors  ---*/
-$primaryColorDown    : darken($primaryColor, 10) !default;
-$secondaryColorDown  : lighten($secondaryColor, 10) !default;
+$primaryColorDown    : color.adjust($primaryColor, $lightness: -10%) !default;
+$secondaryColorDown  : color.adjust($secondaryColor, $lightness: 10%) !default;
 
-$redDown             : darken($red, 10) !default;
-$orangeDown          : darken($orange, 10) !default;
-$yellowDown          : darken($yellow, 10) !default;
-$oliveDown           : darken($olive, 10) !default;
-$greenDown           : darken($green, 10) !default;
-$tealDown            : darken($teal, 10) !default;
-$blueDown            : darken($blue, 10) !default;
-$violetDown          : darken($violet, 10) !default;
-$purpleDown          : darken($purple, 10) !default;
-$pinkDown            : darken($pink, 10) !default;
-$brownDown           : darken($brown, 10) !default;
+$redDown             : color.adjust($red, $lightness: -10%) !default;
+$orangeDown          : color.adjust($orange, $lightness: -10%) !default;
+$yellowDown          : color.adjust($yellow, $lightness: -10%) !default;
+$oliveDown           : color.adjust($olive, $lightness: -10%) !default;
+$greenDown           : color.adjust($green, $lightness: -10%) !default;
+$tealDown            : color.adjust($teal, $lightness: -10%) !default;
+$blueDown            : color.adjust($blue, $lightness: -10%) !default;
+$violetDown          : color.adjust($violet, $lightness: -10%) !default;
+$purpleDown          : color.adjust($purple, $lightness: -10%) !default;
+$pinkDown            : color.adjust($pink, $lightness: -10%) !default;
+$brownDown           : color.adjust($brown, $lightness: -10%) !default;
 
-$lightRedDown        : darken($lightRed, 10) !default;
-$lightOrangeDown     : darken($lightOrange, 10) !default;
-$lightYellowDown     : darken($lightYellow, 10) !default;
-$lightOliveDown      : darken($lightOlive, 10) !default;
-$lightGreenDown      : darken($lightGreen, 10) !default;
-$lightTealDown       : darken($lightTeal, 10) !default;
-$lightBlueDown       : darken($lightBlue, 10) !default;
-$lightVioletDown     : darken($lightViolet, 10) !default;
-$lightPurpleDown     : darken($lightPurple, 10) !default;
-$lightPinkDown       : darken($lightPink, 10) !default;
-$lightBrownDown      : darken($lightBrown, 10) !default;
-$lightGreyDown       : darken($lightGrey, 10) !default;
-$lightBlackDown      : darken($fullBlack, 10) !default;
+$lightRedDown        : color.adjust($lightRed, $lightness: -10%) !default;
+$lightOrangeDown     : color.adjust($lightOrange, $lightness: -10%) !default;
+$lightYellowDown     : color.adjust($lightYellow, $lightness: -10%) !default;
+$lightOliveDown      : color.adjust($lightOlive, $lightness: -10%) !default;
+$lightGreenDown      : color.adjust($lightGreen, $lightness: -10%) !default;
+$lightTealDown       : color.adjust($lightTeal, $lightness: -10%) !default;
+$lightBlueDown       : color.adjust($lightBlue, $lightness: -10%) !default;
+$lightVioletDown     : color.adjust($lightViolet, $lightness: -10%) !default;
+$lightPurpleDown     : color.adjust($lightPurple, $lightness: -10%) !default;
+$lightPinkDown       : color.adjust($lightPink, $lightness: -10%) !default;
+$lightBrownDown      : color.adjust($lightBrown, $lightness: -10%) !default;
+$lightGreyDown       : color.adjust($lightGrey, $lightness: -10%) !default;
+$lightBlackDown      : color.adjust($fullBlack, $lightness: -10%) !default;
 
 /*---  Emotive  ---*/
-$positiveColorDown   : darken($positiveColor, 10) !default;
-$negativeColorDown   : darken($negativeColor, 10) !default;
+$positiveColorDown   : color.adjust($positiveColor, $lightness: -10%) !default;
+$negativeColorDown   : color.adjust($negativeColor, $lightness: -10%) !default;
 
 /*---  Brand   ---*/
-$facebookDownColor   : darken($facebookColor, 10) !default;
-$twitterDownColor    : darken($twitterColor, 10) !default;
-$googlePlusDownColor : darken($googlePlusColor, 10) !default;
-$linkedInDownColor   : darken($linkedInColor, 10) !default;
-$youtubeDownColor    : darken($youtubeColor, 10) !default;
-$instagramDownColor  : darken($instagramColor, 10) !default;
-$pinterestDownColor  : darken($pinterestColor, 10) !default;
-$vkDownColor         : darken($vkColor, 10) !default;
+$facebookDownColor   : color.adjust($facebookColor, $lightness: -10%) !default;
+$twitterDownColor    : color.adjust($twitterColor, $lightness: -10%) !default;
+$googlePlusDownColor : color.adjust($googlePlusColor, $lightness: -10%) !default;
+$linkedInDownColor   : color.adjust($linkedInColor, $lightness: -10%) !default;
+$youtubeDownColor    : color.adjust($youtubeColor, $lightness: -10%) !default;
+$instagramDownColor  : color.adjust($instagramColor, $lightness: -10%) !default;
+$pinterestDownColor  : color.adjust($pinterestColor, $lightness: -10%) !default;
+$vkDownColor         : color.adjust($vkColor, $lightness: -10%) !default;
 
 /*---  Dark Tones  ---*/
-$fullBlackDown       : lighten($fullBlack, 10) !default;
-$blackDown           : lighten($black, 10) !default;
-$greyDown            : lighten($grey, 10) !default;
+$fullBlackDown       : color.adjust($fullBlack, $lightness: 10%) !default;
+$blackDown           : color.adjust($black, $lightness: 10%) !default;
+$greyDown            : color.adjust($grey, $lightness: 10%) !default;
 
 /*---  Light Tones  ---*/
-$whiteDown           : darken($white, 10) !default;
-$offWhiteDown        : darken($offWhite, 10) !default;
-$darkWhiteDown       : darken($darkWhite, 10) !default;
+$whiteDown           : color.adjust($white, $lightness: -10%) !default;
+$offWhiteDown        : color.adjust($offWhite, $lightness: -10%) !default;
+$darkWhiteDown       : color.adjust($darkWhite, $lightness: -10%) !default;
 
 
 /*-------------------
@@ -785,55 +789,55 @@ $darkWhiteDown       : darken($darkWhite, 10) !default;
 --------------------*/
 
 /*---  Colors  ---*/
-$primaryColorActive    : saturate(darken($primaryColor, 5), 15) !default;
-$secondaryColorActive  : saturate(lighten($secondaryColor, 5), 15) !default;
+$primaryColorActive    : color.adjust(color.adjust($primaryColor, $lightness: -5%), $saturation: 15%) !default;
+$secondaryColorActive  : color.adjust(color.adjust($secondaryColor, $lightness: 5%), $saturation: 15%) !default;
 
-$redActive             : saturate(darken($red, 5), 15) !default;
-$orangeActive          : saturate(darken($orange, 5), 15) !default;
-$yellowActive          : saturate(darken($yellow, 5), 15) !default;
-$oliveActive           : saturate(darken($olive, 5), 15) !default;
-$greenActive           : saturate(darken($green, 5), 15) !default;
-$tealActive            : saturate(darken($teal, 5), 15) !default;
-$blueActive            : saturate(darken($blue, 5), 15) !default;
-$violetActive          : saturate(darken($violet, 5), 15) !default;
-$purpleActive          : saturate(darken($purple, 5), 15) !default;
-$pinkActive            : saturate(darken($pink, 5), 15) !default;
-$brownActive           : saturate(darken($brown, 5), 15) !default;
+$redActive             : color.adjust(color.adjust($red, $lightness: -5%), $saturation: 15%) !default;
+$orangeActive          : color.adjust(color.adjust($orange, $lightness: -5%), $saturation: 15%) !default;
+$yellowActive          : color.adjust(color.adjust($yellow, $lightness: -5%), $saturation: 15%) !default;
+$oliveActive           : color.adjust(color.adjust($olive, $lightness: -5%), $saturation: 15%) !default;
+$greenActive           : color.adjust(color.adjust($green, $lightness: -5%), $saturation: 15%) !default;
+$tealActive            : color.adjust(color.adjust($teal, $lightness: -5%), $saturation: 15%) !default;
+$blueActive            : color.adjust(color.adjust($blue, $lightness: -5%), $saturation: 15%) !default;
+$violetActive          : color.adjust(color.adjust($violet, $lightness: -5%), $saturation: 15%) !default;
+$purpleActive          : color.adjust(color.adjust($purple, $lightness: -5%), $saturation: 15%) !default;
+$pinkActive            : color.adjust(color.adjust($pink, $lightness: -5%), $saturation: 15%) !default;
+$brownActive           : color.adjust(color.adjust($brown, $lightness: -5%), $saturation: 15%) !default;
 
-$lightRedActive        : saturate(darken($lightRed, 5), 15) !default;
-$lightOrangeActive     : saturate(darken($lightOrange, 5), 15) !default;
-$lightYellowActive     : saturate(darken($lightYellow, 5), 15) !default;
-$lightOliveActive      : saturate(darken($lightOlive, 5), 15) !default;
-$lightGreenActive      : saturate(darken($lightGreen, 5), 15) !default;
-$lightTealActive       : saturate(darken($lightTeal, 5), 15) !default;
-$lightBlueActive       : saturate(darken($lightBlue, 5), 15) !default;
-$lightVioletActive     : saturate(darken($lightViolet, 5), 15) !default;
-$lightPurpleActive     : saturate(darken($lightPurple, 5), 15) !default;
-$lightPinkActive       : saturate(darken($lightPink, 5), 15) !default;
-$lightBrownActive      : saturate(darken($lightBrown, 5), 15) !default;
-$lightGreyActive       : saturate(darken($lightGrey, 5), 15) !default;
-$lightBlackActive      : saturate(darken($fullBlack, 5), 15) !default;
+$lightRedActive        : color.adjust(color.adjust($lightRed, $lightness: -5%), $saturation: 15%) !default;
+$lightOrangeActive     : color.adjust(color.adjust($lightOrange, $lightness: -5%), $saturation: 15%) !default;
+$lightYellowActive     : color.adjust(color.adjust($lightYellow, $lightness: -5%), $saturation: 15%) !default;
+$lightOliveActive      : color.adjust(color.adjust($lightOlive, $lightness: -5%), $saturation: 15%) !default;
+$lightGreenActive      : color.adjust(color.adjust($lightGreen, $lightness: -5%), $saturation: 15%) !default;
+$lightTealActive       : color.adjust(color.adjust($lightTeal, $lightness: -5%), $saturation: 15%) !default;
+$lightBlueActive       : color.adjust(color.adjust($lightBlue, $lightness: -5%), $saturation: 15%) !default;
+$lightVioletActive     : color.adjust(color.adjust($lightViolet, $lightness: -5%), $saturation: 15%) !default;
+$lightPurpleActive     : color.adjust(color.adjust($lightPurple, $lightness: -5%), $saturation: 15%) !default;
+$lightPinkActive       : color.adjust(color.adjust($lightPink, $lightness: -5%), $saturation: 15%) !default;
+$lightBrownActive      : color.adjust(color.adjust($lightBrown, $lightness: -5%), $saturation: 15%) !default;
+$lightGreyActive       : color.adjust(color.adjust($lightGrey, $lightness: -5%), $saturation: 15%) !default;
+$lightBlackActive      : color.adjust(color.adjust($fullBlack, $lightness: -5%), $saturation: 15%) !default;
 
 /*---  Emotive  ---*/
-$positiveColorActive   : saturate(darken($positiveColor, 5), 15) !default;
-$negativeColorActive   : saturate(darken($negativeColor, 5), 15) !default;
+$positiveColorActive   : color.adjust(color.adjust($positiveColor, $lightness: -5%), $saturation: 15%) !default;
+$negativeColorActive   : color.adjust(color.adjust($negativeColor, $lightness: -5%), $saturation: 15%) !default;
 
 /*---  Brand   ---*/
-$facebookActiveColor   : saturate(darken($facebookColor, 5), 15) !default;
-$twitterActiveColor    : saturate(darken($twitterColor, 5), 15) !default;
-$googlePlusActiveColor : saturate(darken($googlePlusColor, 5), 15) !default;
-$linkedInActiveColor   : saturate(darken($linkedInColor, 5), 15) !default;
-$youtubeActiveColor    : saturate(darken($youtubeColor, 5), 15) !default;
-$instagramActiveColor  : saturate(darken($instagramColor, 5), 15) !default;
-$pinterestActiveColor  : saturate(darken($pinterestColor, 5), 15) !default;
-$vkActiveColor         : saturate(darken($vkColor, 5), 15) !default;
+$facebookActiveColor   : color.adjust(color.adjust($facebookColor, $lightness: -5%), $saturation: 15%) !default;
+$twitterActiveColor    : color.adjust(color.adjust($twitterColor, $lightness: -5%), $saturation: 15%) !default;
+$googlePlusActiveColor : color.adjust(color.adjust($googlePlusColor, $lightness: -5%), $saturation: 15%) !default;
+$linkedInActiveColor   : color.adjust(color.adjust($linkedInColor, $lightness: -5%), $saturation: 15%) !default;
+$youtubeActiveColor    : color.adjust(color.adjust($youtubeColor, $lightness: -5%), $saturation: 15%) !default;
+$instagramActiveColor  : color.adjust(color.adjust($instagramColor, $lightness: -5%), $saturation: 15%) !default;
+$pinterestActiveColor  : color.adjust(color.adjust($pinterestColor, $lightness: -5%), $saturation: 15%) !default;
+$vkActiveColor         : color.adjust(color.adjust($vkColor, $lightness: -5%), $saturation: 15%) !default;
 
 /*---  Dark Tones  ---*/
-$fullBlackActive       : darken($fullBlack, 5) !default;
-$blackActive           : darken($black, 5) !default;
-$greyActive            : darken($grey, 5) !default;
+$fullBlackActive       : color.adjust($fullBlack, $lightness: -5%) !default;
+$blackActive           : color.adjust($black, $lightness: -5%) !default;
+$greyActive            : color.adjust($grey, $lightness: -5%) !default;
 
 /*---  Light Tones  ---*/
-$whiteActive           : darken($white, 5) !default;
-$offWhiteActive        : darken($offWhite, 5) !default;
-$darkWhiteActive       : darken($darkWhite, 5) !default;
+$whiteActive           : color.adjust($white, $lightness: -5%) !default;
+$offWhiteActive        : color.adjust($offWhite, $lightness: -5%) !default;
+$darkWhiteActive       : color.adjust($darkWhite, $lightness: -5%) !default;

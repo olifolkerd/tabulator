@@ -63,6 +63,33 @@ export default class Keybindings extends Module{
 		}
 	}
 
+	getKeyCode(e){
+		// Convert modern e.key to legacy numeric key code for compatibility
+		if(e.key.length === 1){
+			return e.key.toUpperCase().charCodeAt(0);
+		}
+		
+		// Handle special keys
+		var specialKeys = {
+			"Enter": 13,
+			"Escape": 27,
+			"Tab": 9,
+			"Backspace": 8,
+			"Delete": 46,
+			"ArrowUp": 38,
+			"ArrowDown": 40,
+			"ArrowLeft": 37,
+			"ArrowRight": 39,
+			"Home": 36,
+			"End": 35,
+			"PageUp": 33,
+			"PageDown": 34,
+			"Insert": 45
+		};
+		
+		return specialKeys[e.key] || e.keyCode || 0;
+	}
+
 	mapBinding(action, symbolsList){
 		var binding = {
 			action: Keybindings.actions[action],
@@ -105,7 +132,7 @@ export default class Keybindings extends Module{
 		var self = this;
 
 		this.keyupBinding = function(e){
-			var code = e.keyCode;
+			var code = self.getKeyCode(e);
 			var bindings = self.watchKeys[code];
 
 			if(bindings){
@@ -119,7 +146,7 @@ export default class Keybindings extends Module{
 		};
 
 		this.keydownBinding = function(e){
-			var code = e.keyCode;
+			var code = self.getKeyCode(e);
 			var bindings = self.watchKeys[code];
 
 			if(bindings){

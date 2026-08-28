@@ -1,3 +1,4 @@
+@use "sass:color";
 
 $primary: #3759D7 !default; //the base text color from which the rest of the theme derives
 
@@ -15,7 +16,7 @@ $headerMargin:4px !default; //padding round header
 
 //column header arrows
 $sortArrowActive: $primary !default;
-$sortArrowInactive: lighten($primary, 30%) !default;
+$sortArrowInactive: color.adjust($primary, $lightness: 30%) !default;
 
 //row theming
 $rowBackgroundColor:#f3f3f3 !default; //table row background color
@@ -39,10 +40,10 @@ $footerActiveColor:$primary !default; //footer bottom active text color
 
 $handleWidth:10px !default; //width of the row handle
 $handleColor: $primary !default; //color for odd numbered rows
-$handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
+$handleColorAlt: color.adjust($primary, $lightness: 10%) !default; //color for even numbered rows
 
 //range selection
-$rangeBorderColor: #{darken($primary, 10%)} !default; //range border color
+$rangeBorderColor: #{color.adjust($primary, $lightness: -10%)} !default; //range border color
 $rangeHandleColor: $rangeBorderColor !default; //range handle color
 $rangeHeaderSelectedBackground: $rangeBorderColor !default; //header background color when selected
 $rangeHeaderHighlightBackground: $primary !default; //header background color when highlighted
@@ -50,7 +51,37 @@ $rangeHeaderTextHighlightBackground: #fff !default; //header text color when hig
 
 
 
-@import "../tabulator.scss";
+@use "../tabulator.scss" with (
+	$backgroundColor: $backgroundColor,
+	$borderColor: $borderColor,
+	$textSize: $textSize,
+	$headerBackgroundColor: $headerBackgroundColor,
+	$headerTextColor: $headerTextColor,
+	$headerBorderColor: $headerBorderColor,
+	$headerSeparatorColor: $headerSeparatorColor,
+	$headerMargin: $headerMargin,
+	$sortArrowActive: $sortArrowActive,
+	$sortArrowInactive: $sortArrowInactive,
+	$rowBackgroundColor: $rowBackgroundColor,
+	$rowAltBackgroundColor: $rowAltBackgroundColor,
+	$rowBorderColor: $rowBorderColor,
+	$rowTextColor: $rowTextColor,
+	$rowHoverBackground: $rowHoverBackground,
+	$rowSelectedBackground: $rowSelectedBackground,
+	$rowSelectedBackgroundHover: $rowSelectedBackgroundHover,
+	$editBoxColor: $editBoxColor,
+	$errorColor: $errorColor,
+	$footerBackgroundColor: $footerBackgroundColor,
+	$footerTextColor: $footerTextColor,
+	$footerBorderColor: $footerBorderColor,
+	$footerSeparatorColor: $footerSeparatorColor,
+	$footerActiveColor: $footerActiveColor,
+	$rangeBorderColor: $rangeBorderColor,
+	$rangeHandleColor: $rangeHandleColor,
+	$rangeHeaderSelectedBackground: $rangeHeaderSelectedBackground,
+	$rangeHeaderHighlightBackground: $rangeHeaderHighlightBackground,
+	$rangeHeaderTextHighlightBackground: $rangeHeaderTextHighlightBackground
+);
 
 .tabulator{
 
@@ -134,7 +165,7 @@ $rangeHeaderTextHighlightBackground: #fff !default; //header text color when hig
 			border-bottom:2px solid $headerSeparatorColor !important;
 
 			.tabulator-row{
-				background:lighten($footerBackgroundColor, 5%) !important;
+				background:color.adjust($footerBackgroundColor, $lightness: 5%) !important;
 
 				.tabulator-cell{
 					background:none;
@@ -243,7 +274,7 @@ $rangeHeaderTextHighlightBackground: #fff !default; //header text color when hig
 		border-top:2px solid $primary;
 		border-right:none;
 
-		background:lighten($primary, 20%);
+		background:color.adjust($primary, $lightness: 20%);
 
 		span{
 			color:$primary;
@@ -266,7 +297,7 @@ $rangeHeaderTextHighlightBackground: #fff !default; //header text color when hig
 	.tabulator-print-table-group{
 		border-bottom:2px solid $primary;
 		border-top:2px solid $primary;
-		background:lighten($primary, 20%);
+		background:color.adjust($primary, $lightness: 20%);
 		margin-bottom: 2px;
 
 		span{

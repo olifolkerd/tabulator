@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tabulator Example — 10 Full Demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../dist/css/tabulator_bootstrap5.css" />
+  <script src="../dist/js/tabulator.js"></script>
+</head>
+<body>
+  <main class="container py-4">
+    <h1>10 · Full Demo (release smoke-test)</h1>
+    <p>
+      A kitchen-sink table that exercises many modules at once: inline editing &amp;
+      validation, formatters, header filters, grouping, top/bottom calculations, row
+      selection, add/delete rows, dependency-free downloads (CSV/JSON/HTML) and layout
+      persistence (sorts, filters and column order survive a reload via
+      <code>localStorage</code>).
+      <a href="index.html">← back to index</a>
+    </p>
+
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <button id="add-row" class="btn btn-primary">Add row</button>
+      <button id="clear-selected" class="btn btn-secondary">Delete selected</button>
+      <button id="dl-csv" class="btn btn-dark">Download CSV</button>
+      <button id="dl-json" class="btn btn-dark">Download JSON</button>
+      <button id="dl-html" class="btn btn-dark">Download HTML</button>
+      <button id="reset" class="btn btn-outline-secondary">Reset saved layout</button>
+    </div>
+
+    <div id="example-table"></div>
+    <p><small>Tip: sort/filter/reorder columns, then reload the page — your layout is remembered.</small></p>
+  </main>
+
+  <script>
+    var tabledata = [
+      { id: 1, name: "Oli Bob",    dept: "Engineering", progress: 12, rating: 1, revenue: 12000, active: true,  dob: "2005-08-14" },
+      { id: 2, name: "Mary May",   dept: "Sales",       progress: 90, rating: 4, revenue: 48000, active: false, dob: "1989-02-01" },
+      { id: 3, name: "Chris L.",   dept: "Engineering", progress: 42, rating: 0, revenue: 9000,  active: true,  dob: "1980-11-23" },
+      { id: 4, name: "Brendon P.", dept: "Marketing",   progress: 100,rating: 1, revenue: 21000, active: true,  dob: "1992-04-18" },
+      { id: 5, name: "Margret M.", dept: "Sales",       progress: 16, rating: 5, revenue: 33500, active: false, dob: "1998-06-30" },
+      { id: 6, name: "Van Ng",     dept: "Engineering", progress: 70, rating: 3, revenue: 27000, active: true,  dob: "1975-09-12" },
+    ];
+
+    // Track the next id so "Add row" produces unique keys.
+    var nextId = tabledata.length + 1;
+
+    var table = new Tabulator("#example-table", {
+      data: tabledata,
+      layout: "fitColumns",
+      index: "id",
+
+      // Persist sort, filter, group and column layout across reloads.
+      persistence: true,
+      persistenceID: "tabulator-examples-full-demo",
+
+      selectableRows: true,
+      groupBy: "dept",
+      groupStartOpen: true,
+
+      columns: [
+        { formatter: "rowSelection", titleFormatter: "rowSelection", hozAlign: "center",
+          headerSort: false, width: 45, cellClick: function (e, cell) { cell.getRow().toggleSelect(); } },
+
+        { title: "Name", field: "name", editor: "input", validator: "required",
+          headerFilter: "input", widthGrow: 2 },
+
+        { title: "Department", field: "dept", headerFilter: "list",
+          headerFilterParams: { values: ["Engineering", "Sales", "Marketing"], clearable: true },
+          editor: "list", editorParams: { values: ["Engineering", "Sales", "Marketing"] } },
+
+        { title: "Progress", field: "progress", sorter: "number", formatter: "progress",
+          formatterParams: { min: 0, max: 100 }, editor: "number",
+          editorParams: { min: 0, max: 100 }, validator: ["min:0", "max:100"],
+          bottomCalc: "avg", bottomCalcParams: { precision: 0 } },
+
+        { title: "Rating", field: "rating", formatter: "star", hozAlign: "center",
+          width: 120, editor: "star" },
+
+        { title: "Revenue", field: "revenue", sorter: "number", hozAlign: "right",
+          formatter: "money", formatterParams: { symbol: "$", precision: 0, thousand: "," },
+          editor: "number",
+          bottomCalc: "sum", bottomCalcFormatter: "money",
+          bottomCalcFormatterParams: { symbol: "$", precision: 0, thousand: "," } },
+
+        { title: "Active", field: "active", hozAlign: "center", formatter: "tickCross",
+          editor: "tickCross", headerFilter: "tickCross", headerFilterParams: { tristate: true } },
+
+        { title: "DOB", field: "dob", sorter: "date", hozAlign: "center", editor: "date" },
+
+        // Per-row delete button.
+        { title: "", width: 60, hozAlign: "center", headerSort: false,
+          formatter: function () { return "🗑"; },
+          cellClick: function (e, cell) { cell.getRow().delete(); } },
+      ],
+    });
+
+    document.getElementById("add-row").addEventListener("click", function () {
+      table.addRow({ id: nextId++, name: "New Person", dept: "Engineering",
+        progress: 0, rating: 0, revenue: 0, active: true, dob: "2000-01-01" }, true);
+    });
+
+    document.getElementById("clear-selected").addEventListener("click", function () {
+      table.getSelectedRows().forEach(function (row) { row.delete(); });
+    });
+
+    document.getElementById("dl-csv").addEventListener("click", function () {
+      table.download("csv", "tabulator-data.csv");
+    });
+    document.getElementById("dl-json").addEventListener("click", function () {
+      table.download("json", "tabulator-data.json");
+    });
+    document.getElementById("dl-html").addEventListener("click", function () {
+      table.download("html", "tabulator-data.html", { style: true });
+    });
+
+    document.getElementById("reset").addEventListener("click", function () {
+      table.clearHistory && table.clearHistory();
+      // Wipe the persisted layout and reload to start fresh.
+      ["sort", "filter", "group", "page", "columns"].forEach(function (type) {
+        localStorage.removeItem("tabulator-examples-full-demo-" + type);
+      });
+      location.reload();
+    });
+  </script>
+</body>
+</html>

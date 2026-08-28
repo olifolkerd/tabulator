@@ -1,4 +1,5 @@
-@import "variables.scss";
+@use "sass:color";
+@use "variables.scss" as *;
 
 // Style conversion file, bootstrap to tabulator
 
@@ -35,13 +36,36 @@ $footerSeparatorColor:$table-border-color !default; //footer bottom separator co
 $footerActiveColor:$primary-color !default; //footer bottom active text color
 
 //range selection
-$rangeBorderColor: #{darken($primary-color, 10%)} !default; //range border color
+$rangeBorderColor: #{color.adjust($primary-color, $lightness: -10%)} !default; //range border color
 $rangeHandleColor: $rangeBorderColor !default; //range handle color
 $rangeHeaderSelectedBackground: $rangeBorderColor !default; //header background color when selected
 $rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when selected
 
 
-@import "../../tabulator.scss";
+@use "../../tabulator.scss" with (
+	$backgroundColor: $backgroundColor,
+	$borderColor: $borderColor,
+	$textSize: $textSize,
+	$headerBackgroundColor: $headerBackgroundColor,
+	$headerSeparatorColor: $headerSeparatorColor,
+	$sortArrowActive: $sortArrowActive,
+	$sortArrowInactive: $sortArrowInactive,
+	$rowBackgroundColor: $rowBackgroundColor,
+	$rowAltBackgroundColor: $rowAltBackgroundColor,
+	$rowBorderColor: $rowBorderColor,
+	$rowHoverBackground: $rowHoverBackground,
+	$rowSelectedBackground: $rowSelectedBackground,
+	$rowSelectedBackgroundHover: $rowSelectedBackgroundHover,
+	$editBoxColor: $editBoxColor,
+	$errorColor: $errorColor,
+	$footerBorderColor: $footerBorderColor,
+	$footerSeparatorColor: $footerSeparatorColor,
+	$footerActiveColor: $footerActiveColor,
+	$rangeBorderColor: $rangeBorderColor,
+	$rangeHandleColor: $rangeHandleColor,
+	$rangeHeaderSelectedBackground: $rangeHeaderSelectedBackground,
+	$rangeHeaderSelectedTextColor: $rangeHeaderSelectedTextColor
+);
 
 .tabulator{
 	border:none;
@@ -84,6 +108,7 @@ $rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when select
 		}
 
 		.tabulator-frozen-rows-holder{
+			padding-top: 1em;
 			min-width:600%;
 
 			&:empty{

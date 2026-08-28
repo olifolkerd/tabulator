@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator Grouped Scroll Jump Test (#3654)</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	body { padding: 20px; font-family: Arial, sans-serif; }
+	#test-table { width: 500px; }
+	.tabulator-cell { white-space: normal !important; }
+	</style>
+</head>
+<body>
+	<div id="test-table"></div>
+	<script>
+		function generateData() {
+			const data = [];
+			let id = 1;
+			for (let g = 0; g < 400; g++) {
+				for (let r = 0; r < 5; r++) {
+					const lines = (id % 8) + 1;
+					let text = "";
+					for (let l = 0; l < lines; l++) {
+						text += "Line " + l + " of row " + id + " padding text to wrap. ";
+					}
+					data.push({ id: id, category: "Group " + g, name: "Row " + id, notes: text, value: (id * 37) % 1000 });
+					id++;
+				}
+			}
+			return data;
+		}
+		document.addEventListener("DOMContentLoaded", () => {
+			window.testTable = new Tabulator("#test-table", {
+				data: generateData(),
+				columns: [
+					{ title: "ID", field: "id", width: 120 },
+					{ title: "Name", field: "name", width: 200 },
+					{ title: "Notes", field: "notes", width: 600, formatter: "textarea" },
+					{ title: "Value", field: "value", width: 200, sorter: "number" },
+				],
+				height: "300px",
+				layout: "fitData",
+				groupBy: "category",
+				groupStartOpen: true,
+			});
+		});
+	</script>
+</body>
+</html>

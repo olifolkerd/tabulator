@@ -1,3 +1,4 @@
+@use "sass:color";
 
 //Main Theme Variables
 $backgroundColor: #fff !default; //background color of tabulator
@@ -36,7 +37,32 @@ $footerBorderColor:#aaa !default; //footer border color
 $footerSeparatorColor:#999 !default; //footer bottom separator color
 $footerActiveColor:#d00 !default; //footer bottom active text color
 
-@import "../tabulator.scss";
+@use "../tabulator.scss" with (
+	$backgroundColor: $backgroundColor,
+	$borderColor: $borderColor,
+	$textSize: $textSize,
+	$headerBackgroundColor: $headerBackgroundColor,
+	$headerTextColor: $headerTextColor,
+	$headerBorderColor: $headerBorderColor,
+	$headerSeparatorColor: $headerSeparatorColor,
+	$headerMargin: $headerMargin,
+	$sortArrowActive: $sortArrowActive,
+	$sortArrowInactive: $sortArrowInactive,
+	$rowBackgroundColor: $rowBackgroundColor,
+	$rowAltBackgroundColor: $rowAltBackgroundColor,
+	$rowBorderColor: $rowBorderColor,
+	$rowTextColor: $rowTextColor,
+	$rowHoverBackground: $rowHoverBackground,
+	$rowSelectedBackground: $rowSelectedBackground,
+	$rowSelectedBackgroundHover: $rowSelectedBackgroundHover,
+	$editBoxColor: $editBoxColor,
+	$errorColor: $errorColor,
+	$footerBackgroundColor: $footerBackgroundColor,
+	$footerTextColor: $footerTextColor,
+	$footerBorderColor: $footerBorderColor,
+	$footerSeparatorColor: $footerSeparatorColor,
+	$footerActiveColor: $footerActiveColor
+);
 
 .tabulator{
 	border:none;
@@ -44,12 +70,12 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 	.tabulator-header{
 		.tabulator-calcs-holder{
-			background:darken($headerBackgroundColor, 5%) !important;
+			background:color.adjust($headerBackgroundColor, $lightness: -5%) !important;
 
 			border-bottom:1px solid $headerSeparatorColor;
 
 			.tabulator-row{
-				background:darken($headerBackgroundColor, 5%) !important;
+				background:color.adjust($headerBackgroundColor, $lightness: -5%) !important;
 			}
 		}
 	}
@@ -64,12 +90,12 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 	.tabulator-footer{
 		.tabulator-calcs-holder{
-			background:darken($footerBackgroundColor, 5%) !important;
+			background:color.adjust($footerBackgroundColor, $lightness: -5%) !important;
 
 			border-bottom:1px solid $footerBackgroundColor;
 
 			.tabulator-row{
-				background:darken($footerBackgroundColor, 5%) !important;
+				background:color.adjust($footerBackgroundColor, $lightness: -5%) !important;
 			}
 		}
 

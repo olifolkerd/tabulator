@@ -1,5 +1,4 @@
-@import "functions4.scss";
-@import "variables4.scss";
+@use "variables4.scss" as *;
 
 // Style conversion file, bootstrap to tabulator
 
@@ -38,7 +37,26 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 
 $table-cell-padding-sm: 5px;
 
-@import "../../tabulator.scss";
+@use "../../tabulator.scss" with (
+	$backgroundColor: $backgroundColor,
+	$borderColor: $borderColor,
+	$textSize: $textSize,
+	$headerBackgroundColor: $headerBackgroundColor,
+	$headerSeparatorColor: $headerSeparatorColor,
+	$sortArrowActive: $sortArrowActive,
+	$sortArrowInactive: $sortArrowInactive,
+	$rowBackgroundColor: $rowBackgroundColor,
+	$rowAltBackgroundColor: $rowAltBackgroundColor,
+	$rowBorderColor: $rowBorderColor,
+	$rowHoverBackground: $rowHoverBackground,
+	$rowSelectedBackground: $rowSelectedBackground,
+	$rowSelectedBackgroundHover: $rowSelectedBackgroundHover,
+	$editBoxColor: $editBoxColor,
+	$errorColor: $errorColor,
+	$footerBorderColor: $footerBorderColor,
+	$footerSeparatorColor: $footerSeparatorColor,
+	$footerActiveColor: $footerActiveColor
+);
 
 .tabulator{
 	background-color: $backgroundColor;
@@ -117,7 +135,7 @@ $table-cell-padding-sm: 5px;
 
 		.tabulator-spreadsheet-tabs{
 			.tabulator-spreadsheet-tab{
-				background-color: $spreadsheetActiveTabColor;
+				background-color: tabulator.$spreadsheetActiveTabColor;
 				font-weight: normal;
 
 				&.tabulator-spreadsheet-tab-active{

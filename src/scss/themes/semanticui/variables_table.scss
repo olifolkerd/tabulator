@@ -1,4 +1,5 @@
-@import "variables.scss";
+@use "sass:color";
+@use "variables.scss" as *;
 
 /*******************************
              Table
@@ -115,26 +116,26 @@ $stateMarkerWidth: 0px !default;
 /* Positive */
 $positiveColor: $positiveTextColor !default;
 $positiveBoxShadow: $stateMarkerWidth 0px 0px $positiveBorderColor inset !default;
-$positiveBackgroundHover: darken($positiveBackgroundColor, 3) !default;
-$positiveColorHover: darken($positiveColor, 3) !default;
+$positiveBackgroundHover: color.adjust($positiveBackgroundColor, $lightness: -3%) !default;
+$positiveColorHover: color.adjust($positiveColor, $lightness: -3%) !default;
 
 /* Negative */
 $negativeColor: $negativeTextColor !default;
 $negativeBoxShadow: $stateMarkerWidth 0px 0px $negativeBorderColor inset !default;
-$negativeBackgroundHover: darken($negativeBackgroundColor, 3) !default;
-$negativeColorHover: darken($negativeColor, 3) !default;
+$negativeBackgroundHover: color.adjust($negativeBackgroundColor, $lightness: -3%) !default;
+$negativeColorHover: color.adjust($negativeColor, $lightness: -3%) !default;
 
 /* Error */
 $errorColor: $errorTextColor !default;
 $errorBoxShadow: $stateMarkerWidth 0px 0px $errorBorderColor inset !default;
-$errorBackgroundHover: darken($errorBackgroundColor, 3) !default;
-$errorColorHover: darken($errorColor, 3) !default;
+$errorBackgroundHover: color.adjust($errorBackgroundColor, $lightness: -3%) !default;
+$errorColorHover: color.adjust($errorColor, $lightness: -3%) !default;
 
 /* Warning */
 $warningColor: $warningTextColor !default;
 $warningBoxShadow: $stateMarkerWidth 0px 0px $warningBorderColor inset !default;
-$warningBackgroundHover: darken($warningBackgroundColor, 3) !default;
-$warningColorHover: darken($warningColor, 3) !default;
+$warningBackgroundHover: color.adjust($warningBackgroundColor, $lightness: -3%) !default;
+$warningColorHover: color.adjust($warningColor, $lightness: -3%) !default;
 
 /* Active */
 $activeColor: $textColor !default;

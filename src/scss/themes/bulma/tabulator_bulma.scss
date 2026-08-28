@@ -1,4 +1,5 @@
-@import "variables.scss";
+@use "variables.scss" as *;
+@use "sass:color";
 
 // Style conversion file, bulma to tabulator
 
@@ -39,13 +40,38 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 // $footerActiveColor:#d00 !default; //footer bottom active text color
 
 //range selection
-$rangeBorderColor: #{darken($rowSelectedBackground, 10%)} !default; //range border color
+$rangeBorderColor: #{color.adjust($rowSelectedBackground, $lightness: -10%)} !default; //range border color
 $rangeHandleColor: $rangeBorderColor !default; //range handle color
 $rangeHeaderSelectedBackground: $rangeBorderColor !default; //header background color when selected
 $rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when selected
 
 
-@import "../../tabulator.scss";
+@use "../../tabulator.scss" with (
+	$backgroundColor: $backgroundColor,
+	$textSize: $textSize,
+	$headerBackgroundColor: $headerBackgroundColor,
+	$headerTextColor: $headerTextColor,
+	$headerBorderColor: $headerBorderColor,
+	$headerSeparatorColor: $headerSeparatorColor,
+	$headerMargin: $headerMargin,
+	$sortArrowActive: $sortArrowActive,
+	$sortArrowInactive: $sortArrowInactive,
+	$rowBackgroundColor: $rowBackgroundColor,
+	$rowAltBackgroundColor: $rowAltBackgroundColor,
+	$rowBorderColor: $rowBorderColor,
+	$rowTextColor: $rowTextColor,
+	$rowHoverBackground: $rowHoverBackground,
+	$rowSelectedBackground: $rowSelectedBackground,
+	$editBoxColor: $editBoxColor,
+	$errorColor: $errorColor,
+	$footerBackgroundColor: $footerBackgroundColor,
+	$footerTextColor: $footerTextColor,
+	$footerBorderColor: $footerBorderColor,
+	$rangeBorderColor: $rangeBorderColor,
+	$rangeHandleColor: $rangeHandleColor,
+	$rangeHeaderSelectedBackground: $rangeHeaderSelectedBackground,
+	$rangeHeaderSelectedTextColor: $rangeHeaderSelectedTextColor
+);
 
 .tabulator{
 	border:none;
@@ -236,7 +262,7 @@ $rangeHeaderSelectedTextColor: #FFFFFF !default; //header text color when select
 	
 	@media (hover:hover) and (pointer:fine){
 		&.tabulator-selected:hover{
-			background-color:darken($rowSelectedBackground, 10%) !important;
+			background-color:color.adjust($rowSelectedBackground, $lightness: -10%) !important;
 		}
 	}
 	

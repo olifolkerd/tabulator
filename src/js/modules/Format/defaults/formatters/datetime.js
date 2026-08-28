@@ -10,6 +10,8 @@ export default function(cell, formatterParams, onRendered){
 
 		if(DT.isDateTime(value)){
 			newDatetime = value;
+		}else if(inputFormat === "x"){
+			newDatetime = DT.fromMillis(value);	
 		}else if(inputFormat === "iso"){
 			newDatetime = DT.fromISO(String(value));
 		}else{

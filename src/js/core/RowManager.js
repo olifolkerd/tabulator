@@ -61,6 +61,7 @@ export default class RowManager extends CoreFeature{
 		
 		el.classList.add("tabulator-table");
 		el.setAttribute("role", "rowgroup");
+		el.setAttribute("id", "tabulator-table-body-" + this.table.instanceId);
 		
 		return el;
 	}
@@ -767,7 +768,7 @@ export default class RowManager extends CoreFeature{
 	}
 	
 	setActiveRows(activeRows){
-		this.activeRows = this.activeRows = Object.assign([], activeRows);
+		this.activeRows = activeRows.slice();
 		this.activeRowsCount = this.activeRows.length;
 	}
 	

@@ -10,7 +10,7 @@ export default function(cell, formatterParams, onRendered){
 	var after = !!formatterParams.symbolAfter;
 	var precision = typeof formatterParams.precision !== "undefined" ? formatterParams.precision : 2;
 
-	if(isNaN(floatVal)){
+	if(Number.isNaN(floatVal)){
 		return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 	}
 

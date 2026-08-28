@@ -1,5 +1,6 @@
 import TabulatorFull from "../../../src/js/core/TabulatorFull";
 import Sort from "../../../src/js/modules/Sort/Sort";
+import { DateTime } from "luxon";
 
 describe("Sort module", () => {
     /** @type {TabulatorFull} */
@@ -153,5 +154,106 @@ describe("Sort module", () => {
         expect(sorted[0].data.name).toBe("John");
         expect(sorted[1].data.name).toBe("Jane");
         expect(sorted[2].data.name).toBe("Bob");
+    });
+});
+
+describe("Sort module - datetime sorter with 'x' (epoch milliseconds) format", () => {
+    // 2021-05-10T00:00:00.000Z and the two following days, supplied out of order.
+    const DAY = 24 * 60 * 60 * 1000;
+    const EPOCH_MS = 1620604800000;
+
+    /** @type {TabulatorFull} */
+    let tabulator;
+    /** @type {Sort} */
+    let sortMod;
+
+    beforeEach(async () => {
+        const el = document.createElement("div");
+        el.id = "tabulator";
+        document.body.appendChild(el);
+        tabulator = new TabulatorFull("#tabulator", {
+            dependencies: { luxon: { DateTime } },
+            data: [
+                { id: 1, ts: EPOCH_MS + DAY },
+                { id: 2, ts: EPOCH_MS },
+                { id: 3, ts: EPOCH_MS + 2 * DAY },
+            ],
+            columns: [
+                { title: "ID", field: "id", sorter: "number" },
+                { title: "TS", field: "ts", sorter: "datetime", sorterParams: { format: "x" } },
+            ],
+        });
+        sortMod = tabulator.module("sort");
+        return new Promise((resolve) => {
+            tabulator.on("tableBuilt", () => resolve());
+        });
+    });
+
+    afterEach(() => {
+        tabulator.destroy();
+        document.getElementById("tabulator")?.remove();
+    });
+
+    it("orders epoch-ms timestamps chronologically when ascending", () => {
+        sortMod.setSort(tabulator.columnManager.findColumn("ts"), "asc");
+        const sorted = sortMod.sort(tabulator.rowManager.activeRows);
+        expect(sorted.map((row) => row.data.id)).toEqual([2, 1, 3]);
+    });
+
+    it("orders epoch-ms timestamps in reverse when descending", () => {
+        sortMod.setSort(tabulator.columnManager.findColumn("ts"), "desc");
+        const sorted = sortMod.sort(tabulator.rowManager.activeRows);
+        expect(sorted.map((row) => row.data.id)).toEqual([3, 1, 2]);
+    });
+});
+
+describe("Sort module - BigInt values with auto-detected sorter", () => {
+    // Fix https://github.com/tabulator-tables/tabulator/pull/4894
+    // isNaN(value) threw "Cannot convert a BigInt value to a number" when
+    // guessing a sorter for a column holding BigInt values.
+
+    /** @type {TabulatorFull} */
+    let tabulator;
+    /** @type {Sort} */
+    let sortMod;
+
+    beforeEach(async () => {
+        const el = document.createElement("div");
+        el.id = "tabulator";
+        document.body.appendChild(el);
+        tabulator = new TabulatorFull("#tabulator", {
+            data: [
+                { id: 1, big: 30n },
+                { id: 2, big: 10n },
+                { id: 3, big: 20n },
+            ],
+            // no sorter defined, so it must be auto-detected via findSorter
+            columns: [
+                { title: "ID", field: "id", sorter: "number" },
+                { title: "Big", field: "big" },
+            ],
+        });
+        sortMod = tabulator.module("sort");
+        return new Promise((resolve) => {
+            tabulator.on("tableBuilt", () => resolve());
+        });
+    });
+
+    afterEach(() => {
+        tabulator.destroy();
+        document.getElementById("tabulator")?.remove();
+    });
+
+    it("auto-detects a number sorter for a BigInt column without throwing", () => {
+        const column = tabulator.columnManager.findColumn("big");
+        expect(() => sortMod.findSorter(column)).not.toThrow();
+        expect(sortMod.findSorter(column)).toBe(Sort.sorters.number);
+    });
+
+    it("sorts BigInt values numerically when the sorter is auto-detected", () => {
+        const column = tabulator.columnManager.findColumn("big");
+        sortMod.setSort(column, "asc");
+        const sorted = sortMod.sort(tabulator.rowManager.activeRows);
+        expect(sorted.map((row) => row.data.id)).toEqual([2, 3, 1]);
     });
 });

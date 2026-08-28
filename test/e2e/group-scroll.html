@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator Group Scroll Test</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	body {
+		padding: 20px;
+		font-family: Arial, sans-serif;
+	}
+	#test-table {
+		width: 600px;
+	}
+	</style>
+</head>
+<body>
+	<h1>Tabulator Group Scroll Test</h1>
+	<div id="test-table"></div>
+
+	<script>
+		function generateData() {
+			const groupCount = 1000;
+			const rowsPerGroup = 3;
+			const data = [];
+			let id = 1;
+			for (let g = 0; g < groupCount; g++) {
+				for (let r = 0; r < rowsPerGroup; r++) {
+					data.push({
+						id: id++,
+						category: "Group " + g,
+						name: "Row " + g + "-" + r,
+						value: Math.round(Math.random() * 1000),
+					});
+				}
+			}
+			return data;
+		}
+
+		window.testTable = new Tabulator("#test-table", {
+			data: generateData(),
+			columns: [
+				{ title: "Name", field: "name" },
+				{ title: "Category", field: "category" },
+				{ title: "Value", field: "value", sorter: "number" },
+			],
+			height: "300px",
+			layout: "fitColumns",
+			groupBy: "category",
+			groupStartOpen: false,
+		});
+	</script>
+</body>
+</html>

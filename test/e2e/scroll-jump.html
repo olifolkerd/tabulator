@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator Scroll Jump Test (#3654)</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	body {
+		padding: 20px;
+		font-family: Arial, sans-serif;
+	}
+	#test-table {
+		width: 500px;
+	}
+	/* Variable-height cells: wrap long text over multiple lines so row
+	   heights differ significantly from the estimated average. */
+	.tabulator-cell {
+		white-space: normal !important;
+	}
+	</style>
+</head>
+<body>
+	<h1>Tabulator Vertical Scroll Jump Test (#3654)</h1>
+	<div id="test-table"></div>
+
+	<script>
+		function generateData() {
+			const rowCount = 2000;
+			const data = [];
+			for (let i = 0; i < rowCount; i++) {
+				// Deterministic but widely varying line count (1..8 lines) so
+				// real row heights differ a lot from the estimated average.
+				const lines = (i % 8) + 1;
+				let text = "";
+				for (let l = 0; l < lines; l++) {
+					text += "Line " + l + " of row " + i +
+						" with some padding text to force wrapping. ";
+				}
+				data.push({
+					id: i + 1,
+					name: "Row " + i,
+					notes: text,
+					value: (i * 37) % 1000,
+				});
+			}
+			return data;
+		}
+
+		document.addEventListener("DOMContentLoaded", () => {
+			window.testTable = new Tabulator("#test-table", {
+				data: generateData(),
+				// Wide columns force a horizontal scrollbar, which is part of
+				// the documented reproduction (engage horizontal scroll first).
+				columns: [
+					{ title: "ID", field: "id", width: 120 },
+					{ title: "Name", field: "name", width: 200 },
+					{ title: "Notes", field: "notes", width: 600,
+						formatter: "textarea" },
+					{ title: "Value", field: "value", width: 200,
+						sorter: "number" },
+				],
+				height: "300px",
+				layout: "fitData",
+			});
+		});
+	</script>
+</body>
+</html>

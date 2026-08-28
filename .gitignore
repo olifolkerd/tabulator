@@ -2,7 +2,6 @@
 *.sublime-workspace
 
 node_modules/
-examples/
 npm-debug.log
 
 # Playwright
@@ -10,3 +9,5 @@ npm-debug.log
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+dist/

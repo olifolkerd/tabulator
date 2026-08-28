@@ -65,21 +65,28 @@ export default class InternalEventBus {
 	}
 
 	_chain(key, args, initialValue, fallback){
-		var value = initialValue;
+		const subs = this.events[key];
 
-		if(!Array.isArray(args)){
-			args = [args];
-		}
+		if(subs && subs.length){
+			if(!Array.isArray(args)){
+				args = [args];
+			}
 
-		if(this.subscribed(key)){
-			this.events[key].forEach((subscriber, i) => {
-				value = subscriber.callback.apply(this, args.concat([value]));
-			});
+			//reuse a single args array across subscribers, mutating only the trailing
+			//accumulator slot, instead of allocating a fresh concat per subscriber
+			const callArgs = args.slice();
+			const valueIndex = callArgs.length;
+			let value = initialValue;
+
+			for(let i = 0; i < subs.length; i++){
+				callArgs[valueIndex] = value;
+				value = subs[i].callback.apply(this, callArgs);
+			}
 
 			return value;
-		}else{
-			return typeof fallback === "function" ? fallback() : fallback;
 		}
+
+		return typeof fallback === "function" ? fallback() : fallback;
 	}
 
 	_confirm(key, args){
@@ -110,53 +117,39 @@ export default class InternalEventBus {
 		}
 	}
 
-	_dispatch(){
-		var args = Array.from(arguments),
-		key = args.shift();
-
-		if(this.events[key]){
-			this.events[key].forEach((subscriber) => {
+	_dispatch(key, ...args){
+		const subs = this.events[key];
+		if(subs){
+			for(const subscriber of subs){
 				subscriber.callback.apply(this, args);
-			});
+			}
 		}
 	}
 
-	_debugDispatch(){
-		var args = Array.from(arguments),
-		key = args[0];
-
-		args[0] = "InternalEvent:" + key;
-
+	_debugDispatch(key, ...args){
 		if(this.debug === true || this.debug.includes(key)){
-			console.log(...args);
+			const debugArgs = ["InternalEvent:" + key, ...args];
+			console.log(...debugArgs);
 		}
 
-		return this._dispatch(...arguments);
+		return this._dispatch(key, ...args);
 	}
 
-	_debugChain(){
-		var args = Array.from(arguments),
-		key = args[0];
-
-		args[0] = "InternalEvent:" + key;
-
+	_debugChain(key, args, initialValue, fallback){
 		if(this.debug === true || this.debug.includes(key)){
-			console.log(...args);
+			const debugArgs = ["InternalEvent:" + key, args, initialValue, fallback];
+			console.log(...debugArgs);
 		}
 
-		return this._chain(...arguments);
+		return this._chain(key, args, initialValue, fallback);
 	}
 
-	_debugConfirm(){
-		var args = Array.from(arguments),
-		key = args[0];
-
-		args[0] = "InternalEvent:" + key;
-
+	_debugConfirm(key, args){
 		if(this.debug === true || this.debug.includes(key)){
-			console.log(...args);
+			const debugArgs = ["InternalEvent:" + key, args];
+			console.log(...debugArgs);
 		}
 
-		return this._confirm(...arguments);
+		return this._confirm(key, args);
 	}
 }

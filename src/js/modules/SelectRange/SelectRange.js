@@ -33,6 +33,8 @@ export default class SelectRange extends Module {
 		this.registerTableOption("selectableRangeClearCells", false); //allow clearing of active range
 		this.registerTableOption("selectableRangeClearCellsValue", undefined); //value for cleared active range
 		this.registerTableOption("selectableRangeAutoFocus", true); //focus on a cell after resetRanges
+		this.registerTableOption("selectableRangeInitializeDefault", true); //initializes default range on cell [0,0]
+		this.registerTableOption("selectableRangeBlurEditOnNavigate", undefined); //prevent editing on navigation
 		
 		this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
 		this.registerTableFunction("getRanges", this.getRanges.bind(this));
@@ -66,6 +68,10 @@ export default class SelectRange extends Module {
 				console.warn("Having multiple frozen columns with selectRange option may result in unpredictable behavior.");
 			}
 		}
+		
+		this.subscribe("edit-nav-disabled", () => {
+			return true; // Disable navigation in edit module
+		});
 	}
 	
 	
@@ -84,7 +90,7 @@ export default class SelectRange extends Module {
 		
 		this.table.rowManager.element.addEventListener("keydown", this.keyDownEvent);
 		
-		this.resetRanges();
+		this.setDefaultRange();
 		
 		this.table.rowManager.element.appendChild(this.overlay);
 		this.table.columnManager.element.setAttribute("tabindex", 0);
@@ -119,7 +125,7 @@ export default class SelectRange extends Module {
 		this.subscribe("scroll-horizontal", this.layoutChange.bind(this));
 		
 		this.subscribe("data-destroy", this.tableDestroyed.bind(this));
-		this.subscribe("data-processed", this.resetRanges.bind(this));
+		this.subscribe("data-processed", this.setDefaultRange.bind(this));
 		
 		this.subscribe("table-layout", this.layoutElement.bind(this));
 		this.subscribe("table-redraw", this.redraw.bind(this));
@@ -128,8 +134,8 @@ export default class SelectRange extends Module {
 		this.subscribe("edit-editor-clear", this.finishEditingCell.bind(this));
 		this.subscribe("edit-blur", this.restoreFocus.bind(this));
 		
-		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "left"));
-		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "right"));
+		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "prev"));
+		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "next"));
 		this.subscribe("keybinding-nav-left", this.keyNavigate.bind(this, "left"));
 		this.subscribe("keybinding-nav-right", this.keyNavigate.bind(this, "right"));
 		this.subscribe("keybinding-nav-up", this.keyNavigate.bind(this, "up"));
@@ -141,12 +147,6 @@ export default class SelectRange extends Module {
 	initializeColumn(column) {
 		if(this.columnSelection && column.definition.headerSort && this.options("headerSortClickElement") !== "icon"){
 			console.warn("Using column headerSort with selectableRangeColumns option may result in unpredictable behavior. Consider using headerSortClickElement: 'icon'.");
-		}
-		
-		if (column.modules.edit) {
-			// Block editor from taking action so we can trigger edit by
-			// double clicking.
-			// column.modules.edit.blocked = true;
 		}
 	}
 	
@@ -242,9 +242,15 @@ export default class SelectRange extends Module {
 				if (this.table.modules.edit && this.table.modules.edit.currentCell) {
 					return;
 				}
-				
-				this.table.modules.edit.editCell(this.getActiveCell());
-				
+
+				var activeCell = this.getActiveCell();
+				// no range is selected
+				if(!activeCell) {
+					return;
+				}
+
+				this.table.modules.edit.editCell(activeCell);
+
 				e.preventDefault();
 			}
 			
@@ -403,6 +409,25 @@ export default class SelectRange extends Module {
 	///////////////////////////////////
 	
 	keyNavigate(dir, e){
+		if(this.options("selectableRangeBlurEditOnNavigate")){
+			const isEditing = this.chain("edit-check-editing");
+			
+			if(isEditing){
+				if(dir === 'next' || dir === 'prev'){
+					this.dispatch("edit-cancel-cell");
+				}else{
+					// Prevent navigating while editing except for next/prev
+					return false;
+				}
+			}
+		}
+
+		if (dir === 'prev') {
+			dir = 'left';
+		} else if (dir === 'next') {
+			dir = 'right';
+		}
+
 		if(this.navigate(false, false, dir)){
 			e.preventDefault();
 		}
@@ -755,7 +780,7 @@ export default class SelectRange extends Module {
 	redraw(force) {
 		if (force) {
 			this.selecting = 'cell';
-			this.resetRanges();
+			this.setDefaultRange();
 			this.layoutElement();
 		}
 	}
@@ -870,6 +895,7 @@ export default class SelectRange extends Module {
 	
 	
 	getActiveCell() {
+		if(!this.activeRange) return;
 		return this.getCell(this.activeRange.start.row, this.activeRange.start.col);
 	}
 	
@@ -904,28 +930,41 @@ export default class SelectRange extends Module {
 		
 		return range;
 	}
-	
-	resetRanges() {
+
+	createDefaultRange() {
 		var range, cell, visibleCells;
-		
-		this.ranges.forEach((range) => range.destroy());
-		this.ranges = [];
-		
 		range = this.addRange();
-		
-		if(this.table.rowManager.activeRows.length){
+
+		if(this.table.rowManager.activeRows.length) {
 			visibleCells = this.table.rowManager.activeRows[0].cells.filter((cell) => cell.column.visible);
 			cell = visibleCells[this.rowHeader ? 1 : 0];
 
-			if(cell){
+			if (cell) {
 				range.setBounds(cell);
-				if(this.options("selectableRangeAutoFocus")){
+				if (this.options("selectableRangeAutoFocus")) {
 					this.initializeFocus(cell);
 				}
 			}
 		}
-		
+
 		return range;
+	}
+
+	clearRanges() {
+		this.ranges.forEach((range) => range.destroy());
+		this.ranges = [];
+	}
+
+	setDefaultRange() {
+		this.clearRanges();
+		if(this.options("selectableRangeInitializeDefault")) {
+			this.createDefaultRange();
+		}
+	}
+
+	resetRanges() {
+		this.clearRanges();
+		return this.createDefaultRange();
 	}
 	
 	tableDestroyed(){

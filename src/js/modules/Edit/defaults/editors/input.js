@@ -52,18 +52,18 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
-		switch(e.keyCode){
-			// case 9:
-			case 13:
+		switch(e.key){
+			// case "Tab":
+			case "Enter":
 				onChange(e);
 				break;
 
-			case 27:
+			case "Escape":
 				cancel();
 				break;
 
-			case 35:
-			case 36:
+			case "End":
+			case "Home":
 				e.stopPropagation();
 				break;
 		}

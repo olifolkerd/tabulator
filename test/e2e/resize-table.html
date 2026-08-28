@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator Resize-During-Edit Test</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	body {
+		margin: 0;
+		font-family: Arial, sans-serif;
+	}
+	/* Resizable wrapper so the test can shrink the table width on the fly. */
+	#wrapper {
+		width: 800px;
+	}
+	</style>
+</head>
+<body>
+	<!--
+		Regression fixture for PR #4888 (fix for issue #4142).
+
+		The PR skips ALL resize-driven redraws while a cell is being edited (the
+		edit guard used to be mobile-only). On desktop that means a genuine
+		container/window resize that happens WHILE editing is dropped and never
+		reapplied. With layout:"fitColumns" the column widths therefore fail to
+		re-fit when the table is resized during an edit.
+
+		Fixed height -> virtual render mode -> the ResizeObserver code path.
+	-->
+	<div id="wrapper">
+		<div id="resize-table"></div>
+	</div>
+
+	<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		const tabledata = [];
+		for (let i = 1; i <= 20; i++) {
+			tabledata.push({ id: i, name: "Name " + i, value: "Value " + i });
+		}
+
+		window.testTable = new Tabulator("#resize-table", {
+			data: tabledata,
+			height: "300px",
+			layout: "fitColumns",
+			columns: [
+				{ title: "ID", field: "id" },
+				{ title: "Name", field: "name", editor: "input" },
+				{ title: "Value", field: "value" },
+			],
+		});
+	});
+	</script>
+</body>
+</html>

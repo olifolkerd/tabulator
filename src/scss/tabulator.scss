@@ -1,3 +1,4 @@
+@use "sass:color";
 
 //Main Theme Variables
 $backgroundColor: #888 !default; //background color of tabulator
@@ -15,6 +16,8 @@ $headerMargin:4px !default; //padding round header
 $sortArrowHover: #555 !default;
 $sortArrowActive: #666 !default;
 $sortArrowInactive: #bbb !default;
+$tickColor: #2DC214 !default;
+$crossColor: #CE1515 !default;
 
 $columnResizeGuideColor:#999 !default;
 
@@ -143,7 +146,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			&.tabulator-moving{
 				position: absolute;
 				border:1px solid $headerSeparatorColor;
-				background:darken($headerBackgroundColor, 10%);
+				background:color.adjust($headerBackgroundColor, $lightness: -10%);
 				pointer-events: none;
 			}
 			
@@ -280,7 +283,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 				@media (hover:hover) and (pointer:fine){
 					&.tabulator-col-sorter-element:hover{
 						cursor:pointer;
-						background-color:darken($headerBackgroundColor, 10%);
+						background-color:color.adjust($headerBackgroundColor, $lightness: -10%);
 					}
 				}
 				
@@ -407,7 +410,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			box-sizing:border-box;
 			display: inline-block;
 			
-			background:lighten($headerBackgroundColor, 5%) !important;
+			background:color.adjust($headerBackgroundColor, $lightness: 5%) !important;
 			
 			border-top:1px solid $rowBorderColor;
 			border-bottom:1px solid $headerBorderColor;
@@ -415,7 +418,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			// overflow: hidden;
 			
 			.tabulator-row{
-				background:lighten($headerBackgroundColor, 5%) !important;
+				background:color.adjust($headerBackgroundColor, $lightness: 5%) !important;
 				
 				.tabulator-col-resize-handle{
 					display: none;
@@ -423,8 +426,8 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			}
 		}
 		
-		.tabulator-frozen-rows-holder{	
-			display: inline-block;	
+		.tabulator-frozen-rows-holder{
+			display: inline-block;
 			&:empty{
 				display: none;
 			}
@@ -484,7 +487,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			.tabulator-row{
 				&.tabulator-calcs{
 					font-weight: bold;
-					background:darken($rowAltBackgroundColor, 5%) !important;
+					background:color.adjust($rowAltBackgroundColor, $lightness: -5%) !important;
 					
 					&.tabulator-calcs-top{
 						border-bottom:2px solid $rowBorderColor;
@@ -590,7 +593,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			
 			text-align: left;
 			
-			background:lighten($footerBackgroundColor, 5%) !important;
+			background:color.adjust($footerBackgroundColor, $lightness: 5%) !important;
 			border-bottom:1px solid $rowBorderColor;
 			border-top:1px solid $rowBorderColor;
 			
@@ -598,7 +601,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 			
 			.tabulator-row{
 				display: inline-block;
-				background:lighten($footerBackgroundColor, 5%) !important;
+				background:color.adjust($footerBackgroundColor, $lightness: 5%) !important;
 				
 				.tabulator-col-resize-handle{
 					display: none;
@@ -894,6 +897,14 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		overflow:hidden;
 		text-overflow:ellipsis;
 		outline:none;
+
+		.tabulator-tick{
+			fill:$tickColor;
+		}
+
+		.tabulator-cross{
+			fill:$crossColor;
+		}
 		
 		&.tabulator-row-header{
 			border-right:1px solid $borderColor;
@@ -1678,3 +1689,4 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 		}
 	}
 }
+

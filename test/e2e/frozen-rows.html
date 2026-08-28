@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator Frozen Rows Test</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	body {
+		padding: 20px;
+		font-family: Arial, sans-serif;
+	}
+	#test-table {
+		width: 100%;
+		height: 300px;
+	}
+	</style>
+</head>
+<body>
+	<h1>Tabulator Frozen Rows Test</h1>
+	<div id="test-table"></div>
+
+	<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		const testData = [];
+		for (let i = 1; i <= 50; i++) {
+			testData.push({ id: i, name: "Row " + i, value: i * 10 });
+		}
+
+		const columns = [
+			{ title: "ID", field: "id" },
+			{ title: "Name", field: "name" },
+			{ title: "Value", field: "value" },
+		];
+
+		window.testTable = new Tabulator("#test-table", {
+			data: testData,
+			columns: columns,
+			layout: "fitColumns",
+			frozenRows: 1,
+		});
+	});
+	</script>
+</body>
+</html>

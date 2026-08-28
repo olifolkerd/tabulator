@@ -31,6 +31,8 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		if(DT){
 			if(DT.isDateTime(cellValue)){
 				newDatetime = cellValue;
+			}else if(inputFormat === "x"){
+				newDatetime = DT.fromMillis(cellValue);	
 			}else if(inputFormat === "iso"){
 				newDatetime = DT.fromISO(String(cellValue));
 			}else{
@@ -70,6 +72,10 @@ export default function(cell, onRendered, success, cancel, editorParams){
 						value = luxDateTime;
 						break;
 
+					case "x":
+						value = luxDateTime.toMillis();
+						break;
+					
 					case "iso":
 						value = luxDateTime.toISO();
 						break;
@@ -96,23 +102,23 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
-		switch(e.keyCode){
-			// case 9:
-			case 13:
+		switch(e.key){
+			// case "Tab":
+			case "Enter":
 				onChange();
 				break;
 			
-			case 27:
+			case "Escape":
 				cancel();
 				break;
 			
-			case 35:
-			case 36:
+			case "End":
+			case "Home":
 				e.stopPropagation();
 				break;
 
-			case 38: //up arrow
-			case 40: //down arrow
+			case "ArrowUp":
+			case "ArrowDown":
 				if(vertNav == "editor"){
 					e.stopImmediatePropagation();
 					e.stopPropagation();

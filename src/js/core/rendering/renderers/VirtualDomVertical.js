@@ -310,27 +310,32 @@ export default class VirtualDomVertical extends Renderer{
 				}
 
 				element.appendChild(rowFragment);
-				
-				// NOTE: The next 3 loops are separate on purpose
-				// This is to batch up the dom writes and reads which drastically improves performance 
+
+				// NOTE: The next 4 loops are separate on purpose
+				// This is to batch up the dom writes and reads which drastically improves performance
 
 				renderedRows.forEach((row) => {
 					row.rendered();
+				});
 
-					if(!row.heightInitialized) {
+				const rowsNeedingHeightInit = [];
+				renderedRows.forEach((row) => {
+					//(re)calculate the height of any row that has not been sized yet, or
+					//whose cached height is invalid/zero (e.g. it was first measured while
+					//detached), otherwise its bad height poisons the padding calculations.
+					if(!row.heightInitialized || !row.getHeight()) {
 						row.calcHeight(true);
+						rowsNeedingHeightInit.push(row);
 					}
 				});
 
-				renderedRows.forEach((row) => {
-					if(!row.heightInitialized) {
-						row.setCellHeight();
-					}
+				rowsNeedingHeightInit.forEach((row) => {
+					row.setCellHeight();
 				});
 
 				renderedRows.forEach((row) => {
-					rowHeight = row.getHeight();
-					
+					rowHeight = row.getHeight() || this.vDomRowHeight;
+
 					if(totalRowsRendered < topPad){
 						topPadHeight += rowHeight;
 					}else {

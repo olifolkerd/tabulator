@@ -7,7 +7,7 @@ export default function(cell, formatterParams, onRendered){
 	color = "#666666",
 	percent, percentValue;
 
-	if(isNaN(value) || typeof cell.getValue() === "undefined"){
+	if(Number.isNaN(value) || typeof cell.getValue() === "undefined"){
 		return;
 	}
 
