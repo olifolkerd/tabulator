@@ -1038,7 +1038,7 @@ export default class RowManager extends CoreFeature{
 	}
 	
 	//adjust the height of the table holder to fit in the Tabulator element
-	adjustTableSize(){
+	adjustTableSize(blockRedraw){
 		let initialHeight = this.element.clientHeight, minHeight;
 		let resized = false;
 		
@@ -1054,8 +1054,8 @@ export default class RowManager extends CoreFeature{
 				this.element.style.maxHeight = height;
 			} else {
 				this.element.style.height = "";
-				this.element.style.height =
-				this.table.element.clientHeight - otherHeight + "px";
+				//clamp at zero, a negative height is invalid css and would leave the holder at its content height
+				this.element.style.height = Math.max(this.table.element.clientHeight - otherHeight, 0) + "px";
 				this.element.scrollTop = this.scrollTop;
 			}
 			
@@ -1064,7 +1064,10 @@ export default class RowManager extends CoreFeature{
 			//check if the table has changed size when dealing with variable height tables
 			if(!this.fixedHeight && initialHeight != this.element.clientHeight){
 				resized = true;
-				if(!this.redrawing){ // prevent recursive redraws		
+
+				//the renderer blocks the redraw when it adjusts the size from inside its render loop,
+				//it picks up the new size itself and a redraw would re-render the rows while they are still being rendered
+				if(!blockRedraw && !this.redrawing){ // prevent recursive redraws		
 					this.redrawing = true;
 					if(this.subscribed("table-resize")){
 						this.dispatch("table-resize");
