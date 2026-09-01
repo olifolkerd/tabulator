@@ -669,12 +669,13 @@ export default class Edit extends Module{
 		cellEditor, component, params;
 
 		//prevent editing if another cell is refusing to leave focus (eg. validation fail)
-		
+		//and prevent an open editor being restarted on top of itself
 		if(this.currentCell){
-			if(!this.invalidEdit && this.currentCell !== cell){
-				this.cancelEdit();
+			if(this.invalidEdit || this.currentCell === cell){
+				return;
 			}
-			return;
+			
+			this.cancelEdit();
 		}
 		
 		//handle successful value change
