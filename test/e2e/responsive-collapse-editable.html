@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator Responsive Collapse Editable Test</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	body {
+		margin: 0;
+		padding: 10px;
+		font-family: Arial, sans-serif;
+	}
+	#test-table {
+		width: 100%;
+		height: 400px;
+	}
+	</style>
+</head>
+<body>
+	<div id="test-table"></div>
+
+	<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		// every cellEdited the table emits, so a test can assert the edit went down
+		// the ordinary Edit path rather than just changing some DOM
+		window.edits = [];
+		window.cancels = [];
+
+		window.testTable = new Tabulator("#test-table", {
+			layout: "fitColumns",
+			responsiveLayout: "collapseEditable",
+			data: [
+				{ id: 1, name: "Alice", age: 25, city: "New York", code: "AA" },
+				{ id: 2, name: "Bob", age: 32, city: "Chicago", code: "BB" },
+			],
+			columns: [
+				{ title: "", formatter: "responsiveCollapse", width: 40, minWidth: 40, hozAlign: "center", resizable: false, headerSort: false, responsive: 0 },
+				{ title: "ID", field: "id", width: 80, responsive: 0 },
+				{ title: "Name", field: "name", width: 160, editor: "input", responsive: 0 },
+				{ title: "Age", field: "age", width: 160, editor: "input", responsive: 2 },
+				{ title: "City", field: "city", width: 160, editor: "input", responsive: 3 },
+				{ title: "Code", field: "code", width: 160, editor: "input", validator: "required", responsive: 4 },
+			],
+		});
+
+		window.testTable.on("cellEdited", function (cell) {
+			window.edits.push({ field: cell.getField(), value: cell.getValue() });
+		});
+
+		window.testTable.on("cellEditCancelled", function (cell) {
+			window.cancels.push(cell.getField());
+		});
+	});
+	</script>
+</body>
+</html>
