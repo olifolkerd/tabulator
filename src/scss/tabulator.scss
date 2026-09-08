@@ -883,6 +883,19 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 				}
 			}
 		}
+		
+		//a cell relocated here by the collapseEditable mode
+		.tabulator-cell{
+			//the column width and row height are re-applied inline on every pass
+			width:100% !important;
+			height:auto !important;
+			
+			border-right:none;
+			
+			white-space:normal;
+			overflow:visible;
+			text-overflow:clip;
+		}
 	}
 	
 	//cell element

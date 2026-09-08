@@ -1,6 +1,7 @@
 export default function(cell, formatterParams, onRendered){
 	var el = document.createElement("div"),
-	config = cell.getRow()._row.modules.responsiveLayout;
+	row = cell.getRow()._row,
+	config = row.modules.responsiveLayout;
 
 	el.classList.add("tabulator-responsive-collapse-toggle");
 	
@@ -35,6 +36,7 @@ export default function(cell, formatterParams, onRendered){
 	el.addEventListener("click", function(e){
 		e.stopImmediatePropagation();
 		toggleList(!config.open);
+		row.dispatch("row-responsive-toggled", row, config.open);
 		cell.getTable().rowManager.adjustTableSize();
 	});
 

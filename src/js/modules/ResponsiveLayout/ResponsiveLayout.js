@@ -16,6 +16,7 @@ export default class ResponsiveLayout extends Module{
 		this.collapseFormatter = [];
 		this.collapseStartOpen = true;
 		this.collapseHandleColumn = false;
+		this.deferredRows = new Set();
 
 		this.registerTableOption("responsiveLayout", false); //responsive layout flags
 		this.registerTableOption("responsiveLayoutCollapseStartOpen", true); //start showing collapsed data
@@ -38,12 +39,26 @@ export default class ResponsiveLayout extends Module{
 
 			this.subscribe("table-redrawing", this.tableRedraw.bind(this));
 			
-			if(this.table.options.responsiveLayout === "collapse"){
+			//this.mode is not set until initializeResponsivity
+			if(this.isCollapseMode(this.table.options.responsiveLayout)){
 				this.subscribe("row-data-changed", this.generateCollapsedRowContent.bind(this));
 				this.subscribe("row-init", this.initializeRow.bind(this));
 				this.subscribe("row-layout", this.layoutRow.bind(this));
+
+				if(this.isEditableMode(this.table.options.responsiveLayout)){
+					this.subscribe("row-responsive-toggled", this.rowResponsiveToggled.bind(this));
+					this.subscribe("edit-editor-clear", this.editorCleared.bind(this));
+				}
 			}
 		}
+	}
+
+	isCollapseMode(mode = this.mode){
+		return mode === "collapse" || mode === "collapseEditable";
+	}
+
+	isEditableMode(mode = this.mode){
+		return mode === "collapseEditable";
 	}
 
 	tableRedraw(force){
@@ -73,7 +88,7 @@ export default class ResponsiveLayout extends Module{
 					column.modules.responsive.index = i;
 					columns.push(column);
 
-					if(!column.visible && this.mode === "collapse"){
+					if(!column.visible && this.isCollapseMode()){
 						this.hiddenColumns.push(column);
 					}
 				}
@@ -89,7 +104,7 @@ export default class ResponsiveLayout extends Module{
 
 		this.columns = columns;
 
-		if(this.mode === "collapse"){
+		if(this.isCollapseMode()){
 			this.generateCollapsedContent();
 		}
 
@@ -157,7 +172,7 @@ export default class ResponsiveLayout extends Module{
 
 		column.hide(false, true);
 
-		if(this.mode === "collapse"){
+		if(this.isCollapseMode()){
 			this.hiddenColumns.unshift(column);
 			this.generateCollapsedContent();
 
@@ -170,11 +185,15 @@ export default class ResponsiveLayout extends Module{
 	showColumn(column){
 		var index;
 
+		if(this.isEditableMode()){
+			this.restoreColumnCells(column);
+		}
+
 		column.show(false, true);
 		//set column width to prevent calculation loops on uninitialized columns
 		column.setWidth(column.getWidth());
 
-		if(this.mode === "collapse"){
+		if(this.isCollapseMode()){
 			index = this.hiddenColumns.indexOf(column);
 
 			if(index > -1){
@@ -249,7 +268,20 @@ export default class ResponsiveLayout extends Module{
 		var el, contents;
 
 		if(row.modules.responsiveLayout){
+			//a rebuild would tear an open editor out of the DOM, so defer it
+			if(this.isEditableMode() && this.rowIsEditing(row)){
+				this.deferredRows.add(row);
+				return;
+			}
+
+			this.deferredRows.delete(row);
+
 			el = row.modules.responsiveLayout.element;
+
+			//restore first, so the teardown below moves cells rather than orphaning them
+			if(this.isEditableMode()){
+				this.restoreCollapsedCells(row);
+			}
 
 			while(el.firstChild) el.removeChild(el.firstChild);
 
@@ -270,6 +302,20 @@ export default class ResponsiveLayout extends Module{
 			var value = column.getFieldValue(data);
 
 			if(column.definition.title && column.field){
+				if(this.isEditableMode()){
+					let cell = row.getCell(column.field);
+
+					if(cell){
+						output.push({
+							field: column.field,
+							title: column.definition.title,
+							value: this.collapseCell(cell)
+						});
+					}
+
+					return;
+				}
+
 				if(column.modules.format && this.table.options.responsiveLayoutCollapseUseFormatters){
 
 					mockCellComponent = {
@@ -318,6 +364,90 @@ export default class ResponsiveLayout extends Module{
 		});
 
 		return output;
+	}
+
+	editorCleared(){
+		var rows = this.deferredRows;
+
+		if(rows.size){
+			this.deferredRows = new Set();
+			rows.forEach((row) => {
+				this.generateCollapsedRowContent(row);
+			});
+		}
+	}
+
+	rowIsEditing(row){
+		var currentCell = this.table.modExists("edit") ? this.table.modules.edit.currentCell : false;
+
+		return !!currentCell && currentCell.row === row;
+	}
+
+	//an editor left open in a closed container would hold the redraw block
+	rowResponsiveToggled(row, open){
+		if(!open && this.rowIsEditing(row)){
+			this.table.modules.edit.cancelEdit();
+		}
+	}
+
+	//only visibility is touched here; sizing is left to the stylesheet
+	collapseCell(cell){
+		var element = cell.getElement();
+
+		cell.show();
+
+		return element;
+	}
+
+	restoreColumnCells(column){
+		column.cells.forEach((cell) => {
+			this.restoreCell(cell);
+		});
+	}
+
+	restoreCollapsedCells(row){
+		row.cells.forEach((cell) => {
+			this.restoreCell(cell);
+		});
+	}
+
+	restoreCell(cell){
+		var config = cell.row.modules.responsiveLayout,
+		cells = cell.row.cells,
+		anchor = null,
+		rowEl;
+
+		//cell.element, not getElement(), which would force a lazy render
+		if(!config || !config.element || !cell.element || !config.element.contains(cell.element)){
+			return;
+		}
+
+		rowEl = cell.row.getElement();
+
+		for(let i = cells.indexOf(cell) + 1; i < cells.length; i++){
+			if(cells[i].element && cells[i].element.parentNode === rowEl){
+				anchor = cells[i].element;
+				break;
+			}
+		}
+
+		//the collapse container is always the row's last child
+		if(!anchor && config.element.parentNode === rowEl){
+			anchor = config.element;
+		}
+
+		if(anchor){
+			rowEl.insertBefore(cell.element, anchor);
+		}else{
+			rowEl.appendChild(cell.element);
+		}
+
+		//the column may have been shown while the cell was away
+		if(cell.column.visible){
+			cell.show();
+		}else{
+			cell.hide();
+		}
 	}
 
 	formatCollapsedData(data){
