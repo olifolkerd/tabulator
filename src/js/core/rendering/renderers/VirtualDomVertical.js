@@ -39,8 +39,8 @@ export default class VirtualDomVertical extends Renderer{
 	clearRows(){
 		var element = this.tableElement;
 
-		// element.children.detach();
-		while(element.firstChild) element.removeChild(element.firstChild);
+		//single native clear instead of N removeChild calls
+		element.replaceChildren();
 
 		element.style.paddingTop = "";
 		element.style.paddingBottom = "";
@@ -257,7 +257,7 @@ export default class VirtualDomVertical extends Renderer{
 		if(!position){
 			this.clear();
 		}else {
-			while(element.firstChild) element.removeChild(element.firstChild);
+			element.replaceChildren();
 
 			//check if position is too close to bottom of table
 			heightOccupied = (rowsCount - position + 1) * this.vDomRowHeight;
