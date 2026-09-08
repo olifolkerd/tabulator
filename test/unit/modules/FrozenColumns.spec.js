@@ -351,6 +351,41 @@ describe('FrozenColumns', function(){
 			expect(result).toContain(rightCol2);
 		});
 
+		test('reinitializeRows deinitializes only non-visible rows and lays out visible ones', function(){
+			const frozenColumns = new FrozenColumns({});
+
+			const visible = [
+				{ type: "row", deinitialize: jest.fn() },
+				{ type: "row", deinitialize: jest.fn() },
+			];
+			const hidden = [
+				{ type: "row", deinitialize: jest.fn() },
+				{ type: "row", deinitialize: jest.fn() },
+			];
+			const allRows = [visible[0], hidden[0], visible[1], hidden[1]];
+
+			frozenColumns.table = {
+				rowManager: {
+					getVisibleRows: () => visible,
+					getRows: () => allRows,
+				},
+			};
+			frozenColumns.layoutRow = jest.fn();
+
+			frozenColumns.reinitializeRows();
+
+			// only the non-visible rows are deinitialized (Set-based exclusion)
+			expect(hidden[0].deinitialize).toHaveBeenCalledTimes(1);
+			expect(hidden[1].deinitialize).toHaveBeenCalledTimes(1);
+			expect(visible[0].deinitialize).not.toHaveBeenCalled();
+			expect(visible[1].deinitialize).not.toHaveBeenCalled();
+
+			// visible rows are laid out
+			expect(frozenColumns.layoutRow).toHaveBeenCalledTimes(2);
+			expect(frozenColumns.layoutRow).toHaveBeenCalledWith(visible[0]);
+			expect(frozenColumns.layoutRow).toHaveBeenCalledWith(visible[1]);
+		});
+
 		test('_calcSpace calculates width of columns', function(){
 			// Create a mock table
 			const mockTable = {};
