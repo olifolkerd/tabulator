@@ -1,34 +1,34 @@
 //sort numbers
 export default function(a, b, aRow, bRow, column, dir, params){
+	//fast-path: both already finite numbers, no separator/empty handling needed
+	if(typeof a === "number" && typeof b === "number" && isFinite(a) && isFinite(b)){
+		return a - b;
+	}
+
 	var alignEmptyValues = params.alignEmptyValues;
 	var decimal = params.decimalSeparator;
 	var thousand = params.thousandSeparator;
 	var emptyAlign = 0;
+	var aEmpty = a === "" || a === null || typeof a === "undefined";
+	var bEmpty = b === "" || b === null || typeof b === "undefined";
 
-	a = String(a);
-	b = String(b);
-
-	if(thousand){
-		a = a.split(thousand).join("");
-		b = b.split(thousand).join("");
-	}
-
-	if(decimal){
-		a = a.split(decimal).join(".");
-		b = b.split(decimal).join(".");
-	}
-
-	a = parseFloat(a);
-	b = parseFloat(b);
-
-	//handle non numeric values
-	if(isNaN(a)){
-		emptyAlign =  isNaN(b) ? 0 : -1;
-	}else if(isNaN(b)){
-		emptyAlign =  1;
+	if(aEmpty){
+		emptyAlign = bEmpty ? 0 : -1;
+	}else if(bEmpty){
+		emptyAlign = 1;
 	}else{
-		//compare valid values
-		return a - b;
+		a = parseValue(a, decimal, thousand);
+		b = parseValue(b, decimal, thousand);
+
+		//handle non numeric values
+		if(isNaN(a)){
+			emptyAlign =  isNaN(b) ? 0 : -1;
+		}else if(isNaN(b)){
+			emptyAlign =  1;
+		}else{
+			//compare valid values
+			return a - b;
+		}
 	}
 
 	//fix empty values in position
@@ -37,4 +37,22 @@ export default function(a, b, aRow, bRow, column, dir, params){
 	}
 
 	return emptyAlign;
+}
+
+function parseValue(value, decimal, thousand){
+	if(typeof value === "number"){
+		return value;
+	}
+
+	value = String(value);
+
+	if(thousand){
+		value = value.replaceAll(thousand, "");
+	}
+
+	if(decimal && decimal !== "." ){
+		value = value.replaceAll(decimal, ".");
+	}
+
+	return parseFloat(value);
 }
