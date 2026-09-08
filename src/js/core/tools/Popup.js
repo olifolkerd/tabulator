@@ -135,6 +135,10 @@ export default class Popup extends CoreFeature{
 		if(this.destroyed || this.table.destroyed){
 			return this;
 		}
+
+		if(!this.parent){
+			this.reversedX = false;
+		}
 		
 		if(origin instanceof HTMLElement){
 			parentEl = origin;
@@ -153,12 +157,11 @@ export default class Popup extends CoreFeature{
 			
 			x = coords.x;
 			y = coords.y;
-			
-			this.reversedX = false;
 		}
 		
 		this.element.style.top = y + "px";
 		this.element.style.left = x + "px";
+		this.element.style.right = "";
 		
 		this.container.appendChild(this.element);
 		
@@ -181,22 +184,35 @@ export default class Popup extends CoreFeature{
 	
 	_fitToScreen(x, y, parentEl, parentOffset, position){
 		var scrollTop = this.container === document.body ? document.documentElement.scrollTop : this.container.scrollTop;
+		var scrollLeft = this.container === document.body ? document.documentElement.scrollLeft : this.container.scrollLeft;
+		var boundsLeft = this.container === document.body ? scrollLeft : 0;
+		var boundsRight = this.container === document.body ? scrollLeft + document.documentElement.clientWidth : this.container.offsetWidth;
+		var offsetHeight = Math.max(this.container === document.body ? document.documentElement.clientHeight : this.container.offsetHeight, scrollTop ? this.container.scrollHeight : 0);
+		var newLeft = x;
 		
 		//move menu to start on right edge if it is too close to the edge of the screen
-		if((x + this.element.offsetWidth) >= this.container.offsetWidth || this.reversedX){
-			this.element.style.left = "";
-			
-			if(parentEl){
-				this.element.style.right = (this.container.offsetWidth - parentOffset.left) + "px";
+		if((newLeft + this.element.offsetWidth) > boundsRight || this.reversedX){
+			if(parentEl && position === "right"){
+				newLeft = parentOffset.left - this.element.offsetWidth;
+			}else if(parentEl && position === "left"){
+				newLeft = parentOffset.left + parentEl.offsetWidth;
+			}else if(parentEl){
+				newLeft = parentOffset.left - this.element.offsetWidth;
 			}else{
-				this.element.style.right = (this.container.offsetWidth - x) + "px";
+				newLeft = boundsRight - this.element.offsetWidth;
 			}
 			
 			this.reversedX = true;
 		}
+
+		if(newLeft < boundsLeft){
+			newLeft = boundsLeft;
+		}
+
+		this.element.style.left = newLeft + "px";
+		this.element.style.right = "";
 		
 		//move menu to start on bottom edge if it is too close to the edge of the screen
-		let offsetHeight = Math.max(this.container.offsetHeight, scrollTop ? this.container.scrollHeight : 0);
 		if((y + this.element.offsetHeight) > offsetHeight) {
 			if(parentEl){
 				switch(position){
