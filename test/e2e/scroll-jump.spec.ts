@@ -21,12 +21,16 @@ import { join } from "path";
 // HOW THE JUMP IS MEASURED
 // When you scroll up by D pixels the visible content must move DOWN by exactly
 // D. We track one identifiable row element across a scroll-up step and compare
-// how far it moved on screen ("moved") with how far the holder actually
-// scrolled ("scrolled"). For a correct virtual DOM the row is glued to the
-// content so moved === scrolled; "jump = moved - scrolled" is therefore the
-// number of pixels the content shifted underneath the scroll position. This
-// metric is independent of whether scrollTop itself is trustworthy (it isn't,
-// once the bug fires).
+// how far it moved on screen ("moved") with the D we asked for, so
+// "jump = moved - requested" is the number of pixels the content shifted that
+// the user did not ask for.
+//
+// We deliberately do NOT compare against the holder's own scrollTop delta.
+// A virtual renderer revises its total scrollHeight as it measures real row
+// heights, and scrollTop is measured from the top of that changing document, so
+// it shifts by the height correction while nothing on screen moves at all. That
+// makes "moved - scrolled" report a jump for a view that is perfectly steady.
+// The requested delta has no such term.
 //
 // The companion "gentle scrolling" test below demonstrates that this metric
 // reads ~0 for well-behaved scrolling, so a large reading is a real jump.
@@ -133,7 +137,7 @@ async function scrollUpAndMeasure(
 				id: beforeScrolling.id,
 				moved: Math.round(moved),
 				scrolled: Math.round(scrolled),
-				jump: Math.round(moved - scrolled),
+				jump: Math.round(moved - delta),
 			});
 		}
 	}
@@ -169,9 +173,8 @@ test.describe("Vertical scroll jumping with variable height rows (#3654)", () =>
 		// Sanity: the scroll-up actually moved content.
 		expect(jumps.length).toBeGreaterThan(0);
 
-		// The tracked row should stay glued to the content (move by exactly the
-		// scroll distance, give or take sub-pixel rounding). A larger reading
-		// is the #3654 jump.
+		// The tracked row should move by exactly the distance we scrolled up,
+		// give or take sub-pixel rounding. A larger reading is the #3654 jump.
 		expect(worstJump).toBeLessThanOrEqual(20);
 	});
 
@@ -218,9 +221,12 @@ test.describe("Vertical scroll jumping with grouped variable height rows (#3654)
 		await page.waitForTimeout(50);
 
 		// Track data rows only, never the group header rows.
+		// The step must stay well under the ~275px viewport: a step that turns
+		// over the whole rendered window leaves no row present both before and
+		// after the scroll, so nothing can be measured.
 		const jumps = await scrollUpAndMeasure(
 			page,
-			250,
+			80,
 			40,
 			".tabulator-row:not(.tabulator-group)",
 		);
