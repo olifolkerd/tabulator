@@ -45,6 +45,12 @@ export default class DataTree extends Module{
 
 	initialize(){
 		if(this.table.options.dataTree){
+			this.filterMod = this.table.modules.filter;
+			this.dataTreeFilter = this.table.modExists("filter")  ? this.table.options.dataTreeFilter : null;
+			
+			this.sortMod = this.table.modules.sort;
+			this.dataTreeSort = this.table.modExists("sort") && this.table.options.dataTreeSort;
+			
 			var dummyEl = null,
 			options = this.table.options;
 
@@ -315,7 +321,7 @@ export default class DataTree extends Module{
 	getRows(rows){
 		var output = [];
 
-		rows.forEach((row, i) => {
+		for(const row of rows){
 			var config, children;
 
 			output.push(row);
@@ -329,49 +335,47 @@ export default class DataTree extends Module{
 				if(!config.index && config.children !== false){
 					children = this.getChildren(row, false, true);
 
-					children.forEach((child) => {
+					for(const child of children){
 						child.create();
 						output.push(child);
-					});
+					}
 				}
 			}
-		});
+		}
 
 		return output;
 	}
 
 	getChildren(row, allChildren, sortOnly){
-		var config = row.modules.dataTree,
-		children = [],
-		output = [];
+		const output = [];
+		this._collectChildren(row, allChildren, sortOnly, output);
+		return output;
+	}
 
-		if(config.children !== false && (config.open || allChildren)){
-			if(!Array.isArray(config.children)){
-				config.children = this.generateChildren(row);
-			}
+	//recurse into a single shared accumulator so each descendant is pushed exactly
+	//once, instead of allocating + re-copying an array at every level
+	_collectChildren(row, allChildren, sortOnly, output){
+		const config = row.modules.dataTree;
 
-			if(this.table.modExists("filter") && this.table.options.dataTreeFilter){
-				children = this.table.modules.filter.filter(config.children);
-			}else{
-				children = config.children;
-			}
-
-			if(this.table.modExists("sort") && this.table.options.dataTreeSort){
-				this.table.modules.sort.sort(children, sortOnly);
-			}
-
-			children.forEach((child) => {
-				output.push(child);
-
-				var subChildren = this.getChildren(child, false, true);
-
-				subChildren.forEach((sub) => {
-					output.push(sub);
-				});
-			});
+		if(config.children === false || !(config.open || allChildren)){
+			return;
 		}
 
-		return output;
+		if(!Array.isArray(config.children)){
+			config.children = this.generateChildren(row);
+		}
+
+		const children = this.dataTreeFilter ? this.filterMod.filter(config.children) : config.children;
+
+		if(this.dataTreeSort){
+			this.sortMod.sort(children, sortOnly);
+		}
+
+		for(let i = 0; i < children.length; i++){
+			const child = children[i];
+			output.push(child);
+			this._collectChildren(child, false, true, output);
+		}
 	}
 
 	generateChildren(row){
@@ -382,20 +386,22 @@ export default class DataTree extends Module{
 		if(!Array.isArray(childArray)){
 			childArray = [childArray];
 		}
-
-		childArray.forEach((childData) => {
+		
+		
+		const treeIdx = row.modules.dataTree.index + 1;
+		for(const childData of childArray){ 
 			var childRow = new Row(childData || {}, this.table.rowManager);
-
 			childRow.create();
+			
+			const dataTree = childRow.modules.dataTree;
+			dataTree.index = treeIdx;
+			dataTree.parent = row;
 
-			childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
-			childRow.modules.dataTree.parent = row;
-
-			if(childRow.modules.dataTree.children){
-				childRow.modules.dataTree.open = this.startOpen(childRow.getComponent(), childRow.modules.dataTree.index);
+			if(dataTree.children){
+				dataTree.open = this.startOpen(childRow.getComponent(), treeIdx);
 			}
 			children.push(childRow);
-		});
+		}
 
 		return children;
 	}
@@ -453,28 +459,23 @@ export default class DataTree extends Module{
 	}
 
 	getFilteredTreeChildren(row){
-		var config = row.modules.dataTree,
-		output = [], children;
-
-		if(config.children){
-
-			if(!Array.isArray(config.children)){
-				config.children = this.generateChildren(row);
-			}
-
-			if(this.table.modExists("filter") && this.table.options.dataTreeFilter){
-				children = this.table.modules.filter.filter(config.children);
-			}else{
-				children = config.children;
-			}
-
-			children.forEach((childRow) => {
-				if(childRow instanceof Row){
-					output.push(childRow);
-				}
-			});
+		const config = row.modules.dataTree;
+		if(!config.children){
+			return [];
+		}
+		
+		if(!Array.isArray(config.children)){
+			config.children = this.generateChildren(row);
 		}
 
+		const output = [];
+		const children = this.filterMod && this.dataTreeFilter ? this.filterMod.filter(config.children) : config.children;			
+		for(const childRow of children){
+			if(childRow instanceof Row){
+				output.push(childRow);
+			}
+		}
+		
 		return output;
 	}
 
@@ -598,29 +599,31 @@ export default class DataTree extends Module{
 	}
 
 	getTreeChildren(row, component, recurse){
-		var config = row.modules.dataTree,
-		output = [];
+		const output = [];
+		this._collectTreeChildren(row, component, recurse, output);
+		return output;
+	}
 
-		if(config && config.children){
+	_collectTreeChildren(row, component, recurse, output){
+		const config = row.modules.dataTree;
 
-			if(!Array.isArray(config.children)){
-				config.children = this.generateChildren(row);
-			}
-
-			config.children.forEach((childRow) => {
-				if(childRow instanceof Row){
-					output.push(component ? childRow.getComponent() : childRow);
-
-					if(recurse){
-						this.getTreeChildren(childRow, component, recurse).forEach(child => {
-							output.push(child);
-						});
-					}
-				}
-			});
+		if(!config || !config.children){
+			return;
 		}
 
-		return output;
+		if(!Array.isArray(config.children)){
+			config.children = this.generateChildren(row);
+		}
+
+		for(const childRow of config.children){
+			if(childRow instanceof Row){
+				output.push(component ? childRow.getComponent() : childRow);
+
+				if(recurse){
+					this._collectTreeChildren(childRow, component, recurse, output);
+				}
+			}
+		}
 	}
 
 	getChildField(){
