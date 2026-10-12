@@ -490,6 +490,14 @@ export default class SelectRange extends Module {
 				case "down":
 					nextRow = this.findJumpCellDown(rangeEdge.row, range.start.col);
 					break;
+				case "home":
+					nextRow = 0;
+					nextCol = 0;
+					break;
+				case "end":
+					nextRow = this.getTableRows().length - 1;
+					nextCol = this.getTableColumns().length - 1;
+					break;
 			}
 		}else{
 			if(expand){
@@ -510,6 +518,12 @@ export default class SelectRange extends Module {
 					break;
 				case "down":
 					nextRow = Math.min(nextRow + 1, this.getTableRows().length - 1);
+					break;
+				case "home":
+					nextCol = 0;
+					break;
+				case "end":
+					nextCol = this.getTableColumns().length - 1;
 					break;
 			}
 		}
