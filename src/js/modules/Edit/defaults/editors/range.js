@@ -42,7 +42,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		}
 	});
 	
-	function onChange(){
+	function onChange(e){
 		var value = input.value;
 		
 		if(!isNaN(value) && value !==""){
@@ -50,17 +50,17 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		}
 		
 		if(value != cellValue){
-			if(success(value)){
+			if(success(value, e)){
 				cellValue = value; //persist value if successfully validated incase editor is used as header filter
 			}
 		}else{
-			cancel();
+			cancel(e);
 		}
 	}
 	
 	//submit new value on blur
 	input.addEventListener("blur", function(e){
-		onChange();
+		onChange(e);
 	});
 	
 	//submit new value on enter
@@ -68,11 +68,11 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		switch(e.key){
 			case "Enter":
 			// case "Tab":
-				onChange();
+				onChange(e);
 				break;
 			
 			case "Escape":
-				cancel();
+				cancel(e);
 				break;
 		}
 	});

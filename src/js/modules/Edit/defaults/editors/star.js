@@ -55,7 +55,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		starHolder.addEventListener("click", function(e){
 			e.stopPropagation();
 			e.stopImmediatePropagation();
-			success(i);
+			success(i, e);
 			element.blur();
 		});
 
@@ -114,11 +114,11 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	});
 
 	starsHolder.addEventListener("click", function(e){
-		success(0);
+		success(0, e);
 	});
 
 	element.addEventListener("blur", function(e){
-		cancel();
+		cancel(e);
 	});
 
 	//allow key based navigation
@@ -133,11 +133,11 @@ export default function(cell, onRendered, success, cancel, editorParams){
 				break;
 
 			case "Enter":
-				success(value);
+				success(value, e);
 				break;
 
 			case "Escape":
-				cancel();
+				cancel(e);
 				break;
 		}
 	});

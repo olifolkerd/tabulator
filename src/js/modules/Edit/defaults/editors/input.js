@@ -38,11 +38,11 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 	function onChange(e){
 		if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value !== cellValue){
-			if(success(input.value)){
+			if(success(input.value, e)){
 				cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
 			}
 		}else{
-			cancel();
+			cancel(e);
 		}
 	}
 
@@ -59,7 +59,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 				break;
 
 			case "Escape":
-				cancel();
+				cancel(e);
 				break;
 
 			case "End":

@@ -74,20 +74,20 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	
 	//submit new value on blur
 	input.addEventListener("change", function(e){
-		success(setValue());
+		success(setValue(), e);
 	});
 
 	input.addEventListener("blur", function(e){
-		success(setValue(true));
+		success(setValue(true), e);
 	});
 	
 	//submit new value on enter
 	input.addEventListener("keydown", function(e){
 		if(e.key == "Enter"){
-			success(setValue());
+			success(setValue(), e);
 		}
 		if(e.key == "Escape"){
-			cancel();
+			cancel(e);
 		}
 	});
 	

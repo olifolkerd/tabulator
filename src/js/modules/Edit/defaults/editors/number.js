@@ -39,7 +39,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	input.value = cellValue;
 
 	var blurFunc = function(e){
-		onChange();
+		onChange(e);
 	};
 
 	onRendered(function () {
@@ -59,7 +59,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		}
 	});
 
-	function onChange(){
+	function onChange(e){
 		var value = input.value;
 
 		if(!isNaN(value) && value !==""){
@@ -67,11 +67,11 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		}
 
 		if(value !== cellValue){
-			if(success(value)){
+			if(success(value, e)){
 				cellValue = value; //persist value if successfully validated incase editor is used as header filter
 			}
 		}else{
-			cancel();
+			cancel(e);
 		}
 	}
 
@@ -80,11 +80,11 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		switch(e.key){
 			case "Enter":
 			// case "Tab":
-				onChange();
+				onChange(e);
 				break;
 
 			case "Escape":
-				cancel();
+				cancel(e);
 				break;
 
 			case "ArrowUp":
