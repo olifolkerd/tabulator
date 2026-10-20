@@ -403,10 +403,14 @@ export default class SelectRange extends Module {
 		}
 	}
 	
-	finishEditingCell() {
+	finishEditingCell(_cell, _cancel, e) {
 		this.blockKeydown = true;
 		this.table.rowManager.element.focus();
-		
+
+		if (e && e.key === "Enter") {
+			this.navigate(false, false, e.shiftKey ? "up" : "down");
+		}
+
 		setTimeout(() => {
 			this.blockKeydown = false;
 		}, 10);

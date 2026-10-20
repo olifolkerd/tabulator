@@ -269,7 +269,7 @@ export default class Edit{
 			if(this.popup){
 				this.popup.hide();
 			}else{
-				this._resolveValue(true);
+				this._resolveValue(true, e);
 			}
 		}
 	}
@@ -295,11 +295,11 @@ export default class Edit{
 				break;
 			
 			case "Enter":
-				this._keyEnter();
+				this._keyEnter(e);
 				break;
 			
 			case "Escape":
-				this._keyEsc();
+				this._keyEsc(e);
 				break;
 			
 			case "Home":
@@ -357,7 +357,7 @@ export default class Edit{
 	
 	_keyTab(e){
 		if(this.params.autocomplete && this.lastAction === "typing"){
-			this._resolveValue(true);
+			this._resolveValue(true, e);
 		}else{
 			if(this.focusedItem){
 				this._chooseItem(this.focusedItem, true);
@@ -407,20 +407,20 @@ export default class Edit{
 	
 	_keyEnter(e){
 		if(this.params.autocomplete && this.lastAction === "typing"){
-			this._resolveValue(true);
+			this._resolveValue(true, e);
 		}else{
 			if(this.focusedItem){
 				if(this.isFilter && !this.params.multiselect && this.focusedItem.selected){
-					this._resolveValue();
+					this._resolveValue(false, e);
 				}else{
-					this._chooseItem(this.focusedItem);
+					this._chooseItem(this.focusedItem, false, e);
 				}
 			}
 		}
 	}
 	
 	_keyEsc(e){
-		this._cancel();
+		this._cancel(e);
 	}
 	
 	_keyHomeEnd(e){
@@ -966,7 +966,7 @@ export default class Edit{
 	_itemClick(item, e){
 		e.stopPropagation();
 		
-		this._chooseItem(item);
+		this._chooseItem(item, false, e);
 	}
 	
 	_groupClick(item, e){
@@ -978,9 +978,9 @@ export default class Edit{
 	////// Current Item Management ///////
 	//////////////////////////////////////
 	
-	_cancel(){
+	_cancel(e){
 		this.popup.hide(true);
-		this.actions.cancel();
+		this.actions.cancel(e);
 	}
 	
 	_clearChoices(){
@@ -996,7 +996,7 @@ export default class Edit{
 		this.focusedItem = null;
 	}
 	
-	_chooseItem(item, silent){
+	_chooseItem(item, silent, e){
 		var index;
 		
 		this.typing = false;
@@ -1020,7 +1020,7 @@ export default class Edit{
 			if(this.isFilter && !silent && item.selected){
 				this._clearChoices();
 				this.input.value = "";
-				this._resolveValue();
+				this._resolveValue(false, e);
 				return;
 			}
 			this.currentItems = [item];
@@ -1031,14 +1031,14 @@ export default class Edit{
 			this._styleItem(item);
 			
 			if(!silent){
-				this._resolveValue();
+				this._resolveValue(false, e);
 			}
 		}
 		
 		this._focusItem(item);
 	}
 	
-	_resolveValue(blur){
+	_resolveValue(blur, e){
 		var output, initialValue;
 		
 		if(this.popup){
@@ -1052,7 +1052,7 @@ export default class Edit{
 				if(this.params.freetext || (this.params.allowEmpty && this.input.value === "")){
 					output = this.input.value;
 				}else{
-					this.actions.cancel();
+					this.actions.cancel(e);
 					return;
 				}
 			}else{
@@ -1077,7 +1077,7 @@ export default class Edit{
 			output = this.params.emptyValue;
 		}
 		
-		this.actions.success(output);
+		this.actions.success(output, e);
 		
 		if(this.isFilter){
 			this.initialValues = output && !Array.isArray(output) ? [output] : output;

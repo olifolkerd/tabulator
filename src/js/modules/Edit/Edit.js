@@ -486,7 +486,10 @@ export default class Edit extends Module{
 	}
 	
 	
-	clearEditor(cancel){
+	/**
+	 * @param {KeyboardEvent|MouseEvent|FocusEvent|Event} [e] editor event that ended the edit
+	 */
+	clearEditor(cancel, e){
 		var cell = this.currentCell,
 		cellEl;
 		
@@ -497,7 +500,7 @@ export default class Edit extends Module{
 			
 			cellEl = cell.getElement();
 			
-			this.dispatch("edit-editor-clear", cell, cancel);
+			this.dispatch("edit-editor-clear", cell, cancel, e);
 			
 			cellEl.classList.remove("tabulator-editing");
 			
@@ -515,12 +518,15 @@ export default class Edit extends Module{
 		}
 	}
 	
-	cancelEdit(){
+	/**
+	 * @param {KeyboardEvent|MouseEvent|FocusEvent|Event} [e] editor event that ended the edit
+	 */
+	cancelEdit(e){
 		if(this.currentCell){
 			var cell = this.currentCell;
 			var component = this.currentCell.getComponent();
 			
-			this.clearEditor(true);
+			this.clearEditor(true, e);
 			cell.setValueActual(cell.getValue());
 			cell.cellRendered();
 			
@@ -679,7 +685,10 @@ export default class Edit extends Module{
 		}
 		
 		//handle successful value change
-		function success(value){
+		/**
+		 * @param {KeyboardEvent|MouseEvent|FocusEvent|Event} [e] editor event that ended the edit
+		 */
+		function success(value, e){
 			if(self.currentCell === cell && !editFinished){
 				var valid = self.chain("edit-success", [cell, value], true, true);
 
@@ -687,7 +696,7 @@ export default class Edit extends Module{
 
 					editFinished = true;
 
-					self.clearEditor();
+					self.clearEditor(false, e);
 					
 					if(!cell.modules.edit){
 						cell.modules.edit = {};
@@ -721,11 +730,14 @@ export default class Edit extends Module{
 		}
 		
 		//handle aborted edit
-		function cancel(){
+		/**
+		 * @param {KeyboardEvent|MouseEvent|FocusEvent|Event} [e] editor event that ended the edit
+		 */
+		function cancel(e){
 			// editFinished = true;
 
 			if(self.currentCell === cell && !editFinished){
-				self.cancelEdit();
+				self.cancelEdit(e);
 			}else{
 				// console.warn("Edit Success Error - cannot call cancel on a cell that is no longer being edited");
 			}

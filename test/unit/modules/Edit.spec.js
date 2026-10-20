@@ -169,7 +169,7 @@ describe("Edit module", () => {
 		list.listEl.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
 		list.listEl.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
 
-		expect(success).toHaveBeenCalledWith("Female");
+		expect(success).toHaveBeenCalledWith("Female", expect.any(KeyboardEvent));
 		expect(list.input.value).toBe("Female");
 	});
 
@@ -180,8 +180,8 @@ describe("Edit module", () => {
 		list.listEl.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
 
 		expect(success).toHaveBeenCalledTimes(2);
-		expect(success).toHaveBeenNthCalledWith(1, "Female");
-		expect(success).toHaveBeenNthCalledWith(2, "Female");
+		expect(success).toHaveBeenNthCalledWith(1, "Female", expect.any(KeyboardEvent));
+		expect(success).toHaveBeenNthCalledWith(2, "Female", expect.any(KeyboardEvent));
 	});
 
 	it("should use currentItems instead of initialValues after the first multiselect parse", async () => {

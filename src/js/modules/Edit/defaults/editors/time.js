@@ -59,7 +59,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		}
 	});
 	
-	function onChange(){
+	function onChange(e){
 		var value = input.value,
 		luxTime;
 		
@@ -86,18 +86,18 @@ export default function(cell, onRendered, success, cancel, editorParams){
 				}
 			}
 			
-			if(success(value)){
+			if(success(value, e)){
 				cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
 			}
 		}else{
-			cancel();
+			cancel(e);
 		}
 	}
 	
 	//submit new value on blur
 	input.addEventListener("blur", function(e) {
 		if (e.relatedTarget || e.rangeParent || e.explicitOriginalTarget !== input) {
-			onChange(); // only on a "true" blur; not when focusing browser's date/time picker
+			onChange(e); // only on a "true" blur; not when focusing browser's date/time picker
 		}
 	});
 	
@@ -106,11 +106,11 @@ export default function(cell, onRendered, success, cancel, editorParams){
 		switch(e.key){
 			// case "Tab":
 			case "Enter":
-				onChange();
+				onChange(e);
 				break;
 			
 			case "Escape":
-				cancel();
+				cancel(e);
 				break;
 			
 			case "End":

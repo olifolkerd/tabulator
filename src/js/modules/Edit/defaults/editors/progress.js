@@ -10,11 +10,11 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	mouseDrag, mouseDragWidth;
 
 	//set new value
-	function updateValue(){
+	function updateValue(e){
 		var style = window.getComputedStyle(element, null);
 
 		var calcVal = (percent * Math.round(bar.offsetWidth / ((element.clientWidth - parseInt(style.getPropertyValue("padding-left")) - parseInt(style.getPropertyValue("padding-right")))/100))) + min;
-		success(calcVal);
+		success(calcVal, e);
 		element.setAttribute("aria-valuenow", calcVal);
 		element.setAttribute("aria-label", value);
 	}
@@ -90,7 +90,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			mouseDrag = false;
 			mouseDragWidth = false;
 
-			updateValue();
+			updateValue(e);
 		}
 	});
 
@@ -109,18 +109,18 @@ export default function(cell, onRendered, success, cancel, editorParams){
 
 			case "Tab":
 			case "Enter":
-				updateValue();
+				updateValue(e);
 				break;
 
 			case "Escape":
-				cancel();
+				cancel(e);
 				break;
 
 		}
 	});
 
-	element.addEventListener("blur", function(){
-		cancel();
+	element.addEventListener("blur", function(e){
+		cancel(e);
 	});
 
 	return bar;
