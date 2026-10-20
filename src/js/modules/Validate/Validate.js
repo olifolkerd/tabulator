@@ -59,13 +59,14 @@ export default class Validate extends Module{
 	}
 	
 	editorClear(cell, cancelled){
-		if(cancelled){
-			if(cell.column.modules.validate){
-				this.cellValidate(cell);
-			}
+		if(cancelled && cell.column.modules.validate){
+			// validate() adds or removes the fail class for the unchanged value,
+			// so do not remove it afterwards
+			// https://github.com/tabulator-tables/tabulator/issues/4829
+			this.cellValidate(cell);
+		}else{
+			cell.getElement().classList.remove("tabulator-validation-fail");
 		}
-
-		cell.getElement().classList.remove("tabulator-validation-fail");
 	}
 	
 	editedClear(cell){

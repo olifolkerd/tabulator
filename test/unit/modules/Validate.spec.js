@@ -301,3 +301,75 @@ describe("Validate unique validator", () => {
         expect(result).toBe(true);
     });
 });
+
+describe("Validate when an edit is cancelled", () => {
+    /** @type {TabulatorFull} */
+    let tabulator;
+    let offsetSpies;
+
+    beforeAll(() => {
+        // jsdom computes no layout, so Tabulator's visibility check would skip
+        // rendering the table body and rows would have no cells to edit
+        offsetSpies = [
+            jest.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockReturnValue(30),
+            jest.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(100),
+        ];
+    });
+
+    afterAll(() => {
+        offsetSpies.forEach((spy) => spy.mockRestore());
+    });
+
+    beforeEach(async () => {
+        const el = document.createElement("div");
+        el.id = "validate-cancel-test";
+        document.body.appendChild(el);
+        tabulator = new TabulatorFull("#validate-cancel-test", {
+            data: [
+                { id: 1, name: "" },
+                { id: 2, name: "Jane" }
+            ],
+            columns: [
+                { title: "Name", field: "name", editor: "input", validator: "required" }
+            ],
+            renderVertical: "basic"
+        });
+
+        return new Promise((resolve) => {
+            tabulator.on("renderComplete", () => {
+                resolve();
+            });
+        });
+    });
+
+    afterEach(() => {
+        tabulator.destroy();
+        document.getElementById("validate-cancel-test")?.remove();
+    });
+
+    // https://github.com/tabulator-tables/tabulator/issues/4829
+    it("should keep an invalid cell marked invalid after its edit is cancelled", () => {
+        const cell = tabulator.getRows()[0].getCells()[0];
+
+        tabulator.validate();
+        expect(cell.getElement().classList.contains("tabulator-validation-fail")).toBe(true);
+
+        cell.edit(true);
+        cell.cancelEdit();
+
+        expect(cell.getElement().classList.contains("tabulator-validation-fail")).toBe(true);
+        expect(cell.isValid()).not.toBe(true);
+        expect(tabulator.getInvalidCells()).toContain(cell);
+    });
+
+    // https://github.com/tabulator-tables/tabulator/issues/4829
+    it("should not mark a valid cell invalid after its edit is cancelled", () => {
+        const cell = tabulator.getRows()[1].getCells()[0];
+
+        cell.edit(true);
+        cell.cancelEdit();
+
+        expect(cell.getElement().classList.contains("tabulator-validation-fail")).toBe(false);
+        expect(cell.isValid()).toBe(true);
+    });
+});
