@@ -235,4 +235,32 @@ describe("SelectRange with cell editing", () => {
         expect(editMod.currentCell).toBeFalsy();
         expect(cell.getElement().querySelector("input")).toBeNull();
     });
+
+    // https://github.com/tabulator-tables/tabulator/issues/4839
+    it("should do nothing when Enter is pressed on a cell without an editor", () => {
+        const selectRangeMod = tabulator.module("selectRange");
+        const editMod = tabulator.module("edit");
+        const cell = tabulator.getRows()[0].getCells()[0]._cell;
+        const event = new KeyboardEvent("keydown", { key: "Enter", cancelable: true });
+
+        selectRangeMod.activeRange.setBounds(cell, cell);
+
+        expect(() => selectRangeMod._handleKeyDown(event)).not.toThrow();
+        expect(editMod.currentCell).toBeFalsy();
+        expect(event.defaultPrevented).toBe(false);
+    });
+
+    // https://github.com/tabulator-tables/tabulator/issues/4839
+    it("should start editing when Enter is pressed on a cell with an editor", () => {
+        const selectRangeMod = tabulator.module("selectRange");
+        const editMod = tabulator.module("edit");
+        const cell = tabulator.getRows()[0].getCells()[1]._cell;
+        const event = new KeyboardEvent("keydown", { key: "Enter", cancelable: true });
+
+        selectRangeMod.activeRange.setBounds(cell, cell);
+        selectRangeMod._handleKeyDown(event);
+
+        expect(editMod.currentCell).toBe(cell);
+        expect(event.defaultPrevented).toBe(true);
+    });
 });

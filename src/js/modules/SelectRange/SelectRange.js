@@ -257,6 +257,12 @@ export default class SelectRange extends Module {
 					return;
 				}
 
+				// only start editing if the column has an editor
+				// https://github.com/tabulator-tables/tabulator/issues/4839
+				if(!this.table.modules.edit || !activeCell.column.modules.edit) {
+					return;
+				}
+
 				this.table.modules.edit.editCell(activeCell);
 
 				e.preventDefault();
