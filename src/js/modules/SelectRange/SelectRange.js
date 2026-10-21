@@ -25,9 +25,11 @@ export default class SelectRange extends Module {
 		/** @type {Range|false} */
 		this.activeRange = false;
 		this.blockKeydown = false;
+		this.tabAnchorCol = null;
 		this.fillHandle = null;
 		
 		this.keyDownEvent = this._handleKeyDown.bind(this);
+		this.editKeyDownEvent = this._handleEditKeyDown.bind(this);
 		this.mouseUpEvent = this._handleMouseUp.bind(this);
 		
 		this.registerTableOption("selectableRange", false); //enable selectable range
@@ -38,6 +40,7 @@ export default class SelectRange extends Module {
 		this.registerTableOption("selectableRangeAutoFocus", true); //focus on a cell after resetRanges
 		this.registerTableOption("selectableRangeInitializeDefault", true); //initializes default range on cell [0,0]
 		this.registerTableOption("selectableRangeBlurEditOnNavigate", undefined); //prevent editing on navigation
+		this.registerTableOption("selectableRangeCommitEditOnNavigate", false); //commit instead of cancel the edit when blurred on navigation
 		this.registerTableOption("selectableRangeFill", false); //drag the range handle to fill neighbouring cells
 		
 		this.registerTableFunction("getRangesData", this.getRangesData.bind(this));
@@ -139,11 +142,16 @@ export default class SelectRange extends Module {
 		this.subscribe("table-redraw", this.redraw.bind(this));
 		this.subscribe("table-destroy", this.tableDestroyed.bind(this));
 		
+		this.subscribe("edit-editor-created", this.handleEditorCreated.bind(this));
 		this.subscribe("edit-editor-clear", this.finishEditingCell.bind(this));
 		this.subscribe("edit-blur", this.restoreFocus.bind(this));
 		
-		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "prev"));
-		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "next"));
+		// Runs before Edit's own Tab handling, which would open the next cell's
+		// editor first and make Tab move twice
+		this.subscribe("keybinding-nav-prev", this.keyNavigate.bind(this, "prev"), 20);
+		// Runs before Edit moves the editor, which would shift the active range
+		this.subscribe("keybinding-nav-next", this.setTabAnchor.bind(this), 10);
+		this.subscribe("keybinding-nav-next", this.keyNavigate.bind(this, "next"), 20);
 		this.subscribe("keybinding-nav-left", this.keyNavigate.bind(this, "left"));
 		this.subscribe("keybinding-nav-right", this.keyNavigate.bind(this, "right"));
 		this.subscribe("keybinding-nav-up", this.keyNavigate.bind(this, "up"));
@@ -268,6 +276,28 @@ export default class SelectRange extends Module {
 				}
 			}
 		}
+	}
+
+	_handleEditKeyDown(e) {
+		if (e.key !== "Enter") {
+			return;
+		}
+
+		if (e.ctrlKey || e.altKey || e.metaKey) {
+			return;
+		}
+
+		if (this.table.modules.edit.checkEditing()) {
+			return;
+		}
+
+		if (e.shiftKey) {
+			this.navigateToTabAnchor("up");
+		} else {
+			this.navigateToTabAnchor("down");
+		}
+
+		e.preventDefault();
 	}
 	
 	initializeFocus(cell){
@@ -402,6 +432,10 @@ export default class SelectRange extends Module {
 			this.activeRange.setBounds(cell);
 		}
 	}
+
+	handleEditorCreated(cell, editor) {
+		editor.addEventListener("keydown", this.editKeyDownEvent);
+	}
 	
 	finishEditingCell(_cell, _cancel, e) {
 		this.blockKeydown = true;
@@ -426,12 +460,21 @@ export default class SelectRange extends Module {
 			
 			if(isEditing){
 				if(dir === 'next' || dir === 'prev'){
-					this.dispatch("edit-cancel-cell");
+					if(this.options("selectableRangeCommitEditOnNavigate")){
+						// Moving focus out of the editor commits it, like clicking away
+						this.restoreFocus();
+					}else{
+						this.dispatch("edit-cancel-cell");
+					}
 				}else{
 					// Prevent navigating while editing except for next/prev
 					return false;
 				}
 			}
+		}
+
+		if (dir !== "next") {
+			this.tabAnchorCol = null;
 		}
 
 		if (dir === 'prev') {
@@ -445,7 +488,28 @@ export default class SelectRange extends Module {
 		}
 	}
 	
+	setTabAnchor(){
+		if (this.tabAnchorCol === null) {
+			this.tabAnchorCol = this.activeRange.start.col;
+		}
+	}
+
+	navigateToTabAnchor(dir){
+		const range = this.activeRange;
+
+		if (this.tabAnchorCol !== null) {
+			range.setStart(range.start.row, this.tabAnchorCol);
+			range.setEnd(range.start.row, this.tabAnchorCol);
+			this.tabAnchorCol = null;
+			this.layoutElement();
+		}
+
+		this.navigate(false, false, dir);
+	}
+	
 	keyNavigateRange(e, dir, jump, expand){
+		this.tabAnchorCol = null;
+
 		if(this.navigate(jump, expand, dir)){
 			e.preventDefault();
 		}
@@ -935,6 +999,7 @@ export default class SelectRange extends Module {
 		}
 		
 		range = new Range(this.table, this, { start, end });
+		this.tabAnchorCol = null;
 		
 		this.setActiveRange(range);
 		this.ranges.push(range);

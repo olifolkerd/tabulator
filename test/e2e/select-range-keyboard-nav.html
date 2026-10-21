@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Tabulator Test</title>
+		<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+		<script src="../../dist/js/tabulator.js"></script>
+		<style>
+		body {
+			padding: 20px;
+			font-family: Arial, sans-serif;
+		}
+		#test-table {
+			width: 100%;
+			height: 400px;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="test-table"></div>
+
+		<script>
+		const params = new URLSearchParams(location.search);
+
+		window.testTable = new Tabulator("#test-table", {
+			data: [
+				{ a: "a1", b: "b1", c: "c1", d: "d1" },
+				{ a: "a2", b: "b2", c: "c2", d: "d2" },
+				{ a: "a3", b: "b3", c: "c3", d: "d3" },
+			],
+			columns: [
+				{ title: "A", field: "a", editor: "input" },
+				{ title: "B", field: "b", editor: "input" },
+				{ title: "C", field: "c", editor: "input" },
+				{
+					title: "D",
+					field: "d",
+					editor: "textarea",
+					editorParams: { enterSubmit: true, altEnterNewLine: true },
+				},
+			],
+			layout: "fitColumns",
+			selectableRange: true,
+			selectableRangeBlurEditOnNavigate: params.has("blurEditOnNavigate"),
+			selectableRangeCommitEditOnNavigate: params.has("commitEditOnNavigate"),
+		});
+		</script>
+	</body>
+</html>

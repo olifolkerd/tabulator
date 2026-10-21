@@ -86,6 +86,17 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			case "Enter":
 				if(e.shiftKey && editorParams.shiftEnterSubmit){
 					onChange(e);
+				} else if(
+					(e.shiftKey && editorParams.shiftEnterNewLine)
+					|| (e.altKey && editorParams.altEnterNewLine)
+					|| (e.ctrlKey && editorParams.ctrlEnterNewLine)
+					|| (e.metaKey && editorParams.metaEnterNewLine)
+				) {
+					e.preventDefault();
+					input.setRangeText("\n", input.selectionStart, input.selectionEnd, "end");
+				} else if (editorParams.enterSubmit){
+					e.preventDefault();
+					onChange(e);
 				}
 				break;
 

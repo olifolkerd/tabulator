@@ -792,6 +792,8 @@ export default class Edit extends Module{
 				//if editor returned, add to DOM, if false, abort edit
 				if(this.currentCell && cellEditor !== false){
 					if(cellEditor instanceof Node){
+						this.dispatch("edit-editor-created", cell, cellEditor);
+
 						element.classList.add("tabulator-editing");
 						cell.row.getElement().classList.add("tabulator-editing");
 						cell.table.element.classList.add("tabulator-editing");
