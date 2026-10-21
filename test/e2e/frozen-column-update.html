@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Frozen column update regression</title>
+  <link rel="stylesheet" href="../../dist/css/tabulator.min.css">
+</head>
+<body>
+  <div id="table" style="width: 500px"></div>
+  <script src="../../dist/js/tabulator.js"></script>
+  <script>
+    const right = new URLSearchParams(location.search).has('right');
+    const frozen = [
+      {title: 'First', field: 'a', frozen: true},
+      {title: 'Second', field: 'b', frozen: true},
+      {title: 'Third', field: 'c', frozen: true},
+    ];
+    const scrolling = [{title: 'Scrolling', field: 'd', width: 400}];
+    window.table = new Tabulator('#table', {
+      layout: 'fitColumns',
+      data: [{a: 'A', b: 'B', c: 'C', d: 'D'}],
+      columns: right ? [...scrolling, ...frozen] : [...frozen, ...scrolling],
+    });
+  </script>
+</body>
+</html>

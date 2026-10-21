@@ -104,6 +104,10 @@ export default class ResizeColumns extends Module{
 	}
 	
 	reinitializeColumn(column){
+		if(!column.element){
+			return;
+		}
+
 		var frozenOffset = this.frozenColumnOffset(column);
 		
 		column.cells.forEach((cell) => {
