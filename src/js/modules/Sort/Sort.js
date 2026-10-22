@@ -166,19 +166,20 @@ export default class Sort extends Module{
 				sorters=[],
 				match = false;
 				
-				if(column.modules.sort){
-					if(column.modules.sort.tristate){
-						if(column.modules.sort.dir == "none"){
-							dir = column.modules.sort.startingDir;
+				const sortModule = column.modules.sort;
+				if(sortModule){
+					if(sortModule.tristate){
+						if(sortModule.dir == "none"){
+							dir = sortModule.startingDir;
 						}else{
-							if(column.modules.sort.dir == column.modules.sort.startingDir){
-								dir = column.modules.sort.dir == "asc" ? "desc" : "asc";
+							if(sortModule.dir == sortModule.startingDir){
+								dir = sortModule.dir == "asc" ? "desc" : "asc";
 							}else{
 								dir = "none";
 							}
 						}
 					}else{
-						switch(column.modules.sort.dir){
+						switch(sortModule.dir){
 							case "asc":
 								dir = "desc";
 								break;
@@ -188,7 +189,7 @@ export default class Sort extends Module{
 								break;
 							
 							default:
-								dir = column.modules.sort.startingDir;
+								dir = sortModule.startingDir;
 						}
 					}
 					
@@ -355,32 +356,29 @@ export default class Sort extends Module{
 		if(this.table.options.sortMode !== "remote"){
 			
 			//build list of valid sorters and trigger column specific callbacks before sort begins
-			sortList.forEach(function(item, i){
-				var sortObj;
-				
-				if(item.column){
-					sortObj = item.column.modules.sort;
-					
+			for(const item of sortList) {
+				const column = item.column;
+				if(column){
+					const sortObj = column.modules.sort;
 					if(sortObj){
-						
 						//if no sorter has been defined, take a guess
 						if(!sortObj.sorter){
-							sortObj.sorter = self.findSorter(item.column);
+							sortObj.sorter = self.findSorter(column);
 						}
 						
-						item.params = typeof sortObj.params === "function" ? sortObj.params(item.column.getComponent(), item.dir) : sortObj.params;
+						item.params = typeof sortObj.params === "function" ? sortObj.params(column.getComponent(), item.dir) : sortObj.params;
 						
 						sortListActual.push(item);
 					}
 					
 					if(!sortOnly) {
-						self.setColumnHeader(item.column, item.dir);
+						self.setColumnHeader(column, item.dir);
 					}
 				}
-			});
+			}
 			
 			//sort data
-			if (sortListActual.length) {
+			if (sortListActual.length && data.length) {
 				self._sortItems(data, sortListActual);
 			}
 			
@@ -439,42 +437,57 @@ export default class Sort extends Module{
 	
 	//sort each item in sort list
 	_sortItems(data, sortList){
-		var sorterCount = sortList.length - 1;
-		
-		data.sort((a, b) => {
-			var result;
-			
-			for(var i = sorterCount; i>= 0; i--){
-				let sortItem = sortList[i];
-				
-				result = this._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
-				
+		const sortMeta = sortList.map((sortItem) => {
+			return {
+				column: sortItem.column,
+				dir: sortItem.dir,
+				params: sortItem.params,
+				sorter: sortItem.column.modules.sort.sorter,
+				columnComponent: sortItem.column.getComponent(),
+				asc: sortItem.dir === "asc",
+			};
+		});
+
+		const sorterCount = sortMeta.length - 1;
+		const length = data.length;
+
+		//extract each row's sort keys and component once, then sort the decorated array
+		const decorated = new Array(length);
+		for(let k = 0; k < length; k++){
+			const row = data[k];
+			const rowData = row.getData();
+			const values = new Array(sortMeta.length);
+			for(let j = 0; j <= sorterCount; j++){
+				const value = sortMeta[j].column.getFieldValue(rowData);
+				values[j] = typeof value !== "undefined" ? value : "";
+			}
+			decorated[k] = {values, component: row.getComponent(), row};
+		}
+
+		decorated.sort((a, b) => {
+			for(let i = sorterCount; i >= 0; i--){
+				const sortItem = sortMeta[i];
+				const asc = sortItem.asc;
+				const result = sortItem.sorter.call(this,
+					asc ? a.values[i] : b.values[i],
+					asc ? b.values[i] : a.values[i],
+					asc ? a.component : b.component,
+					asc ? b.component : a.component,
+					sortItem.columnComponent,
+					sortItem.dir,
+					sortItem.params
+				);
+
 				if(result !== 0){
-					break;
+					return result;
 				}
 			}
-			
-			return result;
+
+			return 0;
 		});
-	}
-	
-	//process individual rows for a sort function on active data
-	_sortRow(a, b, column, dir, params){
-		var el1Comp, el2Comp;
-		
-		//switch elements depending on search direction
-		var el1 = dir == "asc" ? a : b;
-		var el2 = dir == "asc" ? b : a;
-		
-		a = column.getFieldValue(el1.getData());
-		b = column.getFieldValue(el2.getData());
-		
-		a = typeof a !== "undefined" ? a : "";
-		b = typeof b !== "undefined" ? b : "";
-		
-		el1Comp = el1.getComponent();
-		el2Comp = el2.getComponent();
-		
-		return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
+
+		for(let k = 0; k < length; k++){
+			data[k] = decorated[k].row;
+		}
 	}
 }
