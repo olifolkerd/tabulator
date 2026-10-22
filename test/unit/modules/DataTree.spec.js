@@ -50,9 +50,11 @@ describe('DataTree', function(){
 					dataTreeStartExpanded: false,
 					movableRows: false
 				},
+				modules: {},
+				modExists: jest.fn().mockReturnValue(false),
 				columnManager: {
 					getFirstVisibleColumn: jest.fn().mockReturnValue({
-						field: "name"  
+						field: "name"
 					})
 				}
 			};
