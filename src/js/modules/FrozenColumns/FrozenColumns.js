@@ -222,7 +222,8 @@ export default class FrozenColumns extends Module{
 	
 	reinitializeRows(){
 		var visibleRows = this.table.rowManager.getVisibleRows(true);
-		var otherRows = this.table.rowManager.getRows().filter(row => !visibleRows.includes(row));
+		var visibleRowSet = new Set(visibleRows);
+		var otherRows = this.table.rowManager.getRows().filter(row => !visibleRowSet.has(row));
 		
 		otherRows.forEach((row) =>{
 			row.deinitialize();
