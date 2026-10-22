@@ -29,6 +29,7 @@
 
 import RowManager from "../../../../src/js/core/RowManager";
 import VirtualDomVertical from "../../../../src/js/core/rendering/renderers/VirtualDomVertical";
+import Helpers from "../../../../src/js/core/tools/Helpers";
 
 const ROW_HEIGHT = 24;
 const HEADER_HEIGHT = 54; // column title row + header filter row, as in the issue's fiddle
@@ -344,5 +345,62 @@ describe("VirtualDomVertical rerenderRows() without a row to anchor on", () => {
 
         expect(renderer.vDomBottom).toBe(remaining.length - 1);
         expect(holder.scrollTop).toBe(holder.scrollHeight - holder.clientHeight);
+    });
+});
+
+// An iframe hidden with display:none still receives resize observer callbacks, so a
+// redraw can be requested while the table has no measurable size (reported in a
+// multi-iframe layout where the table came back blank / scrolled to the wrong place).
+describe("VirtualDomVertical rendering while the table is not visible", () => {
+
+    afterEach(() => {
+        document.body.innerHTML = "";
+        jest.restoreAllMocks();
+    });
+
+    it("does not tear down the rendered rows or move the window when a render is requested while hidden", () => {
+        const {renderer, tableElement, holder} = buildTable();
+        const elVisible = jest.spyOn(Helpers, "elVisible").mockReturnValue(true);
+
+        renderer.renderRows();
+
+        const rendered = tableElement.children.length;
+        const top = renderer.vDomTop;
+        const bottom = renderer.vDomBottom;
+        const scrollTop = holder.scrollTop;
+
+        expect(rendered).toBeGreaterThan(0);
+
+        elVisible.mockReturnValue(false);
+
+        // both the anchor based redraw and a plain render have to be no-ops in this state
+        renderer._virtualRenderFill(50, true, 0);
+        renderer.rerenderRows();
+
+        elVisible.mockRestore();
+
+        expect(tableElement.children.length).toBe(rendered);
+        expect(renderer.vDomTop).toBe(top);
+        expect(renderer.vDomBottom).toBe(bottom);
+        expect(holder.scrollTop).toBe(scrollTop);
+    });
+
+    it("renders from the top when the rendered rows were torn down and the window still points at live rows", () => {
+        const {renderer, rows, tableElement, holder} = buildTable({rowCount: 1000});
+
+        renderer.renderRows();
+        renderer.scrollToRow(rows[500]);
+
+        expect(renderer.vDomTop).toBeGreaterThan(0);
+
+        // the data was reloaded while the table was hidden: the rendered rows are gone and the
+        // scroll position was reset, so the stale window cannot be used as an anchor
+        tableElement.innerHTML = "";
+        holder.scrollTop = 0;
+
+        renderer.rerenderRows();
+
+        expect(renderer.vDomTop).toBe(0);
+        expect(holder.scrollTop).toBe(0);
     });
 });
