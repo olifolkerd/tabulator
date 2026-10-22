@@ -37,7 +37,8 @@ describe("Import module", () => {
         const mockColumnField = "columnField";
         const mockColumn = {
             getField: jest.fn().mockReturnValue(mockColumnField),
-            getDefinition: jest.fn().mockReturnValue({ title: "Column" })
+            getDefinition: jest.fn().mockReturnValue({ title: "Column" }),
+            visible: true,
         };
         
         // Create mock module manager
@@ -375,18 +376,100 @@ describe("Import module", () => {
             return [{ name: "Imported" }];
         });
         jest.spyOn(importMod, 'structureData').mockImplementation(data => data);
-        
+
         // Set importFormat
         mockTable.options.importFormat = "csv";
-        
+
         // Trigger data load
         const result = await importMod.loadData("some csv data");
-        
+
         // Verify functions were called
         expect(importMod.lookupImporter).toHaveBeenCalled();
         expect(importMod.structureData).toHaveBeenCalledWith([{ name: "Imported" }]);
-        
+
         // Verify result
         expect(result).toEqual([{ name: "Imported" }]);
+    });
+
+    // Regression: https://github.com/tabulator-tables/tabulator/issues/4726
+    // rowHeader must not consume an import column slot.
+    it("should skip rowHeader column when mapping imported xlsx/array data to columns", () => {
+        jest.spyOn(importMod, 'transformHeader').mockImplementation(headers => headers);
+        jest.spyOn(importMod, 'transformData').mockImplementation(data => data);
+
+        // columns: [rowHeader, name, rating] - rowHeader must be ignored
+        const rowHeaderCol = {
+            getField: jest.fn().mockReturnValue(undefined),
+            getDefinition: jest.fn().mockReturnValue({ title: "" }),
+            isRowHeader: true,
+            visible: true,
+        };
+        const nameCol = {
+            getField: jest.fn().mockReturnValue("name"),
+            getDefinition: jest.fn().mockReturnValue({ title: "Name" }),
+            visible: true,
+        };
+        const ratingCol = {
+            getField: jest.fn().mockReturnValue("rating"),
+            getDefinition: jest.fn().mockReturnValue({ title: "Rating" }),
+            visible: true,
+        };
+
+        mockTable.getColumns.mockReturnValue([rowHeaderCol, nameCol, ratingCol]);
+
+        // Simulate a 2-column export: the rowHeader column is not written
+        // to the file, so only the two data columns appear in the array data.
+        const arrayData = [
+            ["AB", 50],
+            ["CD", 55],
+        ];
+
+        const result = importMod.structureArrayToColumns(arrayData);
+
+        // name should hold the first column ("AB", "CD"), rating the second (50, 55)
+        expect(result).toEqual([
+            { name: "AB", rating: 50 },
+            { name: "CD", rating: 55 },
+        ]);
+    });
+
+    // Regression: https://github.com/tabulator-tables/tabulator/issues/4726
+    // Hidden columns (visible:false) also break the index-based mapping on import.
+    it("should skip hidden columns when mapping imported xlsx/array data to columns", () => {
+        jest.spyOn(importMod, 'transformHeader').mockImplementation(headers => headers);
+        jest.spyOn(importMod, 'transformData').mockImplementation(data => data);
+
+        // columns: [name, hiddenProgress, rating]
+        const nameCol = {
+            getField: jest.fn().mockReturnValue("name"),
+            getDefinition: jest.fn().mockReturnValue({ title: "Name" }),
+            visible: true,
+        };
+        const hiddenCol = {
+            getField: jest.fn().mockReturnValue("progress"),
+            getDefinition: jest.fn().mockReturnValue({ title: "Progress" }),
+            visible: false,
+        };
+        const ratingCol = {
+            getField: jest.fn().mockReturnValue("rating"),
+            getDefinition: jest.fn().mockReturnValue({ title: "Rating" }),
+            visible: true,
+        };
+
+        mockTable.getColumns.mockReturnValue([nameCol, hiddenCol, ratingCol]);
+
+        // Hidden column was excluded on export, so import has only 2 columns
+        const arrayData = [
+            ["AB", 50],
+            ["CD", 55],
+        ];
+
+        const result = importMod.structureArrayToColumns(arrayData);
+
+        // hidden column must not absorb index 1; rating should receive it
+        expect(result).toEqual([
+            { name: "AB", rating: 50 },
+            { name: "CD", rating: 55 },
+        ]);
     });
 });

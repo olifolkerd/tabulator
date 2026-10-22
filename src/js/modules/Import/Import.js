@@ -239,32 +239,38 @@ export default class Import extends Module{
 	structureArrayToColumns(parsedData){
 		var data = [],
 		firstRow = this.transformHeader(parsedData[0]),
-		columns = this.table.getColumns();
-		
+		allColumns = this.table.getColumns(),
+		//exclude rowHeader and hidden columns so the column-position-based mapping
+		//matches what was actually written to the export
+		//(see https://github.com/tabulator-tables/tabulator/issues/4726)
+		columns = allColumns.filter(function(column){
+			return column && !column.isRowHeader && column.visible;
+		});
+
 		//remove first row if it is the column names
 		if(columns[0] && firstRow[0]){
 			if(columns[0].getDefinition().title === firstRow[0]){
 				parsedData.shift();
 			}
 		}
-		
+
 		//convert row arrays to objects
 		parsedData.forEach((rowData) => {
 			var row = {};
 
 			rowData = this.transformData(rowData);
-			
+
 			rowData.forEach((value, index) => {
 				var column = columns[index];
-				
+
 				if(column){
 					row[column.getField()] = value;
 				}
 			});
-			
+
 			data.push(row);
 		});
-		
+
 		return data;
 	}
 
