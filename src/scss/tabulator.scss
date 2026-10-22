@@ -440,6 +440,7 @@ $rangeHeaderTextHighlightBackground: #000000 !default; //header text color when 
 		width:100%;
 		white-space: nowrap;
 		overflow:auto;
+		overflow-anchor: none;
 		-webkit-overflow-scrolling: touch;
 		
 		&:focus{
