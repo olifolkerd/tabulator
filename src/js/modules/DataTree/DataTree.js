@@ -345,6 +345,12 @@ export default class DataTree extends Module{
 		children = [],
 		output = [];
 
+		// a row that has been wiped has no tree config and therefore no children
+		// https://github.com/tabulator-tables/tabulator/issues/4832
+		if(!config){
+			return output;
+		}
+
 		if(config.children !== false && (config.open || allChildren)){
 			if(!Array.isArray(config.children)){
 				config.children = this.generateChildren(row);
