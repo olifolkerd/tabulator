@@ -35,4 +35,16 @@ export default {
 	rangeExpandJumpDown: function(e){
 		this.dispatch("keybinding-nav-range", e, "down", true, true);
 	},
+	rangeHome: function(e){
+		this.dispatch("keybinding-nav-range", e, "home", false, false);
+	},
+	rangeEnd: function(e){
+		this.dispatch("keybinding-nav-range", e, "end", false, false);
+	},
+	rangeJumpHome: function(e){
+		this.dispatch("keybinding-nav-range", e, "home", true, false);
+	},
+	rangeJumpEnd: function(e){
+		this.dispatch("keybinding-nav-range", e, "end", true, false);
+	},
 };

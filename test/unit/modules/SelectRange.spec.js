@@ -130,6 +130,35 @@ describe("SelectRange module", () => {
         expect(range.overlaps(0, 0, 0, 0)).toBe(false);
     });
 
+    describe("Home/End navigation", () => {
+        const press = (key, opts = {}) => {
+            tabulator.element.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, ...opts }));
+        };
+
+        const activeRect = () => selectRangeMod.activeRange.rect;
+
+        beforeEach(() => {
+            selectRangeMod.activeRange.setStart(1, 1);
+            selectRangeMod.activeRange.setEnd(1, 1);
+        });
+
+        it("moves to the first and last column of the current row on Home/End", () => {
+            press("End");
+            expect(activeRect()).toMatchObject({ top: 1, left: 3, bottom: 1, right: 3 });
+
+            press("Home");
+            expect(activeRect()).toMatchObject({ top: 1, left: 0, bottom: 1, right: 0 });
+        });
+
+        it("moves to the first and last cell of the table on Ctrl+Home/Ctrl+End", () => {
+            press("End", { ctrlKey: true });
+            expect(activeRect()).toMatchObject({ top: 2, left: 3, bottom: 2, right: 3 });
+
+            press("Home", { ctrlKey: true });
+            expect(activeRect()).toMatchObject({ top: 0, left: 0, bottom: 0, right: 0 });
+        });
+    });
+
     it("should handle destroyedGuard", () => {
         const range = selectRangeMod.getRanges()[0]._range;
         
