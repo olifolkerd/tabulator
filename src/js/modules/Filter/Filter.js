@@ -841,22 +841,19 @@ export default class Filter extends Module{
 
 		if(this.table.options.filterMode !== "remote" && (this.filterList.length || Object.keys(this.headerFilters).length)){
 
-			rowList.forEach((row) => {
+			for(const row of rowList){
 				if(this.filterRow(row)){
 					activeRows.push(row);
 				}
-			});
-
+			}
 		}else{
 			activeRows = rowList.slice(0);
 		}
 
 		if(this.subscribedExternal("dataFiltered")){
-
-			activeRows.forEach((row) => {
+			for(const row of activeRows){
 				activeRowComponents.push(row.getComponent());
-			});
-
+			}
 			this.dispatchExternal("dataFiltered", this.getFilters(true), activeRowComponents);
 		}
 
@@ -865,38 +862,34 @@ export default class Filter extends Module{
 
 	//filter individual row
 	filterRow(row, filters){
-		var match = true,
-		data = row.getData();
-
-		this.filterList.forEach((filter) => {
+		const data = row.getData();
+		
+		for(const filter of this.filterList){
 			if(!this.filterRecurse(filter, data)){
-				match = false;
-			}
-		});
-
-
-		for(var field in this.headerFilters){
-			if(!this.headerFilters[field].func(data)){
-				match = false;
+				return false;
 			}
 		}
 
-		return match;
+		for(const field in this.headerFilters){
+			if(!this.headerFilters[field].func(data)){
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	filterRecurse(filter, data){
-		var match = false;
-
 		if(Array.isArray(filter)){
-			filter.forEach((subFilter) => {
+			for(const subFilter of filter){
 				if(this.filterRecurse(subFilter, data)){
-					match = true;
+					return true;
 				}
-			});
+			}
 		}else{
-			match = filter.func(data);
+			return filter.func(data);
 		}
 
-		return match;
+		return false;
 	}
 }

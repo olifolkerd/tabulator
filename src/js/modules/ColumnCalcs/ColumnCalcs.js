@@ -464,13 +464,14 @@ export default class ColumnCalcs extends Module{
 			
 			var cells = [];
 			
-			this.table.columnManager.columnsByIndex.forEach((column) => {
+			const hasFormatModule = this.table.modExists("format");
+			for (const column of this.table.columnManager.columnsByIndex){
 				
 				//set field name of mock column
 				this.genColumn.setField(column.getField());
 				this.genColumn.hozAlign = column.hozAlign;
 				
-				if(column.definition[pos + "CalcFormatter"] && this.table.modExists("format")){
+				if(hasFormatModule && column.definition[pos + "CalcFormatter"]){
 					this.genColumn.modules.format = {
 						formatter: this.table.modules.format.lookupFormatter(column.definition[pos + "CalcFormatter"]),
 						params: column.definition[pos + "CalcFormatterParams"] || {},
@@ -497,7 +498,7 @@ export default class ColumnCalcs extends Module{
 				if(!column.visible){
 					cell.hide();
 				}
-			});
+			}
 			
 			row.cells = cells;
 		};
@@ -507,25 +508,24 @@ export default class ColumnCalcs extends Module{
 	
 	//generate stats row
 	generateRowData(pos, data){
-		var rowData = {},
+		const rowData = {}, 
 		calcs = pos == "top" ? this.topCalcs : this.botCalcs,
 		type = pos == "top" ? "topCalc" : "botCalc",
-		params, paramKey;
+		paramKey = type + "Params";
 		
-		calcs.forEach(function(column){
-			var values = [];
-			
-			if(column.modules.columnCalcs && column.modules.columnCalcs[type]){
-				data.forEach(function(item){
+		for(const column of calcs){
+			const colCalcs = column.modules.columnCalcs;
+			if(colCalcs && colCalcs[type]){
+				const  values = [];
+				for(const item of data ){
 					values.push(column.getFieldValue(item));
-				});
+				}
 				
-				paramKey = type + "Params";
-				params = typeof column.modules.columnCalcs[paramKey] === "function" ? column.modules.columnCalcs[paramKey](values, data) : column.modules.columnCalcs[paramKey];
-				
-				column.setFieldValue(rowData, column.modules.columnCalcs[type](values, data, params));
+				const colCalc = colCalcs[paramKey];
+				const params = typeof colCalc === "function" ? colCalc(values, data) : colCalc;
+				column.setFieldValue(rowData, colCalcs[type](values, data, params));
 			}
-		});
+		}
 		
 		return rowData;
 	}
