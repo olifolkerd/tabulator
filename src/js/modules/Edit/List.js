@@ -571,6 +571,11 @@ export default class Edit{
 		var params = this.params.filterRemote ? {term:term} : {};
 		url = urlBuilder(url, {}, params);
 		
+		if(!this._isSafeAjaxURL(url)){
+			console.error("List Ajax Load Error - URL blocked as a potential SSRF risk: " + url);
+			return Promise.reject("Invalid URL");
+		}
+		
 		return fetch(url)
 			.then((response)=>{
 				if(response.ok) {
