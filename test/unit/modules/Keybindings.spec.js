@@ -119,6 +119,36 @@ describe("Keybindings module", () => {
 		expect(testActionFunc).toHaveBeenCalled();
 	})
     
+    // https://github.com/tabulator-tables/tabulator/issues/4900
+    it.each([
+        ["#", 222], ["#", 191], ["!", 49], ["$", 52], ["%", 53],
+        ["&", 55], ["'", 222], ["(", 57], ["-", 189], [".", 190],
+    ])("uses the browser key code for printable %s (%i)", (key, keyCode) => {
+        expect(keybindingsMod.getKeyCode(new KeyboardEvent("keydown", { key, keyCode }))).toBe(keyCode);
+    });
+
+    it.each(["#", "!", "$", "%", "&", "'", "(", "-", ".", "é"])(
+        "does not interpret %s as a navigation key without a legacy code", (key) => {
+            expect(keybindingsMod.getKeyCode(new KeyboardEvent("keydown", { key }))).toBe(0);
+        }
+    );
+
+    it.each([["a", 65], ["Z", 90], ["9", 57], ["End", 35], ["Home", 36], ["ArrowLeft", 37]])(
+        "preserves the modern-key fallback for %s", (key, expected) => {
+            expect(keybindingsMod.getKeyCode(new KeyboardEvent("keydown", { key }))).toBe(expected);
+        }
+    );
+
+    it("does not run scrollToEnd when an editor emits a hash key", () => {
+        mockTable.options.keybindings = {};
+        keybindingsMod.initialize();
+        const event = new KeyboardEvent("keydown", { key: "#", keyCode: 222, cancelable: true });
+        keybindingsMod.keyupBinding(event);
+        expect(event.defaultPrevented).toBe(false);
+        expect(mockTable.rowManager.scrollToRow).not.toHaveBeenCalled();
+        expect(mockTable.element.focus).not.toHaveBeenCalled();
+    });
+
     it("should initialize watchKeys and pressedKeys as empty when keybindings disabled", () => {
         // With keybindings:false, the module should initialize empty structures
         expect(keybindingsMod.watchKeys).toEqual({});

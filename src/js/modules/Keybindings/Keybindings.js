@@ -66,7 +66,8 @@ export default class Keybindings extends Module{
 	getKeyCode(e){
 		// Convert modern e.key to legacy numeric key code for compatibility
 		if(e.key.length === 1){
-			return e.key.toUpperCase().charCodeAt(0);
+			// Character codes for punctuation overlap navigation key codes (e.g. # and End).
+			return e.keyCode || (/^[a-z0-9]$/i.test(e.key) ? e.key.toUpperCase().charCodeAt(0) : 0);
 		}
 		
 		// Handle special keys

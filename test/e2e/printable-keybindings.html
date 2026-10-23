@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Printable keybinding regression</title>
+  <link rel="stylesheet" href="../../dist/css/tabulator.min.css">
+</head>
+<body>
+  <div id="table"></div>
+  <script src="../../dist/js/tabulator.js"></script>
+  <script>
+    window.table = new Tabulator('#table', {
+      height: 200,
+      data: Array.from({length: 50}, (_, id) => ({id, value: 'text'})),
+      columns: [{field: 'value', title: 'Value', editor: 'input'}],
+    });
+  </script>
+</body>
+</html>
