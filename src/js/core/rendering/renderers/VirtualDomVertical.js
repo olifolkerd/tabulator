@@ -21,6 +21,8 @@ export default class VirtualDomVertical extends Renderer{
 		this.vDomTopPad = 0; //hold value of padding for top of virtual DOM
 		this.vDomBottomPad = 0; //hold value of padding for bottom of virtual DOM
 
+		this.vDomScrollHeight = 0; //cached scrollable height, set on a full fill; read by scrollRows before the first fill
+
 		this.vDomMaxRenderChain = 90; //the maximum number of dom elements that can be rendered in 1 go
 
 		this.vDomWindowBuffer = 0; //window row buffer before removing elements, to smooth scrolling
@@ -60,6 +62,7 @@ export default class VirtualDomVertical extends Renderer{
 		this.vDomBottomPad = 0;
 		this.vDomScrollPosTop = 0;
 		this.vDomScrollPosBottom = 0;
+		this.vDomScrollHeight = 0;
 	}
 
 	renderRows(){
@@ -97,14 +100,24 @@ export default class VirtualDomVertical extends Renderer{
 			callback();
 		}
 
-		if(this.rows().length){
+		var newRows = this.rows();
+
+		if(newRows.length){
 			if(topRow === false){
 				//no rendered row to anchor on, start from the top if nothing was rendered before,
 				//otherwise the rendered window is past the end of the shrunken data so anchor on the last row
-				topRow = rows.length ? this.rows().length - 1 : 0;
+				topRow = rows.length ? newRows.length - 1 : 0;
 			}
 
-			this._virtualRenderFill(topRow, true, topOffset || 0);
+			if(topRow >= newRows.length){
+				//The anchor row was found in the PRE-callback (e.g. pre-filter) rows
+				//but points past the new row count, so its topOffset is stale and
+				//would inflate vDomTopPad into a blank strip across the top. A fresh
+				//fill resets vDomTopPad to 0.
+				this._virtualRenderFill();
+			}else{
+				this._virtualRenderFill(topRow, true, topOffset || 0);
+			}
 		}else{
 			this.clear();
 			this.table.rowManager.tableEmpty();
@@ -373,7 +386,13 @@ export default class VirtualDomVertical extends Renderer{
 				this.vDomScrollHeight = topPadHeight + rowsHeight + this.vDomBottomPad - containerHeight;
 			}else {
 				this.vDomTopPad = !forceMove ? this.scrollTop - topPadHeight : (this.vDomRowHeight * this.vDomTop) + offset;
-				this.vDomBottomPad = this.vDomBottom == rowsCount-1 ? 0 : Math.max(this.vDomScrollHeight - this.vDomTopPad - rowsHeight - topPadHeight, 0);
+				//Derive the bottom pad from the CURRENT row count (mirroring the
+				//!position branch) rather than the previously-cached
+				//vDomScrollHeight, which goes stale after a filter/sort/resize
+				//changes rowsCount and leaves an inflated blank strip below the
+				//last row. Refresh vDomScrollHeight so later reads stay coherent.
+				this.vDomBottomPad = this.vDomBottom == rowsCount-1 ? 0 : this.vDomRowHeight * (rowsCount - this.vDomBottom - 1);
+				this.vDomScrollHeight = topPadHeight + rowsHeight + this.vDomBottomPad - containerHeight;
 			}
 			
 			element.style.paddingTop = this.vDomTopPad+"px";
@@ -516,6 +535,7 @@ export default class VirtualDomVertical extends Renderer{
 
 		if(paddingAdjust){
 			this.vDomTopPad += paddingAdjust;
+			this.vDomTopPad = Math.max(this.vDomTopPad, 0);
 			this.tableElement.style.paddingTop = this.vDomTopPad + "px";
 			this.vDomScrollPosTop += this.vDomTop ? paddingAdjust : paddingAdjust + this.vDomWindowBuffer;
 		}

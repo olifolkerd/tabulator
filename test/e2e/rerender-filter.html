@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator rerenderRows filter blank-strip test</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	body { padding: 20px; font-family: Arial, sans-serif; }
+	#test-table { width: 500px; }
+	.tabulator-cell { white-space: normal !important; }
+	</style>
+</head>
+<body>
+	<div id="test-table"></div>
+	<script>
+		function generateData() {
+			const rowCount = 2000;
+			const data = [];
+			for (let i = 0; i < rowCount; i++) {
+				const lines = (i % 8) + 1; // variable heights
+				let text = "";
+				for (let l = 0; l < lines; l++) {
+					text += "Line " + l + " of row " + i + " with padding to wrap. ";
+				}
+				data.push({
+					id: i + 1,
+					name: "Row " + i,
+					notes: text,
+					// ~2.5% of rows are "rare" so filtering long -> short.
+					cat: i % 40 === 0 ? "rare" : "common",
+				});
+			}
+			return data;
+		}
+
+		document.addEventListener("DOMContentLoaded", () => {
+			window.testTable = new Tabulator("#test-table", {
+				data: generateData(),
+				columns: [
+					{ title: "ID", field: "id", width: 120 },
+					{ title: "Name", field: "name", width: 200 },
+					{ title: "Notes", field: "notes", width: 600, formatter: "textarea" },
+					{ title: "Cat", field: "cat", width: 120 },
+				],
+				height: "300px",
+				layout: "fitData",
+			});
+		});
+	</script>
+</body>
+</html>
