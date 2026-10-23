@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator Remote Scroll Position Test</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	body {
+		padding: 20px;
+		font-family: Arial, sans-serif;
+	}
+	#test-table {
+		width: 500px;
+	}
+	</style>
+</head>
+<body>
+	<h1>Tabulator Remote Scroll Position Test</h1>
+	<div id="test-table"></div>
+
+	<script>
+		const allRows = [];
+		for (let i = 0; i < 200; i++) {
+			allRows.push({
+				id: i + 1,
+				name: "Row " + (i + 1),
+				city: ["Berlin", "Paris", "Rome", "Vienna"][i % 4],
+				notes: "Some notes for row " + (i + 1),
+				value: (i * 37) % 1000,
+			});
+		}
+
+		// Stand-in for a server that filters, sorts and paginates the data.
+		function serverResponse(params) {
+			let rows = allRows.slice();
+
+			(params.filter || []).forEach((filter) => {
+				rows = rows.filter((row) => String(row[filter.field]).includes(filter.value));
+			});
+
+			(params.sort || []).forEach((sorter) => {
+				const dir = sorter.dir === "asc" ? 1 : -1;
+				rows.sort((a, b) => (a[sorter.field] > b[sorter.field] ? dir : a[sorter.field] < b[sorter.field] ? -dir : 0));
+			});
+
+			const lastPage = Math.max(1, Math.ceil(rows.length / params.size));
+			const start = (params.page - 1) * params.size;
+
+			return { last_page: lastPage, data: rows.slice(start, start + params.size) };
+		}
+
+		document.addEventListener("DOMContentLoaded", () => {
+			window.testTable = new Tabulator("#test-table", {
+				ajaxURL: "remote",
+				ajaxRequestFunc: (url, config, params) => Promise.resolve(serverResponse(params)),
+				pagination: true,
+				paginationMode: "remote",
+				paginationSize: 50,
+				sortMode: "remote",
+				filterMode: "remote",
+				height: "300px",
+				layout: "fitData",
+				// Wide columns force a horizontal scrollbar.
+				columns: [
+					{ title: "ID", field: "id", width: 120 },
+					{ title: "Name", field: "name", width: 200 },
+					{ title: "City", field: "city", width: 300, headerFilter: "input" },
+					{ title: "Notes", field: "notes", width: 400 },
+					{ title: "Value", field: "value", width: 200 },
+				],
+			});
+		});
+	</script>
+</body>
+</html>

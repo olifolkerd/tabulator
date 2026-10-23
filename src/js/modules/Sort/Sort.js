@@ -233,14 +233,10 @@ export default class Sort extends Module{
 	
 	refreshSort(){
 		if(this.table.options.sortMode === "remote"){
-			this.reloadData(null, false, false);
+			this.reloadData(null, false, false, true);
 		}else{
 			this.refreshData(true);
 		}
-		
-		//TODO - Persist left position of row manager
-		// left = this.scrollLeft;
-		// this.scrollHorizontal(left);
 	}
 	
 	//check if the sorters have changed since last use

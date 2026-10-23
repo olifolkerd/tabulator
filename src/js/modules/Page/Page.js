@@ -786,8 +786,13 @@ export default class Page extends Module{
 				return Promise.resolve();
 			
 			case "remote":
+				left = this.table.rowManager.scrollLeft;
+			
 				this.dataChanging = true;
 				return this.reloadData(null)
+					.then(() => {
+						this.table.rowManager.scrollHorizontal(left);
+					})
 					.finally(() => {
 						this.dataChanging = false;
 					});
