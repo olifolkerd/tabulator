@@ -113,6 +113,7 @@ export default class Row extends CoreFeature{
 
 	deinitialize(){
 		this.initialized = false;
+		this.heightInitialized = false;
 	}
 	
 	deinitializeHeight(){

@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Tabulator Virtual Cell Height Recycling Test</title>
+	<link rel="stylesheet" href="../../dist/css/tabulator.min.css" />
+	<script src="../../dist/js/tabulator.js"></script>
+	<style>
+	#test-table {
+		width: 500px;
+	}
+	.tabulator-cell {
+		white-space: normal !important;
+	}
+	</style>
+</head>
+<body>
+	<div id="test-table"></div>
+
+	<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		const metricFields = Array.from(
+			{ length: 32 },
+			(_value, index) => `metric_${index + 1}`,
+		);
+		const data = Array.from({ length: 500 }, (_, index) => {
+			const row = {
+				id: index + 1,
+				name: `Row ${index + 1}`,
+				notes: `Notes for row ${index + 1}`,
+			};
+
+			metricFields.forEach((field, metricIndex) => {
+				row[field] = index * 100 + metricIndex;
+			});
+
+			return row;
+		});
+
+		window.testTable = new Tabulator("#test-table", {
+			data,
+			columns: [
+				{ title: "ID", field: "id", width: 120 },
+				{ title: "Name", field: "name", width: 200 },
+				{ title: "Notes", field: "notes", width: 600 },
+				...metricFields.map((field) => ({ title: field, field, width: 160 })),
+			],
+			height: "300px",
+			rowHeight: 43,
+			layout: "fitData",
+			renderHorizontal: "virtual",
+		});
+	});
+	</script>
+</body>
+</html>
