@@ -3,12 +3,21 @@ export default function(cell, onRendered, success, cancel, editorParams){
 	var self = this,
 	element = cell.getElement(),
 	value = cell.getValue(),
-	maxStars = element.getElementsByTagName("svg").length || 5,
+	maxStars = element.getElementsByTagName("svg").length || formatterStars() || 5,
 	size = element.getElementsByTagName("svg")[0] ? element.getElementsByTagName("svg")[0].getAttribute("width") : 14,
 	stars = [],
 	starsHolder = document.createElement("div"),
 	star = document.createElementNS('http://www.w3.org/2000/svg', "svg");
 
+
+	//use the star formatter's star count when there are no formatted stars to count, e.g. in a header filter
+	//https://github.com/tabulator-tables/tabulator/issues/4979
+	function formatterStars(){
+		var definition = cell.getColumn().getDefinition(),
+		params = definition.formatterParams;
+
+		return definition.formatter === "star" && params && typeof params === "object" ? params.stars : 0;
+	}
 
 	//change star type
 	function starChange(val){

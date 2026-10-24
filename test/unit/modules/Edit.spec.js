@@ -429,3 +429,63 @@ describe("Edit module programmatic edited state", () => {
 		expect(table.getEditedCells().length).toBe(1);
 	});
 });
+
+describe("Edit module star editor", () => {
+	let table;
+	
+	const setupTable = async (columns) => {
+		document.body.innerHTML = '<div id="star-editor-table"></div>';
+		
+		table = new TabulatorFull("#star-editor-table", {
+			data: [
+				{ id: 1, rating: 2 },
+				{ id: 2, rating: 7 }
+			],
+			columns: columns
+		});
+		
+		await new Promise(resolve => {
+			table.on("tableBuilt", resolve);
+		});
+	};
+	
+	const headerFilterStars = (field) => {
+		return table.getColumn(field).getElement().querySelector(".tabulator-header-filter").getElementsByTagName("svg").length;
+	};
+	
+	afterEach(() => {
+		table.destroy();
+		document.body.innerHTML = "";
+	});
+	
+	// https://github.com/tabulator-tables/tabulator/issues/4979
+	it("should use the star formatter's star count in a star header filter", async () => {
+		await setupTable([
+			{ title: "ID", field: "id" },
+			{ title: "Rating", field: "rating", formatter: "star", formatterParams: { stars: 10 }, headerFilter: "star" }
+		]);
+		
+		expect(headerFilterStars("rating")).toBe(10);
+	});
+	
+	it("should default to 5 stars in a star header filter without star formatter params", async () => {
+		await setupTable([
+			{ title: "ID", field: "id" },
+			{ title: "Rating", field: "rating", formatter: "star", headerFilter: "star" }
+		]);
+		
+		expect(headerFilterStars("rating")).toBe(5);
+	});
+	
+	it("should keep using the formatted star count when editing a cell", async () => {
+		await setupTable([
+			{ title: "ID", field: "id" },
+			{ title: "Rating", field: "rating", formatter: "star", formatterParams: { stars: 8 }, editor: "star" }
+		]);
+		
+		const cell = table.getRows()[0].getCell("rating");
+		cell.edit();
+		
+		expect(cell.getElement().getElementsByTagName("svg").length).toBe(8);
+	});
+});
